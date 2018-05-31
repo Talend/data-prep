@@ -166,6 +166,31 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
     }
 
     @Test
+    public void should_generate_sequence() {
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "Bacon ipsum");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "Bacon ipsum");
+        expectedValues.put("0003", "2");
+        expectedValues.put("0002", "01/01/2015");
+
+        parameters.put(CreateNewColumn.MODE_PARAMETER, CreateNewColumn.SEQUENCE_MODE);
+        parameters.put(CreateNewColumn.START_VALUE, "2");
+        parameters.put(CreateNewColumn.STEP_VALUE, "1");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void should_do_nothing_without_any_parameters() {
         // given
         DataSetRow row = getRow("first", "second", "Done !");
@@ -227,6 +252,40 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
         parameters.put(CreateNewColumn.MODE_PARAMETER, CreateNewColumn.COLUMN_MODE);
         parameters.put(CreateNewColumn.SELECTED_COLUMN_PARAMETER, "0009");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(row.get("0000"), "first");
+        assertEquals(row.get("0001"), "second");
+        assertEquals(row.get("0002"), "Done !");
+    }
+
+    @Test
+    public void should_do_nothing_with_wrong_parameters_5() {
+        // given
+        DataSetRow row = getRow("first", "second", "Done !");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(CreateNewColumn.MODE_PARAMETER, CreateNewColumn.SEQUENCE_MODE);
+        parameters.put(CreateNewColumn.START_VALUE, "1");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(row.get("0000"), "first");
+        assertEquals(row.get("0001"), "second");
+        assertEquals(row.get("0002"), "Done !");
+    }
+
+    @Test
+    public void should_do_nothing_with_wrong_parameters_6() {
+        // given
+        DataSetRow row = getRow("first", "second", "Done !");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(CreateNewColumn.MODE_PARAMETER, CreateNewColumn.SEQUENCE_MODE);
+        parameters.put(CreateNewColumn.STEP_VALUE, "1");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

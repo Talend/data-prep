@@ -704,7 +704,7 @@ public class DataSetService extends BaseDataSetService {
                 analyzeDataSet(currentDataSetMetadata.getId(), emptyList());
 
                 // publishing update event
-                publisher.publishEvent(new DatasetUpdatedEvent(updatedDataSetMetadata));
+                publisher.publishEvent(new DatasetImportedEvent(dataSetId));
 
             } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
                 LOG.warn("Dataset update {} cannot be done, new content is too big", currentDataSetMetadata.getId());

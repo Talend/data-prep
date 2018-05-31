@@ -134,18 +134,24 @@ public class FilterStep extends DataPrepStep {
     }
 
     private void doApplyFilterOnPreparation(String tql, String preparationName) throws IOException {
+        PreparationContent preparationContent = getPreparationContent(preparationName, tql);
+        context.storeObject("preparationContent", preparationContent);
+    }
+
+    private PreparationContent getPreparationContent(String preparationName, String tql) throws IOException {
         String preparationId = context.getPreparationId(suffixName(preparationName));
         Response response = api.getPreparationContent(preparationId, "head", "HEAD", tql);
         response.then().statusCode(200);
 
-        PreparationContent preparationContent = response.as(PreparationContent.class);
-        context.storeObject("preparationContent", preparationContent);
+        return response.as(PreparationContent.class);
     }
 
     @Then("^The characteristics of the preparation \"(.*)\" match:$")
-    public void checkFilterApplyedOnPreparation(String preparationName, DataTable dataTable) throws Exception {
+    public void checkFilterAppliedOnPreparation(String preparationName, DataTable dataTable) throws Exception {
         PreparationContent preparationContent = (PreparationContent)context.getObject("preparationContent");
-
+        if (preparationContent == null) {
+            preparationContent = getPreparationContent(preparationName, null);
+        }
         checkContent(preparationContent, dataTable);
     }
 

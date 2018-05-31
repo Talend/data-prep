@@ -36,6 +36,8 @@ public class FilteredNode extends BasicNode {
 
     private DataSetRow lastRow;
 
+    private long totalCount = 0;
+
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         synchronized (filter) {
@@ -43,6 +45,8 @@ public class FilteredNode extends BasicNode {
                 instance = filter.apply(metadata);
             }
         }
+        totalCount++;
+        metadata.setSampleNbRows(totalCount);
         if (instance.test(row)) {
             hasMatched = true;
             super.receive(row, metadata);

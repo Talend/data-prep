@@ -16,5 +16,5 @@ export function* fetchAll() {
 }
 
 export default {
-	'AppLoader#handle': fetchAll,
+	bootstrap: fetchAll,
 };

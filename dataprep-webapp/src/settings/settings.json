@@ -79,12 +79,11 @@
     }
   },
   "props": {
-    "AppLoader#default":{
-      "saga": "AppLoader#handle",
-      "step": [
-        { "waitFor": ["settings"] }
-      ],
-      "hasCollections": ["settings"]
+    "AppLoader#default": {
+      "saga": "bootstrap",
+      "hasCollections": [
+        "settings"
+      ]
     },
     "HeaderBar#default": {
       "app": "Data Preparation",
@@ -170,10 +169,10 @@
     },
     "HomeListView#preparations": {
       "hasTheme": true,
+      "saga": "preparation:fetch:home",
       "header": {},
       "sidepanel": {},
       "list": {
-        "didMountActionCreator" : "preparation:fetchAll",
         "collectionId": "preparations",
         "list": {
           "columns": [

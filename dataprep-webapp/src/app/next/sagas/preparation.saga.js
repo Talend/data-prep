@@ -1,14 +1,16 @@
 import { call, take, put, select } from 'redux-saga/effects';
 import http from '@talend/react-cmf/lib/sagas/http';
-import api, { actions } from '@talend/react-cmf';
+import { actions } from '@talend/react-cmf';
 import {
 	CANCEL_RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
+	OPEN_FOLDER,
 	OPEN_PREPARATION_CREATOR,
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
 } from '../constants/actions';
+import PreparationService from '../services/preparation.service';
 
 const defaultHttpConfiguration = {
 	headers: {
@@ -40,8 +42,40 @@ function* duplicate() {
 			{},
 			defaultHttpConfiguration,
 		);
-		yield api.saga.putActionCreator('preparation:fetchAll');
+		yield call(fetchPreparations);
 	}
+}
+
+function* fetchHomePreparations() {
+	yield put(
+		actions.http.get('http://localhost:8888/api/folders/Lw==/preparations', {
+			cmf: {
+				collectionId: 'preparations',
+			},
+			transform({ folders, preparations }) {
+				const adaptedFolders = folders.map(folder => ({
+					author: folder.ownerId,
+					className: 'list-item-folder',
+					icon: 'talend-folder',
+					id: folder.id,
+					name: folder.name,
+					type: 'folder',
+				}));
+				const adaptedPreparations = preparations.map(prep => ({
+					author: prep.author,
+					className: 'list-item-preparation',
+					datasetName: prep.dataset.dataSetName,
+					icon: 'talend-dataprep',
+					id: prep.id,
+					name: prep.name,
+					nbSteps: prep.steps.length - 1,
+					type: 'preparation',
+				}));
+
+				return adaptedFolders.concat(adaptedPreparations);
+			},
+		}),
+	);
 }
 
 function* fetchPreparations() {
@@ -52,28 +86,22 @@ function* fetchPreparations() {
 				cmf: {
 					collectionId: 'preparations',
 				},
-				transform({ folders, preparations }) {
-					const adaptedFolders = folders.map(folder => ({
-						author: folder.ownerId,
-						className: 'list-item-folder',
-						icon: 'talend-folder',
-						id: folder.id,
-						name: folder.name,
-						type: 'folder',
-					}));
-					const adaptedPreparations = preparations.map(prep => ({
-						author: prep.author,
-						className: 'list-item-preparation',
-						datasetName: prep.dataset.dataSetName,
-						icon: 'talend-dataprep',
-						id: prep.id,
-						name: prep.name,
-						nbSteps: prep.steps.length - 1,
-						type: 'preparation',
-					}));
+				transform: PreparationService.transform,
+			}),
+		);
+	}
+}
 
-					return adaptedFolders.concat(adaptedPreparations);
+function* fetchFolder() {
+	while (true) {
+		const { id } = yield take(OPEN_FOLDER);
+		debugger
+		yield put(
+			actions.http.get(`http://localhost:8888/api/folders/${id}/preparations`, {
+				cmf: {
+					collectionId: 'preparations',
 				},
+				transform: PreparationService.transform,
 			}),
 		);
 	}
@@ -89,7 +117,7 @@ function* rename() {
 			{ name: payload.name },
 			defaultHttpConfiguration,
 		);
-		yield api.saga.putActionCreator('preparation:fetchAll');
+		yield call(fetchPreparations);
 	}
 }
 
@@ -113,10 +141,12 @@ function* openAbout() {
 }
 
 export default {
-	cancelRename,
-	duplicate,
-	fetchPreparations,
-	rename,
-	setTitleEditionMode,
-	openAbout,
+	'preparation:cancelRename': cancelRename,
+	'preparation:duplicate': duplicate,
+	'preparation:fetch:home': fetchHomePreparations,
+	'preparation:fetch': fetchPreparations,
+	'preparation:folder': fetchFolder,
+	'preparation:rename': rename,
+	'preparation:setTitleEditionMode': setTitleEditionMode,
+	'preparation:openAbout': openAbout,
 };

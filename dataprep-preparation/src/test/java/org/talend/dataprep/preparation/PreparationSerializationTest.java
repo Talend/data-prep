@@ -121,6 +121,16 @@ public class PreparationSerializationTest extends ServiceBaseTest {
     public void preparationDetailsStepsWithActions() throws Exception {
 
         final String version = versionService.version().getVersionId();
+        // create row metadata
+        RowMetadata rowMetadata = new RowMetadata();
+        ColumnMetadata firstColumn = new ColumnMetadata();
+        firstColumn.setId("0000");
+        ColumnMetadata secondColumn = new ColumnMetadata();
+        secondColumn.setId("0001");
+        ColumnMetadata thirdColumn = new ColumnMetadata();
+        thirdColumn.setId("0002");
+        rowMetadata.setColumns(asList(firstColumn, secondColumn, thirdColumn));
+
         // Add a step
         final List<Action> actions = PreparationTest.getSimpleAction("uppercase", "column_name", "lastname");
         final PreparationActions newContent1 = PreparationActions.ROOT_ACTIONS.append(actions);
@@ -131,6 +141,7 @@ public class PreparationSerializationTest extends ServiceBaseTest {
         Preparation preparation =
                 new Preparation("b7368bd7e4de38ff954636d0ac0438c7fb56a208", "12345", s1.id(), version);
         preparation.setCreationDate(0L);
+        preparation.setRowMetadata(rowMetadata);
         repository.add(preparation);
 
         final Preparation storedPreparation = repository.get(preparation.id(), Preparation.class);

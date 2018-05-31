@@ -30,7 +30,6 @@ function open(event, { type, id }) {
 }
 
 function fetch(payload) {
-	console.log('[NC] FETCH ?: ', payload);
 	const { folderId = 'Lw==' } = payload || {};
 	return {
 		type: FETCH_PREPARATIONS,

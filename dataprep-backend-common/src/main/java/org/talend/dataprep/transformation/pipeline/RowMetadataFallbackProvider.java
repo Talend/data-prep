@@ -16,12 +16,12 @@ package org.talend.dataprep.transformation.pipeline;
 import org.talend.dataprep.api.dataset.RowMetadata;
 
 /**
- * This class provide a fallback of the row metadata when we write the result without records (due to a filter). Because
- * the writer Node use the
- * last row metadata of the last record received, and a fallback when no record are received.
+ * This class provides a fallback of the row metadata when we write the result without records (due to a filter).
+ * So that the writer Node uses the last row metadata of the last record received, and a fallback when no record is
+ * received.
  * Statistics Nodes (@link org.talend.dataprep.transformation.pipeline.node.StatisticsNode) supply the fallback for the
  * row metadata after statistics are proceed (on signals END_OF_STREAM and STOP).
- * Writer Node (@link org.talend.dataprep.transformation.pipeline.model.WriterNode) get this fallback when it received
+ * Writer Node (@link org.talend.dataprep.transformation.pipeline.model.WriterNode) get this fallback when it receives
  * the END_OF_STREAM signal.
  */
 public class RowMetadataFallbackProvider {

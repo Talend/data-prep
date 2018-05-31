@@ -45,7 +45,7 @@ public class WriterNode extends BasicNode implements Monitored {
 
     private RowMetadataFallbackProvider rowMetadataFallbackProvider;
 
-    /** Fall back raw metadata when no row (hence row metadata) is received. */
+    /** Fall back row metadata when no row (hence no row metadata) is received. */
     private RowMetadata fallBackRowMetadata;
 
     private RowMetadata lastRowMetadata;
@@ -65,9 +65,8 @@ public class WriterNode extends BasicNode implements Monitored {
      * @param writer the transformer writer.
      * @param metadataCacheWriter the metadata cache writer.
      * @param metadataKey the transformation metadata cache key to use.
-     * @param fallBackRowMetadata fallback raw metadata to be able to write an empty content even if no row/rowMetadata
-     * id
-     * received.
+     * @param fallBackRowMetadata fallback row metadata to be able to write an empty content even if no row/rowMetadata
+     * was received.
      */
     public WriterNode(final TransformerWriter writer, final ConfiguredCacheWriter metadataCacheWriter,
             final ContentCacheKey metadataKey, RowMetadata fallBackRowMetadata) {

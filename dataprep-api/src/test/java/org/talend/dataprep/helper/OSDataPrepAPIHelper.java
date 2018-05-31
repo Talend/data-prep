@@ -13,21 +13,11 @@
 
 package org.talend.dataprep.helper;
 
-import static com.jayway.restassured.http.ContentType.JSON;
-import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
-import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Base64;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -43,11 +33,22 @@ import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Header;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Base64;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static com.jayway.restassured.http.ContentType.JSON;
+import static com.jayway.restassured.http.ContentType.TEXT;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
+import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -177,7 +178,7 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
+                .contentType(TEXT.withCharset(UTF_8)) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
                         Charset.defaultCharset())) //
                 .queryParam("name", datasetName) //

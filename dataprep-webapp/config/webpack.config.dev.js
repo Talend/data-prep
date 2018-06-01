@@ -40,9 +40,6 @@ const PROXY_OPTIONS = {
 		'/upload/**',
 	],
 	target: process.env.API_URL || SERVER_URL,
-	pathRewrite: {
-		'^/api/v1': '/api',
-	},
 };
 
 config.devServer = {

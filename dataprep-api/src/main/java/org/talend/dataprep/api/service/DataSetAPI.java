@@ -288,7 +288,7 @@ public class DataSetAPI extends APIService {
             try {
 
                 Stream<Dataset> datasetStream = datasetClient.listDataset(
-                        certified ? Dataset.CertificationState.certified : Dataset.CertificationState.none, favorite);
+                        certified ? Dataset.CertificationState.CERTIFIED : Dataset.CertificationState.NONE, favorite);
 
                 if (isNotBlank(name)) {
                     datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getLabel(), name));

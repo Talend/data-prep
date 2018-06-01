@@ -181,8 +181,8 @@ public class Dataset {
     }
 
     public enum CertificationState {
-        none,
-        pending,
-        certified
+        NONE,
+        PENDING,
+        CERTIFIED
     }
 }

@@ -120,6 +120,20 @@ public class ApiDatasetClient {
         return getDataSet(id, false, false, null);
     }
 
+    public DataSet getDataSet(String id, boolean fullContent) {
+        return getDataSet(id, fullContent, false, null);
+    }
+
+    /**
+     *
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param filter TQL filter for content
+     */
+    public DataSet getDataSet(String id, boolean fullContent, String filter) {
+        return getDataSet(id, fullContent, false, filter);
+    }
+
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
         DataSet dataset = new DataSet();
         // convert metadata
@@ -138,16 +152,6 @@ public class ApiDatasetClient {
         // DataSet specifics
         metadata.getContent().getLimit().ifPresent(theLimit -> dataset.setRecords(dataset.getRecords().limit(theLimit)));
         return dataset;
-    }
-
-    /**
-     *
-     * @param id the dataset to fetch
-     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
-     * @param filter TQL filter for content
-     */
-    public DataSet getDataSet(String id, boolean fullContent, String filter) {
-        return getDataSet(id, fullContent, false, filter);
     }
 
     public Stream<DataSetMetadata> searchDataset(String name, boolean strict) {

@@ -23,7 +23,9 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +38,7 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
+import org.talend.dataprep.util.ConverterBasedPropertyEditor;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
@@ -48,6 +51,7 @@ import java.util.stream.Stream;
 
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
 
 @RestController
 @RequestMapping("/api/v1/datasets")
@@ -62,6 +66,11 @@ public class DataSetController {
         this.beanConversionService = beanConversionService;
     }
 
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(Dataset.CertificationState.class, new ConverterBasedPropertyEditor<>(Dataset.CertificationState::valueOf));
+    }
+
     @GetMapping
     public Stream<Dataset> getAllDatasets(@RequestParam(required = false) Dataset.CertificationState certification,
             @RequestParam(required = false) Boolean favorite) {
@@ -69,16 +78,7 @@ public class DataSetController {
         if (certification == null) {
             legacyCertified = false;
         } else {
-            switch (certification) {
-            case certified:
-                legacyCertified = true;
-                break;
-            case none:
-            case pending:
-            default:
-                legacyCertified = false;
-                break;
-            }
+            legacyCertified = CERTIFIED == certification;
         }
         boolean legacyFavorite = favorite != null && favorite == TRUE;
         return dataSetService.list(SortAndOrderHelper.Sort.CREATION_DATE, SortAndOrderHelper.Order.DESC, null, false,

@@ -34,6 +34,14 @@ export default function initialize(additionalConfiguration = {}) {
 	// register all saga api
 	api.saga.registerMany(sagas.bootstrap);
 
+	api.registry.addToRegistry(
+		'SEARCH_CATEGORIES_BY_PROVIDER',
+		{
+			tdp: ['dataset', 'preparation', 'folder'],
+			doc: ['documentation'],
+		},
+	);
+
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, {}),
 		fork(api.sagas.component.handle),

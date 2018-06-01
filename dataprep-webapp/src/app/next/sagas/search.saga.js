@@ -1,13 +1,10 @@
 import { delay } from 'redux-saga';
 import { call, cancel, fork, take, takeLatest, all, put, select } from 'redux-saga/effects';
-import { actions } from '@talend/react-cmf';
+import api, { actions } from '@talend/react-cmf';
 import { Typeahead } from '@talend/react-containers';
 import { SEARCH, SEARCH_SELECT, SEARCH_RESET, OPEN_WINDOW } from '../constants/actions';
 import { default as creators } from '../actions';
-import {
-	DEBOUNCE_TIMEOUT,
-	SEARCH_CATEGORIES_BY_PROVIDER,
-} from '../constants/search';
+import { DEBOUNCE_TIMEOUT } from '../constants/search';
 
 import SearchService from '../services/search.service';
 
@@ -45,11 +42,12 @@ function* reset() {
 function* process(payload) {
 	yield delay(DEBOUNCE_TIMEOUT);
 
-	const providers = Object.keys(SEARCH_CATEGORIES_BY_PROVIDER);
+	const categories = api.registry.getFromRegistry('SEARCH_CATEGORIES_BY_PROVIDER');
+	const providers = Object.keys(categories);
 	const batches = providers.map(
 		provider => SearchService.build(
 			provider,
-			SEARCH_CATEGORIES_BY_PROVIDER[provider],
+			categories[provider],
 			payload,
 		)
 	);

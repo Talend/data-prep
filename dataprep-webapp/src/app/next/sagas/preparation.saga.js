@@ -1,6 +1,5 @@
 import { call, take, put, select } from 'redux-saga/effects';
 import http from '@talend/react-cmf/lib/sagas/http';
-import matchPath from '@talend/react-cmf/lib/sagaRouter/matchPath';
 import api, { actions } from '@talend/react-cmf';
 import {
 	CANCEL_RENAME_PREPARATION,
@@ -46,16 +45,13 @@ function* duplicate() {
 		yield call(fetch);
 	}
 }
-}
 
 function* fetch() {
 	while (true) {
 		const { payload } = yield take(FETCH_PREPARATIONS);
-		const path = window.location.pathname;
-		const match = matchPath(path, { path: '/preparations/:folderId' });
-		const folderId = (match && match.params.folderId) || payload.folderId;
+		const defaultFolderId = 'Lw==';
 		yield put(
-			actions.http.get(`http://localhost:8888/api/folders/${folderId}/preparations`, {
+			actions.http.get(`/api/folders/${payload.folderId || defaultFolderId}/preparations`, {
 				cmf: {
 					collectionId: 'preparations',
 				},
@@ -108,11 +104,11 @@ function* openAbout() {
 }
 
 export default {
-	cancelRename,
-	duplicate,
-	fetch,
-	openFolder,
-	rename,
-	setTitleEditionMode,
-	openAbout,
+	'preparation:rename:cancel': cancelRename,
+	'preparation:duplicate': duplicate,
+	'preparation:fetch': fetch,
+	'preparation:folder:open': openFolder,
+	'preparation:rename:submit': rename,
+	'preparation:rename': setTitleEditionMode,
+	'preparation:about:open': openAbout,
 };

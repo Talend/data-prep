@@ -39,16 +39,12 @@ export default function initialize(additionalConfiguration = {}) {
 		fork(api.sagas.component.handle),
 		...sagas.help.map(call),
 		...sagas.redirect.map(call),
-		...sagas.preparation.map(call),
+		...Object.keys(sagas.preparation).map(k => call(sagas.preparation[k])),
 		fork(sagas.httpHandler),
 	];
-
-	// Use for EE additional configuration
-	const additionalSagas = additionalConfiguration.sagas;
-	if (additionalSagas) {
-		additionalSagas.forEach((additionalSaga) => {
-			rootSagas.push(...additionalSaga.map(call));
-		});
+	const additionalRootSagas = additionalConfiguration.rootSagas;
+	if (additionalRootSagas) {
+		rootSagas.push(...additionalRootSagas);
 	}
 
 	api.saga.registerMany(sagas.preparation);

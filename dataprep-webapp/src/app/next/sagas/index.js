@@ -7,7 +7,7 @@ import { default as redirect } from './window.saga';
 export default {
 	help: Object.keys(help).map(k => help[k]),
 	redirect: Object.keys(redirect).map(k => redirect[k]),
-	preparation: Object.keys(preparation).map(k => preparation[k]),
+	preparation,
 	bootstrap,
 	httpHandler,
 };

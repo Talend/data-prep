@@ -44,16 +44,6 @@
         "componentId": "preparations"
       },
       {
-        "path": "datasets",
-        "component": "HomeListView",
-        "componentId": "datasets"
-      },
-      {
-        "path": "datastores",
-        "component": "HomeListView",
-        "componentId": "datastores"
-      },
-      {
         "path": "*",
         "component": "Redirect",
         "componentId": "unknownRouteRedirect"

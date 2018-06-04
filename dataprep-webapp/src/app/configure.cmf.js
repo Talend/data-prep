@@ -29,20 +29,25 @@ const registerRouteFunction = api.route.registerFunction;
  */
 export default function initialize(additionalConfiguration = {}) {
 	// register all saga api
-	api.saga.registerMany(sagas.bootstrap);
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, {}),
 		fork(api.sagas.component.handle),
-		...sagas.help.map(call),
-		...sagas.redirect.map(call),
-		...Object.keys(sagas.preparation).map(k => call(sagas.preparation[k])),
-		...Object.keys(sagas.http).map(k => call(sagas.http[k])),
 	];
+	const rootSagasToStart = {
+		...sagas.help,
+		...sagas.http,
+		...sagas.preparation,
+		...sagas.redirect,
+	};
 	const additionalRootSagas = additionalConfiguration.rootSagas;
 	if (additionalRootSagas) {
-		rootSagas.push(...additionalRootSagas);
+		Object.assign(rootSagasToStart, additionalRootSagas);
 	}
+	Object.keys(rootSagasToStart).forEach((rootSagaToStartName) => {
+		rootSagas.push(call(rootSagasToStart[rootSagaToStartName]));
+	});
 
+	api.saga.registerMany(sagas.bootstrap);
 	api.saga.registerMany(sagas.preparation);
 	// Use for EE additional configuration
 	const additionalManySagas = additionalConfiguration.manySagas;

@@ -1,7 +1,7 @@
 import { call, put, select } from 'redux-saga/effects';
 import api, { actions } from '@talend/react-cmf';
 import http from './http';
-import PreparationService from '../../services/preparation.service';
+import PreparationService from '../../services/preparation/preparation.service';
 
 const defaultHttpConfiguration = {
 	headers: {
@@ -9,7 +9,6 @@ const defaultHttpConfiguration = {
 		'Content-Type': 'application/json',
 	},
 };
-
 
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));

@@ -1,13 +1,13 @@
 import { actions } from '@talend/react-cmf';
 import { call, put } from 'redux-saga/effects';
-import localstorage from 'store';
+import store from 'store';
 
 /**
  * Fetch app settings
  * @returns {IterableIterator<*>}
  */
 function* fetchSettings() {
-	const data = yield localstorage.get('settings');
+	const data = yield store.get('settings');
 	yield put(actions.collections.addOrReplace('settings', data));
 }
 

@@ -1,61 +1,21 @@
 import { takeEvery } from 'redux-saga/effects';
 import { OPEN_WINDOW, REDIRECT_WINDOW } from '../../constants/actions';
-import windowSagas from './window.saga';
+import { default as sagas } from './redirect.saga';
+import * as effects from '../effects/redirect.effects';
 
-const url = 'http://url.fake';
 
-const action = {
-	payload: {
-		url,
-	},
-};
-
-describe('Window', () => {
+describe('redirect', () => {
 	describe('open', () => {
-		beforeEach(() => {
-			global.window.open = jest.fn();
-		});
-
 		it('should register saga', () => {
-			const gen = windowSagas.open();
-
-			expect(gen.next().value)
-				.toEqual(takeEvery(OPEN_WINDOW, windowSagas.openWindow));
-		});
-
-		it('should open new window', () => {
-			windowSagas.openWindow(action);
-
-			expect(global.window.open)
-				.toHaveBeenCalledWith(url, '_blank');
+			const gen = sagas['window:open']();
+			expect(gen.next().value).toEqual(takeEvery(OPEN_WINDOW, effects.open));
 		});
 	});
 
 	describe('redirect', () => {
-		let location;
-
-		beforeEach(() => {
-			location = global.window.location.assign;
-			global.window.open = jest.fn();
-			global.window.location.assign = jest.fn();
-		});
-
-		afterEach(() => {
-			global.window.location.assign = location;
-		});
-
 		it('should register saga', () => {
-			const gen = windowSagas.redirect();
-
-			expect(gen.next().value)
-				.toEqual(takeEvery(REDIRECT_WINDOW, windowSagas.redirectWindow));
-		});
-
-		it('should redirect same window', () => {
-			windowSagas.redirectWindow(action);
-
-			expect(global.window.location.assign)
-				.toHaveBeenCalledWith(url);
+			const gen = sagas['window:redirect']();
+			expect(gen.next().value).toEqual(takeEvery(REDIRECT_WINDOW, effects.redirect));
 		});
 	});
 });

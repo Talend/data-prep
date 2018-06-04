@@ -36,10 +36,7 @@ export default function initialize(additionalConfiguration = {}) {
 
 	api.registry.addToRegistry(
 		'SEARCH_CATEGORIES_BY_PROVIDER',
-		{
-			tdp: ['dataset', 'preparation', 'folder'],
-			doc: ['documentation'],
-		},
+		constants.search.SEARCH_CATEGORIES_BY_PROVIDER,
 	);
 
 	const rootSagas = [

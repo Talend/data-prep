@@ -1,11 +1,9 @@
 export default class SearchProvider {
-	static KEY = 'SHOULD_BE_OVERRIDED';
-
-	static build() {
+	build() {
 		throw new Error('build(): Not implemented');
 	}
 
-	static transform() {
+	transform() {
 		throw new Error('convert(): Not implemented');
 	}
 }

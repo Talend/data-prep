@@ -4,25 +4,38 @@ import { DATAPREP_SEARCH_URL } from '../../constants/search';
 
 
 export default class DataprepSearchProvider extends SearchProvider {
-	static KEY = 'doc';
+	constructor(categories) {
+		super();
+		this.categories = categories;
+	}
 
-	static build(term, categories) {
-		const query = categories.map(t => `categories=${t}`).join('&');
+	build(term) {
+		const query = this.categories.map(t => `categories=${t.type}`).join('&');
 		return [
 			http.get,
 			`${DATAPREP_SEARCH_URL}${term}&${query}`,
 		];
 	}
 
-	static transform(data) {
+	transform(data) {
 		const converted = JSON.parse(data.data);
-		return Object.keys(converted).map(type => ({
-			title: type,
-			suggestions: converted[type].map(({ id, name }) => ({
-				title: name,
-				type,
-				id,
-			})),
-		}));
+		return Object.keys(converted).map((type) => {
+			const category = this.categories.find(cat => cat.type === type);
+
+			return {
+				title: category.label,
+				icon: {
+					name: category.icon,
+					title: category.label,
+				},
+				suggestions: converted[type]
+					.filter(suggestion => suggestion.name.length)
+					.map(({ id, name }) => ({
+						title: name,
+						type,
+						id,
+					})),
+			};
+		});
 	}
 }

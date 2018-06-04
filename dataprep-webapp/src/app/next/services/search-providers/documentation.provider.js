@@ -3,41 +3,47 @@ import SearchProvider from './search.provider';
 import { DOCUMENTATION_SEARCH_URL } from '../../constants/search';
 
 export default class DocumentationSearchProvider extends SearchProvider {
-	static KEY = 'doc';
-	static CATEGORY = 'documentation';
-	static DEFAULT_PAYLOAD = {
-		contentLocale: 'en',
-		filters: [
-			{ key: 'version', values: ['2.1'] },
-			{ key: 'EnrichPlatform', values: ['Talend Data Preparation'] },
-		],
-		paging: { page: 1, perPage: 5 },
-	};
+	constructor(categories) {
+		super();
+		this.category = categories[0];
+		this.DEFAULT_PAYLOAD = {
+			contentLocale: 'en',
+			filters: [
+				{ key: 'version', values: ['2.1'] },
+				{ key: 'EnrichPlatform', values: ['Talend Data Preparation'] },
+			],
+			paging: { page: 1, perPage: 5 },
+		};
+	}
 
-	static build(query) {
+	build(query) {
 		return [
 			http.post,
 			DOCUMENTATION_SEARCH_URL,
 			{
-				...DocumentationSearchProvider.DEFAULT_PAYLOAD,
+				...this.DEFAULT_PAYLOAD,
 				query,
 			},
 		];
 	}
 
-	static _normalize(str) {
+	_normalize(str) {
 		const dom = document.createElement('p');
 		dom.innerHTML = str.replace(/(<[^>]*>)/g, '');
 		return dom.innerText;
 	}
 
-	static transform(data) {
+	transform(data) {
 		return {
-			title: DocumentationSearchProvider.CATEGORY,
+			title: this.category.label,
+			icon: {
+				name: this.category.icon,
+				title: this.category.type,
+			},
 			suggestions: data.data.results.map(topic => ({
-				type: DocumentationSearchProvider.CATEGORY,
-				description: DocumentationSearchProvider._normalize(topic.htmlExcerpt),
-				title: DocumentationSearchProvider._normalize(topic.htmlTitle),
+				type: this.category.type,
+				description: this._normalize(topic.htmlExcerpt),
+				title: this._normalize(topic.htmlTitle),
 				url: topic.occurrences[0].readerUrl,
 			})),
 		};

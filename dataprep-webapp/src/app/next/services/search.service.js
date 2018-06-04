@@ -1,23 +1,18 @@
-import * as providers from './search-providers';
+import { default as p } from './search-providers';
 
 export default class SearchService {
-	static PROVIDERS = {
-		tdp: providers.DataprepSearchProvider,
-		doc: providers.DocumentationSearchProvider,
-	};
-
-	static getProvider(key) {
-		if (!SearchService.PROVIDERS[key]) {
-			throw new Error('Unknown provider: ' + key);
-		}
-		return SearchService.PROVIDERS[key];
+	constructor(categories) {
+		this.providers = {};
+		Object.keys(categories).forEach((key) => {
+			this.providers[key] = new p[key](categories[key]);
+		});
 	}
 
-	static build(provider, categories, term) {
-		return SearchService.getProvider(provider).build(term, categories);
+	build(provider, term) {
+		return this.providers[provider].build(term);
 	}
 
-	static transform(provider, results) {
-		return SearchService.getProvider(provider).transform(results);
+	transform(provider, results) {
+		return this.providers[provider].transform(results);
 	}
 }

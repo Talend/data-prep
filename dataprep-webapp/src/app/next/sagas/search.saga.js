@@ -44,17 +44,17 @@ function* process(payload) {
 
 	const categories = api.registry.getFromRegistry('SEARCH_CATEGORIES_BY_PROVIDER');
 	const providers = Object.keys(categories);
+	const service = new SearchService(categories);
 	const batches = providers.map(
-		provider => SearchService.build(
+		provider => service.build(
 			provider,
-			categories[provider],
 			payload,
 		)
 	);
 	const results = (
 			yield all(batches.map(request => call(...request)))
 		).map(
-			(result, index) => SearchService.transform(providers[index], result)
+			(result, index) => service.transform(providers[index], result)
 		);
 
 	yield put(Typeahead.setStateAction({ searching: false }, 'headerbar:search'));

@@ -1,7 +1,5 @@
 import { takeEvery } from 'redux-saga/effects';
-
-import { OPEN_WINDOW, REDIRECT_WINDOW } from '../constants/actions';
-
+import { OPEN_WINDOW, REDIRECT_WINDOW } from '../../constants/actions';
 import windowSagas from './window.saga';
 
 const url = 'http://url.fake';
@@ -13,7 +11,6 @@ const action = {
 };
 
 describe('Window', () => {
-
 	describe('open', () => {
 		beforeEach(() => {
 			global.window.open = jest.fn();

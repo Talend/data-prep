@@ -6,15 +6,12 @@ import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import { all, call, fork } from 'redux-saga/effects';
-
 import actions from './next/actions';
 import components from './next/components/index';
 import App from './next/components/App.container';
 import { ALERT } from './next/constants/actions';
-
 import { default as constants } from './next/constants';
-
-import sagas from './next/sagas';
+import sagas from './next/sagas/watchers';
 
 window.api = api;
 window.registry = api.registry.getRegistry();
@@ -33,14 +30,13 @@ const registerRouteFunction = api.route.registerFunction;
 export default function initialize(additionalConfiguration = {}) {
 	// register all saga api
 	api.saga.registerMany(sagas.bootstrap);
-
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, {}),
 		fork(api.sagas.component.handle),
 		...sagas.help.map(call),
 		...sagas.redirect.map(call),
 		...Object.keys(sagas.preparation).map(k => call(sagas.preparation[k])),
-		fork(sagas.httpHandler),
+		...Object.keys(sagas.http).map(k => call(sagas.http[k])),
 	];
 	const additionalRootSagas = additionalConfiguration.rootSagas;
 	if (additionalRootSagas) {
@@ -128,14 +124,8 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openCreator);
-		registerActionCreator('help:tour', () => ({
-			type: ALERT,
-			payload: 'help:tour',
-		}));
-		registerActionCreator('help:feedback:open', () => ({
-			type: ALERT,
-			payload: 'help:feedback:open',
-		}));
+		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
+		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
 		registerActionCreator('redirect', actions.redirect);
 		registerActionCreator('version:fetch', actions.version.fetch);
 

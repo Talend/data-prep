@@ -169,6 +169,33 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
     }
 
     @Test
+    public void test_apply_in_noNativeSemanticType() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("toto").type(Type.STRING)) //
+                .with(value("+49-89-636-48018").domain("newSemanticType"))//
+                .with(value("tata").type(Type.STRING)) //
+                .build();
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "toto");
+        expectedValues.put("0001", "+49-89-636-48018");
+        expectedValues.put("0003", "Fix_Line");
+        expectedValues.put("0004", "49");
+        expectedValues.put("0005", "DE");
+        expectedValues.put("0006", "Munich");
+        expectedValues.put("0007", "");
+        expectedValues.put("0008", "Europe/Berlin");
+        expectedValues.put("0002", "tata");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void test_apply_in_USValueInAFrenchColumn() {
         // given
         final DataSetRow row = builder() //

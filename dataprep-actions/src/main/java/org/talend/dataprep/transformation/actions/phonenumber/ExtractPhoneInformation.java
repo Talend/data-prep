@@ -155,20 +155,22 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
 
     private String getRegionCodeFromDomain(SemanticCategoryEnum domainEnum) {
         String region = null;
-        switch (domainEnum) {
-        case FR_PHONE:
-            region = FR_REGION_CODE;
-            break;
-        case DE_PHONE:
-            region = DE_REGION_CODE;
-            break;
-        case US_PHONE:
-            region = US_REGION_CODE;
-            break;
-        case UK_PHONE:
-            region = UK_REGION_CODE;
-            break;
-        default:
+        if (domainEnum != null) {
+            switch (domainEnum) {
+                case FR_PHONE:
+                    region = FR_REGION_CODE;
+                    break;
+                case DE_PHONE:
+                    region = DE_REGION_CODE;
+                    break;
+                case US_PHONE:
+                    region = US_REGION_CODE;
+                    break;
+                case UK_PHONE:
+                    region = UK_REGION_CODE;
+                    break;
+                default:
+            }
         }
         return region;
     }

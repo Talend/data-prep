@@ -10,7 +10,7 @@ import {
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
 } from '../constants/actions';
-import PreparationService from '../services/preparation.service';
+import PreparationService from '../services/preparation/preparation.service';
 
 const defaultHttpConfiguration = {
 	headers: {
@@ -38,7 +38,7 @@ function* duplicate() {
 
 		yield call(
 			http.post,
-			`http://localhost:8888/api/preparations/${prep.payload.id}/copy?destination=Lw==&newName=${newName}`,
+			`/api/preparations/${prep.payload.id}/copy?destination=Lw==&newName=${newName}`,
 			{},
 			defaultHttpConfiguration,
 		);
@@ -76,7 +76,7 @@ function* rename() {
 
 		yield call(
 			http.put,
-			`http://localhost:8888/api/preparations/${payload.id}`,
+			`/api/preparations/${payload.id}`,
 			{ name: payload.name },
 			defaultHttpConfiguration,
 		);

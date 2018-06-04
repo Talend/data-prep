@@ -25,7 +25,7 @@ export function* duplicate(prep) {
 
 	yield call(
 		http.post,
-		`http://localhost:8888/api/preparations/${prep.payload.id}/copy?destination=Lw==&newName=${newName}`,
+		`/api/preparations/${prep.payload.id}/copy?destination=Lw==&newName=${newName}`,
 		{},
 		defaultHttpConfiguration,
 	);
@@ -53,7 +53,7 @@ export function* openFolder(id) {
 export function* rename(payload) {
 	yield call(
 		http.put,
-		`http://localhost:8888/api/preparations/${payload.id}`,
+		`/api/preparations/${payload.id}`,
 		{ name: payload.name },
 		defaultHttpConfiguration,
 	);

@@ -15,10 +15,10 @@
 
 import d3 from 'd3';
 import angular from 'angular';
+import localstorage from 'store';
 import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
-
 import { init } from 'i18next';
 
 import bootstrapReact from './index.cmf';
@@ -177,6 +177,8 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 getAppConfiguration().then((appSettings) => {
 	appSettings.context.provider = 'catalog';
 	const { provider = 'legacy' } = appSettings.context;
+
+	localstorage.set('settings', appSettings);
 
 	if (
 		provider.includes('catalog') &&

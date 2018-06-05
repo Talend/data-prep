@@ -15,6 +15,7 @@ package org.talend.dataprep.dataset.service.analysis;
 
 import java.util.List;
 
+import org.talend.dataprep.dataset.service.BaseDataSetService;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataSetAnalyzer;
 
 /**
@@ -26,7 +27,7 @@ import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataS
  * concurrently and should listen to a JMS queue.
  * 
  * @see SynchronousDataSetAnalyzer
- * @see org.talend.dataprep.dataset.service.DataSetService#analyzeDataSet(String, boolean, List)
+ * @see BaseDataSetService#analyzeDataSet(String, List)
  */
 public interface DataSetAnalyzer {
 

@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.talend.dataprep.api.dataset.DataSetContent;
+import org.talend.dataprep.api.dataset.DataSetLifecycle;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
@@ -64,6 +65,8 @@ public class DataSetServiceImportTest {
         final DataSetMetadata metadata = mock(DataSetMetadata.class);
         when(metadata.getContent()).thenReturn(mock(DataSetContent.class));
         when(metadata.getLocation()).thenReturn(mock(DataSetLocation.class));
+        when(metadata.getContent()).thenReturn(mock(DataSetContent.class));
+        when(metadata.getLifecycle()).thenReturn(mock(DataSetLifecycle.class));
         when(repository.get(eq("ds-1234"))).thenReturn(metadata);
     }
 
@@ -96,7 +99,8 @@ public class DataSetServiceImportTest {
         dataSetService.setSynchronousAnalyzers(Collections.singletonList(analysis));
 
         // when
-        dataSetService.updateDataSet("ds-1234", new DataSetMetadata());
+        final DataSetMetadata dataSetMetadata = new DataSetMetadata();
+        dataSetService.updateDataSet("ds-1234", dataSetMetadata);
 
         // then
         verify(repository, times(1)).save(any());

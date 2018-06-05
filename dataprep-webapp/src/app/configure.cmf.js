@@ -13,8 +13,6 @@ import { ALERT } from './next/constants/actions';
 import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
 
-window.api = api;
-window.registry = api.registry.getRegistry();
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;

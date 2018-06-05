@@ -38,7 +38,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -461,8 +460,7 @@ public class DataSetService extends BaseDataSetService {
                 }
 
                 // Filter content
-                stream = stream.filter(
-                        filterService.build(URLDecoder.decode(filter, "UTF-8"), dataSetMetadata.getRowMetadata()));
+                stream = stream.filter(filterService.build(filter, dataSetMetadata.getRowMetadata()));
 
                 dataSet.setRecords(stream);
                 return dataSet;

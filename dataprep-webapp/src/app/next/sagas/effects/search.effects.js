@@ -8,7 +8,7 @@ import { DEBOUNCE_TIMEOUT } from '../../constants/search';
 import SearchService from '../../services/search.service';
 
 
-export function* goto({ payload }) {
+export function* goto(payload) {
 	const results = yield select(state => state.cmf.collections.get('search'));
 	const item = results
 		.get(payload.sectionIndex)

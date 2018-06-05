@@ -1,3 +1,5 @@
+import matchPath from '@talend/react-cmf/lib/sagaRouter/matchPath';
+
 import folder from './folder';
 import {
 	CANCEL_RENAME_PREPARATION,
@@ -28,7 +30,13 @@ function open(event, { type, id }) {
 }
 
 function fetch(payload) {
-	const { folderId = 'Lw==' } = payload || {};
+	let folderId;
+	if (payload) {
+		folderId = payload.folderId;
+	}
+	else if (matchPath(window.location.pathname, { path: '/preparations/:folderId' })) {
+		folderId = matchPath.params.folderId;
+	}
 	return {
 		type: FETCH_PREPARATIONS,
 		payload: {

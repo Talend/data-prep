@@ -3057,7 +3057,7 @@ exports[`App container should render 1`] = `
       <div
         className="theme-tc-notification-container tc-notification-container"
       >
-        <span />
+        <div />
       </div>
     </div>
   </div>

@@ -1,11 +1,8 @@
 import SagaTester from 'redux-saga-tester';
-
 import { HTTP_STATUS } from '@talend/react-cmf/lib/middlewares/http/constants';
-
 import httpSagas from './http.saga';
 
-describe('HTTP sagas', () => {
-
+xdescribe('HTTP sagas', () => {
 	it('should redirect to 403', () => {
 		// given
 		const sagaTester = new SagaTester({

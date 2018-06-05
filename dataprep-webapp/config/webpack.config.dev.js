@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const ReactCMFWebpackPlugin = require('@talend/react-cmf-webpack-plugin');
+// const ReactCMFWebpackPlugin = require('@talend/react-cmf-webpack-plugin');
 
 const appConfig = require('./../src/assets/config/config.json');
 const config = require('./webpack.config');
@@ -19,9 +19,9 @@ config.plugins.push(
 	new webpack.DefinePlugin({
 		'process.env.NODE_ENV': JSON.stringify('development'),
 	}),
-	new ReactCMFWebpackPlugin({
-		watch: true,
-	}),
+	// new ReactCMFWebpackPlugin({
+	// 	watch: true,
+	// }),
 );
 
 config.watchOptions = {

@@ -26,6 +26,7 @@ i18next.init({
 	debug: false,
 	wait: true, // globally set to wait for loaded translations in translate hoc
 	lng: I18N.EN_LOCALE,
+	interpolation: { escapeValue: false },
 });
 
 I18N.LOCALES.forEach(locale => NAMESPACES.forEach(namespace => setNameSpace(locale, namespace)));

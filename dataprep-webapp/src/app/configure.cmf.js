@@ -6,15 +6,12 @@ import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import { all, call, fork } from 'redux-saga/effects';
-
 import actions from './next/actions';
 import components from './next/components/index';
 import App from './next/components/App.container';
 import { ALERT } from './next/constants/actions';
-
 import { default as constants } from './next/constants';
-
-import sagas from './next/sagas';
+import sagas from './next/sagas/watchers';
 
 window.api = api;
 window.registry = api.registry.getRegistry();
@@ -32,8 +29,6 @@ const registerRouteFunction = api.route.registerFunction;
  */
 export default function initialize(additionalConfiguration = {}) {
 	// register all saga api
-	api.saga.registerMany(sagas.bootstrap);
-
 	api.registry.addToRegistry(
 		'SEARCH_CATEGORIES_BY_PROVIDER',
 		constants.search.SEARCH_CATEGORIES_BY_PROVIDER,
@@ -42,22 +37,23 @@ export default function initialize(additionalConfiguration = {}) {
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, {}),
 		fork(api.sagas.component.handle),
-		...sagas.help.map(call),
-		...sagas.preparation.map(call),
-		...sagas.search.map(call),
-		...sagas.redirect.map(call),
-		...sagas.preparation.map(call),
-		fork(sagas.httpHandler),
 	];
-
-	// Use for EE additional configuration
-	const additionalSagas = additionalConfiguration.sagas;
-	if (additionalSagas) {
-		additionalSagas.forEach((additionalSaga) => {
-			rootSagas.push(...additionalSaga.map(call));
-		});
+	const rootSagasToStart = {
+		...sagas.help,
+		...sagas.http,
+		...sagas.search,
+		...sagas.preparation,
+		...sagas.redirect,
+	};
+	const additionalRootSagas = additionalConfiguration.rootSagas;
+	if (additionalRootSagas) {
+		Object.assign(rootSagasToStart, additionalRootSagas);
 	}
+	Object.keys(rootSagasToStart).forEach((rootSagaToStartName) => {
+		rootSagas.push(call(rootSagasToStart[rootSagaToStartName]));
+	});
 
+	api.saga.registerMany(sagas.bootstrap);
 	api.saga.registerMany(sagas.preparation);
 	// Use for EE additional configuration
 	const additionalManySagas = additionalConfiguration.manySagas;
@@ -139,14 +135,8 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openCreator);
-		registerActionCreator('help:tour', () => ({
-			type: ALERT,
-			payload: 'help:tour',
-		}));
-		registerActionCreator('help:feedback:open', () => ({
-			type: ALERT,
-			payload: 'help:feedback:open',
-		}));
+		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
+		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
 		registerActionCreator('redirect', actions.redirect);
 		registerActionCreator('version:fetch', actions.version.fetch);
 		registerActionCreator('headerbar:search:start', actions.search.start);

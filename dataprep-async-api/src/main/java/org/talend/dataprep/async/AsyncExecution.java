@@ -14,7 +14,6 @@ package org.talend.dataprep.async;
 
 import java.util.Comparator;
 import java.util.UUID;
-import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +25,7 @@ import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -95,11 +95,11 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
     }
 
     public static Comparator<AsyncExecution> reverseStartDateComparator() {
-        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getStartDate()).reversed();
+        return Comparator.<AsyncExecution, Long> comparing(task -> task.getTime().getStartDate()).reversed();
     }
 
     public static Comparator<AsyncExecution> reverseEndDateComparator() {
-        return Comparator.<AsyncExecution, Long>comparing(task -> task.getTime().getEndDate()).reversed();
+        return Comparator.<AsyncExecution, Long> comparing(task -> task.getTime().getEndDate()).reversed();
     }
 
     /**
@@ -183,7 +183,8 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
     }
 
     /**
-     * Update execution status to a new {@link AsyncExecution.Status status}. This update status takes care of start / creation
+     * Update execution status to a new {@link AsyncExecution.Status status}. This update status takes care of start /
+     * creation
      * times.
      *
      * @param status the new {@link AsyncExecution.Status status} for this execution.
@@ -259,6 +260,11 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
         }
         return id.equals(that.id);
 
+    }
+
+    @JsonIgnore
+    public boolean isResumable() {
+        return this.getStatus() == Status.RUNNING || this.getStatus() == Status.NEW;
     }
 
     public String getTenantId() {

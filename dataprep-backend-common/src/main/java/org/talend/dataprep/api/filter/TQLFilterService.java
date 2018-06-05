@@ -35,12 +35,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.tql.excp.TqlException;
 import org.talend.tql.model.AllFields;
 import org.talend.tql.model.AndExpression;
 import org.talend.tql.model.ComparisonExpression;
@@ -76,19 +73,9 @@ public class TQLFilterService implements FilterService {
         return parsedPredicate.accept(new DataSetPredicateVisitor(rowMetadata));
     }
 
-    @Override
-    public void validateFilter(String filterAsString) {
-        if (!StringUtils.isEmpty(filterAsString)) {
-            try {
-                Tql.parse(filterAsString);
-            } catch (TqlException tqle) {
-                throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, tqle);
-            }
-        }
-    }
-
     /**
      * Get the list of columns present in the filter expression.
+     *
      * @param filterAsString The non-blank filter expression.
      * @param rowMetadata The rowMetaData to get the list of all columns of the dataSet.
      * @return List of columns present in the filter expression.

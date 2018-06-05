@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.api.filter;
 
-import static org.talend.dataprep.api.filter.JSONFilterWalker.validate;
 import static org.talend.dataprep.api.filter.JSONFilterWalker.walk;
 
 import java.util.function.Predicate;
@@ -31,10 +30,5 @@ public class SimpleFilterService implements FilterService {
     public Predicate<DataSetRow> build(String filterAsString, RowMetadata rowMetadata) {
         final PredicateCallback callback = new PredicateCallback();
         return walk(filterAsString, rowMetadata, callback);
-    }
-
-    @Override
-    public void validateFilter(String filterAsString) {
-        validate(filterAsString);
     }
 }

@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "columns": [
+      {
+        "name": "nickname",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 5
+        },
+        "id": "0000"
+      },
+      {
+        "name": "secret firstname",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 5
+        },
+        "id": "0001"
+      },
+      {
+        "name": "secret lastname",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 5
+        },
+        "id": "0002"
+      },
+      {
+        "name": "date of birth",
+        "headerSize": 0,
+        "type": "date",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 5
+        },
+        "id": "0003"
+      },
+      {
+        "name": "city",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 5
+        },
+        "id": "0004"
+      }
+    ]
+  },
+  "records": [
+    {
+      "0000": "Spiderman",
+      "0001": "Peter",
+      "0002": "Parker",
+      "0003": "05/15/1962",
+      "0004": "New York City"
+    },
+    {
+      "0000": "Superman",
+      "0001": "Clark",
+      "0002": "Kent",
+      "0003": "02/28/1938",
+      "0004": "New York City"
+    },
+    {
+      "0000": "Captain America",
+      "0001": "Stevens",
+      "0002": "Rogers",
+      "0003": "04/04/1918",
+      "0004": "New York City"
+    },
+    {
+      "0000": "Iron Man",
+      "0001": "Tony",
+      "0002": "Stark",
+      "0003": "03/05/1963",
+      "0004": "New York City"
+    }
+  ]
+}

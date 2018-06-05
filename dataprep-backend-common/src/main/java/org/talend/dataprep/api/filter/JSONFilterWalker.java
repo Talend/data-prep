@@ -14,12 +14,10 @@ package org.talend.dataprep.api.filter;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -102,23 +100,6 @@ public class JSONFilterWalker {
         } catch (Exception e) {
             LOG.warn("Unable to parse filter {]", filterAsString, e);
             throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e);
-        }
-    }
-
-    /**
-     * Validate the filter as a correct json object.
-     *
-     * @param filterAsString The JSON filter to be parsed.
-     * @throws TalendRuntimeException if filter is not valid.
-     */
-    public static void validate(String filterAsString) {
-        if (!StringUtils.isEmpty(filterAsString)) {
-            final ObjectMapper mapper = new ObjectMapper();
-            try {
-                mapper.reader().readTree(filterAsString);
-            } catch (IOException e) {
-                throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e);
-            }
         }
     }
 

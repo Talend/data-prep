@@ -103,7 +103,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
                 return new HttpGet(uriBuilder.build());
             } catch (URISyntaxException e) {
-                LOG.warn("Unable to get the dataSet", e);
+                LOG.warn("Unable to get the dataSet {}", dataSetId);
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             }
         });
@@ -119,7 +119,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
 
                 return new HttpGet(uriBuilder.build());
             } catch (URISyntaxException e) {
-                LOG.warn("Unable to get the dataSet", e);
+                LOG.warn("Unable to get the dataSet {}", dataSetId);
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             }
         });

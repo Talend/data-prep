@@ -12,55 +12,6 @@
 
 package org.talend.dataprep.api.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.StandalonePreparation;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.AppendStep;
-import org.talend.dataprep.api.preparation.MixedContentMap;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationSummary;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.api.service.api.EnrichedPreparation;
-import org.talend.dataprep.api.service.api.PreviewAddParameters;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.exception.TdpExceptionDto;
-import org.talend.dataprep.preparation.service.UserPreparation;
-import org.talend.dataprep.security.Security;
-import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
-import org.talend.dataprep.transformation.actions.text.Trim;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -95,6 +46,58 @@ import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARAT
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.BaseErrorCodes;
+import org.talend.dataprep.StandalonePreparation;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.MixedContentMap;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationSummary;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.service.api.EnrichedPreparation;
+import org.talend.dataprep.api.service.api.PreviewAddParameters;
+import org.talend.dataprep.async.AsyncExecution;
+import org.talend.dataprep.async.AsyncExecutionMessage;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.exception.TdpExceptionDto;
+import org.talend.dataprep.preparation.service.UserPreparation;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
+import org.talend.dataprep.transformation.actions.text.Trim;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -845,7 +848,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationFilteredInitialContent() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet",
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGetWithFilter",
                 home.getId());
 
         final InputStream expected = PreparationAPITest.class
@@ -856,6 +859,23 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // then
         assertThat(content, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void testPreparationWithMalformedFilterShouldFail() throws Exception {
+        // given
+        final String preparationId =
+                testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGetWithMalformedFilter", home.getId());
+
+        // when
+        Response response = testClient.getFailedPreparationWithFilter(preparationId, "malformed filter");
+
+        // then
+        AsyncExecutionMessage asyncExecutionMessage =
+                mapper.readerFor(AsyncExecutionMessage.class).readValue(response.asString());
+
+        assertEquals(asyncExecutionMessage.getStatus(), AsyncExecution.Status.FAILED);
+        assertEquals(asyncExecutionMessage.getError().getCode(), BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name());
     }
 
     @Test

@@ -41,13 +41,6 @@ public class PolyglotFilterService implements FilterService {
         }
     }
 
-    @Override
-    public void validateFilter(String filterAsString) {
-        if (!StringUtils.isBlank(filterAsString)) {
-            selectFilterService(filterAsString).validateFilter(filterAsString);
-        }
-    }
-
     private FilterService selectFilterService(String filterAsString) {
         if (filterAsString.startsWith("{")) {
             return jsonFilterService;

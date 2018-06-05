@@ -47,7 +47,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -101,9 +100,6 @@ import io.swagger.annotations.ApiParam;
 
 @RestController
 public class PreparationAPI extends APIService {
-
-    @Autowired
-    private FilterService filterService;
 
     @Autowired
     private DataSetAPI dataSetAPI;
@@ -340,8 +336,6 @@ public class PreparationAPI extends APIService {
             LOG.debug("Retrieving preparation content for {}/{} (pool: {} )...", preparationId, version,
                     getConnectionStats());
         }
-
-        filterService.validateFilter(filter);
 
         try {
             GenericCommand<InputStream> command =

@@ -13,7 +13,10 @@
 
 package org.talend.dataprep.api.service.test;
 
-import static com.jayway.restassured.RestAssured.*;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -23,20 +26,22 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import com.jayway.restassured.specification.ResponseSpecification;
-import com.fasterxml.jackson.databind.MappingIterator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,11 +58,13 @@ import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.format.CSVFormat;
 
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import com.jayway.restassured.specification.ResponseSpecification;
 
 /**
  * Test client for data-prep API.
@@ -323,10 +330,32 @@ public class APIClientTest {
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {
                 LOGGER.error("cannot sleep", e);
-                Assert.fail();
+                fail();
             }
             nbLoop++;
         }
+    }
+
+    public Response getFailedPreparationWithFilter(String preparationId, String malformedFilter) throws IOException {
+        Response transformedResponse =
+                given().when().get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
+                        preparationId, "head", "HEAD", malformedFilter);
+
+        if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
+            // first time we have a 202 with a Location to see asynchronous method status
+            final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
+
+            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+
+            return given()
+                    .expect() //
+                    .statusCode(200)
+                    .log()
+                    .ifError()
+                    .when()
+                    .get(asyncMethodStatusUrl);
+        }
+        return transformedResponse;
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter, String fileName)

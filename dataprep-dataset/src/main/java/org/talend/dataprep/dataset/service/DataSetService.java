@@ -75,8 +75,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
@@ -434,12 +432,6 @@ public class DataSetService extends BaseDataSetService {
                     @PathVariable(value = "id") @ApiParam(name = "id",
                             value = "Id of the requested data set") String dataSetId) {
         return () -> {
-            try {
-                filterService.validateFilter(filter);
-            } catch (TalendRuntimeException e) {
-                throw new TDPException(BaseErrorCodes.UNABLE_TO_PARSE_FILTER, e, ExceptionContext.build());
-            }
-
             final Marker marker = Markers.dataset(dataSetId);
             LOG.debug(marker, "Get data set #{}", dataSetId);
             Stream<DataSetRow> stream = null;
@@ -457,11 +449,9 @@ public class DataSetService extends BaseDataSetService {
                     stream = stream.map(r -> {
                         final Map<String, Object> values = r.values();
                         final Map<String, Object> filteredValues = new HashMap<>(values);
+                        // Remove technical properties from returned values.
                         values.forEach((k, v) -> {
-                            if (k != null && k.startsWith(FlagNames.INTERNAL_PROPERTY_PREFIX)) { // Removes technical
-                                // properties
-                                // from returned
-                                // values.
+                            if (k != null && k.startsWith(FlagNames.INTERNAL_PROPERTY_PREFIX)) {
                                 filteredValues.remove(k);
                             }
                         });

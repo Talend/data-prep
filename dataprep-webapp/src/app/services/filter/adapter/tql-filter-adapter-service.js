@@ -290,43 +290,44 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			type: QUALITY,
 			args: { empty: true, invalid: false },
 		});
-		if (colId === WILDCARD && type === QUALITY) {
+
+		const existingInvalidFilterWithWildcard = find(filters, {
+			colId,
+			type: QUALITY,
+			args: { empty: false, invalid: true },
+		});
+
+		if (type === QUALITY) {
 			// if there is already a quality filter => merge it with the new quality filter
-			const existingInvalidFilterWithWildcard = find(filters, {
-				colId: WILDCARD,
-				type: QUALITY,
-				args: { empty: false, invalid: true },
-			});
 			if (existingInvalidFilterWithWildcard || existingEmptyFilter) {
-				const existingQualityFilter = filters.find(filter => filter.colId === WILDCARD && filter.type === QUALITY);
+				const existingQualityFilter = filters.find(filter => filter.colId === colId && filter.type === QUALITY);
 				existingQualityFilter.args.empty = existingQualityFilter.args.empty || args.empty;
 				existingQualityFilter.args.invalid = existingQualityFilter.args.empty || args.invalid;
 			}
-			// Otherwise, add the new quality filter
-			else {
-				filters.push(
-					createFilter(type, colId, colName, editable, args, null)
-				);
-			}
-		}
-		// For a column, if the new filter is an empty filter and there are already EXACT or MATCHES filters => Merge them into a filter with multi values (same filter badge)
-		else if (colId !== WILDCARD && type === QUALITY && args.empty && !args.invalid) {
-			const existingExactFilter = find(filters, {
-				colId,
-				type: EXACT,
-			});
-			const existingMatchFilter = find(filters, {
-				colId,
-				type: MATCHES,
-			});
+			// For a column, if the new filter is an empty filter and there are already EXACT or MATCHES filters => Merge them into a filter with multi values (same filter badge)
+			else if (colId !== WILDCARD && args.empty && !args.invalid) {
+				const existingExactFilter = find(filters, {
+					colId,
+					type: EXACT,
+				});
+				const existingMatchFilter = find(filters, {
+					colId,
+					type: MATCHES,
+				});
 
-			if (existingExactFilter) {
-				existingExactFilter.args.phrase = existingExactFilter.args.phrase.concat(getEmptyRecordsValues());
+				if (existingExactFilter) {
+					existingExactFilter.args.phrase = existingExactFilter.args.phrase.concat(getEmptyRecordsValues());
+				}
+				else if (existingMatchFilter) {
+					existingMatchFilter.args.patterns = existingMatchFilter.args.patterns.concat(getEmptyRecordsValues());
+				}
+				else { // create a new filter
+					filters.push(
+						createFilter(type, colId, colName, editable, args, null)
+					);
+				}
 			}
-			else if (existingMatchFilter) {
-				existingMatchFilter.args.patterns = existingMatchFilter.args.patterns.concat(getEmptyRecordsValues());
-			}
-			else {
+			else { // create a new filter
 				filters.push(
 					createFilter(type, colId, colName, editable, args, null)
 				);

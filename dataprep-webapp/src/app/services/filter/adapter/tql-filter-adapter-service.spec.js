@@ -318,12 +318,21 @@ describe('TQL Filter Adapter Service', () => {
 			expect(filter.args).toEqual({ invalid: true, empty: false });
 		}));
 
-		it('should return EMPTY_INVALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
+		it('should return EMPTY_INVALID_RECORDS QUALITY filter with WILDCARD', inject((TqlFilterAdapterService) => {
 			// when
 			const filter = TqlFilterAdapterService.fromTQL("((* is empty) or (* is invalid))", columns)[0];
 			// then
 			expect(filter.type).toEqual(QUALITY);
 			expect(filter.colId).toEqual('*');
+			expect(filter.args).toEqual({ invalid: true, empty: true });
+		}));
+
+		it('should return EMPTY_INVALID_RECORDS QUALITY filter with column id', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 is empty) or (0000 is invalid))", columns)[0];
+			// then
+			expect(filter.type).toEqual(QUALITY);
+			expect(filter.colId).toEqual('0000');
 			expect(filter.args).toEqual({ invalid: true, empty: true });
 		}));
 

@@ -3,12 +3,6 @@ import api, { actions } from '@talend/react-cmf';
 import http from './http';
 import PreparationService from '../../services/preparation/preparation.service';
 
-const defaultHttpConfiguration = {
-	headers: {
-		Accept: 'application/json, text/plain, */*',
-		'Content-Type': 'application/json',
-	},
-};
 
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));
@@ -20,13 +14,13 @@ export function* cancelRename(payload) {
 }
 
 export function* duplicate(prep) {
+	// FIXME: generate unique names
 	const newName = `test${Math.random()}`;
 
 	yield call(
 		http.post,
 		`/api/preparations/${prep.payload.id}/copy?destination=Lw==&newName=${newName}`,
 		{},
-		defaultHttpConfiguration,
 	);
 	yield call(fetch);
 }

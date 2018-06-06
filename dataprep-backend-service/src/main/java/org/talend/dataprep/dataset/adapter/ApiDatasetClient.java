@@ -9,6 +9,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -16,12 +17,14 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.InvalidMarker;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetSchema;
 import org.talend.dataprep.dataset.adapter.commands.DatasetList;
+import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
@@ -230,7 +233,7 @@ public class ApiDatasetClient {
         metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 
-        if (rowMetadata != null && rowMetadata.getColumns().stream().anyMatch(c -> c.getStatistics() != null)) {
+        if (rowMetadata != null && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
             try {
                 AnalysisResult analysisResult = metadataCache.get(dataset.getId(), () -> analyseDataset(dataset.getId(), rowMetadata));
                 metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata)); // because sadly, my cache is not immutable
@@ -243,6 +246,12 @@ public class ApiDatasetClient {
         }
 
         return metadata;
+    }
+
+    private static final Statistics EMPTY_STATS = new Statistics();
+
+    private boolean isComputedStatistics(Statistics statistics) {
+        return statistics == null || EMPTY_STATS.equals(statistics);
     }
 
     private AnalysisResult analyseDataset(String id, RowMetadata rowMetadata) {
@@ -261,6 +270,12 @@ public class ApiDatasetClient {
             this.rowMetadata = rowMetadata;
             this.rowcount = rowcount;
         }
+    }
+
+    // TODO: WIP
+    @EventListener
+    public void onUpdate(DatasetUpdatedEvent event) {
+        metadataCache.invalidate(event.getSource().getId());
     }
 
 }

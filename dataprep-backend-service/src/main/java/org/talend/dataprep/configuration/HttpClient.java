@@ -164,7 +164,7 @@ public class HttpClient {
         public void idleConnectionJanitor() {
             connectionManager.closeExpiredConnections();
             connectionManager.closeIdleConnections(60, TimeUnit.SECONDS);
-            LOGGER.info("connection pool status {}", connectionManager.getTotalStats());
+            LOGGER.debug("connection pool status {}", connectionManager.getTotalStats());
         }
     }
 

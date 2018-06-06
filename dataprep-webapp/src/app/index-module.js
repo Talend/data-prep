@@ -84,7 +84,7 @@ const app = angular
 			$translateProvider.translations(
 				translationKey,
 				translations[translationKey]
-			)
+			);
 		);
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
@@ -160,7 +160,7 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 				const translationsWithFallback = Object.assign(
 					{},
 					$translate.getTranslationTable(fallbackLng),
-					$translate.getTranslationTable(preferredLanguage)
+					$translate.getTranslationTable(preferredLanguage),
 				);
 
 				i18n.addResourceBundle(
@@ -168,7 +168,7 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 					I18N_DOMAIN_COMPONENTS,
 					translationsWithFallback,
 					false,
-					false
+					false,
 				);
 			});
 		});

@@ -104,6 +104,23 @@
           }
         }
       },
+      "search": {
+        "id": "headerbar:search",
+        "componentId": "headerbar:search",
+        "icon": {
+          "name": "talend-search",
+          "title": "Toggle search input",
+          "bsStyle": "link",
+          "tooltipPlacement": "bottom"
+        },
+        "onChangeActionCreator": "headerbar:search:start",
+        "onSelectActionCreator": "headerbar:search:select",
+        "onBlurActionCreator": "headerbar:search:reset",
+        "itemsExpression": {
+          "id": "cmf.collections.get",
+          "args": ["search", null]
+        }
+      },
       "help": {
         "id": "header-help",
         "icon": "talend-question-circle",

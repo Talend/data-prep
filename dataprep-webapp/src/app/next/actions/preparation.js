@@ -8,6 +8,7 @@ import {
 	SET_TITLE_EDITION_MODE,
 	FETCH_PREPARATIONS,
 	OPEN_PREPARATION_CREATOR,
+	REDIRECT_WINDOW,
 } from '../constants/actions';
 
 
@@ -19,15 +20,12 @@ function open(event, { type, id }) {
 	case 'folder':
 		return folder.open(event, { id });
 	case 'preparation':
-		/* TODO
-		- get current url
-		- pass it in the url as 'return' query param
-		- playground must redirect to this return param on close
-		*/
-		window.location.href = `${window.location.origin}/#/playground/preparation?prepid=${id}`;
-		break;
-	default:
-		break;
+		return {
+			type: REDIRECT_WINDOW,
+			payload: {
+				url: `${window.location.origin}/#/playground/preparation?prepid=${id}`,
+			},
+		};
 	}
 }
 

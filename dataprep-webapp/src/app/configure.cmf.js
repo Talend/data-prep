@@ -27,6 +27,11 @@ const registerRouteFunction = api.route.registerFunction;
  */
 export default function initialize(additionalConfiguration = {}) {
 	// register all saga api
+	api.registry.addToRegistry(
+		'SEARCH_CATEGORIES_BY_PROVIDER',
+		constants.search.SEARCH_CATEGORIES_BY_PROVIDER,
+	);
+
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, {}),
 		fork(api.sagas.component.handle),
@@ -34,6 +39,7 @@ export default function initialize(additionalConfiguration = {}) {
 	const rootSagasToStart = {
 		...sagas.help,
 		...sagas.http,
+		...sagas.search,
 		...sagas.preparation,
 		...sagas.redirect,
 	};
@@ -131,6 +137,9 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
 		registerActionCreator('redirect', actions.redirect);
 		registerActionCreator('version:fetch', actions.version.fetch);
+		registerActionCreator('headerbar:search:start', actions.search.start);
+		registerActionCreator('headerbar:search:select', actions.search.select);
+		registerActionCreator('headerbar:search:reset', actions.search.reset);
 
 		const additionalActionCreators = additionalConfiguration.actionCreators;
 		if (additionalActionCreators) {

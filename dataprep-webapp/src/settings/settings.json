@@ -81,9 +81,6 @@
   "props": {
     "AppLoader#default": {
       "saga": "bootstrap",
-      "hasCollections": [
-        "settings"
-      ]
     },
     "HeaderBar#default": {
       "app": "Data Preparation",

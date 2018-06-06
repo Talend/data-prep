@@ -80,7 +80,7 @@
   },
   "props": {
     "AppLoader#default": {
-      "saga": "bootstrap",
+      "saga": "bootstrap"
     },
     "HeaderBar#default": {
       "app": "Data Preparation",

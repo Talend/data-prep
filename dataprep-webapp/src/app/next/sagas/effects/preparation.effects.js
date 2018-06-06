@@ -48,7 +48,6 @@ export function* rename(payload) {
 		http.put,
 		`/api/preparations/${payload.id}`,
 		{ name: payload.name },
-		defaultHttpConfiguration,
 	);
 	yield call(fetch);
 }

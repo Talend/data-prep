@@ -1,188 +1,58 @@
-// import SagaTester from 'redux-saga-tester';
-// import sagas from './search.saga';
-//
-// import {
-// 	SEARCH_RESET,
-// 	SEARCH_SELECT,
-// 	OPEN_WINDOW,
-// 	REDIRECT_WINDOW,
-// 	OPEN_FOLDER,
-// 	SEARCH,
-// } from '../constants/actions';
-//
+import { delay } from 'redux-saga';
+import { createMockTask } from 'redux-saga/utils';
+import { take, call, fork, takeLatest, cancel } from 'redux-saga/effects';
+import sagas from './search.saga';
+import * as effects from '../effects/search.effects';
+import { SEARCH_SELECT, SEARCH_RESET, SEARCH } from '../../constants/actions';
+import { DEBOUNCE_TIMEOUT } from '../../constants/search';
 
-describe('search', () => {
-	it('should not fail', () => {
-		expect(true).toEqual(true);
+
+describe('Search', () => {
+	describe('reset', () => {
+		it('should handle reset action and call the appropriate effect', () => {
+			const gen = sagas['search:reset']();
+			expect(gen.next().value).toEqual(takeLatest(SEARCH_RESET, effects.reset));
+		});
+	});
+
+	describe('goto', () => {
+		const action = {
+			payload: { type: 'folder' },
+		};
+
+		it('should handle search select action and call the appropriate effect', () => {
+			const gen = sagas['search:goto']();
+			expect(gen.next().value).toEqual(take(SEARCH_SELECT));
+			expect(gen.next(action).value).toEqual(call(effects.goto, action.payload));
+		});
+	});
+
+	describe('search', () => {
+		const action = {
+			payload: { term: 'test' },
+		};
+
+		it('should handle search action and call the appropriate effect', () => {
+			const gen = sagas['search:process']();
+			const task = createMockTask();
+			expect(gen.next().value).toEqual(take(SEARCH));
+
+			// now we need to go inside the forked generator,
+			// so we retrieve it from the action :
+			const leaf = gen.next(action).value;
+			const cb = leaf.FORK.fn;
+			const forked = cb(action.payload);
+
+			expect(leaf).toEqual(fork(cb, action.payload));
+
+			// inside the forked generator :
+			expect(forked.next().value).toEqual(call(delay, DEBOUNCE_TIMEOUT));
+			expect(forked.next().value).toEqual(call(effects.search, action.payload));
+
+			// in parallel, we wanna check that the debounce works properly
+			// if it is, the task must be cancelled at the next iteration :
+			expect(gen.next(task).value).toEqual(take(SEARCH));
+			expect(gen.next(action).value).toEqual(cancel(task));
+		});
 	});
 });
-
-
-// describe('Search', () => {
-// 	describe('reset', () => {
-// 		it('should reset search state', () => {
-// 			const tester = new SagaTester({
-// 				initialState: {},
-// 			});
-// 			tester.start(() => sagas.reset());
-//
-// 			tester.dispatch({
-// 				type: SEARCH_RESET,
-// 			});
-//
-// 			const actions = tester.getCalledActions();
-// 			expect(actions[actions.length - 1]).toEqual({
-// 				type: 'REACT_CMF.COLLECTION_ADD_OR_REPLACE',
-// 				collectionId: 'search',
-// 				data: null,
-// 			});
-// 		});
-// 	});
-//
-// 	describe('goto', () => {
-// 		beforeEach(() => {
-// 			global.window.open = jest.fn();
-// 		});
-//
-// 		it('should open selected preparation', () => {
-// 			const tester = new SagaTester({
-// 				initialState: INITIAL_STATE,
-// 			});
-// 			tester.start(() => sagas.goto());
-//
-// 			tester.dispatch({
-// 				type: SEARCH_SELECT,
-// 				payload: {
-// 					sectionIndex: 0,
-// 					itemIndex: 0,
-// 				},
-// 			});
-//
-// 			const actions = tester.getCalledActions();
-// 			expect(actions[actions.length - 1]).toEqual({
-// 				type: REDIRECT_WINDOW,
-// 				payload: { url: 'null/#/playground/preparation?prepid=666' },
-// 			});
-// 		});
-//
-// 		it('should open selected folder', () => {
-// 			const tester = new SagaTester({
-// 				initialState: INITIAL_STATE,
-// 			});
-// 			tester.start(() => sagas.goto());
-//
-// 			tester.dispatch({
-// 				type: SEARCH_SELECT,
-// 				payload: {
-// 					sectionIndex: 0,
-// 					itemIndex: 1,
-// 				},
-// 			});
-//
-// 			const actions = tester.getCalledActions();
-// 			expect(actions[actions.length - 1]).toEqual({
-// 				type: OPEN_FOLDER,
-// 				id: 42,
-// 				cmf: { routerPush: '/preparations/42' },
-// 			});
-// 		});
-//
-// 		it('should redirect to the appropriate documentation page', () => {
-// 			const tester = new SagaTester({
-// 				initialState: INITIAL_STATE,
-// 			});
-// 			tester.start(() => sagas.goto());
-//
-// 			tester.dispatch({
-// 				type: SEARCH_SELECT,
-// 				payload: {
-// 					sectionIndex: 0,
-// 					itemIndex: 2,
-// 				},
-// 			});
-//
-// 			const actions = tester.getCalledActions();
-// 			expect(actions[actions.length - 1]).toEqual({
-// 				type: OPEN_WINDOW,
-// 				payload: { url: 'www.doc.org/test' },
-// 			});
-// 		});
-//
-// 		it('should do nothing if type is unknown', () => {
-// 			const tester = new SagaTester({
-// 				initialState: INITIAL_STATE,
-// 			});
-// 			tester.start(() => sagas.goto());
-//
-// 			tester.dispatch({
-// 				type: SEARCH_SELECT,
-// 				payload: {
-// 					sectionIndex: 0,
-// 					itemIndex: 3,
-// 				},
-// 			});
-//
-// 			const actions = tester.getCalledActions();
-// 			expect(actions.length).toBe(1);
-// 		});
-// 	});
-//
-// 	describe('search', () => {
-// 		it('should set loading feedback', () => {
-// 			const tester = new SagaTester({
-// 				initialState: {},
-// 			});
-// 			tester.start(() => sagas.search());
-//
-// 			tester.dispatch({
-// 				type: SEARCH,
-// 			});
-//
-// 			const actions = tester.getCalledActions();
-// 			expect(actions[actions.length - 1]).toEqual({
-// 				type: 'Container(Typeahead).setState',
-// 				cmf: {
-// 					componentState: {
-// 						type: 'REACT_CMF.COMPONENT_MERGE_STATE',
-// 						componentName: 'Container(Typeahead)',
-// 						key: 'headerbar:search',
-// 						componentState: { searching: true },
-// 					},
-// 				},
-// 			});
-// 		});
-//
-// 		it('should debounce', async () => {
-// 			window.fetch = jest.fn().mockImplementation(
-// 				() => Promise.resolve([])
-// 			);
-//
-// 			const tester = new SagaTester({
-// 				initialState: {},
-// 			});
-// 			tester.start(() => sagas.search());
-//
-// 			tester.dispatch({
-// 				type: SEARCH,
-// 			});
-//
-// 			/*
-// 				{
-// 					type: 'REACT_CMF.COLLECTION_ADD_OR_REPLACE',
-// 					collectionId: 'search',
-// 					data: [],
-// 				}
-// 			*/
-//
-// 			await tester.waitFor('Container(Typeahead).setState');
-// 			// await tester.waitFor('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
-//
-// 			// tester.getCalledActions().forEach((action) => {
-// 			// 	console.log('[NC] action: ', action);
-// 			// });
-//
-// 			// const actions = tester.getCalledActions();
-// 			// console.log('[NC] actions: ', actions);
-// 		});
-// 	});
-// });

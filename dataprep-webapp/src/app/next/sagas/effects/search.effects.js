@@ -1,11 +1,11 @@
-import { delay } from 'redux-saga';
 import { call, all, put, select } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
 import api, { actions } from '@talend/react-cmf';
 import { Typeahead } from '@talend/react-containers';
 import { OPEN_WINDOW } from '../../constants/actions';
 import { default as creators } from '../../actions';
-import { DEBOUNCE_TIMEOUT } from '../../constants/search';
 import SearchService from '../../services/search.service';
+import { DEBOUNCE_TIMEOUT } from '../../constants/search';
 
 
 export function* goto(payload) {
@@ -36,7 +36,6 @@ export function* reset() {
 
 export function* search(payload) {
 	yield put(Typeahead.setStateAction({ searching: true }, 'headerbar:search'));
-	yield delay(DEBOUNCE_TIMEOUT);
 
 	const categories = api.registry.getFromRegistry('SEARCH_CATEGORIES_BY_PROVIDER');
 	const providers = Object.keys(categories);

@@ -41,9 +41,9 @@ public class HashData extends AbstractActionMetadata implements ColumnAction {
      */
     public static final String ACTION_NAME = "hash_data";
 
-    protected static final String NEW_COLUMN_SUFFIX = "_hashed";
+    private static final String NEW_COLUMN_SUFFIX = "_hashed";
 
-    public static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
+    private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
     @Override
     public String getName() {

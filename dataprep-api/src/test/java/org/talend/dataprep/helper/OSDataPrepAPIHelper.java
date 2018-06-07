@@ -48,8 +48,7 @@ public class OSDataPrepAPIHelper {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${restassured.debug:false}")
-    private boolean enableRestAssuredDebug;
+    private boolean enableRestAssuredDebug = false;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -167,8 +166,6 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .log()
-                .all() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
                         Charset.defaultCharset())) //
@@ -509,6 +506,14 @@ public class OSDataPrepAPIHelper {
                 .get("/api/datasets");
     }
 
+    public boolean isEnableRestAssuredDebug() {
+        return enableRestAssuredDebug;
+    }
+
+    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
+        this.enableRestAssuredDebug = enableRestAssuredDebug;
+        return this;
+    }
     public Response applyAggragate(Aggregate aggregate) throws Exception {
         return given()
                 .baseUri(apiBaseUrl) //

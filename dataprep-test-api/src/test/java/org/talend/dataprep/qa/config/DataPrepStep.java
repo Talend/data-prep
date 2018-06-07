@@ -13,7 +13,10 @@
 
 package org.talend.dataprep.qa.config;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
@@ -49,6 +52,13 @@ public abstract class DataPrepStep {
     @Autowired
     protected FolderUtil folderUtil;
 
+    @Value("${restassured.debug:false}")
+    private boolean enableRestAssuredDebug;
+
+    @PostConstruct
+    public void init() {
+        api.setEnableRestAssuredDebug(enableRestAssuredDebug);
+    }
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     /**

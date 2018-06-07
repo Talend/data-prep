@@ -57,7 +57,27 @@ public class Dataset {
 
     private Integer schemaVersion;
 
+    private CertificationState certification;
+
+    private boolean favorite;
+
     public Dataset() {
+    }
+
+    public CertificationState getCertification() {
+        return certification;
+    }
+
+    public void setCertification(CertificationState certification) {
+        this.certification = certification;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     public String getId() {

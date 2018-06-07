@@ -12,9 +12,12 @@
 
 package org.talend.dataprep.api.service;
 
-import com.netflix.hystrix.HystrixCommand;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +54,7 @@ import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.dataset.adapter.Dataset;
+import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -59,14 +63,13 @@ import org.talend.dataprep.user.store.UserDataRepository;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+
+import com.netflix.hystrix.HystrixCommand;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -79,6 +82,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.command.CommandHelper.toPublisher;
 import static org.talend.dataprep.command.CommandHelper.toStreaming;
+import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -287,15 +291,16 @@ public class DataSetAPI extends APIService {
         return () -> {
             try {
 
-                Dataset.CertificationState certification = certified ? Dataset.CertificationState.CERTIFIED : null;
+                CertificationState certification = certified ? CERTIFIED : null;
                 Stream<Dataset> datasetStream = datasetClient.listDataset(certification, favorite);
 
                 if (isNotBlank(name)) {
                     datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getLabel(), name));
                 }
 
-                // TODO certified (should fix DataSetAPITest#should_list_filtered_datasets_properly)
-                //datasetStream = datasetStream.filter(ds -> ds.isCertified() == certified);
+                if (certified) {
+                    datasetStream = datasetStream.filter(dataset -> dataset.getCertification() == CERTIFIED);
+                }
 
                 if (limit) {
                     datasetStream = datasetStream.limit(datasetListLimit);

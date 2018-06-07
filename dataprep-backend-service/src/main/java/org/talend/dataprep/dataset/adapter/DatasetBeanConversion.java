@@ -19,9 +19,12 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
 import org.talend.dataprep.api.dataset.DataSetContent;
+import org.talend.dataprep.api.dataset.DataSetGovernance;
+import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,6 +53,13 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                     dataSetMetadata.setCreationDate(dataset.getCreated());
                     dataSetMetadata.setLastModificationDate(dataset.getUpdated());
                     dataSetMetadata.setAuthor(dataset.getOwner());
+
+                    CertificationState certificationState = dataset.getCertification();
+                    if (certificationState != null) {
+                        DataSetGovernance governance = new DataSetGovernance();
+                        governance.setCertificationStep(Certification.valueOf(certificationState.name()));
+                        dataSetMetadata.setGovernance(governance);
+                    }
 
                     JsonNode datasetProperties = objectMapper.createObjectNode();
                     try {

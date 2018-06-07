@@ -17,11 +17,14 @@ package org.talend.dataprep.dataset.adapter.conversion;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.dataset.DataSetGovernance;
+import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.Dataset;
+import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +53,12 @@ public class DataSetMetadataBeanConversion extends BeanConversionServiceWrapper 
                     dataset.setUpdated(dataSetMetadata.getLastModificationDate());
                     dataset.setOwner(dataSetMetadata.getAuthor());
                     dataset.setLabel(dataSetMetadata.getName());
+
+                    DataSetGovernance governance = dataSetMetadata.getGovernance();
+                    if (governance != null) {
+                        Certification certificationStep = governance.getCertificationStep();
+                        dataset.setCertification(CertificationState.valueOf(certificationStep.name()));
+                    }
 
                     DataSetLocation location = dataSetMetadata.getLocation();
 

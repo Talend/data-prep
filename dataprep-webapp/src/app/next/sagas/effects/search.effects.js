@@ -1,11 +1,9 @@
 import { call, all, put, select } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 import api, { actions } from '@talend/react-cmf';
 import { Typeahead } from '@talend/react-containers';
 import { OPEN_WINDOW } from '../../constants/actions';
 import { default as creators } from '../../actions';
 import SearchService from '../../services/search.service';
-import { DEBOUNCE_TIMEOUT } from '../../constants/search';
 
 
 export function* goto(payload) {

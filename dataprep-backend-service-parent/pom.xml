@@ -118,6 +118,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
                     <configuration>
                         <!-- start-class is a property set in service modules -->
                         <mainClass>${start-class}</mainClass>

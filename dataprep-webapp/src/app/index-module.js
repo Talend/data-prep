@@ -83,8 +83,8 @@ const app = angular
 		Object.keys(translations).forEach(translationKey =>
 			$translateProvider.translations(
 				translationKey,
-				translations[translationKey]
-			);
+				translations[translationKey],
+			)
 		);
 		$translateProvider.useSanitizeValueStrategy(null);
 	})

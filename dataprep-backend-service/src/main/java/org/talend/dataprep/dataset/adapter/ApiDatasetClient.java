@@ -160,10 +160,11 @@ public class ApiDatasetClient {
     public Stream<DataSetMetadata> searchDataset(String name, boolean strict) {
         Stream<Dataset> datasetStream = listDataset(null, null);
         if (isNotBlank(name)) {
-            datasetStream = datasetStream.filter(dataset -> {
-                String label = dataset.getLabel();
-                return strict ? name.equals(label) : containsIgnoreCase(label, name);
-            });
+            if (strict) {
+                datasetStream = datasetStream.filter(dataset -> name.equalsIgnoreCase(dataset.getLabel()));
+            } else {
+                datasetStream = datasetStream.filter(dataset -> containsIgnoreCase(dataset.getLabel(), name));
+            }
         }
         return datasetStream.filter(Objects::nonNull).map(this::toDataSetMetadata);
     }

@@ -52,6 +52,8 @@ import 'd3-tip';
 // LoDash https://github.com/lodash/lodash
 import 'lodash';
 
+import 'store';
+
 // Modernizr https://github.com/modernizr/modernizr
 // import 'modernizr';
 

@@ -15,10 +15,10 @@
 
 import d3 from 'd3';
 import angular from 'angular';
+import store from 'store';
 import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
-
 import { init } from 'i18next';
 
 import bootstrapReact from './index.cmf';
@@ -50,10 +50,7 @@ let preferredLanguage;
 const fallbackLng = 'en';
 export const i18n = init({
 	fallbackLng, // Fallback language
-	ns: [
-		I18N_DOMAIN_COMPONENTS,
-		I18N_DOMAIN_FORMS,
-	],
+	ns: [I18N_DOMAIN_COMPONENTS, I18N_DOMAIN_FORMS],
 	defaultNS: I18N_DOMAIN_COMPONENTS,
 	fallbackNS: I18N_DOMAIN_COMPONENTS,
 	debug: false,
@@ -83,8 +80,12 @@ const app = angular
 	// Translate config
 	.config(($translateProvider) => {
 		'ngInject';
-		Object.keys(translations)
-			.forEach(translationKey => $translateProvider.translations(translationKey, translations[translationKey]));
+		Object.keys(translations).forEach(translationKey =>
+			$translateProvider.translations(
+				translationKey,
+				translations[translationKey],
+			)
+		);
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
 	// Router config
@@ -93,7 +94,7 @@ const app = angular
 
 window.bootstrapAngular = function bootstrapAngular(appSettings) {
 	app
-	// Debug config
+		// Debug config
 		.config(($compileProvider) => {
 			'ngInject';
 			$compileProvider.debugInfoEnabled(false);
@@ -105,9 +106,12 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 				(appSettings.context && appSettings.context.language) ||
 				fallbackLng;
 
-			const preferredLocale = appSettings.context && appSettings.context.locale;
+			const preferredLocale =
+				appSettings.context && appSettings.context.locale;
 			if (preferredLocale) {
-				$httpProvider.defaults.headers.common['Accept-Language'] = preferredLocale;
+				$httpProvider.defaults.headers.common[
+					'Accept-Language'
+				] = preferredLocale;
 			}
 
 			moment.locale(preferredLanguage);
@@ -170,21 +174,25 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 		});
 };
 
-getAppConfiguration()
-	.then((appSettings) => {
-		// appSettings.context.provider = 'catalog';
-		const { provider = 'legacy' } = appSettings.context;
+getAppConfiguration().then((appSettings) => {
+	// appSettings.context.provider = 'catalog';
+	const { provider = 'legacy' } = appSettings.context;
 
-		if (provider.includes('catalog') && !(/#\/(playground|export|version)/.test(window.location.href))) {
-			bootstrapReact();
-		}
-		else {
-			window.bootstrapAngular(appSettings);
-			angular
-				.element(document)
-				.ready(() => angular.bootstrap(document, [window.MODULE_NAME]));
-		}
-	});
+	store.set('settings', appSettings);
+
+	if (
+		provider.includes('catalog') &&
+		!/#\/(playground|export|version)/.test(window.location.href)
+	) {
+		bootstrapReact();
+	}
+	else {
+		window.bootstrapAngular(appSettings);
+		angular
+			.element(document)
+			.ready(() => angular.bootstrap(document, [window.MODULE_NAME]));
+	}
+});
 
 /* eslint-enable angular/window-service */
 

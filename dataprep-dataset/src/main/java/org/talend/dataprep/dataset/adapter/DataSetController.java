@@ -127,7 +127,7 @@ public class DataSetController {
             @RequestParam(required = false) boolean advanced) {
         InputStream result;
         Callable<DataSet> dataSetCallable = dataSetService.get(false, true, EMPTY, datasetId);
-        Stream<DataSetRow> records = null;
+        Stream<DataSetRow> records = Stream.empty();
         try {
             DataSet dataSet = dataSetCallable.call();
             if (dataSet != null) {

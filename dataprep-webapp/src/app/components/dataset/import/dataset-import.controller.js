@@ -222,9 +222,9 @@ export default class DatasetImportCtrl {
 				))
 				.then(() => {
 					if (!this.datasetForm) {
-					   if (this.item && this.item.id) {
-					      formData.datasetId = this.item.id;
-					    }
+						if (this.item && this.item.id) {
+							formData.datasetId = this.item.id;
+						}
 						return this._initDatasetForm(formData);
 					}
 				});

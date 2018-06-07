@@ -12,6 +12,7 @@ out/
 
 
 dataprep-webapp/src/assets/fonts/font_dl_from_google.sh
+dataprep-webapp/cypress/videos/
 
 #jenv file
 .java-version

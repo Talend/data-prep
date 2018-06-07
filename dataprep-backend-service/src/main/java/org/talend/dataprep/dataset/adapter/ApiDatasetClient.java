@@ -1,9 +1,17 @@
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.netflix.hystrix.HystrixCommand;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +39,10 @@ import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -119,16 +120,25 @@ public class ApiDatasetClient {
         return toDataSetRows(getDataSetContent(id), metadata.getRowMetadata());
     }
 
+    /**
+     * Get a dataSet by id.
+     * @param id the dataset to fetch
+     */
     public DataSet getDataSet(String id) {
         return getDataSet(id, false, false, null);
     }
 
+    /**
+     * Get a dataSet by id.
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     */
     public DataSet getDataSet(String id, boolean fullContent) {
         return getDataSet(id, fullContent, false, null);
     }
 
     /**
-     *
+     * Get a dataSet by id.
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param filter TQL filter for content
@@ -137,6 +147,13 @@ public class ApiDatasetClient {
         return getDataSet(id, fullContent, false, filter);
     }
 
+    /**
+     * Get a dataSet by id.
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param withRowValidityMarker perform a quality analysis on the dataset records
+     * @param filter TQL filter for content
+     */
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
         DataSet dataset = new DataSet();
         // convert metadata
@@ -148,7 +165,7 @@ public class ApiDatasetClient {
             records = records.peek(addValidity(metadata.getRowMetadata().getColumns()));
         }
         if (filter != null) {
-            records = filter(records, filter, metadata.getRowMetadata());
+            records = records.filter(filterService.build(filter, metadata.getRowMetadata()));
         }
         dataset.setRecords(records);
 
@@ -167,10 +184,6 @@ public class ApiDatasetClient {
             }
         }
         return datasetStream.filter(Objects::nonNull).map(this::toDataSetMetadata);
-    }
-
-    private Stream<DataSetRow> filter(Stream<DataSetRow> stream, String filter, RowMetadata metadata) {
-        return stream.filter(filterService.build(filter, metadata));
     }
 
     private Long limit(boolean fullContent) {

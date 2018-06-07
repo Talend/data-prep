@@ -12,7 +12,8 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.OutputStream;
+
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
-import java.io.OutputStream;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
@@ -87,10 +88,10 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         final String dataSetId = preparation.getDataSetId();
         final ExportFormat format = getFormat(parameters.getExportType());
 
-        // get the dataset content (in an auto-closable block to make sure it is properly closed)
         boolean releasedIdentity = false;
         securityProxy.asTechnicalUser(); // Allow get dataset and get dataset metadata access whatever share status is
-        try (DataSet dataSet = datasetClient.getDataSet(dataSetId)) {
+        try {
+            DataSet dataSet = datasetClient.getDataSet(dataSetId);
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
 

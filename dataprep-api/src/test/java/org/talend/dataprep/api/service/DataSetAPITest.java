@@ -187,10 +187,10 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         // when
-        final String list = when().get("/api/datasets").asString();
+        Response response = when().get("/api/datasets");
 
         // then
-        assertTrue(list.contains(dataSetId));
+        assertTrue(response.asString().contains(dataSetId));
     }
 
     @Test

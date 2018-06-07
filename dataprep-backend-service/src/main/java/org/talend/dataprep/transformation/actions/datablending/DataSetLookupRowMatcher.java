@@ -12,6 +12,14 @@
 
 package org.talend.dataprep.transformation.actions.datablending;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +32,6 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
-
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
@@ -97,7 +97,7 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
     @PostConstruct
     private void init() {
         LOGGER.debug("opening {}", datasetId);
-        DataSet lookup = datasetClient.getDataSet(datasetId);
+        DataSet lookup = datasetClient.getDataSet(datasetId, true);
         records = lookup.getRecords();
         this.lookupIterator = records.iterator();
         this.emptyRow = getEmptyRow(lookup.getMetadata().getRowMetadata().getColumns());

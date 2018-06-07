@@ -170,7 +170,9 @@ public class ApiDatasetClient {
         dataset.setRecords(records);
 
         // DataSet specifics
-        metadata.getContent().getLimit().ifPresent(theLimit -> dataset.setRecords(dataset.getRecords().limit(theLimit)));
+        if (!fullContent) {
+            metadata.getContent().getLimit().ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
+        }
         return dataset;
     }
 

@@ -27,8 +27,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -46,14 +44,8 @@ public class DataSetRowIteratorTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    // protected org.talend.dataprep.schema.FormatFamilyFactory factory;
-
-    // Serializer serializer = factory.getFormatFamily(content.getFormatFamilyId()).getSerializer();
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataSetRowIteratorTest.class);
-
     @Test
-    public void should_read_dataset_serialized_salesforce_cache() throws IOException {
+    public void shouldReadSerializedSalesforceDatasetInCache() throws IOException {
 
         // given
         DataSet dataSet = from(this.getClass().getResourceAsStream("dataset-sample_cache.json"));

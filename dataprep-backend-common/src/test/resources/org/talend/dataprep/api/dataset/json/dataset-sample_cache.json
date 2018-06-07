@@ -1,0 +1,6157 @@
+{
+  "metadata": {
+    "id": "35357b46-e435-440f-a778-24d403595155",
+    "columns": [
+      {
+        "name": "Id",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0000",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "0010O00001pX93QQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93RQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93OQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93PQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93SQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93TQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93KQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93LQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93MQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93NQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93JQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "0010O00001pX93IQAS",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9999A99999aA99AAAA",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 18,
+            "maximalLength": 18,
+            "averageLength": 18
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "IsDeleted",
+        "headerSize": 0,
+        "type": "boolean",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0001",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "false",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "aaaaa",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "MasterRecordId",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0002",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Name",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0003",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "Edge Communications",
+              "occurrences": 1
+            },
+            {
+              "data": "Dickenson plc",
+              "occurrences": 1
+            },
+            {
+              "data": "sForce",
+              "occurrences": 1
+            },
+            {
+              "data": "United Oil & Gas Corp.",
+              "occurrences": 1
+            },
+            {
+              "data": "United Oil & Gas, UK",
+              "occurrences": 1
+            },
+            {
+              "data": "Grand Hotels & Resorts Ltd",
+              "occurrences": 1
+            },
+            {
+              "data": "GenePoint",
+              "occurrences": 1
+            },
+            {
+              "data": "United Oil & Gas, Singapore",
+              "occurrences": 1
+            },
+            {
+              "data": "University of Arizona",
+              "occurrences": 1
+            },
+            {
+              "data": "Pyramid Construction Inc.",
+              "occurrences": 1
+            },
+            {
+              "data": "Express Logistics and Transport",
+              "occurrences": 1
+            },
+            {
+              "data": "Burlington Textiles Corp of America",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaa Aaaaaaaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaa Aaaaaaaa Aaaa aa Aaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaa Aaaaaaaaaaaa Aaa.",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaa Aaa & Aaa, Aaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaa Aaa & Aaa, AA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "AaaaAaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaa Aaaaaaaaa aaa Aaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aAaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaa Aaa & Aaa Aaaa.",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaa aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaa Aaaaaa & Aaaaaaa Aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaa aa Aaaaaaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 6,
+            "maximalLength": 35,
+            "averageLength": 21.166666666666668
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Type",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0004",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 9,
+          "distinctCount": 3,
+          "frequencyTable": [
+            {
+              "data": "Customer - Direct",
+              "occurrences": 7
+            },
+            {
+              "data": "Customer - Channel",
+              "occurrences": 4
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaaaaa - Aaaaaa",
+              "occurrences": 7
+            },
+            {
+              "pattern": "Aaaaaaaa - Aaaaaaa",
+              "occurrences": 4
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 18,
+            "averageLength": 15.916666666666666
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ParentId",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0005",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "BillingStreet",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0006",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "525 S. Lexington Ave",
+              "occurrences": 1
+            },
+            {
+              "data": "345 Shoreline Park\nMountain View, CA 94043\nUSA",
+              "occurrences": 1
+            },
+            {
+              "data": "888 N Euclid \nHallis Center, Room 501\nTucson, AZ 85721\nUnited States",
+              "occurrences": 1
+            },
+            {
+              "data": "1301 Avenue of the Americas \r\nNew York, NY 10019\r\nUSA",
+              "occurrences": 1
+            },
+            {
+              "data": "1301 Hoch Drive",
+              "occurrences": 1
+            },
+            {
+              "data": "312 Constitution Place\nAustin, TX 78767\nUSA",
+              "occurrences": 1
+            },
+            {
+              "data": "9 Tagore Lane\nSingapore, Singapore 787472\nSingapore",
+              "occurrences": 1
+            },
+            {
+              "data": "2334 N. Michigan Avenue, Suite 1500\nChicago, IL 60601, USA",
+              "occurrences": 1
+            },
+            {
+              "data": "620 SW 5th Avenue Suite 400\nPortland, Oregon 97204\nUnited States",
+              "occurrences": 1
+            },
+            {
+              "data": "The Landmark @ One Market",
+              "occurrences": 1
+            },
+            {
+              "data": "2 Place Jussieu",
+              "occurrences": 1
+            },
+            {
+              "data": "Kings Park, 17th Avenue, Team Valley Trading Estate,\nGateshead, Tyne and Wear NE26 3HS\nUnited Kingdom",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "999 A Aaaaaa \nAaaaaa Aaaaaa, Aaaa 999\nAaaaaa, AA 99999\nAaaaaa Aaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999 Aaaaaaaaaaaa Aaaaa\nAaaaaa, AA 99999\nAAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999 Aaaaaaaaa Aaaa\nAaaaaaaa Aaaa, AA 99999\nAAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaa Aaaaaaaa @ Aaa Aaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9999 A. Aaaaaaaa Aaaaaa, Aaaaa 9999\nAaaaaaa, AA 99999, AAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaa Aaaa, 99aa Aaaaaa, Aaaa Aaaaaa Aaaaaaa Aaaaaa,\nAaaaaaaaa, Aaaa aaa Aaaa AA99 9AA\nAaaaaa Aaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999 AA 9aa Aaaaaa Aaaaa 999\nAaaaaaaa, Aaaaaa 99999\nAaaaaa Aaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9 Aaaaa Aaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9 Aaaaaa Aaaa\nAaaaaaaaa, Aaaaaaaaa 999999\nAaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9999 Aaaa Aaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9999 Aaaaaa aa aaa Aaaaaaaa \r\nAaa Aaaa, AA 99999\r\nAAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999 A. Aaaaaaaaa Aaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 15,
+            "maximalLength": 101,
+            "averageLength": 46.583333333333336
+          }
+        },
+        "domain": "ADDRESS_LINE",
+        "domainLabel": "Address Line",
+        "domainFrequency": 75,
+        "semanticDomains": [
+          {
+            "id": "ADDRESS_LINE",
+            "label": "Address Line",
+            "frequency": 75
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "BillingCity",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0007",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "San Francisco",
+              "occurrences": 1
+            },
+            {
+              "data": "New York",
+              "occurrences": 1
+            },
+            {
+              "data": "Singapore",
+              "occurrences": 1
+            },
+            {
+              "data": "Portland",
+              "occurrences": 1
+            },
+            {
+              "data": "Chicago",
+              "occurrences": 1
+            },
+            {
+              "data": "Burlington",
+              "occurrences": 1
+            },
+            {
+              "data": "Tucson",
+              "occurrences": 1
+            },
+            {
+              "data": "Lawrence",
+              "occurrences": 1
+            },
+            {
+              "data": "Austin",
+              "occurrences": 1
+            },
+            {
+              "data": "Paris",
+              "occurrences": 1
+            },
+            {
+              "data": "Mountain View",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaaaaa",
+              "occurrences": 2
+            },
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 2
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaa Aaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaa Aaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaa Aaaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 13,
+            "averageLength": 7.75
+          }
+        },
+        "domain": "AIRPORT",
+        "domainLabel": "Airport",
+        "domainFrequency": 50,
+        "semanticDomains": [
+          {
+            "id": "AIRPORT",
+            "label": "Airport",
+            "frequency": 50
+          },
+          {
+            "id": "US_COUNTY",
+            "label": "US County",
+            "frequency": 41.67
+          },
+          {
+            "id": "FIRST_NAME",
+            "label": "First Name",
+            "frequency": 25
+          },
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 25
+          },
+          {
+            "id": "COUNTRY",
+            "label": "Country",
+            "frequency": 8.33
+          },
+          {
+            "id": "FR_COMMUNE",
+            "label": "FR Commune",
+            "frequency": 8.33
+          },
+          {
+            "id": "FR_DEPARTEMENT",
+            "label": "FR Departement",
+            "frequency": 8.33
+          },
+          {
+            "id": "US_STATE",
+            "label": "US State",
+            "frequency": 8.33
+          },
+          {
+            "id": "NA_STATE",
+            "label": "North American state",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "BillingState",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 2,
+          "valid": 9
+        },
+        "id": "0008",
+        "statistics": {
+          "count": 12,
+          "valid": 9,
+          "invalid": 2,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 1,
+          "distinctCount": 11,
+          "frequencyTable": [
+            {
+              "data": "CA",
+              "occurrences": 2
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "Singapore",
+              "occurrences": 1
+            },
+            {
+              "data": "IL",
+              "occurrences": 1
+            },
+            {
+              "data": "OR",
+              "occurrences": 1
+            },
+            {
+              "data": "TX",
+              "occurrences": 1
+            },
+            {
+              "data": "NC",
+              "occurrences": 1
+            },
+            {
+              "data": "UK",
+              "occurrences": 1
+            },
+            {
+              "data": "KS",
+              "occurrences": 1
+            },
+            {
+              "data": "AZ",
+              "occurrences": 1
+            },
+            {
+              "data": "NY",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "AA",
+              "occurrences": 10
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 9,
+            "averageLength": 2.4166666666666665
+          }
+        },
+        "domain": "US_STATE_CODE",
+        "domainLabel": "US State Code",
+        "domainFrequency": 75,
+        "semanticDomains": [
+          {
+            "id": "US_STATE_CODE",
+            "label": "US State Code",
+            "frequency": 75
+          },
+          {
+            "id": "NA_STATE_CODE",
+            "label": "North American state code",
+            "frequency": 75
+          },
+          {
+            "id": "LANGUAGE_CODE_ISO2",
+            "label": "Language Code ISO2",
+            "frequency": 58.33
+          },
+          {
+            "id": "COUNTRY_CODE_ISO2",
+            "label": "Country Code ISO2",
+            "frequency": 41.67
+          },
+          {
+            "id": "COMPANY",
+            "label": "Company",
+            "frequency": 16.67
+          },
+          {
+            "id": "COUNTRY",
+            "label": "Country",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "BillingPostalCode",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 8,
+          "invalid": 0,
+          "valid": 4
+        },
+        "id": "0009",
+        "statistics": {
+          "count": 12,
+          "valid": 4,
+          "invalid": 0,
+          "empty": 8,
+          "max": 94087,
+          "min": 27215,
+          "mean": 65649.5,
+          "variance": 792749139.6666666,
+          "duplicateCount": 7,
+          "distinctCount": 5,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 8
+            },
+            {
+              "data": "66045",
+              "occurrences": 1
+            },
+            {
+              "data": "27215",
+              "occurrences": 1
+            },
+            {
+              "data": "75251",
+              "occurrences": 1
+            },
+            {
+              "data": "94087",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 8
+            },
+            {
+              "pattern": "99999",
+              "occurrences": 4
+            }
+          ],
+          "quantiles": {
+            "median": 70648,
+            "lowerQuantile": 36922.5,
+            "upperQuantile": 89378
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 27215,
+                  "max": 27215
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 66045,
+                  "max": 66045
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 75251,
+                  "max": 75251
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 94087,
+                  "max": 94087
+                }
+              }
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "FR_POSTAL_CODE",
+            "label": "FR Postal Code",
+            "frequency": 33.33
+          },
+          {
+            "id": "FR_CODE_COMMUNE_INSEE",
+            "label": "FR Insee Code",
+            "frequency": 33.33
+          },
+          {
+            "id": "US_POSTAL_CODE",
+            "label": "US Postal Code",
+            "frequency": 33.33
+          },
+          {
+            "id": "DE_POSTAL_CODE",
+            "label": "DE Postal Code",
+            "frequency": 33.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "BillingCountry",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 8,
+          "invalid": 0,
+          "valid": 4
+        },
+        "id": "0010",
+        "statistics": {
+          "count": 12,
+          "valid": 4,
+          "invalid": 0,
+          "empty": 8,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 8,
+          "distinctCount": 4,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 8
+            },
+            {
+              "data": "USA",
+              "occurrences": 2
+            },
+            {
+              "data": "France",
+              "occurrences": 1
+            },
+            {
+              "data": "US",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 8
+            },
+            {
+              "pattern": "AAA",
+              "occurrences": 2
+            },
+            {
+              "pattern": "AA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 6,
+            "averageLength": 1.1666666666666667
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "AIRPORT_CODE",
+            "label": "Airport Code",
+            "frequency": 16.67
+          },
+          {
+            "id": "COUNTRY_CODE_ISO3",
+            "label": "Country Code ISO3",
+            "frequency": 16.67
+          },
+          {
+            "id": "COUNTRY",
+            "label": "Country",
+            "frequency": 8.33
+          },
+          {
+            "id": "COUNTRY_CODE_ISO2",
+            "label": "Country Code ISO2",
+            "frequency": 8.33
+          },
+          {
+            "id": "FIRST_NAME",
+            "label": "First Name",
+            "frequency": 8.33
+          },
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 8.33
+          },
+          {
+            "id": "FR_COMMUNE",
+            "label": "FR Commune",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "BillingLatitude",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0011",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "BillingLongitude",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0012",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ShippingStreet",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 2,
+          "invalid": 0,
+          "valid": 10
+        },
+        "id": "0013",
+        "statistics": {
+          "count": 12,
+          "valid": 10,
+          "invalid": 0,
+          "empty": 2,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 1,
+          "distinctCount": 11,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 2
+            },
+            {
+              "data": "345 Shoreline Park\nMountain View, CA 94043\nUSA",
+              "occurrences": 1
+            },
+            {
+              "data": "888 N Euclid \nHallis Center, Room 501\nTucson, AZ 85721\nUnited States",
+              "occurrences": 1
+            },
+            {
+              "data": "1301 Avenue of the Americas \r\nNew York, NY 10019\r\nUSA",
+              "occurrences": 1
+            },
+            {
+              "data": "1301 Hoch Drive",
+              "occurrences": 1
+            },
+            {
+              "data": "312 Constitution Place\nAustin, TX 78767\nUSA",
+              "occurrences": 1
+            },
+            {
+              "data": "9 Tagore Lane\nSingapore, Singapore 787472\nSingapore",
+              "occurrences": 1
+            },
+            {
+              "data": "2334 N. Michigan Avenue, Suite 1500\nChicago, IL 60601, USA",
+              "occurrences": 1
+            },
+            {
+              "data": "620 SW 5th Avenue Suite 400\nPortland, Oregon 97204\nUnited States",
+              "occurrences": 1
+            },
+            {
+              "data": "2 Place Jussieu",
+              "occurrences": 1
+            },
+            {
+              "data": "Kings Park, 17th Avenue, Team Valley Trading Estate,\nGateshead, Tyne and Wear NE26 3HS\nUnited Kingdom",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 2
+            },
+            {
+              "pattern": "999 A Aaaaaa \nAaaaaa Aaaaaa, Aaaa 999\nAaaaaa, AA 99999\nAaaaaa Aaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999 Aaaaaaaaaaaa Aaaaa\nAaaaaa, AA 99999\nAAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999 Aaaaaaaaa Aaaa\nAaaaaaaa Aaaa, AA 99999\nAAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9999 A. Aaaaaaaa Aaaaaa, Aaaaa 9999\nAaaaaaa, AA 99999, AAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaa Aaaa, 99aa Aaaaaa, Aaaa Aaaaaa Aaaaaaa Aaaaaa,\nAaaaaaaaa, Aaaa aaa Aaaa AA99 9AA\nAaaaaa Aaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999 AA 9aa Aaaaaa Aaaaa 999\nAaaaaaaa, Aaaaaa 99999\nAaaaaa Aaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9 Aaaaa Aaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9 Aaaaaa Aaaa\nAaaaaaaaa, Aaaaaaaaa 999999\nAaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9999 Aaaa Aaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "9999 Aaaaaa aa aaa Aaaaaaaa \r\nAaa Aaaa, AA 99999\r\nAAA",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 101,
+            "averageLength": 42.833333333333336
+          }
+        },
+        "domain": "ADDRESS_LINE",
+        "domainLabel": "Address Line",
+        "domainFrequency": 66.67,
+        "semanticDomains": [
+          {
+            "id": "ADDRESS_LINE",
+            "label": "Address Line",
+            "frequency": 66.67
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ShippingCity",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 10,
+          "invalid": 0,
+          "valid": 2
+        },
+        "id": "0014",
+        "statistics": {
+          "count": 12,
+          "valid": 2,
+          "invalid": 0,
+          "empty": 10,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 9,
+          "distinctCount": 3,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 10
+            },
+            {
+              "data": "Lawrence",
+              "occurrences": 1
+            },
+            {
+              "data": "Paris",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 10
+            },
+            {
+              "pattern": "Aaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 8,
+            "averageLength": 1.0833333333333333
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "FIRST_NAME",
+            "label": "First Name",
+            "frequency": 16.67
+          },
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 16.67
+          },
+          {
+            "id": "AIRPORT",
+            "label": "Airport",
+            "frequency": 8.33
+          },
+          {
+            "id": "US_COUNTY",
+            "label": "US County",
+            "frequency": 8.33
+          },
+          {
+            "id": "FR_COMMUNE",
+            "label": "FR Commune",
+            "frequency": 8.33
+          },
+          {
+            "id": "FR_DEPARTEMENT",
+            "label": "FR Departement",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ShippingState",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 11,
+          "invalid": 0,
+          "valid": 1
+        },
+        "id": "0015",
+        "statistics": {
+          "count": 12,
+          "valid": 1,
+          "invalid": 0,
+          "empty": 11,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 10,
+          "distinctCount": 2,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 11
+            },
+            {
+              "data": "KS",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 11
+            },
+            {
+              "pattern": "AA",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 2,
+            "averageLength": 0.16666666666666666
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "LANGUAGE_CODE_ISO2",
+            "label": "Language Code ISO2",
+            "frequency": 8.33
+          },
+          {
+            "id": "US_STATE_CODE",
+            "label": "US State Code",
+            "frequency": 8.33
+          },
+          {
+            "id": "NA_STATE_CODE",
+            "label": "North American state code",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ShippingPostalCode",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 10,
+          "invalid": 0,
+          "valid": 2
+        },
+        "id": "0016",
+        "statistics": {
+          "count": 12,
+          "valid": 2,
+          "invalid": 0,
+          "empty": 10,
+          "max": 75251,
+          "min": 66045,
+          "mean": 70648,
+          "variance": 42375218,
+          "duplicateCount": 9,
+          "distinctCount": 3,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 10
+            },
+            {
+              "data": "66045",
+              "occurrences": 1
+            },
+            {
+              "data": "75251",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 10
+            },
+            {
+              "pattern": "99999",
+              "occurrences": 2
+            }
+          ],
+          "quantiles": {
+            "median": 70648,
+            "lowerQuantile": 66045,
+            "upperQuantile": 75251
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 66045,
+                  "max": 66045
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 75251,
+                  "max": 75251
+                }
+              }
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "FR_POSTAL_CODE",
+            "label": "FR Postal Code",
+            "frequency": 16.67
+          },
+          {
+            "id": "FR_CODE_COMMUNE_INSEE",
+            "label": "FR Insee Code",
+            "frequency": 16.67
+          },
+          {
+            "id": "US_POSTAL_CODE",
+            "label": "US Postal Code",
+            "frequency": 16.67
+          },
+          {
+            "id": "DE_POSTAL_CODE",
+            "label": "DE Postal Code",
+            "frequency": 16.67
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ShippingCountry",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 10,
+          "invalid": 0,
+          "valid": 2
+        },
+        "id": "0017",
+        "statistics": {
+          "count": 12,
+          "valid": 2,
+          "invalid": 0,
+          "empty": 10,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 9,
+          "distinctCount": 3,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 10
+            },
+            {
+              "data": "USA",
+              "occurrences": 1
+            },
+            {
+              "data": "France",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 10
+            },
+            {
+              "pattern": "AAA",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 6,
+            "averageLength": 0.75
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "AIRPORT_CODE",
+            "label": "Airport Code",
+            "frequency": 8.33
+          },
+          {
+            "id": "COUNTRY",
+            "label": "Country",
+            "frequency": 8.33
+          },
+          {
+            "id": "COUNTRY_CODE_ISO3",
+            "label": "Country Code ISO3",
+            "frequency": 8.33
+          },
+          {
+            "id": "FIRST_NAME",
+            "label": "First Name",
+            "frequency": 8.33
+          },
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ShippingLatitude",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0018",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "ShippingLongitude",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0019",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Phone",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 1,
+          "valid": 11
+        },
+        "id": "0020",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 1,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "(520) 773-9050",
+              "occurrences": 1
+            },
+            {
+              "data": "(650) 867-3450",
+              "occurrences": 1
+            },
+            {
+              "data": "(650) 450-8810",
+              "occurrences": 1
+            },
+            {
+              "data": "(336) 222-7000",
+              "occurrences": 1
+            },
+            {
+              "data": "+44 191 4956203",
+              "occurrences": 1
+            },
+            {
+              "data": "(014) 427-4427",
+              "occurrences": 1
+            },
+            {
+              "data": "(312) 596-1000",
+              "occurrences": 1
+            },
+            {
+              "data": "(415) 901-7000",
+              "occurrences": 1
+            },
+            {
+              "data": "(512) 757-6000",
+              "occurrences": 1
+            },
+            {
+              "data": "(785) 241-6200",
+              "occurrences": 1
+            },
+            {
+              "data": "(503) 421-7800",
+              "occurrences": 1
+            },
+            {
+              "data": "(212) 842-5500",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "(999) 999-9999",
+              "occurrences": 11
+            },
+            {
+              "pattern": "+99 999 9999999",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 14,
+            "maximalLength": 15,
+            "averageLength": 14.083333333333334
+          }
+        },
+        "domain": "PHONE",
+        "domainLabel": "Phone number",
+        "domainFrequency": 91.67,
+        "semanticDomains": [
+          {
+            "id": "PHONE",
+            "label": "Phone number",
+            "frequency": 91.67
+          },
+          {
+            "id": "US_PHONE",
+            "label": "US Phone",
+            "frequency": 83.33
+          },
+          {
+            "id": "UK_PHONE",
+            "label": "UK Phone",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Fax",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 1,
+          "valid": 11
+        },
+        "id": "0021",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 1,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "(520) 773-9060",
+              "occurrences": 1
+            },
+            {
+              "data": "(312) 596-1500",
+              "occurrences": 1
+            },
+            {
+              "data": "(650) 450-8820",
+              "occurrences": 1
+            },
+            {
+              "data": "(336) 222-8000",
+              "occurrences": 1
+            },
+            {
+              "data": "+44 191 4956620",
+              "occurrences": 1
+            },
+            {
+              "data": "(650) 867-9895",
+              "occurrences": 1
+            },
+            {
+              "data": "(415) 901-7002",
+              "occurrences": 1
+            },
+            {
+              "data": "(014) 427-4428",
+              "occurrences": 1
+            },
+            {
+              "data": "(212) 842-5501",
+              "occurrences": 1
+            },
+            {
+              "data": "(785) 241-6201",
+              "occurrences": 1
+            },
+            {
+              "data": "(512) 757-9000",
+              "occurrences": 1
+            },
+            {
+              "data": "(503) 421-7801",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "(999) 999-9999",
+              "occurrences": 11
+            },
+            {
+              "pattern": "+99 999 9999999",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 14,
+            "maximalLength": 15,
+            "averageLength": 14.083333333333334
+          }
+        },
+        "domain": "PHONE",
+        "domainLabel": "Phone number",
+        "domainFrequency": 91.67,
+        "semanticDomains": [
+          {
+            "id": "PHONE",
+            "label": "Phone number",
+            "frequency": 91.67
+          },
+          {
+            "id": "US_PHONE",
+            "label": "US Phone",
+            "frequency": 83.33
+          },
+          {
+            "id": "UK_PHONE",
+            "label": "UK Phone",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "AccountNumber",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0022",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "CD451796",
+              "occurrences": 1
+            },
+            {
+              "data": "CC634267",
+              "occurrences": 1
+            },
+            {
+              "data": "CD736025",
+              "occurrences": 1
+            },
+            {
+              "data": "CD656092",
+              "occurrences": 1
+            },
+            {
+              "data": "CD439877",
+              "occurrences": 1
+            },
+            {
+              "data": "CD355120-B",
+              "occurrences": 1
+            },
+            {
+              "data": "CD355118",
+              "occurrences": 1
+            },
+            {
+              "data": "CD355119-A",
+              "occurrences": 1
+            },
+            {
+              "data": "CC947211",
+              "occurrences": 1
+            },
+            {
+              "data": "CC213425",
+              "occurrences": 1
+            },
+            {
+              "data": "CC978213",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "AA999999",
+              "occurrences": 9
+            },
+            {
+              "pattern": "AA999999-A",
+              "occurrences": 2
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 10,
+            "averageLength": 7.666666666666667
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "UK_SSN",
+            "label": "UK Social Security Number",
+            "frequency": 33.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Website",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 5,
+          "valid": 7
+        },
+        "id": "0023",
+        "statistics": {
+          "count": 12,
+          "valid": 7,
+          "invalid": 5,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 2,
+          "distinctCount": 10,
+          "frequencyTable": [
+            {
+              "data": "http://www.uos.com",
+              "occurrences": 3
+            },
+            {
+              "data": "http://edgecomm.com",
+              "occurrences": 1
+            },
+            {
+              "data": "dickenson-consulting.com",
+              "occurrences": 1
+            },
+            {
+              "data": "www.universityofarizona.com",
+              "occurrences": 1
+            },
+            {
+              "data": "www.grandhotels.com",
+              "occurrences": 1
+            },
+            {
+              "data": "www.pyramid.com",
+              "occurrences": 1
+            },
+            {
+              "data": "www.burlington.com",
+              "occurrences": 1
+            },
+            {
+              "data": "www.expressl&t.net",
+              "occurrences": 1
+            },
+            {
+              "data": "www.genepoint.com",
+              "occurrences": 1
+            },
+            {
+              "data": "www.sforce.com",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "aaaa://aaa.aaa.aaa",
+              "occurrences": 3
+            },
+            {
+              "pattern": "aaa.aaaaaaaaaaaaaaaaaaa.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaaa://aaaaaaaa.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaa.aaaaaaaaaaa.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaa.aaaaaaaaa.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaaaaaaaa-aaaaaaaaaa.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaa.aaaaaaaa&a.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaa.aaaaaa.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaa.aaaaaaa.aaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "aaa.aaaaaaaaaa.aaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 14,
+            "maximalLength": 27,
+            "averageLength": 18.75
+          }
+        },
+        "domain": "WEB_DOMAIN",
+        "domainLabel": "Web Domain",
+        "domainFrequency": 58.33,
+        "semanticDomains": [
+          {
+            "id": "WEB_DOMAIN",
+            "label": "Web Domain",
+            "frequency": 58.33
+          },
+          {
+            "id": "URL",
+            "label": "URL",
+            "frequency": 33.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "PhotoUrl",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0024",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "/services/images/photo/0010O00001pX93JQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93IQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93KQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93LQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93RQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93QQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93SQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93TQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93OQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93PQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93NQAS",
+              "occurrences": 1
+            },
+            {
+              "data": "/services/images/photo/0010O00001pX93MQAS",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "/aaaaaaaa/aaaaaa/aaaaa/9999A99999aA99AAAA",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 41,
+            "maximalLength": 41,
+            "averageLength": 41
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Sic",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0025",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": 546732,
+          "min": 2268,
+          "mean": 54515.181818181816,
+          "variance": 26653984885.763638,
+          "duplicateCount": 2,
+          "distinctCount": 10,
+          "frequencyTable": [
+            {
+              "data": "4437",
+              "occurrences": 3
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "7321",
+              "occurrences": 1
+            },
+            {
+              "data": "4253",
+              "occurrences": 1
+            },
+            {
+              "data": "2268",
+              "occurrences": 1
+            },
+            {
+              "data": "6576",
+              "occurrences": 1
+            },
+            {
+              "data": "6752",
+              "occurrences": 1
+            },
+            {
+              "data": "8742",
+              "occurrences": 1
+            },
+            {
+              "data": "546732",
+              "occurrences": 1
+            },
+            {
+              "data": "3712",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9999",
+              "occurrences": 10
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999999",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": 4437,
+            "lowerQuantile": 4253,
+            "upperQuantile": 7321
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 2268,
+                  "max": 2268
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 3712,
+                  "max": 3712
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 4253,
+                  "max": 4253
+                }
+              },
+              {
+                "occurrences": 3,
+                "range": {
+                  "min": 4437,
+                  "max": 4437
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 6576,
+                  "max": 6576
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 6752,
+                  "max": 6752
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 7321,
+                  "max": 7321
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 8742,
+                  "max": 8742
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 546732,
+                  "max": 546732
+                }
+              }
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Industry",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0026",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 2,
+          "distinctCount": 10,
+          "frequencyTable": [
+            {
+              "data": "Energy",
+              "occurrences": 3
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "Biotechnology",
+              "occurrences": 1
+            },
+            {
+              "data": "Hospitality",
+              "occurrences": 1
+            },
+            {
+              "data": "Apparel",
+              "occurrences": 1
+            },
+            {
+              "data": "Construction",
+              "occurrences": 1
+            },
+            {
+              "data": "Education",
+              "occurrences": 1
+            },
+            {
+              "data": "Transportation",
+              "occurrences": 1
+            },
+            {
+              "data": "Consulting",
+              "occurrences": 1
+            },
+            {
+              "data": "Electronics",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 3
+            },
+            {
+              "pattern": "Aaaaaaaaaaa",
+              "occurrences": 2
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaa",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 14,
+            "averageLength": 8.75
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "INDUSTRY_GROUP",
+            "label": "Industry Group",
+            "frequency": 33.33
+          },
+          {
+            "id": "SECTOR",
+            "label": "Sector",
+            "frequency": 25
+          },
+          {
+            "id": "INDUSTRY",
+            "label": "Industry",
+            "frequency": 18.33
+          },
+          {
+            "id": "JOB_TITLE",
+            "label": "Job Title",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "AnnualRevenue",
+        "headerSize": 0,
+        "type": "double",
+        "quality": {
+          "empty": 4,
+          "invalid": 0,
+          "valid": 8
+        },
+        "id": "0027",
+        "statistics": {
+          "count": 12,
+          "valid": 8,
+          "invalid": 0,
+          "empty": 4,
+          "max": 5600000000,
+          "min": 30000000,
+          "mean": 1071125000,
+          "variance": 3483107267857143000,
+          "duplicateCount": 4,
+          "distinctCount": 8,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 4
+            },
+            {
+              "data": "9.5E8",
+              "occurrences": 2
+            },
+            {
+              "data": "5.6E9",
+              "occurrences": 1
+            },
+            {
+              "data": "3.0E7",
+              "occurrences": 1
+            },
+            {
+              "data": "3.5E8",
+              "occurrences": 1
+            },
+            {
+              "data": "5.0E7",
+              "occurrences": 1
+            },
+            {
+              "data": "5.0E8",
+              "occurrences": 1
+            },
+            {
+              "data": "1.39E8",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9.9A9",
+              "occurrences": 7
+            },
+            {
+              "pattern": "",
+              "occurrences": 4
+            },
+            {
+              "pattern": "9.99A9",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": 425000000,
+            "lowerQuantile": 72250000,
+            "upperQuantile": 950000000
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 30000000,
+                  "max": 30000000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 50000000,
+                  "max": 50000000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 139000000,
+                  "max": 139000000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 350000000,
+                  "max": 350000000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 500000000,
+                  "max": 500000000
+                }
+              },
+              {
+                "occurrences": 2,
+                "range": {
+                  "min": 950000000,
+                  "max": 950000000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 5600000000,
+                  "max": 5600000000
+                }
+              }
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "NumberOfEmployees",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0028",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": 145000,
+          "min": 120,
+          "mean": 21996.818181818184,
+          "variance": 1808045691.3636365,
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "265",
+              "occurrences": 1
+            },
+            {
+              "data": "39000",
+              "occurrences": 1
+            },
+            {
+              "data": "24000",
+              "occurrences": 1
+            },
+            {
+              "data": "1000",
+              "occurrences": 1
+            },
+            {
+              "data": "5600",
+              "occurrences": 1
+            },
+            {
+              "data": "3000",
+              "occurrences": 1
+            },
+            {
+              "data": "2680",
+              "occurrences": 1
+            },
+            {
+              "data": "12300",
+              "occurrences": 1
+            },
+            {
+              "data": "9000",
+              "occurrences": 1
+            },
+            {
+              "data": "145000",
+              "occurrences": 1
+            },
+            {
+              "data": "120",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9999",
+              "occurrences": 5
+            },
+            {
+              "pattern": "99999",
+              "occurrences": 3
+            },
+            {
+              "pattern": "999",
+              "occurrences": 2
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            },
+            {
+              "pattern": "999999",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": 5600,
+            "lowerQuantile": 1000,
+            "upperQuantile": 24000
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 120,
+                  "max": 120
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 265,
+                  "max": 265
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 1000,
+                  "max": 1000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 2680,
+                  "max": 2680
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 3000,
+                  "max": 3000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 5600,
+                  "max": 5600
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 9000,
+                  "max": 9000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 12300,
+                  "max": 12300
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 24000,
+                  "max": 24000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 39000,
+                  "max": 39000
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 145000,
+                  "max": 145000
+                }
+              }
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "FR_POSTAL_CODE",
+            "label": "FR Postal Code",
+            "frequency": 25
+          },
+          {
+            "id": "FR_CODE_COMMUNE_INSEE",
+            "label": "FR Insee Code",
+            "frequency": 25
+          },
+          {
+            "id": "US_POSTAL_CODE",
+            "label": "US Postal Code",
+            "frequency": 25
+          },
+          {
+            "id": "DE_POSTAL_CODE",
+            "label": "DE Postal Code",
+            "frequency": 25
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Ownership",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0029",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 8,
+          "distinctCount": 4,
+          "frequencyTable": [
+            {
+              "data": "Public",
+              "occurrences": 8
+            },
+            {
+              "data": "Private",
+              "occurrences": 2
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "Other",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 8
+            },
+            {
+              "pattern": "Aaaaaaa",
+              "occurrences": 2
+            },
+            {
+              "pattern": "Aaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 7,
+            "averageLength": 5.583333333333333
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "TickerSymbol",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 4,
+          "invalid": 0,
+          "valid": 8
+        },
+        "id": "0030",
+        "statistics": {
+          "count": 12,
+          "valid": 8,
+          "invalid": 0,
+          "empty": 4,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 5,
+          "distinctCount": 7,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 4
+            },
+            {
+              "data": "UOS",
+              "occurrences": 3
+            },
+            {
+              "data": "BTXT",
+              "occurrences": 1
+            },
+            {
+              "data": "PYR",
+              "occurrences": 1
+            },
+            {
+              "data": "GHTL",
+              "occurrences": 1
+            },
+            {
+              "data": "EXLT",
+              "occurrences": 1
+            },
+            {
+              "data": "EDGE",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 4
+            },
+            {
+              "pattern": "AAA",
+              "occurrences": 4
+            },
+            {
+              "pattern": "AAAA",
+              "occurrences": 4
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 4,
+            "averageLength": 2.3333333333333335
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "AIRPORT_CODE",
+            "label": "Airport Code",
+            "frequency": 25
+          },
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 8.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Description",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 6,
+          "invalid": 0,
+          "valid": 6
+        },
+        "id": "0031",
+        "statistics": {
+          "count": 12,
+          "valid": 6,
+          "invalid": 0,
+          "empty": 6,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 5,
+          "distinctCount": 7,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 6
+            },
+            {
+              "data": "Edge, founded in 1998, is a start-up based in Austin, TX. The company designs and manufactures a device to convert music from one digital format to another. Edge sells its product through retailers and its own website.",
+              "occurrences": 1
+            },
+            {
+              "data": "Genomics company engaged in mapping and sequencing of the human genome and developing gene-based drugs",
+              "occurrences": 1
+            },
+            {
+              "data": "Chain of hotels and resorts across the US, UK, Eastern Europe, Japan, and SE Asia.",
+              "occurrences": 1
+            },
+            {
+              "data": "Commerical logistics and transportation company.",
+              "occurrences": 1
+            },
+            {
+              "data": "Leading university in AZ offering undergraduate and graduate programs in arts and humanities, pure sciences, engineering, business, and medicine.",
+              "occurrences": 1
+            },
+            {
+              "data": "World's third largest oil and gas company.",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 6
+            },
+            {
+              "pattern": "Aaaa, aaaaaaa aa 9999, aa a aaaaa-aa aaaaa aa Aaaaaa, AA. Aaa aaaaaaa aaaaaaa aaa aaaaaaaaaaaa a aaaaaa aa aaaaaaa aaaaa aaaa aaa aaaaaaa aaaaaa aa aaaaaaa. Aaaa aaaaa aaa aaaaaaa aaaaaaa aaaaaaaaa aaa aaa aaa aaaaaaa.",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaa aaaaaaa aaaaaaa aa aaaaaaa aaa aaaaaaaaaa aa aaa aaaaa aaaaaa aaa aaaaaaaaaa aaaa-aaaaa aaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaa aa aaaaaa aaa aaaaaaa aaaaaa aaa AA, AA, Aaaaaaa Aaaaaa, Aaaaa, aaa AA Aaaa.",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaa aaaaaaaaaa aa AA aaaaaaaa aaaaaaaaaaaaa aaa aaaaaaaa aaaaaaaa aa aaaa aaa aaaaaaaaaa, aaaa aaaaaaaa, aaaaaaaaaaa, aaaaaaaa, aaa aaaaaaaa.",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaa'a aaaaa aaaaaaa aaa aaa aaa aaaaaaa.",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaaaaa aaaaaaaaa aaa aaaaaaaaaaaaaa aaaaaaa.",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 218,
+            "averageLength": 53.083333333333336
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Rating",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 5,
+          "invalid": 0,
+          "valid": 7
+        },
+        "id": "0032",
+        "statistics": {
+          "count": 12,
+          "valid": 7,
+          "invalid": 0,
+          "empty": 5,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 8,
+          "distinctCount": 4,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 5
+            },
+            {
+              "data": "Warm",
+              "occurrences": 3
+            },
+            {
+              "data": "Cold",
+              "occurrences": 2
+            },
+            {
+              "data": "Hot",
+              "occurrences": 2
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 5
+            },
+            {
+              "pattern": "Aaaa",
+              "occurrences": 5
+            },
+            {
+              "pattern": "Aaa",
+              "occurrences": 2
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 4,
+            "averageLength": 2.1666666666666665
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [
+          {
+            "id": "AIRPORT_CODE",
+            "label": "Airport Code",
+            "frequency": 16.67
+          },
+          {
+            "id": "COMPANY",
+            "label": "Company",
+            "frequency": 16.67
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Site",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0033",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "OwnerId",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0034",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "0050O000007Sr2JQAS",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9999A999999Aa9AAAA",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 18,
+            "maximalLength": 18,
+            "averageLength": 18
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "CreatedDate",
+        "headerSize": 0,
+        "type": "date",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0035",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": 1508744627000,
+          "min": 1508744627000,
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "2017-10-23T07:43:47.000Z",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": {
+            "type": "date",
+            "items": [
+              {
+                "occurrences": 12,
+                "range": {
+                  "min": 1508716800000,
+                  "max": 1508803200000
+                }
+              }
+            ],
+            "pace": "DAY"
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "CreatedById",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0036",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "0050O000007Sr2JQAS",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9999A999999Aa9AAAA",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 18,
+            "maximalLength": 18,
+            "averageLength": 18
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "LastModifiedDate",
+        "headerSize": 0,
+        "type": "date",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0037",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": 1508744627000,
+          "min": 1508744627000,
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "2017-10-23T07:43:47.000Z",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": {
+            "type": "date",
+            "items": [
+              {
+                "occurrences": 12,
+                "range": {
+                  "min": 1508716800000,
+                  "max": 1508803200000
+                }
+              }
+            ],
+            "pace": "DAY"
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "LastModifiedById",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0038",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "0050O000007Sr2JQAS",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9999A999999Aa9AAAA",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 18,
+            "maximalLength": 18,
+            "averageLength": 18
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "SystemModstamp",
+        "headerSize": 0,
+        "type": "date",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0039",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": 1508744627000,
+          "min": 1508744627000,
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "2017-10-23T07:43:47.000Z",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": {
+            "type": "date",
+            "items": [
+              {
+                "occurrences": 12,
+                "range": {
+                  "min": 1508716800000,
+                  "max": 1508803200000
+                }
+              }
+            ],
+            "pace": "DAY"
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "LastActivityDate",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0040",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "LastViewedDate",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0041",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "LastReferencedDate",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0042",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Jigsaw",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0043",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "JigsawCompanyId",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0044",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "CleanStatus",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 12
+        },
+        "id": "0045",
+        "statistics": {
+          "count": 12,
+          "valid": 12,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "Pending",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaaaa",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 7,
+            "maximalLength": 7,
+            "averageLength": 7
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "AccountSource",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0046",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "DunsNumber",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0047",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Tradestyle",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0048",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "NaicsCode",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0049",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "NaicsDesc",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0050",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "YearStarted",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0051",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "SicDesc",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0052",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "DandbCompanyId",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 12,
+          "invalid": 0,
+          "valid": 0
+        },
+        "id": "0053",
+        "statistics": {
+          "count": 12,
+          "valid": 0,
+          "invalid": 0,
+          "empty": 12,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 11,
+          "distinctCount": 1,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 12
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "",
+              "occurrences": 12
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 0,
+            "averageLength": 0
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "CustomerPriority__c",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 3,
+          "invalid": 0,
+          "valid": 9
+        },
+        "id": "0054",
+        "statistics": {
+          "count": 12,
+          "valid": 9,
+          "invalid": 0,
+          "empty": 3,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 8,
+          "distinctCount": 4,
+          "frequencyTable": [
+            {
+              "data": "High",
+              "occurrences": 4
+            },
+            {
+              "data": "",
+              "occurrences": 3
+            },
+            {
+              "data": "Medium",
+              "occurrences": 3
+            },
+            {
+              "data": "Low",
+              "occurrences": 2
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaa",
+              "occurrences": 4
+            },
+            {
+              "pattern": "",
+              "occurrences": 3
+            },
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 3
+            },
+            {
+              "pattern": "Aaa",
+              "occurrences": 2
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 6,
+            "averageLength": 3.3333333333333335
+          }
+        },
+        "domain": "LAST_NAME",
+        "domainLabel": "Last Name",
+        "domainFrequency": 50,
+        "semanticDomains": [
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 50
+          },
+          {
+            "id": "COMPANY",
+            "label": "Company",
+            "frequency": 25
+          },
+          {
+            "id": "AIRPORT_CODE",
+            "label": "Airport Code",
+            "frequency": 16.67
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "SLA__c",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0055",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 7,
+          "distinctCount": 5,
+          "frequencyTable": [
+            {
+              "data": "Platinum",
+              "occurrences": 4
+            },
+            {
+              "data": "Silver",
+              "occurrences": 3
+            },
+            {
+              "data": "Bronze",
+              "occurrences": 2
+            },
+            {
+              "data": "Gold",
+              "occurrences": 2
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 5
+            },
+            {
+              "pattern": "Aaaaaaaa",
+              "occurrences": 4
+            },
+            {
+              "pattern": "Aaaa",
+              "occurrences": 2
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 8,
+            "averageLength": 5.833333333333333
+          }
+        },
+        "domain": "LAST_NAME",
+        "domainLabel": "Last Name",
+        "domainFrequency": 41.67,
+        "semanticDomains": [
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 41.67
+          },
+          {
+            "id": "AIRPORT",
+            "label": "Airport",
+            "frequency": 33.33
+          },
+          {
+            "id": "FIRST_NAME",
+            "label": "First Name",
+            "frequency": 25
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Active__c",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 2,
+          "invalid": 0,
+          "valid": 10
+        },
+        "id": "0056",
+        "statistics": {
+          "count": 12,
+          "valid": 10,
+          "invalid": 0,
+          "empty": 2,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 10,
+          "distinctCount": 2,
+          "frequencyTable": [
+            {
+              "data": "Yes",
+              "occurrences": 10
+            },
+            {
+              "data": "",
+              "occurrences": 2
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaa",
+              "occurrences": 10
+            },
+            {
+              "pattern": "",
+              "occurrences": 2
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 3,
+            "averageLength": 2.5
+          }
+        },
+        "domain": "ANSWER",
+        "domainLabel": "Answer",
+        "domainFrequency": 83.33,
+        "semanticDomains": [
+          {
+            "id": "ANSWER",
+            "label": "Answer",
+            "frequency": 83.33
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "NumberofLocations__c",
+        "headerSize": 0,
+        "type": "double",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0057",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": 955,
+          "min": 1,
+          "mean": 112.0909090909091,
+          "variance": 80110.09090909091,
+          "duplicateCount": 2,
+          "distinctCount": 10,
+          "frequencyTable": [
+            {
+              "data": "2.0",
+              "occurrences": 2
+            },
+            {
+              "data": "6.0",
+              "occurrences": 2
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "1.0",
+              "occurrences": 1
+            },
+            {
+              "data": "34.0",
+              "occurrences": 1
+            },
+            {
+              "data": "150.0",
+              "occurrences": 1
+            },
+            {
+              "data": "3.0",
+              "occurrences": 1
+            },
+            {
+              "data": "955.0",
+              "occurrences": 1
+            },
+            {
+              "data": "57.0",
+              "occurrences": 1
+            },
+            {
+              "data": "17.0",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9.9",
+              "occurrences": 6
+            },
+            {
+              "pattern": "99.9",
+              "occurrences": 3
+            },
+            {
+              "pattern": "999.9",
+              "occurrences": 2
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": 6,
+            "lowerQuantile": 2,
+            "upperQuantile": 57
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 1,
+                  "max": 1
+                }
+              },
+              {
+                "occurrences": 2,
+                "range": {
+                  "min": 2,
+                  "max": 2
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 3,
+                  "max": 3
+                }
+              },
+              {
+                "occurrences": 2,
+                "range": {
+                  "min": 6,
+                  "max": 6
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 17,
+                  "max": 17
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 34,
+                  "max": 34
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 57,
+                  "max": 57
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 150,
+                  "max": 150
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 955,
+                  "max": 955
+                }
+              }
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "UpsellOpportunity__c",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0058",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 8,
+          "distinctCount": 4,
+          "frequencyTable": [
+            {
+              "data": "Maybe",
+              "occurrences": 5
+            },
+            {
+              "data": "Yes",
+              "occurrences": 4
+            },
+            {
+              "data": "No",
+              "occurrences": 2
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaa",
+              "occurrences": 5
+            },
+            {
+              "pattern": "Aaa",
+              "occurrences": 4
+            },
+            {
+              "pattern": "Aa",
+              "occurrences": 2
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "textLengthSummary": {
+            "minimalLength": 0,
+            "maximalLength": 5,
+            "averageLength": 3.4166666666666665
+          }
+        },
+        "domain": "ANSWER",
+        "domainLabel": "Answer",
+        "domainFrequency": 50,
+        "semanticDomains": [
+          {
+            "id": "ANSWER",
+            "label": "Answer",
+            "frequency": 50
+          },
+          {
+            "id": "COUNTRY_CODE_ISO2",
+            "label": "Country Code ISO2",
+            "frequency": 16.67
+          },
+          {
+            "id": "LANGUAGE_CODE_ISO2",
+            "label": "Language Code ISO2",
+            "frequency": 16.67
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "SLASerialNumber__c",
+        "headerSize": 0,
+        "type": "integer",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0059",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": 9840,
+          "min": 2457,
+          "mean": 5804.454545454545,
+          "variance": 5635478.672727272,
+          "duplicateCount": 0,
+          "distinctCount": 12,
+          "frequencyTable": [
+            {
+              "data": "",
+              "occurrences": 1
+            },
+            {
+              "data": "2657",
+              "occurrences": 1
+            },
+            {
+              "data": "9840",
+              "occurrences": 1
+            },
+            {
+              "data": "2457",
+              "occurrences": 1
+            },
+            {
+              "data": "5572",
+              "occurrences": 1
+            },
+            {
+              "data": "3479",
+              "occurrences": 1
+            },
+            {
+              "data": "6654",
+              "occurrences": 1
+            },
+            {
+              "data": "7324",
+              "occurrences": 1
+            },
+            {
+              "data": "5367",
+              "occurrences": 1
+            },
+            {
+              "data": "7425",
+              "occurrences": 1
+            },
+            {
+              "data": "8350",
+              "occurrences": 1
+            },
+            {
+              "data": "4724",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9999",
+              "occurrences": 11
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": 5572,
+            "lowerQuantile": 3479,
+            "upperQuantile": 7425
+          },
+          "histogram": {
+            "type": "number",
+            "items": [
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 2457,
+                  "max": 2457
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 2657,
+                  "max": 2657
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 3479,
+                  "max": 3479
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 4724,
+                  "max": 4724
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 5367,
+                  "max": 5367
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 5572,
+                  "max": 5572
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 6654,
+                  "max": 6654
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 7324,
+                  "max": 7324
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 7425,
+                  "max": 7425
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 8350,
+                  "max": 8350
+                }
+              },
+              {
+                "occurrences": 1,
+                "range": {
+                  "min": 9840,
+                  "max": 9840
+                }
+              }
+            ]
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "SLAExpirationDate__c",
+        "headerSize": 0,
+        "type": "date",
+        "quality": {
+          "empty": 1,
+          "invalid": 0,
+          "valid": 11
+        },
+        "id": "0060",
+        "statistics": {
+          "count": 12,
+          "valid": 11,
+          "invalid": 0,
+          "empty": 1,
+          "max": 1526774400000,
+          "min": 1510876800000,
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 9,
+          "distinctCount": 3,
+          "frequencyTable": [
+            {
+              "data": "2018-05-20",
+              "occurrences": 7
+            },
+            {
+              "data": "2017-11-17",
+              "occurrences": 4
+            },
+            {
+              "data": "",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "yyyy-MM-dd",
+              "occurrences": 11
+            },
+            {
+              "pattern": "yyyy-M-d",
+              "occurrences": 4
+            },
+            {
+              "pattern": "",
+              "occurrences": 1
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": {
+            "type": "date",
+            "items": [
+              {
+                "occurrences": 4,
+                "range": {
+                  "min": 1509494400000,
+                  "max": 1512086400000
+                }
+              },
+              {
+                "occurrences": 0,
+                "range": {
+                  "min": 1512086400000,
+                  "max": 1514764800000
+                }
+              },
+              {
+                "occurrences": 0,
+                "range": {
+                  "min": 1514764800000,
+                  "max": 1517443200000
+                }
+              },
+              {
+                "occurrences": 0,
+                "range": {
+                  "min": 1517443200000,
+                  "max": 1519862400000
+                }
+              },
+              {
+                "occurrences": 0,
+                "range": {
+                  "min": 1519862400000,
+                  "max": 1522540800000
+                }
+              },
+              {
+                "occurrences": 0,
+                "range": {
+                  "min": 1522540800000,
+                  "max": 1525132800000
+                }
+              },
+              {
+                "occurrences": 7,
+                "range": {
+                  "min": 1525132800000,
+                  "max": 1527811200000
+                }
+              }
+            ],
+            "pace": "MONTH"
+          },
+          "textLengthSummary": {
+            "minimalLength": "NaN",
+            "maximalLength": "NaN",
+            "averageLength": "NaN"
+          }
+        },
+        "domain": "",
+        "domainLabel": "",
+        "domainFrequency": 0,
+        "semanticDomains": [],
+        "domainForced": false,
+        "typeForced": false
+      }
+    ],
+    "nextId": 61,
+    "lifecycle": {
+      "inProgress": false,
+      "importing": false,
+      "contentAnalyzed": true,
+      "schemaAnalyzed": true,
+      "qualityAnalyzed": true
+    },
+    "records": 12,
+    "nbLinesHeader": 1,
+    "nbLinesFooter": 0,
+    "type": "application/prs.tcomp-ds.tcomp-SalesforceDatastore",
+    "parameters": {},
+    "formatGuess": "formatGuess#tcomp",
+    "limit": null,
+    "certificationStep": "NONE",
+    "name": "dnfg,h,",
+    "author": "d0df82d9-3a21-45ff-ad5e-6c2b0a05a0e2",
+    "created": 1527847298640,
+    "lastModificationDate": 1528211405172,
+    "app-version": "2.7.0-SNAPSHOT",
+    "draft": false,
+    "encoding": "UTF8",
+    "dataSetSize": 0
+  },
+  "records": [
+    {
+      "0000": "0010O00001pX93SQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "GenePoint",
+      "0004": "Customer - Channel",
+      "0005": "",
+      "0006": "345 Shoreline Park\nMountain View, CA 94043\nUSA",
+      "0007": "Mountain View",
+      "0008": "CA",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "345 Shoreline Park\nMountain View, CA 94043\nUSA",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(650) 867-3450",
+      "0021": "(650) 867-9895",
+      "0022": "CC978213",
+      "0023": "www.genepoint.com",
+      "0024": "/services/images/photo/0010O00001pX93SQAS",
+      "0025": "3712",
+      "0026": "Biotechnology",
+      "0027": "3.0E7",
+      "0028": "265",
+      "0029": "Private",
+      "0030": "",
+      "0031": "Genomics company engaged in mapping and sequencing of the human genome and developing gene-based drugs",
+      "0032": "Cold",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "Low",
+      "0055": "Bronze",
+      "0056": "Yes",
+      "0057": "1.0",
+      "0058": "Yes",
+      "0059": "7324",
+      "0060": "2018-05-20",
+      "tdpId": 1
+    },
+    {
+      "0000": "0010O00001pX93QQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "United Oil & Gas, UK",
+      "0004": "Customer - Direct",
+      "0005": "",
+      "0006": "Kings Park, 17th Avenue, Team Valley Trading Estate,\nGateshead, Tyne and Wear NE26 3HS\nUnited Kingdom",
+      "0007": "",
+      "0008": "UK",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "Kings Park, 17th Avenue, Team Valley Trading Estate,\nGateshead, Tyne and Wear NE26 3HS\nUnited Kingdom",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "+44 191 4956203",
+      "0021": "+44 191 4956620",
+      "0022": "CD355119-A",
+      "0023": "http://www.uos.com",
+      "0024": "/services/images/photo/0010O00001pX93QQAS",
+      "0025": "4437",
+      "0026": "Energy",
+      "0027": "",
+      "0028": "24000",
+      "0029": "Public",
+      "0030": "UOS",
+      "0031": "",
+      "0032": "",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "High",
+      "0055": "Platinum",
+      "0056": "Yes",
+      "0057": "34.0",
+      "0058": "No",
+      "0059": "3479",
+      "0060": "2017-11-17",
+      "__tdpInvalid": "0023,0008",
+      "tdpId": 2
+    },
+    {
+      "0000": "0010O00001pX93RQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "United Oil & Gas, Singapore",
+      "0004": "Customer - Direct",
+      "0005": "",
+      "0006": "9 Tagore Lane\nSingapore, Singapore 787472\nSingapore",
+      "0007": "Singapore",
+      "0008": "Singapore",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "9 Tagore Lane\nSingapore, Singapore 787472\nSingapore",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(650) 450-8810",
+      "0021": "(650) 450-8820",
+      "0022": "CD355120-B",
+      "0023": "http://www.uos.com",
+      "0024": "/services/images/photo/0010O00001pX93RQAS",
+      "0025": "4437",
+      "0026": "Energy",
+      "0027": "",
+      "0028": "3000",
+      "0029": "Public",
+      "0030": "UOS",
+      "0031": "",
+      "0032": "",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "High",
+      "0055": "Platinum",
+      "0056": "Yes",
+      "0057": "6.0",
+      "0058": "Maybe",
+      "0059": "2457",
+      "0060": "2018-05-20",
+      "__tdpInvalid": "0023,0008",
+      "tdpId": 3
+    },
+    {
+      "0000": "0010O00001pX93IQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "Edge Communications",
+      "0004": "Customer - Direct",
+      "0005": "",
+      "0006": "312 Constitution Place\nAustin, TX 78767\nUSA",
+      "0007": "Austin",
+      "0008": "TX",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "312 Constitution Place\nAustin, TX 78767\nUSA",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(512) 757-6000",
+      "0021": "(512) 757-9000",
+      "0022": "CD451796",
+      "0023": "http://edgecomm.com",
+      "0024": "/services/images/photo/0010O00001pX93IQAS",
+      "0025": "6576",
+      "0026": "Electronics",
+      "0027": "1.39E8",
+      "0028": "1000",
+      "0029": "Public",
+      "0030": "EDGE",
+      "0031": "Edge, founded in 1998, is a start-up based in Austin, TX. The company designs and manufactures a device to convert music from one digital format to another. Edge sells its product through retailers and its own website.",
+      "0032": "Hot",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "Medium",
+      "0055": "Silver",
+      "0056": "Yes",
+      "0057": "2.0",
+      "0058": "Maybe",
+      "0059": "2657",
+      "0060": "2017-11-17",
+      "__tdpInvalid": "0023",
+      "tdpId": 4
+    },
+    {
+      "0000": "0010O00001pX93JQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "Burlington Textiles Corp of America",
+      "0004": "Customer - Direct",
+      "0005": "",
+      "0006": "525 S. Lexington Ave",
+      "0007": "Burlington",
+      "0008": "NC",
+      "0009": "27215",
+      "0010": "USA",
+      "0011": "",
+      "0012": "",
+      "0013": "",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(336) 222-7000",
+      "0021": "(336) 222-8000",
+      "0022": "CD656092",
+      "0023": "www.burlington.com",
+      "0024": "/services/images/photo/0010O00001pX93JQAS",
+      "0025": "546732",
+      "0026": "Apparel",
+      "0027": "3.5E8",
+      "0028": "9000",
+      "0029": "Public",
+      "0030": "BTXT",
+      "0031": "",
+      "0032": "Warm",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "",
+      "0055": "Silver",
+      "0056": "",
+      "0057": "6.0",
+      "0058": "Maybe",
+      "0059": "5367",
+      "0060": "2017-11-17",
+      "tdpId": 5
+    },
+    {
+      "0000": "0010O00001pX93KQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "Pyramid Construction Inc.",
+      "0004": "Customer - Channel",
+      "0005": "",
+      "0006": "2 Place Jussieu",
+      "0007": "Paris",
+      "0008": "",
+      "0009": "75251",
+      "0010": "France",
+      "0011": "",
+      "0012": "",
+      "0013": "2 Place Jussieu",
+      "0014": "Paris",
+      "0015": "",
+      "0016": "75251",
+      "0017": "France",
+      "0018": "",
+      "0019": "",
+      "0020": "(014) 427-4427",
+      "0021": "(014) 427-4428",
+      "0022": "CC213425",
+      "0023": "www.pyramid.com",
+      "0024": "/services/images/photo/0010O00001pX93KQAS",
+      "0025": "4253",
+      "0026": "Construction",
+      "0027": "9.5E8",
+      "0028": "2680",
+      "0029": "Public",
+      "0030": "PYR",
+      "0031": "",
+      "0032": "",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "",
+      "0055": "Silver",
+      "0056": "Yes",
+      "0057": "17.0",
+      "0058": "Maybe",
+      "0059": "9840",
+      "0060": "2018-05-20",
+      "__tdpInvalid": "0020,0021",
+      "tdpId": 6
+    },
+    {
+      "0000": "0010O00001pX93LQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "Dickenson plc",
+      "0004": "Customer - Channel",
+      "0005": "",
+      "0006": "1301 Hoch Drive",
+      "0007": "Lawrence",
+      "0008": "KS",
+      "0009": "66045",
+      "0010": "USA",
+      "0011": "",
+      "0012": "",
+      "0013": "1301 Hoch Drive",
+      "0014": "Lawrence",
+      "0015": "KS",
+      "0016": "66045",
+      "0017": "USA",
+      "0018": "",
+      "0019": "",
+      "0020": "(785) 241-6200",
+      "0021": "(785) 241-6201",
+      "0022": "CC634267",
+      "0023": "dickenson-consulting.com",
+      "0024": "/services/images/photo/0010O00001pX93LQAS",
+      "0025": "6752",
+      "0026": "Consulting",
+      "0027": "5.0E7",
+      "0028": "120",
+      "0029": "Private",
+      "0030": "",
+      "0031": "",
+      "0032": "",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "Low",
+      "0055": "Bronze",
+      "0056": "Yes",
+      "0057": "2.0",
+      "0058": "No",
+      "0059": "7425",
+      "0060": "2018-05-20",
+      "tdpId": 7
+    },
+    {
+      "0000": "0010O00001pX93MQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "Grand Hotels & Resorts Ltd",
+      "0004": "Customer - Direct",
+      "0005": "",
+      "0006": "2334 N. Michigan Avenue, Suite 1500\nChicago, IL 60601, USA",
+      "0007": "Chicago",
+      "0008": "IL",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "2334 N. Michigan Avenue, Suite 1500\nChicago, IL 60601, USA",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(312) 596-1000",
+      "0021": "(312) 596-1500",
+      "0022": "CD439877",
+      "0023": "www.grandhotels.com",
+      "0024": "/services/images/photo/0010O00001pX93MQAS",
+      "0025": "2268",
+      "0026": "Hospitality",
+      "0027": "5.0E8",
+      "0028": "5600",
+      "0029": "Public",
+      "0030": "GHTL",
+      "0031": "Chain of hotels and resorts across the US, UK, Eastern Europe, Japan, and SE Asia.",
+      "0032": "Warm",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "High",
+      "0055": "Gold",
+      "0056": "Yes",
+      "0057": "57.0",
+      "0058": "Yes",
+      "0059": "5572",
+      "0060": "2018-05-20",
+      "tdpId": 8
+    },
+    {
+      "0000": "0010O00001pX93OQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "Express Logistics and Transport",
+      "0004": "Customer - Channel",
+      "0005": "",
+      "0006": "620 SW 5th Avenue Suite 400\nPortland, Oregon 97204\nUnited States",
+      "0007": "Portland",
+      "0008": "OR",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "620 SW 5th Avenue Suite 400\nPortland, Oregon 97204\nUnited States",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(503) 421-7800",
+      "0021": "(503) 421-7801",
+      "0022": "CC947211",
+      "0023": "www.expressl&t.net",
+      "0024": "/services/images/photo/0010O00001pX93OQAS",
+      "0025": "8742",
+      "0026": "Transportation",
+      "0027": "9.5E8",
+      "0028": "12300",
+      "0029": "Public",
+      "0030": "EXLT",
+      "0031": "Commerical logistics and transportation company.",
+      "0032": "Cold",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "Medium",
+      "0055": "Platinum",
+      "0056": "Yes",
+      "0057": "150.0",
+      "0058": "Maybe",
+      "0059": "4724",
+      "0060": "2018-05-20",
+      "__tdpInvalid": "0023",
+      "tdpId": 9
+    },
+    {
+      "0000": "0010O00001pX93PQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "University of Arizona",
+      "0004": "Customer - Direct",
+      "0005": "",
+      "0006": "888 N Euclid \nHallis Center, Room 501\nTucson, AZ 85721\nUnited States",
+      "0007": "Tucson",
+      "0008": "AZ",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "888 N Euclid \nHallis Center, Room 501\nTucson, AZ 85721\nUnited States",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(520) 773-9050",
+      "0021": "(520) 773-9060",
+      "0022": "CD736025",
+      "0023": "www.universityofarizona.com",
+      "0024": "/services/images/photo/0010O00001pX93PQAS",
+      "0025": "7321",
+      "0026": "Education",
+      "0027": "",
+      "0028": "39000",
+      "0029": "Other",
+      "0030": "",
+      "0031": "Leading university in AZ offering undergraduate and graduate programs in arts and humanities, pure sciences, engineering, business, and medicine.",
+      "0032": "Warm",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "Medium",
+      "0055": "Gold",
+      "0056": "Yes",
+      "0057": "3.0",
+      "0058": "Yes",
+      "0059": "8350",
+      "0060": "2017-11-17",
+      "tdpId": 10
+    },
+    {
+      "0000": "0010O00001pX93NQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "United Oil & Gas Corp.",
+      "0004": "Customer - Direct",
+      "0005": "",
+      "0006": "1301 Avenue of the Americas \r\nNew York, NY 10019\r\nUSA",
+      "0007": "New York",
+      "0008": "NY",
+      "0009": "",
+      "0010": "",
+      "0011": "",
+      "0012": "",
+      "0013": "1301 Avenue of the Americas \r\nNew York, NY 10019\r\nUSA",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(212) 842-5500",
+      "0021": "(212) 842-5501",
+      "0022": "CD355118",
+      "0023": "http://www.uos.com",
+      "0024": "/services/images/photo/0010O00001pX93NQAS",
+      "0025": "4437",
+      "0026": "Energy",
+      "0027": "5.6E9",
+      "0028": "145000",
+      "0029": "Public",
+      "0030": "UOS",
+      "0031": "World's third largest oil and gas company.",
+      "0032": "Hot",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "High",
+      "0055": "Platinum",
+      "0056": "Yes",
+      "0057": "955.0",
+      "0058": "Yes",
+      "0059": "6654",
+      "0060": "2018-05-20",
+      "__tdpInvalid": "0023",
+      "tdpId": 11
+    },
+    {
+      "0000": "0010O00001pX93TQAS",
+      "0001": "false",
+      "0002": "",
+      "0003": "sForce",
+      "0004": "",
+      "0005": "",
+      "0006": "The Landmark @ One Market",
+      "0007": "San Francisco",
+      "0008": "CA",
+      "0009": "94087",
+      "0010": "US",
+      "0011": "",
+      "0012": "",
+      "0013": "",
+      "0014": "",
+      "0015": "",
+      "0016": "",
+      "0017": "",
+      "0018": "",
+      "0019": "",
+      "0020": "(415) 901-7000",
+      "0021": "(415) 901-7002",
+      "0022": "",
+      "0023": "www.sforce.com",
+      "0024": "/services/images/photo/0010O00001pX93TQAS",
+      "0025": "",
+      "0026": "",
+      "0027": "",
+      "0028": "",
+      "0029": "",
+      "0030": "",
+      "0031": "",
+      "0032": "",
+      "0033": "",
+      "0034": "0050O000007Sr2JQAS",
+      "0035": "2017-10-23T07:43:47.000Z",
+      "0036": "0050O000007Sr2JQAS",
+      "0037": "2017-10-23T07:43:47.000Z",
+      "0038": "0050O000007Sr2JQAS",
+      "0039": "2017-10-23T07:43:47.000Z",
+      "0040": "",
+      "0041": "",
+      "0042": "",
+      "0043": "",
+      "0044": "",
+      "0045": "Pending",
+      "0046": "",
+      "0047": "",
+      "0048": "",
+      "0049": "",
+      "0050": "",
+      "0051": "",
+      "0052": "",
+      "0053": "",
+      "0054": "",
+      "0055": "",
+      "0056": "",
+      "0057": "",
+      "0058": "",
+      "0059": "",
+      "0060": "",
+      "tdpId": 12
+    }
+  ]
+}

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.dataset.json;
 
@@ -20,17 +20,69 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Unit test for the DataSetRowIterator.
- * 
+ *
  * @see DataSetRowIterator
  */
+@RunWith(MockitoJUnitRunner.class)
 public class DataSetRowIteratorTest {
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    // protected org.talend.dataprep.schema.FormatFamilyFactory factory;
+
+    // Serializer serializer = factory.getFormatFamily(content.getFormatFamilyId()).getSerializer();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataSetRowIteratorTest.class);
+
+    @Test
+    public void should_read_dataset_serialized_salesforce_cache() throws IOException {
+
+        // given
+        DataSet dataSet = from(this.getClass().getResourceAsStream("dataset-sample_cache.json"));
+        List<DataSetRow> expectedDatasetRows = dataSet.getRecords().collect(Collectors.toList());
+
+        // when
+        final InputStream json = DataSetRowIteratorTest.class.getResourceAsStream("TCOMPContent_cache_serialized");
+        List<DataSetRow> actualDatasetRows = new ArrayList<>();
+
+        JsonParser parser = mapper.getFactory().createParser(json);
+        final DataSetRowIterator iterator = new DataSetRowIterator(parser, dataSet.getMetadata().getRowMetadata());
+        AtomicLong tdpId = new AtomicLong(1);
+        while (iterator.hasNext()) {
+            DataSetRow datasetRow = iterator.next();
+            if (!datasetRow.isEmpty()) {
+                datasetRow.setTdpId(tdpId.getAndIncrement());
+                actualDatasetRows.add(datasetRow.clone());
+            }
+        }
+
+        // then
+        Assert.assertEquals(expectedDatasetRows.size(), actualDatasetRows.size());
+        for (int i = 0; i <= actualDatasetRows.size() - 1; i++) {
+            DataSetRow actualDataSetrow = actualDatasetRows.get(i);
+            DataSetRow expectedDataSetrow = expectedDatasetRows.get(i);
+            Assert.assertEquals(actualDataSetrow.getInternalValues(), expectedDataSetrow.getInternalValues());
+            Assert.assertEquals(actualDataSetrow.getRowMetadata().hashCode(), expectedDataSetrow.getRowMetadata().hashCode());
+        }
+    }
 
     @Test
     public void should_iterate_row_with_id() throws IOException {
@@ -89,5 +141,22 @@ public class DataSetRowIteratorTest {
             values.put(format.format(i), data[i]);
         }
         return new DataSetRow(values);
+    }
+
+    /**
+     * @param json A valid JSON stream, may be <code>null</code>.
+     * @return The {@link DataSetMetadata} instance parsed from stream or <code>null</code> if parameter is null. If
+     * stream is empty, also returns <code>null</code>.
+     */
+    public DataSet from(InputStream json) {
+        try {
+            JsonParser parser = mapper.getFactory().createParser(json);
+            return mapper.readerFor(DataSet.class).readValue(parser);
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return null;
+
+        }
     }
 }

@@ -1,5 +1,21 @@
 import Immutable from 'immutable';
 
+export const PROVIDERS = {
+	test: [
+		{
+			type: 'test',
+			label: 'Test',
+			icon: 'talend-test',
+		},
+	],
+	mock: [
+		{
+			type: 'mock',
+			label: 'Mock',
+			icon: 'talend-mock',
+		},
+	],
+};
 
 export const STATE = [
 	{
@@ -53,6 +69,21 @@ export const STATE = [
 		suggestions: [
 			{
 				type: 'documentation',
+				description: 'description 1',
+				title: 'title 1',
+				url: 'url 1',
+			},
+		],
+	},
+	{
+		title: 'Nop',
+		icon: {
+			name: 'talend-nop',
+			title: 'nop',
+		},
+		suggestions: [
+			{
+				type: 'nop',
 				description: 'description 1',
 				title: 'title 1',
 				url: 'url 1',

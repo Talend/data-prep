@@ -17,6 +17,8 @@ package org.talend.dataprep.dataset.adapter;
 
 import java.util.Set;
 
+import org.talend.dataprep.api.dataset.DataSetLifecycle;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.schema.Schema;
 
 /**
@@ -63,19 +65,25 @@ public class Dataset {
 
     private boolean favorite;
 
-    // FIXME legacy DatasetMetadata fields that doesn't match Dataset Catalog fields
     // TODO remove when no support of dataset legacy mode
     private DataSetMetadataLegacy dataSetMetadataLegacy;
 
+    /**
+     * // FIXME legacy DatasetMetadata fields that doesn't match Dataset Catalog fields
+     * @see DataSetMetadata
+     */
     public static class DataSetMetadataLegacy {
 
-        public DataSetMetadataLegacy() {
-        }
-
+        private String encoding;
         private Schema schemaParserResult;
         private boolean draft;
         private String sheetName;
+        private long dataSetSize;
+        private String tag;
+        private DataSetLifecycle lifecycle;
 
+        public DataSetMetadataLegacy() {
+        }
 
         public Schema getSchemaParserResult() {
             return schemaParserResult;
@@ -99,6 +107,38 @@ public class Dataset {
 
         public void setSheetName(String sheetName) {
             this.sheetName = sheetName;
+        }
+
+        public String getEncoding() {
+            return encoding;
+        }
+
+        public void setEncoding(String encoding) {
+            this.encoding = encoding;
+        }
+
+        public long getDataSetSize() {
+            return dataSetSize;
+        }
+
+        public void setDataSetSize(long dataSetSize) {
+            this.dataSetSize = dataSetSize;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
+
+        public DataSetLifecycle getLifecycle() {
+            return lifecycle;
+        }
+
+        public void setLifecycle(DataSetLifecycle lifecycle) {
+            this.lifecycle = lifecycle;
         }
     }
 

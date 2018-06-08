@@ -12,17 +12,18 @@
 
 package org.talend.dataprep.maintenance.cache;
 
+import static org.talend.dataprep.maintenance.executor.Schedule.NIGHT;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.CacheJanitor;
+import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.tenancy.ForAll;
 
-@Component
+@MaintenanceTask(NIGHT)
 public class ScheduledCacheJanitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledCacheJanitor.class);
@@ -41,7 +42,6 @@ public class ScheduledCacheJanitor {
     /**
      * Cleans the cache every minute.
      */
-    @Scheduled(fixedDelay = 60000, initialDelay = 30 * 60 * 1000)
     public void scheduledJanitor() {
         LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
         forAll.execute(() -> janitor.janitor());

@@ -1,6 +1,7 @@
 package org.talend.dataprep.maintenance.upgrade;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.talend.dataprep.maintenance.executor.Schedule.ONCE;
 
 import java.util.function.Supplier;
 
@@ -10,7 +11,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.stereotype.Component;
+import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.upgrade.UpgradeService;
 import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
@@ -19,7 +20,7 @@ import org.talend.tenancy.ForAll;
 /**
  *
  */
-@Component
+@MaintenanceTask(ONCE)
 public class UpgradeTask {
 
     /** This class' logger. */

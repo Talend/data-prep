@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.maintenance.preparation;
 
+import static org.talend.dataprep.maintenance.executor.Schedule.NIGHT;
 import static org.talend.tql.api.TqlBuilder.neq;
 
 import java.util.ArrayList;
@@ -23,8 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tenancy.ForAll;
@@ -32,7 +33,7 @@ import org.talend.tenancy.ForAll;
 /**
  * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.
  */
-@Component
+@MaintenanceTask(NIGHT)
 @ConditionalOnProperty(value = "preparation.store.orphan.cleanup", havingValue = "true", matchIfMissing = true)
 public class PreparationCleaner {
 

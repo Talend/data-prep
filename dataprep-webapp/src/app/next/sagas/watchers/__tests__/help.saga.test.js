@@ -1,7 +1,7 @@
 import { call, take } from 'redux-saga/effects';
-import sagas from './help.saga';
-import * as effects from '../effects/help.effects';
-import { OPEN_ABOUT } from '../../constants/actions';
+import sagas from '../help.saga';
+import * as effects from '../../effects/help.effects';
+import { OPEN_ABOUT } from '../../../constants/actions';
 
 describe('help', () => {
 	describe('open', () => {

@@ -1,4 +1,4 @@
-import * as effects from './redirect.effects';
+import * as effects from '../redirect.effects';
 
 const url = 'http://url.fake';
 

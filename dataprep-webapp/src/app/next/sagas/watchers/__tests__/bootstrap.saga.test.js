@@ -1,6 +1,6 @@
 import { call } from 'redux-saga/effects';
-import { bootstrap } from './bootstrap.saga';
-import * as effects from '../effects/bootstrap.effects';
+import { bootstrap } from '../bootstrap.saga';
+import * as effects from '../../effects/bootstrap.effects';
 
 describe('bootstrap', () => {
 	describe('fetch', () => {

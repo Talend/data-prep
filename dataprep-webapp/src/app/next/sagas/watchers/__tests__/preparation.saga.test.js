@@ -1,11 +1,11 @@
 import { call, take } from 'redux-saga/effects';
-import sagas from './preparation.saga';
-import * as effects from '../effects/preparation.effects';
+import sagas from '../preparation.saga';
+import * as effects from '../../effects/preparation.effects';
 import {
 	CANCEL_RENAME_PREPARATION, FETCH_PREPARATIONS, OPEN_FOLDER,
 	OPEN_PREPARATION_CREATOR,
-	PREPARATION_DUPLICATE, RENAME_PREPARATION, SET_TITLE_EDITION_MODE
-} from '../../constants/actions';
+	PREPARATION_DUPLICATE, RENAME_PREPARATION, SET_TITLE_EDITION_MODE,
+} from '../../../constants/actions';
 
 describe('preparation', () => {
 	describe('cancelRename', () => {

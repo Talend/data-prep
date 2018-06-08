@@ -1,7 +1,7 @@
 import { call, put, select } from 'redux-saga/effects';
 import api, { actions } from '@talend/react-cmf';
 import http from './http';
-import PreparationService from '../../services/preparation/preparation.service';
+import PreparationService from '../../services/preparation.service';
 
 
 export function* cancelRename(payload) {

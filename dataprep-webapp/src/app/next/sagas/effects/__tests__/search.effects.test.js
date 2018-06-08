@@ -1,12 +1,12 @@
 import api from '@talend/react-cmf';
 import { put, all, call } from 'redux-saga/effects';
-import * as effects from './search.effects';
-import { OPEN_WINDOW } from '../../constants/actions';
+import * as effects from '../search.effects';
+import { OPEN_WINDOW } from '../../../constants/actions';
+import { default as creators } from '../../../actions';
 import { IMMUTABLE_STATE, STATE, PROVIDERS } from './search.effects.mock';
-import { default as creators } from '../../actions';
 
 
-jest.mock('../../services/search.service', () => {
+jest.mock('../../../services/search.service', () => {
 	return () => ({
 		build: (_, payload) => {
 			return [jest.fn, payload];

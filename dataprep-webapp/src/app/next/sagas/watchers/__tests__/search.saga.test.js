@@ -1,10 +1,10 @@
 import { delay } from 'redux-saga';
 import { createMockTask } from 'redux-saga/utils';
 import { take, call, fork, takeLatest, cancel } from 'redux-saga/effects';
-import sagas from './search.saga';
-import * as effects from '../effects/search.effects';
-import { SEARCH_SELECT, SEARCH_RESET, SEARCH } from '../../constants/actions';
-import { DEBOUNCE_TIMEOUT } from '../../constants/search';
+import sagas from '../search.saga';
+import * as effects from '../../effects/search.effects';
+import { SEARCH_SELECT, SEARCH_RESET, SEARCH } from '../../../constants/actions';
+import { DEBOUNCE_TIMEOUT } from '../../../constants/search';
 
 
 describe('Search', () => {

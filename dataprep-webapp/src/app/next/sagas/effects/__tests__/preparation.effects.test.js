@@ -87,4 +87,23 @@ describe('preparation', () => {
 			expect(effect.args[1]).toEqual({ name: 'newPrep0' });
 		});
 	});
+
+	describe('openFolder', () => {
+		it('should dispatch the appropriate action', () => {
+			api.saga.putActionCreator = jest.fn();
+			const gen = effects.openFolder({ id: 'test' });
+
+			gen.next();
+
+			expect(api.saga.putActionCreator).toHaveBeenCalledWith(
+				'preparation:fetch',
+				{
+					folderId: {
+						id: 'test',
+					},
+				},
+			);
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
 });

@@ -28,6 +28,8 @@ export const QUALITY = 'quality';
 export const WILDCARD = '*';
 
 export default function TqlFilterAdapterService($translate, FilterUtilsService) {
+	'ngInject';
+
 	let EMPTY_RECORDS_VALUES;
 	let INVALID_EMPTY_RECORDS_VALUES;
 	let INVALID_RECORDS_VALUES;

@@ -1,55 +1,14 @@
-import SagaTester from 'redux-saga-tester';
-import { HTTP_STATUS } from '@talend/react-cmf/lib/middlewares/http/constants';
-import httpSagas from '../http.saga';
+import { takeLatest } from 'redux-saga/effects';
+import sagas from '../http.saga';
+import * as effects from '../../effects/http.effects';
 
-xdescribe('HTTP sagas', () => {
-	it('should redirect to 403', () => {
-		const sagaTester = new SagaTester({
-			initialState: {},
-		});
-		sagaTester.start(() => httpSagas());
 
-		sagaTester.dispatch({
-			type: '@@HTTP/ERRORS',
-			error: {
-				stack: {
-					status: HTTP_STATUS.FORBIDDEN,
-				},
-			},
-		});
+describe('http', () => {
+	describe('open', () => {
+		it('should wait for HTTP errors actions', () => {
+			const gen = sagas['http:errors:handler']();
 
-		const actions = sagaTester.getCalledActions();
-		expect(actions[actions.length - 1]).toEqual({
-			type: '@@router/CALL_HISTORY_METHOD',
-			payload: {
-				method: 'replace',
-				args: [`/${HTTP_STATUS.FORBIDDEN}`],
-			},
-		});
-	});
-
-	it('should redirect to 404', () => {
-		const sagaTester = new SagaTester({
-			initialState: {},
-		});
-		sagaTester.start(() => httpSagas());
-
-		sagaTester.dispatch({
-			type: '@@HTTP/ERRORS',
-			error: {
-				stack: {
-					status: HTTP_STATUS.NOT_FOUND,
-				},
-			},
-		});
-
-		const actions = sagaTester.getCalledActions();
-		expect(actions[actions.length - 1]).toEqual({
-			type: '@@router/CALL_HISTORY_METHOD',
-			payload: {
-				method: 'replace',
-				args: [`/${HTTP_STATUS.NOT_FOUND}`],
-			},
+			expect(gen.next().value).toEqual(takeLatest('@@HTTP/ERRORS', effects.handle));
 		});
 	});
 });

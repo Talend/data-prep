@@ -11,6 +11,7 @@ describe('Search', () => {
 	describe('reset', () => {
 		it('should handle reset action and call the appropriate effect', () => {
 			const gen = sagas['search:reset']();
+
 			expect(gen.next().value).toEqual(takeLatest(SEARCH_RESET, effects.reset));
 		});
 	});
@@ -22,6 +23,7 @@ describe('Search', () => {
 
 		it('should handle search select action and call the appropriate effect', () => {
 			const gen = sagas['search:goto']();
+
 			expect(gen.next().value).toEqual(take(SEARCH_SELECT));
 			expect(gen.next(action).value).toEqual(call(effects.goto, action.payload));
 		});
@@ -35,6 +37,7 @@ describe('Search', () => {
 		it('should handle search action and call the appropriate effect', () => {
 			const gen = sagas['search:process']();
 			const task = createMockTask();
+
 			expect(gen.next().value).toEqual(take(SEARCH));
 
 			// now we need to go inside the forked generator,

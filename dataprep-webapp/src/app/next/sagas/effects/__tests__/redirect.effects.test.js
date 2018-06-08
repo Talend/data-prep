@@ -1,14 +1,14 @@
 import * as effects from '../redirect.effects';
 
-const url = 'http://url.fake';
-
-const action = {
-	payload: {
-		url,
-	},
-};
 
 describe('Window', () => {
+	const url = 'http://url.fake';
+	const action = {
+		payload: {
+			url,
+		},
+	};
+
 	describe('open', () => {
 		beforeEach(() => {
 			global.window.open = jest.fn();

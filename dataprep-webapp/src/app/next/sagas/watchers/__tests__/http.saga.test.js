@@ -4,13 +4,11 @@ import httpSagas from '../http.saga';
 
 xdescribe('HTTP sagas', () => {
 	it('should redirect to 403', () => {
-		// given
 		const sagaTester = new SagaTester({
 			initialState: {},
 		});
 		sagaTester.start(() => httpSagas());
 
-		// when
 		sagaTester.dispatch({
 			type: '@@HTTP/ERRORS',
 			error: {
@@ -20,7 +18,6 @@ xdescribe('HTTP sagas', () => {
 			},
 		});
 
-		// then
 		const actions = sagaTester.getCalledActions();
 		expect(actions[actions.length - 1]).toEqual({
 			type: '@@router/CALL_HISTORY_METHOD',
@@ -32,13 +29,11 @@ xdescribe('HTTP sagas', () => {
 	});
 
 	it('should redirect to 404', () => {
-		// given
 		const sagaTester = new SagaTester({
 			initialState: {},
 		});
 		sagaTester.start(() => httpSagas());
 
-		// when
 		sagaTester.dispatch({
 			type: '@@HTTP/ERRORS',
 			error: {
@@ -48,7 +43,6 @@ xdescribe('HTTP sagas', () => {
 			},
 		});
 
-		// then
 		const actions = sagaTester.getCalledActions();
 		expect(actions[actions.length - 1]).toEqual({
 			type: '@@router/CALL_HISTORY_METHOD',

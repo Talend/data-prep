@@ -1,4 +1,4 @@
-import windowAction from './redirect';
+import windowAction from '../redirect';
 
 describe('Redirect action', () => {
 	it('should create a CMF redirection action', () => {

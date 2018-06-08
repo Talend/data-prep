@@ -2,6 +2,7 @@ import http from '@talend/react-cmf/lib/sagas/http';
 import SearchProvider from './search.provider';
 import { DOCUMENTATION_SEARCH_URL } from '../../constants/search';
 
+
 export default class DocumentationSearchProvider extends SearchProvider {
 	constructor(categories) {
 		super();
@@ -27,12 +28,6 @@ export default class DocumentationSearchProvider extends SearchProvider {
 		];
 	}
 
-	_normalize(str) {
-		const dom = document.createElement('p');
-		dom.innerHTML = str.replace(/(<[^>]*>)/g, '');
-		return dom.innerText;
-	}
-
 	transform(data) {
 		return {
 			title: this.category.label,
@@ -42,10 +37,16 @@ export default class DocumentationSearchProvider extends SearchProvider {
 			},
 			suggestions: data.data.results.map(topic => ({
 				type: this.category.type,
-				description: this._normalize(topic.htmlExcerpt),
-				title: this._normalize(topic.htmlTitle),
+				description: normalize(topic.htmlExcerpt),
+				title: normalize(topic.htmlTitle),
 				url: topic.occurrences[0].readerUrl,
 			})),
 		};
 	}
+}
+
+function normalize(str) {
+	const dom = document.createElement('p');
+	dom.innerHTML = str.replace(/(<[^>]*>)/g, '');
+	return dom.innerText;
 }

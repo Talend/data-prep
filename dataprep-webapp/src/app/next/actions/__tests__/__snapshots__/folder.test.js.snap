@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Folder action should create an open action 1`] = `
+Object {
+  "cmf": Object {
+    "routerPush": "/preparations/42",
+  },
+  "id": 42,
+  "type": "TDP_OPEN_FOLDER",
+}
+`;

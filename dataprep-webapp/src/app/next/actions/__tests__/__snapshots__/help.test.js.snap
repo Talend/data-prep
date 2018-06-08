@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Help action should create an openAbout action 1`] = `
+Object {
+  "type": "TDP_OPEN_ABOUT",
+}
+`;

@@ -17,6 +17,8 @@ package org.talend.dataprep.dataset.adapter;
 
 import java.util.Set;
 
+import org.talend.dataprep.schema.Schema;
+
 /**
  * Representation of a Talend dataset entity.
  * Contains ONLY metadata about the dataset. Not its schema, not a sample, no analysis..
@@ -60,6 +62,45 @@ public class Dataset {
     private CertificationState certification;
 
     private boolean favorite;
+
+    // FIXME legacy DatasetMetadata fields that doesn't match Dataset Catalog fields
+    // TODO remove when no support of dataset legacy mode
+    private DataSetMetadataLegacy dataSetMetadataLegacy;
+
+    public static class DataSetMetadataLegacy {
+
+        public DataSetMetadataLegacy() {
+        }
+
+        private Schema schemaParserResult;
+        private boolean draft;
+        private String sheetName;
+
+
+        public Schema getSchemaParserResult() {
+            return schemaParserResult;
+        }
+
+        public void setSchemaParserResult(Schema schemaParserResult) {
+            this.schemaParserResult = schemaParserResult;
+        }
+
+        public boolean isDraft() {
+            return draft;
+        }
+
+        public void setDraft(boolean draft) {
+            this.draft = draft;
+        }
+
+        public String getSheetName() {
+            return sheetName;
+        }
+
+        public void setSheetName(String sheetName) {
+            this.sheetName = sheetName;
+        }
+    }
 
     public Dataset() {
     }
@@ -198,6 +239,14 @@ public class Dataset {
 
     public void setDatastore(Datastore datastore) {
         this.datastore = datastore;
+    }
+
+    public DataSetMetadataLegacy getDataSetMetadataLegacy() {
+        return dataSetMetadataLegacy;
+    }
+
+    public void setDataSetMetadataLegacy(DataSetMetadataLegacy dataSetMetadataLegacy) {
+        this.dataSetMetadataLegacy = dataSetMetadataLegacy;
     }
 
     public enum CertificationState {

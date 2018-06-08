@@ -86,6 +86,12 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                         }
                     }
 
+                    // Manage legacy fields that doesn't match data catalog concept
+                    Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = dataset.getDataSetMetadataLegacy();
+                    dataSetMetadata.setSheetName(dataSetMetadataLegacy.getSheetName());
+                    dataSetMetadata.setSchemaParserResult(dataSetMetadataLegacy.getSchemaParserResult());
+                    dataSetMetadata.setDraft(dataSetMetadataLegacy.isDraft());
+
                     return dataSetMetadata;
                 }) //
                 .build());

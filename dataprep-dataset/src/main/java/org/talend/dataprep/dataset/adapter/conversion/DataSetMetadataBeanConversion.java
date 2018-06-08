@@ -73,6 +73,13 @@ public class DataSetMetadataBeanConversion extends BeanConversionServiceWrapper 
                         dataset.setProperties(jsonNode.toString());
                     }
 
+                    // Manage legacy fields that doesn't match data catalog concept
+                    Dataset.DataSetMetadataLegacy metadataLegacy = new Dataset.DataSetMetadataLegacy();
+                    metadataLegacy.setSheetName(dataSetMetadata.getSheetName());
+                    metadataLegacy.setDraft(dataSetMetadata.isDraft());
+                    metadataLegacy.setSchemaParserResult(dataSetMetadata.getSchemaParserResult());
+                    dataset.setDataSetMetadataLegacy(metadataLegacy);
+
                     return dataset;
                 }).build() //
         ); return instance;

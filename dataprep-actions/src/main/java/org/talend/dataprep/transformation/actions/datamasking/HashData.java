@@ -52,7 +52,7 @@ public class HashData extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public String getCategory(Locale locale) {
-        return ActionCategory.COLUMNS.getDisplayName(locale);
+        return ActionCategory.DATA_MASKING.getDisplayName(locale);
     }
 
     @Override

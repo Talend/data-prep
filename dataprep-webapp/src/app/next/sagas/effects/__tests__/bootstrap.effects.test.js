@@ -1,6 +1,7 @@
 import store from 'store';
 import * as effects from '../../effects/bootstrap.effects';
 
+
 describe('bootstrap', () => {
 	describe('fetch', () => {
 		it('should update cmf store', () => {

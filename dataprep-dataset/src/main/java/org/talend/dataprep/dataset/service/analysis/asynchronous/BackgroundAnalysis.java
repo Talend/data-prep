@@ -115,11 +115,8 @@ public class BackgroundAnalysis {
                 DistributedLock datasetLock = repository.createDatasetMetadataLock(metadata.getId());
                 try {
                     datasetLock.lock();
-                    final DataSetMetadata dataSetMetadata = repository.get(dataSetId);
-                    if (dataSetMetadata != null) {
-                        dataSetMetadata.getLifecycle().qualityAnalyzed(true);
-                        repository.save(metadata);
-                    }
+                    metadata.getLifecycle().qualityAnalyzed(true);
+                    repository.save(metadata);
                 } finally {
                     datasetLock.unlock();
                 }

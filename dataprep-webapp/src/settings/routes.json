@@ -1,0 +1,53 @@
+{
+  "props": {
+    "RedirectContainer#default": {
+      "path": "/preparations"
+    },
+    "RedirectContainer#unknownRouteRedirect": {
+      "path": "/404"
+    },
+    "HttpErrorView#404": {
+      "header": {},
+      "sidepanel": {},
+      "status": 404,
+      "title": "Oops",
+      "message": "We didn't find the requested page"
+    },
+    "HttpErrorView#403": {
+      "header": {},
+      "sidepanel": {},
+      "status": 403,
+      "title": "Access denied",
+      "message": "You are not allowed to access this page"
+    }
+  },
+  "routes": {
+    "path": "/",
+    "component": "App",
+    "indexRoute": {
+      "component": "Redirect"
+    },
+    "childRoutes": [
+      {
+        "path": "404",
+        "component": "HttpErrorView",
+        "componentId": "404"
+      },
+      {
+        "path": "403",
+        "component": "HttpErrorView",
+        "componentId": "403"
+      },
+      {
+        "path": "preparations(/:folderId)",
+        "component": "HomeListView",
+        "componentId": "preparations"
+      },
+      {
+        "path": "*",
+        "component": "Redirect",
+        "componentId": "unknownRouteRedirect"
+      }
+    ]
+  }
+}

@@ -97,6 +97,7 @@ import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.StatisticsAdapter;
+import org.talend.dataprep.dataset.event.DatasetImportedEvent;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.dataset.service.analysis.synchronous.ContentAnalysis;
 import org.talend.dataprep.dataset.service.analysis.synchronous.FormatAnalysis;
@@ -252,7 +253,7 @@ public class DataSetService extends BaseDataSetService {
             predicates.add(filter);
         }
 
-        final String tqlFilter = predicates.stream().collect(Collectors.joining(" and "));
+        final String tqlFilter = String.join(" and ", predicates);
         LOG.debug("TQL Filter in use: {}", tqlFilter);
 
         // Get all data sets according to filter
@@ -380,9 +381,11 @@ public class DataSetService extends BaseDataSetService {
             LOG.debug(marker, "dataset metadata stored {}", dataSetMetadata);
 
             // Queue events (format analysis, content indexing for search...)
-            analyzeDataSet(id, true, emptyList());
+            analyzeDataSet(id, emptyList());
 
             LOG.debug(marker, "Created!");
+
+            publisher.publishEvent(new DatasetImportedEvent(id));
             return id;
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
             hypotheticalException =
@@ -699,8 +702,11 @@ public class DataSetService extends BaseDataSetService {
                 updatedDataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
                 dataSetMetadataRepository.save(updatedDataSetMetadata);
 
+                // Content was changed, so queue events (format analysis, content indexing for search...)
+                analyzeDataSet(currentDataSetMetadata.getId(), emptyList());
+
                 // publishing update event
-                publisher.publishEvent(new DatasetUpdatedEvent(updatedDataSetMetadata));
+                publisher.publishEvent(new DatasetImportedEvent(dataSetId));
 
             } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
                 LOG.warn("Dataset update {} cannot be done, new content is too big", currentDataSetMetadata.getId());
@@ -716,8 +722,6 @@ public class DataSetService extends BaseDataSetService {
                 }
                 lock.unlock();
             }
-            // Content was changed, so queue events (format analysis, content indexing for search...)
-            analyzeDataSet(currentDataSetMetadata.getId(), true, emptyList());
             return currentDataSetMetadata.getId();
         }
     }
@@ -860,7 +864,6 @@ public class DataSetService extends BaseDataSetService {
             }
 
             LOG.debug("updateDataSet: {}", dataSetMetadata);
-            publisher.publishEvent(new DatasetUpdatedEvent(dataSetMetadata));
 
             //
             // Only part of the metadata can be updated, so the original dataset metadata is loaded and updated
@@ -927,11 +930,15 @@ public class DataSetService extends BaseDataSetService {
                 formatAnalyzer.update(original, metadataForUpdate);
 
                 // save the result
+                metadataForUpdate.getLifecycle().setInProgress(true);
+                metadataForUpdate.getContent().setNbRecords(0);
                 dataSetMetadataRepository.save(metadataForUpdate);
 
                 // all good mate!! so send that to jms
                 // Asks for a in depth schema analysis (for column type information).
-                analyzeDataSet(dataSetId, true, singletonList(FormatAnalysis.class));
+                analyzeDataSet(dataSetId, singletonList(FormatAnalysis.class));
+
+                publisher.publishEvent(new DatasetUpdatedEvent(dataSetMetadata));
             } catch (TDPException e) {
                 throw e;
             } catch (Exception e) {
@@ -1070,7 +1077,7 @@ public class DataSetService extends BaseDataSetService {
 
             // analyze the updated dataset (not all analysis are performed)
             analyzeDataSet(dataSetId, //
-                    false, //
+                    //
                     asList(ContentAnalysis.class, FormatAnalysis.class, SchemaAnalysis.class));
 
         } finally {

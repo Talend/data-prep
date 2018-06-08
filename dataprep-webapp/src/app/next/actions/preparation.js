@@ -1,39 +1,48 @@
+import matchPath from '@talend/react-cmf/lib/sagaRouter/matchPath';
+
+import folder from './folder';
 import {
 	CANCEL_RENAME_PREPARATION,
-	OPEN_FOLDER,
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
 	FETCH_PREPARATIONS,
 	OPEN_PREPARATION_CREATOR,
-} from '../constants';
+	REDIRECT_WINDOW,
+} from '../constants/actions';
 
-function openPreparation(event, { id, type }) {
+
+// FIXME [NC]: folder management has nothing to do here
+// we're in the `preparation` action creators file,
+// so I think that the `type` argument should not exists
+function open(event, { type, id }) {
 	switch (type) {
 	case 'folder':
+		return folder.open(event, { id });
+	case 'preparation':
 		return {
-			type: OPEN_FOLDER,
-			id,
-			cmf: {
-				routerPush: `/preparations/${id}`,
+			type: REDIRECT_WINDOW,
+			payload: {
+				url: `${window.location.origin}/#/playground/preparation?prepid=${id}`,
 			},
 		};
-	case 'preparation':
-		/* TODO
-		- get current url
-		- pass it in the url as 'return' query param
-		- playground must redirect to this return param on close
-		*/
-		window.location.href = `${window.location.origin}/#/playground/preparation?prepid=${id}`;
-		break;
-	default:
-		break;
 	}
 }
 
-function fetchAll() {
-	// TODO [NC]: folderId
-	return { type: FETCH_PREPARATIONS };
+function fetch(payload) {
+	let folderId;
+	if (payload) {
+		folderId = payload.folderId;
+	}
+	else if (matchPath(window.location.pathname, { path: '/preparations/:folderId' })) {
+		folderId = matchPath.params.folderId;
+	}
+	return {
+		type: FETCH_PREPARATIONS,
+		payload: {
+			folderId,
+		},
+	};
 }
 
 function duplicate(event, { model }) {
@@ -74,8 +83,8 @@ function openCreator() {
 }
 
 export default {
-	openPreparation,
-	fetchAll,
+	open,
+	fetch,
 	duplicate,
 	rename,
 	cancelRename,

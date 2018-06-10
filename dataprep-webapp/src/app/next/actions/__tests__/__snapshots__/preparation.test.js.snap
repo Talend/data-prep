@@ -13,7 +13,7 @@ Object {
 exports[`Preparation action open should create an open preparation action 1`] = `
 Object {
   "payload": Object {
-    "url": "null/#/playground/preparation?prepid=42",
+    "url": "http://dataprep.com/#/playground/preparation?prepid=42",
   },
   "type": "TDP_REDIRECT_WINDOW",
 }

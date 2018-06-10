@@ -3,7 +3,6 @@ import actions from '../preparation';
 jest.mock('@talend/react-cmf/lib/sagaRouter', () => {
 	return () => ({
 		matchPath: (_, payload) => {
-			console.log('[NC] KJSHKAJHDKJASHDSJKDAKD : ', payload);
 			return 'yo';
 		},
 	});

@@ -94,7 +94,7 @@ describe('preparation', () => {
 			expect(effect.fn).toEqual(http.put);
 			expect(effect.args[0]).toEqual('/api/preparations/id0');
 			expect(effect.args[1]).toEqual({ name: 'newPrep0' });
-
+			expect(gen.next().value).toEqual(call(effects.fetch));
 			expect(gen.next().done).toBeTruthy();
 		});
 	});

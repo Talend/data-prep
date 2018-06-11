@@ -13,6 +13,7 @@
 package org.talend.dataprep.command;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.cloud.sleuth.Span.SPAN_NAME_NAME;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -165,8 +166,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     private HttpStatus status;
 
-    private final SpanInjector<HttpRequestBase> injector = new HttpRequestBaseSpanInjector();
-
     /**
      * Protected constructor.
      *
@@ -179,7 +178,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     protected GenericCommand(final HystrixCommandGroupKey group, final Map<String, String> headers) {
         this(group);
         this.headers.putAll(headers);
-
     }
 
     /** Override this method to change security token source. Executed in post construct with all fields initialized. */
@@ -278,6 +276,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         spanName.append(this.getClass().getSimpleName());
 
         final Span requestSpan = tracer.createSpan(spanName.toString(), tracer.getCurrentSpan());
+        final SpanInjector<HttpRequestBase> injector = new HttpRequestBaseSpanInjector(this.getClass());
         injector.inject(requestSpan, request);
         return requestSpan;
     }
@@ -459,13 +458,20 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      */
     private static class HttpRequestBaseSpanInjector implements SpanInjector<HttpRequestBase> {
 
+        private final Class commandClass;
+
+        private HttpRequestBaseSpanInjector(Class commandClass) {
+            this.commandClass = commandClass;
+        }
+
         public void inject(Span span, HttpRequestBase httpRequestBase) {
-            this.setIdHeader(httpRequestBase, "X-B3-TraceId", span.getTraceId());
-            this.setIdHeader(httpRequestBase, "X-B3-SpanId", span.getSpanId());
-            this.setHeader(httpRequestBase, "X-B3-Sampled", span.isExportable() ? "1" : "0");
-            this.setHeader(httpRequestBase, "X-Span-Name", span.getName());
-            this.setIdHeader(httpRequestBase, "X-B3-ParentSpanId", this.getParentId(span));
-            this.setHeader(httpRequestBase, "X-Process-Id", span.getProcessId());
+            this.setIdHeader(httpRequestBase, Span.TRACE_ID_NAME, span.getTraceId());
+            this.setIdHeader(httpRequestBase, Span.SPAN_ID_NAME, span.getSpanId());
+            this.setHeader(httpRequestBase, Span.SAMPLED_NAME, span.isExportable() ? "1" : "0");
+            this.setHeader(httpRequestBase, SPAN_NAME_NAME, span.getName());
+            this.setIdHeader(httpRequestBase, Span.PARENT_ID_NAME, this.getParentId(span));
+            this.setHeader(httpRequestBase, Span.PROCESS_ID_NAME, span.getProcessId());
+            this.setHeader(httpRequestBase, Span.SPAN_LOCAL_COMPONENT_TAG_NAME, commandClass.getName());
         }
 
         private void setHeader(HttpRequestBase request, String name, String value) {

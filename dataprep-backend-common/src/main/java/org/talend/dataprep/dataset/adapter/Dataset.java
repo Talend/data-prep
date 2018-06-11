@@ -17,7 +17,6 @@ package org.talend.dataprep.dataset.adapter;
 
 import java.util.Set;
 
-import org.talend.dataprep.api.dataset.DataSetLifecycle;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.schema.Schema;
 
@@ -78,9 +77,7 @@ public class Dataset {
         private Schema schemaParserResult;
         private boolean draft;
         private String sheetName;
-        private long dataSetSize;
         private String tag;
-        private DataSetLifecycle lifecycle;
 
         public DataSetMetadataLegacy() {
         }
@@ -117,14 +114,6 @@ public class Dataset {
             this.encoding = encoding;
         }
 
-        public long getDataSetSize() {
-            return dataSetSize;
-        }
-
-        public void setDataSetSize(long dataSetSize) {
-            this.dataSetSize = dataSetSize;
-        }
-
         public String getTag() {
             return tag;
         }
@@ -133,13 +122,6 @@ public class Dataset {
             this.tag = tag;
         }
 
-        public DataSetLifecycle getLifecycle() {
-            return lifecycle;
-        }
-
-        public void setLifecycle(DataSetLifecycle lifecycle) {
-            this.lifecycle = lifecycle;
-        }
     }
 
     public Dataset() {

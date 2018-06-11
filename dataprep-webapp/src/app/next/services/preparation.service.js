@@ -1,4 +1,4 @@
-function transform({ folders, preparations }) {
+function transform({ folders = [], preparations = [] }) {
 	const adaptedFolders = folders.map(folder => ({
 		author: folder.ownerId,
 		className: 'list-item-folder',

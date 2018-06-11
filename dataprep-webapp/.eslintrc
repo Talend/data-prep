@@ -67,6 +67,7 @@
     "module": true,
     "moment": true,
     "Parallel": true,
-    "Slick": true
+    "Slick": true,
+    "cy": true
   }
 }

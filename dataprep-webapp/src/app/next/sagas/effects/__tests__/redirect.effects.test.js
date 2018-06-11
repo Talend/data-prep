@@ -1,14 +1,14 @@
-import * as effects from './redirect.effects';
+import * as effects from '../redirect.effects';
 
-const url = 'http://url.fake';
-
-const action = {
-	payload: {
-		url,
-	},
-};
 
 describe('Window', () => {
+	const url = 'http://url.fake';
+	const action = {
+		payload: {
+			url,
+		},
+	};
+
 	describe('open', () => {
 		beforeEach(() => {
 			global.window.open = jest.fn();
@@ -16,7 +16,6 @@ describe('Window', () => {
 
 		it('should open new window', () => {
 			effects.open(action);
-
 			expect(global.window.open).toHaveBeenCalledWith(url, '_blank');
 		});
 	});
@@ -35,7 +34,6 @@ describe('Window', () => {
 
 		it('should redirect same window', () => {
 			effects.redirect(action);
-
 			expect(global.window.location.assign).toHaveBeenCalledWith(url);
 		});
 	});

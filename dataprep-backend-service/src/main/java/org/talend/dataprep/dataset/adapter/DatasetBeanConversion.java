@@ -91,11 +91,10 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                     dataSetMetadata.setSheetName(dataSetMetadataLegacy.getSheetName());
                     dataSetMetadata.setSchemaParserResult(dataSetMetadataLegacy.getSchemaParserResult());
                     dataSetMetadata.setDraft(dataSetMetadataLegacy.isDraft());
-                    dataSetMetadata.setEncoding(dataSetMetadataLegacy.getEncoding());
-                    dataSetMetadata.setDataSetSize(dataSetMetadataLegacy.getDataSetSize());
-                    dataSetMetadata.setTag(dataSetMetadataLegacy.getTag());
-                    dataSetMetadata.setLifecycle(dataSetMetadataLegacy.getLifecycle());
 
+                    dataSetMetadata.setEncoding(dataSetMetadataLegacy.getEncoding());
+
+                    dataSetMetadata.setTag(dataSetMetadataLegacy.getTag());
                     return dataSetMetadata;
                 }) //
                 .build());

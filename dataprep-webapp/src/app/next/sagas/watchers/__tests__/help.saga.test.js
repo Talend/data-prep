@@ -11,6 +11,8 @@ describe('help', () => {
 
 			expect(gen.next().value).toEqual(take(OPEN_ABOUT));
 			expect(gen.next().value).toEqual(call(effects.open));
+
+			expect(gen.next().value).toEqual(take(OPEN_ABOUT));
 		});
 	});
 });

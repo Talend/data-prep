@@ -16,7 +16,6 @@ describe('Window', () => {
 
 		it('should open new window', () => {
 			effects.open(action);
-
 			expect(global.window.open).toHaveBeenCalledWith(url, '_blank');
 		});
 	});
@@ -35,7 +34,6 @@ describe('Window', () => {
 
 		it('should redirect same window', () => {
 			effects.redirect(action);
-
 			expect(global.window.location.assign).toHaveBeenCalledWith(url);
 		});
 	});

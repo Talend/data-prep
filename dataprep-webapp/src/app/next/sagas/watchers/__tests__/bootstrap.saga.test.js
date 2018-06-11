@@ -9,6 +9,8 @@ describe('bootstrap', () => {
 			const gen = bootstrap();
 
 			expect(gen.next().value).toEqual(call(effects.fetch));
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 });

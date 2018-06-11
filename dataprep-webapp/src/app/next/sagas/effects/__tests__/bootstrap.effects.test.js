@@ -13,6 +13,8 @@ describe('bootstrap', () => {
 			expect(effect.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
 			expect(effect.collectionId).toBe('settings');
 			expect(effect.data).toEqual(expected);
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 });

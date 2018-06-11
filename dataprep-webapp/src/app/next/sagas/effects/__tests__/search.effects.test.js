@@ -31,6 +31,7 @@ describe('Search', () => {
 			expect(effect.PUT.action.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
 			expect(effect.PUT.action.collectionId).toBe('search');
 			expect(effect.PUT.action.data).toBe(null);
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});
@@ -43,6 +44,7 @@ describe('Search', () => {
 			expect(gen.next(IMMUTABLE_STATE).value).toEqual(
 				put(creators.preparation.open(null, STATE[0].suggestions[0])),
 			);
+
 			expect(gen.next().done).toBeTruthy();
 		});
 
@@ -53,6 +55,7 @@ describe('Search', () => {
 			expect(gen.next(IMMUTABLE_STATE).value).toEqual(
 				put(creators.dataset.open(null, STATE[1].suggestions[0])),
 			);
+
 			expect(gen.next().done).toBeTruthy();
 		});
 
@@ -63,6 +66,7 @@ describe('Search', () => {
 			expect(gen.next(IMMUTABLE_STATE).value).toEqual(
 				put(creators.folder.open(null, STATE[2].suggestions[0])),
 			);
+
 			expect(gen.next().done).toBeTruthy();
 		});
 
@@ -76,6 +80,7 @@ describe('Search', () => {
 					payload: { url: STATE[3].suggestions[0].url },
 				}),
 			);
+
 			expect(gen.next().done).toBeTruthy();
 		});
 
@@ -83,6 +88,7 @@ describe('Search', () => {
 			const gen = effects.goto({ sectionIndex: 4, itemIndex: 0 });
 
 			expect(gen.next().value.SELECT).toBeDefined();
+
 			expect(gen.next(IMMUTABLE_STATE).done).toBeTruthy();
 		});
 	});

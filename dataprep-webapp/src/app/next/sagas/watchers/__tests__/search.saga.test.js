@@ -26,6 +26,8 @@ describe('Search', () => {
 
 			expect(gen.next().value).toEqual(take(SEARCH_SELECT));
 			expect(gen.next(action).value).toEqual(call(effects.goto, action.payload));
+
+			expect(gen.next().value).toEqual(take(SEARCH_SELECT));
 		});
 	});
 

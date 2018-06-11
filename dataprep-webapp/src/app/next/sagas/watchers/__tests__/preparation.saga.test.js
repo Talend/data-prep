@@ -21,6 +21,8 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(CANCEL_RENAME_PREPARATION));
 			expect(gen.next(action).value).toEqual(call(effects.cancelRename, action.payload));
+
+			expect(gen.next().value).toEqual(take(CANCEL_RENAME_PREPARATION));
 		});
 	});
 
@@ -31,6 +33,8 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(PREPARATION_DUPLICATE));
 			expect(gen.next(prep).value).toEqual(call(effects.duplicate, prep));
+
+			expect(gen.next().value).toEqual(take(PREPARATION_DUPLICATE));
 		});
 	});
 
@@ -43,6 +47,8 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
 			expect(gen.next(action).value).toEqual(call(effects.fetch, action.payload));
+
+			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
 		});
 	});
 
@@ -55,6 +61,8 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(OPEN_FOLDER));
 			expect(gen.next(action).value).toEqual(call(effects.openFolder, action.id));
+
+			expect(gen.next().value).toEqual(take(OPEN_FOLDER));
 		});
 	});
 
@@ -67,6 +75,8 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(RENAME_PREPARATION));
 			expect(gen.next(action).value).toEqual(call(effects.rename, action.payload));
+
+			expect(gen.next().value).toEqual(take(RENAME_PREPARATION));
 		});
 	});
 
@@ -79,6 +89,8 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(SET_TITLE_EDITION_MODE));
 			expect(gen.next(action).value).toEqual(call(effects.setTitleEditionMode, action.payload));
+
+			expect(gen.next().value).toEqual(take(SET_TITLE_EDITION_MODE));
 		});
 	});
 
@@ -88,6 +100,8 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
 			expect(gen.next().value).toEqual(call(effects.openAbout));
+
+			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
 		});
 	});
 });

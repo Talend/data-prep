@@ -1,6 +1,5 @@
-import { call, all } from 'redux-saga/effects';
+import { call } from 'redux-saga/effects';
 import api from '@talend/react-cmf';
-import registry from '@talend/react-cmf/lib/registry';
 import * as effects from '../../effects/preparation.effects';
 import { IMMUTABLE_STATE } from './preparation.effects.mock';
 import http from '../http';
@@ -18,6 +17,7 @@ describe('preparation', () => {
 			expect(effect.collectionId).toBe('preparations');
 			const prepUpdated = effect.data.find(prep => prep.get('id') === preparation);
 			expect(prepUpdated.get('display')).toEqual('text');
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});
@@ -32,6 +32,7 @@ describe('preparation', () => {
 			expect(effect.collectionId).toBe('preparations');
 			const prepUpdated = effect.data.find(prep => prep.get('id') === preparation);
 			expect(prepUpdated.get('display')).toEqual('input');
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});
@@ -45,6 +46,8 @@ describe('preparation', () => {
 			expect(effect.key).toEqual('default');
 			expect(effect.componentName).toEqual('PreparationCreatorModal');
 			expect(effect.componentState).toEqual({ show: true });
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 
@@ -55,6 +58,8 @@ describe('preparation', () => {
 			expect(effect.fn).toEqual(http.post);
 			expect(effect.args[0].includes('/api/preparations/id0/copy?destination=Lw==&newName=test')).toBeTruthy();
 			expect(gen.next().value).toEqual(call(effects.fetch));
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 
@@ -66,6 +71,8 @@ describe('preparation', () => {
 			expect(effect.url).toEqual('/api/folders/Lw==/preparations');
 			expect(effect.cmf).toEqual({ collectionId: 'preparations' });
 			expect(effect.transform).toEqual(PreparationService.transform);
+
+			expect(gen.next().done).toBeTruthy();
 		});
 
 		it('should fetch the preparations of a folder', () => {
@@ -75,6 +82,8 @@ describe('preparation', () => {
 			expect(effect.url).toEqual('/api/folders/abcd/preparations');
 			expect(effect.cmf).toEqual({ collectionId: 'preparations' });
 			expect(effect.transform).toEqual(PreparationService.transform);
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 
@@ -85,6 +94,8 @@ describe('preparation', () => {
 			expect(effect.fn).toEqual(http.put);
 			expect(effect.args[0]).toEqual('/api/preparations/id0');
 			expect(effect.args[1]).toEqual({ name: 'newPrep0' });
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 
@@ -103,6 +114,7 @@ describe('preparation', () => {
 					},
 				},
 			);
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});

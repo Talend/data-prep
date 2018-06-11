@@ -276,6 +276,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         spanName.append(this.getClass().getSimpleName());
 
         final Span requestSpan = tracer.createSpan(spanName.toString(), tracer.getCurrentSpan());
+        requestSpan.tag(Span.SPAN_LOCAL_COMPONENT_TAG_NAME, this.getClass().getName());
         final SpanInjector<HttpRequestBase> injector = new HttpRequestBaseSpanInjector(this.getClass());
         injector.inject(requestSpan, request);
         return requestSpan;

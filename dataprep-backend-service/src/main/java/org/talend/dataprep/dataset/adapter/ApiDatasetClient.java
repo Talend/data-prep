@@ -244,6 +244,10 @@ public class ApiDatasetClient {
     }
 
     private DataSetMetadata toDataSetMetadata(Dataset dataset, boolean fullContent) {
+        if (dataset == null) {
+            return null;
+        }
+
         RowMetadata rowMetadata = getDataSetRowMetadata(dataset.getId());
         DataSetMetadata metadata = conversionService.convert(dataset, DataSetMetadata.class);
         metadata.setRowMetadata(rowMetadata);

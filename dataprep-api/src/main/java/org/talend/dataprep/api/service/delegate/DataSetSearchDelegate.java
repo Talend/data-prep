@@ -27,12 +27,12 @@ public class DataSetSearchDelegate extends AbstractSearchDelegate<DataSetMetadat
 
     @Override
     public String getSearchCategory() {
-        return "datasets";
+        return "dataset";
     }
 
     @Override
     public String getSearchLabel() {
-        return "datasets";
+        return "dataset";
     }
 
     @Override

@@ -36,6 +36,7 @@ describe('Filter monitor directive', () => {
         createElement = () => {
             element = angular.element('<filter-monitor ' +
                 'filters="filters" ' +
+	            'preview="preview" ' +
                 'on-toogle="toogle()" ' +
                 'nb-lines="nbLines" ' +
                 'nb-total-lines="nbTotalLines" ' +
@@ -77,6 +78,7 @@ describe('Filter monitor directive', () => {
             scope.percentage = 25;
             scope.nbLines = 50;
             scope.nbTotalLines = 200;
+	        scope.preview = false;
 
             //when
             createElement();
@@ -86,6 +88,21 @@ describe('Filter monitor directive', () => {
             expect(statsElement.attr('title')).toBe('25% of lines are matching your filter(s)');
             expect(statsElement.text().trim()).toBe('50/200');
         });
+
+	    it('should NOT render stats', () => {
+		    //given
+		    scope.percentage = 25;
+		    scope.nbLines = 50;
+		    scope.nbTotalLines = 200;
+		    scope.preview = true;
+
+		    //when
+		    createElement();
+
+		    //then
+		    const statsElement = element.find('.filter-count').eq(0);
+		    expect(statsElement.text().trim()).toBe('-/-');
+	    });
     });
 
     describe('actions', () => {

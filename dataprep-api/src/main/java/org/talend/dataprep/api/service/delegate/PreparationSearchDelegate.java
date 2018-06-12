@@ -34,12 +34,12 @@ public class PreparationSearchDelegate extends AbstractSearchDelegate<EnrichedPr
 
     @Override
     public String getSearchCategory() {
-        return "preparations";
+        return "preparation";
     }
 
     @Override
     public String getSearchLabel() {
-        return "preparations";
+        return "preparation";
     }
 
     @Override
@@ -53,5 +53,4 @@ public class PreparationSearchDelegate extends AbstractSearchDelegate<EnrichedPr
         return toStream(UserPreparation.class, mapper, command) //
                 .map(userPreparation -> beanConversionService.convert(userPreparation, EnrichedPreparation.class));
     }
-
 }

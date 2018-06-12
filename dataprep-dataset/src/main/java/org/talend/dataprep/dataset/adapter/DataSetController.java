@@ -15,7 +15,13 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.google.common.base.Throwables;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -38,19 +44,17 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.service.DataSetService;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.util.ConverterBasedPropertyEditor;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
+import com.google.common.base.Throwables;
 
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
 
 @RestController
@@ -126,19 +130,24 @@ public class DataSetController {
             @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
         InputStream result;
-        Callable<DataSet> dataSetCallable = dataSetService.get(false, true, EMPTY, datasetId);
+        Callable<DataSet> dataSetCallable = dataSetService.get(true, true, EMPTY, datasetId);
         Stream<DataSetRow> records = Stream.empty();
+        DataSetMetadata metadata = null;
         try {
             DataSet dataSet = dataSetCallable.call();
             if (dataSet != null) {
                 records = dataSet.getRecords();
+                metadata = dataSet.getMetadata();
             }
         } catch (Exception e) {
             Throwables.propagateIfPossible(e, RuntimeException.class);
             throw new RuntimeException("unexpected", e);
         }
 
-        DataSetMetadata metadata = dataSetService.getMetadata(datasetId).getMetadata();
+        if (metadata == null) {
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_SERVE_DATASET_CONTENT, build().put("id", datasetId));
+        }
+
         Schema schema = AvroUtils.toSchema(metadata.getRowMetadata());
         GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(schema);
 

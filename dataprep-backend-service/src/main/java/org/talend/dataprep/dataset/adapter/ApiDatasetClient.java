@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
@@ -87,10 +88,12 @@ public class ApiDatasetClient {
         return context.getBean(DatasetList.class, certification, favorite).execute();
     }
 
+    @Nullable
     public Dataset getMetadata(String id) {
         return context.getBean(DataSetGetMetadata.class, id).execute();
     }
 
+    @Nullable
     public Schema getDataSetSchema(String id) {
         return context.getBean(DataSetGetSchema.class, id).execute();
     }
@@ -149,6 +152,7 @@ public class ApiDatasetClient {
 
     /**
      * Get a dataSet by id.
+     * Convert metadata and records from {@link Dataset} to {@link DataSet}
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param withRowValidityMarker perform a quality analysis on the dataset records
@@ -157,21 +161,26 @@ public class ApiDatasetClient {
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
         DataSet dataset = new DataSet();
         // convert metadata
-        DataSetMetadata metadata = toDataSetMetadata(getMetadata(id), fullContent);
-        dataset.setMetadata(metadata);
+        Dataset metadata = getMetadata(id);
+        if (metadata == null) {
+            return null;
+        }
+        DataSetMetadata dataSetMetadata = toDataSetMetadata(metadata, fullContent);
+        dataset.setMetadata(dataSetMetadata);
+
         // convert records
-        Stream<DataSetRow> records = toDataSetRows(getDataSetContent(id), metadata.getRowMetadata());
+        Stream<DataSetRow> records = toDataSetRows(getDataSetContent(id), dataSetMetadata.getRowMetadata());
         if (withRowValidityMarker) {
-            records = records.peek(addValidity(metadata.getRowMetadata().getColumns()));
+            records = records.peek(addValidity(dataSetMetadata.getRowMetadata().getColumns()));
         }
         if (filter != null) {
-            records = records.filter(filterService.build(filter, metadata.getRowMetadata()));
+            records = records.filter(filterService.build(filter, dataSetMetadata.getRowMetadata()));
         }
         dataset.setRecords(records);
 
         // DataSet specifics
         if (!fullContent) {
-            metadata.getContent().getLimit().ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
+            dataSetMetadata.getContent().getLimit().ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
         }
         return dataset;
     }
@@ -244,9 +253,6 @@ public class ApiDatasetClient {
     }
 
     private DataSetMetadata toDataSetMetadata(Dataset dataset, boolean fullContent) {
-        if (dataset == null) {
-            return null;
-        }
 
         RowMetadata rowMetadata = getDataSetRowMetadata(dataset.getId());
         DataSetMetadata metadata = conversionService.convert(dataset, DataSetMetadata.class);

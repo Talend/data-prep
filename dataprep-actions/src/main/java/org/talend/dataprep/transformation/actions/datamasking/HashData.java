@@ -78,9 +78,11 @@ public class HashData extends AbstractActionMetadata implements ColumnAction {
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toHash = row.get(columnId);
-        if (toHash != null) {
-            row.set(ActionsUtils.getTargetColumnId(context), sha256Hex(toHash));
+        String hash = "";
+        if (toHash != null && !toHash.isEmpty()) {
+            hash = sha256Hex(toHash);
         }
+        row.set(ActionsUtils.getTargetColumnId(context), hash);
     }
 
     @Override

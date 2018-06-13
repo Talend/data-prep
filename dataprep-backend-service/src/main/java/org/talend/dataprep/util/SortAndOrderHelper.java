@@ -30,11 +30,11 @@ import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.preparation.service.UserPreparation;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -285,16 +285,16 @@ public final class SortAndOrderHelper {
      * @param orderKey the order comparator to use.
      * @return a preparation comparator from the given parameters.
      */
-    public static Comparator<Preparation> getPreparationComparator(Sort sortKey, Order orderKey) {
+    public static Comparator<PreparationDTO> getPreparationComparator(Sort sortKey, Order orderKey) {
         return getPreparationComparator(sortKey, orderKey, null);
     }
 
-    public static Comparator<Preparation> getPreparationComparator(Sort sortKey, Order orderKey,
-            Function<? super Preparation, ? extends DataSetMetadata> dataSetFinder) {
+    public static Comparator<PreparationDTO> getPreparationComparator(Sort sortKey, Order orderKey,
+                                                                      Function<PreparationDTO, ? extends DataSetMetadata> dataSetFinder) {
         Comparator<Comparable> comparisonOrder = getOrderComparator(orderKey);
 
         // Select comparator for sort (either by name or date)
-        Function<Preparation, Comparable> keyExtractor;
+        Function<PreparationDTO, Comparable> keyExtractor;
         if (sortKey == null) { // default to NAME sort
             keyExtractor = preparation -> preparation.getName().toUpperCase();
         } else {
@@ -307,21 +307,16 @@ public final class SortAndOrderHelper {
                 break;
             case AUTHOR:
                 keyExtractor = preparation -> {
-                    // TODO: make this class agnostic of the subclass of DatasetMetadata it is using
-                    // in order to just call a method to retrieve the author name
-                    if (preparation instanceof UserPreparation) {
-                        Owner owner = ((UserPreparation) preparation).getOwner();
-                        return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
-                    }
-                    return preparation.getAuthor();
+                    Owner owner = preparation.getOwner();
+                    return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
                 };
                 break;
             case CREATION_DATE:
             case DATE:
-                keyExtractor = Preparation::getCreationDate;
+                keyExtractor = PreparationDTO::getCreationDate;
                 break;
             case LAST_MODIFICATION_DATE:
-                keyExtractor = Preparation::getLastModificationDate;
+                keyExtractor = PreparationDTO::getLastModificationDate;
                 break;
             case NB_STEPS:
                 keyExtractor = preparation -> preparation.getSteps().size();

@@ -21,21 +21,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.action.ActionForm;
-import org.talend.dataprep.api.preparation.*;
-import org.talend.dataprep.api.share.Owner;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationSummary;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
-import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -53,22 +57,15 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
     public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
                                         ApplicationContext applicationContext) {
         conversionService.register(fromBean(Preparation.class) //
-                .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class) //
+                .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class, PreparationDTO.class) //
                 .using(PreparationMessage.class, (s, t) -> toPreparationMessage(s, t, applicationContext)) //
                 .using(PreparationSummary.class, (s, t) -> toStudioPreparation(s, t, applicationContext)) //
-                .using(UserPreparation.class, (s, t) -> toUserPreparation(t, applicationContext)) //
                 .build());
         return conversionService;
     }
 
     private PreparationSummary toStudioPreparation(Preparation source, PreparationSummary target,
                                                    ApplicationContext applicationContext) {
-        if (target.getOwner() == null) {
-            final Security security = applicationContext.getBean(Security.class);
-            Owner owner = new Owner(security.getUserId(), security.getUserDisplayName(), StringUtils.EMPTY);
-            target.setOwner(owner);
-        }
-
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
         final ActionRegistry actionRegistry = applicationContext.getBean(ActionRegistry.class);
 
@@ -87,15 +84,6 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             target.setAllowDistributedRun(allowDistributedRun);
         }
 
-        return target;
-    }
-
-    private UserPreparation toUserPreparation(UserPreparation target, ApplicationContext applicationContext) {
-        if (target.getOwner() == null) {
-            final Security security = applicationContext.getBean(Security.class);
-            Owner owner = new Owner(security.getUserId(), security.getUserDisplayName(), StringUtils.EMPTY);
-            target.setOwner(owner);
-        }
         return target;
     }
 

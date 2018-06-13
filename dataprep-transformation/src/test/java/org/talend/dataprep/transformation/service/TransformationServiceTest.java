@@ -12,32 +12,6 @@
 
 package org.talend.dataprep.transformation.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.preparation.store.PreparationRepository;
-import org.talend.dataquality.semantic.broadcast.TdqCategories;
-
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.zip.GZIPInputStream;
-
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -51,6 +25,34 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.cache.TransformationCacheKey;
+import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataquality.semantic.broadcast.TdqCategories;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
 
 /**
  * Integration tests on actions.
@@ -139,8 +141,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", "no_preparation_id", dataSetId, "JSON");
 
         // then
-        assertEquals(500, response.getStatusCode());
-        assertTrue(response.asString().contains("UNABLE_TO_READ_PREPARATION"));
+        assertEquals(404, response.getStatusCode());
+        assertTrue(response.asString().contains("PREPARATION_DOES_NOT_EXIST"));
     }
 
     @Test
@@ -190,7 +192,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         String prepId = createEmptyPreparationFromDataset(dsId, "uppercase prep");
         applyActionFromFile(prepId, "uppercase_action.json");
 
-        final Preparation preparation = getPreparation(prepId);
+        final PreparationDTO preparation = getPreparation(prepId);
         final String headId = preparation.getHeadId();
 
         final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //

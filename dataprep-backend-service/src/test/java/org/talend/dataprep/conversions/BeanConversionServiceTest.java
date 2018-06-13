@@ -12,12 +12,21 @@
 
 package org.talend.dataprep.conversions;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 import org.junit.After;
 import org.junit.Test;
-import org.talend.dataprep.conversions.model.*;
+import org.talend.dataprep.conversions.model.InheritedModel;
+import org.talend.dataprep.conversions.model.InheritedModelA;
+import org.talend.dataprep.conversions.model.InheritedModelB;
+import org.talend.dataprep.conversions.model.ModelA;
+import org.talend.dataprep.conversions.model.ModelA1;
+import org.talend.dataprep.conversions.model.ModelA2;
+import org.talend.dataprep.conversions.model.ModelB;
 
 public class BeanConversionServiceTest {
 
@@ -75,7 +84,7 @@ public class BeanConversionServiceTest {
         // Then
         final ModelA source = new ModelA("test");
         final ModelA convert = conversionService.convert(source, ModelA.class);
-        assertTrue(source != convert);
+        assertTrue(source == convert);
         assertEquals(ModelA.class, convert.getClass());
         assertEquals("test", convert.getProperty());
     }

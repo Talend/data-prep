@@ -40,6 +40,7 @@ export default function PreparationRestService($http, RestURLs) {
         // getter : list, content, details
 		getContent,
 		getDetails,
+        getSummary,
 		getMetadata,
 		isExportPossible,
 
@@ -107,6 +108,18 @@ export default function PreparationRestService($http, RestURLs) {
      */
 	function getDetails(preparationId) {
 		return $http.get(`${RestURLs.preparationUrl}/${preparationId}/details`).then(response => response.data);
+	}
+
+    /**
+     * @ngdoc method
+     * @name getSummary
+     * @methodOf data-prep.services.preparation.service:PreparationRestService
+     * @param {string} preparationId The preparation id to load
+     * @description Get current preparation summary
+     * @returns {promise} The GET promise
+     */
+	function getSummary(preparationId) {
+		return $http.get(`${RestURLs.preparationUrl}/${preparationId}/summary`).then(response => response.data);
 	}
 
     //---------------------------------------------------------------------------------

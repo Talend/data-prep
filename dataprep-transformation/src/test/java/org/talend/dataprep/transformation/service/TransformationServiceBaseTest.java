@@ -36,7 +36,7 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.test.SpringLocalizationRule;
@@ -209,13 +209,13 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
                 .statusCode(is(200));
     }
 
-    protected Preparation getPreparation(final String preparationId) throws IOException {
+    protected PreparationDTO getPreparation(final String preparationId) throws IOException {
         final String json = given().when() //
                 .expect().statusCode(200).log().ifError() //
                 .get("/preparations/{id}/details", preparationId) //
                 .asString();
 
-        return mapper.readerFor(Preparation.class).readValue(json);
+        return mapper.readerFor(PreparationDTO.class).readValue(json);
 
     }
 }

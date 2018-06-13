@@ -506,7 +506,7 @@ public class DataSetService extends BaseDataSetService {
         }
         DataSet dataSet = new DataSet();
         dataSet.setMetadata(conversionService.convert(metadata, UserDataSetMetadata.class));
-        LOG.info("found dataset {} for #{}", dataSet.getMetadata().getName(), dataSetId);
+        LOG.debug("found dataset {} for #{}", dataSet.getMetadata().getName(), dataSetId);
         return dataSet;
     }
 

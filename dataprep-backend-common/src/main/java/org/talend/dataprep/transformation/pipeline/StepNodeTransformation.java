@@ -12,6 +12,14 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
+import static java.util.Optional.ofNullable;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -23,14 +31,6 @@ import org.talend.dataprep.transformation.pipeline.node.CompileNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-
-import static java.util.Optional.ofNullable;
-
 /**
  * An {@link Visitor} for node that groups all step related nodes into a {@link StepNode}.
  */
@@ -38,9 +38,9 @@ class StepNodeTransformation extends Visitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StepNodeTransformation.class);
 
-    private final Iterator<Step> steps;
+    private final Iterator<String> steps;
 
-    private final Function<Step, RowMetadata> previousStepRowMetadataSupplier;
+    private final Function<String, RowMetadata> previousStepRowMetadataSupplier;
 
     private State DISPATCH = new Dispatch();
 
@@ -57,8 +57,8 @@ class StepNodeTransformation extends Visitor {
      * @param steps                           The {@link Step steps} to be used when creating new {@link StepNode}.
      * @param previousStepRowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with step.
      */
-    StepNodeTransformation(List<Step> steps, Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
-        if (!steps.isEmpty() && !Step.ROOT_STEP.getId().equals(steps.get(0).getId())) {
+    StepNodeTransformation(List<String> steps, Function<String, RowMetadata> previousStepRowMetadataSupplier) {
+        if (!steps.isEmpty() && !Step.ROOT_STEP.getId().equals(steps.get(0))) {
             // Code expects root step to be located at the beginning of iterator.
             Collections.reverse(steps);
         }
@@ -70,7 +70,7 @@ class StepNodeTransformation extends Visitor {
         if (steps.hasNext()) {
             AtomicInteger remainingCount = new AtomicInteger(0);
             steps.forEachRemaining(s -> {
-                if (!Step.ROOT_STEP.getId().equals(s.getId())) {
+                if (!Step.ROOT_STEP.getId().equals(s)) {
                     LOGGER.warn("Remaining step #{}: {}", remainingCount.get(), s);
                     remainingCount.incrementAndGet();
                 }
@@ -136,9 +136,9 @@ class StepNodeTransformation extends Visitor {
                 }
 
                 // insert a StepNode within the pipeline builder
-                Step nextStep = steps.next();
-                if (Step.ROOT_STEP.getId().equals(nextStep.getId())) {
-                    LOGGER.debug("Unable to use step '{}' (root step).", nextStep.getId());
+                String nextStep = steps.next();
+                if (Step.ROOT_STEP.getId().equals(nextStep)) {
+                    LOGGER.debug("Unable to use step '{}' (root step).", nextStep);
                     if (steps.hasNext()) {
                         nextStep = steps.next();
                     } else {
@@ -169,9 +169,9 @@ class StepNodeTransformation extends Visitor {
 
         private final Node previous;
 
-        private final Step step;
+        private final String step;
 
-        private StepState(Node previous, Step step) {
+        private StepState(Node previous, String step) {
             this.previous = previous;
             this.step = step;
         }

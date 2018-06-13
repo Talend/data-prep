@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
@@ -25,15 +27,13 @@ import org.apache.http.entity.StringEntity;
 import org.springframework.http.HttpStatus;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
-import static org.talend.dataprep.command.Defaults.pipeStream;
 
 /**
  * Base class for preview commands.
@@ -44,7 +44,7 @@ public abstract class PreviewAbstract extends GenericCommand<InputStream> {
     private PreviewParameters parameters;
 
     /** The preparation to deal with (may be null if dealing with dataset). */
-    protected final Preparation preparation;
+    protected final PreparationDTO preparation;
 
     /** The preparation actions to deal with (may be null if dealing with dataset). */
     protected final List<Action> actions;
@@ -53,7 +53,7 @@ public abstract class PreviewAbstract extends GenericCommand<InputStream> {
      * Default constructor.
      */
     // private constructor to ensure the IoC
-    protected PreviewAbstract(Preparation preparation, List<Action> actions) {
+    protected PreviewAbstract(PreparationDTO preparation, List<Action> actions) {
         super(GenericCommand.PREPARATION_GROUP);
         this.preparation = preparation;
         this.actions = actions;

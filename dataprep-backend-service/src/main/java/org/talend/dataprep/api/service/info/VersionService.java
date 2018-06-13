@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +43,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(value = "version", basePath = "/version", description = "versions of running application")
 public class VersionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionService.class);
 
     private static final String UNDEFINED_VERSION_ID = "N/A";
 

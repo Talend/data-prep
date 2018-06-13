@@ -15,9 +15,12 @@ package org.talend.dataprep.preparation.service;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -26,10 +29,20 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
@@ -47,6 +60,9 @@ public class PreparationController {
 
     @Autowired
     private PreparationService preparationService;
+
+    @Autowired
+    private BeanConversionService beanConversionService;
 
     /**
      * Create a preparation from the http request body.
@@ -80,7 +96,7 @@ public class PreparationController {
             @ApiParam(value = "Sort key (by name or date).") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc).") @RequestParam(defaultValue = "desc") Order order) {
         LOGGER.debug("Get list of preparations (summary).");
-        return preparationService.listAll(name, folderPath, path, sort, order).map(Preparation::id);
+        return preparationService.listAll(name, folderPath, path, sort, order).map(PreparationDTO::getId);
     }
 
     /**
@@ -93,7 +109,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/details", method = GET)
     @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations details the current user is allowed to see. Creation date is always displayed in UTC time zone. This operation return all details on the preparations.")
     @Timed
-    public Stream<UserPreparation> listAll(
+    public Stream<PreparationDTO> listAll(
             @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
             @ApiParam(name = "folder_path", value = "Filter preparations by folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
             @ApiParam(name = "path", value = "Filter preparations by full path (<folder path>/<preparation name>).") @RequestParam(required = false, name = "path") String path,
@@ -110,7 +126,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/summaries", method = GET)
     @ApiOperation(value = "List all preparations", notes = "Returns the list of preparations summaries the current user is allowed to see. Creation date is always displayed in UTC time zone.")
     @Timed
-    public Stream<PreparationSummary> listSummary(
+    public Stream<PreparationDTO> listSummary(
             @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
             @ApiParam(name = "folder_path", value = "Filter preparations by folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
             @ApiParam(name = "path", value = "Filter preparations by full path (<folder path>/<preparation name>).") @RequestParam(required = false, name = "path") String path,
@@ -144,7 +160,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/search", method = GET)
     @ApiOperation(value = "Search for preparations details", notes = "Returns the list of preparations details that match the search criteria.")
     @Timed
-    public Stream<UserPreparation> searchPreparations(
+    public Stream<PreparationDTO> searchPreparations(
             @RequestParam(required = false) @ApiParam("dataSetId") String dataSetId,
             @RequestParam(required = false) @ApiParam(value = "Id of the folder where to look for preparations") String folderId,
             @RequestParam(required = false) @ApiParam(value = "Path of the folder where to look for preparations") String folderPath,
@@ -169,7 +185,7 @@ public class PreparationController {
     public String copy(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to copy") String preparationId,
             @ApiParam(value = "The name of the copied preparation.") @RequestParam(required = false) String name,
-            @ApiParam(value = "The folder path to create the copy.") @RequestParam() String destination) throws IOException {
+            @ApiParam(value = "The folder path to create the copy.") @RequestParam() String destination) {
         return preparationService.copy(preparationId, name, destination);
     }
 
@@ -187,8 +203,7 @@ public class PreparationController {
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to move") String preparationId,
             @ApiParam(value = "The original folder path of the preparation.") @RequestParam String folder,
             @ApiParam(value = "The new folder path of the preparation.") @RequestParam String destination,
-            @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "") String newName)
-            throws IOException {
+            @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "") String newName) {
         preparationService.move(preparationId, folder, destination, newName);
     }
 
@@ -215,7 +230,7 @@ public class PreparationController {
     @ApiOperation(value = "Create a preparation", notes = "Returns the id of the updated preparation.")
     @Timed
     public String update(@ApiParam("id") @PathVariable("id") String id,
-                         @RequestBody @ApiParam("preparation") final PreparationMessage preparation) {
+                         @RequestBody @ApiParam("preparation") final PreparationDTO preparation) {
         return preparationService.update(id, preparation);
     }
 
@@ -233,6 +248,13 @@ public class PreparationController {
                                      @RequestBody @ApiParam("rowMetadata") final RowMetadata rowMetadata) {
         preparationService.updatePreparationStep(stepId, rowMetadata);
         return stepId;
+    }
+
+    @RequestMapping(value = "/preparations/steps/{stepId}/metadata", method = DELETE)
+    @ApiOperation(value = "Deletes the metadata associated with step")
+    @Timed
+    public void invalidateStepMetadata(@ApiParam("stepId") @PathVariable("stepId") String stepId) {
+        preparationService.invalidatePreparationStep(stepId);
     }
 
     /**
@@ -274,7 +296,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/{id}/details", method = GET)
     @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
     @Timed
-    public PreparationMessage getDetails( //
+    public PreparationDTO getDetails( //
             @ApiParam("id") @PathVariable("id") String id, //
             @ApiParam(value = "stepId", defaultValue = "head") @RequestParam(value = "stepId", defaultValue = "head") String stepId) {
         return preparationService.getPreparationDetails(id, stepId);
@@ -289,7 +311,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/{id}", method = GET)
     @ApiOperation(value = "Get preparation", notes = "Return the preparation with provided id.")
     @Timed
-    public Preparation get(@ApiParam("id") @PathVariable("id") String id) {
+    public PreparationDTO get(@ApiParam("id") @PathVariable("id") String id) {
         return preparationService.getPreparation(id);
     }
 
@@ -441,6 +463,6 @@ public class PreparationController {
                   notes = "Just find the step for this ID.")
     @Timed
     public Step getStep(@PathVariable("id") final String stepId) {
-        return preparationService.getStep(stepId);
+        return beanConversionService.convert(preparationService.getStep(stepId), Step.class);
     }
 }

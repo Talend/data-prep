@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import org.talend.dataprep.api.preparation.*;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.metrics.Timed;
 import org.talend.tql.model.Expression;
 
 /**
@@ -50,12 +51,14 @@ public class PersistentPreparationRepository implements PreparationRepository {
         }
     }
 
+    @Timed
     @Override
     public <T extends Identifiable> boolean exist(Class<T> clazz, Expression expression) {
         final Class<? extends Identifiable> targetClass = selectPersistentClass(clazz);
         return delegate.exist(targetClass, expression);
     }
 
+    @Timed
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
@@ -72,12 +75,14 @@ public class PersistentPreparationRepository implements PreparationRepository {
         }
     }
 
+    @Timed
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression expression) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
         return Stream.concat(delegate.list(persistentClass, expression).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz, clazz));
     }
 
+    @Timed
     @Override
     public void add(Identifiable object) {
         final List<? extends Identifiable> objects = PreparationUtils.scatter(object).stream() //
@@ -90,6 +95,7 @@ public class PersistentPreparationRepository implements PreparationRepository {
         delegate.add(objects);
     }
 
+    @Timed
     @Override
     public void add(Collection<? extends Identifiable> objects) {
         for (Identifiable object : objects) {
@@ -97,13 +103,20 @@ public class PersistentPreparationRepository implements PreparationRepository {
         }
     }
 
+    @Timed
     @Override
     public <T extends Identifiable> T get(String id, Class<T> clazz) {
         final Class<T> targetClass = (Class<T>) selectPersistentClass(clazz);
         Object beanToConvert;
         if (clazz.equals(Step.class) && Step.ROOT_STEP.getId().equals(id)) {
             return (T) Step.ROOT_STEP;
-        } else if (clazz.equals(PreparationActions.class) && PreparationActions.ROOT_ACTIONS.getId().equals(id)) {
+        } else if (clazz.equals(PersistentStep.class) && Step.ROOT_STEP.getId().equals(id)) {
+            final PersistentStep persistentStep = new PersistentStep();
+            persistentStep.setParentId(null);
+            persistentStep.setId(Step.ROOT_STEP.id());
+            persistentStep.setContent(PreparationActions.ROOT_ACTIONS.id());
+            return (T) persistentStep;
+        }  else if (clazz.equals(PreparationActions.class) && PreparationActions.ROOT_ACTIONS.getId().equals(id)) {
             return (T) PreparationActions.ROOT_ACTIONS;
         } else {
             beanToConvert = delegate.get(id, targetClass);
@@ -111,22 +124,26 @@ public class PersistentPreparationRepository implements PreparationRepository {
         return beanConversionService.convert(beanToConvert, clazz);
     }
 
+    @Timed
     @Override
     public void clear() {
         delegate.clear();
     }
 
+    @Timed
     @Override
     public void remove(Identifiable object) {
         final Class<? extends Identifiable> targetClass = selectPersistentClass(object.getClass());
         delegate.remove(beanConversionService.convert(object, targetClass));
     }
 
+    @Timed
     @Override
     public <T extends Identifiable> void remove(Class<T> clazz, Expression filter) {
         list(clazz, filter).forEach(this::remove);
     }
 
+    @Timed
     @Override
     public long count(Class<? extends Identifiable> clazz, Expression filter) {
         return delegate.count(clazz, filter);

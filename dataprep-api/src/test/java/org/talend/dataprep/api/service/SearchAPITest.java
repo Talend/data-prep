@@ -16,7 +16,9 @@ package org.talend.dataprep.api.service;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -158,11 +160,6 @@ public class SearchAPITest extends ApiServiceTestBase {
         assertSearchItems(rootNode, "folders", "path", expectedFoldersPath);
         assertSearchItems(rootNode, "datasets", "id", expectedDatasetsId);
         assertSearchItems(rootNode, "preparations", "id", expectedPreparationsId);
-
-        final JsonNode preparations = rootNode.get("preparations");
-        for (int i = 0; i < preparations.size(); ++i) {
-            assertTrue(preparations.get(i).has("folder"));
-        }
     }
 
     private void assertSearchItems(final JsonNode rootNode, final String prop, final String field,

@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.datamasking;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -79,7 +80,7 @@ public class HashData extends AbstractActionMetadata implements ColumnAction {
         final String columnId = context.getColumnId();
         final String toHash = row.get(columnId);
         String hash = "";
-        if (toHash != null && !toHash.isEmpty()) {
+        if (!StringUtils.isEmpty(toHash)) {
             hash = sha256Hex(toHash);
         }
         row.set(ActionsUtils.getTargetColumnId(context), hash);

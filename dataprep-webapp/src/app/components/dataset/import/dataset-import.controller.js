@@ -173,11 +173,14 @@ export default class DatasetImportCtrl {
 	 * @name onDatastoreFormSubmit
 	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Datastore form change handler
-	 * @param event Original event
-	 * @param changes Form changes
+	 * @param uiSpecs All data as form properties
+	 * @param definitionName ID attached to the form
 	 */
-	onDatastoreFormSubmit(event, changes) {
-		const { formData, definitionName = (this.locationType || this.item.location.componentType || LIVE_LOCATION_TYPE) } = changes;
+	onDatastoreFormSubmit(
+		uiSpecs,
+		definitionName = (this.locationType || this.item.location.componentType || LIVE_LOCATION_TYPE)
+	) {
+		const { formData } = uiSpecs;
 		if (this.submitLock) {
 			const formsData = {
 				dataStoreProperties: formData,
@@ -251,11 +254,10 @@ export default class DatasetImportCtrl {
 	 * @methodOf data-prep.dataset-import:DatasetImportCtrl
 	 * @description Dataset form submit handler
 	 * @see onDatastoreFormSubmit
-	 * @param event Original event
-	 * @param changes Form changes
+	 * @param uiSpecs
 	 */
-	onDatasetFormSubmit(event, changes) {
-		const { formData } = changes;
+	onDatasetFormSubmit(uiSpecs) {
+		const { formData } = uiSpecs;
 		this._simulateDatastoreSubmit(formData);
 	}
 

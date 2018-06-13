@@ -121,6 +121,27 @@ public class HashDataTest extends AbstractMetadataBaseTest<HashData> {
     }
 
     @Test
+    public void should_not_hash_empty() {
+        //given
+        final Map<String, String> values = new LinkedHashMap<>();
+        values.put("0000", "");
+        values.put("0001", "Pomme de terre");
+        values.put("0002", "06/06/2018");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "");
+        expectedValues.put("0001", "Pomme de terre");
+        expectedValues.put("0002", "06/06/2018");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void should_accept_column() {
         assertTrue(action.acceptField(getColumn(Type.ANY)));
     }

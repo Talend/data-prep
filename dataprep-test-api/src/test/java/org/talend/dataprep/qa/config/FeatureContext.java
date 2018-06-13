@@ -85,10 +85,6 @@ public class FeatureContext {
         return name + TI_SUFFIX_UID;
     }
 
-    public static String removeSuffixName(String name) {
-        return name.substring(0, name.indexOf(TI_SUFFIX_UID));
-    }
-
     @PostConstruct
     public void init() {
         folders = folderUtil.getEmptyReverseSortedSet();
@@ -188,11 +184,6 @@ public class FeatureContext {
         return new ArrayList<>(datasetIdByName.values());
     }
 
-
-    @NotNull
-    public List<String> getDatasetNames(){
-        return new ArrayList<>(datasetIdByName.keySet());
-    }
 
     /**
      * List all created preparation id.

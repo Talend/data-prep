@@ -96,7 +96,6 @@ public class HttpClient {
 
         connectionManager.setMaxTotal(maxPoolSize);
         connectionManager.setDefaultMaxPerRoute(maxPerRoute);
-        connectionManager.setValidateAfterInactivity(defaultKeepAlive * 1000);
         return connectionManager;
     }
 

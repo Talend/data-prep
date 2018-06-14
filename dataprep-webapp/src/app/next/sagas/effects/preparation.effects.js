@@ -64,3 +64,7 @@ export function* setTitleEditionMode(payload) {
 export function* openAbout() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
 }
+
+export function* openCopyMove() {
+	yield put(actions.components.mergeState('PreparationCopyMoveModal', 'default', { show: true }));
+}

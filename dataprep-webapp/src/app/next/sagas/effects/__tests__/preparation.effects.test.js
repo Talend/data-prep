@@ -37,9 +37,9 @@ describe('preparation', () => {
 		});
 	});
 
-	describe('openAbout', () => {
+	describe('openPreparationCreator', () => {
 		it('should update PreparationCreatorModal state in the cmf store', () => {
-			const gen = effects.openAbout();
+			const gen = effects.openPreparationCreator();
 			const effect = gen.next().value.PUT.action;
 
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');

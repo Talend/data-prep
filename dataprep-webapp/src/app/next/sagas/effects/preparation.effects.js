@@ -61,7 +61,7 @@ export function* setTitleEditionMode(payload) {
 	yield put(actions.collections.addOrReplace('preparations', updated));
 }
 
-export function* openAbout() {
+export function* openPreparationCreator() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
 }
 

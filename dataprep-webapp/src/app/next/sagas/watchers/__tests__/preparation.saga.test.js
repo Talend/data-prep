@@ -94,12 +94,12 @@ describe('preparation', () => {
 		});
 	});
 
-	describe('openAbout', () => {
-		it('should wait for OPEN_PREPARATION_CREATOR action and call openAbout', () => {
-			const gen = sagas['preparation:about:open']();
+	describe('openPreparationCreator', () => {
+		it('should wait for OPEN_PREPARATION_CREATOR action and call openPreparationCreator', () => {
+			const gen = sagas['preparation:creator:open']();
 
 			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
-			expect(gen.next().value).toEqual(call(effects.openAbout));
+			expect(gen.next().value).toEqual(call(effects.openPreparationCreator));
 
 			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
 		});

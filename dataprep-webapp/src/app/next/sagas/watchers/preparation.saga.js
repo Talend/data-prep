@@ -53,10 +53,10 @@ function* setTitleEditionMode() {
 	}
 }
 
-function* openAbout() {
+function* openPreparationCreator() {
 	while (true) {
 		yield take(OPEN_PREPARATION_CREATOR);
-		yield call(effects.openAbout);
+		yield call(effects.openPreparationCreator);
 	}
 }
 
@@ -67,5 +67,5 @@ export default {
 	'preparation:folder:open': openFolder,
 	'preparation:rename:submit': rename,
 	'preparation:rename': setTitleEditionMode,
-	'preparation:about:open': openAbout,
+	'preparation:creator:open': openPreparationCreator,
 };

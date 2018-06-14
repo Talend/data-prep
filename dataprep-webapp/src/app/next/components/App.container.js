@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { I18nextProvider } from 'react-i18next';
 import { IconsProvider } from '@talend/react-components';
 import { Notification, ShortcutManager } from '@talend/react-containers';
 import AppLoader from '@talend/react-containers/lib/AppLoader';
-
-import { I18nextProvider } from 'react-i18next';
+import { default as components } from './';
 import i18n from './../../i18n';
-import AboutModal from './AboutModal';
-import PreparationCreatorModal from './PreparationCreator';
 
 export default function App(props) {
 	return (
@@ -17,9 +15,10 @@ export default function App(props) {
 					<IconsProvider />
 					<ShortcutManager view="shortcuts" />
 					<Notification />
-					<AboutModal />
-					<PreparationCreatorModal />
-					{props.children}
+					<components.AboutModal />
+					<components.PreparationCreatorModal />
+					<components.PreparationCopyMoveModal />
+					{ props.children }
 				</div>
 			</AppLoader>
 		</I18nextProvider>

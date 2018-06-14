@@ -123,9 +123,9 @@ describe('Dataset Rest Service', () => {
 		it('should call dataset list by name and return the first dataset', inject(($rootScope, $q, DatasetRestService, RestURLs) => {
 			//given
 			let dataset = null;
-			const searchResult = { datasets: [{ name: 'Customers' }] };
+			const searchResult = { dataset: [{ name: 'Customers' }] };
 			$httpBackend
-				.expectGET(`${RestURLs.searchUrl}?name=toto&strict=true&filter=datasets`)
+				.expectGET(`${RestURLs.searchUrl}?name=toto&strict=true&categories=dataset`)
 				.respond(200, searchResult);
 
 			//when
@@ -137,7 +137,7 @@ describe('Dataset Rest Service', () => {
 			$rootScope.$digest();
 
 			//then
-			expect(dataset).toEqual(searchResult.datasets[0]);
+			expect(dataset).toEqual(searchResult.dataset[0]);
 		}));
 
 		it('should call dataset list by name and return undefined', inject(($rootScope, $q, DatasetRestService, RestURLs) => {
@@ -145,7 +145,7 @@ describe('Dataset Rest Service', () => {
 			let dataset = null;
 			const searchResult = {};
 			$httpBackend
-				.expectGET(`${RestURLs.searchUrl}?name=toto&strict=true&filter=datasets`)
+				.expectGET(`${RestURLs.searchUrl}?name=toto&strict=true&categories=dataset`)
 				.respond(200, searchResult);
 
 			//when

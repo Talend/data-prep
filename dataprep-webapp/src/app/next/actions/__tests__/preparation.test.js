@@ -101,7 +101,7 @@ describe('Preparation action', () => {
 	});
 
 	it('should create an open creator action', () => {
-		const action = actions.openCreator();
+		const action = actions.openPreparationCreatorModal();
 
 		expect(action).toMatchSnapshot();
 	});

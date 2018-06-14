@@ -21,7 +21,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 				onHide={this.close}
 			>
 				<Modal.Header>
-					<Modal.Title>Talend Data Preparation</Modal.Title>
+					<Modal.Title>Copy / Move</Modal.Title>
 				</Modal.Header>
 
 				<Modal.Body>Modal content</Modal.Body>

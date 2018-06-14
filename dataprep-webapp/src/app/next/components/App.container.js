@@ -13,7 +13,7 @@ export default function App(props) {
 			<AppLoader>
 				<div className="tdp">
 					<IconsProvider />
-					<ShortcutManager view="shortcuts" />
+					<ShortcutManager />
 					<Notification />
 					<components.AboutModal />
 					<components.PreparationCreatorModal />

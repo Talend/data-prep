@@ -51,10 +51,16 @@
       "label": "Add preparation",
       "actionCreator": "preparation:add:open"
     },
+    "preparation:copy:move:open": {
+      "id": "preparation:copy:move:open",
+      "icon": "talend-files-o",
+      "label": "Copy/Move preparation",
+      "actionCreator": "preparation:copy:move:open"
+    },
     "preparation:rename": {
       "id": "preparation:rename",
       "icon": "talend-pencil",
-      "label": "Rename",
+      "label": "Edit name",
       "actionCreator": "preparation:rename"
     },
     "preparation:duplicate": {
@@ -226,7 +232,8 @@
           ],
           "items": [
             "preparation:rename",
-            "preparation:duplicate"
+            "preparation:duplicate",
+            "preparation:copy:move:open"
           ],
           "editSubmit": "preparation:edit:submit",
           "editCancel": "preparation:edit:cancel"

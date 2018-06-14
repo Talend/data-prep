@@ -8,6 +8,7 @@ import {
 	FETCH_PREPARATIONS,
 	OPEN_PREPARATION_CREATOR,
 	REDIRECT_WINDOW,
+	OPEN_COPY_MOVE_MODAL,
 } from '../constants/actions';
 
 
@@ -77,8 +78,12 @@ function setTitleEditionMode(event, { model }) {
 	};
 }
 
-function openCreator() {
+function openPreparationCreatorModal() {
 	return { type: OPEN_PREPARATION_CREATOR };
+}
+
+function openCopyMoveModal() {
+	return { type: OPEN_COPY_MOVE_MODAL };
 }
 
 export default {
@@ -88,5 +93,6 @@ export default {
 	rename,
 	cancelRename,
 	setTitleEditionMode,
-	openCreator,
+	openPreparationCreatorModal,
+	openCopyMoveModal,
 };

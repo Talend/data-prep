@@ -61,10 +61,10 @@ export function* setTitleEditionMode(payload) {
 	yield put(actions.collections.addOrReplace('preparations', updated));
 }
 
-export function* openPreparationCreator() {
+export function* openPreparationCreatorModal() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
 }
 
-export function* openCopyMove() {
+export function* openCopyMoveModal() {
 	yield put(actions.components.mergeState('PreparationCopyMoveModal', 'default', { show: true }));
 }

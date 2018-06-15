@@ -127,8 +127,8 @@ public class DataSetController {
 
     @GetMapping(value = "/{datasetId}/content", produces = AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
     public Resource getDatasetContent(@PathVariable String datasetId,
-            @RequestParam(required = false) boolean withUiSpec,
-            @RequestParam(required = false) boolean advanced) {
+            @RequestParam(required = false) Boolean offset,
+            @RequestParam(required = false) Boolean limit) {
         InputStream result;
         Callable<DataSet> dataSetCallable = dataSetService.get(true, true, EMPTY, datasetId);
         Stream<DataSetRow> records = Stream.empty();

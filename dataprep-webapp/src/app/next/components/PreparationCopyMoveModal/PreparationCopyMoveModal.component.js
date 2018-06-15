@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal } from 'react-bootstrap';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { Dialog } from '@talend/react-components';
+import { SelectObject } from '@talend/react-containers';
 
 export default class PreparationCopyMoveModal extends React.Component {
 	constructor(props) {
@@ -14,22 +15,46 @@ export default class PreparationCopyMoveModal extends React.Component {
 	}
 
 	render() {
+		const infos = {
+			actions: {
+				left: [
+					{
+						label: 'Cancel',
+						onClick: () => console.log('Preparations clicked'),
+					},
+				],
+				right: [
+					{
+						label: 'Move',
+						onClick: () => console.log('Datasets clicked'),
+						bsStyle: 'primary',
+					},
+					{
+						label: 'Copy',
+						onClick: () => console.log('Favorites clicked'),
+						bsStyle: 'primary',
+					},
+				],
+			},
+		};
+
+		const selectObjectProps = {
+			id: 'folders',
+			source: 'folders',
+			tree: {},
+			// selectedId: props.preparationId,
+		};
+
 		const cmfState = this.props.state;
 		return (
-			<Modal
-				show={cmfState && cmfState.get('show')}
+			<Dialog
+				actionbar={infos}
 				onHide={this.close}
+				show={cmfState && cmfState.get('show')}
+				header={'Copy/Move preparation - Select target folder'}
 			>
-				<Modal.Header>
-					<Modal.Title>Copy / Move</Modal.Title>
-				</Modal.Header>
-
-				<Modal.Body>Modal content</Modal.Body>
-
-				<Modal.Footer>
-					<Button onClick={this.close}>Close</Button>
-				</Modal.Footer>
-			</Modal>
+				<SelectObject {...selectObjectProps} />
+			</Dialog>
 		);
 	}
 }

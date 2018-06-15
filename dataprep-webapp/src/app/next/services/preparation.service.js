@@ -20,6 +20,15 @@ function transform({ folders = [], preparations = [] }) {
 	return adaptedFolders.concat(adaptedPreparations);
 }
 
+function transformTree(input) {
+	const t = item => ({
+		name: item.folder.name || 'Home',
+		children: item.children.map(t),
+	});
+	return [t(input)];
+}
+
 export default {
 	transform,
+	transformTree,
 };

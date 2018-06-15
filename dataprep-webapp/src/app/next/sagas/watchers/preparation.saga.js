@@ -1,4 +1,4 @@
-import { call, take } from 'redux-saga/effects';
+import { all, call, take } from 'redux-saga/effects';
 import {
 	OPEN_FOLDER,
 	RENAME_PREPARATION,
@@ -64,7 +64,12 @@ function* openPreparationCreatorModal() {
 function* openCopyMoveModal() {
 	while (true) {
 		yield take(OPEN_COPY_MOVE_MODAL);
-		yield call(effects.openCopyMoveModal);
+		yield all(
+			[
+				call(effects.fetchTree),
+				call(effects.openCopyMoveModal),
+			],
+		);
 	}
 }
 

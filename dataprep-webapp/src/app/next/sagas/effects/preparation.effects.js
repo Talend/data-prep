@@ -37,6 +37,17 @@ export function* fetch(payload) {
 	);
 }
 
+export function* fetchTree() {
+	yield put(
+		actions.http.get('/api/folders/tree', {
+			cmf: {
+				collectionId: 'folders',
+			},
+			transform: PreparationService.transformTree,
+		}),
+	);
+}
+
 export function* openFolder(id) {
 	yield api.saga.putActionCreator('preparation:fetch', {
 		folderId: id,

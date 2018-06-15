@@ -98,9 +98,9 @@ public class ApiDatasetClient {
         return context.getBean(DataSetGetSchema.class, id).execute();
     }
 
-    public Stream<GenericRecord> getDataSetContent(String id, boolean fullContent) {
+    public Stream<GenericRecord> getDataSetContent(String id, Long limit) {
         Schema schema = getDataSetSchema(id);
-        return context.getBean(DataSetGetContent.class, id, schema, fullContent).execute();
+        return context.getBean(DataSetGetContent.class, id, schema, limit).execute();
     }
 
     // ------- Composite adapters -------
@@ -120,12 +120,12 @@ public class ApiDatasetClient {
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata, boolean fullContent) {
-        return toDataSetRows(getDataSetContent(id, fullContent), rowMetadata);
+        return toDataSetRows(getDataSetContent(id, limit(fullContent)), rowMetadata);
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id, boolean fullContent) {
         DataSetMetadata metadata = getDataSetMetadata(id);
-        return toDataSetRows(getDataSetContent(id, fullContent), metadata.getRowMetadata());
+        return toDataSetRows(getDataSetContent(id, limit(fullContent)), metadata.getRowMetadata());
     }
 
     /**
@@ -174,7 +174,7 @@ public class ApiDatasetClient {
         dataset.setMetadata(dataSetMetadata);
 
         // convert records
-        Stream<GenericRecord> dataSetContent = getDataSetContent(id, fullContent);
+        Stream<GenericRecord> dataSetContent = getDataSetContent(id, limit(fullContent));
         Stream<DataSetRow> records = toDataSetRows(dataSetContent, dataSetMetadata.getRowMetadata());
         if (withRowValidityMarker) {
             records = records.peek(addValidity(dataSetMetadata.getRowMetadata().getColumns()));

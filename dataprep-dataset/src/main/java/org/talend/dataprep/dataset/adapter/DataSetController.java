@@ -127,10 +127,10 @@ public class DataSetController {
 
     @GetMapping(value = "/{datasetId}/content", produces = AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
     public Resource getDatasetContent(@PathVariable String datasetId,
-            @RequestParam(required = false) Boolean offset,
-            @RequestParam(required = false) Boolean limit) {
+            @RequestParam(defaultValue = "0") long offset,
+            @RequestParam(defaultValue = "-1") long limit) {
         InputStream result;
-        Callable<DataSet> dataSetCallable = dataSetService.get(true, true, EMPTY, datasetId);
+        Callable<DataSet> dataSetCallable = dataSetService.get(true, true, limit, EMPTY, datasetId);
         Stream<DataSetRow> records = Stream.empty();
         DataSetMetadata metadata = null;
         try {

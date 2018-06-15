@@ -105,6 +105,11 @@ public class ApiDatasetClient {
 
     // ------- Composite adapters -------
 
+    public Stream<DataSetMetadata> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
+        Stream<Dataset> datasetStream = listDataset(certification, favorite);
+        return datasetStream.map(this::toDataSetMetadata);
+    }
+
     public DataSetMetadata getDataSetMetadata(String id) {
         return toDataSetMetadata(getMetadata(id));
     }

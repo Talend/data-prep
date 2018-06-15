@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -53,7 +54,6 @@ import org.talend.dataprep.api.service.command.transformation.SuggestLookupActio
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
-import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.metrics.Timed;
@@ -292,21 +292,21 @@ public class DataSetAPI extends APIService {
             try {
 
                 CertificationState certification = certified ? CERTIFIED : null;
-                Stream<Dataset> datasetStream = datasetClient.listDataset(certification, favorite);
+                Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, favorite);
 
                 if (isNotBlank(name)) {
-                    datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getLabel(), name));
+                    datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
                 }
 
                 if (certified) {
-                    datasetStream = datasetStream.filter(dataset -> dataset.getCertification() == CERTIFIED);
+                    datasetStream = datasetStream.filter(dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
                 }
 
                 if (limit) {
                     datasetStream = datasetStream.limit(datasetListLimit);
                 }
 
-                return datasetStream.map(dataset -> beanConversionService.convert(dataset, DataSetMetadata.class)) //
+                return datasetStream //
                         .map(dataSetMetadata -> beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class)) //
                         .sorted(SortAndOrderHelper.getDataSetMetadataComparator(sort, order));
             } finally {

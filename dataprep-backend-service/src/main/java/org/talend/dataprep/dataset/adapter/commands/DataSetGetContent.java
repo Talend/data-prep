@@ -55,34 +55,41 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
 
     private final String limit;
 
-
-    public DataSetGetContent(final String dataSetId, Schema contentSchema) {
+    public DataSetGetContent(final String dataSetId, Schema contentSchema, String limit, String offset) {
         super(DATASET_GROUP);
         this.dataSetId = dataSetId;
         this.contentSchema = contentSchema;
-        this.offset = Integer.toString(0);
-        this.limit = Integer.toString(Integer.MAX_VALUE);
+        this.offset = offset;
+        this.limit = limit;
 
         on(HttpStatus.NO_CONTENT).then((req, resp) -> Stream.empty());
         on(HttpStatus.OK).then(this::readResult);
         onError(e -> new TDPException(UNABLE_TO_RETRIEVE_DATASET_CONTENT, e, build().put("id", dataSetId)));
     }
 
+    public DataSetGetContent(final String dataSetId, Schema contentSchema) {
+        this(dataSetId, contentSchema, null, null);
+    }
+
     @PostConstruct
     private void initConfiguration() {
         execute(() -> {
-            URI build;
+            URI uri;
 
             try {
-                build = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId + "/content")
-                        .addParameter("offset", offset)
-                        .addParameter("limit", limit)
-                        .build();
+                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId + "/content");
+                if (offset != null) {
+                    uriBuilder.addParameter("offset", offset);
+                } if (limit != null) {
+                    uriBuilder.addParameter("limit", limit);
+                }
+
+                uri = uriBuilder.build();
             } catch (URISyntaxException e) {
                 throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
 
-            HttpGet httpGet = new HttpGet(build);
+            HttpGet httpGet = new HttpGet(uri);
             httpGet.addHeader(ACCEPT, AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE);
             return httpGet;
         });

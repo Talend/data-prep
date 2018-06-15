@@ -98,9 +98,9 @@ public class ApiDatasetClient {
         return context.getBean(DataSetGetSchema.class, id).execute();
     }
 
-    public Stream<GenericRecord> getDataSetContent(String id) {
+    public Stream<GenericRecord> getDataSetContent(String id, boolean fullContent) {
         Schema schema = getDataSetSchema(id);
-        return context.getBean(DataSetGetContent.class, id, schema).execute();
+        return context.getBean(DataSetGetContent.class, id, schema, fullContent).execute();
     }
 
     // ------- Composite adapters -------
@@ -119,13 +119,13 @@ public class ApiDatasetClient {
         return dataSetSchema == null ? null : AvroUtils.toRowMetadata(dataSetSchema);
     }
 
-    public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata) {
-        return toDataSetRows(getDataSetContent(id), rowMetadata);
+    public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata, boolean fullContent) {
+        return toDataSetRows(getDataSetContent(id, fullContent), rowMetadata);
     }
 
-    public Stream<DataSetRow> getDataSetContentAsRows(String id) {
+    public Stream<DataSetRow> getDataSetContentAsRows(String id, boolean fullContent) {
         DataSetMetadata metadata = getDataSetMetadata(id);
-        return toDataSetRows(getDataSetContent(id), metadata.getRowMetadata());
+        return toDataSetRows(getDataSetContent(id, fullContent), metadata.getRowMetadata());
     }
 
     /**
@@ -174,7 +174,8 @@ public class ApiDatasetClient {
         dataset.setMetadata(dataSetMetadata);
 
         // convert records
-        Stream<DataSetRow> records = toDataSetRows(getDataSetContent(id), dataSetMetadata.getRowMetadata());
+        Stream<GenericRecord> dataSetContent = getDataSetContent(id, fullContent);
+        Stream<DataSetRow> records = toDataSetRows(dataSetContent, dataSetMetadata.getRowMetadata());
         if (withRowValidityMarker) {
             records = records.peek(addValidity(dataSetMetadata.getRowMetadata().getColumns()));
         }
@@ -266,7 +267,7 @@ public class ApiDatasetClient {
 
         if (rowMetadata != null && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
             try {
-                AnalysisResult analysisResult = metadataCache.get(dataset.getId(), () -> analyseDataset(dataset.getId(), rowMetadata));
+                AnalysisResult analysisResult = metadataCache.get(dataset.getId(), () -> analyseDataset(dataset.getId(), rowMetadata, fullContent));
                 metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata)); // because sadly, my cache is not immutable
                 metadata.setDataSetSize(analysisResult.rowcount);
                 metadata.getContent().setNbRecords(analysisResult.rowcount);
@@ -285,9 +286,9 @@ public class ApiDatasetClient {
         return statistics == null || EMPTY_STATS.equals(statistics);
     }
 
-    private AnalysisResult analyseDataset(String id, RowMetadata rowMetadata) {
+    private AnalysisResult analyseDataset(String id, RowMetadata rowMetadata, boolean fullContent) {
         AtomicLong count = new AtomicLong(0);
-        try (Stream<DataSetRow> records = getDataSetContentAsRows(id, rowMetadata).peek(e -> count.incrementAndGet())) {
+        try (Stream<DataSetRow> records = getDataSetContentAsRows(id, rowMetadata, fullContent).peek(e -> count.incrementAndGet())) {
             analyzerService.analyzeFull(records, rowMetadata.getColumns());
         }
         return new AnalysisResult(rowMetadata, count.get());

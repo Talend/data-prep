@@ -25,12 +25,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.util.avro.AvroUtils;
 
@@ -51,24 +53,20 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
 
     private final Schema contentSchema;
 
-    private final String offset;
+    private final boolean fullContent;
 
-    private final String limit;
+    @Autowired
+    private DataSetContentLimit limit;
 
-    public DataSetGetContent(final String dataSetId, Schema contentSchema, String limit, String offset) {
+    public DataSetGetContent(final String dataSetId, Schema contentSchema, boolean fullContent) {
         super(DATASET_GROUP);
         this.dataSetId = dataSetId;
         this.contentSchema = contentSchema;
-        this.offset = offset;
-        this.limit = limit;
+        this.fullContent = fullContent;
 
         on(HttpStatus.NO_CONTENT).then((req, resp) -> Stream.empty());
         on(HttpStatus.OK).then(this::readResult);
         onError(e -> new TDPException(UNABLE_TO_RETRIEVE_DATASET_CONTENT, e, build().put("id", dataSetId)));
-    }
-
-    public DataSetGetContent(final String dataSetId, Schema contentSchema) {
-        this(dataSetId, contentSchema, null, null);
     }
 
     @PostConstruct
@@ -77,11 +75,16 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
             URI uri;
 
             try {
-                URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId + "/content");
-                if (offset != null) {
-                    uriBuilder.addParameter("offset", offset);
-                } if (limit != null) {
-                    uriBuilder.addParameter("limit", limit);
+                URIBuilder uriBuilder;
+                if (limit.limitContentSize() || fullContent) {
+                    uriBuilder = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId + "/content");
+                    //                if (offset != null) {
+                    //                    uriBuilder.addParameter("offset", offset);
+                    //                } if (limit != null) {
+                    //                    uriBuilder.addParameter("limit", limit);
+                    //                }
+                } else {
+                    uriBuilder = new URIBuilder(datasetServiceUrl + "/api/v1/dataset-sample/" + dataSetId);
                 }
 
                 uri = uriBuilder.build();

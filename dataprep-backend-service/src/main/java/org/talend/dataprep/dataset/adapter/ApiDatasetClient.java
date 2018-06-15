@@ -56,6 +56,8 @@ import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
 @Service
 public class ApiDatasetClient {
 
+    private static final Statistics EMPTY_STATS = new Statistics();
+
     @Autowired
     private ApplicationContext context;
 
@@ -279,8 +281,6 @@ public class ApiDatasetClient {
 
         return metadata;
     }
-
-    private static final Statistics EMPTY_STATS = new Statistics();
 
     private boolean isComputedStatistics(Statistics statistics) {
         return statistics == null || EMPTY_STATS.equals(statistics);

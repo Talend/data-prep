@@ -58,8 +58,6 @@ import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
-import org.talend.dataprep.security.Security;
-import org.talend.dataprep.user.store.UserDataRepository;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
@@ -89,12 +87,6 @@ public class DataSetAPI extends APIService {
 
     @Autowired
     private ApiDatasetClient datasetClient;
-
-    @Autowired
-    private Security security;
-
-    @Autowired
-    private UserDataRepository userDataRepository;
 
     @Value("${dataset.list.limit:10}")
     private int datasetListLimit;

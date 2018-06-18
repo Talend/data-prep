@@ -14,7 +14,7 @@
 const ACCEPTED_CODE = 202;
 const LOOP_DELAY = 1000;
 const FOLLOWED_STATUS = ['NEW', 'RUNNING'];
-const FAILED_STATUS = ['FAILED'];
+const FAILED_STATUS = ['FAILED', 'CANCELED'];
 
 const METHODS = {
 	POST: 'POST',

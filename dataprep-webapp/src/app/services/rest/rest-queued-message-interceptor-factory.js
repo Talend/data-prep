@@ -11,9 +11,9 @@
 
  ============================================================================*/
 
-const ACCEPTED_STATUS = 202;
+const ACCEPTED_CODE = 202;
 const LOOP_DELAY = 1000;
-const FOLLOW_STATUS = ['NEW', 'RUNNING'];
+const FOLLOWED_STATUS = ['NEW', 'RUNNING'];
 
 const METHODS = {
 	POST: 'POST',
@@ -36,7 +36,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 
 		return new Promise((resolve, reject) => {
 			$http.get(url)
-				.then(({ data }) => (FOLLOW_STATUS.includes(data.status) ? reject : resolve)(data));
+				.then(({ data }) => (FOLLOWED_STATUS.includes(data.status) ? reject : resolve)(data));
 		});
 	}
 
@@ -66,7 +66,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 		response(response) {
 			const { headers, config, status } = response;
 
-			if (status === ACCEPTED_STATUS && ALLOWED_METHODS.includes(config.method) && !config.async) {
+			if (status === ACCEPTED_CODE && ALLOWED_METHODS.includes(config.method) && !config.async) {
 				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {
 						const $http = $injector.get('$http');

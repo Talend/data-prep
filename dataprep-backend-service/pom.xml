@@ -91,11 +91,6 @@
         </dependency>
         <dependency>
             <groupId>org.talend.daikon</groupId>
-            <artifactId>content-service-journal-mongo</artifactId>
-            <classifier>lib</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.talend.daikon</groupId>
             <artifactId>daikon-spring-tenancy</artifactId>
         </dependency>
         <dependency>

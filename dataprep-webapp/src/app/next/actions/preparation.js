@@ -82,8 +82,11 @@ function openPreparationCreatorModal() {
 	return { type: OPEN_PREPARATION_CREATOR };
 }
 
-function openCopyMoveModal() {
-	return { type: OPEN_COPY_MOVE_MODAL };
+function openCopyMoveModal(event, { model }) {
+	return {
+		type: OPEN_COPY_MOVE_MODAL,
+		payload: model,
+	};
 }
 
 export default {

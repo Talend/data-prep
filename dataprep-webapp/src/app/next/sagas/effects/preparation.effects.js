@@ -76,6 +76,13 @@ export function* openPreparationCreatorModal() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
 }
 
-export function* openCopyMoveModal() {
-	yield put(actions.components.mergeState('PreparationCopyMoveModal', 'default', { show: true }));
+export function* openCopyMoveModal(model) {
+	yield put(
+		actions.components.mergeState('PreparationCopyMoveModal', 'default',
+			{
+				show: true,
+				model,
+			},
+		)
+	);
 }

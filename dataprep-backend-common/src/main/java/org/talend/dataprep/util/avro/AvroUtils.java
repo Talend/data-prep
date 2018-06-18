@@ -1,17 +1,5 @@
 package org.talend.dataprep.util.avro;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -22,6 +10,17 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
@@ -190,7 +189,6 @@ public class AvroUtils {
     public static Schema toSchema(final String name, List<ColumnMetadata> columns) {
         final Map<String, Integer> uniqueSuffixes = new HashMap<>();
         final List<Schema.Field> fields = columns.stream() //
-                .sorted(Comparator.comparingInt(c -> Integer.parseInt(c.getId()))) //
                 .peek(columnMetadata -> {
                     final Integer suffix = uniqueSuffixes.get(columnMetadata.getName());
                     if (suffix != null) {

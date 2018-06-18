@@ -34,6 +34,9 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
+/**
+ * Get the dataSet schema
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class DataSetGetSchema extends GenericCommand<Schema> {

@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.dataset.adapter;
+package org.talend.dataprep.dataset.adapter.conversions;
 
 import java.io.IOException;
 
@@ -24,7 +24,9 @@ import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
+import org.talend.dataprep.dataset.adapter.Datastore;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

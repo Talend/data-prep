@@ -31,6 +31,9 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
+/**
+ * Get a dataset by id.
+ */
 @Component(value = "DataSetGetMetadata#2")
 @Scope(SCOPE_PROTOTYPE)
 public class DataSetGetMetadata extends GenericCommand<Dataset> {

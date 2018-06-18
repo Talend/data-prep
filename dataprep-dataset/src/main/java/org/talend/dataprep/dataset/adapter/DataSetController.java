@@ -47,7 +47,6 @@ import org.talend.dataprep.dataset.service.DataSetService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.util.ConverterBasedPropertyEditor;
-import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.avro.AvroUtils;
 
 import com.google.common.base.Throwables;
@@ -56,6 +55,8 @@ import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
+import static org.talend.dataprep.util.SortAndOrderHelper.Order;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
 @RestController
 @RequestMapping("/api/v1/datasets")
@@ -76,17 +77,14 @@ public class DataSetController {
     }
 
     @GetMapping
-    public Stream<Dataset> getAllDatasets(@RequestParam(required = false) Dataset.CertificationState certification,
+    public Stream<Dataset> getAllDatasets(
+            @RequestParam(required = false) Dataset.CertificationState certification,
             @RequestParam(required = false) Boolean favorite) {
-        boolean legacyCertified;
-        if (certification == null) {
-            legacyCertified = false;
-        } else {
-            legacyCertified = CERTIFIED == certification;
-        }
+        boolean legacyCertified = CERTIFIED == certification;
         boolean legacyFavorite = favorite != null && favorite == TRUE;
-        return dataSetService.list(SortAndOrderHelper.Sort.CREATION_DATE, SortAndOrderHelper.Order.DESC, null, false,
-                legacyCertified, legacyFavorite, false) //
+
+        return dataSetService.list(Sort.CREATION_DATE, Order.DESC, null, false, legacyCertified, legacyFavorite,
+                false) //
                 .map(userDataSetMetadata -> beanConversionService.convert(userDataSetMetadata, Dataset.class));
     }
 
@@ -113,16 +111,15 @@ public class DataSetController {
     }
 
     @GetMapping(value = "/{datasetId}/schema", produces = AvroUtils.AVRO_JSON_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
-    public String getDatasetSchema(@PathVariable String datasetId,
-            @RequestParam(required = false) boolean withUiSpec,
-            @RequestParam(required = false) boolean advanced) {
+    public String getDatasetSchema(@PathVariable String datasetId) {
         DataSet dataSet = dataSetService.getMetadata(datasetId);
-        if (dataSet != null && dataSet.getMetadata() != null && dataSet.getMetadata().getRowMetadata() != null) {
-            RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata();
-            return AvroUtils.toSchema(rowMetadata).toString();
-        } else {
+
+        if (dataSet == null || dataSet.getMetadata() == null || dataSet.getMetadata().getRowMetadata() == null) {
             return null;
         }
+
+        RowMetadata rowMetadata = dataSet.getMetadata().getRowMetadata();
+        return AvroUtils.toSchema(rowMetadata).toString();
     }
 
     @GetMapping(value = "/{datasetId}/content", produces = AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE)

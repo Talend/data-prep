@@ -41,7 +41,7 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RETRIE
 import static org.talend.dataprep.util.avro.AvroUtils.readBinaryStream;
 
 /**
- * Command to get a dataset.
+ * Command to get the stream of AVRO records of the dataset.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)

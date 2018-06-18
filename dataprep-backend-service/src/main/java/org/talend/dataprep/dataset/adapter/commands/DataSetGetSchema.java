@@ -35,7 +35,8 @@ import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 /**
- * Get the dataSet schema
+ * Get the dataSet schema.
+ * @see Schema
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)

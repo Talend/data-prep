@@ -42,6 +42,7 @@ import static org.talend.dataprep.util.avro.AvroUtils.readBinaryStream;
 
 /**
  * Command to get the stream of AVRO records of the dataset.
+ * @see GenericRecord
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)

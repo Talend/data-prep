@@ -14,6 +14,7 @@
 const ACCEPTED_CODE = 202;
 const LOOP_DELAY = 1000;
 const FOLLOWED_STATUS = ['NEW', 'RUNNING'];
+const FAILED_STATUS = ['FAILED'];
 
 const METHODS = {
 	POST: 'POST',
@@ -70,7 +71,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {
 						const $http = $injector.get('$http');
-						return data.result.downloadUrl ? $http({
+						return data.result.downloadUrl && !FAILED_STATUS.includes(data.status) ? $http({
 							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
 							url: `${RestURLs.context}${data.result.downloadUrl}`,
 						}) : $q.resolve(data);

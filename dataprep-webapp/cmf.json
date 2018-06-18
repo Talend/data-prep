@@ -1,0 +1,24 @@
+{
+  "settings": {
+    "i18n": {
+      "languages": ["en", "fr"],
+      "namespace-paths": [
+        {
+          "name": "data-prep-cmf",
+          "path": "src/app/next/locales/{{locale}}/{{namespace}}.json"
+        },
+        {
+          "name": "dataset-cmf",
+          "path": "node_modules/@talend/dataset/lib/app/locales/{{locale}}/{{namespace}}.json"
+        }
+      ],
+      "extract-namespaces": ["data-prep-cmf", "dataset-cmf"],
+      "extract-from": "src/settings"
+    },
+    "sources": [
+      "node_modules/@talend/dataset/lib/settings",
+      "src/settings"
+    ],
+    "destination": "build/settings.json"
+  }
+}

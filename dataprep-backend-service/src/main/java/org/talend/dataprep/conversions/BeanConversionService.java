@@ -12,20 +12,30 @@
 
 package org.talend.dataprep.conversions;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.stereotype.Service;
+import static java.util.stream.Stream.of;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
-import static java.util.stream.Stream.of;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
+import org.springframework.cloud.sleuth.annotation.NewSpan;
+import org.springframework.cloud.sleuth.annotation.SpanTag;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.stereotype.Service;
 
 /**
  * This service provides methods to convert beans to other beans (DTOs, transient beans...). This service helps code to
@@ -35,6 +45,9 @@ import static java.util.stream.Stream.of;
 public class BeanConversionService implements ConversionService {
 
     private final Map<Class<?>, Registration<Object>> registrations = new HashMap<>();
+
+    @Autowired(required = false)
+    private Tracer tracer;
 
     /**
      * The {@link BeanUtils#copyProperties(java.lang.Object, java.lang.Object)} method does <b>NOT</b> check if parametrized type
@@ -124,9 +137,14 @@ public class BeanConversionService implements ConversionService {
     }
 
     @Override
-    public <U> U convert(Object source, Class<U> targetClass) {
+    @NewSpan("conversion")
+    public <U> U convert(Object source, @SpanTag("target") Class<U> targetClass) {
         if (source == null) {
             return null;
+        }
+        if (tracer != null) {
+            tracer.addTag(Span.SPAN_LOCAL_COMPONENT_TAG_NAME, BeanConversionService.class.getName());
+            tracer.addTag("source", source.getClass().getName());
         }
         try {
             U converted = targetClass.newInstance();

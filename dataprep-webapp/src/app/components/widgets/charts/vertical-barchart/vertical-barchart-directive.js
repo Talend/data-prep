@@ -64,6 +64,7 @@ export default function VerticalBarchart($timeout) {
 			onCtrlClick: '&',
 			onShiftClick: '&',
 			activeLimits: '=',
+			feature: '@',
 			keyField: '@',
 			keyLabel: '@',
 			primaryData: '=',
@@ -297,6 +298,7 @@ export default function VerticalBarchart($timeout) {
 					.attr('width', xScale.rangeBand() + 4)
 					.attr('height', height)
 					.attr('class', 'bg-rect')
+					.attr('data-feature', scope.feature)
 					.style('opacity', 0)
 					.on('mouseenter', function (d, i) {
 						d3.select(this).style('opacity', 0.4);

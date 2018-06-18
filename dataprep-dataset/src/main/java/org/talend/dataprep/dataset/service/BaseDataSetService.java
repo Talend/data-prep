@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset.service;
 
@@ -27,7 +27,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
-import org.talend.dataprep.dataset.event.DatasetImportedEvent;
 import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataSetAnalyzer;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
@@ -59,17 +58,10 @@ public abstract class BaseDataSetService {
     @Autowired
     private List<SynchronousDataSetAnalyzer> synchronousAnalyzers;
 
-    /**
-     * Sort the synchronous analyzers.
-     */
-    @PostConstruct
-    public void initialize() {
-        synchronousAnalyzers.sort(comparingInt(SynchronousDataSetAnalyzer::order));
-    }
-
     static void assertDataSetMetadata(DataSetMetadata dataSetMetadata, String dataSetId) {
         if (dataSetMetadata == null) {
-            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, ExceptionContext.build().put("id", dataSetId));
+            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST,
+                    ExceptionContext.build().put("id", dataSetId));
         }
         if (dataSetMetadata.getLifecycle().isImporting()) {
             // Data set is being imported, this is an error since user should not have an id to a being-created
@@ -80,13 +72,26 @@ public abstract class BaseDataSetService {
     }
 
     /**
+     * Sort the synchronous analyzers.
+     */
+    @PostConstruct
+    public void initialize() {
+        synchronousAnalyzers.sort(comparingInt(SynchronousDataSetAnalyzer::order));
+    }
+
+    public void setSynchronousAnalyzers(List<SynchronousDataSetAnalyzer> synchronousAnalyzers) {
+        this.synchronousAnalyzers = synchronousAnalyzers;
+    }
+
+    /**
      * Make sure the given name is not used by another dataset. If yes, throws a TDPException.
      *
      * @param name the name to check.
      */
     protected void checkIfNameIsAvailable(String name) {
         if (dataSetMetadataRepository.exist("name = '" + name + "'")) {
-            final ExceptionContext context = ExceptionContext.build() //
+            final ExceptionContext context = ExceptionContext
+                    .build() //
                     .put("name", name);
             throw new TDPException(DATASET_NAME_ALREADY_USED, context);
         }
@@ -94,47 +99,27 @@ public abstract class BaseDataSetService {
 
     /**
      * Performs the analysis on the given dataset id.
-     *
-     * @param id the dataset id.
-     * @param performAsyncBackgroundAnalysis true if the asynchronous background analysis should be performed.
+     *  @param id the dataset id.
      * @param analysersToSkip the list of analysers to skip.
      */
-    protected final void analyzeDataSet(String id, boolean performAsyncBackgroundAnalysis,
-            List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
-
+    protected final void analyzeDataSet(String id, List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
         // Calls all synchronous analysis first
-        try {
-            for (SynchronousDataSetAnalyzer synchronousDataSetAnalyzer : synchronousAnalyzers) {
-                if (analysersToSkip.contains(synchronousDataSetAnalyzer.getClass())) {
-                    continue;
-                }
-                LOG.info("Running {}", synchronousDataSetAnalyzer.getClass());
-                synchronousDataSetAnalyzer.analyze(id);
-                LOG.info("Done running {}", synchronousDataSetAnalyzer.getClass());
+        for (SynchronousDataSetAnalyzer synchronousDataSetAnalyzer : synchronousAnalyzers) {
+            if (analysersToSkip.contains(synchronousDataSetAnalyzer.getClass())) {
+                continue;
             }
-        } catch (Exception e) {
-            // Clean up content & metadata (don't keep invalid information)
-            try {
-                final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
-                contentStore.delete(metadata);
-                dataSetMetadataRepository.remove(id);
-            } catch (Exception unableToCleanResources) {
-                LOG.error("Unable to clean temporary resources for '{}'.", id, unableToCleanResources);
-            }
-            throw e;
+            LOG.info("Running {}", synchronousDataSetAnalyzer.getClass());
+            synchronousDataSetAnalyzer.analyze(id);
+            LOG.info("Done running {}", synchronousDataSetAnalyzer.getClass());
         }
 
         // important log here (TDP-4137)
         final DataSetMetadata metadata = dataSetMetadataRepository.get(id);
-        LOG.info("New DataSet #{}, name: {}, type: {}, from: {}", metadata.getId(), metadata.getName(),
-                metadata.getContent().getMediaType(), metadata.getLocation().getStoreName());
-
-        // perform async analysis
-        if (performAsyncBackgroundAnalysis) {
-            LOG.debug("starting async background analysis");
-            publisher.publishEvent(new DatasetImportedEvent(id));
+        if (metadata != null) {
+            LOG.info("New DataSet #{}, name: {}, type: {}, from: {}", metadata.getId(), metadata.getName(),
+                    metadata.getContent().getMediaType(), metadata.getLocation().getStoreName());
         } else {
-            LOG.info("skipping asynchronous background analysis");
+            LOG.error("Dataset #{} does not exist (but was expected to)", id);
         }
     }
 

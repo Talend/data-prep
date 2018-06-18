@@ -24,6 +24,7 @@ export default function FilterMonitor() {
 			nbTotalLines: '=',
 			percentage: '=',
 			state: '=',
+			preview: '<',
 		},
 		bindToController: true,
 		controller: () => {

@@ -14,7 +14,10 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
@@ -157,7 +160,7 @@ public class TrimTest extends AbstractMetadataBaseTest<Trim> {
     public void should_remove_other_value() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0000", " the beatles " + '\u2028'+""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        values.put("0000", " the beatles " + '\u2028' + ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         final DataSetRow row = new DataSetRow(values);
 
         parameters = new HashMap<>();
@@ -194,7 +197,7 @@ public class TrimTest extends AbstractMetadataBaseTest<Trim> {
 
     @Test
     public void TDP_2190() {
-        //given
+        // given
         final DataSetRow row = getRow("1 ", " 2", " Hey ! ");
 
         final Map<String, String> expectedValues = new HashMap<>();
@@ -227,9 +230,8 @@ public class TrimTest extends AbstractMetadataBaseTest<Trim> {
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(2, action.getBehavior().size());
+        assertEquals(1, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_PATTERN));
     }
 
 }

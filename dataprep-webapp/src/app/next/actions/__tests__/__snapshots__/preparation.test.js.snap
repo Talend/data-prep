@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Preparation action open should create an open folder action 1`] = `
+Object {
+  "cmf": Object {
+    "routerPush": "/preparations/42",
+  },
+  "id": 42,
+  "type": "TDP_OPEN_FOLDER",
+}
+`;
+
+exports[`Preparation action open should create an open preparation action 1`] = `
+Object {
+  "payload": Object {
+    "url": "http://dataprep.com/#/playground/preparation?prepid=42",
+  },
+  "type": "TDP_REDIRECT_WINDOW",
+}
+`;
+
+exports[`Preparation action open should not create anything if type is unknown 1`] = `undefined`;
+
+exports[`Preparation action should create a cancel rename action 1`] = `
+Object {
+  "payload": 42,
+  "type": "TDP_CANCEL_RENAME_PREPARATION",
+}
+`;
+
+exports[`Preparation action should create a duplicate action 1`] = `
+Object {
+  "payload": Object {
+    "id": 42,
+  },
+  "type": "TDP_PREPARATION_DUPLICATE",
+}
+`;
+
+exports[`Preparation action should create a fetch action 1`] = `
+Object {
+  "payload": Object {
+    "folderId": 42,
+  },
+  "type": "TDP_FETCH_PREPARATIONS",
+}
+`;
+
+exports[`Preparation action should create a rename action 1`] = `
+Object {
+  "payload": Object {
+    "id": 42,
+    "name": undefined,
+  },
+  "type": "TDP_RENAME_PREPARATION",
+}
+`;
+
+exports[`Preparation action should create a set title edition mode action 1`] = `
+Object {
+  "payload": 42,
+  "type": "TDP_SET_TITLE_EDITION_MODE",
+}
+`;
+
+exports[`Preparation action should create an open creator action 1`] = `
+Object {
+  "type": "TDP_OPEN_PREPARATION_CREATOR",
+}
+`;

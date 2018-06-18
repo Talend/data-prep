@@ -64,6 +64,6 @@ public class BasicRules {
     /**
      * A helper to filter columns where semantic domain=phone.
      */
-    protected static final Predicate<ColumnMetadata> IS_PHONE = columnMetadata -> columnMetadata.getDomain().toLowerCase().endsWith("phone");
+    protected static final Predicate<ColumnMetadata> IS_PHONE = columnMetadata -> columnMetadata.getDomain().toLowerCase().contains("phone");
 
 }

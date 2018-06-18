@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.talend.dataprep</groupId>
     <artifactId>dataprep-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>2.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>dataprep-parent</name>
     <description>dataprep parent pom</description>
@@ -79,7 +79,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.3</version>
+                    <version>2.5</version>
                 </plugin>
 
                 <plugin>
@@ -213,9 +213,6 @@
                                         <excludes>
                                             <exclude>org.slf4j:slf4j-simple</exclude>
                                             <exclude>commons-logging:commons-logging-api</exclude>
-                                            <exclude>org.apache.logging.log4j:log4j-core</exclude>
-                                            <exclude>org.apache.logging.log4j:log4j-api</exclude>
-                                            <exclude>log4j:log4j</exclude>
                                             <exclude>org.codehaus.jackson:jackson-jaxrs</exclude>
                                             <exclude>org.codehaus.jackson:jackson-xc</exclude>
                                             <exclude>javax.servlet.jsp:jsp-api</exclude>

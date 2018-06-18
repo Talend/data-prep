@@ -24,7 +24,7 @@
                 <span>{{ step.label | translate }}</span>
                 <pure-circular-progress
                     ng-if="step.state === $ctrl.state.progress.states.inProgress"
-                    class="step-icon progress-icon"
+                    class="'step-icon progress-icon'"
                 ></pure-circular-progress>
                 <icon
                     ng-if="step.state === $ctrl.state.progress.states.complete"

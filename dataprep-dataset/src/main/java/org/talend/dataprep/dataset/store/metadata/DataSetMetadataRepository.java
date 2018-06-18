@@ -20,6 +20,7 @@ import javax.annotation.Nullable;
 
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.lock.DistributedLock;
+import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -33,12 +34,14 @@ public interface DataSetMetadataRepository {
      * @param filter A TQL filter (i.e. storage-agnostic)
      * @return <code>true</code> if at least one {@link DataSetMetadata} matches <code>filter</code>.
      */
+    @Timed
     boolean exist(String filter);
 
     /**
      * @return A {@link java.lang.Iterable iterable} of {@link DataSetMetadata data set}. Returned data set are expected
      * to be visible by current user.
      */
+    @Timed
     Stream<DataSetMetadata> list();
 
     /**
@@ -50,6 +53,7 @@ public interface DataSetMetadataRepository {
      * values are "ASC" or "DESC".
      * @return A {@link Iterable} of {@link DataSetMetadata} that matches <code>filter</code>.
      */
+    @Timed
     Stream<DataSetMetadata> list(String filter, Sort sortField, Order sortDirection);
 
     /**
@@ -64,6 +68,7 @@ public interface DataSetMetadataRepository {
      *
      * @param dataSetMetadata The {@link DataSetMetadata data set} to create or update.
      */
+    @Timed
     void save(DataSetMetadata dataSetMetadata);
 
     /**
@@ -75,11 +80,13 @@ public interface DataSetMetadataRepository {
      * Please note this methods only removes data set the current user has write access on.
      * </p>
      */
+    @Timed
     void clear();
 
     /**
      * @return The number of {@link DataSetMetadata data sets} the current user can see.
      */
+    @Timed
     int size();
 
     /**
@@ -88,6 +95,7 @@ public interface DataSetMetadataRepository {
      * @param id A data set id.
      * @return The {@link DataSetMetadata} with given <code>id</code> or null if non found.
      */
+    @Timed
     @Nullable
     DataSetMetadata get(String id);
 
@@ -97,6 +105,7 @@ public interface DataSetMetadataRepository {
      * @param id The id of the {@link DataSetMetadata data set} to delete.
      * @see DataSetMetadata#getId()
      */
+    @Timed
     void remove(String id);
 
     /**
@@ -106,6 +115,7 @@ public interface DataSetMetadataRepository {
      * @param id of the metadata to get the lock on.
      * @return the lock instance to be used for locking and unlocking metadata access.
      */
+    @Timed
     DistributedLock createDatasetMetadataLock(String id);
 
     /**
@@ -113,6 +123,7 @@ public interface DataSetMetadataRepository {
      * @param id the id of a data set
      * @return A {@link java.lang.Iterable iterable} of {@link DataSetMetadata data set}.
      */
+    @Timed
     default Iterable<DataSetMetadata> listCompatible(String id) {
         final DataSetMetadata metadata = get(id);
         if (metadata == null) {
@@ -127,5 +138,6 @@ public interface DataSetMetadataRepository {
      *
      * @return the total size of all data sets
      */
+    @Timed
     long countAllDataSetsSize();
 }

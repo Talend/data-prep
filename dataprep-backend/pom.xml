@@ -343,12 +343,6 @@
             </dependency>
             <dependency>
                 <groupId>org.talend.daikon</groupId>
-                <artifactId>content-service-journal-mongo</artifactId>
-                <version>${org.talend.daikon.version}</version>
-                <classifier>lib</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.talend.daikon</groupId>
                 <artifactId>local-content-service</artifactId>
                 <version>${org.talend.daikon.version}</version>
                 <classifier>lib</classifier>

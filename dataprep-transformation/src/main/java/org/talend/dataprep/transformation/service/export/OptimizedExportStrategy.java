@@ -12,6 +12,9 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,21 +36,19 @@ import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a preparation (using its default data set), using any information
@@ -66,10 +67,12 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         if (parameters == null) {
             return false;
         }
+        if (parameters.getFrom() == FILTER) {
+            return false;
+        }
         if (parameters.getContent() != null) {
             return false;
         }
-
         if (StringUtils.isEmpty(parameters.getPreparationId())){
             return false;
         }

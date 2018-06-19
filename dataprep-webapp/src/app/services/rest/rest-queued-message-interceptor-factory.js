@@ -15,7 +15,7 @@ const ACCEPTED_CODE = 202;
 const LOOP_DELAY = 1000;
 const FOLLOWED_STATUS = ['NEW', 'RUNNING'];
 const FAILED_STATUS = 'FAILED';
-const CANCELED_STATUS = 'CANCELED';
+const CANCELLED_STATUS = 'CANCELLED';
 
 const METHODS = {
 	POST: 'POST',
@@ -76,7 +76,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 						switch (data.status) {
 						case FAILED_STATUS:
 							MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
-						case CANCELED_STATUS:
+						case CANCELLED_STATUS:
 							return $q.reject();
 						default:
 							return data.result.downloadUrl ? $http({

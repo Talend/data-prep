@@ -14,7 +14,8 @@
 const ACCEPTED_CODE = 202;
 const LOOP_DELAY = 1000;
 const FOLLOWED_STATUS = ['NEW', 'RUNNING'];
-const FAILED_STATUS = ['FAILED', 'CANCELED'];
+const FAILED_STATUS = 'FAILED';
+const CANCELED_STATUS = 'CANCELED';
 
 const METHODS = {
 	POST: 'POST',
@@ -72,15 +73,17 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 					.then((data) => {
 						const $http = $injector.get('$http');
 
-						if (FAILED_STATUS.includes(data.status)) {
+						switch (data.status) {
+						case FAILED_STATUS:
 							MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+						case CANCELED_STATUS:
 							return $q.reject();
+						default:
+							return data.result.downloadUrl ? $http({
+								method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
+								url: `${RestURLs.context}${data.result.downloadUrl}`,
+							}) : $q.resolve(data);
 						}
-
-						return data.result.downloadUrl ? $http({
-							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
-							url: `${RestURLs.context}${data.result.downloadUrl}`,
-						}) : $q.resolve(data);
 					});
 			}
 

@@ -2,10 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Immutable from 'immutable';
-import { Dialog } from '@talend/react-components';
+import { cmfConnect, Inject } from '@talend/react-cmf';
 import { SelectObject } from '@talend/react-containers';
+import Form from '@talend/react-containers/lib/Form';
 
 import './PreparationCopyMoveModal.scss';
+
+const FORM_ID = 'preparation:copy:move:form';
 
 export default class PreparationCopyMoveModal extends React.Component {
 	constructor(props) {
@@ -19,12 +22,24 @@ export default class PreparationCopyMoveModal extends React.Component {
 		this.props.setState({ show: false });
 	}
 
-	copy() {
-		console.log('[NC] copy');
+	move() {
+		this._proceed('preparation:move');
 	}
 
-	move() {
-		console.log('[NC] move');
+	copy() {
+		this._proceed('preparation:copy');
+	}
+
+	_proceed(action) {
+		const state = this.props.state;
+		const model = state.get('model', new Immutable.Map());
+
+		this.props.dispatchActionCreator(
+			action,
+			{
+				name: model.get('name'),
+			}
+		);
 	}
 
 	render() {
@@ -36,47 +51,59 @@ export default class PreparationCopyMoveModal extends React.Component {
 				left: [
 					{
 						label: 'Cancel',
+						bsStyle: 'link',
 						onClick: this.close,
 					},
 				],
 				right: [
 					{
 						label: 'Move',
-						onClick: this.move,
 						bsStyle: 'primary',
+						onClick: this.move,
 					},
 					{
 						label: 'Copy',
-						onClick: this.copy,
 						bsStyle: 'primary',
+						onClick: this.copy,
 					},
 				],
 			},
 		};
 
+		const form = {
+			formId: FORM_ID,
+			jsonSchema: {
+				type: 'object',
+				properties: {
+					text: {
+						type: 'string',
+					},
+				},
+			},
+			uiSchema: [
+				{
+					key: 'text',
+					title: 'Name',
+				},
+			],
+			data: {
+				text: model.get('name', ''),
+			},
+			actions: [],
+		};
+
+		// initialState
 		return (
-			<Dialog
+			<Inject
+				component="Dialog"
 				header={'Copy/Move preparation - Select target folder'}
 				onHide={this.close}
 				actionbar={bar}
 				show={show}
 			>
-				<SelectObject
-					source={'folders'}
-					id={'folders'}
-					tree={{}}
-				/>
-				<div>
-					<span>Name</span>
-					<input
-						value={model.get('name', '')}
-						id="copy-move-name-input"
-						className="form-control"
-						type="text"
-						required
-					/>
-				</div>
-			</Dialog>
+				<SelectObject source={'folders'} id={'folders'} tree={{}} />
+				<Form {...form} />
+			</Inject>
 		);
 	}
 }
@@ -84,4 +111,5 @@ PreparationCopyMoveModal.displayName = 'PreparationCopyMoveModal';
 PreparationCopyMoveModal.propTypes = {
 	state: ImmutablePropTypes.contains({ show: PropTypes.bool }).isRequired,
 	setState: PropTypes.func.isRequired,
+	...cmfConnect.INJECTED_PROPS,
 };

@@ -1,6 +1,8 @@
 import { all, call, take } from 'redux-saga/effects';
 import {
 	OPEN_FOLDER,
+	PREPARATION_COPY,
+	PREPARATION_MOVE,
 	RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
 	OPEN_COPY_MOVE_MODAL,
@@ -47,6 +49,20 @@ function* rename() {
 	}
 }
 
+function* copy() {
+	while (true) {
+		const { payload } = yield take(PREPARATION_COPY);
+		yield call(effects.copy, payload);
+	}
+}
+
+function* move() {
+	while (true) {
+		const { payload } = yield take(PREPARATION_MOVE);
+		yield call(effects.move, payload);
+	}
+}
+
 function* setTitleEditionMode() {
 	while (true) {
 		const { payload } = yield take(SET_TITLE_EDITION_MODE);
@@ -74,6 +90,8 @@ function* openCopyMoveModal() {
 }
 
 export default {
+	'preparation:copy': copy,
+	'preparation:move': move,
 	'preparation:fetch': fetch,
 	'preparation:duplicate': duplicate,
 	'preparation:rename:submit': rename,

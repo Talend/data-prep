@@ -37,6 +37,14 @@ export function* fetch(payload) {
 	);
 }
 
+export function* copy(payload) {
+	yield true;
+}
+
+export function* move(payload) {
+	yield true;
+}
+
 export function* fetchTree() {
 	yield put(
 		actions.http.get('/api/folders/tree', {

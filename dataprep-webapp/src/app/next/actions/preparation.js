@@ -1,6 +1,8 @@
 import matchPath from '@talend/react-cmf/lib/sagaRouter/matchPath';
 import folder from './folder';
 import {
+	PREPARATION_COPY,
+	PREPARATION_MOVE,
 	CANCEL_RENAME_PREPARATION,
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
@@ -89,8 +91,22 @@ function openCopyMoveModal(event, { model }) {
 	};
 }
 
+function copy(event, payload) {
+	return {
+		type: PREPARATION_COPY,
+	};
+}
+
+function move(event, payload) {
+	return {
+		type: PREPARATION_MOVE,
+	};
+}
+
 export default {
 	open,
+	copy,
+	move,
 	fetch,
 	duplicate,
 	rename,

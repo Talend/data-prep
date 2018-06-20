@@ -36,7 +36,7 @@ import org.talend.dataprep.api.folder.FolderTreeNode;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationDTO;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
@@ -139,7 +139,7 @@ public class PreparationClientTest {
      * @param preparationId the wanted preparation id.
      * @return the preparation details from its id.
      */
-    public PreparationMessage getDetails(String preparationId) {
+    public PreparationDetailsDTO getDetails(String preparationId) {
         return getDetails(preparationId, null);
     }
 
@@ -150,7 +150,7 @@ public class PreparationClientTest {
      * @param wantedStepId the optional wanted step id.
      * @return the details of a preparation at a given (optional) step.
      */
-    public PreparationMessage getDetails(String preparationId, String wantedStepId) {
+    public PreparationDetailsDTO getDetails(String preparationId, String wantedStepId) {
         final RequestSpecification specs = given();
 
         if (StringUtils.isNotBlank(wantedStepId)) {
@@ -163,7 +163,7 @@ public class PreparationClientTest {
         }
 
         try {
-            return mapper.readerFor(PreparationMessage.class).readValue(response.asString());
+            return mapper.readerFor(PreparationDetailsDTO.class).readValue(response.asString());
         } catch (IOException e) {
             throw new TDPException(UNABLE_TO_READ_CONTENT);
         }

@@ -14,7 +14,7 @@ import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.security.Security;
 
 @Component
-@Scope("request")
+@Scope("prototype")
 public class OwnerInjection implements BiFunction<PersistentPreparation, PreparationDTO, PreparationDTO> {
 
     @Autowired

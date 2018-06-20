@@ -584,7 +584,7 @@ public class PreparationService {
                     ExceptionContext.build().put("id", id));
         }
 
-        ensurePreparationConsistency(preparation);
+        // ensurePreparationConsistency(preparation);
 
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {
@@ -665,7 +665,7 @@ public class PreparationService {
 
     public void addPreparationAction(final String preparationId, final AppendStep step) {
         LOGGER.debug("Adding action to preparation...");
-        Preparation preparation = getPreparation(preparationId);
+        Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
         List<Action> actions = getVersionedAction(preparationId, "head");
         StepDiff actionCreatedColumns = stepDiffDelegate.computeCreatedColumns(preparation.getRowMetadata(),
                 buildActions(actions), buildActions(step.getActions()));
@@ -821,7 +821,7 @@ public class PreparationService {
     public List<Action> getVersionedAction(final String id, final String version) {
         LOGGER.debug("Get list of actions of preparation #{} at version {}.", id, version);
 
-        final Preparation preparation = preparationRepository.get(id, Preparation.class);
+        final PersistentPreparation preparation = preparationRepository.get(id, PersistentPreparation.class);
         if (preparation != null) {
             final String stepId = getStepId(version, preparation);
             final PersistentStep step = getStep(stepId);
@@ -898,7 +898,7 @@ public class PreparationService {
      * @param preparation The preparation
      * @return The converted step Id
      */
-    protected String getStepId(final String version, final Preparation preparation) {
+    protected String getStepId(final String version, final PersistentPreparation preparation) {
         if ("head".equalsIgnoreCase(version)) { //$NON-NLS-1$
             return preparation.getHeadId();
         } else if ("origin".equalsIgnoreCase(version)) { //$NON-NLS-1$
@@ -945,13 +945,13 @@ public class PreparationService {
      * @return The preparation with the provided id
      * @throws TDPException when no preparation has the provided id
      */
-    public Preparation getPreparation(final String preparationId) {
-        final Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
+    public PreparationDTO getPreparation(final String preparationId) {
+        final PersistentPreparation preparation = preparationRepository.get(preparationId, PersistentPreparation.class);
         if (preparation == null) {
             LOGGER.error("Preparation #{} does not exist", preparationId);
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }
-        return preparation;
+        return beanConversionService.convert(preparation, PreparationDTO.class);
     }
 
     /**

@@ -311,7 +311,7 @@ public class PreparationController {
     @RequestMapping(value = "/preparations/{id}", method = GET)
     @ApiOperation(value = "Get preparation", notes = "Return the preparation with provided id.")
     @Timed
-    public Preparation get(@ApiParam("id") @PathVariable("id") String id) {
+    public PreparationDTO get(@ApiParam("id") @PathVariable("id") String id) {
         return preparationService.getPreparation(id);
     }
 

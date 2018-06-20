@@ -72,7 +72,7 @@ import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationDTO;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.BasePreparationTest;
@@ -349,11 +349,11 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, step);
 
         // when
-        final PreparationMessage details = clientTest.getDetails(preparationId, wantedStepId);
+        final PreparationDetailsDTO details = clientTest.getDetails(preparationId, wantedStepId);
 
         // then
         assertNotNull(details);
-        assertEquals(wantedStepId, details.getHeadId());
+        assertEquals(wantedStepId, details.getSteps().get(details.getSteps().size() - 1));
         assertEquals(3, details.getSteps().size());
     }
 

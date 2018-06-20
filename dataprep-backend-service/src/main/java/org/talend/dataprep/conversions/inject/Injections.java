@@ -14,7 +14,7 @@ public class Injections {
     }
 
     @Bean
-    @Scope("request")
+    @Scope("prototype")
     public OwnerInjection ownerInjection() {
         return new OwnerInjection();
     }

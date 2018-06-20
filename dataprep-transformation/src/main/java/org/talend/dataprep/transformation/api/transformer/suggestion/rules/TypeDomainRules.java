@@ -76,7 +76,7 @@ public class TypeDomainRules extends BasicRules {
     public static SuggestionEngineRule phoneRule() {
         return forActions(FormatPhoneNumber.ACTION_NAME) //
                 .when(IS_PHONE) //
-                .then(columnMetadata -> MEDIUM) //
+                .then(columnMetadata -> HIGH) //
                 .build();
     }
 
@@ -92,8 +92,8 @@ public class TypeDomainRules extends BasicRules {
         domainsToMask.add(SemanticCategoryEnum.US_PHONE.getId());
 
         return forActions(ExtractPhoneInformation.ACTION_NAME) //
-                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain())) //
-                .then(columnMetadata -> MEDIUM) //
+                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain()) || IS_PHONE.test(columnMetadata)) //
+                .then(columnMetadata -> HIGH) //
                 .build();
     }
 

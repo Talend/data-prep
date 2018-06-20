@@ -27,12 +27,12 @@ public class FolderSearchDelegate extends AbstractSearchDelegate<Folder> {
 
     @Override
     public String getSearchCategory() {
-        return "folders";
+        return "folder";
     }
 
     @Override
     public String getSearchLabel() {
-        return "folders";
+        return "folder";
     }
 
     @Override

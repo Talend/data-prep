@@ -15,7 +15,11 @@ package org.talend.dataprep.configuration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.*;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
@@ -25,6 +29,7 @@ import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -52,7 +57,7 @@ public class HttpClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClient.class);
 
     /** Maximum connection pool size. */
-    @Value("${http.pool.size:50}")
+    @Value("${http.pool.size:200}")
     private int maxPoolSize;
 
     /**
@@ -104,6 +109,7 @@ public class HttpClient {
                 .setConnectionManager(connectionManager) //
                 .setKeepAliveStrategy(getKeepAliveStrategy()) //
                 .setDefaultRequestConfig(getRequestConfig()) //
+                .setConnectionReuseStrategy(DefaultClientConnectionReuseStrategy.INSTANCE) //
                 .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false)) //
                 .setRedirectStrategy(new RedirectTransferStrategy()) //
                 .build();

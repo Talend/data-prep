@@ -63,11 +63,7 @@ class ActionsImport implements ImportBeanDefinitionRegistrar {
                 final Class<?> clazz = Class.forName(classMetadata.getClassName());
                 return AnnotationUtils.findAnnotation(clazz, Action.class) != null;
             } catch (Throwable e) { // NOSONAR
-                if (!LOGGER.isDebugEnabled()) {
-                    LOGGER.error("Unable to filter class {}.", classMetadata.getClassName());
-                } else {
-                    LOGGER.debug("Unable to filter class {}.", classMetadata.getClassName(), e);
-                }
+                LOGGER.debug("Unable to filter class {}.", classMetadata.getClassName(), e);
             }
             return false;
         }

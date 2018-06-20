@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dataset action should create an open action 1`] = `
+Object {
+  "payload": Object {
+    "id": 42,
+    "type": "test",
+  },
+  "type": "TDP_OPEN_DATASET",
+}
+`;

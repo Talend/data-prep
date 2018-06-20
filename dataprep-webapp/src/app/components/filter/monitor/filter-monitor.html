@@ -30,10 +30,13 @@
 			</label>
 		</div>
 	</div>
-	<div id="filter-monitor-right" class="pull-right" insertion-filter-monitor>
-         <span id="filters-monitor-stats"
+	<div id="filter-monitor-right" class="pull-right" insertion-filter-monitor ng-switch="!!filterMonitorCtrl.preview">
+         <span ng-switch-when="false"
+			   id="filters-monitor-stats"
+			   class="filter-count"
                title="{{ 'NB_LINES_MATCHING_FILTERS' | translate:{percentage: filterMonitorCtrl.percentage} }}">
               <span class="nbLines">{{filterMonitorCtrl.nbLines}}</span>/<span>{{filterMonitorCtrl.nbTotalLines}}</span>
          </span>
+		 <span class="filter-count" ng-switch-when="true">-/-</span>
 	</div>
 </div>

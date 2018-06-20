@@ -103,7 +103,7 @@ public class FormatPhoneNumber extends AbstractMultiScopeAction {
 
     protected static final String FR_REGION_CODE = "FR";
 
-    protected static final String UK_REGION_CODE = "UK";
+    protected static final String UK_REGION_CODE = "GB";
 
     protected static final String DE_REGION_CODE = "DE";
 

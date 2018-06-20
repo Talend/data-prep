@@ -124,7 +124,7 @@ describe('Onboarding service', () => {
 		// then
 		const options = OnboardingService.currentTour._options;
 		expect(options.steps[1]).toEqual({
-			element: '#datagrid .slick-header-columns-right > .slick-header-column',
+			element: '#datagrid .grid-header',
 			position: 'right',
 			intro: '<div class="introjs-tooltiptitle">Columns</div><div class="introjs-tooltipcontent">Select a column to discover the transformation functions you can apply to your data.</div>',
 		});

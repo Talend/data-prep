@@ -270,7 +270,7 @@ public class ApiDatasetClient {
     // No cache as metadata may be updated without notice (see BackgroundAnalysis that update metadata twice)
     private AnalysisResult getAnalyseDatasetFromLegacy(String id) {
         DataSetMetadata metadata = context.getBean(DataSetGetMetadataLegacy.class, id).execute();
-        return new AnalysisResult(metadata.getRowMetadata(), metadata.getDataSetSize());
+        return new AnalysisResult(metadata.getRowMetadata(), metadata.getContent().getNbRecords());
     }
 
     private AnalysisResult analyseDataset(String id) {

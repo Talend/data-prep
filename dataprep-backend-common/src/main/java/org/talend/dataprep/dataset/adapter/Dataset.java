@@ -50,6 +50,8 @@ public class Dataset {
 
     private Long version;
 
+    private String creator;
+
     private String datastoreId;
 
     private Datastore datastore;
@@ -284,6 +286,14 @@ public class Dataset {
 
     public void setEntitlements(Set<String> entitlements) {
         this.entitlements = entitlements;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public enum CertificationState {

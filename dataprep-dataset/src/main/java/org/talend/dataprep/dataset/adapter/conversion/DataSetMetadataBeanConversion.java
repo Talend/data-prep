@@ -70,7 +70,7 @@ public class DataSetMetadataBeanConversion extends BeanConversionServiceWrapper 
                         jsonNode.set("location", objectMapper.valueToTree(location));
                         jsonNode.set("content", objectMapper.valueToTree(dataSetMetadata.getContent()));
 
-                        dataset.setProperties(jsonNode.toString());
+                        dataset.setProperties(jsonNode);
                     }
 
                     // Manage legacy fields that doesn't match data catalog concept

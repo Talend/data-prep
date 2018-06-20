@@ -20,11 +20,15 @@ import java.util.Set;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.schema.Schema;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
  * Representation of a Talend dataset entity.
  * Contains ONLY metadata about the dataset. Not its schema, not a sample, no analysis..
  * See <a href="https://github.com/Talend/dataset/blob/master/common/src/main/scala/org/talend/dataflow/common/model/Dataset.scala#L63">scala implementation in dataset</a>.
  */
+@JsonIgnoreProperties({"__acl"})
 public class Dataset {
 
     private String id;
@@ -53,7 +57,7 @@ public class Dataset {
     private String schemaId;
 
     /** Raw TComp JSON properties. */
-    private String properties;
+    private ObjectNode properties;
 
     /** ID of owner. */
     private String owner;
@@ -64,7 +68,10 @@ public class Dataset {
 
     private boolean favorite;
 
+    private Set<String> entitlements;
+
     // TODO remove when no support of dataset legacy mode
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private DataSetMetadataLegacy dataSetMetadataLegacy;
 
     /**
@@ -231,11 +238,11 @@ public class Dataset {
         this.schemaId = schemaId;
     }
 
-    public String getProperties() {
+    public ObjectNode getProperties() {
         return properties;
     }
 
-    public void setProperties(String properties) {
+    public void setProperties(ObjectNode properties) {
         this.properties = properties;
     }
 
@@ -269,6 +276,14 @@ public class Dataset {
 
     public void setDataSetMetadataLegacy(DataSetMetadataLegacy dataSetMetadataLegacy) {
         this.dataSetMetadataLegacy = dataSetMetadataLegacy;
+    }
+
+    public Set<String> getEntitlements() {
+        return entitlements;
+    }
+
+    public void setEntitlements(Set<String> entitlements) {
+        this.entitlements = entitlements;
     }
 
     public enum CertificationState {

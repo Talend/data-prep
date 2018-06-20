@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.dataset.adapter.conversions;
 
-import java.io.IOException;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -33,7 +31,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 @Component
@@ -63,13 +60,9 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                         dataSetMetadata.setGovernance(governance);
                     }
 
-                    JsonNode datasetProperties = objectMapper.createObjectNode();
-                    try {
-                        if (isNotBlank(dataset.getProperties())) {
-                            datasetProperties = objectMapper.readTree(dataset.getProperties());
-                        }
-                    } catch (IOException e) {
-                        throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                    JsonNode datasetProperties = dataset.getProperties();
+                    if (datasetProperties == null) {
+                        datasetProperties = objectMapper.createObjectNode();
                     }
 
                     Datastore datastore = dataset.getDatastore();
@@ -90,13 +83,14 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
 
                     // Manage legacy fields that doesn't match data catalog concept
                     Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = dataset.getDataSetMetadataLegacy();
-                    dataSetMetadata.setSheetName(dataSetMetadataLegacy.getSheetName());
-                    dataSetMetadata.setSchemaParserResult(dataSetMetadataLegacy.getSchemaParserResult());
-                    dataSetMetadata.setDraft(dataSetMetadataLegacy.isDraft());
+                    if (dataSetMetadataLegacy != null) {
+                        dataSetMetadata.setSheetName(dataSetMetadataLegacy.getSheetName());
+                        dataSetMetadata.setSchemaParserResult(dataSetMetadataLegacy.getSchemaParserResult());
+                        dataSetMetadata.setDraft(dataSetMetadataLegacy.isDraft());
+                        dataSetMetadata.setEncoding(dataSetMetadataLegacy.getEncoding());
+                        dataSetMetadata.setTag(dataSetMetadataLegacy.getTag());
+                    }
 
-                    dataSetMetadata.setEncoding(dataSetMetadataLegacy.getEncoding());
-
-                    dataSetMetadata.setTag(dataSetMetadataLegacy.getTag());
                     return dataSetMetadata;
                 }) //
                 .build());

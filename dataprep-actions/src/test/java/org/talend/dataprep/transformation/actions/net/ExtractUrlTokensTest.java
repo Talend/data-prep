@@ -297,6 +297,36 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     }
 
     @Test
+    public void testApplySurrogatePairCharactorsExtraction() {
+        TokenExtractionResult result = testApply("ftp://𠀀𠀁𠀂𠀃𠀄:𠁁𠁂𠁃@𠁁𠁂.𠀂𠀃𠀄");
+        assertEquals("𠀀𠀁𠀂𠀃𠀄", result.userToken);
+        assertEquals("𠁁𠁂𠁃", result.passwordToken);
+        assertEquals("𠁁𠁂.𠀂𠀃𠀄", result.hostToken);
+    }
+
+    @Test
+    public void testApplyGreekLanguageExtraction() {
+        TokenExtractionResult result = testApply("ftp://Σελίδα@site.com/Μία_Σελίδα");
+        assertEquals("Σελίδα", result.userToken);
+        assertEquals("/Μία_Σελίδα", result.pathToken);
+    }
+
+    @Test
+    public void testApplyHebrewLanguageExtraction() {
+        TokenExtractionResult result = testApply("http://site.com/מבשרת");
+        assertEquals("site.com", result.hostToken);
+        assertEquals("/מבשרת", result.pathToken);
+    }
+
+    @Test
+    public void testApplySpecialCharactorsExtraction() {
+        TokenExtractionResult result = testApply("ftp://user-cn:pass_cn@www.talend-cn.com:8080");
+        assertEquals("user-cn", result.userToken);
+        assertEquals("pass_cn", result.passwordToken);
+        assertEquals("www.talend-cn.com", result.hostToken);
+    }
+
+    @Test
     @Ignore
     public void testApplyEncodedCharactersTokenExtraction() throws Exception {
         // encoded version of: https://卷筒:纸@引き割り.引き割り:8580
@@ -318,6 +348,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         assertEquals("file", testApply("file://server:21/this/is/a/resource").protocolToken);
         assertEquals("mvn", testApply("mvn://server:21/this/is/a/resource").protocolToken);
         assertEquals("tagada", testApply("tagada://server:21/this/is/a/resource").protocolToken);
+        assertEquals("sftp", testApply("sftp://server:21/this/is/a/resource").protocolToken);
     }
 
     @Test

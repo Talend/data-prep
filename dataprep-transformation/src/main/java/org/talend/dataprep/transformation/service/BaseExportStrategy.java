@@ -29,7 +29,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -79,7 +79,7 @@ public abstract class BaseExportStrategy {
     protected SecurityProxy securityProxy;
 
     @Autowired
-    protected ApiDatasetClient datasetClient;
+    protected DatasetClient datasetClient;
 
     /**
      * Return the format that matches the given name or throw an error if the format is unknown.

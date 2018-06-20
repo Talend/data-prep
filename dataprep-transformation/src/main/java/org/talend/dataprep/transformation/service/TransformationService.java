@@ -12,24 +12,10 @@
 
 package org.talend.dataprep.transformation.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.GZIPOutputStream;
-import javax.annotation.Resource;
-import javax.validation.Valid;
-
+import com.fasterxml.jackson.core.JsonParser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -77,7 +63,7 @@ import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
@@ -111,11 +97,23 @@ import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
-import com.fasterxml.jackson.core.JsonParser;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
@@ -212,7 +210,7 @@ public class TransformationService extends BaseTransformationService {
     private ExportParametersUtil exportParametersUtil;
 
     @Autowired
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters",

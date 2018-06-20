@@ -12,11 +12,7 @@
 
 package org.talend.dataprep.configuration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import com.netflix.hystrix.HystrixCommand;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,13 +28,16 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.security.NoOpSecurityProxy;
 import org.talend.dataprep.security.SecurityProxy;
 
-import com.netflix.hystrix.HystrixCommand;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -66,7 +65,7 @@ public class APIPreparationConversionsTest {
     private ApplicationContext applicationContext;
 
     @Mock
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     private BeanConversionService conversionService = new BeanConversionService();
 
@@ -77,7 +76,7 @@ public class APIPreparationConversionsTest {
         if (!setup) {
             conversionService = eeApiPreparationConversions.doWith(conversionService, "whateverTheName", applicationContext);
             when(applicationContext.getBean(eq(SecurityProxy.class))).thenAnswer(i -> new NoOpSecurityProxy());
-            when(applicationContext.getBean(eq(ApiDatasetClient.class))).thenReturn(datasetClient);
+            when(applicationContext.getBean(eq(DatasetClient.class))).thenReturn(datasetClient);
             setup = true;
         }
     }

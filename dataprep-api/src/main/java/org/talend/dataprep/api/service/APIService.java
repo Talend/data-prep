@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
@@ -46,7 +46,7 @@ public class APIService {
     protected BeanConversionService beanConversionService;
 
     @Autowired
-    protected ApiDatasetClient datasetClient;
+    protected DatasetClient datasetClient;
 
     protected <T extends HystrixCommand> T getCommand(Class<T> clazz, Object... args) {
         try {

@@ -10,7 +10,7 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -37,7 +37,7 @@ public class PreparationUpdateListenerUtil {
     private PreparationUtils preparationUtils;
 
     @Autowired
-    private ApiDatasetClient apiDatasetClient;
+    private DatasetClient datasetClient;
 
     @Autowired
     private SecurityProxy securityProxy;
@@ -51,7 +51,7 @@ public class PreparationUpdateListenerUtil {
     public void removePreparationStepRowMetadata(String dataSetId) {
         try {
             securityProxy.asTechnicalUser();
-            final DataSetMetadata dataSetMetadata = apiDatasetClient.getDataSetMetadata(dataSetId);
+            final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
             if (dataSetMetadata == null) {
                 LOGGER.error("Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).", dataSetId);
                 return;

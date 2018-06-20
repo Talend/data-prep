@@ -15,7 +15,7 @@ package org.talend.dataprep.api.service.delegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 
 import java.util.stream.Stream;
 
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 public class DataSetSearchDelegate extends AbstractSearchDelegate<DataSetMetadata> {
 
     @Autowired
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     @Override
     public String getSearchCategory() {

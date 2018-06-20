@@ -65,7 +65,7 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
@@ -101,7 +101,7 @@ public class PreparationAPI extends APIService {
     private DataSetAPI dataSetAPI;
 
     @Autowired
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     @RequestMapping(value = "/api/preparations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all preparations.", notes = "Returns the list of preparations the current user is allowed to see.")

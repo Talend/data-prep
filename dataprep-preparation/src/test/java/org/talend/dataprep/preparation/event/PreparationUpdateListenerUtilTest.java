@@ -10,7 +10,7 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tql.api.TqlBuilder;
@@ -38,7 +38,7 @@ public class PreparationUpdateListenerUtilTest {
     private PreparationUtils preparationUtils;
 
     @Mock
-    private ApiDatasetClient apiDatasetClient;
+    private DatasetClient datasetClient;
 
     @Mock
     private SecurityProxy securityProxy;
@@ -69,7 +69,7 @@ public class PreparationUpdateListenerUtilTest {
                 .thenReturn(Stream.of(preparation));
         when(preparationRepository.get(eq(step1.id()), eq(Step.class))).thenReturn(step1);
         when(preparationRepository.get(eq(step2.id()), eq(Step.class))).thenReturn(step2);
-        when(apiDatasetClient.getDataSetMetadata(any())).thenReturn(metadata);
+        when(datasetClient.getDataSetMetadata(any())).thenReturn(metadata);
 
         // when
         preparationUpdateListenerUtil.removePreparationStepRowMetadata(metadata.getId());

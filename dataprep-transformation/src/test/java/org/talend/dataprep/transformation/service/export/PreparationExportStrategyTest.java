@@ -1,10 +1,7 @@
 package org.talend.dataprep.transformation.service.export;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.stream.Stream;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +23,7 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
@@ -35,8 +32,10 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 import org.talend.dataprep.transformation.format.JsonFormat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -82,7 +81,7 @@ public class PreparationExportStrategyTest {
     private PreparationDetailsGet preparationDetailsGet;
 
     @Mock
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     @Before
     public void setUp() throws Exception {

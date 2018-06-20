@@ -15,15 +15,16 @@
 
 package org.talend.dataprep.dataset.adapter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 public class DatasetTest {
 
     @Test

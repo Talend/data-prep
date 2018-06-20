@@ -12,26 +12,6 @@
 
 package org.talend.dataprep.preparation.service;
 
-import java.text.DecimalFormat;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Deque;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +34,7 @@ import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -72,6 +52,26 @@ import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.tql.api.TqlBuilder;
 import org.talend.tql.model.Expression;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.text.DecimalFormat;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
@@ -161,7 +161,7 @@ public class PreparationService {
     private Set<Validator> validators;
 
     @Autowired
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     /**
      * Create a preparation from the http request body.

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.format.CSVFormat;
@@ -32,7 +32,7 @@ import org.talend.dataprep.transformation.service.ExportUtils;
 public class DataSetExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     @Override
     public boolean accept(ExportParameters parameters) {

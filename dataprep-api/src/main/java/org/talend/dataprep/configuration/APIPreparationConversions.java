@@ -23,7 +23,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.command.preparation.LocatePreparation;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -56,7 +56,7 @@ public class APIPreparationConversions extends BeanConversionServiceWrapper {
         if (preparationMessage.getDataSetId() == null) {
             return enrichedPreparation;
         } else {
-            ApiDatasetClient datasetClient = applicationContext.getBean(ApiDatasetClient.class);
+            DatasetClient datasetClient = applicationContext.getBean(DatasetClient.class);
             // get the dataset metadata
             try {
                 securityProxy.asTechnicalUser(); // because dataset are not shared

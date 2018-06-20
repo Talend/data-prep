@@ -31,7 +31,7 @@ import org.talend.dataprep.api.service.command.export.ExportTypes;
 import org.talend.dataprep.api.service.command.export.PreparationExportTypes;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -59,7 +59,7 @@ import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
 public class ExportAPI extends APIService {
 
     @Autowired
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     @RequestMapping(value = "/api/export", method = GET)
     @ApiOperation(value = "Export a dataset", consumes = APPLICATION_FORM_URLENCODED_VALUE, notes = "Export a dataset or a preparation to file. The file type is provided in the request body.")

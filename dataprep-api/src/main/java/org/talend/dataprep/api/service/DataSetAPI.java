@@ -12,12 +12,9 @@
 
 package org.talend.dataprep.api.service;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.netflix.hystrix.HystrixCommand;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,21 +50,22 @@ import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActi
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.dataset.adapter.ApiDatasetClient;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
-
-import com.netflix.hystrix.HystrixCommand;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -86,7 +84,7 @@ import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CER
 public class DataSetAPI extends APIService {
 
     @Autowired
-    private ApiDatasetClient datasetClient;
+    private DatasetClient datasetClient;
 
     @Value("${dataset.list.limit:10}")
     private int datasetListLimit;

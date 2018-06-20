@@ -49,7 +49,7 @@ import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
  * Adapter for legacy data model over the {@link DataCatalogClient}.
  */
 @Service
-public class ApiDatasetClient {
+public class DatasetClient {
 
     private static final Statistics EMPTY_STATS = new Statistics();
 

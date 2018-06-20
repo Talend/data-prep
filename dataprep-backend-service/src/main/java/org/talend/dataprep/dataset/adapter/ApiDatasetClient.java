@@ -1,18 +1,9 @@
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import javax.annotation.Nullable;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +20,7 @@ import org.talend.dataprep.api.dataset.row.InvalidMarker;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
-import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
-import org.talend.dataprep.dataset.adapter.commands.DataSetGetSchema;
-import org.talend.dataprep.dataset.adapter.commands.DatasetList;
+import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadataLegacy;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.quality.AnalyzerService;
@@ -40,26 +28,33 @@ import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.netflix.hystrix.HystrixCommand;
+import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
 
 /**
- * Client based on Hystrix commands to call a dataset API. Exposes native avro calls and conversions.
+ * Adapter for legacy data model over the {@link DataCatalogClient}.
  */
-// It also allows to avoid using context.getBean everywhere
 @Service
 public class ApiDatasetClient {
 
     private static final Statistics EMPTY_STATS = new Statistics();
 
     @Autowired
-    private ApplicationContext context;
+    private DataCatalogClient dataCatalogClient;
 
     @Autowired
     private ObjectMapper mapper;
@@ -79,55 +74,51 @@ public class ApiDatasetClient {
     @Autowired
     private FilterService filterService;
 
-    private final Cache<String, AnalysisResult> metadataCache = CacheBuilder.newBuilder()
+    private final Cache<String, AnalysisResult> computedMetadataCache = CacheBuilder.newBuilder()
             .maximumSize(50)
             .softValues()
             .build();
 
-    // ------- Pure API -------
+    private Function<String, AnalysisResult> datasetAnalysisSupplier;
 
-    public Stream<Dataset> listDataset(Dataset.CertificationState certification, Boolean favorite) {
-        return context.getBean(DatasetList.class, certification, favorite).execute();
-    }
+    @Autowired
+    private ApplicationContext context;
 
-    @Nullable
-    public Dataset getMetadata(String id) {
-        return context.getBean(DataSetGetMetadata.class, id).execute();
-    }
+    @Value("${dataset.service.provider:legacy}")
+    private String catalogMode;
 
-    @Nullable
-    public Schema getDataSetSchema(String id) {
-        return context.getBean(DataSetGetSchema.class, id).execute();
-    }
-
-    public Stream<GenericRecord> getDataSetContent(String id, Long limit) {
-        Schema schema = getDataSetSchema(id);
-        return context.getBean(DataSetGetContent.class, id, schema, limit).execute();
+    @PostConstruct
+    private void initializeAnalysisSupplier() {
+        if ("legacy".equals(catalogMode)) {
+            datasetAnalysisSupplier = this::getAnalyseDatasetFromLegacy;
+        } else {
+            datasetAnalysisSupplier = this::analyseDataset;
+        }
     }
 
     // ------- Composite adapters -------
 
     public Stream<DataSetMetadata> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
-        Stream<Dataset> datasetStream = listDataset(certification, favorite);
+        Stream<Dataset> datasetStream = dataCatalogClient.listDataset(certification, favorite);
         return datasetStream.map(this::toDataSetMetadata);
     }
 
     public DataSetMetadata getDataSetMetadata(String id) {
-        return toDataSetMetadata(getMetadata(id));
+        return toDataSetMetadata(dataCatalogClient.getMetadata(id));
     }
 
     public RowMetadata getDataSetRowMetadata(String id) {
-        Schema dataSetSchema = getDataSetSchema(id);
+        Schema dataSetSchema = dataCatalogClient.getDataSetSchema(id);
         return dataSetSchema == null ? null : AvroUtils.toRowMetadata(dataSetSchema);
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata, boolean fullContent) {
-        return toDataSetRows(getDataSetContent(id, limit(fullContent)), rowMetadata);
+        return toDataSetRows(dataCatalogClient.getDataSetContent(id, limit(fullContent)), rowMetadata);
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id, boolean fullContent) {
         DataSetMetadata metadata = getDataSetMetadata(id);
-        return toDataSetRows(getDataSetContent(id, limit(fullContent)), metadata.getRowMetadata());
+        return toDataSetRows(dataCatalogClient.getDataSetContent(id, limit(fullContent)), metadata.getRowMetadata());
     }
 
     /**
@@ -168,7 +159,7 @@ public class ApiDatasetClient {
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
         DataSet dataset = new DataSet();
         // convert metadata
-        Dataset metadata = getMetadata(id);
+        Dataset metadata = dataCatalogClient.getMetadata(id);
         if (metadata == null) {
             return null;
         }
@@ -176,7 +167,7 @@ public class ApiDatasetClient {
         dataset.setMetadata(dataSetMetadata);
 
         // convert records
-        Stream<GenericRecord> dataSetContent = getDataSetContent(id, limit(fullContent));
+        Stream<GenericRecord> dataSetContent = dataCatalogClient.getDataSetContent(id, limit(fullContent));
         Stream<DataSetRow> records = toDataSetRows(dataSetContent, dataSetMetadata.getRowMetadata());
         if (withRowValidityMarker) {
             records = records.peek(addValidity(dataSetMetadata.getRowMetadata().getColumns()));
@@ -194,7 +185,7 @@ public class ApiDatasetClient {
     }
 
     public Stream<DataSetMetadata> searchDataset(String name, boolean strict) {
-        Stream<Dataset> datasetStream = listDataset(null, null);
+        Stream<Dataset> datasetStream = dataCatalogClient.listDataset(null, null);
         if (isNotBlank(name)) {
             if (strict) {
                 datasetStream = datasetStream.filter(dataset -> name.equalsIgnoreCase(dataset.getLabel()));
@@ -218,19 +209,14 @@ public class ApiDatasetClient {
 
     /**
      * Still present because Chained commands still need this one.
-     *
-     * @param dataSetId
-     * @param fullContent
-     * @param includeInternalContent
-     * @return
      */
     @Deprecated
     public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
-        DataSet dataSet = getDataSet(dataSetId, fullContent, false, null);
         return new HystrixCommand<InputStream>(DATASET_GROUP) {
 
             @Override
             protected InputStream run() throws IOException {
+                DataSet dataSet = getDataSet(dataSetId, fullContent, false, null);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 mapper.writerFor(DataSet.class).writeValue(out, dataSet);
                 return new ByteArrayInputStream(out.toByteArray());
@@ -261,22 +247,17 @@ public class ApiDatasetClient {
     }
 
     private DataSetMetadata toDataSetMetadata(Dataset dataset, boolean fullContent) {
-
         RowMetadata rowMetadata = getDataSetRowMetadata(dataset.getId());
         DataSetMetadata metadata = conversionService.convert(dataset, DataSetMetadata.class);
         metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 
         if (rowMetadata != null && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
-            try {
-                AnalysisResult analysisResult = metadataCache.get(dataset.getId(), () -> analyseDataset(dataset.getId(), rowMetadata, fullContent));
+                AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
                 metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata)); // because sadly, my cache is not immutable
                 metadata.setDataSetSize(analysisResult.rowcount);
                 metadata.getContent().setNbRecords(analysisResult.rowcount);
-            } catch (ExecutionException e) {
-                // source method do not throw checked exception
-                throw (RuntimeException) e.getCause();
-            }
+
         }
 
         return metadata;
@@ -286,28 +267,44 @@ public class ApiDatasetClient {
         return statistics == null || EMPTY_STATS.equals(statistics);
     }
 
-    private AnalysisResult analyseDataset(String id, RowMetadata rowMetadata, boolean fullContent) {
-        AtomicLong count = new AtomicLong(0);
-        try (Stream<DataSetRow> records = getDataSetContentAsRows(id, rowMetadata, fullContent).peek(e -> count.incrementAndGet())) {
-            analyzerService.analyzeFull(records, rowMetadata.getColumns());
+    // No cache as metadata may be updated without notice (see BackgroundAnalysis that update metadata twice)
+    private AnalysisResult getAnalyseDatasetFromLegacy(String id) {
+        DataSetMetadata metadata = context.getBean(DataSetGetMetadataLegacy.class, id).execute();
+        return new AnalysisResult(metadata.getRowMetadata(), metadata.getDataSetSize());
+    }
+
+    private AnalysisResult analyseDataset(String id) {
+        try {
+            return computedMetadataCache.get(id, () -> {
+                AtomicLong count = new AtomicLong(0);
+                RowMetadata rowMetadata = getDataSetRowMetadata(id);
+                try (Stream<DataSetRow> records = dataCatalogClient.getDataSetContent(id, sampleSize)
+                        .map(toDatasetRow(rowMetadata))) {
+                    analyzerService.analyzeFull(records, rowMetadata.getColumns());
+                }
+                return new AnalysisResult(rowMetadata, count.get());
+            });
+        } catch (ExecutionException e) {
+            // source method do not throw checked exception
+            throw (RuntimeException) e.getCause();
         }
-        return new AnalysisResult(rowMetadata, count.get());
     }
 
     private class AnalysisResult {
+
         private final RowMetadata rowMetadata;
+
         private final long rowcount;
 
-        public AnalysisResult(RowMetadata rowMetadata, long rowcount) {
+        AnalysisResult(RowMetadata rowMetadata, long rowcount) {
             this.rowMetadata = rowMetadata;
             this.rowcount = rowcount;
         }
     }
 
-    // TODO: WIP
     @EventListener
-    public void onUpdate(DatasetUpdatedEvent event) {
-        metadataCache.invalidate(event.getSource().getId());
+    public void cleanCacheEntryOnDatasetModification(DatasetUpdatedEvent event) {
+        computedMetadataCache.invalidate(event.getSource().getId());
     }
 
 }

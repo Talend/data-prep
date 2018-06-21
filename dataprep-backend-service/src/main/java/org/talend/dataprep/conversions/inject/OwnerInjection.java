@@ -6,12 +6,11 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.share.Owner;
-import org.talend.dataprep.preparation.store.PersistentPreparation;
+import org.talend.dataprep.api.share.SharedResource;
 import org.talend.dataprep.security.Security;
 
-public class OwnerInjection implements BiFunction<PersistentPreparation, PreparationDTO, PreparationDTO> {
+public class OwnerInjection<T extends SharedResource> implements BiFunction<Object, T, T> {
 
     @Autowired
     private Security security;
@@ -24,7 +23,7 @@ public class OwnerInjection implements BiFunction<PersistentPreparation, Prepara
     }
 
     @Override
-    public PreparationDTO apply(PersistentPreparation persistentPreparation, PreparationDTO dto) {
+    public T apply(Object persistentPreparation, T dto) {
         dto.setOwner(owner);
         return dto;
     }

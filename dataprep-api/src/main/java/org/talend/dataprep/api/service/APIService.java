@@ -35,7 +35,7 @@ public class APIService {
     protected static final Logger LOG = LoggerFactory.getLogger(APIService.class);
 
     @Autowired
-    private ApplicationContext context;
+    protected ApplicationContext context;
 
     @Autowired
     private PoolingHttpClientConnectionManager connectionManager;

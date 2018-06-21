@@ -1,10 +1,14 @@
 package org.talend.dataprep.api.preparation;
 
 import java.util.List;
+import java.util.Set;
+
+import org.talend.dataprep.api.share.Owner;
+import org.talend.dataprep.api.share.SharedResource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PreparationListItemDTO {
+public class PreparationListItemDTO implements SharedResource {
 
     /** The dataset id. */
     private String id;
@@ -23,6 +27,55 @@ public class PreparationListItemDTO {
     private String name;
 
     private List<String> steps;
+
+    private Owner owner;
+
+    private boolean shared;
+
+    private boolean sharedByMe;
+
+    private Set<String> roles;
+
+    @Override
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public void setSharedResource(boolean shared) {
+        this.shared = shared;
+    }
+
+    @Override
+    public void setSharedByMe(boolean sharedByMe) {
+        this.sharedByMe = sharedByMe;
+    }
+
+    @Override
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String getOwnerId() {
+        return owner.getId();
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public boolean isSharedByMe() {
+        return sharedByMe;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
 
     public String getId() {
         return id;

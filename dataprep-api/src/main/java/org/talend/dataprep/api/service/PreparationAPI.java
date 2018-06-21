@@ -91,6 +91,7 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
 import org.talend.dataprep.conversions.inject.DataSetNameInjection;
+import org.talend.dataprep.conversions.inject.OwnerInjection;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
@@ -120,13 +121,21 @@ public class PreparationAPI extends APIService {
     @Timed
     public Stream<PreparationListItemDTO> listPreparations(
             @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
+            @RequestParam(name = "format", required = false) String format,
             @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
             @ApiParam(name = "path", value = "Filter preparations by full path. Should always return one preparation") @RequestParam(required = false, name = "path") String path,
             @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
-        return toStream(PreparationDTO.class, mapper, command) //
-                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        if ("summary".equalsIgnoreCase(format)) {
+            final OwnerInjection ownerInjection = context.getBean(OwnerInjection.class);
+            final Stream<PreparationListItemDTO> stream = toStream(PreparationDTO.class, mapper, command) //
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection, ownerInjection));
+            return stream;
+        } else {
+            return toStream(PreparationDTO.class, mapper, command) //
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        }
     }
 
     /**

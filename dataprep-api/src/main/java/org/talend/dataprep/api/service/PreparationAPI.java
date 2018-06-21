@@ -97,7 +97,6 @@ import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
-import org.talend.dataprep.util.SortAndOrderHelper.Format;
 
 import com.netflix.hystrix.HystrixCommand;
 
@@ -120,14 +119,12 @@ public class PreparationAPI extends APIService {
     @ApiOperation(value = "Get all preparations.", notes = "Returns the list of preparations the current user is allowed to see.")
     @Timed
     public Stream<PreparationListItemDTO> listPreparations(
-            @ApiParam(name = "format", value = "Format of the returned document (can be 'long', 'short' or 'summary'). Defaults to 'summary'.")
-            @RequestParam(value = "format", defaultValue = "summary") Format format,
             @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
             @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
             @ApiParam(name = "path", value = "Filter preparations by full path. Should always return one preparation") @RequestParam(required = false, name = "path") String path,
             @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
-        GenericCommand<InputStream> command = getCommand(PreparationList.class, format, name, folderPath, path, sort, order);
+        GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
         return toStream(PreparationDTO.class, mapper, command) //
                 .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
     }

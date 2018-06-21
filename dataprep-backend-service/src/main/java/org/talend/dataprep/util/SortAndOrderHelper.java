@@ -91,18 +91,6 @@ public final class SortAndOrderHelper {
         }
     }
 
-    /**
-     * Representation style of entities. Create for Preparations formats available.
-     */
-    public enum Format {
-        /** Smallest size only IDs. */
-        SHORT,
-        /** Small summary. */
-        SUMMARY,
-        /** Complete detailed format. */
-        LONG
-    }
-
     private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
 
     private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
@@ -156,27 +144,6 @@ public final class SortAndOrderHelper {
         }
     }
 
-    private static class FormatPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Enum value;
-            try {
-                value = Format.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.trace("Could not read Sort parameter as camel case.", e);
-                try {
-                    value = Format.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.trace("Could not read Sort parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
-    }
-
     /**
      * Create a {@link PropertyEditor} to allow binding of lower-case {@link Order} in
      * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
@@ -191,14 +158,6 @@ public final class SortAndOrderHelper {
      */
     public static PropertyEditor getSortPropertyEditor() {
         return new SortPropertyEditor();
-    }
-
-    /**
-     * Create a {@link PropertyEditor} to allow binding of lower-case {@link Format} in
-     * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
-     */
-    public static PropertyEditor getFormatPropertyEditor() {
-        return new FormatPropertyEditor();
     }
 
     /**

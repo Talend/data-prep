@@ -20,6 +20,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
@@ -59,7 +60,7 @@ public class StandardExportStrategiesIntegrationTest {
 
     private StandardExportStrategies standardExportStrategiesConfiguration = new StandardExportStrategies();
 
-    private OrderedBeans<SampleExportStrategy> sampleExportStrategies;
+    protected OrderedBeans<SampleExportStrategy> sampleExportStrategies;
 
     private ApplyPreparationExportStrategy applyPreparationExportStrategy;
 
@@ -74,7 +75,7 @@ public class StandardExportStrategiesIntegrationTest {
     private CachedExportStrategy cachedExportStrategy;
 
     @Mock
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
     @Mock
     private PreparationDetailsGet preparationDetailsGet;
@@ -158,14 +159,33 @@ public class StandardExportStrategiesIntegrationTest {
         assertThat(electedStrategy.get()).isInstanceOf(CachedExportStrategy.class);
     }
 
-    private Optional<? extends ExportStrategy> chooseExportStrategy(ExportParameters parameters) {
+    protected Optional<? extends ExportStrategy> chooseExportStrategy(ExportParameters parameters) {
         return sampleExportStrategies //
                 .filter(exportStrategy -> exportStrategy.accept(parameters)) //
                 .findFirst();
     }
 
     @Test
-    public void testOptimizedExportStrategyShouldBeChosen() throws Exception {
+    public void testOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoSteps() throws Exception {
+        ExportParameters parameters = new ExportParameters();
+        parameters.setFrom(HEAD); // or null or RESERVOIR
+        parameters.setContent(null);
+        parameters.setPreparationId(idOfPrepWith2StepsOrMore());
+        reset(preparationDetailsGet);
+        when(preparationDetailsGet.execute())
+                .thenReturn(this.getClass().getResourceAsStream("two_steps_preparation_details.json"))
+                .thenReturn(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
+        when(contentCache.has(transformationCacheKeyPreviousVersion)).thenReturn(true);
+        when(contentCache.has(transformationMetadataCacheKeyPreviousVersion)).thenReturn(true);
+
+        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+
+        assertThat(electedStrategy.isPresent());
+        assertThat(electedStrategy.get()).isInstanceOf(OptimizedExportStrategy.class);
+    }
+
+    @Test
+    public void testOptimizedExportStrategyShouldNotBeChosenWhenPrepHasOnlyOneStep() throws Exception {
         ExportParameters parameters = new ExportParameters();
         parameters.setFrom(HEAD); // or null or RESERVOIR
         parameters.setContent(null);
@@ -176,7 +196,8 @@ public class StandardExportStrategiesIntegrationTest {
         Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         assertThat(electedStrategy.isPresent());
-        assertThat(electedStrategy.get()).isInstanceOf(OptimizedExportStrategy.class);
+        assertThat(electedStrategy.get()).isNotInstanceOf(OptimizedExportStrategy.class);
+        assertThat(electedStrategy.get()).isInstanceOf(PreparationExportStrategy.class);
     }
 
     private String idOfPrepWith2StepsOrMore() {

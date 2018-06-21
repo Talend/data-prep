@@ -176,12 +176,10 @@ export default function PlaygroundService(
 			TitleService.setStrict(dataset.name);
 		}
 
-		return this.updatePreparationDetails()
-			.then(() => {
-				if (state.playground.recipe.current.steps.length) {
-					StateService.showRecipe();
-				}
-			});
+		RecipeService.refresh(preparation);
+		if (state.playground.recipe.current.steps.length) {
+			StateService.showRecipe();
+		}
 	}
 
 	/**

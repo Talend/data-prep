@@ -241,4 +241,5 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
         }
         return behaviors;
     }
+
 }

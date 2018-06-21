@@ -314,8 +314,6 @@ public class PreparationAPI extends APIService {
 
                         details.setAllowDistributedRun(allowDistributedRun.get());
 
-                        details.setAllowFullRun(true);
-
                         return details;
                     }
                 );

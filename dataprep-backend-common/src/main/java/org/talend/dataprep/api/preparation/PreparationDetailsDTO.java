@@ -29,7 +29,8 @@ public class PreparationDetailsDTO {
     private List<ActionForm> metadata;
 
     private boolean allowDistributedRun;
-    private boolean allowFullRun;
+
+    private boolean allowFullRun = false;
 
     public String getId() {
         return id;

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.dataprep.api.service.api.SearchResult;
 import org.talend.dataprep.api.service.delegate.SearchDelegate;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.i18n.MessagesBundle;
@@ -55,22 +56,60 @@ public class SearchAPI extends APIService {
      * Search dataprep folders, preparations and datasets.
      *
      * @param name the name searched.
-     * @param filter the types of items to search. It can be (dataset, preparation, folder).
+     * @param categories the types of items to search. It can be (datasets, preparations, folders).
      * @param strict strict mode means that the name should be the full name (still case insensitive).
+     * @deprecated replace by {@link this.search(String, List<String>, boolean, List<String>)}
      */
-    //@formatter:off
     @RequestMapping(value = "/api/search", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "List the of elements contained in a folder matching the given name", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List the of elements contained in a folder matching the given name",
+            produces = APPLICATION_JSON_VALUE)
     @Timed
     public StreamingResponseBody search(
             @ApiParam(value = "name") @RequestParam(defaultValue = "", required = false) final String name,
-            @ApiParam(value = "filter") @RequestParam(required = false) final List<String> filter,
+            @ApiParam(value = "categories") @RequestParam(required = false) final List<String> categories,
             @ApiParam(value = "strict") @RequestParam(defaultValue = "false", required = false) final boolean strict) {
-    //@formatter:on
-        return output -> doSearch(name, filter, strict, output);
+        if (categories == null || categories.isEmpty()) {
+            // old way to do search (for angular)
+            return output -> doSearch(name, categories, strict, output);
+        }
+        return output -> doMinimalSearch(name, categories, strict, output);
     }
 
-    private void doSearch(String name, List<String> filter, boolean strict, OutputStream output) {
+    private void doMinimalSearch(String name, List<String> categories, boolean strict, OutputStream output) {
+        try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
+            generator.writeStartObject();
+
+            // Write results
+            searchDelegates //
+                    .filter(searchDelegate -> categories.contains(searchDelegate.getSearchCategory())) //
+                    .forEach(searchDelegate -> {
+                        final String category = searchDelegate.getSearchCategory();
+                        try {
+                            generator.writeObjectField(category, searchDelegate //
+                                    .search(name, strict) //
+                                    .map(result -> beanConversionService.convert(result, SearchResult.class)));
+                        } catch (IOException e) {
+                            LOG.error("Unable to search '{}'.", category, e);
+                        }
+                    });
+
+            generator.writeEndObject();
+
+        } catch (IOException e) {
+            throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
+        }
+        LOG.debug("Search done on for '{}' with filter '{}' (strict mode: {})", name, categories, strict);
+    }
+
+    /**
+     * @param name
+     * @param categories
+     * @param strict
+     * @param output
+     * @deprecated see {@link this.doMinimalSearch(String List<String>, boolean , OutputStream ))}
+     */
+    @Deprecated
+    private void doSearch(String name, List<String> categories, boolean strict, OutputStream output) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Searching dataprep for '{}' (pool: {})...", name, getConnectionStats());
         }
@@ -90,8 +129,8 @@ public class SearchAPI extends APIService {
 
             // Now the search types categories
             searchDelegates.forEach(searchDelegate -> {
-                final String categoryLabel =
-                        messagesBundle.getString(LocaleContextHolder.getLocale(), "search." + searchDelegate.getSearchLabel());
+                final String categoryLabel = messagesBundle.getString(LocaleContextHolder.getLocale(),
+                        "search." + searchDelegate.getSearchLabel());
                 try {
                     generator.writeStartObject();
                     generator.writeStringField("type", searchDelegate.getInventoryType());
@@ -106,7 +145,7 @@ public class SearchAPI extends APIService {
             // Write results
             searchDelegates.forEach(searchDelegate -> {
                 final String category = searchDelegate.getSearchCategory();
-                if (filter == null || filter.contains(category)) {
+                if (categories == null || categories.contains(category)) {
                     try {
                         generator.writeObjectField(category, searchDelegate.search(name, strict));
                     } catch (IOException e) {
@@ -118,6 +157,6 @@ public class SearchAPI extends APIService {
         } catch (IOException e) {
             throw new TDPException(UNABLE_TO_SEARCH_DATAPREP, e);
         }
-        LOG.debug("Search done on for '{}' with filter '{}' (strict mode: {})", name, filter, strict);
+        LOG.debug("Search done on for '{}' with filter '{}' (strict mode: {})", name, categories, strict);
     }
 }

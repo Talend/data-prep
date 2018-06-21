@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { syncHistoryWithStore } from 'react-router-redux';
+
 import { App } from '@talend/react-cmf';
 
 import configure from './configure.cmf';

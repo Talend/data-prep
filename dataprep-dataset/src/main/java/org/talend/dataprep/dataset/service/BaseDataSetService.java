@@ -27,7 +27,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
-import org.talend.dataprep.dataset.event.DatasetImportedEvent;
 import org.talend.dataprep.dataset.service.analysis.DataSetAnalyzer;
 import org.talend.dataprep.dataset.service.analysis.synchronous.SynchronousDataSetAnalyzer;
 import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
@@ -100,13 +99,10 @@ public abstract class BaseDataSetService {
 
     /**
      * Performs the analysis on the given dataset id.
-     *
-     * @param id the dataset id.
-     * @param performAsyncBackgroundAnalysis true if the asynchronous background analysis should be performed.
+     *  @param id the dataset id.
      * @param analysersToSkip the list of analysers to skip.
      */
-    protected final void analyzeDataSet(String id, boolean performAsyncBackgroundAnalysis,
-            List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
+    protected final void analyzeDataSet(String id, List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
         // Calls all synchronous analysis first
         for (SynchronousDataSetAnalyzer synchronousDataSetAnalyzer : synchronousAnalyzers) {
             if (analysersToSkip.contains(synchronousDataSetAnalyzer.getClass())) {
@@ -124,14 +120,6 @@ public abstract class BaseDataSetService {
                     metadata.getContent().getMediaType(), metadata.getLocation().getStoreName());
         } else {
             LOG.error("Dataset #{} does not exist (but was expected to)", id);
-        }
-
-        // perform async analysis
-        if (performAsyncBackgroundAnalysis) {
-            LOG.debug("starting async background analysis");
-            publisher.publishEvent(new DatasetImportedEvent(id));
-        } else {
-            LOG.info("skipping asynchronous background analysis");
         }
     }
 

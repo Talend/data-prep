@@ -28,6 +28,8 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -63,6 +65,21 @@ public class OSDataPrepAPIHelper {
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
+
+    private ITExecutionContext executionContext;
+
+    /**
+     * Try to guess the execution context from the API url. A bit dirty, should be cleaned up when all endpoints url are
+     * uniformized between CLOUD and ON_PREMISE.
+     */
+    @PostConstruct
+    public void initExecutionContext() {
+        if (apiBaseUrl.contains("cloud")) {
+            executionContext = ITExecutionContext.CLOUD;
+        } else {
+            executionContext = ITExecutionContext.ON_PREMISE;
+        }
+    }
 
     /**
      * Wraps the {@link RestAssured#given()} method so that we can add behavior
@@ -239,29 +256,7 @@ public class OSDataPrepAPIHelper {
     public Response listDatasetDetails() {
         return given() //
                 .when() //
-                .get("api/datasets/summary");
-    }
-
-    /**
-     * List all dataset in TDP instance.
-     *
-     * @return the response.
-     */
-    public Response listDataset() {
-        return given() //
-                .get("/api/datasets");
-    }
-
-    /**
-     * Get a preparation as a list of step id.
-     *
-     * @param preparationId the preparation id.
-     * @return the response.
-     */
-    public Response getPreparation(String preparationId) {
-        return given() //
-                .when() //
-                .get("/api/preparations/{preparationId}/details", preparationId);
+                .get("/api/datasets/summary");
     }
 
     /**
@@ -600,5 +595,18 @@ public class OSDataPrepAPIHelper {
                 .when() //
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");
+    }
+
+    public ITExecutionContext getExecutionContext() {
+        return executionContext;
+    }
+
+    /**
+     * Description of the Integration Test execution context. This is useful to manage url changes between OnPremise &
+     * Cloud context.
+     */
+    public enum ITExecutionContext {
+        ON_PREMISE,
+        CLOUD
     }
 }

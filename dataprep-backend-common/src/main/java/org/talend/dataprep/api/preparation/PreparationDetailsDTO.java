@@ -29,6 +29,7 @@ public class PreparationDetailsDTO {
     private List<ActionForm> metadata;
 
     private boolean allowDistributedRun;
+    private boolean allowFullRun;
 
     public String getId() {
         return id;
@@ -108,5 +109,13 @@ public class PreparationDetailsDTO {
 
     public void setLastModificationDate(long lastModificationDate) {
         this.lastModificationDate = lastModificationDate;
+    }
+
+    public void setAllowFullRun(boolean allowFullRun) {
+        this.allowFullRun = allowFullRun;
+    }
+
+    public boolean isAllowFullRun() {
+        return allowFullRun;
     }
 }

@@ -584,7 +584,7 @@ public class PreparationService {
                     ExceptionContext.build().put("id", id));
         }
 
-        // ensurePreparationConsistency(preparation);
+        ensurePreparationConsistency(preparation);
 
         // specify the step id if provided
         if (!StringUtils.equals("head", stepId)) {

@@ -16,8 +16,6 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Sampler;
-import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -44,11 +42,6 @@ public class DataPrepEvents {
     @Bean(name = "applicationEventMulticaster")
     public ApplicationEventMulticaster getDataPrepEventsCaster( ) {
         return new DataPrepEventsCaster(executor, beanFactory);
-    }
-
-    @Bean
-    public Sampler sampler() {
-        return new AlwaysSampler();
     }
 
 }

@@ -78,8 +78,8 @@ public class PipelineTransformer implements Transformer {
     @Autowired
     private StepMetadataRepository preparationUpdater;
 
-    @Autowired(required = false)
-    private Tracer tracer;
+    @Autowired
+    private Optional<Tracer> tracer;
 
     @Override
     public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
@@ -121,13 +121,13 @@ public class PipelineTransformer implements Transformer {
 
             @Override
             public void execute() {
-                final Span span = tracer.createSpan("pipeline-" + configuration.getPreparationId());
+                final Optional<Span> span = tracer.map(t -> t.createSpan("pipeline-" + configuration.getPreparationId()));
                 try {
                     LOGGER.debug("Before transformation: {}", pipeline);
                     pipeline.execute(input);
                 } finally {
                     LOGGER.debug("After transformation: {}", pipeline);
-                    tracer.close(span);
+                    span.ifPresent(s -> tracer.ifPresent(t -> t.close(s)));
                 }
 
                 if (preparation != null) {

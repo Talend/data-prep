@@ -5,7 +5,7 @@
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-// You should have received a copy of the agreement*
+// You should have received a copy of the agreement
 // along with this program; if not, write to Talend SA
 // 9 rue Pages 92150 Suresnes, France
 //
@@ -25,8 +25,12 @@ import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
@@ -46,12 +50,29 @@ import com.jayway.restassured.specification.RequestSpecification;
 @Component
 public class OSDataPrepAPIHelper {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private boolean enableRestAssuredDebug = false;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
+
+    private ITExecutionContext executionContext;
+
+    /**
+     * Try to guess the execution context from the API url. A bit dirty, should be cleaned up when all endpoints url are
+     * uniformized between CLOUD and ON_PREMISE.
+     */
+    @PostConstruct
+    public void initExecutionContext() {
+        if (apiBaseUrl.contains("cloud")) {
+            executionContext = ITExecutionContext.CLOUD;
+        } else {
+            executionContext = ITExecutionContext.ON_PREMISE;
+        }
+    }
 
     /**
      * Wraps the {@link RestAssured#given()} method so that we can add behavior
@@ -139,8 +160,8 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .contentType(JSON) //
                 .when() //
-                .post("/api/preparations/" + preparationId + "/steps/" + stepId + "/order?parentStepId="
-                        + parentStepId);
+                .queryParam("parentStepId", parentStepId)
+                .post("/api/preparations/{preparationId}/steps/{stepId}/order", preparationId, stepId);
     }
 
     /**
@@ -228,29 +249,7 @@ public class OSDataPrepAPIHelper {
     public Response listDatasetDetails() {
         return given() //
                 .when() //
-                .get("api/datasets/summary");
-    }
-
-    /**
-     * List all dataset in TDP instance.
-     *
-     * @return the response.
-     */
-    public Response listDataset() {
-        return given() //
-                .get("/api/datasets");
-    }
-
-    /**
-     * Get a preparation as a list of step id.
-     *
-     * @param preparationId the preparation id.
-     * @return the response.
-     */
-    public Response getPreparation(String preparationId) {
-        return given() //
-                .when() //
-                .get("/api/preparations/{preparationId}/details", preparationId);
+                .get("/api/datasets/summary");
     }
 
     /**
@@ -311,7 +310,7 @@ public class OSDataPrepAPIHelper {
      * @param parameters the export parameters.
      * @return the response.
      */
-    public Response executeExport(Map<String, Object> parameters) throws IOException {
+    public Response executeExport(Map<String, String> parameters) throws IOException {
         return given() //
                 .contentType(JSON) //
                 .when() //
@@ -514,12 +513,25 @@ public class OSDataPrepAPIHelper {
         this.enableRestAssuredDebug = enableRestAssuredDebug;
         return this;
     }
+
     public Response applyAggragate(Aggregate aggregate) throws Exception {
         return given()
-                .baseUri(apiBaseUrl) //
                 .header(new Header("Content-Type", "application/json")) //
                 .when() //
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");
+    }
+
+    public ITExecutionContext getExecutionContext() {
+        return executionContext;
+    }
+
+    /**
+     * Description of the Integration Test execution context. This is useful to manage url changes between OnPremise &
+     * Cloud context.
+     */
+    public enum ITExecutionContext {
+        ON_PREMISE,
+        CLOUD
     }
 }

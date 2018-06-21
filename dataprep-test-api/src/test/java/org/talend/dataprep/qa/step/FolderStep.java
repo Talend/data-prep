@@ -1,8 +1,15 @@
 package org.talend.dataprep.qa.step;
 
-import com.jayway.restassured.response.Response;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -10,14 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.jayway.restassured.response.Response;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
 
 /**
  * Store steps related to folders.
@@ -37,8 +40,7 @@ public class FolderStep extends DataPrepStep {
         String parentFolderName = params.get(ORIGIN);
         String folder = suffixFolderName(params.get(FOLDER_NAME));
 
-        List<Folder> folders = folderUtil.listFolders();
-        Folder parentFolder = folderUtil.extractFolder(parentFolderName, folders);
+        Folder parentFolder = folderUtil.searchFolder(parentFolderName);
         Assert.assertNotNull(parentFolder);
 
         Response response = api.createFolder(parentFolder.id, folder);
@@ -47,8 +49,8 @@ public class FolderStep extends DataPrepStep {
         Folder createdFolder = objectMapper.readValue(content, Folder.class);
         Assert.assertEquals(createdFolder.path, "/" + folder);
 
-        folders = folderUtil.listFolders();
-        Set<Folder> splittedFolders = util.splitFolder(createdFolder, folders);
-        splittedFolders.forEach(f -> context.storeFolder(f));
+        List<Folder> folders = folderUtil.listFolders();
+        Set<Folder> splittedFolders = folderUtil.splitFolder(createdFolder, folders);
+        context.storeFolder(splittedFolders);
     }
 }

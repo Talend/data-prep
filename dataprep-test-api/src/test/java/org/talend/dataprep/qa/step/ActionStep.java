@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.qa.step;
 
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +35,6 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with action
@@ -57,7 +57,8 @@ public class ActionStep extends DataPrepStep {
     }
 
     @When("^I add a \"(.*)\" step identified by \"(.*)\" on the preparation \"(.*)\" with parameters :$")
-    public void whenIAddAStepWithAliasToAPreparation(String actionName, String stepAlias, String preparationName, DataTable dataTable) throws IOException {
+    public void whenIAddAStepWithAliasToAPreparation(String actionName, String stepAlias, String preparationName,
+            DataTable dataTable) throws IOException {
         // step creation
         whenIAddAStepToAPreparation(actionName, preparationName, dataTable);
         // we recover the preparation details in order to get an action object with the step Id
@@ -67,8 +68,10 @@ public class ActionStep extends DataPrepStep {
     }
 
     @Given("^I check that a step like \"(.*)\" exists in the preparation \"(.*)\"$")
-    public void existStep(String stepAlias, String preparationName) throws IOException {
-        String prepId = context.getPreparationId(suffixName(preparationName));
+    public void existStep(String stepAlias, String prepFullName) throws IOException {
+        String prepSuffixedName = suffixName(util.extractNameFromFullName(prepFullName));
+        String prepPath = util.extractPathFromFullName(prepFullName);
+        String prepId = context.getPreparationId(prepSuffixedName, prepPath);
         Action storedAction = context.getAction(stepAlias);
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
         Assert.assertTrue(actions.contains(storedAction));
@@ -89,8 +92,9 @@ public class ActionStep extends DataPrepStep {
         response.then().statusCode(200);
     }
 
-    @Given("I update the first action with name \"(.*)\" on the preparation \"(.*)\" with the following parameters :")
-    public void updateFirstActionFoundWithName(String actionName, String prepName, DataTable dataTable) throws IOException {
+    @Given("^I update the first action with name \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
+    public void updateFirstActionFoundWithName(String actionName, String prepName, DataTable dataTable)
+            throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(prepName));
         Action foundAction = getFirstActionWithName(prepId, actionName);
@@ -109,9 +113,11 @@ public class ActionStep extends DataPrepStep {
     private Action getFirstActionWithName(String preparationId, String actionName) throws IOException {
         PreparationDetails prepDet = getPreparationDetails(preparationId);
         prepDet.updateActionIds();
-        return prepDet.actions.stream() //
+        return prepDet.actions
+                .stream() //
                 .filter(action -> action.action.equals(actionName)) //
-                .findFirst().get();
+                .findFirst()
+                .get();
     }
 
     @And("^I move the first step like \"(.*)\" after the first step like \"(.*)\" on the preparation \"(.*)\"$")
@@ -148,7 +154,8 @@ public class ActionStep extends DataPrepStep {
     private List<Action> getActionsFromStoredAction(String preparationId, Action storedAction) throws IOException {
         PreparationDetails prepDet = getPreparationDetails(preparationId);
         prepDet.updateActionIds();
-        return prepDet.actions.stream() //
+        return prepDet.actions
+                .stream() //
                 .filter(action -> action.action.equals(storedAction.action) //
                         && action.parameters.equals(storedAction.parameters)) //
                 .collect(Collectors.toList());
@@ -170,7 +177,7 @@ public class ActionStep extends DataPrepStep {
         return api.moveAction(prepId, action.id, parentAction.id);
     }
 
-    @Given("I remove the first action with name \"(.*)\" on the preparation \"(.*)\"")
+    @Given("^I remove the first action with name \"(.*)\" on the preparation \"(.*)\"$")
     public void removeFirstActionFoundWithName(String actionName, String prepName) throws IOException {
         String prepId = context.getPreparationId(suffixName(prepName));
         Action foundAction = getFirstActionWithName(prepId, actionName);

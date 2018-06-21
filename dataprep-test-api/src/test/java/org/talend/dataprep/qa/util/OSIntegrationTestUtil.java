@@ -1,5 +1,10 @@
 package org.talend.dataprep.qa.util;
 
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
@@ -17,10 +23,6 @@ import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.helper.api.ActionFilterEnum;
 import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.Folder;
-
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.
@@ -47,7 +49,8 @@ public class OSIntegrationTestUtil {
 
         String[] folderPaths = folder.getPath().split("/");
         StringBuilder folderBuilder = new StringBuilder();
-        Arrays.stream(folderPaths) //
+        Arrays
+                .stream(folderPaths) //
                 .filter(f -> !f.isEmpty() && !f.equals("/")) //
                 .forEach(f -> { //
                     if (folderBuilder.length() > 0) {
@@ -64,13 +67,18 @@ public class OSIntegrationTestUtil {
 
     /**
      * Map parameters from a Cucumber step to an Action parameters.
-     * <p>add default scope column</p>
+     * <p>
+     * add default scope column
+     * </p>
+     *
      * @param params the parameters to map.
      * @return the given {@link Action} updated.
      */
     @NotNull
     public Map<String, Object> mapParamsToActionParameters(@NotNull Map<String, String> params) {
-        Map<String, Object> actionParameters = params.entrySet().stream() //
+        Map<String, Object> actionParameters = params
+                .entrySet()
+                .stream() //
                 .filter(entry -> !entry.getKey().startsWith(FILTER.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     if (parametersToBeSuffixed.contains(e.getKey())) {
@@ -95,7 +103,9 @@ public class OSIntegrationTestUtil {
     @Nullable
     public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
         final Filter filter = new Filter();
-        long nbAfes = params.keySet().stream() //
+        long nbAfes = params
+                .keySet()
+                .stream() //
                 .map(ActionFilterEnum::getActionFilterEnum) //
                 .filter(Objects::nonNull) //
                 .peek(afe -> {
@@ -116,5 +126,31 @@ public class OSIntegrationTestUtil {
     public String getFilenameExtension(@NotNull String filename) {
         String[] tokens = filename.split("\\.");
         return tokens[tokens.length - 1];
+    }
+
+    /**
+     * Return the path of a fully qualified name.
+     *
+     * @param fullName the fully qualified name.
+     * @return the path or an empty {@link String } if no path is found.
+     */
+    @NotNull
+    public String extractPathFromFullName(@NotNull String fullName) {
+        String foundPath = "/";
+        if (fullName.contains("/") && fullName.lastIndexOf("/") != 0) {
+            foundPath = fullName.substring(0, fullName.lastIndexOf("/"));
+        }
+        return suffixFolderName(foundPath);
+    }
+
+    /**
+     * Return the name of a fully qualified name.
+     *
+     * @param fullName the fully qualified name.
+     * @return the found name.
+     */
+    @NotNull
+    public String extractNameFromFullName(@NotNull String fullName) {
+        return fullName.substring(fullName.lastIndexOf("/") + 1);
     }
 }

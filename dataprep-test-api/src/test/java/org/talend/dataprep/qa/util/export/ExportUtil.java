@@ -18,7 +18,7 @@ public class ExportUtil {
      * @param param the parameters type.
      * @param value the parameters value to store in the export {@link Map}
      */
-    public void feedExportParam(Map<String, Object> exportParams, ExportParam param, Object value) {
+    public void feedExportParam(Map<String, String> exportParams, ExportParam param, String value) {
         if (!param.getType().equals(StepParamType.IN)) {
             if (value != null) {
                 exportParams.put(param.getJsonName(), value);
@@ -33,7 +33,7 @@ public class ExportUtil {
      * @param param the parameters type.
      * @param dataTable the dataTable expecting to contains the parameter value to store.
      */
-    public void feedExportParam(Map<String, Object> exportParams, ExportParam param, Map<String, String> dataTable) {
+    public void feedExportParam(Map<String, String> exportParams, ExportParam param, Map<String, String> dataTable) {
         if (!param.getType().equals(StepParamType.IN)) {
             String value = dataTable.get(param.getName());
             if (value != null) {

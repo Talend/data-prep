@@ -40,7 +40,7 @@ Feature: Perform scenarios with some Trim related action
     Given I update the first step like "changeDate1" on the preparation "best_sad_songs_prep" with the following parameters :
       | custom_date_pattern | dd.MM.yyyy. |
 
-  Scenario: Export and check the exported file
+  Scenario: Export best_sad_songs_prep preparation and check the exported file best_sad_songs_result.csv
   # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
       | preparationName      | best_sad_songs_prep       |
@@ -54,4 +54,4 @@ Feature: Perform scenarios with some Trim related action
   @CleanAfter
   Scenario: Remove Trim Action preparation best_sad_songs_prep
     When I remove the preparation "best_sad_songs_prep"
-    Then I check that the preparation "best_sad_songs_prep" doesn't exist in the folder "/"
+    Then I check that the preparation "/best_sad_songs_prep" doesn't exist

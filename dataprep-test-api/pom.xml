@@ -27,6 +27,7 @@
     <artifactId>dataprep-test-api</artifactId>
 
     <properties>
+        <skipITs>true</skipITs>
         <spring.version>4.3.7.RELEASE</spring.version>
         <cucumber.version>1.2.5</cucumber.version>
     </properties>

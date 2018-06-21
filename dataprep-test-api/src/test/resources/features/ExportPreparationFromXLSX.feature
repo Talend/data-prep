@@ -19,7 +19,7 @@ Feature: Export Preparation from XLSX file
       | fileName             | 6L3C_result.csv  |
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_default_export_parameters.csv" file
 
-  Scenario: Verify transformation result with another escape char
+  Scenario: Verify transformation result with another escape char export on 6L3C_dataset from XLSX file
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 6L3C_preparation |
@@ -30,7 +30,7 @@ Feature: Export Preparation from XLSX file
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_processed_custom_escape_char.csv" file
 
   @CleanAfter
-  Scenario: Verify transformation result with custom parameters
+  Scenario: Verify transformation result with custom parameters export on 6L3C_dataset from XLSX file
     When I export the preparation with parameters :
       | exportType           | CSV                               |
       | csv_fields_delimiter | -                                 |

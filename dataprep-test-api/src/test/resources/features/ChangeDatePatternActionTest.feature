@@ -1,5 +1,15 @@
-@EnvOs @EnvOnPremise @EnvCloud
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with ChangeDate related actions
+
+  # First Part
+  # Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (without new column) : A-customers_100_with_pb_prep
+  # Scenario: Export previous preparation ("A-customers_100_with_pb_prep") and check the exported file
+  # Scenario: Remove first ChangeDatePattern Action preparation : A-customers_100_with_pb_prep
+
+  # Second Part
+  # Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (with new column)
+  # Scenario: Export previous preparation ("A-customers_100_with_pb_prep_newCol") and check the exported file
+  # Scenario: Remove second ChangeDatePattern Action preparation A-customers_100_with_pb_prep_newCol
 
   Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (without new column)
     # 0. dd/MM/yyyy --> (1.) ISO 8601 --> (2.) French Standard --> (3.) update action 1. to German Standard  with time
@@ -21,7 +31,8 @@ Feature: Perform scenarios with ChangeDate related actions
       | custom_date_pattern | dd/MM/yy           |
     Then I check that a step like "changeDateFrench" exists in the preparation "A-customers_100_with_pb_prep"
 
-  Scenario: Export and check the exported file
+  # This one re-uses previous preparation and updates it
+  Scenario: Export previous preparation - "A-customers_100_with_pb_prep" - and check the exported file
     # Before update : ISO 8601 and French Standard should be exported
     When I export the preparation with parameters :
       | preparationName      | A-customers_100_with_pb_prep            |
@@ -48,9 +59,10 @@ Feature: Perform scenarios with ChangeDate related actions
   @CleanAfter
   Scenario: Remove first ChangeDatePattern Action preparation A-customers_100_with_pb_prep
     When I remove the preparation "A-customers_100_with_pb_prep"
-    Then I check that the preparation "A-customers_100_with_pb_prep" doesn't exist in the folder "/"
+    Then I check that the preparation "/A-customers_100_with_pb_prep" doesn't exist
 
-  # this scenario is the same than the previous one but this time, the option new column is used
+  ##################################################################################################
+  # These scenarios are the same than the previous ones, but this time, the option new column is used
   Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (with new column)
     Given I upload the dataset "/data/A-customers_100_with_pb.csv" with name "A-customers_100_with_pb_dataset"
     # 0. dd/MM/yyyy --> (1.) ISO 8601 --> (2.) French Standard --> (3.) update action 1. to German Standard  with time
@@ -72,7 +84,7 @@ Feature: Perform scenarios with ChangeDate related actions
       | create_new_column   | true               |
     Then I check that a step like "changeDateFrench_newCol" exists in the preparation "A-customers_100_with_pb_prep_newCol"
 
-  Scenario: Export and check the exported file
+  Scenario: Export previous preparation - "A-customers_100_with_pb_prep_newCol" - and check the exported file
     # Before update : ISO 8601 and French Standard should be exported
     When I export the preparation with parameters :
       | dataSetName          | A-customers_100_with_pb_dataset                |
@@ -99,4 +111,4 @@ Feature: Perform scenarios with ChangeDate related actions
   @CleanAfter
   Scenario: Remove second ChangeDatePattern Action preparation A-customers_100_with_pb_prep_newCol
     When I remove the preparation "A-customers_100_with_pb_prep_newCol"
-    Then I check that the preparation "A-customers_100_with_pb_prep_newCol" doesn't exist in the folder "/"
+    Then I check that the preparation "/A-customers_100_with_pb_prep_newCol" doesn't exist

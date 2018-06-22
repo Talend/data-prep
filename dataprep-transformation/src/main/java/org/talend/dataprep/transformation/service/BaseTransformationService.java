@@ -83,11 +83,9 @@ public abstract class BaseTransformationService {
 
     StreamingResponseBody executeSampleExportStrategy(final ExportParameters parameters) {
         LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
-        // Full run execution (depends on the export parameters).
         try {
-            final Optional<? extends ExportStrategy> electedStrategy = sampleExportStrategies //
-                    .filter(exportStrategy -> exportStrategy.accept(parameters)) //
-                    .findFirst();
+            final Optional<? extends ExportStrategy> electedStrategy =
+                    chooseExportStrategy(sampleExportStrategies, parameters);
             if (electedStrategy.isPresent()) {
                 LOG.debug("Strategy for execution: {}", electedStrategy.get().getClass());
                 return electedStrategy.get().execute(parameters);
@@ -99,5 +97,12 @@ public abstract class BaseTransformationService {
         } catch (Exception e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
         }
+    }
+
+    protected <T extends ExportStrategy> Optional<T>
+            chooseExportStrategy(OrderedBeans<T> exportStrategies, final ExportParameters parameters) {
+        return exportStrategies //
+                .filter(exportStrategy -> exportStrategy.accept(parameters)) //
+                .findFirst();
     }
 }

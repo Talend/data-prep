@@ -117,10 +117,10 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     public void should_delete_column() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0001", "1");
-        values.put("0002", "");
-        values.put("0003", "blop");
-        values.put("0004", " ");
+        values.put("0000", "1");
+        values.put("0001", "");
+        values.put("0002", "blop");
+        values.put("0003", " ");
         final DataSetRow row = new DataSetRow(rowMetadata, values);
         parameters.put(DeleteAllEmptyColumns.ACTION_PARAMETER, DeleteAllEmptyColumns.DELETE);
 
@@ -140,10 +140,10 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     public void should_delete_only_one_column() {
         // given
         final Map<String, String> values = new HashMap<>();
-        values.put("0001", "1");
-        values.put("0002", "");
-        values.put("0003", "blop");
-        values.put("0004", " ");
+        values.put("0000", "1");
+        values.put("0001", "");
+        values.put("0002", "blop");
+        values.put("0003", " ");
         final DataSetRow row = new DataSetRow(rowMetadata, values);
         parameters.put(DeleteAllEmptyColumns.ACTION_PARAMETER, DeleteAllEmptyColumns.KEEP);
 
@@ -162,7 +162,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
 
     @Test
     public void should_have_expected_behavior() {
-        assertEquals(1, action.getBehavior().size());
+        assertEquals(3, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_DELETE_COLUMNS));
     }
 

@@ -23,8 +23,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_FREQUENCY;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_PATTERN;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_QUALITY;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
 public class StatisticsNodesBuilder {
@@ -134,17 +136,20 @@ public class StatisticsNodesBuilder {
 
             if (needIntermediateStatistics(nextAction)) {
                 final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+                NodeBuilder nodeBuilder = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()));
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
-                    // the type detection is needed by some actions : see bug TDP-4926
-                    // this modification needs performance analysis
-                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
-                            .to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis())).build();
-                } else {
-                    // 2 cases remain as this point: action needs invalid values or filter attached to action does
-                    node = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()))
-                            .to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()))
-                            .build();
+                    nodeBuilder.to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis()));
                 }
+                if (behavior.contains(NEED_STATISTICS_QUALITY)) {
+                    nodeBuilder.to(getQualityStatisticsNode(actionsProfile.getFilterForPatternAnalysis()));
+                }
+                if (behavior.contains(NEED_STATISTICS_FREQUENCY)) {
+                    nodeBuilder.to(getFrequencyStatisticsNode(actionsProfile.getFilterForPatternAnalysis()));
+                }
+                if (nextAction.getParameters().containsKey(FILTER.getKey()) || behavior.contains(NEED_STATISTICS_INVALID)) {
+                    nodeBuilder.to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()));
+                }
+                node = nodeBuilder.build();
             }
         }
         return node;
@@ -153,7 +158,8 @@ public class StatisticsNodesBuilder {
     private boolean needIntermediateStatistics(final Action nextAction) {
         // next action indicates that it need fresh statistics
         final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
-        if (behavior.contains(NEED_STATISTICS_PATTERN) || behavior.contains(NEED_STATISTICS_INVALID)) {
+        if (behavior.contains(NEED_STATISTICS_PATTERN) || behavior.contains(NEED_STATISTICS_INVALID) //
+                || behavior.contains(NEED_STATISTICS_QUALITY) || behavior.contains(NEED_STATISTICS_FREQUENCY)) {
             return true;
         }
 
@@ -207,6 +213,10 @@ public class StatisticsNodesBuilder {
         return StatisticsNode.getDefaultAnalyzer(analyzerService);
     }
 
+    private Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getFrequencyAnalyzer() {
+        return c -> analyzerService.build(c, AnalyzerService.Analysis.FREQUENCY);
+    }
+
     private Node getTypeDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
         return allowSchemaAnalysis ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis)
                 : new BasicNode();
@@ -227,5 +237,9 @@ public class StatisticsNodesBuilder {
 
     private Node getFullStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {
         return new StatisticsNode(getFullAnalyzer(), columnFilter, statisticsAdapter);
+    }
+
+    private Node getFrequencyStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {
+        return new StatisticsNode(getFrequencyAnalyzer(), columnFilter, statisticsAdapter);
     }
 }

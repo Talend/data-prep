@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -40,11 +41,15 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteAllEmptyColumns.class);
 
-    private static boolean isColumnToDelete(ColumnMetadata columnMetadata, String parameter) {
+    private static boolean isColumnToDelete(ColumnMetadata columnMetadata, String parameter, DataSetRow row) {
         switch (parameter) {
         case KEEP:
             if (columnMetadata.getStatistics().getDataFrequencies().size() > 1) {
                 return false;
+            } else {
+                if (StringUtils.isNotEmpty(row.get(columnMetadata.getId()))) {
+                    return false;
+                }
             }
         default:
             return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
@@ -89,29 +94,29 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        List<ColumnMetadata> columns = actionContext.getRowMetadata().getColumns();
+
+    }
+
+    @Override
+    public void applyOnDataSet(DataSetRow row, ActionContext context) {
+        List<ColumnMetadata> columns = context.getRowMetadata().getColumns();
         List<String> columnsToDelete = new ArrayList<>();
 
         for (ColumnMetadata column : columns) {
-            if (isColumnToDelete(column, actionContext.getParameters().get(ACTION_PARAMETER))) {
+            if (isColumnToDelete(column, context.getParameters().get(ACTION_PARAMETER), row)) {
                 columnsToDelete.add(column.getId());
             }
         }
 
         columnsToDelete.forEach(columnId -> {
-            actionContext.getRowMetadata().deleteColumnById(columnId);
+            context.getRowMetadata().deleteColumnById(columnId);
             LOGGER.debug("DeleteColumn for columnId {}", columnId);
         });
-        actionContext.setActionStatus(ActionContext.ActionStatus.DONE);
-    }
-
-    @Override
-    public void applyOnDataSet(DataSetRow row, ActionContext context) {
-        // nothing to do here
+        context.setActionStatus(ActionContext.ActionStatus.DONE);
     }
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS, Behavior.NEED_STATISTICS_PATTERN);
+        return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS, Behavior.NEED_STATISTICS_QUALITY, Behavior.NEED_STATISTICS_FREQUENCY);
     }
 }

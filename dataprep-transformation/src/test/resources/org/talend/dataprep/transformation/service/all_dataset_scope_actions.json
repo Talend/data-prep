@@ -253,75 +253,6 @@
     "dynamic":false
   },
   {
-<<<<<<< HEAD
-    "name":"delete_all_empty",
-    "category":"data cleansing",
-    "parameters":[
-      {
-        "name":"column_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "label":"Column",
-        "description":"The column to which you want to apply this action",
-        "default":""
-      },
-      {
-        "name":"row_id",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "label":"Row",
-        "description":"The row to which you want to apply this action",
-        "default":""
-      },
-      {
-        "name":"scope",
-        "type":"string",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "label":"Scope",
-        "description":"The transformation scope (CELL | ROW | COLUMN | DATASET)",
-        "default":""
-      },
-      {
-        "name":"filter",
-        "type":"filter",
-        "implicit":true,
-        "canBeBlank":true,
-        "placeHolder":"",
-        "label":"Filter",
-        "description":"An optional filter to apply action on matching values only.",
-        "default":""
-      },
-      {
-        "name":"action_on_blank_lines",
-        "type":"select",
-        "implicit":false,
-        "canBeBlank":false,
-        "placeHolder":"",
-        "configuration":{
-          "values":[
-            {
-              "value":"delete",
-              "label":"Delete"
-            },
-            {
-              "value":"keep",
-              "label":"Keep"
-            }
-          ],
-          "multiple":false
-        },
-        "label":"Rows containing non-printing characters",
-        "description":"Delete rows containing non-printing characters",
-        "readonly":true,
-        "radio":false,
-        "default":"delete"
-=======
     "name": "delete_all_empty",
     "category": "data cleansing",
     "parameters": [
@@ -389,7 +320,6 @@
         "readonly": true,
         "radio": false,
         "default": "delete"
->>>>>>> master
       }
     ],
     "actionScope":[

@@ -29,8 +29,6 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
@@ -50,7 +48,7 @@ import com.jayway.restassured.specification.RequestSpecification;
 @Component
 public class OSDataPrepAPIHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
+    // private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
 

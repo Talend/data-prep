@@ -91,7 +91,7 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
         dataSetMetadataRepository.clear();
     }
 
-    protected String createFolder(final String path) throws IOException {
+    protected String createFolder(final String path) {
         final Folder folder = folderRepository.addFolder(home.getId(), path);
         return folder.getId();
     }

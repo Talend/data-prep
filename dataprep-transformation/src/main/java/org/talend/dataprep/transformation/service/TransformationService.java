@@ -271,7 +271,7 @@ public class TransformationService extends BaseTransformationService {
      * @param datasetId the dataset id to transform.
      * @param formatName The output {@link ExportFormat format}. This format also set the MIME response type.
      * @param stepId the preparation step id to use (default is 'head').
-     * @param name the transformation name.
+     * @param name the transformation name.origin/master
      * @param exportParams additional (optional) export parameters.
      */
     //@formatter:off
@@ -342,7 +342,8 @@ public class TransformationService extends BaseTransformationService {
 
         // get the content of the preparation (internal call with piped streams)
         if (StringUtils.isNotBlank(parameters.getPreparationId())) {
-            try (PipedOutputStream temp = new PipedOutputStream()) {
+            try {
+                PipedOutputStream temp = new PipedOutputStream();
                 contentToAggregate = new PipedInputStream(temp);
 
                 // because of piped streams, processing must be asynchronous
@@ -383,6 +384,12 @@ public class TransformationService extends BaseTransformationService {
             return aggregationService.aggregate(parameters, dataSet);
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
+        } finally {
+            try {
+                contentToAggregate.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -432,7 +439,8 @@ public class TransformationService extends BaseTransformationService {
 
         try (final InputStream metadata = contentCache.get(metadataKey); //
                 final InputStream content = contentCache.get(contentKey); //
-                final JsonParser contentParser = mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))) {
+                final JsonParser contentParser = mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))
+        ) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);

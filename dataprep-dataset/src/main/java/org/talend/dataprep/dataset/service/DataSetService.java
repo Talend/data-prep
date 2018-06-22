@@ -297,7 +297,7 @@ public class DataSetService extends BaseDataSetService {
         LOG.debug(marker, "Creating...");
 
         // sanity check
-        if ((checkSizeParameter(size))) {
+        if (checkSizeParameter(size)) {
             LOG.warn("invalid size provided {}", size);
             throw new TDPException(UNEXPECTED_CONTENT, build().put("size", size));
         }
@@ -316,7 +316,10 @@ public class DataSetService extends BaseDataSetService {
         final TDPException hypotheticalException;
         try {
 
-            quotaService.checkIfAddingSizeExceedsAvailableStorage(size);
+            // if the size is provided, let's check if the quota will not be exceeded
+            if (size != null && size > 0) {
+                quotaService.checkIfAddingSizeExceedsAvailableStorage(size);
+            }
 
             dataSetMetadata = metadataBuilder //
                     .metadata() //
@@ -595,7 +598,6 @@ public class DataSetService extends BaseDataSetService {
             return create(name, null, size, TEXT_PLAIN_VALUE, dataSetContent);
         } else {
 
-            // check the size if it's available (quick win)
             // just like the creation, let's make sure invalid size forbids dataset creation
             if (checkSizeParameter(size)) {
                 LOG.warn("invalid size provided {}", size);
@@ -608,7 +610,10 @@ public class DataSetService extends BaseDataSetService {
             try {
                 lock.lock();
 
-                quotaService.checkIfAddingSizeExceedsAvailableStorage(Math.abs(size - currentDataSetMetadata.getDataSetSize()));
+                // check the size if it's available (quick win)
+                if (size != null && size > 0) {
+                    quotaService.checkIfAddingSizeExceedsAvailableStorage(Math.abs(size - currentDataSetMetadata.getDataSetSize()));
+                }
 
                 final DataSetMetadataBuilder datasetBuilder = metadataBuilder.metadata().id(currentDataSetMetadata.getId());
                 datasetBuilder.copyNonContentRelated(currentDataSetMetadata);

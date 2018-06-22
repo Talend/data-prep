@@ -680,7 +680,7 @@ public class TransformationService extends BaseTransformationService {
     @ResponseBody
     public Stream<ActionForm> columnActions(@RequestBody(required = false) ColumnMetadata column) {
         return actionRegistry.findAll() //
-                .filter(action -> !"TEST".equals(action.getCategory(LocaleContextHolder.getLocale()))
+                .filter(action -> !"TEST".equals(action.getCategory(getLocale()))
                         && action.acceptScope(COLUMN)) //
                 .map(am -> column != null ? am.adapt(column) : am).map(ad -> ad.getActionForm(getLocale()));
     }

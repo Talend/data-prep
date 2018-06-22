@@ -1,15 +1,5 @@
 package org.talend.dataprep.transformation.actions.delete;
 
-import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
-import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +11,16 @@ import org.talend.dataprep.parameters.SelectParameter;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.DataSetAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
+import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 
 /**
  * Delete columns when they are empty.
@@ -39,20 +39,22 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
 
     protected static final String KEEP = "keep";
 
+    private static final String COLUMNS_TO_DELETE = "column_to_delete";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteAllEmptyColumns.class);
 
     private static boolean isColumnToDelete(ColumnMetadata columnMetadata, String parameter, DataSetRow row) {
         switch (parameter) {
-        case KEEP:
-            if (columnMetadata.getStatistics().getDataFrequencies().size() > 1) {
-                return false;
-            } else {
-                if (StringUtils.isNotEmpty(row.get(columnMetadata.getId()))) {
+            case KEEP:
+                if (columnMetadata.getStatistics().getDataFrequencies().size() > 1) {
                     return false;
+                } else {
+                    if (StringUtils.isNotEmpty(row.get(columnMetadata.getId()))) {
+                        return false;
+                    }
                 }
-            }
-        default:
-            return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
+            default:
+                return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
         }
     }
 
@@ -94,25 +96,27 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-
+        actionContext.get(COLUMNS_TO_DELETE, p -> new HashSet());
     }
 
     @Override
     public void applyOnDataSet(DataSetRow row, ActionContext context) {
-        List<ColumnMetadata> columns = context.getRowMetadata().getColumns();
-        List<String> columnsToDelete = new ArrayList<>();
+        final List<ColumnMetadata> columns = context.getRowMetadata().getColumns();
+        final Set<String> columnsToDelete = context.get(COLUMNS_TO_DELETE);
 
-        for (ColumnMetadata column : columns) {
-            if (isColumnToDelete(column, context.getParameters().get(ACTION_PARAMETER), row)) {
-                columnsToDelete.add(column.getId());
+        if (columnsToDelete.isEmpty()) {
+            for (ColumnMetadata column : columns) {
+                if (isColumnToDelete(column, context.getParameters().get(ACTION_PARAMETER), row)) {
+                    columnsToDelete.add(column.getId());
+                }
             }
+            context.get(COLUMNS_TO_DELETE, p -> columnsToDelete);
         }
-
         columnsToDelete.forEach(columnId -> {
-            context.getRowMetadata().deleteColumnById(columnId);
             LOGGER.debug("DeleteColumn for columnId {}", columnId);
+            row.deleteColumnById(columnId);
+            context.getRowMetadata().deleteColumnById(columnId);
         });
-        context.setActionStatus(ActionContext.ActionStatus.DONE);
     }
 
     @Override

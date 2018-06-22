@@ -131,10 +131,10 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
                 .when() //
                 .get("/datasets/{id}/metadata", dataSetId);
 
-        final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(get.asInputStream());
-        assertNotNull(dataSet);
+        final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(get.asInputStream());
+        assertNotNull(metadata);
 
-        return dataSet.getMetadata();
+        return metadata;
     }
 
     protected DataSet getDataset(final String dataSetId) throws IOException {

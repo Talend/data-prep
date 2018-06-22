@@ -165,6 +165,7 @@ export default function PlaygroundService(
 		if (preparation) {
 			ExportService.refreshTypes('preparations', preparation.id);
 			TitleService.setStrict(preparation.name);
+			RecipeService.refresh(preparation);
 		}
 
 		// dataset specific init
@@ -174,12 +175,9 @@ export default function PlaygroundService(
 			TitleService.setStrict(dataset.name);
 		}
 
-		return this.updatePreparationDetails()
-			.then(() => {
-				if (state.playground.recipe.current.steps.length) {
-					StateService.showRecipe();
-				}
-			});
+		if (state.playground.recipe.current.steps.length) {
+			StateService.showRecipe();
+		}
 	}
 
 	/**

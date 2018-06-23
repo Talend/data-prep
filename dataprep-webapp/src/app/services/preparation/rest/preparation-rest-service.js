@@ -40,7 +40,7 @@ export default function PreparationRestService($http, RestURLs) {
         // getter : list, content, details
 		getContent,
 		getDetails,
-        getSummary,
+		getSummary,
 		getMetadata,
 		isExportPossible,
 

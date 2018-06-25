@@ -254,10 +254,9 @@ public class DatasetClient {
 
         if (rowMetadata != null && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
                 AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
-                metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata)); // because sadly, my cache is not immutable
+                metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
                 metadata.setDataSetSize(analysisResult.rowcount);
                 metadata.getContent().setNbRecords(analysisResult.rowcount);
-
         }
 
         return metadata;

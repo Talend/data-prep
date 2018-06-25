@@ -1,7 +1,7 @@
 @EnvOs @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with CreateNewColumn related action
 
-  Scenario: Create a new column with generate sequence mode on a dataset
+  Scenario: Create a new column with generate sequence mode on dataset customers_dataset
     Given I upload the dataset "/data/customers.csv" with name "customers_dataset"
     Given I create a preparation with name "customers_prep", based on "customers_dataset" dataset
     Given I add a "create_new_column" step identified by "createNewColumn" on the preparation "customers_prep" with parameters :
@@ -13,7 +13,7 @@ Feature: Perform scenarios with CreateNewColumn related action
     Then I check that a step like "createNewColumn" exists in the preparation "customers_prep"
 
   @CleanAfter
-  Scenario: Export customers_prep and check the exported file customers_prep_result.csv
+  Scenario: Export customers_prep and check the exported file customers_prep_result.csv to test column creating with generate sequence
     When I export the preparation with parameters :
       | preparationName      | customers_prep            |
       | dataSetName          | customers_dataset         |

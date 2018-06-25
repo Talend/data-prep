@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.talend.dataprep.api.preparation.json.MixedContentMapModule;
 
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 @Configuration
 @SuppressWarnings("InsufficientBranchCoverage")
@@ -32,11 +31,6 @@ public class Serialization {
     @Bean
     public MixedContentMapModule mixedContentMapModule() {
         return new MixedContentMapModule();
-    }
-
-    @Bean
-    public AfterburnerModule afterburnerModule() {
-        return new AfterburnerModule();
     }
 
 }

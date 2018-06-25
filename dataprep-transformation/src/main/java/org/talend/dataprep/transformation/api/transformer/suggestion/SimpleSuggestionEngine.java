@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer.suggestion;
 
@@ -40,13 +40,25 @@ public class SimpleSuggestionEngine implements SuggestionEngine {
     @Override
     public Stream<Suggestion> score(Stream<ActionDefinition> actions, ColumnMetadata column) {
         return actions.map(actionMetadata -> { //
-                    int score = 0;
-                    for (SuggestionEngineRule rule : rules) {
-                        score += rule.apply(actionMetadata, column);
-                    }
-                    return new Suggestion(actionMetadata, score);
-                }) //
+            int score = 0;
+            for (SuggestionEngineRule rule : rules) {
+                score += rule.apply(actionMetadata, column);
+            }
+            return new Suggestion(actionMetadata, score);
+        }) //
                 .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()));
+    }
+
+    /**
+     * @see SuggestionEngine#score(ActionDefinition, ColumnMetadata)
+     */
+    @Override
+    public Suggestion score(ActionDefinition actionDef, ColumnMetadata column) {
+        int score = 0;
+        for (SuggestionEngineRule rule : rules) {
+            score += rule.apply(actionDef, column);
+        }
+        return new Suggestion(actionDef, score);
     }
 
     /**

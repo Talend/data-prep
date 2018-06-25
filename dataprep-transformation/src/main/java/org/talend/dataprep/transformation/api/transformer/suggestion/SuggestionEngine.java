@@ -39,6 +39,21 @@ public interface SuggestionEngine {
     Stream<Suggestion> score(Stream<ActionDefinition> actions, ColumnMetadata column);
 
     /**
+     * <p>
+     * Scores one <code>action</code> for a given <code>column</code>. Each suggestion is ranked from 0 to 1
+     * </p>
+     * <p>
+     * This method only operates on {@link ColumnMetadata}, meaning it can <b>not</b> decide based on content, only
+     * based on metadata.
+     * </p>
+     *
+     * @param action an {@link ActionDefinition action} to be scored.
+     * @param column The {@link ColumnMetadata column information} to be used to rank actions.
+     * @return A ordered collection of {@link Suggestion suggestions}.
+     */
+    Suggestion score(ActionDefinition action, ColumnMetadata column);
+
+    /**
      * Returns a list of {@link ActionDefinition actions} to improve quality of data set's content. Implementations may
      * not provide suggestions, but are required to <b>at least</b> return an empty list of {@link ActionDefinition
      * actions}.

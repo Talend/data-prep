@@ -71,6 +71,7 @@ import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
+import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 

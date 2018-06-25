@@ -33,7 +33,6 @@ import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -96,48 +95,6 @@ public final class SortAndOrderHelper {
             .converterTo(CaseFormat.LOWER_CAMEL);
 
     private SortAndOrderHelper() {
-    }
-
-    private static class SortPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Sort value;
-            try {
-                value = Sort.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.trace("Could not read Sort parameter as camel case.", e);
-                try {
-                    value = Sort.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.trace("Could not read Sort parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
-    }
-
-    private static class OrderPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Order value;
-            try {
-                value = Order.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.trace("Could not read Order parameter as camel case.", e);
-                try {
-                    value = Order.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.trace("Could not read Order parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
     }
 
     /**
@@ -245,7 +202,7 @@ public final class SortAndOrderHelper {
     }
 
     public static Comparator<PreparationDTO> getPreparationComparator(Sort sortKey, Order orderKey,
-                                                                      Function<PreparationDTO, ? extends DataSetMetadata> dataSetFinder) {
+            Function<? super PreparationDTO, ? extends DataSetMetadata> dataSetFinder) {
         Comparator<Comparable> comparisonOrder = getOrderComparator(orderKey);
 
         // Select comparator for sort (either by name or date)

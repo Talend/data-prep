@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.PreparationListItemDTO;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
@@ -26,6 +26,9 @@ public class DataSetNameInjection implements BiFunction<PreparationDTO, Preparat
     @Autowired
     private Security security;
 
+    @Autowired
+    private DatasetClient datasetClient;
+
     public DataSetNameInjection() {
         cache = CacheBuilder
                 .newBuilder() //
@@ -40,8 +43,7 @@ public class DataSetNameInjection implements BiFunction<PreparationDTO, Preparat
             final String tenantId = security.getTenantId();
             final Cache<String, String> tenantCache = cache.get(tenantId, this::initTenant);
             if (tenantCache.getIfPresent(dto.getDataSetId()) == null) {
-                final DataSetGetMetadata getMetadata = applicationContext.getBean(DataSetGetMetadata.class, dto.getDataSetId());
-                tenantCache.put(dto.getDataSetId(), getMetadata.execute().getName());
+                tenantCache.put(dto.getDataSetId(), datasetClient.getDataSetMetadata(dto.getDataSetId()).getName());
             }
             item.getDataSet().setDataSetName(tenantCache.getIfPresent(dto.getDataSetId()));
             return item;

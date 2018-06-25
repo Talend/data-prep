@@ -266,7 +266,7 @@ public class PreparationService {
         final OwnerInjection ownerInjection = springContext.getBean(OwnerInjection.class);
         return preparationStream
                 .map(p -> beanConversionService.convert(p, PreparationDTO.class, ownerInjection)) //
-                .sorted(getPreparationComparator(sort, order, p -> datasetClient.getDataSetMetadata(p.getDataSetId()));
+                .sorted(getPreparationComparator(sort, order, p -> datasetClient.getDataSetMetadata(p.getDataSetId())));
     }
 
     /**

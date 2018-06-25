@@ -13,7 +13,6 @@
 package org.talend.dataprep.transformation.service.export;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,9 +64,6 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
     @Override
     public boolean accept(ExportParameters parameters) {
         if (parameters == null) {
-            return false;
-        }
-        if (parameters.getFrom() == FILTER) {
             return false;
         }
         if (parameters.getContent() != null) {

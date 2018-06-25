@@ -80,6 +80,9 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
     public static final String COLUMN_MODE = "other_column_mode";
 
     public static final String SEQUENCE_MODE = "sequence_mode";
+
+    public static final String PARAM_NAME = "paramName";
+
     /**
      * Name of the new column.
      */
@@ -111,16 +114,11 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(parameter(locale).setName(NEW_COLUMN_NAME)
-                .setType(ParameterType.STRING)
-                .setDefaultValue(DEFAULT_NAME_FOR_NEW_COLUMN)
-                .setCanBeBlank(false)
-                .build(this));
+        parameters.add(parameter(locale).setName(NEW_COLUMN_NAME).setType(ParameterType.STRING)
+                .setDefaultValue(DEFAULT_NAME_FOR_NEW_COLUMN).setCanBeBlank(false).build(this));
 
-        Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
-                .setType(STRING)
-                .setDefaultValue(EMPTY)
-                .build(this);
+        Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER).setType(STRING)
+                .setDefaultValue(EMPTY).build(this);
 
         //@formatter:off
         parameters.add(selectParameter(locale)
@@ -168,10 +166,10 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
         final RowMetadata rowMetadata = context.getRowMetadata();
         final Map<String, String> parameters = context.getParameters();
 
-        String newValue = "";
+        String newValue = EMPTY;
         switch (parameters.get(MODE_PARAMETER)) {
         case EMPTY_MODE:
-            newValue = "";
+            newValue = EMPTY;
             break;
         case CONSTANT_MODE:
             newValue = parameters.get(DEFAULT_VALUE_PARAMETER);
@@ -209,20 +207,20 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
     private void checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (!parameters.containsKey(MODE_PARAMETER)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
-                    ExceptionContext.build().put("paramName", MODE_PARAMETER));
+                    ExceptionContext.build().put(PARAM_NAME, MODE_PARAMETER));
         }
 
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(DEFAULT_VALUE_PARAMETER)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
-                    ExceptionContext.build().put("paramName", DEFAULT_VALUE_PARAMETER));
+                    ExceptionContext.build().put(PARAM_NAME, DEFAULT_VALUE_PARAMETER));
         }
         if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
                 || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
-                    ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
+                    ExceptionContext.build().put(PARAM_NAME, SELECTED_COLUMN_PARAMETER));
         }
-        if (parameters.get(MODE_PARAMETER).equals(SEQUENCE_MODE) && (!parameters.containsKey(START_VALUE)
-                || !parameters.containsKey(STEP_VALUE))) {
+        if (parameters.get(MODE_PARAMETER).equals(SEQUENCE_MODE)
+                && (!parameters.containsKey(START_VALUE) || !parameters.containsKey(STEP_VALUE))) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName1", START_VALUE).put("paramName2", STEP_VALUE));
         }

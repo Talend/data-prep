@@ -49,10 +49,6 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-import com.fasterxml.jackson.core.JsonParser;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -134,42 +130,11 @@ import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.GZIPOutputStream;
+import com.fasterxml.jackson.core.JsonParser;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
-import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
-import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "transformations", basePath = "/transform", description = "Transformations on data")

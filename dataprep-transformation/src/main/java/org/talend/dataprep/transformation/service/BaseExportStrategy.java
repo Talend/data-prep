@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -43,13 +41,6 @@ import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

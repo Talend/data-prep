@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,15 +26,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
-
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
  * Command used to retrieve a preview when updating a command.

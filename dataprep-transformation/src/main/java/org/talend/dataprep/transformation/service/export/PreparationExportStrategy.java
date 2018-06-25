@@ -12,7 +12,10 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+
+import java.io.OutputStream;
+
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -24,12 +27,7 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.command.dataset.DataSetGet;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
@@ -41,9 +39,7 @@ import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
-import java.io.OutputStream;
-
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.

@@ -18,7 +18,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
 
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +26,6 @@ import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -55,20 +52,8 @@ import org.talend.dataprep.http.HttpRequestContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.talend.dataprep.command.CommandHelper.toStream;
-import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class ExportAPI extends APIService {

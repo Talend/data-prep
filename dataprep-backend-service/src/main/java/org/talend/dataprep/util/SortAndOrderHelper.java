@@ -12,8 +12,18 @@
 
 package org.talend.dataprep.util;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+
+import java.beans.PropertyEditor;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -24,18 +34,9 @@ import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.preparation.service.UserPreparation;
 
-import javax.annotation.Nullable;
-import java.beans.PropertyEditor;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.function.Function;
-
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
 
 /**
  * Utility class used to sort and order DataSets or Preparations.

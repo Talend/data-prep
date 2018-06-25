@@ -12,9 +12,50 @@
 
 package org.talend.dataprep.dataset.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.StreamSupport.stream;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_CONTENT;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.INVALID_DATASET_NAME;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.MAX_STORAGE_MAY_BE_EXCEEDED;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_CREATE_DATASET;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNSUPPORTED_CONTENT;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
+import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
+import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -88,48 +129,9 @@ import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.StreamSupport.stream;
-import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_CONTENT;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.INVALID_DATASET_NAME;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.MAX_STORAGE_MAY_BE_EXCEEDED;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_CREATE_DATASET;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNSUPPORTED_CONTENT;
-import static org.talend.dataprep.i18n.DataprepBundle.message;
-import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.util.SortAndOrderHelper.getDataSetMetadataComparator;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "datasets", basePath = "/datasets", description = "Operations on data sets")

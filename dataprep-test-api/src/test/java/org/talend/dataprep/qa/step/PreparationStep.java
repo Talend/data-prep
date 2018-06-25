@@ -6,7 +6,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
@@ -193,13 +192,5 @@ public class PreparationStep extends DataPrepStep {
     @NotNull
     protected String getSuffixedPrepName(@NotNull String prepFullName) {
         return suffixName(util.extractNameFromFullName(prepFullName));
-    }
-
-    @Then("^The fetched preparation \"(.*)\" should contain following columns:$")
-    public void thePreparationShouldContainFollowingColumns(String preparationName, List<String> columns) throws Exception {
-        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "FILTER");
-        response.then().statusCode(OK.value());
-
-        checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
     }
 }

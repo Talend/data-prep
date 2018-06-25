@@ -13,11 +13,6 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.talend.dataprep.command.Defaults.asNull;
-
-import java.io.InputStream;
-
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.springframework.context.annotation.Scope;
@@ -28,8 +23,14 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import java.io.InputStream;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.talend.dataprep.command.Defaults.asNull;
+
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class UpdateColumn extends GenericCommand<Void> {
 
     private UpdateColumn(final String dataSetId, final String columnId, final InputStream body) {

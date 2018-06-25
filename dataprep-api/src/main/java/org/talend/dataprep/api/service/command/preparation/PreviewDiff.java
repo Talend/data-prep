@@ -26,11 +26,20 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.service.api.PreviewDiffParameters;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Command used to retrieve preview from a diff.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreviewDiff extends PreviewAbstract {
 
     /** The diff parameters. */
@@ -44,7 +53,7 @@ public class PreviewDiff extends PreviewAbstract {
 
     /**
      * Default constructor.
-     * 
+     *
      * @param input the parameters.
      * @param preparation the preparation to deal with.
      * @param lastActiveStepActions preparation actions up to the last active step.

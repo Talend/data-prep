@@ -12,18 +12,21 @@
 
 package org.talend.dataprep.api.service.delegate;
 
-import java.util.stream.Stream;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.command.CommandHelper;
-import org.talend.dataprep.command.dataset.SearchDataSets;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
+
+import java.util.stream.Stream;
 
 /**
  * A {@link SearchDelegate} implementation to search in datasets.
  */
 @Component
 public class DataSetSearchDelegate extends AbstractSearchDelegate<DataSetMetadata> {
+
+    @Autowired
+    private DatasetClient datasetClient;
 
     @Override
     public String getSearchCategory() {
@@ -41,8 +44,7 @@ public class DataSetSearchDelegate extends AbstractSearchDelegate<DataSetMetadat
     }
 
     @Override
-    public Stream<DataSetMetadata> search(String query, boolean strict) {
-        final SearchDataSets command = getCommand(SearchDataSets.class, query, strict);
-        return CommandHelper.toStream(DataSetMetadata.class, mapper, command);
+    public Stream<DataSetMetadata> search(String name, boolean strict) {
+        return datasetClient.searchDataset(name, strict);
     }
 }

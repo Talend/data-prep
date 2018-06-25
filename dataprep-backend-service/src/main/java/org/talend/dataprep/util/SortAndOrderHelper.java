@@ -12,19 +12,8 @@
 
 package org.talend.dataprep.util;
 
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
-
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorSupport;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -35,9 +24,18 @@ import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.preparation.service.UserPreparation;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
+import javax.annotation.Nullable;
+import java.beans.PropertyEditor;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Function;
+
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
 
 /**
  * Utility class used to sort and order DataSets or Preparations.
@@ -93,9 +91,6 @@ public final class SortAndOrderHelper {
 
     private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
 
-    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
-            .converterTo(CaseFormat.UPPER_UNDERSCORE);
-
     private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
             .converterTo(CaseFormat.LOWER_CAMEL);
 
@@ -149,7 +144,7 @@ public final class SortAndOrderHelper {
      * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
      */
     public static PropertyEditor getOrderPropertyEditor() {
-        return new OrderPropertyEditor();
+        return new ConverterBasedPropertyEditor<>(Order::valueOf);
     }
 
     /**
@@ -157,7 +152,7 @@ public final class SortAndOrderHelper {
      * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
      */
     public static PropertyEditor getSortPropertyEditor() {
-        return new SortPropertyEditor();
+        return new ConverterBasedPropertyEditor<>(Sort::valueOf);
     }
 
     /**

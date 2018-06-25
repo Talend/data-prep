@@ -27,7 +27,10 @@ import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,9 +45,8 @@ import org.talend.dataprep.api.service.command.export.Export;
 import org.talend.dataprep.api.service.command.export.ExportTypes;
 import org.talend.dataprep.api.service.command.export.PreparationExportTypes;
 import org.talend.dataprep.command.CommandHelper;
-import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -53,11 +55,26 @@ import org.talend.dataprep.http.HttpRequestContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
 
 @RestController
 public class ExportAPI extends APIService {
+
+    @Autowired
+    private DatasetClient datasetClient;
 
     @RequestMapping(value = "/api/export", method = GET)
     @ApiOperation(value = "Export a dataset", consumes = APPLICATION_FORM_URLENCODED_VALUE, notes = "Export a dataset or a preparation to file. The file type is provided in the request body.")
@@ -78,8 +95,7 @@ public class ExportAPI extends APIService {
 
             LOG.info("New Export {}", parameters);
 
-            final GenericCommand<InputStream> command = getCommand(Export.class, parameters);
-            return CommandHelper.toStreaming(command);
+            return CommandHelper.toStreaming(getCommand(Export.class, parameters));
         } catch (TDPException e) {
             throw e;
         } catch (Exception e) {
@@ -110,8 +126,7 @@ public class ExportAPI extends APIService {
             }
         } else if (StringUtils.isBlank(exportName)){
             // deal export name in case of dataset
-            DataSetGetMetadata dataSetGetMetadata = getCommand(DataSetGetMetadata.class, parameters.getDatasetId());
-            final DataSetMetadata metadata = dataSetGetMetadata.execute();
+            final DataSetMetadata metadata = datasetClient.getDataSetMetadata(parameters.getDatasetId());
             exportName = metadata.getName();
         }
         return exportName;

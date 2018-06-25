@@ -6,4 +6,6 @@ public interface DataSetContentLimit {
 
     boolean limitContentSize();
 
+    Long getLimit();
+
 }

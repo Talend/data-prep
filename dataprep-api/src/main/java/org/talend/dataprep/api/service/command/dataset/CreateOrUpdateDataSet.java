@@ -13,15 +13,6 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.talend.dataprep.command.Defaults.asString;
-import static org.talend.dataprep.command.Defaults.emptyString;
-import static org.talend.dataprep.command.Defaults.passthrough;
-import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
@@ -32,11 +23,21 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.asString;
+import static org.talend.dataprep.command.Defaults.emptyString;
+import static org.talend.dataprep.command.Defaults.passthrough;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE_OR_UPDATE_DATASET;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
+
 /**
  * Command in charge of mostly updating a dataset content.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class CreateOrUpdateDataSet extends GenericCommand<String> {
 
     /**

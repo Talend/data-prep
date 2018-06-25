@@ -19,11 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Check if any preparation use the dataset
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class CheckDatasetUsage extends GenericCommand<Boolean> {
 
     /**

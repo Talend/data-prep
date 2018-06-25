@@ -1,17 +1,16 @@
 package org.talend.dataprep.dataset;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.json.DataSetLocationMapping;
 
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import javax.annotation.PostConstruct;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 /**
  * A Jackson module that gathers all declared {@link DataSetLocationMapping} found in the current
@@ -24,7 +23,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 public class DataSetLocationModule extends SimpleModule {
 
     @Autowired(required = false)
-    private List<DataSetLocationMapping> mappings = new ArrayList<>();
+    private List<DataSetLocationMapping> mappings = emptyList();
 
     @PostConstruct
     public void init(){

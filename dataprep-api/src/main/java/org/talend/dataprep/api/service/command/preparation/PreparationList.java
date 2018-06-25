@@ -12,13 +12,6 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static org.talend.dataprep.command.Defaults.emptyStream;
-import static org.talend.dataprep.command.Defaults.pipeStream;
-import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -31,8 +24,16 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.emptyStream;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
+
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationList extends GenericCommand<InputStream> {
 
     private PreparationList(String name, String folderPath, String path, Sort sort, Order order) {

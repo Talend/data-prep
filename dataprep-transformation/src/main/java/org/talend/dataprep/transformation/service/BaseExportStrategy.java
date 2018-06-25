@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -40,6 +43,13 @@ import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -74,6 +84,9 @@ public abstract class BaseExportStrategy {
     /** The security proxy to use to get the dataset despite the roles/ownership. */
     @Autowired
     protected SecurityProxy securityProxy;
+
+    @Autowired
+    protected DatasetClient datasetClient;
 
     /**
      * Return the format that matches the given name or throw an error if the format is unknown.

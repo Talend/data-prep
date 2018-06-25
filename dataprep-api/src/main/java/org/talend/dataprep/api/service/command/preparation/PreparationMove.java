@@ -13,10 +13,6 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static org.talend.dataprep.command.Defaults.asNull;
-
-import java.net.URISyntaxException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -28,11 +24,16 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import java.net.URISyntaxException;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.asNull;
+
 /**
  * Command used to move a preparation.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationMove extends GenericCommand<Void> {
 
     /**

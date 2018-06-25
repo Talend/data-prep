@@ -12,11 +12,6 @@
 
 package org.talend.dataprep.actions;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.function.Function;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
@@ -26,8 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.actions.resources.FunctionResource;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
+import org.talend.dataprep.util.avro.AvroUtils;
+
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.function.Function;
 
 class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Serializable {
 
@@ -102,7 +102,7 @@ class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Se
         if (outputSchema == null) {
             // Computing Avro schema is rather long, don't do it for each line.
             final RowMetadata modifiedRowRowMetadata = modifiedRow.getRowMetadata();
-            outputSchema = RowMetadataUtils.toSchema(modifiedRowRowMetadata);
+            outputSchema = AvroUtils.toSchema(modifiedRowRowMetadata);
         }
     }
 }

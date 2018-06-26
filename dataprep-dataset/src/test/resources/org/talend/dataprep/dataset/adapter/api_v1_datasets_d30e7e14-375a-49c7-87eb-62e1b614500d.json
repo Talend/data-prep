@@ -1,0 +1,28 @@
+{
+  "entitlements": [],
+  "__acl": 0,
+  "id": "d30e7e14-375a-49c7-87eb-62e1b614500d",
+  "created": 1524131129516,
+  "updated": 1524131129516,
+  "enabled": true,
+  "label": "filter1_main",
+  "type": "SimpleFileIoDataset",
+  "version": 0,
+  "datastoreId": "59c364bb-47be-457c-a805-9533003f2959",
+  "datastore": {
+    "id": "59c364bb-47be-457c-a805-9533003f2959",
+    "label": "HDFS",
+    "type": "SimpleFileIoDatastore"
+  },
+  "properties": {
+    "path": "/user/talend/filter1/main",
+    "format": "CSV",
+    "fieldDelimiter": "SEMICOLON",
+    "@definitionName": "SimpleFileIoDataset",
+    "recordDelimiter": "LF",
+    "specificFieldDelimiter": ";",
+    "specificRecordDelimiter": "\\n"
+  },
+  "owner": "admin",
+  "creator": "free@dss.talend.com"
+}

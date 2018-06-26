@@ -12,19 +12,12 @@
 
 package org.talend.dataprep.api.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -54,12 +47,18 @@ import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
 import org.talend.dataprep.transformation.actions.text.Trim;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -74,7 +73,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -258,39 +256,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(longFormat.getString("allowFullRun"), is("false"));
         final List<String> steps = longFormat.getList("steps"); // make sure the "steps" node is a string array
         assertThat(steps.size(), is(1));
-    }
-
-    @Test
-    public void testListCompatibleDataSets() throws Exception {
-        // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2");
-        final String dataSetId3 = testClient.createDataset("t-shirt_100.csv", "incompatible");
-        final String preparationId =
-                testClient.createPreparationFromDataset(dataSetId, "testPreparation", home.getId());
-
-        // when
-        final String compatibleDatasetList =
-                when().get("/api/preparations/{id}/basedatasets", preparationId).asString();
-
-        // then
-        assertTrue(compatibleDatasetList.contains(dataSetId2));
-        assertFalse(compatibleDatasetList.contains(dataSetId3));
-    }
-
-    @Test
-    public void testListCompatibleDataSetsWhenUniqueDatasetInRepository() throws Exception {
-        // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "unique");
-        final String preparationId =
-                testClient.createPreparationFromDataset(dataSetId, "testPreparation", home.getId());
-
-        // when
-        final String compatibleDatasetList =
-                when().get("/api/preparations/{id}/basedatasets", preparationId).asString();
-
-        // then
-        assertFalse(compatibleDatasetList.contains(dataSetId));
     }
 
     @Test

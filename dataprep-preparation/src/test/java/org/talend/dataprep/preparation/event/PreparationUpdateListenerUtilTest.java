@@ -1,32 +1,29 @@
 package org.talend.dataprep.preparation.event;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyVararg;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.stream.Stream;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.ApplicationContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tql.api.TqlBuilder;
+
+import java.util.Arrays;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreparationUpdateListenerUtilTest {
@@ -41,7 +38,7 @@ public class PreparationUpdateListenerUtilTest {
     private PreparationUtils preparationUtils;
 
     @Mock
-    private ApplicationContext applicationContext;
+    private DatasetClient datasetClient;
 
     @Mock
     private SecurityProxy securityProxy;
@@ -72,10 +69,7 @@ public class PreparationUpdateListenerUtilTest {
                 .thenReturn(Stream.of(preparation));
         when(preparationRepository.get(eq(step1.id()), eq(Step.class))).thenReturn(step1);
         when(preparationRepository.get(eq(step2.id()), eq(Step.class))).thenReturn(step2);
-
-        final DataSetGetMetadata dataSetGetMetadata = mock(DataSetGetMetadata.class);
-        when(applicationContext.getBean(eq(DataSetGetMetadata.class), anyVararg())).thenReturn(dataSetGetMetadata);
-        when(dataSetGetMetadata.execute()).thenReturn(metadata);
+        when(datasetClient.getDataSetMetadata(any())).thenReturn(metadata);
 
         // when
         preparationUpdateListenerUtil.removePreparationStepRowMetadata(metadata.getId());

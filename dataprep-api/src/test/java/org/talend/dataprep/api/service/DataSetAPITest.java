@@ -12,36 +12,14 @@
 
 package org.talend.dataprep.api.service;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static com.jayway.restassured.path.json.JsonPath.from;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.Instant.now;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static org.talend.dataprep.util.SortAndOrderHelper.Order.ASC;
-import static org.talend.dataprep.util.SortAndOrderHelper.Order.DESC;
-import static org.talend.dataprep.util.SortAndOrderHelper.Sort.CREATION_DATE;
-import static org.talend.dataprep.util.SortAndOrderHelper.Sort.NAME;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
-
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.assertj.core.api.Assertions;
@@ -64,14 +42,35 @@ import org.talend.dataprep.schema.FormatFamily;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.Instant.now;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.util.SortAndOrderHelper.Order.ASC;
+import static org.talend.dataprep.util.SortAndOrderHelper.Order.DESC;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort.CREATION_DATE;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort.NAME;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 /**
  * Unit test for Data Set API.
@@ -144,15 +143,21 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset_TDP-2546.csv", datasetOriginalName);
 
         // then, the content should include technical properties when asked.
-        String defaultDataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
+        String defaultDataSetContent = given()
+                .queryParam("metadata", true)
+                .get("/api/datasets/{dataSetId}", dataSetId).asString();
         assertThat(defaultDataSetContent.contains("__tdp"), is(false));
 
-        String dataSetContent =
-                when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=false").asString();
+        String dataSetContent = given()
+                .queryParam("metadata", true)
+                .queryParam("includeTechnicalProperties", false)
+                .get("/api/datasets/{dataSetId}", dataSetId).asString();
         assertThat(dataSetContent.contains("__tdp"), is(false));
 
         String dataSetContentWithTechnicalContent =
-                when().get("/api/datasets/" + dataSetId + "?metadata=true&includeTechnicalProperties=true").asString();
+                given().queryParam("metadata", true)
+                        .queryParam("includeTechnicalProperties", true)
+                        .get("/api/datasets/{dataSetId}", dataSetId).asString();
         assertThat(dataSetContentWithTechnicalContent.contains("__tdp"), is(true));
     }
 
@@ -182,10 +187,10 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         // when
-        final String list = when().get("/api/datasets").asString();
+        Response response = when().get("/api/datasets");
 
         // then
-        assertTrue(list.contains(dataSetId));
+        assertTrue(response.asString().contains(dataSetId));
     }
 
     @Test
@@ -236,21 +241,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void testListCompatibleDataSets() throws Exception {
-        // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
-        final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "compatible2");
-        final String dataSetId3 = testClient.createDataset("t-shirt_100.csv", "incompatible");
-
-        // when
-        final String compatibleDatasetList = when().get("/api/datasets/{id}/compatibledatasets", dataSetId).asString();
-
-        // then
-        assertTrue(compatibleDatasetList.contains(dataSetId2));
-        assertFalse(compatibleDatasetList.contains(dataSetId3));
-    }
-
-    @Test
     public void testListCompatiblePreparationsWhenNothingIsCompatible() throws Exception {
         //
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "compatible1");
@@ -282,18 +272,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
         assertEquals(2, compatiblePreparations.size());
         assertTrue(prep2.equals(compatiblePreparations.get(0).getId()));
         assertTrue(prep1.equals(compatiblePreparations.get(1).getId()));
-    }
-
-    @Test
-    public void testListCompatibleDataSetsWhenUniqueDatasetInRepository() throws Exception {
-        // given
-        final String dataSetId = testClient.createDataset("dataset/dataset.csv", "unique");
-
-        // when
-        final String compatibleDatasetList = when().get("/api/datasets/{id}/compatibledatasets", dataSetId).asString();
-
-        // then
-        assertFalse(compatibleDatasetList.contains(dataSetId));
     }
 
     @Test
@@ -415,7 +393,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         Response response = when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId);
 
         // then
-        response.then().header("Content-Type", "application/json");
+        response.then().contentType(ContentType.JSON);
         final String contentAsString = response.asString();
         assertThat(contentAsString, sameJSONAsFile(expected));
     }
@@ -663,9 +641,11 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final DataSetMetadata dataSetMetadata1 = dataSetMetadataRepository.get(dataSetId1);
         dataSetMetadata1.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
         dataSetMetadata1.setLastModificationDate((now().getEpochSecond() + 1) * 1_000);
+
         dataSetMetadataRepository.save(dataSetMetadata1);
         final DataSetMetadata dataSetMetadata2 = dataSetMetadataRepository.get(dataSetId2);
         dataSetMetadataRepository.save(dataSetMetadata2);
+
         final DataSetMetadata dataSetMetadata3 = dataSetMetadataRepository.get(dataSetId3);
         dataSetMetadata3.getGovernance().setCertificationStep(DataSetGovernance.Certification.CERTIFIED);
         dataSetMetadataRepository.save(dataSetMetadata3);
@@ -793,10 +773,14 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_filter.json");
 
         // when
-        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false&filter=0001%3D%27John%27", dataSetId);
+        Response response = given()
+                .queryParam("metadata", "true")
+                .queryParam("columns", "false")
+                .queryParam("filter", "0001='John'")
+                .get("/api/datasets/{id}", dataSetId);
 
         // then
-        response.then().header("Content-Type", "application/json");
+        response.then().contentType(ContentType.JSON);
         final String contentAsString = response.asString();
         assertThat(contentAsString, sameJSONAsFile(expected));
     }

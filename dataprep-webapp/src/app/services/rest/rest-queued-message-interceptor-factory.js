@@ -11,9 +11,11 @@
 
  ============================================================================*/
 
-const ACCEPTED_STATUS = 202;
+const ACCEPTED_CODE = 202;
 const LOOP_DELAY = 1000;
-const RUNNING_STATUS = 'RUNNING';
+const FOLLOWED_STATUS = ['NEW', 'RUNNING'];
+const FAILED_STATUS = 'FAILED';
+const CANCELLED_STATUS = 'CANCELLED';
 
 const METHODS = {
 	POST: 'POST',
@@ -28,7 +30,7 @@ const NOOP = () => {};
  * @name data-prep.services.rest.service:RestQueuedMessageHandler
  * @description Queued message interceptor
  */
-export default function RestQueuedMessageHandler($q, $injector, $timeout, RestURLs) {
+export default function RestQueuedMessageHandler($q, $injector, $timeout, RestURLs, MessageService) {
 	'ngInject';
 
 	function checkStatus(url) {
@@ -36,7 +38,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 
 		return new Promise((resolve, reject) => {
 			$http.get(url)
-				.then(({ data }) => (data.status === RUNNING_STATUS ? reject : resolve)(data));
+				.then(({ data }) => (FOLLOWED_STATUS.includes(data.status) ? reject : resolve)(data));
 		});
 	}
 
@@ -61,19 +63,27 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 		 * @name response
 		 * @methodOf data-prep.services.rest.service:RestQueuedMessageHandler
 		 * @param {object} response - the intercepted response
-		 * @description If a 202 occurs, loop until the status change from RUNNING to anything else
+		 * @description If a 202 occurs, loop until the status change from NEW/RUNNING to anything else
 		 */
 		response(response) {
 			const { headers, config, status } = response;
 
-			if (status === ACCEPTED_STATUS && ALLOWED_METHODS.includes(config.method) && !config.async) {
+			if (status === ACCEPTED_CODE && ALLOWED_METHODS.includes(config.method) && !config.async) {
 				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {
 						const $http = $injector.get('$http');
-						return data.result.downloadUrl ? $http({
-							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
-							url: `${RestURLs.context}${data.result.downloadUrl}`,
-						}) : $q.resolve(data);
+
+						switch (data.status) {
+						case FAILED_STATUS:
+							MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+						case CANCELLED_STATUS:
+							return $q.reject();
+						default:
+							return data.result.downloadUrl ? $http({
+								method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
+								url: `${RestURLs.context}${data.result.downloadUrl}`,
+							}) : $q.resolve(data);
+						}
 					});
 			}
 

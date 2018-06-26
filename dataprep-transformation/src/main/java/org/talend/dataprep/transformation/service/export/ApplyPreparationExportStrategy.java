@@ -31,14 +31,14 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
@@ -76,13 +76,17 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
                 parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
                 format);
 
-        return outputStream -> executeApplyPreparation(parameters, outputStream);
+        TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
+        return outputStream -> doExecute(parameters, new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
 
-    private void executeApplyPreparation(ExportParameters parameters, OutputStream outputStream) {
+    @Override public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
+        doExecute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), key);
+    }
+
+    private void doExecute(ExportParameters parameters, OutputStream outputStream, TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
-        final String formatName = parameters.getExportType();
         final Preparation preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
         final ExportFormat format = getFormat(parameters.getExportType());
@@ -110,19 +114,9 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             final String actions = getActions(preparationId, version);
 
             // create tee to broadcast to cache + service output
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
-                    dataSetId, //
-                    preparationId, //
-                    version, //
-                    formatName, //
-                    parameters.getFrom(), //
-                    parameters.getArguments(), //
-                    parameters.getFilter() //
-            );
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
-                    contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+            try {
                 final Configuration.Builder configurationBuilder = Configuration.builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
@@ -131,7 +125,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
                         .preparation(getPreparation(preparationId)) //
                         .stepId(version) //
                         .volume(SMALL) //
-                        .output(tee) //
+                        .output(outputStream) //
                         .limit(this.limit);
 
                 // no need for statistics if it's not JSON output
@@ -142,11 +136,13 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
                 final Configuration configuration = configurationBuilder.build();
 
                 factory.get(configuration).buildExecutable(dataSet, configuration).execute();
-                tee.flush();
+                outputStream.flush();
             } catch (Throwable e) { // NOSONAR
                 LOGGER.debug("evicting cache {}", key.getKey());
                 contentCache.evict(key);
                 throw e;
+            } finally {
+                outputStream.close();
             }
         } catch (TDPException e) {
             throw e;

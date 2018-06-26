@@ -98,7 +98,7 @@ public class AggregationTest extends TransformationServiceBaseTest {
         final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
         parameters.setDatasetId(null);
         parameters.setPreparationId(preparationId);
-        parameters.setStepId(null);
+        parameters.setStepId("756984");
 
         String actual = given()//
                 .body(mapper.writeValueAsString(parameters))//
@@ -124,7 +124,7 @@ public class AggregationTest extends TransformationServiceBaseTest {
         final AggregationParameters parameters = mapper.readerFor(AggregationParameters.class).readValue(actionsAsJson);
         parameters.setDatasetId(null);
         parameters.setPreparationId(preparationId);
-        parameters.setStepId(null);
+        parameters.setStepId("756984");
 
         String actual = given()//
                 .body(mapper.writeValueAsString(parameters))//

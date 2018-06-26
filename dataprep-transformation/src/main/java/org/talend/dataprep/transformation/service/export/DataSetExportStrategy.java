@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
@@ -31,8 +34,6 @@ import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a data set, without using a preparation.
@@ -48,6 +49,10 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
         return parameters.getContent() == null //
                 && !StringUtils.isEmpty(parameters.getDatasetId()) //
                 && StringUtils.isEmpty(parameters.getPreparationId());
+    }
+
+    @Override public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
+        execute(parameters);
     }
 
     @Override

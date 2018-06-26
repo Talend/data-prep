@@ -11,10 +11,21 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.service.ExportStrategy;
 
 /**
  * Tagging interface for export strategies that can be used for sampling.
  */
 public interface SampleExportStrategy extends ExportStrategy {
+
+    /**
+     * Execute export strategy with the given parameter and write the result to the cache. Callers are expected to ensure {@link #accept(ExportParameters)}
+     * returns <code>true</code> before calling this method.
+     *
+     * @param parameters
+     * @param key
+     */
+    void writeToCache(ExportParameters parameters, TransformationCacheKey key);
 }

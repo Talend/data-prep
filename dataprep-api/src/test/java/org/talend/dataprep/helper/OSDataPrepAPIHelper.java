@@ -592,7 +592,7 @@ public class OSDataPrepAPIHelper {
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");
     }
-      
+
     public boolean isEnableRestAssuredDebug() {
         return enableRestAssuredDebug;
     }
@@ -600,13 +600,5 @@ public class OSDataPrepAPIHelper {
     public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
         this.enableRestAssuredDebug = enableRestAssuredDebug;
         return this;
-    }
-
-    public Response applyAggragate(Aggregate aggregate) throws Exception {
-        return given()
-                .header(new Header("Content-Type", "application/json")) //
-                .when() //
-                .body(mapper.writeValueAsString(aggregate)) //
-                .post("/api/aggregate");
     }
 }

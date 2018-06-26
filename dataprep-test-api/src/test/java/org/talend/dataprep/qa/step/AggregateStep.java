@@ -96,7 +96,7 @@ public class AggregateStep extends DataPrepStep {
 
         aggregate.preparationId = params.get("preparationId");
         aggregate.addGroupBy(params.get("groupBy"));
-        aggregate.stepId = "head";
+        aggregate.stepId = getPreparationDetails(aggregate.preparationId).getHead();
         return aggregate;
     }
 }

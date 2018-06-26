@@ -21,11 +21,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
@@ -76,6 +76,10 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
                 IOUtils.copy(cachedContent, outputStream);
             }
         };
+    }
+
+    @Override public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
+        throw new UnsupportedOperationException("Cache export strategy don't support write to cache.");
     }
 
     private TransformationCacheKey getCacheKey(ExportParameters parameters) {

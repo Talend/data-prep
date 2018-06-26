@@ -18,6 +18,7 @@ public interface ExportStrategy {
 
     /**
      * Return whether this export strategy is applicable to the parameters or not.
+     *
      * @param parameters Export parameters (can be null).
      * @return <code>true</code> if export strategy is applicable to parameters.
      */
@@ -26,6 +27,7 @@ public interface ExportStrategy {
     /**
      * Execute export strategy with given parameters. Callers are expected to ensure {@link #accept(ExportParameters)}
      * returns <code>true</code> before calling this method.
+     *
      * @param parameters Export parameters (can <b>not</b> be null).
      * @return A {@link StreamingResponseBody} that streams the export data to the provided output stream.
      */

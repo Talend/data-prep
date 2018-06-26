@@ -1,14 +1,14 @@
-import { OPEN_DATASET } from '../constants/actions';
+import { REDIRECT_WINDOW } from '../constants/actions';
 
-
-function open(event, { type, id }) {
+function open(event, { id }) {
 	return {
-		type: OPEN_DATASET,
+		type: REDIRECT_WINDOW,
 		payload: {
-			type, id,
+			url: `${window.location.origin}/#/playground/dataset?datasetid=${id}`,
 		},
 	};
 }
+
 export default {
 	open,
 };

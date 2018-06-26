@@ -13,20 +13,17 @@
 
 package org.talend.dataprep.quality;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramAnalyzer;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramStatistics;
 import org.talend.dataprep.api.dataset.statistics.number.StreamNumberHistogramAnalyzer;
 import org.talend.dataprep.api.type.TypeUtils;
+import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.transformation.actions.date.DateParser;
 import org.talend.dataprep.transformation.api.transformer.json.NullAnalyzer;
 import org.talend.dataquality.common.inference.Analyzer;
@@ -62,6 +59,12 @@ import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.dataquality.statistics.type.DataTypeAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service in charge of analyzing dataset quality.
@@ -299,6 +302,18 @@ public class AnalyzerService {
      */
     public Analyzer<Analyzers.Result> schemaAnalysis(List<ColumnMetadata> columns) {
         return build(columns, Analysis.SEMANTIC, Analysis.TYPE);
+    }
+
+    public void analyzeFull(final Stream<DataSetRow> records, List<ColumnMetadata> columns) {
+        final Analyzer<Analyzers.Result> analyzer = full(columns);
+
+        analyzer.init();
+        records.map(r -> r.toArray()).forEach(analyzer::analyze);
+        analyzer.end();
+
+        final List<Analyzers.Result> analyzerResult = analyzer.getResult();
+        final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
+        statisticsAdapter.adapt(columns, analyzerResult);
     }
 
     public enum Analysis {

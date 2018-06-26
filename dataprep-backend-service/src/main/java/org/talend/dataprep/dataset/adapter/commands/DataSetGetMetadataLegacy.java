@@ -10,8 +10,9 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.command.dataset;
+package org.talend.dataprep.dataset.adapter.commands;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.command.Defaults.convertResponse;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
@@ -33,9 +34,12 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
 
-@Component
-@Scope("prototype")
-public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
+/**
+ * Get a dataset by id using the legacy dataprep dataset API.
+ */
+@Component(value = "DataSetGetMetadata#legacy")
+@Scope(SCOPE_PROTOTYPE)
+public class DataSetGetMetadataLegacy extends GenericCommand<DataSetMetadata> {
 
     private final String dataSetId;
 
@@ -47,7 +51,7 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
      *
      * @param dataSetId the dataset id to get.
      */
-    private DataSetGetMetadata(final String dataSetId) {
+    private DataSetGetMetadataLegacy(final String dataSetId) {
         super(GenericCommand.DATASET_GROUP);
         this.dataSetId = dataSetId;
 
@@ -64,11 +68,6 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
         }
     }
 
-    /**
-     * Private constructor to ensure the use of IoC
-     *
-     * @param relativePath to get the sample or not
-     */
     private void configureDataset(String relativePath) {
         URI builtUri;
         try {
@@ -90,5 +89,4 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
     private void configureSampleDataset(String dataSetId) {
         configureDataset("/datasets/" + dataSetId + "/sample/metadata");
     }
-
 }

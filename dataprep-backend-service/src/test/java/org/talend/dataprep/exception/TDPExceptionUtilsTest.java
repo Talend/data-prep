@@ -13,16 +13,18 @@
 
 package org.talend.dataprep.exception;
 
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import org.junit.Test;
+
+import java.io.InputStream;
+
 import static com.netflix.hystrix.exception.HystrixRuntimeException.FailureType.BAD_REQUEST_EXCEPTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_CONNECT_TO_STREAMS;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_SERVICE_EXCEPTION;
-
-import org.junit.Test;
-import org.talend.dataprep.command.dataset.DataSetGet;
-
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 /**
  * Unit test for TDPExceptionUtils.
@@ -37,7 +39,7 @@ public class TDPExceptionUtilsTest {
         TDPException expected = new TDPException(UNABLE_TO_CONNECT_TO_STREAMS);
         final HystrixRuntimeException hre = new HystrixRuntimeException( //
                 BAD_REQUEST_EXCEPTION, //
-                DataSetGet.class, //
+                TestHystrixCommand.class, //
                 "hello", //
                 new Exception("middle", expected), //
                 new Throwable("fallback")//
@@ -56,7 +58,7 @@ public class TDPExceptionUtilsTest {
         // given
         final HystrixRuntimeException hre = new HystrixRuntimeException( //
                 BAD_REQUEST_EXCEPTION, //
-                DataSetGet.class, //
+                TestHystrixCommand.class, //
                 "hello", //
                 new Exception("middle", new IllegalArgumentException("root")), //
                 new Throwable("fallback")//
@@ -68,5 +70,17 @@ public class TDPExceptionUtilsTest {
         // then
         assertNotNull(tdpException);
         assertEquals(UNEXPECTED_SERVICE_EXCEPTION, tdpException.getCode());
+    }
+
+    private static class TestHystrixCommand extends HystrixCommand<InputStream> {
+
+        protected TestHystrixCommand() {
+            super(HystrixCommandGroupKey.Factory.asKey("test-group"));
+        }
+
+        @Override
+        protected InputStream run() throws Exception {
+            return null;
+        }
     }
 }

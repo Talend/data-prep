@@ -12,44 +12,10 @@
 
 package org.talend.dataprep.transformation.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
-import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
-import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.annotation.Resource;
-import javax.validation.Valid;
-
+import com.fasterxml.jackson.core.JsonParser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -94,11 +60,10 @@ import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
-import org.talend.dataprep.command.dataset.DataSetGet;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
@@ -131,11 +96,42 @@ import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
-import com.fasterxml.jackson.core.JsonParser;
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
+import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 @RestController
 @Api(value = "transformations", basePath = "/transform", description = "Transformations on data")
@@ -206,16 +202,18 @@ public class TransformationService extends BaseTransformationService {
     @Autowired
     private ExportParametersUtil exportParametersUtil;
 
+    @Autowired
+    private DatasetClient datasetClient;
+
     @RequestMapping(value = "/apply", method = POST)
-    @ApiOperation(value = "Run the transformation given the provided export parameters", notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
+    @ApiOperation(value = "Run the transformation given the provided export parameters",
+            notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
     @VolumeMetered
     @AsyncOperation(conditionalClass = GetPrepContentAsyncCondition.class, //
             resultUrlGenerator = PreparationGetContentUrlGenerator.class, //
             executionIdGeneratorClass = ExportParametersExecutionIdGenerator.class //
     )
-    public StreamingResponseBody execute(
-            @ApiParam(value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
-            throws IOException {
+    public StreamingResponseBody execute(@ApiParam(value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters) throws IOException {
 
         ExportParameters completeParameters = parameters;
 
@@ -234,13 +232,16 @@ public class TransformationService extends BaseTransformationService {
     }
 
     @RequestMapping(value = "/apply/preparation/{preparationId}/{stepId}/metadata", method = GET)
-    @ApiOperation(value = "Run the transformation given the provided export parameters", notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
+    @ApiOperation(value = "Run the transformation given the provided export parameters",
+            notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
     @VolumeMetered
-    @AsyncOperation(conditionalClass = GetPrepMetadataAsyncCondition.class, //
+    @AsyncOperation(
+            conditionalClass = GetPrepMetadataAsyncCondition.class, //
             resultUrlGenerator = PrepMetadataGetContentUrlGenerator.class, //
-            executionIdGeneratorClass = PrepMetadataExecutionIdGenerator.class)
+            executionIdGeneratorClass = PrepMetadataExecutionIdGenerator.class
+    )
     public DataSetMetadata executeMetadata(@PathVariable("preparationId") @AsyncParameter String preparationId,
-            @PathVariable("stepId") @AsyncParameter String stepId) {
+                                           @PathVariable("stepId") @AsyncParameter String stepId) {
 
         LOG.debug("getting preparation metadata for #{}, step {}", preparationId, stepId);
 
@@ -278,8 +279,9 @@ public class TransformationService extends BaseTransformationService {
         } else {
             LOG.debug("No step in preparation '{}', falls back to get dataset metadata (id: {})", preparationId,
                     preparation.getDataSetId());
-            DataSetGetMetadata getMetadata = context.getBean(DataSetGetMetadata.class, preparation.getDataSetId());
-            return getMetadata.execute();
+            DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+            dataSetMetadata.setRowMetadata(preparation.getRowMetadata());
+            return dataSetMetadata;
         }
         return null;
     }
@@ -358,6 +360,17 @@ public class TransformationService extends BaseTransformationService {
             throw new TDPException(CommonErrorCodes.BAD_AGGREGATION_PARAMETERS, e);
         }
 
+        // apply the aggregation
+        try (InputStream contentToAggregate = getContentToAggregate(parameters);
+                JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
+            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+            return aggregationService.aggregate(parameters, dataSet);
+        } catch (IOException e) {
+            throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
+        }
+    }
+
+    private InputStream getContentToAggregate(AggregationParameters parameters) {
         InputStream contentToAggregate;
 
         // get the content of the preparation (internal call with piped streams)
@@ -394,23 +407,9 @@ public class TransformationService extends BaseTransformationService {
                 throw new TDPException(CommonErrorCodes.UNABLE_TO_AGGREGATE, e);
             }
         } else {
-            final DataSetGet dataSetGet = context.getBean(DataSetGet.class, parameters.getDatasetId(), false, true);
-            contentToAggregate = dataSetGet.execute();
+            contentToAggregate = datasetClient.getDataSetGetCommand(parameters.getDatasetId(), false, true).execute();
         }
-
-        // apply the aggregation
-        try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
-            DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-            return aggregationService.aggregate(parameters, dataSet);
-        } catch (IOException e) {
-            throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
-        } finally {
-            try {
-                contentToAggregate.close();
-            } catch (IOException e) {
-                LOG.debug("Pb to close agggregation stream {}");
-            }
-        }
+        return contentToAggregate;
     }
 
     /**
@@ -442,13 +441,13 @@ public class TransformationService extends BaseTransformationService {
     }
 
     private void executeDiffOnSample(final PreviewParameters previewParameters, final OutputStream output) {
-        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
+        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(//
                 previewParameters.getPreparationId(), //
                 Step.ROOT_STEP.id(), //
                 previewParameters.getSourceType() //
         );
 
-        final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
+        final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey(//
                 previewParameters.getDataSetId(), //
                 previewParameters.getPreparationId(), //
                 Step.ROOT_STEP.id(), //
@@ -458,8 +457,8 @@ public class TransformationService extends BaseTransformationService {
         );
 
         try (final InputStream metadata = contentCache.get(metadataKey); //
-                final InputStream content = contentCache.get(contentKey); //
-                final JsonParser contentParser = mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))) {
+             final InputStream content = contentCache.get(contentKey); //
+             final JsonParser contentParser = mapper.getFactory().createParser(new InputStreamReader(content, UTF_8))) {
 
             // build metadata
             final RowMetadata rowMetadata = mapper.readerFor(RowMetadata.class).readValue(metadata);
@@ -485,29 +484,20 @@ public class TransformationService extends BaseTransformationService {
 
     private void executeDiffOnDataset(final PreviewParameters previewParameters, final OutputStream output) {
 
-        final DataSetGet dataSetGet = context.getBean(DataSetGet.class, previewParameters.getDataSetId(), false, true);
-
         boolean identityReleased = false;
         securityProxy.asTechnicalUser();
-
-        // because of dataset records streaming, the dataset content must be within an auto closeable block
-        try (final InputStream dataSetContent = dataSetGet.execute(); //
-                final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(dataSetContent, UTF_8))) {
-
+        try {
+            final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId());
             securityProxy.releaseIdentity();
             identityReleased = true;
 
-            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-            executePreview( //
+            executePreview(//
                     previewParameters.getNewActions(), //
                     previewParameters.getBaseActions(), //
                     previewParameters.getTdpIds(), //
                     dataSet, //
                     output //
             );
-
-        } catch (IOException e) {
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_PERFORM_PREVIEW, e);
         } finally {
             // make sure the technical identity is released
             if (!identityReleased) {
@@ -518,13 +508,13 @@ public class TransformationService extends BaseTransformationService {
 
     private boolean shouldApplyDiffToSampleSource(final PreviewParameters previewParameters) {
         if (previewParameters.getSourceType() != HEAD && previewParameters.getPreparationId() != null) {
-            final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
+            final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(//
                     previewParameters.getPreparationId(), //
                     Step.ROOT_STEP.id(), //
                     previewParameters.getSourceType() //
             );
 
-            final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
+            final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey(//
                     previewParameters.getDataSetId(), //
                     previewParameters.getPreparationId(), //
                     Step.ROOT_STEP.id(), //
@@ -561,13 +551,13 @@ public class TransformationService extends BaseTransformationService {
     }
 
     private void evictCache(final String preparationId, final ExportParameters.SourceType sourceType) {
-        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder()
-                .preparationId(preparationId)
-                .sourceType(sourceType)
+        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder() //
+                .preparationId(preparationId) //
+                .sourceType(sourceType) //
                 .build();
-        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder()
-                .preparationId(preparationId)
-                .sourceType(sourceType)
+        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder() //
+                .preparationId(preparationId) //
+                .sourceType(sourceType) //
                 .build();
         contentCache.evictMatch(metadataKey);
         contentCache.evictMatch(contentKey);
@@ -577,10 +567,9 @@ public class TransformationService extends BaseTransformationService {
      * Compare the results of 2 sets of actions, and return the diff metadata Ex : the created columns ids
      */
     private StepDiff getCreatedColumns(final PreviewParameters previewParameters) {
-        final DataSetGetMetadata dataSetGetMetadata = context.getBean(DataSetGetMetadata.class, previewParameters.getDataSetId());
-        DataSetMetadata dataSetMetadata = dataSetGetMetadata.execute();
+        final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(previewParameters.getDataSetId());
         StepDiff stepDiff;
-        if (dataSetGetMetadata.isSuccessfulExecution() && dataSetMetadata != null) {
+        if (dataSetMetadata != null) {
             RowMetadata metadataBase = dataSetMetadata.getRowMetadata();
             RowMetadata metadataAfter = metadataBase.clone();
 
@@ -631,7 +620,7 @@ public class TransformationService extends BaseTransformationService {
         final PreviewConfiguration configuration = PreviewConfiguration.preview() //
                 .withActions(actions) //
                 .withIndexes(indexes) //
-                .fromReference( //
+                .fromReference(//
                         Configuration.builder() //
                                 .format(JSON) //
                                 .output(output) //
@@ -676,13 +665,14 @@ public class TransformationService extends BaseTransformationService {
      * @see #suggest(ColumnMetadata, int)
      */
     @RequestMapping(value = "/actions/column", method = POST)
-    @ApiOperation(value = "Return all actions for a column (regardless of column metadata)", notes = "This operation returns an array of actions.")
+    @ApiOperation(value = "Return all actions for a column (regardless of column metadata)",
+            notes = "This operation returns an array of actions.")
     @ResponseBody
     public Stream<ActionForm> columnActions(@RequestBody(required = false) ColumnMetadata column) {
         return actionRegistry.findAll() //
-                .filter(action -> !"TEST".equals(action.getCategory(getLocale()))
-                        && action.acceptScope(COLUMN)) //
-                .map(am -> column != null ? am.adapt(column) : am).map(ad -> ad.getActionForm(getLocale()));
+                .filter(action -> !"TEST".equals(action.getCategory(LocaleContextHolder.getLocale())) && action.acceptScope(COLUMN)) //
+                .map(am -> column != null ? am.adapt(column) : am) //
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**
@@ -694,17 +684,18 @@ public class TransformationService extends BaseTransformationService {
      * @see #suggest(DataSet)
      */
     @RequestMapping(value = "/suggest/column", method = POST)
-    @ApiOperation(value = "Suggest actions for a given column metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
+    @ApiOperation(value = "Suggest actions for a given column metadata",
+            notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
     public Stream<ActionForm> suggest(@RequestBody(required = false) ColumnMetadata column, //
-            @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit", defaultValue = "5", required = false) int limit) {
+                                      @ApiParam(value = "How many actions should be suggested at most", defaultValue = "5") @RequestParam(value = "limit", defaultValue = "5", required = false) int limit) {
         if (column == null) {
             return Stream.empty();
         }
 
         // look for all actions applicable to the column type
-        final Stream<Suggestion> suggestions = suggestionEngine
-                .score(actionRegistry.findAll().parallel().filter(am -> am.acceptField(column)), column);
+        final Stream<Suggestion> suggestions =
+                suggestionEngine.score(actionRegistry.findAll().parallel().filter(am -> am.acceptField(column)), column);
         return suggestions //
                 .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
                 .limit(limit) //
@@ -724,7 +715,8 @@ public class TransformationService extends BaseTransformationService {
     public Stream<ActionForm> lineActions() {
         return actionRegistry.findAll() //
                 .filter(action -> action.acceptScope(LINE)) //
-                .map(action -> action.adapt(LINE)).map(ad -> ad.getActionForm(getLocale()));
+                .map(action -> action.adapt(LINE)) //
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**
@@ -736,9 +728,11 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Return all actions on the whole dataset.", notes = "This operation returns an array of actions.")
     @ResponseBody
     public Stream<ActionForm> datasetActions() {
-        return actionRegistry.findAll() //
+        return actionRegistry
+                .findAll() //
                 .filter(action -> action.acceptScope(DATASET)) //
-                .map(action -> action.adapt(DATASET)).map(ad -> ad.getActionForm(getLocale()));
+                .map(action -> action.adapt(DATASET)) //
+                .map(ad -> ad.getActionForm(getLocale()));
     }
 
     /**
@@ -749,7 +743,8 @@ public class TransformationService extends BaseTransformationService {
      * @see #suggest(ColumnMetadata, int)
      */
     @RequestMapping(value = "/suggest/dataset", method = POST)
-    @ApiOperation(value = "Suggest actions for a given data set metadata", notes = "This operation returns an array of suggested actions in decreasing order of importance.")
+    @ApiOperation(value = "Suggest actions for a given data set metadata",
+            notes = "This operation returns an array of suggested actions in decreasing order of importance.")
     @ResponseBody
     public List<ActionForm> suggest(DataSet dataSet) {
         return Collections.emptyList();
@@ -759,7 +754,8 @@ public class TransformationService extends BaseTransformationService {
      * List all transformation related error codes.
      */
     @RequestMapping(value = "/transform/errors", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all transformation related error codes.", notes = "Returns the list of all transformation related error codes.")
+    @ApiOperation(value = "Get all transformation related error codes.",
+            notes = "Returns the list of all transformation related error codes.")
     @Timed
     public Iterable<JsonErrorCodeDescription> listErrors() {
         // need to cast the typed dataset errors into mock ones to use json parsing
@@ -778,7 +774,8 @@ public class TransformationService extends BaseTransformationService {
     @Timed
     @PublicAPI
     public Stream<ExportFormatMessage> exportTypes() {
-        return formatRegistrationService.getExternalFormats() //
+        return formatRegistrationService
+                .getExternalFormats() //
                 .sorted(Comparator.comparingInt(ExportFormat::getOrder)) // Enforce strict order.
                 .map(f -> beanConversionService.convert(f, ExportFormatMessage.class)) //
                 .filter(ExportFormatMessage::isEnabled);
@@ -792,7 +789,7 @@ public class TransformationService extends BaseTransformationService {
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForPreparation(@PathVariable String preparationId) {
         final Preparation preparation = getPreparation(preparationId);
-        final DataSetMetadata metadata = context.getBean(DataSetGetMetadata.class, preparation.getDataSetId()).execute();
+        final DataSetMetadata metadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
         return getPreparationExportTypesForDataSet(metadata.getId());
     }
 
@@ -803,13 +800,12 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Get the available format types for the preparation")
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForDataSet(@PathVariable String dataSetId) {
+        final DataSetMetadata metadata = datasetClient.getDataSetMetadata(dataSetId);
 
-        return formatRegistrationService.getExternalFormats() //
+        return formatRegistrationService
+                .getExternalFormats() //
                 .filter(ExportFormat::isEnabled) //
-                .filter(f -> {
-                    final DataSetMetadata metadata = context.getBean(DataSetGetMetadata.class, dataSetId).execute();
-                    return f.isCompatible(metadata);
-                }) //
+                .filter(f -> f.isCompatible(metadata)) //
                 .sorted(Comparator.comparingInt(ExportFormat::getOrder)) // Enforce strict order.
                 .map(f -> beanConversionService.convert(f, ExportFormatMessage.class));
     }
@@ -837,7 +833,8 @@ public class TransformationService extends BaseTransformationService {
      * @return the semantic types for a given preparation / column.
      */
     @RequestMapping(value = "/preparations/{preparationId}/columns/{columnId}/types", method = GET)
-    @ApiOperation(value = "list the types of the wanted column", notes = "This list can be used by user to change the column type.")
+    @ApiOperation(value = "list the types of the wanted column",
+            notes = "This list can be used by user to change the column type.")
     @Timed
     @PublicAPI
     public List<SemanticDomain> getPreparationColumnSemanticCategories(
@@ -866,12 +863,20 @@ public class TransformationService extends BaseTransformationService {
          */
 
         // generate the cache keys for both metadata & content
-        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder() //
-                .preparationId(preparationId).stepId(version).sourceType(HEAD).build();
+        final ContentCacheKey metadataKey = cacheKeyGenerator
+                .metadataBuilder() //
+                .preparationId(preparationId)
+                .stepId(version)
+                .sourceType(HEAD)
+                .build();
 
-        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder() //
-                .datasetId(preparation.getDataSetId()).preparationId(preparationId).stepId(version) //
-                .format(JSON).sourceType(HEAD) //
+        final ContentCacheKey contentKey = cacheKeyGenerator
+                .contentBuilder() //
+                .datasetId(preparation.getDataSetId())
+                .preparationId(preparationId)
+                .stepId(version) //
+                .format(JSON)
+                .sourceType(HEAD) //
                 .build();
 
         // if the preparation is not cached, let's compute it to have some cache
@@ -881,7 +886,7 @@ public class TransformationService extends BaseTransformationService {
 
         // run the analyzer service on the cached content
         try (final InputStream metadataCache = contentCache.get(metadataKey);
-                final InputStream content = this.contentCache.get(contentKey)) {
+             final InputStream content = this.contentCache.get(contentKey)) {
             final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataCache);
             final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, content);
             LOG.debug("found {} for preparation #{}, column #{}", semanticDomains, preparationId, columnId);

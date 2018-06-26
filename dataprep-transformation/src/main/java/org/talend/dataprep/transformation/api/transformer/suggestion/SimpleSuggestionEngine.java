@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.api.transformer.suggestion;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -30,6 +31,8 @@ import org.talend.dataprep.api.dataset.DataSet;
 @Component
 public class SimpleSuggestionEngine implements SuggestionEngine {
 
+    final Comparator<Suggestion> suggestionComparator = (s1, s2) -> Integer.compare(s2.getScore(), s1.getScore());
+
     /** Available rules. */
     @Autowired(required = false)
     private List<SuggestionEngineRule> rules = new ArrayList<>();
@@ -39,20 +42,13 @@ public class SimpleSuggestionEngine implements SuggestionEngine {
      */
     @Override
     public Stream<Suggestion> score(Stream<ActionDefinition> actions, ColumnMetadata column) {
-        return actions.map(actionMetadata -> { //
-            int score = 0;
-            for (SuggestionEngineRule rule : rules) {
-                score += rule.apply(actionMetadata, column);
-            }
-            return new Suggestion(actionMetadata, score);
-        }) //
-                .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()));
+        return actions.map(actionMetadata -> score(actionMetadata, column)).sorted(suggestionComparator);
     }
 
     /**
-     * @see SuggestionEngine#score(ActionDefinition, ColumnMetadata)
+     * @param actionDef
+     * @param column
      */
-    @Override
     public Suggestion score(ActionDefinition actionDef, ColumnMetadata column) {
         int score = 0;
         for (SuggestionEngineRule rule : rules) {

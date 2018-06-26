@@ -552,7 +552,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Evict content entries related to the preparation", notes = "This operation remove content entries related to the preparation.")
     @VolumeMetered
     public void evictCache(@ApiParam(value = "Preparation Id.") @PathVariable(value = "preparationId") final String preparationId) {
-        for(final ExportParameters.SourceType sourceType : ExportParameters.SourceType.values()) {
+        for (final ExportParameters.SourceType sourceType : ExportParameters.SourceType.values()) {
             evictCache(preparationId, sourceType);
         }
     }
@@ -702,7 +702,6 @@ public class TransformationService extends BaseTransformationService {
 
         // look for all actions applicable to the column type
         return actionRegistry.findAll() //
-                .parallel() //
                 .filter(am -> am.acceptScope(COLUMN) && am.acceptField(column)) //
                 .map(am -> suggestionEngine.score(am, column)) //
                 .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))

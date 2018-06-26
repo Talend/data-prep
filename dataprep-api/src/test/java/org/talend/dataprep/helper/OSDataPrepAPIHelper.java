@@ -580,21 +580,17 @@ public class OSDataPrepAPIHelper {
         return asyncExecutionMessage;
     }
 
-    public boolean isEnableRestAssuredDebug() {
-        return enableRestAssuredDebug;
-    }
-
-    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
-        this.enableRestAssuredDebug = enableRestAssuredDebug;
-        return this;
-    }
-
     public Response applyAggragate(Aggregate aggregate) throws Exception {
         return given()
                 .header(new Header("Content-Type", "application/json")) //
                 .when() //
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");
+    }
+
+    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
+        this.enableRestAssuredDebug = enableRestAssuredDebug;
+        return this;
     }
 
     public ITExecutionContext getExecutionContext() {

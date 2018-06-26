@@ -16,8 +16,8 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
 import java.io.OutputStream;
 
-import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.util.io.TeeOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +29,11 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
-import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
@@ -42,7 +42,8 @@ import org.talend.dataprep.transformation.service.ExportUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
+ * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with
+ * {@link ExportParameters.SourceType HEAD} sample.
  */
 @Component
 public class PreparationExportStrategy extends BaseSampleExportStrategy {
@@ -51,9 +52,6 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
-
-    @Autowired
-    private SecurityProxy securityProxy;
 
     @Autowired
     private DatasetClient datasetClient;
@@ -71,16 +69,27 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public StreamingResponseBody execute(final ExportParameters parameters) {
+        TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
+        return outputStream -> execute(parameters, new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
+    }
+
+    @Override
+    public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
+        execute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), cacheKeyGenerator.generateContentKey(parameters));
+    }
+
+    public void execute(ExportParameters parameters, OutputStream stream, TransformationCacheKey key) {
         final String formatName = parameters.getExportType();
         final ExportFormat format = getFormat(formatName);
         ExportUtils.setExportHeaders(parameters.getExportName(), //
                 parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
                 format);
 
-        return outputStream -> performPreparation(parameters, outputStream);
+        performPreparation(parameters, stream, key);
     }
 
-    public void performPreparation(final ExportParameters parameters, final OutputStream outputStream) {
+    public void performPreparation(final ExportParameters parameters, OutputStream outputStream,
+            TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
         final String formatName = parameters.getExportType();
@@ -102,39 +111,28 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             // get the actions to apply (no preparation ==> dataset export ==> no actions)
             final String actions = getActions(preparationId, version);
 
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
-                    dataSetId, //
-                    preparationId, //
-                    version, //
-                    formatName, //
-                    parameters.getFrom(), //
-                    parameters.getArguments(), //
-                    parameters.getFilter() //
-            );
-
-            LOGGER.debug("Cache key: " + key.getKey());
-            LOGGER.debug("Cache key details: " + key.toString());
-
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
-                    contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                final Configuration configuration = Configuration.builder() //
-                        .args(parameters.getArguments()) //
-                        .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                        .sourceType(parameters.getFrom())
-                        .format(format.getName()) //
-                        .actions(actions) //
-                        .preparation(preparation) //
-                        .stepId(version) //
-                        .volume(Configuration.Volume.SMALL) //
-                        .output(tee) //
-                        .limit(limit) //
-                        .build();
-                factory.get(configuration).buildExecutable(dataSet, configuration).execute();
-                tee.flush();
-            } catch (Throwable e) { // NOSONAR
-                contentCache.evict(key);
-                throw e;
-            }
+                try {
+                    final Configuration configuration = Configuration
+                            .builder() //
+                            .args(parameters.getArguments()) //
+                            .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
+                            .sourceType(parameters.getFrom())
+                            .format(format.getName()) //
+                            .actions(actions) //
+                            .preparation(preparation) //
+                            .stepId(version) //
+                            .volume(Configuration.Volume.SMALL) //
+                            .output(outputStream) //
+                            .limit(limit) //
+                            .build();
+                    factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+                    outputStream.flush();
+                } catch (Throwable e) { // NOSONAR
+                    contentCache.evict(key);
+                    throw e;
+                } finally {
+                    outputStream.close();
+                }
         } catch (TDPException e) {
             throw e;
         } catch (Exception e) {

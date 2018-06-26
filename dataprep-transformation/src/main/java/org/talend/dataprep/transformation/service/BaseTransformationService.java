@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -81,6 +82,36 @@ public abstract class BaseTransformationService {
         return format;
     }
 
+    /**
+     * Execute the sample export strategy to the cache.
+     *
+     * @param parameters
+     * @param key
+     */
+    void executeSampleExportStrategyToCache(final ExportParameters parameters, TransformationCacheKey key) {
+        LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
+        // Full run execution (depends on the export parameters).
+        try {
+            Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(sampleExportStrategies, parameters);
+            if (electedStrategy.isPresent()) {
+                LOG.debug("Strategy for execution: {}", electedStrategy.get().getClass());
+                ((SampleExportStrategy)(electedStrategy.get())).writeToCache(parameters, key);
+            } else {
+                throw new IllegalArgumentException("Not valid export parameters (no preparation id nor data set id).");
+            }
+        } catch (TDPException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
+        }
+    }
+
+    /**
+     * Execute the sample export strategy.
+     *
+     * @param parameters
+     * @return
+     */
     StreamingResponseBody executeSampleExportStrategy(final ExportParameters parameters) {
         LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
         try {

@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.api.service.mail;
 
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,18 +22,17 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class MailToCommand extends HystrixCommand<Void> {
 
     public static final HystrixCommandGroupKey MAIL_GROUP = HystrixCommandGroupKey.Factory.asKey("mail"); //$NON-NLS-1$
 
     @Autowired
     private FeedbackSender feedbackSender;
-    
+
     @Autowired
     private VersionService versionService;
 

@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import java.io.InputStream;
-
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -21,11 +19,15 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 
+import java.io.InputStream;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Command to list dataset import types.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class DataSetGetImports extends GenericCommand<InputStream> {
 
     public DataSetGetImports() {

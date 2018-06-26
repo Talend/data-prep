@@ -25,10 +25,11 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class GetFolder
     extends GenericCommand<InputStream> {
 

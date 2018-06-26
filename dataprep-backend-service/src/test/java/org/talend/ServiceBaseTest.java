@@ -19,8 +19,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockPropertySource;
@@ -28,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.daikon.content.local.LocalContentServiceConfiguration;
 import org.talend.dataprep.configuration.DataPrepComponentScanConfiguration;
+import org.talend.dataprep.dataset.adapter.MockDatasetServer;
 import org.talend.dataprep.test.LocalizationRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +42,7 @@ import static org.talend.ServiceBaseTest.TEST_LOCALE;
 
 @RunWith(SpringRunner.class)
 @Import({ LocalContentServiceConfiguration.class, DataPrepComponentScanConfiguration.class })
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = { "dataset.asynchronous.analysis=false", "content-service.store=local", "dataprep.locale:" + TEST_LOCALE })
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = ServiceBaseTest.DatasetClientTestConfiguration.class, properties = { "dataset.asynchronous.analysis=false", "content-service.store=local", "dataprep.locale:" + TEST_LOCALE })
 public abstract class ServiceBaseTest {
 
     public static final String TEST_LOCALE = "en-US";
@@ -78,6 +82,18 @@ public abstract class ServiceBaseTest {
             environment.getPropertySources().addFirst(connectionInformation);
             environmentSet = true;
         }
+    }
+
+    @SpringBootConfiguration
+    @EnableAutoConfiguration
+    @Import(org.talend.dataprep.configuration.HttpClient.class)
+    public static class DatasetClientTestConfiguration {
+
+        @Bean
+        MockDatasetServer mockDatasetServer() {
+            return new MockDatasetServer();
+        }
+
     }
 
     @Test

@@ -704,8 +704,8 @@ public class TransformationService extends BaseTransformationService {
         return actionRegistry.findAll() //
                 .filter(am -> am.acceptScope(COLUMN) && am.acceptField(column)) //
                 .map(am -> suggestionEngine.score(am, column)) //
-                .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
                 .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
+                .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
                 .map(am -> am.adapt(column)) // Adapt default values (e.g. column name)

@@ -15,13 +15,12 @@ package org.talend.dataprep.transformation.format;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.format.export.ExportFormat;
+
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 
 /**
  * Internal service in charge of format type registration.
@@ -33,8 +32,11 @@ public class FormatRegistrationService {
     private static final List<String> INTERNAL_TYPES = Collections.singletonList(JsonFormat.JSON);
 
     /** List of available format types. */
-    @Autowired
-    private List<ExportFormat> types;
+    private final List<ExportFormat> types;
+
+    public FormatRegistrationService(List<ExportFormat> types) {
+        this.types = types;
+    }
 
     /**
      * Return external formats.
@@ -50,7 +52,9 @@ public class FormatRegistrationService {
      * @return the wanted export format or null if not found.
      */
     public ExportFormat getByName(String formatName) {
-        final Optional<ExportFormat> format = types.stream().filter(f -> StringUtils.equalsIgnoreCase(formatName, f.getName())).findFirst();
-        return format.isPresent() ? format.get() : null;
+        return types.stream() //
+                .filter(f -> equalsIgnoreCase(formatName, f.getName())) //
+                .findFirst() //
+                .orElse(null);
     }
 }

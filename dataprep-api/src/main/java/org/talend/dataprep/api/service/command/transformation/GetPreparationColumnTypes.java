@@ -13,11 +13,6 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import static org.talend.dataprep.command.Defaults.pipeStream;
-
-import java.io.InputStream;
-import java.util.function.Supplier;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -26,12 +21,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 
+import java.io.InputStream;
+import java.util.function.Supplier;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
 
 /**
  * Return the available semantic types for a preparation / column.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class GetPreparationColumnTypes extends GenericCommand<InputStream> {
 
     /**

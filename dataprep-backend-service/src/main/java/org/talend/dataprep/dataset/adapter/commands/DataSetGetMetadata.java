@@ -10,7 +10,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.command.dataset;
+package org.talend.dataprep.dataset.adapter.commands;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,30 +19,26 @@ import javax.annotation.PostConstruct;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
+import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.asNull;
-import static org.talend.dataprep.command.Defaults.convertResponse;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
-@Component
-@Scope("prototype")
-public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
+/**
+ * Get a dataset by id.
+ */
+@Component(value = "DataSetGetMetadata#2")
+@Scope(SCOPE_PROTOTYPE)
+public class DataSetGetMetadata extends GenericCommand<Dataset> {
 
     private final String dataSetId;
-
-    @Autowired
-    private DataSetContentLimit limit;
 
     /**
      * Private constructor to ensure the use of IoC
@@ -53,25 +49,15 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
         super(GenericCommand.DATASET_GROUP);
         this.dataSetId = dataSetId;
 
-        onError(Defaults.passthrough());
+        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_METADATA, e));
         on(HttpStatus.NO_CONTENT).then(asNull());
     }
 
     @PostConstruct
     private void initConfiguration() {
-        if (limit.limitContentSize()) {
-            this.configureLimitedDataset(dataSetId);
-        } else {
-            this.configureSampleDataset(dataSetId);
-        }
-    }
-
-    private void configureLimitedDataset(final String dataSetId) {
         URI build;
         try {
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            uriBuilder.setPath(uriBuilder.getPath() + "/datasets/" + dataSetId + "/metadata");
-            build = uriBuilder.build();
+            build = new URIBuilder(datasetServiceUrl + "/api/v1/datasets/" + dataSetId).build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
         }
@@ -79,28 +65,14 @@ public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
         on(HttpStatus.OK).then((req, res) -> {
             try {
-                final DataSet dataSet = objectMapper.readerFor(DataSet.class).readValue(res.getEntity().getContent());
-                return dataSet.getMetadata();
+                return objectMapper.readValue(res.getEntity().getContent(), Dataset.class);
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {
                 req.releaseConnection();
             }
         });
-    }
 
-    private void configureSampleDataset(String dataSetId) {
-        URI uri;
-        try {
-            final URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            uriBuilder.setPath(uriBuilder.getPath() + "/datasets/" + dataSetId + "/sample/metadata");
-            uri = uriBuilder.build();
-        } catch (URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-        }
-
-        execute(() -> new HttpGet(uri));
-        on(HttpStatus.OK).then(convertResponse(objectMapper, DataSetMetadata.class));
     }
 
 }

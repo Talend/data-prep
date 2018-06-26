@@ -13,10 +13,6 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import java.io.InputStream;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,11 +21,22 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Command used to retrieve a preview when adding an action to a dataset/preparation.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreviewAdd extends PreviewAbstract {
 
     /** The parameters to perform the preview on the Add Action request. */

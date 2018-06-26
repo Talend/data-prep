@@ -1,0 +1,264 @@
+[
+  {
+    "id": "d30e7e14-375a-49c7-87eb-62e1b614500d",
+    "created": 1524131129516,
+    "updated": 1524131129516,
+    "label": "filter1_main",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "c4ec508f-aeed-4b64-8567-30462b1f423b",
+    "created": 1524131129810,
+    "updated": 1524131129810,
+    "label": "normalize_output",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"AVRO\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "79c49c45-1cb2-4507-b35a-e3a6e6196404",
+    "created": 1524131129866,
+    "updated": 1524131129866,
+    "label": "EDIT HDFS",
+    "datastore": {
+      "id": "8cb686e1-6d86-4816-b4cb-4f63aa8929c7",
+      "label": "EDIT HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "db91cce2-0254-4252-a1a0-af6723e1d643",
+    "created": 1524131129941,
+    "updated": 1524131129941,
+    "label": "CUSTOMER_SELECTION",
+    "datastore": {
+      "id": "d8c0043f-764b-4541-adae-3f98ee5b76f2",
+      "label": "JDBC",
+      "type": "JDBCDatastore"
+    },
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "14238c71-1677-4525-ac4b-2b49c56459ce",
+    "created": 1524131130038,
+    "updated": 1524131130038,
+    "label": "DELETE HDFS",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "5a26d5a3-6a7c-4e47-b182-3b2db301ee54",
+    "created": 1524131130132,
+    "updated": 1524131130132,
+    "label": "KAFKA_OUT",
+    "datastore": {
+      "id": "5009e967-e10f-419c-b9e4-4c1ff6139b63",
+      "label": "KAFKA",
+      "type": "KafkaDatastore"
+    },
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "8c0d7b05-ea9c-40e9-b506-cf828f255b6d",
+    "created": 1524131130212,
+    "updated": 1524131130212,
+    "label": "TypeConverter: primitives",
+    "datastore": {
+      "id": "81f15b2e-355b-4709-9fa4-da75679f624b",
+      "label": "dev",
+      "type": "FixedDatastore"
+    },
+    "format": "\"AVRO\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "42ffdd08-728a-4c7b-b65e-d27ecbe64337",
+    "created": 1524131130316,
+    "updated": 1524131130316,
+    "label": "filter2_main",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "12e55ed0-58ee-4647-bb13-5ad4c77e622e",
+    "created": 1524131130470,
+    "updated": 1524131130470,
+    "label": "filter2_reject",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "2618292e-50ca-4929-ad6d-68f5e96f42d5",
+    "created": 1524131130566,
+    "updated": 1524131130566,
+    "label": "gdelt",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"AVRO\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "9b6996a5-550a-4266-8a4a-eb9a4e64166f",
+    "created": 1524131130637,
+    "updated": 1524131130637,
+    "label": "customer study",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"AVRO\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "3d5115e5-f1af-4a57-a4c9-47f9915b4ed2",
+    "created": 1524131130735,
+    "updated": 1524131130735,
+    "label": "customer study",
+    "datastore": {
+      "id": "81f15b2e-355b-4709-9fa4-da75679f624b",
+      "label": "dev",
+      "type": "FixedDatastore"
+    },
+    "format": "\"JSON\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "15538c71-1677-4525-ac4b-2b49c56459ce",
+    "created": 1524131130871,
+    "updated": 1524131130871,
+    "label": "JANE DELETE THIS DATASET",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "056d8900-e4e3-4431-a896-94ffcee9e13e",
+    "created": 1524131130972,
+    "updated": 1524131130972,
+    "label": "Californian customer",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "d0a98458-fe97-4125-b067-c20fa169887f",
+    "created": 1524131131038,
+    "updated": 1524131131038,
+    "label": "Ten california customers",
+    "datastore": {
+      "id": "d8c0043f-764b-4541-adae-3f98ee5b76f2",
+      "label": "JDBC",
+      "type": "JDBCDatastore"
+    },
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "25e723a1-64b3-4f04-ad2b-447d8934d114",
+    "created": 1524131131382,
+    "updated": 1524131131382,
+    "label": "jdbc",
+    "datastore": {
+      "id": "d8c0043f-764b-4541-adae-3f98ee5b76f2",
+      "label": "JDBC",
+      "type": "JDBCDatastore"
+    },
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "5f73cb11-35e8-4e6f-868b-a793363ce4a4",
+    "created": 1524131131441,
+    "updated": 1524131131441,
+    "label": "TypeConverter: dates and times",
+    "datastore": {
+      "id": "81f15b2e-355b-4709-9fa4-da75679f624b",
+      "label": "dev",
+      "type": "FixedDatastore"
+    },
+    "format": "\"AVRO\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "d98e25ea-eb54-47da-9ab2-bcc568b405ae",
+    "created": 1524131131170,
+    "updated": 1524131131170,
+    "label": "Customers after python",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"CSV\"",
+    "__acl": 0,
+    "entitlements": []
+  },
+  {
+    "id": "1251df6e-33db-42ba-8651-fdfff081390f",
+    "created": 1524131131291,
+    "updated": 1524131131291,
+    "label": "Avro output",
+    "datastore": {
+      "id": "59c364bb-47be-457c-a805-9533003f2959",
+      "label": "HDFS",
+      "type": "SimpleFileIoDatastore"
+    },
+    "format": "\"AVRO\"",
+    "__acl": 0,
+    "entitlements": []
+  }
+]

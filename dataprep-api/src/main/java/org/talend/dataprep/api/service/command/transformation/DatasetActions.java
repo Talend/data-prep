@@ -13,11 +13,6 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.command.Defaults.pipeStream;
-
-import java.io.InputStream;
-
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,11 +20,17 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import java.io.InputStream;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
 /**
  * Return all actions that can be performed on the whole dataset.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class DatasetActions extends GenericCommand<InputStream> {
 
     /**

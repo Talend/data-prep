@@ -14,8 +14,9 @@ package org.talend.dataprep.transformation.api.transformer.suggestion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,16 +25,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
-import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.transformation.actions.delete.DeleteEmpty;
@@ -48,7 +44,6 @@ import org.talend.dataprep.transformation.api.transformer.suggestion.rules.Inval
 import org.talend.dataprep.transformation.api.transformer.suggestion.rules.StringRules;
 import org.talend.dataprep.transformation.api.transformer.suggestion.rules.TypeDomainRules;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
-import org.talend.dataprep.transformation.service.TransformationService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -57,29 +52,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @see SimpleSuggestionEngine
  */
-@RunWith(MockitoJUnitRunner.class)
 public class SimpleSuggestionEngineTest {
 
     /** The suggestion engine to test. */
-    private SimpleSuggestionEngine simpleSuggestionEnginengine;
+    private final SimpleSuggestionEngine suggestionEngine = new SimpleSuggestionEngine();
 
-    /** The transformation service. */
-    private TransformationService transformationService = new TransformationService();
+    private ActionRegistry actionRegistry;
 
-    private ActionRegistry actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
-
-    /**
-     * Default constructor.
-     */
     public SimpleSuggestionEngineTest() {
-        simpleSuggestionEnginengine = new SimpleSuggestionEngine();
-
-        // ReflectionUtils to save the use of a spring context
-        List<SuggestionEngineRule> rules = new ArrayList<>();
-
+        final List<SuggestionEngineRule> rules = new ArrayList<>();
         final InvalidRules invalidRules = new InvalidRules();
 
-        // Invalide Rules
+        // Invalid Rules
         rules.add(invalidRules.deleteInvalidRule());
         rules.add(invalidRules.fillInvalidRule());
         rules.add(invalidRules.clearInvalidRule());
@@ -109,12 +93,17 @@ public class SimpleSuggestionEngineTest {
         rules.add(StringRules.properCaseRule());
         rules.add(StringRules.replaceRule());
 
-        ReflectionTestUtils.setField(simpleSuggestionEnginengine, "rules", rules);
+        suggestionEngine.setRules(rules);
+    }
+
+    @Before
+    public void setUp() {
+        actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
     }
 
     @Test
     public void shouldSuggest() {
-        Assert.assertThat(simpleSuggestionEnginengine.suggest(new DataSet()).size(), is(0));
+        Assert.assertThat(suggestionEngine.suggest(new DataSet()).size(), is(0));
     }
 
     @Test
@@ -131,7 +120,7 @@ public class SimpleSuggestionEngineTest {
         actions.add(new DeleteEmpty());
         actions.add(new Absolute());
         actions.add(new UpperCase());
-        final Stream<Suggestion> suggestions = simpleSuggestionEnginengine.score(actions.stream(), columnMetadata);
+        final Stream<Suggestion> suggestions = suggestionEngine.score(actions.stream(), columnMetadata);
 
         int currentScore = Integer.MAX_VALUE;
         for (Suggestion suggestion : suggestions.collect(Collectors.toList())) {
@@ -142,74 +131,47 @@ public class SimpleSuggestionEngineTest {
 
     @Test
     public void shouldTestSuggestColumnValid() throws IOException {
-
         // given
         final String json = IOUtils.toString(this.getClass().getResourceAsStream("sample_column.json"), UTF_8);
         ObjectMapper mapper = new ObjectMapper();
         final ColumnMetadata columnMetadata = mapper.readValue(json, ColumnMetadata.class);
 
-        ReflectionTestUtils.setField(transformationService, "actionRegistry", actionRegistry);
-        ReflectionTestUtils.setField(transformationService, "suggestionEngine", simpleSuggestionEnginengine);
-
-        List<String> oldActionFormList = oldWayToSuggest(columnMetadata);
-
-        String[] expectedResult = { "clear_invalid", "delete_invalid", "fillinvalidwithdefault", "delete_empty",
-                "fillemptywithdefault" };
+        String[] expectedResult =
+                { "clear_invalid", "delete_invalid", "fillinvalidwithdefault", "standardize_value", "delete_empty" };
 
         // when
-        String[] newActionFormArray = transformationService //
-                .suggest(columnMetadata, 5) //
-                .map(ActionForm::getName) //
+        String[] newActionFormArray = suggestionEngine //
+                .score(actionRegistry.findAll(), columnMetadata) //
+                .filter(i -> i.getScore() > 0) //
+                .limit(5) //
+                .map(a -> a.getAction().getName()) //
                 .toArray(String[]::new);
 
         // then
-        Assert.assertThat(oldActionFormList, IsIterableContainingInOrder.contains(newActionFormArray));
-
-        // then
-        Assert.assertEquals(5, newActionFormArray.length);
-        Assert.assertThat(oldActionFormList, IsIterableContainingInOrder.contains(newActionFormArray));
-        Assert.assertArrayEquals(expectedResult, newActionFormArray);
+        assertEquals(5, newActionFormArray.length);
+        assertArrayEquals(expectedResult, newActionFormArray);
     }
 
     @Test
     public void shouldTestSuggestColumnString() throws IOException {
-
         // given
-        final String json = IOUtils.toString(this.getClass().getResourceAsStream("metadata_gonfleurs_suggestion.json"), UTF_8);
+        final String json =
+                IOUtils.toString(this.getClass().getResourceAsStream("metadata_gonfleurs_suggestion.json"), UTF_8);
         ObjectMapper mapper = new ObjectMapper();
         final ColumnMetadata columnMetadata = mapper.readValue(json, ColumnMetadata.class);
 
-        ReflectionTestUtils.setField(transformationService, "actionRegistry", actionRegistry);
-        ReflectionTestUtils.setField(transformationService, "suggestionEngine", simpleSuggestionEnginengine);
-
-        List<String> oldActionFormList = oldWayToSuggest(columnMetadata);
         String[] expectedResult = { "lowercase", "propercase", "replace_on_value", "uppercase" };
 
         // when
-        String[] newActionFormArray = transformationService //
-                .suggest(columnMetadata, 5) //
-                .map(ActionForm::getName) //
+        String[] newActionFormArray = suggestionEngine //
+                .score(actionRegistry.findAll(), columnMetadata) //
+                .filter(i -> i.getScore() > 0) //
+                .limit(5) //
+                .map(a -> a.getAction().getName()) //
                 .toArray(String[]::new);
 
         // then
-        Assert.assertEquals(4, newActionFormArray.length);
-        Assert.assertThat(oldActionFormList, IsIterableContainingInOrder.contains(newActionFormArray));
-        Assert.assertArrayEquals(expectedResult, newActionFormArray);
+        assertEquals(4, newActionFormArray.length);
+        assertArrayEquals(expectedResult, newActionFormArray);
     }
-
-    private List<String> oldWayToSuggest(ColumnMetadata columnMetadata) {
-        // old way to compute the list
-        // look for all actions applicable to the column type
-        final Stream<Suggestion> suggestions = simpleSuggestionEnginengine
-                .score(actionRegistry.findAll().filter(am -> am.acceptField(columnMetadata)), columnMetadata);
-
-        return suggestions //
-                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
-                .limit(5) //
-                .map(Suggestion::getAction) // Get the action for positive suggestions
-                .map(am -> am.adapt(columnMetadata)) // Adapt default values (e.g. column name)
-                .map(ad -> ad.getActionForm(getLocale())) //
-                .map(ActionForm::getName).collect(Collectors.toList());
-    }
-
 }

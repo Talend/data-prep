@@ -31,24 +31,22 @@ import org.talend.dataprep.api.dataset.DataSet;
 @Component
 public class SimpleSuggestionEngine implements SuggestionEngine {
 
-    private final Comparator<Suggestion> suggestionComparator = (s1, s2) -> Integer.compare(s2.getScore(), s1.getScore());
+    private static final Comparator<Suggestion> SUGGESTION_COMPARATOR = (s1, s2) -> Integer.compare(s2.getScore(), s1.getScore());
 
     /** Available rules. */
     @Autowired(required = false)
     private List<SuggestionEngineRule> rules = new ArrayList<>();
 
-    /**
-     * @see SuggestionEngine#score(Stream, ColumnMetadata)
-     */
-    @Override
-    public Stream<Suggestion> score(Stream<ActionDefinition> actions, ColumnMetadata column) {
-        return actions.map(actionMetadata -> score(actionMetadata, column)).sorted(suggestionComparator);
+    public void setRules(List<SuggestionEngineRule> rules) {
+        this.rules = rules;
     }
 
-    /**
-     * @param actionDef the ActionDefinition to score
-     * @param column the related column
-     */
+    @Override
+    public Stream<Suggestion> score(Stream<ActionDefinition> actions, ColumnMetadata column) {
+        return actions.map(actionMetadata -> score(actionMetadata, column)).sorted(SUGGESTION_COMPARATOR);
+    }
+
+    @Override
     public Suggestion score(ActionDefinition actionDef, ColumnMetadata column) {
         int score = 0;
         for (SuggestionEngineRule rule : rules) {
@@ -57,9 +55,6 @@ public class SimpleSuggestionEngine implements SuggestionEngine {
         return new Suggestion(actionDef, score);
     }
 
-    /**
-     * @see SuggestionEngine#suggest(DataSet)
-     */
     @Override
     public List<ActionDefinition> suggest(DataSet dataSet) {
         // really simple implementation here :-)

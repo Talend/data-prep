@@ -207,7 +207,7 @@ public class StreamNumberHistogramStatistics {
         double histogramWidth = numberOfBins * binSize;
         double factor = 2;
         while (d < lowerBound - histogramWidth * (factor / 2)) {
-            factor *= 2; // multiply by 2
+            factor *= 2;
         }
         binSize = binSize * factor;
         int offset = (int) (histogramWidth * (factor / 2) / binSize);

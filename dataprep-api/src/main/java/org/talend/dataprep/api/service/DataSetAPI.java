@@ -271,39 +271,36 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List data sets.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets the user can use.")
     @Timed
-    public Callable<Stream<UserDataSetMetadata>> list(
+    public Stream<UserDataSetMetadata> list(
             @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order,
             @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(required = false) Boolean favorite,
             @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
-        return () -> {
-            try {
+        try {
+            CertificationState certification = certified ? CERTIFIED : null;
+            Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, favorite);
 
-                CertificationState certification = certified ? CERTIFIED : null;
-                Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, favorite);
-
-                if (isNotBlank(name)) {
-                    datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
-                }
-
-                if (certified) {
-                    datasetStream = datasetStream.filter(dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
-                }
-
-                if (limit) {
-                    datasetStream = datasetStream.limit(datasetListLimit);
-                }
-
-                return datasetStream //
-                        .map(dataSetMetadata -> beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class)) //
-                        .sorted(SortAndOrderHelper.getDataSetMetadataComparator(sort, order));
-            } finally {
-                LOG.info("listing datasets done [favorite: {}, certified: {}, name: {}, limit: {}]", favorite, certified, name,
-                        limit);
+            if (isNotBlank(name)) {
+                datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
             }
-        };
+
+            if (certified) {
+                datasetStream = datasetStream.filter(dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
+            }
+
+            if (limit) {
+                datasetStream = datasetStream.limit(datasetListLimit);
+            }
+
+            return datasetStream //
+                    .map(dataSetMetadata -> beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class)) //
+                    .sorted(SortAndOrderHelper.getDataSetMetadataComparator(sort, order));
+        } finally {
+            LOG.info("listing datasets done [favorite: {}, certified: {}, name: {}, limit: {}]", favorite, certified, name,
+                    limit);
+        }
     }
 
     @RequestMapping(value = "/api/datasets/summary", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -320,8 +317,8 @@ public class DataSetAPI extends APIService {
             LOG.debug("Listing datasets summary (pool: {})...", getConnectionStats());
         }
         return () -> {
-            Callable<Stream<UserDataSetMetadata>> listDataSets = list(sort, order, name, certified, favorite, limit);
-            return listDataSets.call() //
+            Stream<UserDataSetMetadata> listDataSets = list(sort, order, name, certified, favorite, limit);
+            return listDataSets //
                     .map(m -> {
                         LOG.debug("found dataset {} in the summary list" + m.getName());
                         // Add the related preparations list to the given dataset metadata.

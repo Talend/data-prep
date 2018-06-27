@@ -12,13 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.api.dataset.statistics.number;
 
+import org.talend.dataquality.statistics.numeric.histogram.Range;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import org.talend.dataquality.statistics.numeric.histogram.Range;
 
 /**
  * This class implements implements a new kind of histogram suitable for evolving data sets like streams. This histogram
@@ -209,13 +209,13 @@ public class StreamNumberHistogramStatistics {
      */
     private void extendToLeft(double d) {
         double histogramWidth = numberOfBins * binSize;
-        long factor = 2;
-        while (d < lowerBound - histogramWidth * (factor >>> 1)) {
-            factor <<= 1; // multiply by 2
+        double factor = 2;
+        while (d < lowerBound - histogramWidth * (factor / 2)) {
+            factor *= 2;
         }
         binSize = binSize * factor;
-        int offset = (int) (histogramWidth * (factor >>> 1) / binSize);
-        lowerBound = this.lowerBound - histogramWidth * (factor >>> 1);
+        int offset = (int) (histogramWidth * (factor / 2) / binSize);
+        lowerBound = this.lowerBound - histogramWidth * (factor / 2);
 
         // merge previously existing regulars
         merge(factor, offset);
@@ -229,9 +229,9 @@ public class StreamNumberHistogramStatistics {
      */
     private void extendToRight(double d) {
         double histogramWidth = numberOfBins * binSize;
-        int factor = 2;
-        while (lowerBound + histogramWidth * (factor) <= d) {
-            factor <<= 1;
+        double factor = 2;
+        while ((lowerBound + (histogramWidth * factor)) <= d) {
+            factor *= 2;
         }
         binSize = binSize * factor;
         // merge previously existing regulars
@@ -244,36 +244,36 @@ public class StreamNumberHistogramStatistics {
      * @param factor the factor by which the binSize is multiplied
      * @param offset the position of the older lower bound in the new array
      */
-    private void merge(long factor, int offset) {
+    private void merge(double factor, int offset) {
         // merge previous regulars to form new regulars of newBinSize width
         int k = 0;
-        int i = 0;
-        while (i < numberOfBins) {
+        int binId = 0;
+        while (binId < numberOfBins) {
 
             long count = 0L;
-            for (int j = i; j < i + factor && j < numberOfBins; j++) {
+            for (int j = binId; j < binId + factor && j < numberOfBins; j++) {
                 count += regulars[j];
                 regulars[j] = 0;
             }
 
             regulars[k++] = count;
 
-            // because i is an integer and can be overflowed if i+factor > Integer.MAX_VALUE, let's use a long temp variable
-            long temp = i + factor;
-            if (temp < numberOfBins) {
-                i += (int) factor;
+            // because binId is an integer and can be overflowed if binId+factor > Integer.MAX_VALUE, let's use a long binIdPlusFactor variable
+            double binIdPlusFactor = binId + factor;
+            if (binIdPlusFactor < numberOfBins) {
+                binId += (int) factor;
             } else {
                 // let's break the loop !
-                i = numberOfBins;
+                binId = numberOfBins;
             }
         }
         if (0 < offset) {
             // move bins according to the offset
             // to avoid overwriting some bins that must not we start from "numberOfBins - 1 - offset"
-            for (i = numberOfBins - 1 - offset; 0 <= i; i--) {
-                long count = regulars[i];
-                regulars[i] = 0;
-                regulars[i + offset] = count;
+            for (binId = numberOfBins - 1 - offset; 0 <= binId; binId--) {
+                long count = regulars[binId];
+                regulars[binId] = 0;
+                regulars[binId + offset] = count;
             }
         }
     }

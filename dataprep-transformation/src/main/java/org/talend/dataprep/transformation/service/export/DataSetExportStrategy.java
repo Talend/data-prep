@@ -27,11 +27,8 @@ import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
-import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -57,11 +54,7 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public StreamingResponseBody execute(ExportParameters parameters) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
+        formatService.setExportHeaders(parameters);
         return outputStream -> {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
             final String datasetId = parameters.getDatasetId();
@@ -76,7 +69,7 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
                     Configuration configuration = Configuration.builder() //
                             .args(parameters.getArguments()) //
                             .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                            .format(format.getName()) //
+                            .format(formatService.getFormat(parameters.getExportType()).getName()) //
                             .volume(Configuration.Volume.SMALL) //
                             .output(outputStream) //
                             .limit(limit) //

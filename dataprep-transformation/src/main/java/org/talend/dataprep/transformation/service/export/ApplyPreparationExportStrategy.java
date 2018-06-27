@@ -39,9 +39,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -70,12 +68,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public StreamingResponseBody execute(ExportParameters parameters) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
-
+        formatService.setExportHeaders(parameters);
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
         return outputStream -> doExecute(parameters, new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
@@ -89,7 +82,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final String preparationId = parameters.getPreparationId();
         final Preparation preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
-        final ExportFormat format = getFormat(parameters.getExportType());
+        final ExportFormat format = formatService.getFormat(parameters.getExportType());
 
         // dataset content must be retrieved as the technical user because it might not be shared
         boolean technicianIdentityReleased = false;

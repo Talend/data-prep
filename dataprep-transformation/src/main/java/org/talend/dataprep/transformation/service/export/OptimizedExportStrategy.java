@@ -42,9 +42,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -78,12 +76,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public StreamingResponseBody execute(ExportParameters parameters) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
-
+        formatService.setExportHeaders(parameters);
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
         return outputStream -> performOptimizedTransform(parameters, new org.bouncycastle.util.io.TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
@@ -109,7 +102,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         final DataSetMetadata metadata = optimizedPreparationInput.getMetadata();
         final String previousVersion = optimizedPreparationInput.getPreviousVersion();
         final String version = optimizedPreparationInput.getVersion();
-        final ExportFormat format = getFormat(parameters.getExportType());
+        final ExportFormat format = formatService.getFormat(parameters.getExportType());
 
         // Get content from previous step
         try (JsonParser parser = mapper.getFactory().createParser(

@@ -78,7 +78,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
@@ -205,9 +204,6 @@ public class TransformationService extends BaseTransformationService {
     @Autowired
     private PreparationExportStrategy preparationExportStrategy;
 
-    @Autowired
-    private ExportParametersUtil exportParametersUtil;
-
     @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters",
             notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
@@ -226,6 +222,7 @@ public class TransformationService extends BaseTransformationService {
         if (StringUtils.isNotEmpty(parameters.getPreparationId())) {
             if (contentCache.has(cacheKey)) {
                 LOG.debug("Cache entry exist, return cache");
+                formatService.setExportHeaders(parameters);
                 return outputStream -> {
                     IOUtils.copy(contentCache.get(cacheKey), outputStream);
                 };
@@ -312,7 +309,7 @@ public class TransformationService extends BaseTransformationService {
                                                 @ApiParam(value = "Output format") @PathVariable("format") final String formatName,
                                                 @ApiParam(value = "Step id", defaultValue = "head") @RequestParam(value = "stepId", required = false, defaultValue = "head") final String stepId,
                                                 @ApiParam(value = "Name of the transformation", defaultValue = "untitled") @RequestParam(value = "name", required = false, defaultValue = "untitled") final String name,
-                                                @RequestParam final Map<String, String> exportParams) {
+                                                @RequestParam final Map<String, String> exportParams) throws IOException {
         //@formatter:on
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparationId);
@@ -322,7 +319,10 @@ public class TransformationService extends BaseTransformationService {
         exportParameters.setExportName(name);
         exportParameters.getArguments().putAll(exportParams);
 
-        return executeSampleExportStrategy(exportParameters);
+        final ExportParameters completeParameters =
+                exportParametersUtil.populateFromPreparationExportParameter(exportParameters);
+
+        return executeSampleExportStrategy(completeParameters);
     }
 
     /**
@@ -341,7 +341,7 @@ public class TransformationService extends BaseTransformationService {
             @ApiParam(value = "DataSet id to transform.") @PathVariable(value = "datasetId") final String datasetId,
             @ApiParam(value = "Output format") @PathVariable("format") final String formatName,
             @ApiParam(value = "Name of the transformation", defaultValue = "untitled") @RequestParam(value = "name", required = false, defaultValue = "untitled") final String name,
-            @RequestParam final Map<String, String> exportParams) {
+            @RequestParam final Map<String, String> exportParams) throws IOException {
         //@formatter:on
         return applyOnDataset(null, datasetId, formatName, null, name, exportParams);
     }
@@ -988,7 +988,12 @@ public class TransformationService extends BaseTransformationService {
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparation.getId());
         exportParameters.setExportType("JSON");
-        exportParameters.setStepId(stepId);
+        if ("head".equals(stepId)) {
+            exportParameters.setStepId(preparation.getHeadId());
+        }
+        else {
+            exportParameters.setStepId(stepId);
+        }
         exportParameters.setDatasetId(preparation.getDataSetId());
 
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(exportParameters);

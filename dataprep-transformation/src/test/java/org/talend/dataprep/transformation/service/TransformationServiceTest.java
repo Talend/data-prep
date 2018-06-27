@@ -12,8 +12,29 @@
 
 package org.talend.dataprep.transformation.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.zip.GZIPInputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,28 +50,8 @@ import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.zip.GZIPInputStream;
-
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyMap;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.FILTER;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.cache.ContentCache.TimeToLive.PERMANENT;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
 
 /**
  * Integration tests on actions.
@@ -139,8 +140,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", "no_preparation_id", dataSetId, "JSON");
 
         // then
-        assertEquals(500, response.getStatusCode());
-        assertTrue(response.asString().contains("UNABLE_TO_READ_PREPARATION"));
+        assertEquals(404, response.getStatusCode());
+        assertTrue(response.asString().contains("TDP_PS_PREPARATION_DOES_NOT_EXIST"));
     }
 
     @Test

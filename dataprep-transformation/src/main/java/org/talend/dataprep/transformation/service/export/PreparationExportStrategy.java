@@ -38,9 +38,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,16 +74,11 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
-        execute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), cacheKeyGenerator.generateContentKey(parameters));
+        performPreparation(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), key);
     }
 
     public void execute(ExportParameters parameters, OutputStream stream, TransformationCacheKey key) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
-
+        formatService.setExportHeaders(parameters);
         performPreparation(parameters, stream, key);
     }
 
@@ -93,10 +86,9 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
-        final String formatName = parameters.getExportType();
         final PreparationMessage preparation = getPreparation(preparationId, stepId);
         final String dataSetId = preparation.getDataSetId();
-        final ExportFormat format = getFormat(parameters.getExportType());
+        final ExportFormat format = formatService.getFormat(parameters.getExportType());
 
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         boolean releasedIdentity = false;

@@ -1,11 +1,16 @@
 package org.talend.dataprep.transformation.service.export;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +33,9 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
@@ -38,9 +45,8 @@ import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
+import org.talend.dataprep.transformation.format.FormatService;
 import org.talend.dataprep.transformation.format.JsonFormat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,6 +65,9 @@ public class PreparationExportStrategyTest {
 
     @Mock
     private FormatRegistrationService formatRegistrationService;
+
+    @Mock
+    private FormatService formatService;
 
     @Mock
     private ApplicationContext applicationContext;
@@ -85,6 +94,7 @@ public class PreparationExportStrategyTest {
         strategy.setMapper(new ObjectMapper());
 
         when(formatRegistrationService.getByName(eq("JSON"))).thenReturn(new JsonFormat());
+        when(formatService.getFormat(anyString())).thenReturn(new JsonFormat());
 
         final DataSetGetMetadata dataSetGetMetadata = mock(DataSetGetMetadata.class);
         when(applicationContext.getBean(eq(DataSetGetMetadata.class), anyVararg())).thenReturn(dataSetGetMetadata);

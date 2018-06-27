@@ -21,12 +21,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.export.ExportParameters;
+import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
+import org.talend.dataprep.transformation.format.FormatService;
 import org.talend.dataprep.transformation.service.export.SampleExportStrategy;
 import org.talend.dataprep.util.OrderedBeans;
 
@@ -48,6 +50,9 @@ public abstract class BaseTransformationService {
     @Autowired
     protected FormatRegistrationService formatRegistrationService;
 
+    @Autowired
+    protected FormatService formatService;
+
     /** Preparation service url. */
     @Value("${preparation.service.url}")
     protected String preparationServiceUrl;
@@ -66,6 +71,8 @@ public abstract class BaseTransformationService {
 
     @Autowired
     protected OrderedBeans<SampleExportStrategy> sampleExportStrategies;
+
+    @Autowired protected ExportParametersUtil exportParametersUtil;
 
     /**
      * Return the format that matches the given name or throw an error if the format is unknown.
@@ -95,7 +102,8 @@ public abstract class BaseTransformationService {
             Optional<? extends ExportStrategy> electedStrategy = getExportStrategy(parameters);
             if (electedStrategy.isPresent()) {
                 LOG.debug("Strategy for execution: {}", electedStrategy.get().getClass());
-                ((SampleExportStrategy)(electedStrategy.get())).writeToCache(parameters, key);
+                SampleExportStrategy sampleExportStrategy = (SampleExportStrategy) (electedStrategy.get());
+                sampleExportStrategy.writeToCache(parameters, key);
             } else {
                 throw new IllegalArgumentException("Not valid export parameters (no preparation id nor data set id).");
             }

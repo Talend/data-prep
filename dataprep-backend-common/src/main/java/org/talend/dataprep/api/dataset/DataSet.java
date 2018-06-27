@@ -64,6 +64,8 @@ public class DataSet implements AutoCloseable {
 
     @Override
     public void close() {
-        records.close();
+        if (records != null) {
+            records.close();
+        }
     }
 }

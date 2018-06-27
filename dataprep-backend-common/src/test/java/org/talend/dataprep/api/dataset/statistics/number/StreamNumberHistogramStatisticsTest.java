@@ -335,4 +335,51 @@ public class StreamNumberHistogramStatisticsTest {
         }
     }
 
+    @Test
+    public void test_ShouldHandleVeryLargeDoubleValue_TDQ_14216() {
+        double[] values = new double[] { 6.471292719031975E24,
+                7.005697576483916E27,
+                1.4209533856E10,
+                64802.0,
+                39.0,
+                9.88079E7,
+                313.0,
+                3.1218063E8,
+                655.0,
+                444.0,
+                16.0,
+                822.0,
+                262.0,
+                4.9504559347780128E16,
+                4.3136944E7,
+                2.189301411798859E53,
+                553.0,
+                48.0,
+                877.0,
+                721.0,
+                4.3699032144442255E20,
+                326.0,
+                7.569952728E9,
+                83.0,
+                9.477758927501843E52,
+                9.60463518E8,
+                4.141266E7,
+                702.0,
+                5.6496322046823373E18,
+                296.0,
+                580.0,
+                9.0289352E7,
+                73884.0,
+                8.0,
+                957.0,
+                607.0,
+                9.385833613374734E94};
+
+        final StreamNumberHistogramStatistics histogram = new StreamNumberHistogramStatistics();
+        // when
+        for (double i : values) {
+            histogram.add(i);
+        }
+    }
+
 }

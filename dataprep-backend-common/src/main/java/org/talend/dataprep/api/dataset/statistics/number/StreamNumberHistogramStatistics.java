@@ -12,13 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.api.dataset.statistics.number;
 
+import org.talend.dataquality.statistics.numeric.histogram.Range;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import org.talend.dataquality.statistics.numeric.histogram.Range;
 
 /**
  * This class implements implements a new kind of histogram suitable for evolving data sets like streams. This histogram
@@ -206,11 +206,11 @@ public class StreamNumberHistogramStatistics {
     private void extendToLeft(double d) {
         double histogramWidth = numberOfBins * binSize;
         long factor = 2;
-        while (d < lowerBound - histogramWidth * (factor >>> 1)) {
-            factor <<= 1; // multiply by 2
+        while (d < lowerBound - histogramWidth * (factor / 2)) {
+            factor *= 2; // multiply by 2
         }
         binSize = binSize * factor;
-        int offset = (int) (histogramWidth * (factor >>> 1) / binSize);
+        int offset = (int) (histogramWidth * (factor / 2) / binSize);
         lowerBound = this.lowerBound - histogramWidth * (factor >>> 1);
 
         // merge previously existing regulars
@@ -225,9 +225,9 @@ public class StreamNumberHistogramStatistics {
      */
     private void extendToRight(double d) {
         double histogramWidth = numberOfBins * binSize;
-        int factor = 2;
-        while (lowerBound + histogramWidth * (factor) <= d) {
-            factor <<= 1;
+        long factor = 2;
+        while ((lowerBound + (histogramWidth * factor)) <= d) {
+            factor *= 2;
         }
         binSize = binSize * factor;
         // merge previously existing regulars

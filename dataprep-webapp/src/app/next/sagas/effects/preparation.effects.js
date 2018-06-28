@@ -25,10 +25,9 @@ export function* duplicate(prep) {
 	yield call(fetch);
 }
 
-export function* fetch(payload = {}) {
-	const defaultFolderId = 'Lw==';
+export function* fetch({ folderId = 'Lw==' }) {
 	yield put(
-		actions.http.get(`/api/folders/${payload.folderId || defaultFolderId}/preparations`, {
+		actions.http.get(`/api/folders/${folderId}/preparations`, {
 			cmf: {
 				collectionId: 'preparations',
 			},
@@ -37,13 +36,12 @@ export function* fetch(payload = {}) {
 	);
 }
 
-export function* copy({ id, destination, title }) {
+export function* copy({ id, folderId, destination, title }) {
 	const url = `/api/preparations/${id}/copy?destination=${destination}&newName=${title}`;
 
 	const action = yield call(http.post, url);
 	if (!(action instanceof Error)) {
-		// FIXME [NC]: folder id !
-		yield call(fetch);
+		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
 	}
 }
@@ -53,8 +51,7 @@ export function* move({ id, folderId, destination, title }) {
 
 	const action = yield call(http.put, url);
 	if (!(action instanceof Error)) {
-		// FIXME [NC]: folder id !
-		yield call(fetch);
+		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
 	}
 }

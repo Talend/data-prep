@@ -15,6 +15,7 @@ function transform({ folders = [], preparations = [] }) {
 		id: prep.id,
 		name: prep.name,
 		nbSteps: prep.steps.length - 1,
+		folderId: prep.folder.id,
 		type: 'preparation',
 	}));
 	return adaptedFolders.concat(adaptedPreparations);

@@ -25,7 +25,7 @@ export function* duplicate(prep) {
 	yield call(fetch);
 }
 
-export function* fetch(payload) {
+export function* fetch(payload = {}) {
 	const defaultFolderId = 'Lw==';
 	yield put(
 		actions.http.get(`/api/folders/${payload.folderId || defaultFolderId}/preparations`, {
@@ -37,30 +37,26 @@ export function* fetch(payload) {
 	);
 }
 
-export function* copy(payload) {
-	console.log('[NC] COPY payload: ', payload);
-	// POST
-	// /api/preparations/064c7a0f-c089-4730-a0a8-0cfc823f4e83/
-	// copy?destination=5a781bcfcff47e000b0917d4
-	// &newName=20000L8C-TDP1489%20Preparations
-	yield call(
-		http.post,
-		`/api/preparations/${payload.id}/copy?destination=${payload.destination}&newName=${payload.title}`,
-		{},
-	);
+export function* copy({ id, destination, title }) {
+	const url = `/api/preparations/${id}/copy?destination=${destination}&newName=${title}`;
+
+	const action = yield call(http.post, url);
+	if (!(action instanceof Error)) {
+		// FIXME [NC]: folder id !
+		yield call(fetch);
+		yield call(closeCopyMoveModal);
+	}
 }
 
-export function* move(payload) {
-	console.log('[NC] MOVE payload: ', payload);
-	// PUT
-	// /api/preparations/064c7a0f-c089-4730-a0a8-0cfc823f4e83/
-	// move?folder=5b22237fcff47e000fda8244&destination=5a781bcfcff47e000b0917d4
-	// &newName=20000L8C-TDP1489%20Preparationn
-	yield call(
-		http.put,
-		`/api/preparations/${payload.id}/move?folder=XXX&destination=${payload.destination}&newName=${payload.title}`,
-		{},
-	);
+export function* move({ id, folderId, destination, title }) {
+	const url = `/api/preparations/${id}/move?folder=${folderId}&destination=${destination}&newName=${title}`;
+
+	const action = yield call(http.put, url);
+	if (!(action instanceof Error)) {
+		// FIXME [NC]: folder id !
+		yield call(fetch);
+		yield call(closeCopyMoveModal);
+	}
 }
 
 export function* fetchTree() {

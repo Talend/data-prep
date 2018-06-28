@@ -136,6 +136,7 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openPreparationCreatorModal);
 		registerActionCreator('preparation:copy:move:open', actions.preparation.openCopyMoveModal);
+		registerActionCreator('preparation:copy:move:cancel', actions.preparation.closeCopyMoveModal);
 		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
 		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
 		registerActionCreator('redirect', actions.redirect);

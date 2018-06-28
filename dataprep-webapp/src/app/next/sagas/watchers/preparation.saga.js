@@ -6,13 +6,13 @@ import {
 	RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
 	OPEN_COPY_MOVE_MODAL,
+	CLOSE_COPY_MOVE_MODAL,
 	PREPARATION_DUPLICATE,
 	SET_TITLE_EDITION_MODE,
 	OPEN_PREPARATION_CREATOR,
 	CANCEL_RENAME_PREPARATION,
 } from '../../constants/actions';
 import * as effects from '../effects/preparation.effects';
-
 
 function* cancelRename() {
 	while (true) {
@@ -80,12 +80,14 @@ function* openPreparationCreatorModal() {
 function* openCopyMoveModal() {
 	while (true) {
 		const { payload } = yield take(OPEN_COPY_MOVE_MODAL);
-		yield all(
-			[
-				call(effects.fetchTree),
-				call(effects.openCopyMoveModal, payload),
-			],
-		);
+		yield all([call(effects.fetchTree), call(effects.openCopyMoveModal, payload)]);
+	}
+}
+
+function* closeCopyMoveModal() {
+	while (true) {
+		yield take(CLOSE_COPY_MOVE_MODAL);
+		yield call(effects.closeCopyMoveModal);
 	}
 }
 
@@ -99,5 +101,6 @@ export default {
 	'preparation:rename:cancel': cancelRename,
 	'preparation:rename': setTitleEditionMode,
 	'preparation:copy:move:open': openCopyMoveModal,
+	'preparation:copy:move:cancel': closeCopyMoveModal,
 	'preparation:about:open': openPreparationCreatorModal,
 };

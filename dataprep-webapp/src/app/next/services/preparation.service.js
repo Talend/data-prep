@@ -26,6 +26,7 @@ function transformTree(input) {
 		name: item.folder.name || 'Home',
 		children: item.children.map(t),
 	});
+
 	return [t(input)];
 }
 

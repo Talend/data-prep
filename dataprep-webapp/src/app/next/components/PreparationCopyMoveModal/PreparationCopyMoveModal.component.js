@@ -9,62 +9,54 @@ import Form from '@talend/react-containers/lib/Form';
 import './PreparationCopyMoveModal.scss';
 
 const FORM_ID = 'preparation:copy:move:form';
+const SELECT_OBJECT_ID = 'preparation:copy:move:form';
 
 export default class PreparationCopyMoveModal extends React.Component {
+	static getContent(state) {
+		const select = SelectObject.getState(state, SELECT_OBJECT_ID);
+		const form = Form.getState(state, FORM_ID);
+
+		return {
+			title: form.getIn(['data', 'text'], ''),
+			destination: select.get('selectedId', ''),
+		};
+	}
+
 	constructor(props) {
 		super(props);
 		this.close = this.close.bind(this);
-		this.copy = this.copy.bind(this);
-		this.move = this.move.bind(this);
+		this.proceed = this.proceed.bind(this);
 	}
 
 	close() {
 		this.props.setState({ show: false });
 	}
 
-	move() {
-		this._proceed('preparation:move');
-	}
-
-	copy() {
-		this._proceed('preparation:copy');
-	}
-
-	_proceed(action) {
+	proceed(event, { action }) {
 		const state = this.props.state;
 		const model = state.get('model', new Immutable.Map());
-
-		this.props.dispatchActionCreator(
-			action,
-			{
-				name: model.get('name'),
-			}
-		);
+		this.props.dispatchActionCreator(action.id, event, model.toJS());
 	}
 
 	render() {
 		const state = this.props.state;
 		const show = state.get('show', false);
 		const model = state.get('model', new Immutable.Map());
+		const text = model.get('name', '');
+
 		const bar = {
 			actions: {
 				left: [
-					{
-						label: 'Cancel',
-						bsStyle: 'link',
-						onClick: this.close,
-					},
+					{ actionId: 'preparation:copy:move:cancel' },
 				],
 				right: [
 					{
-						label: 'Move',
-						bsStyle: 'primary',
-						onClick: this.move,
+						actionId: 'preparation:move',
+						onClick: this.proceed,
 					},
 					{
-						label: 'Copy',
-						bsStyle: 'primary',
-						onClick: this.copy,
+						actionId: 'preparation:copy',
+						onClick: this.proceed,
 					},
 				],
 			},
@@ -86,13 +78,14 @@ export default class PreparationCopyMoveModal extends React.Component {
 					title: 'Name',
 				},
 			],
-			data: {
-				text: model.get('name', ''),
-			},
 			actions: [],
+			initialState: Immutable.fromJS({
+				data: {
+					text,
+				},
+			}),
 		};
 
-		// initialState
 		return (
 			<Inject
 				component="Dialog"
@@ -101,7 +94,12 @@ export default class PreparationCopyMoveModal extends React.Component {
 				actionbar={bar}
 				show={show}
 			>
-				<SelectObject source={'folders'} id={'folders'} tree={{}} />
+				<SelectObject
+					source={'folders'}
+					id={'folders'}
+					componentId={SELECT_OBJECT_ID}
+					tree={{}}
+				/>
 				<Form {...form} />
 			</Inject>
 		);

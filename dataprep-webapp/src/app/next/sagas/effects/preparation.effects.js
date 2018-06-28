@@ -38,11 +38,29 @@ export function* fetch(payload) {
 }
 
 export function* copy(payload) {
-	yield true;
+	console.log('[NC] COPY payload: ', payload);
+	// POST
+	// /api/preparations/064c7a0f-c089-4730-a0a8-0cfc823f4e83/
+	// copy?destination=5a781bcfcff47e000b0917d4
+	// &newName=20000L8C-TDP1489%20Preparations
+	yield call(
+		http.post,
+		`/api/preparations/${payload.id}/copy?destination=${payload.destination}&newName=${payload.title}`,
+		{},
+	);
 }
 
 export function* move(payload) {
-	yield true;
+	console.log('[NC] MOVE payload: ', payload);
+	// PUT
+	// /api/preparations/064c7a0f-c089-4730-a0a8-0cfc823f4e83/
+	// move?folder=5b22237fcff47e000fda8244&destination=5a781bcfcff47e000b0917d4
+	// &newName=20000L8C-TDP1489%20Preparationn
+	yield call(
+		http.put,
+		`/api/preparations/${payload.id}/move?folder=XXX&destination=${payload.destination}&newName=${payload.title}`,
+		{},
+	);
 }
 
 export function* fetchTree() {
@@ -91,6 +109,14 @@ export function* openCopyMoveModal(model) {
 				show: true,
 				model,
 			},
+		)
+	);
+}
+
+export function* closeCopyMoveModal() {
+	yield put(
+		actions.components.mergeState('PreparationCopyMoveModal', 'default',
+			{ show: false },
 		)
 	);
 }

@@ -51,11 +51,27 @@
       "label": "Add preparation",
       "actionCreator": "preparation:add:open"
     },
+    "preparation:copy": {
+      "id": "preparation:copy",
+      "label": "Copy",
+      "bsStyle": "primary",
+    },
+    "preparation:move": {
+      "id": "preparation:move",
+      "label": "Move",
+      "bsStyle": "primary",
+    },
     "preparation:copy:move:open": {
       "id": "preparation:copy:move:open",
       "icon": "talend-files-o",
       "label": "Copy/Move preparation",
       "actionCreator": "preparation:copy:move:open"
+    },
+    "preparation:copy:move:cancel": {
+      "id": "preparation:copy:move:cancel",
+      "label": "Cancel",
+      "bsStyle": "link",
+      "actionCreator": "preparation:copy:move:cancel"
     },
     "preparation:rename": {
       "id": "preparation:rename",

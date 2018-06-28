@@ -198,18 +198,20 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     public void testShouldUseDefaultMaskingForInvalid() {
 
         // given
+        String inputValue="bla bla";
         final DataSetRow row = builder() //
-                .with(value("bla bla").type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name())) //
+                .with(value(inputValue).type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name())) //
                 .build();
 
         final Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("0000", "XXXXXXX");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(expectedValues, row.values());
+        String result=row.values().get("0000").toString();
+        assertFalse("The result should not be same with inputValue",inputValue.equals(result));
+        assertTrue("The length of result should be same with inputValue",inputValue.length()==result.length());
     }
 
     @Test

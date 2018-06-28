@@ -14,6 +14,7 @@ package org.talend.dataprep.folder.store;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.talend.dataprep.api.folder.Folder;
@@ -147,12 +148,19 @@ public interface FolderRepository {
     long size();
 
     /**
+     * Use this method to get a {@link Folder} using a <code>path</code>.
+     * @param path The path to be searched.
+     * @return An {@link Optional} for searched <code>path</code>.
+     */
+    Optional<Folder> getFolder(String path);
+
+    /**
      *
-     * @param queryString part of the name to search in folder (not case sensitive)
+     * @param folderName part of the name to search in folder (not case sensitive)
      * @param strict strict mode means the name is the full name
      * @return A {@link Iterable} of {@link Folder} with the query string in the name
      */
-    Stream<Folder> searchFolders(String queryString, boolean strict);
+    Stream<Folder> searchFolders(String folderName, boolean strict);
 
     /**
      * Return the folder that holds the given content id and content type.

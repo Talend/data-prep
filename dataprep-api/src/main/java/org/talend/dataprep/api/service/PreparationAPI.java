@@ -132,9 +132,8 @@ public class PreparationAPI extends APIService {
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
         if ("summary".equalsIgnoreCase(format)) {
             final OwnerInjection ownerInjection = context.getBean(OwnerInjection.class);
-            final Stream<PreparationListItemDTO> stream = toStream(PreparationDTO.class, mapper, command) //
+            return toStream(PreparationDTO.class, mapper, command) //
                     .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection, ownerInjection));
-            return stream;
         } else {
             return toStream(PreparationDTO.class, mapper, command) //
                     .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));

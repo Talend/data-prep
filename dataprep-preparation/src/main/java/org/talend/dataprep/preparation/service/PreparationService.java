@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -254,13 +255,13 @@ public class PreparationService {
         }
         // filter on folder path
         if (searchCriterion.getFolderPath() != null) {
-            final Stream<Folder> folders = folderRepository.searchFolders(searchCriterion.getFolderPath(), false);
-            final Set<String> entries = new HashSet<>();
-            folders.forEach(f -> entries.addAll(folderRepository
+            final Optional<Folder> folder = folderRepository.getFolder(searchCriterion.getFolderPath());
+            final Set<String> folderEntries = new HashSet<>();
+            folder.ifPresent(f -> folderEntries.addAll(folderRepository
                     .entries(f.getId(), PREPARATION) //
                     .map(FolderEntry::getContentId) //
                     .collect(Collectors.toSet())));
-            preparationStream = preparationStream.filter(p -> entries.contains(p.id()));
+            preparationStream = preparationStream.filter(p -> folderEntries.contains(p.id()));
         }
 
         final OwnerInjection ownerInjection = springContext.getBean(OwnerInjection.class);

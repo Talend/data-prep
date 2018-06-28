@@ -41,6 +41,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -328,13 +329,13 @@ public class FileSystemFolderRepository implements FolderRepository {
     }
 
     @Override
-    public Stream<Folder> searchFolders(String queryString, boolean strict) {
+    public Stream<Folder> searchFolders(String folderName, boolean strict) {
         try {
             final String queryForFileSearch;
-            if (queryString.startsWith("/")) {
-                queryForFileSearch = queryString.substring(1);
+            if (folderName.startsWith("/")) {
+                queryForFileSearch = folderName.substring(1);
             } else {
-                queryForFileSearch = queryString;
+                queryForFileSearch = folderName;
             }
             return Files
                     .walk(pathsConverter.getRootFolder()) //
@@ -396,6 +397,27 @@ public class FileSystemFolderRepository implements FolderRepository {
     @Override
     public long size() {
         return countSubDirectories(pathsConverter.getRootFolder());
+    }
+
+    @Override
+    public Optional<Folder> getFolder(String path) {
+        if ("/".equals(path)) {
+            return Optional.of(getHome());
+        }
+        try {
+            final String queryForFileSearch;
+            if (path.startsWith("/")) {
+                queryForFileSearch = path.substring(1);
+            } else {
+                queryForFileSearch = path;
+            }
+            return Files.walk(pathsConverter.getRootFolder()) //
+                    .filter(p -> Files.isDirectory(p) && p.getFileName().toString().equals(queryForFileSearch)) //
+                    .findFirst() //
+                    .map(p -> toFolder(p, security.getUserId()));
+        } catch (IOException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
     }
 
     /** If the path represents a directory, build the {@link Folder} object based on it. */

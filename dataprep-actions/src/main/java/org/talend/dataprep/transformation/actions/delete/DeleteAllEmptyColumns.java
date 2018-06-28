@@ -43,19 +43,28 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteAllEmptyColumns.class);
 
+    /**
+     * This method will be call only at the first call of the apply.
+     * Case KEEP : test if the DataFrequencies is higher than 1
+     * because " " and "" are not the same.
+     * It test also if the first cell is a non-printing character
+     * in case of the column is full of the same non-printing
+     * character.
+     * The the default test is to test by the quality if all the
+     * cells are empty.
+     * character
+     * @param columnMetadata
+     * @param parameter
+     * @param row
+     */
     private static boolean isColumnToDelete(ColumnMetadata columnMetadata, String parameter, DataSetRow row) {
-        switch (parameter) {
-            case KEEP:
-                if (columnMetadata.getStatistics().getDataFrequencies().size() > 1) {
-                    return false;
-                } else {
-                    if (StringUtils.isNotEmpty(row.get(columnMetadata.getId()))) {
-                        return false;
-                    }
-                }
-            default:
-                return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
+        if (KEEP.equals(parameter)) {
+            if (columnMetadata.getStatistics().getDataFrequencies().size() > 1 || //
+                    StringUtils.isNotEmpty(row.get(columnMetadata.getId()))) {
+                return false;
+            }
         }
+        return columnMetadata.getQuality().getValid() + columnMetadata.getQuality().getInvalid() == 0;
     }
 
     @Override
@@ -110,6 +119,9 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
                     columnsToDelete.add(column.getId());
                 }
             }
+            if (columnsToDelete.isEmpty()) {
+                context.setActionStatus(ActionContext.ActionStatus.DONE);
+            }
             context.get(COLUMNS_TO_DELETE, p -> columnsToDelete);
         }
         columnsToDelete.forEach(columnId -> {
@@ -121,6 +133,7 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS, Behavior.NEED_STATISTICS_QUALITY, Behavior.NEED_STATISTICS_FREQUENCY);
+        return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS, Behavior.NEED_STATISTICS_QUALITY, //
+                Behavior.NEED_STATISTICS_FREQUENCY);
     }
 }

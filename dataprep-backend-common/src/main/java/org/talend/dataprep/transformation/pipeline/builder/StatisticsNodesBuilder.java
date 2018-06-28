@@ -16,12 +16,15 @@ import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_FREQUENCY;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
@@ -48,6 +51,9 @@ public class StatisticsNodesBuilder {
     private ActionsProfile actionsProfile;
 
     private Map<Action, ActionDefinition> actionToMetadata;
+
+    final private Set<ActionDefinition.Behavior> BEHAVIORS = Stream.of(NEED_STATISTICS_PATTERN, NEED_STATISTICS_INVALID,
+            NEED_STATISTICS_QUALITY, NEED_STATISTICS_FREQUENCY).collect(Collectors.toSet());
 
     private StatisticsNodesBuilder() {
     }
@@ -122,7 +128,7 @@ public class StatisticsNodesBuilder {
 
     /**
      * Insert statistics computing nodes before the supplied action node if needed.
-     *
+     * Will try each case one by one.
      * @param nextAction action needing
      * @return
      */
@@ -138,15 +144,21 @@ public class StatisticsNodesBuilder {
                 final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
                 NodeBuilder nodeBuilder = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()));
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
+                    // the type detection is needed by some actions : see bug TDP-4926
+                    // this modification needs performance analysis
                     nodeBuilder.to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis()));
                 }
                 if (behavior.contains(NEED_STATISTICS_QUALITY)) {
+                    // the quality of the dataset is needed by some actions : see DeleteAllEmptyColumns
                     nodeBuilder.to(getQualityStatisticsNode(actionsProfile.getFilterForPatternAnalysis()));
                 }
                 if (behavior.contains(NEED_STATISTICS_FREQUENCY)) {
+                    // the frequency of each pattern is needed by some actions : see DeleteAllEmptyColumns
                     nodeBuilder.to(getFrequencyStatisticsNode(actionsProfile.getFilterForPatternAnalysis()));
                 }
                 if (nextAction.getParameters().containsKey(FILTER.getKey()) || behavior.contains(NEED_STATISTICS_INVALID)) {
+                    // 2 cases remain as this point: action needs invalid values or filter attached to action does
+                    // equivalent to the default case
                     nodeBuilder.to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()));
                 }
                 node = nodeBuilder.build();
@@ -158,8 +170,7 @@ public class StatisticsNodesBuilder {
     private boolean needIntermediateStatistics(final Action nextAction) {
         // next action indicates that it need fresh statistics
         final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
-        if (behavior.contains(NEED_STATISTICS_PATTERN) || behavior.contains(NEED_STATISTICS_INVALID) //
-                || behavior.contains(NEED_STATISTICS_QUALITY) || behavior.contains(NEED_STATISTICS_FREQUENCY)) {
+        if (!Collections.disjoint(behavior, BEHAVIORS)) {
             return true;
         }
 

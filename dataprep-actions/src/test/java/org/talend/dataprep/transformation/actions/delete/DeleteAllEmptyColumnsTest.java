@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAllEmptyColumns> {
 
@@ -158,7 +159,6 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         assertNotNull(row.getRowMetadata().getById("0002"));
         assertNotNull(row.getRowMetadata().getById("0003"));
     }
-
 
     @Test
     public void should_have_expected_behavior() {

@@ -140,6 +140,8 @@ public class DataSetService extends BaseDataSetService {
 
     private static final String CONTENT_TYPE = "Content-Type";
 
+    private static final String LIMIT = "limit";
+
     /**
      * Format analyzer needed to update the schema.
      */
@@ -292,7 +294,7 @@ public class DataSetService extends BaseDataSetService {
 
         // Return sorted results
         try (Stream<DataSetMetadata> stream = stream(iterator, false)) {
-            return stream
+            return stream //
                     .filter(metadata -> !metadata.getLifecycle().isImporting()) //
                     .map(m -> conversionService.convert(m, UserDataSetMetadata.class)) //
                     .sorted(comparator) //
@@ -330,7 +332,7 @@ public class DataSetService extends BaseDataSetService {
         LOG.debug(marker, "Creating...");
 
         // sanity check
-        if (size != null && size < 0) {
+        if (checkSizeParameter(size)) {
             LOG.warn("invalid size provided {}", size);
             throw new TDPException(UNEXPECTED_CONTENT, build().put("size", size));
         }
@@ -487,7 +489,7 @@ public class DataSetService extends BaseDataSetService {
             notes = "Get metadata information of a data set by id. Not valid or non existing data set id returns empty content.")
     @Timed
     @ResponseBody
-    public DataSet getMetadata(@PathVariable(value = "id") @ApiParam(name = "id",
+    public DataSetMetadata getMetadata(@PathVariable(value = "id") @ApiParam(name = "id",
             value = "Id of the data set metadata") String dataSetId) {
         if (dataSetId == null) {
             HttpResponseContext.status(HttpStatus.NO_CONTENT);
@@ -502,11 +504,16 @@ public class DataSetService extends BaseDataSetService {
         }
         if (!metadata.getLifecycle().schemaAnalyzed()) {
             HttpResponseContext.status(HttpStatus.ACCEPTED);
-            return DataSet.empty();
+            return new DataSetMetadata();
         }
+        LOG.info("found dataset {} for #{}", metadata.getName(), dataSetId);
+        return metadata;
+    }
+
+    public DataSet getDataset(String dataSetId) {
+        DataSetMetadata metadata = getMetadata(dataSetId);
         DataSet dataSet = new DataSet();
         dataSet.setMetadata(conversionService.convert(metadata, UserDataSetMetadata.class));
-        LOG.info("found dataset {} for #{}", dataSet.getMetadata().getName(), dataSetId);
         return dataSet;
     }
 
@@ -581,7 +588,7 @@ public class DataSetService extends BaseDataSetService {
             // check that there's enough space
             final long maxDataSetSizeAllowed = getMaxDataSetSizeAllowed();
             if (maxDataSetSizeAllowed < original.getDataSetSize()) {
-                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, build().put("limit", maxDataSetSizeAllowed));
+                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, build().put(LIMIT, maxDataSetSizeAllowed));
             }
 
             // Create copy (based on original data set metadata)
@@ -683,18 +690,21 @@ public class DataSetService extends BaseDataSetService {
 
                 // once fully copied to the cache, we know for sure that the content store has enough space, so let's copy
                 // from the cache to the content store
-                PipedInputStream toContentStore = new PipedInputStream();
-                PipedOutputStream fromCache = new PipedOutputStream(toContentStore);
-                Runnable r = () -> {
-                    try (final InputStream input = cacheManager.get(cacheKey)) {
-                        IOUtils.copy(input, fromCache);
-                        fromCache.close(); // it's important to close this stream, otherwise the piped stream will never close
-                    } catch (IOException e) {
-                        throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
-                    }
-                };
-                executor.execute(r);
-                contentStore.storeAsRaw(updatedDataSetMetadata, toContentStore);
+                try (PipedInputStream toContentStore = new PipedInputStream();
+                        PipedOutputStream fromCache = new PipedOutputStream(toContentStore)) {
+                    Runnable r = () -> {
+                        try (final InputStream input = cacheManager.get(cacheKey)) {
+                            IOUtils.copy(input, fromCache);
+                            fromCache.close(); // it's important to close this stream, otherwise the piped stream will never close
+                        } catch (IOException e) {
+                            throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
+                        }
+                    };
+                    executor.execute(r);
+                    contentStore.storeAsRaw(updatedDataSetMetadata, toContentStore);
+                } catch (IOException ex) {
+                    throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, ex);
+                }
 
                 // update the dataset metadata with its new size
                 updatedDataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
@@ -708,7 +718,7 @@ public class DataSetService extends BaseDataSetService {
 
             } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
                 LOG.warn("Dataset update {} cannot be done, new content is too big", currentDataSetMetadata.getId());
-                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put("limit", e.getMaxSize()));
+                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put(LIMIT, e.getMaxSize()));
             } catch (IOException e) {
                 LOG.error("Error updating the dataset", e);
                 throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
@@ -801,11 +811,11 @@ public class DataSetService extends BaseDataSetService {
 
             String theSheetName = dataSetMetadata.getSheetName();
 
-            Optional<Schema.SheetContent> sheetContentFound = dataSetMetadata
-                    .getSchemaParserResult()
-                    .getSheetContents()
-                    .stream()
-                    .filter(sheetContent -> theSheetName.equals(sheetContent.getName()))
+            Optional<Schema.SheetContent> sheetContentFound = dataSetMetadata //
+                    .getSchemaParserResult() //
+                    .getSheetContents() //
+                    .stream() //
+                    .filter(sheetContent -> theSheetName.equals(sheetContent.getName())) //
                     .findFirst();
 
             if (!sheetContentFound.isPresent()) {
@@ -821,7 +831,7 @@ public class DataSetService extends BaseDataSetService {
 
             dataSetMetadata.getRowMetadata().setColumns(columnMetadatas);
         } else {
-            LOG.warn("dataset#{} has draft status but any SchemaParserResult");
+            LOG.warn("dataset#{} has draft status but any SchemaParserResult", dataSetId);
         }
         // Build the result
         DataSet dataSet = new DataSet();
@@ -874,11 +884,11 @@ public class DataSetService extends BaseDataSetService {
 
                 // update the sheet content (in case of a multi-sheet excel file)
                 if (metadataForUpdate.getSchemaParserResult() != null) {
-                    Optional<Schema.SheetContent> sheetContentFound = metadataForUpdate
-                            .getSchemaParserResult()
-                            .getSheetContents()
-                            .stream()
-                            .filter(sheetContent -> dataSetMetadata.getSheetName().equals(sheetContent.getName()))
+                    Optional<Schema.SheetContent> sheetContentFound = metadataForUpdate //
+                            .getSchemaParserResult() //
+                            .getSheetContents() //
+                            .stream() //
+                            .filter(sheetContent -> dataSetMetadata.getSheetName().equals(sheetContent.getName())) //
                             .findFirst();
 
                     if (sheetContentFound.isPresent()) {
@@ -987,19 +997,19 @@ public class DataSetService extends BaseDataSetService {
             LOG.debug("{} favorite dataset for #{} for user {}", unset ? "Unset" : "Set", dataSetId, userId); // $NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 
             UserData userData = userDataRepository.get(userId);
-            if (unset) {// unset the favorites
+            if (unset) { // unset the favorites
                 if (userData != null) {
                     userData.getFavoritesDatasets().remove(dataSetId);
                     userDataRepository.save(userData);
                 } // no user data for this user so nothing to unset
-            } else {// set the favorites
-                if (userData == null) {// let's create a new UserData
+            } else { // set the favorites
+                if (userData == null) { // let's create a new UserData
                     userData = new UserData(userId, versionService.version().getVersionId());
                 } // else already created so just update it.
                 userData.addFavoriteDataset(dataSetId);
                 userDataRepository.save(userData);
             }
-        } else {// no dataset found so throws an error
+        } else { // no dataset found so throws an error
             throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, build().put("id", dataSetId));
         }
     }
@@ -1056,11 +1066,11 @@ public class DataSetService extends BaseDataSetService {
                 }
                 // change domain
                 else {
-                    final SemanticDomain semanticDomain = column
+                    final SemanticDomain semanticDomain = column //
                             .getSemanticDomains() //
                             .stream() //
                             .filter(dom -> StringUtils.equals(dom.getId(), parameters.getDomain())) //
-                            .findFirst()
+                            .findFirst() //
                             .orElse(null);
                     if (semanticDomain != null) {
                         column.setDomain(semanticDomain.getId());
@@ -1266,5 +1276,13 @@ public class DataSetService extends BaseDataSetService {
     private long getMaxDataSetSizeAllowed() {
         final long availableSpace = quotaService.getAvailableSpace();
         return maximumInputStreamSize > availableSpace ? availableSpace : maximumInputStreamSize;
+    }
+
+    /**
+     *
+     * @param size size of the dataset
+     */
+    private boolean checkSizeParameter(Long size) {
+        return size != null && size < 0;
     }
 }

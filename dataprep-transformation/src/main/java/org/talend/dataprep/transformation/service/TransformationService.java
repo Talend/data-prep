@@ -84,7 +84,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.dynamic.DynamicType;
 import org.talend.dataprep.transformation.api.action.dynamic.GenericParameter;
-import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.api.transformer.configuration.PreviewConfiguration;
 import org.talend.dataprep.transformation.api.transformer.suggestion.Suggestion;
@@ -171,12 +170,6 @@ public class TransformationService extends BaseTransformationService {
     private SuggestionEngine suggestionEngine;
 
     /**
-     * The transformer factory.
-     */
-    @Autowired
-    private TransformerFactory factory;
-
-    /**
      * Task executor for asynchronous processing.
      */
     @Resource(name = "serializer#json#executor")
@@ -230,7 +223,7 @@ public class TransformationService extends BaseTransformationService {
 
             ContentCacheKey cacheKey = cacheKeyGenerator.generateContentKey(completeParameters);
 
-            if(!contentCache.has(cacheKey)) {
+            if (!contentCache.has(cacheKey)) {
                 preparationExportStrategy.performPreparation(completeParameters, new NullOutputStream());
             }
         }
@@ -448,13 +441,13 @@ public class TransformationService extends BaseTransformationService {
     }
 
     private void executeDiffOnSample(final PreviewParameters previewParameters, final OutputStream output) {
-        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
+        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(//
                 previewParameters.getPreparationId(), //
                 Step.ROOT_STEP.id(), //
                 previewParameters.getSourceType() //
         );
 
-        final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
+        final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey(//
                 previewParameters.getDataSetId(), //
                 previewParameters.getPreparationId(), //
                 Step.ROOT_STEP.id(), //
@@ -497,7 +490,7 @@ public class TransformationService extends BaseTransformationService {
             securityProxy.releaseIdentity();
             identityReleased = true;
 
-            executePreview( //
+            executePreview(//
                     previewParameters.getNewActions(), //
                     previewParameters.getBaseActions(), //
                     previewParameters.getTdpIds(), //
@@ -514,13 +507,13 @@ public class TransformationService extends BaseTransformationService {
 
     private boolean shouldApplyDiffToSampleSource(final PreviewParameters previewParameters) {
         if (previewParameters.getSourceType() != HEAD && previewParameters.getPreparationId() != null) {
-            final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey( //
+            final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(//
                     previewParameters.getPreparationId(), //
                     Step.ROOT_STEP.id(), //
                     previewParameters.getSourceType() //
             );
 
-            final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey( //
+            final ContentCacheKey contentKey = cacheKeyGenerator.generateContentKey(//
                     previewParameters.getDataSetId(), //
                     previewParameters.getPreparationId(), //
                     Step.ROOT_STEP.id(), //
@@ -557,13 +550,13 @@ public class TransformationService extends BaseTransformationService {
     }
 
     private void evictCache(final String preparationId, final ExportParameters.SourceType sourceType) {
-        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder()
-                .preparationId(preparationId)
-                .sourceType(sourceType)
+        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder() //
+                .preparationId(preparationId) //
+                .sourceType(sourceType) //
                 .build();
-        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder()
-                .preparationId(preparationId)
-                .sourceType(sourceType)
+        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder() //
+                .preparationId(preparationId) //
+                .sourceType(sourceType) //
                 .build();
         contentCache.evictMatch(metadataKey);
         contentCache.evictMatch(contentKey);
@@ -626,7 +619,7 @@ public class TransformationService extends BaseTransformationService {
         final PreviewConfiguration configuration = PreviewConfiguration.preview() //
                 .withActions(actions) //
                 .withIndexes(indexes) //
-                .fromReference( //
+                .fromReference(//
                         Configuration.builder() //
                                 .format(JSON) //
                                 .output(output) //
@@ -677,7 +670,7 @@ public class TransformationService extends BaseTransformationService {
     public Stream<ActionForm> columnActions(@RequestBody(required = false) ColumnMetadata column) {
         return actionRegistry.findAll() //
                 .filter(action -> !"TEST".equals(action.getCategory(LocaleContextHolder.getLocale())) && action.acceptScope(COLUMN)) //
-                .map(am -> column != null ? am.adapt(column) : am)
+                .map(am -> column != null ? am.adapt(column) : am) //
                 .map(ad -> ad.getActionForm(getLocale()));
     }
 
@@ -722,7 +715,7 @@ public class TransformationService extends BaseTransformationService {
     public Stream<ActionForm> lineActions() {
         return actionRegistry.findAll() //
                 .filter(action -> action.acceptScope(LINE)) //
-                .map(action -> action.adapt(LINE))
+                .map(action -> action.adapt(LINE)) //
                 .map(ad -> ad.getActionForm(getLocale()));
     }
 
@@ -738,7 +731,7 @@ public class TransformationService extends BaseTransformationService {
         return actionRegistry
                 .findAll() //
                 .filter(action -> action.acceptScope(DATASET)) //
-                .map(action -> action.adapt(DATASET))
+                .map(action -> action.adapt(DATASET)) //
                 .map(ad -> ad.getActionForm(getLocale()));
     }
 
@@ -811,9 +804,9 @@ public class TransformationService extends BaseTransformationService {
 
         return formatRegistrationService
                 .getExternalFormats() //
-                .sorted(Comparator.comparingInt(ExportFormat::getOrder)) // Enforce strict order.
                 .filter(ExportFormat::isEnabled) //
                 .filter(f -> f.isCompatible(metadata)) //
+                .sorted(Comparator.comparingInt(ExportFormat::getOrder)) // Enforce strict order.
                 .map(f -> beanConversionService.convert(f, ExportFormatMessage.class));
     }
 
@@ -893,9 +886,9 @@ public class TransformationService extends BaseTransformationService {
 
         // run the analyzer service on the cached content
         try (final InputStream metadataCache = contentCache.get(metadataKey);
-             final InputStream contentCache = this.contentCache.get(contentKey)) {
+             final InputStream content = this.contentCache.get(contentKey)) {
             final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataCache);
-            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCache);
+            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, content);
             LOG.debug("found {} for preparation #{}, column #{}", semanticDomains, preparationId, columnId);
             return semanticDomains;
 
@@ -945,8 +938,7 @@ public class TransformationService extends BaseTransformationService {
 
         try (final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(records, UTF_8))) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-            dataSet
-                    .getRecords() //
+            dataSet.getRecords() //
                     .map(r -> r.get(columnId)) //
                     .forEach(analyzer::analyze);
             analyzer.end();

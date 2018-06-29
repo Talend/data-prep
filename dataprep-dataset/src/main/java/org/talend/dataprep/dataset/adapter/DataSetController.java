@@ -100,7 +100,7 @@ public class DataSetController {
     public Dataset getDataset(@PathVariable String datasetId,
             @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
-        DataSet dataSet = dataSetService.getMetadata(datasetId);
+        DataSet dataSet = dataSetService.getDataset(datasetId);
         if (dataSet != null){
             DataSetMetadata metadata = dataSet.getMetadata();
             if (metadata != null) {
@@ -112,8 +112,7 @@ public class DataSetController {
 
     @GetMapping(value = "/{datasetId}/schema", produces = AvroUtils.AVRO_JSON_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
     public String getDatasetSchema(@PathVariable String datasetId) {
-        DataSet dataSet = dataSetService.getMetadata(datasetId);
-
+        DataSet dataSet = dataSetService.getDataset(datasetId);
         if (dataSet == null || dataSet.getMetadata() == null || dataSet.getMetadata().getRowMetadata() == null) {
             return null;
         }

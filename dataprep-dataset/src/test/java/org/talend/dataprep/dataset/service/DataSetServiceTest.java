@@ -152,7 +152,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"BBBB", "AAAA"};
+        String[] expectedNames = new String[] { "BBBB", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -176,11 +176,12 @@ public class DataSetServiceTest extends DataSetBaseTest {
         dataSetMetadataRepository.save(metadata3);
 
         // when
-        final String actual = expect().statusCode(200).log().ifValidationFails().get("/datasets/{id}/compatibledatasets?sort=creationDate", dataSetId).asString();
+        final String actual = expect().statusCode(200).log().ifValidationFails()
+                .get("/datasets/{id}/compatibledatasets?sort=creationDate", dataSetId).asString();
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -208,7 +209,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"BBBB", "AAAA"};
+        String[] expectedNames = new String[] { "BBBB", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -237,14 +238,14 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actualASC).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
         }
 
         mapper.readTree(actualDESC).elements();
-        expectedNames = new String[]{"BBBB", "AAAA"};
+        expectedNames = new String[] { "BBBB", "AAAA" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -326,7 +327,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (most recent first)
         String actual = when().get("/datasets?sort=name").asString();
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"BBBB", "AAAA"};
+        String[] expectedNames = new String[] { "BBBB", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -348,7 +349,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (most recent first)
         String actual = when().get("/datasets?sort=creationDate").asString();
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -370,7 +371,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (most recent first)
         String actual = when().get("/datasets?sort=creationDate&order=desc").asString();
         Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -378,7 +379,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (oldest first when no order value)
         actual = when().get("/datasets?sort=creationDate").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"AAAA", "BBBB"};
+        expectedNames = new String[] { "AAAA", "BBBB" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -386,7 +387,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (oldest first)
         actual = when().get("/datasets?sort=creationDate&order=asc").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"BBBB", "AAAA"};
+        expectedNames = new String[] { "BBBB", "AAAA" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -412,7 +413,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (last character from alphabet first)
         String actual = when().get("/datasets?sort=name&order=desc").asString();
         Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"CCCC", "bbbb", "AAAA"};
+        String[] expectedNames = new String[] { "CCCC", "bbbb", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -420,7 +421,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (last character from alphabet first when no order value)
         actual = when().get("/datasets?sort=name").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"CCCC", "bbbb", "AAAA"};
+        expectedNames = new String[] { "CCCC", "bbbb", "AAAA" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -428,7 +429,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (first character from alphabet first)
         actual = when().get("/datasets?sort=name&order=asc").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"AAAA", "bbbb", "CCCC"};
+        expectedNames = new String[] { "AAAA", "bbbb", "CCCC" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -1032,7 +1033,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .queryParam("Content-Type", "text/csv").when().put("/datasets/" + dataSetId + "/raw");
         assertQueueMessages(dataSetId);
 
-        // when
+        // wheno
         final InputStream content = when().get("/datasets/{id}/content?metadata=false", dataSetId).asInputStream();
         final String contentAsString = IOUtils.toString(content, UTF_8);
 
@@ -1076,8 +1077,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // given
         String dataSetId = createCSVDataSet(this.getClass().getResourceAsStream("../avengers.psv"), "tpd-1066");
         InputStream metadataInput = when().get("/datasets/{id}/metadata", dataSetId).asInputStream();
-        DataSet dataSet = mapper.readerFor(DataSet.class).readValue(metadataInput);
-        DataSetMetadata metadata = dataSet.getMetadata();
+        DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataInput);
 
         // when
         final Map<String, String> parameters = metadata.getContent().getParameters();
@@ -1108,8 +1108,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // given
         String dataSetId = createCSVDataSet(this.getClass().getResourceAsStream("../tdp-1066_no_header.ssv"), "tdp-1066-2");
         InputStream metadataInput = when().get("/datasets/{id}/metadata", dataSetId).asInputStream();
-        DataSet dataSet = mapper.readerFor(DataSet.class).readValue(metadataInput);
-        DataSetMetadata metadata = dataSet.getMetadata();
+        DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataInput);
 
         // then
         assertThat(metadata.getRowMetadata().getColumns().size(), is(2)); // ';' is guessed as separator ==> 2 columns
@@ -1171,18 +1170,15 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         String json = given().when().get("/datasets/{id}/metadata", dataSetId).asString();
         final JsonNode rootNode = mapper.reader().readTree(json);
-        final JsonNode metadata = rootNode.get("metadata");
-
         // only interested in the parser --> excel parser must be used !
-        assertEquals(metadata.get("type").asText(), "application/vnd.ms-excel");
-        assertEquals(metadata.get("formatGuess").asText(), "formatGuess#xls");
-        assertEquals(metadata.get("records").asText(), "500");
+
+        assertEquals("application/vnd.ms-excel", rootNode.get("type").asText());
+        assertEquals("formatGuess#xls", rootNode.get("formatGuess").asText());
     }
 
     @Test
     public void testQuotes() throws Exception {
-        String dataSetId = given().body(
-                IOUtils.toString(this.getClass().getResourceAsStream("../bands_quotes.csv"), UTF_8))
+        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream("../bands_quotes.csv"), UTF_8))
                 .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=false", dataSetId).asInputStream();
@@ -1195,8 +1191,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void testQuotesAndCarriageReturn() throws Exception {
         String dataSetId = given()
-                .body(IOUtils.toString(this.getClass().getResourceAsStream("../bands_quotes_and_carriage_return.csv"),
-                        UTF_8))
+                .body(IOUtils.toString(this.getClass().getResourceAsStream("../bands_quotes_and_carriage_return.csv"), UTF_8))
                 .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=false", dataSetId).asInputStream();
@@ -1211,8 +1206,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
      */
     @Test
     public void empty_lines_and_missing_values() throws Exception {
-        String dataSetId = given().body(
-                IOUtils.toString(this.getClass().getResourceAsStream(US_STATES_TO_CLEAN_CSV), UTF_8))
+        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream(US_STATES_TO_CLEAN_CSV), UTF_8))
                 .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=false", dataSetId).asInputStream();
@@ -1298,8 +1292,10 @@ public class DataSetServiceTest extends DataSetBaseTest {
         InputStream expected = this.getClass().getResourceAsStream("../metadata1.json");
         assertThat(contentAsString, sameJSONAsFile(expected));
 
-        Boolean isFavorites = from(contentAsString).get("metadata.favorite");
-        assertFalse(isFavorites);
+        Response response = when().get("/datasets/favorites");
+        JsonNode rootNode = mapper.readTree(response.asInputStream());
+
+        assertEquals(0, rootNode.size());
 
         // add favorite
         UserData userData = new UserData(security.getUserId(), versionService.version().getVersionId());
@@ -1308,10 +1304,11 @@ public class DataSetServiceTest extends DataSetBaseTest {
         userData.setFavoritesDatasets(favorites);
         userDataRepository.save(userData);
 
-        contentAsString = when().get("/datasets/{id}/metadata", "1234").asString();
-        isFavorites = from(contentAsString).get("metadata.favorite");
-        assertTrue(isFavorites);
+        response = when().get("/datasets/favorites");
+        rootNode = mapper.readTree(response.asInputStream());
 
+        assertEquals(1, rootNode.size());
+        assertEquals("1234", rootNode.get(0).textValue());
     }
 
     @Test
@@ -1543,8 +1540,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void datePattern() throws Exception {
         int before = dataSetMetadataRepository.size();
-        String dataSetId = given().body(
-                IOUtils.toString(this.getClass().getResourceAsStream("../date_time_pattern.csv"), UTF_8))
+        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream("../date_time_pattern.csv"), UTF_8))
                 .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         int after = dataSetMetadataRepository.size();
         assertThat(after - before, is(1));
@@ -1563,8 +1559,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     @Test
     public void should_remove_any_NUL_character() throws Exception {
         // given
-        final String originalContent = IOUtils.toString(this.getClass().getResourceAsStream(DATASET_WITH_NUL_CHAR_CSV),
-                UTF_8);
+        final String originalContent = IOUtils.toString(this.getClass().getResourceAsStream(DATASET_WITH_NUL_CHAR_CSV), UTF_8);
         assertThat(originalContent.chars().anyMatch((c) -> c == '\u0000'), is(true));
         final String dataSetId = createCSVDataSet(this.getClass().getResourceAsStream(DATASET_WITH_NUL_CHAR_CSV), "test");
 
@@ -1577,8 +1572,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
     @Test
     public void invalid_us_states() throws Exception {
-        String dataSetId = given().body(
-                IOUtils.toString(this.getClass().getResourceAsStream("../invalid_us_states.csv"), UTF_8))
+        String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream("../invalid_us_states.csv"), UTF_8))
                 .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
         assertQueueMessages(dataSetId);
         InputStream content = when().get("/datasets/{id}/content?metadata=true", dataSetId).asInputStream();
@@ -1713,7 +1707,6 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(contentAsString, not(is("[]"))); // There should be some exports available
     }
 
-
     @Test
     public void shouldGetDataSetColumnTypes() throws Exception {
 
@@ -1726,11 +1719,11 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // then
         /*
          * expected response array --> first element
-         *  {
+         * {
          * "id":"FR_COMMUNE",
          * "label":"FR Commune",
          * "frequency":99.19429
-         *  }
+         * }
          */
         Assert.assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
@@ -1755,15 +1748,13 @@ public class DataSetServiceTest extends DataSetBaseTest {
                     .when() //
                     .expect().statusCode(413).log().ifValidationFails() //
                     .post("/datasets") //
-                    .then()
-                    .body("code", equalTo("TDP_DSS_MAX_STORAGE_MAY_BE_EXCEEDED"));
+                    .then().body("code", equalTo("TDP_DSS_MAX_STORAGE_MAY_BE_EXCEEDED"));
             // Then
             assertThat("(", not(is("[]"))); // There should be some exports available
         } finally {
             ReflectionTestUtils.setField(dataSetService, "maximumInputStreamSize", l);
         }
     }
-
 
     private String insertEmptyDataSet() {
         String datasetId = UUID.randomUUID().toString();
@@ -1780,6 +1771,5 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertQueueMessages(dataSetId);
         return dataSetId;
     }
-
 
 }

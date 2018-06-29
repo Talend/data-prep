@@ -12,29 +12,27 @@
 
 package org.talend.dataprep.dataset.adapter.commands;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.asNull;
+import static org.talend.dataprep.command.Defaults.convertResponse;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
-import static org.talend.dataprep.command.Defaults.asNull;
-import static org.talend.dataprep.command.Defaults.convertResponse;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 /**
  * Get a dataset by id using the legacy dataprep dataset API.
@@ -70,40 +68,25 @@ public class DataSetGetMetadataLegacy extends GenericCommand<DataSetMetadata> {
         }
     }
 
-    private void configureLimitedDataset(final String dataSetId) {
-        URI build;
+    private void configureDataset(String relativePath) {
+        URI builtUri;
         try {
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            uriBuilder.setPath(uriBuilder.getPath() + "/datasets/" + dataSetId + "/metadata");
-            build = uriBuilder.build();
+            final URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
+            uriBuilder.setPath(uriBuilder.getPath() + relativePath);
+            builtUri = uriBuilder.build();
         } catch (URISyntaxException e) {
             throw new TDPException(UNEXPECTED_EXCEPTION, e);
         }
-        execute(() -> new HttpGet(build));
 
-        on(HttpStatus.OK).then((req, res) -> {
-            try {
-                final DataSet dataSet = objectMapper.readerFor(DataSet.class).readValue(res.getEntity().getContent());
-                return dataSet.getMetadata();
-            } catch (IOException e) {
-                throw new TDPException(UNEXPECTED_EXCEPTION, e);
-            } finally {
-                req.releaseConnection();
-            }
-        });
+        execute(() -> new HttpGet(builtUri));
+        on(HttpStatus.OK).then(convertResponse(objectMapper, DataSetMetadata.class));
+    }
+
+    private void configureLimitedDataset(final String dataSetId) {
+        configureDataset("/datasets/" + dataSetId + "/metadata");
     }
 
     private void configureSampleDataset(String dataSetId) {
-        URI uri;
-        try {
-            final URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl);
-            uriBuilder.setPath(uriBuilder.getPath() + "/datasets/" + dataSetId + "/sample/metadata");
-            uri = uriBuilder.build();
-        } catch (URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-        }
-
-        execute(() -> new HttpGet(uri));
-        on(HttpStatus.OK).then(convertResponse(objectMapper, DataSetMetadata.class));
+        configureDataset("/datasets/" + dataSetId + "/sample/metadata");
     }
 }

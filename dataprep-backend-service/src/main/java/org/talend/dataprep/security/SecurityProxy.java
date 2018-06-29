@@ -30,9 +30,15 @@ public interface SecurityProxy {
      */
     void asTechnicalUser();
 
+    void asTechnicalUser(SecurityReason reason);
+
     /**
      * Release the borrowed identity.
      */
     void releaseIdentity();
+
+    enum SecurityReason {
+        DATASET
+    }
 
 }

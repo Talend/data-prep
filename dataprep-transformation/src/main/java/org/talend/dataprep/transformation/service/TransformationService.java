@@ -12,10 +12,42 @@
 
 package org.talend.dataprep.transformation.service;
 
-import com.fasterxml.jackson.core.JsonParser;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
+import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -75,6 +107,7 @@ import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.SecurityProxy;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.aggregation.AggregationService;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
@@ -97,42 +130,11 @@ import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.GZIPOutputStream;
+import com.fasterxml.jackson.core.JsonParser;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
-import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
-import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "transformations", basePath = "/transform", description = "Transformations on data")
@@ -492,7 +494,7 @@ public class TransformationService extends BaseTransformationService {
     private void executeDiffOnDataset(final PreviewParameters previewParameters, final OutputStream output) {
 
         boolean identityReleased = false;
-        securityProxy.asTechnicalUser();
+        securityProxy.asTechnicalUser(SecurityProxy.SecurityReason.DATASET);
         try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId())) {
             securityProxy.releaseIdentity();
             identityReleased = true;
@@ -736,8 +738,8 @@ public class TransformationService extends BaseTransformationService {
     public Stream<ActionForm> datasetActions() {
         return actionRegistry
                 .findAll() //
-                .filter(action -> action.acceptScope(DATASET)) //
-                .map(action -> action.adapt(DATASET))
+                .filter(action -> action.acceptScope(ScopeCategory.DATASET)) //
+                .map(action -> action.adapt(ScopeCategory.DATASET))
                 .map(ad -> ad.getActionForm(getLocale()));
     }
 

@@ -21,7 +21,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
 public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAllEmptyColumns> {
 
@@ -46,7 +45,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         List<ColumnMetadata> columns = new ArrayList<>();
         Statistics statistics1 = new Statistics();
         statistics1.setDataFrequencies(Arrays.asList(new DataFrequency("blip", 10)));
-        ColumnMetadata columnMetadata = ColumnMetadata.Builder.column() //
+        ColumnMetadata columnMetadata = column() //
                 .type(Type.INTEGER) //
                 .computedId("0000") //
                 .valid(10) //
@@ -55,7 +54,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         columns.add(columnMetadata);
         Statistics statistics2 = new Statistics();
         statistics2.setDataFrequencies(Arrays.asList(new DataFrequency("", 10)));
-        columnMetadata = ColumnMetadata.Builder.column() //
+        columnMetadata = column() //
                 .type(Type.STRING) //
                 .computedId("0001") //
                 .valid(0) //
@@ -66,7 +65,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         columns.add(columnMetadata);
         Statistics statistics3 = new Statistics();
         statistics3.setDataFrequencies(Arrays.asList(new DataFrequency("blop", 10)));
-        columnMetadata = ColumnMetadata.Builder.column() //
+        columnMetadata = column() //
                 .type(Type.STRING) //
                 .statistics(statistics3) //
                 .computedId("0002") //
@@ -75,7 +74,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         columns.add(columnMetadata);
         Statistics statistics4 = new Statistics();
         statistics4.setDataFrequencies(Arrays.asList(new DataFrequency("", 4), new DataFrequency(" ", 6)));
-        columnMetadata = ColumnMetadata.Builder.column() //
+        columnMetadata = column() //
             .type(Type.STRING) //
             .computedId("0003") //
             .empty(10) //

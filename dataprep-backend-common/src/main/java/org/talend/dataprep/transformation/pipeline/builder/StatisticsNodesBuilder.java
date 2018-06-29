@@ -133,7 +133,7 @@ public class StatisticsNodesBuilder {
             performActionsProfiling();
 
             if (needIntermediateStatistics(nextAction)) {
-                final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+                final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior(nextAction);
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
                     // the type detection is needed by some actions : see bug TDP-4926
                     // this modification needs performance analysis
@@ -152,7 +152,7 @@ public class StatisticsNodesBuilder {
 
     private boolean needIntermediateStatistics(final Action nextAction) {
         // next action indicates that it need fresh statistics
-        final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+        final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior(nextAction);
         if (behavior.contains(NEED_STATISTICS_PATTERN) || behavior.contains(NEED_STATISTICS_INVALID)) {
             return true;
         }

@@ -486,8 +486,7 @@ public class TransformationService extends BaseTransformationService {
 
         boolean identityReleased = false;
         securityProxy.asTechnicalUser();
-        try {
-            final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId());
+        try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId())) {
             securityProxy.releaseIdentity();
             identityReleased = true;
 

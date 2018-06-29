@@ -30,6 +30,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.AbstractGenerateSequenceAction;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -38,18 +39,9 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * Generate a sequence on a column based on start value and step value.
  */
 @Action(GenerateSequence.ACTION_NAME)
-public class GenerateSequence extends AbstractActionMetadata implements ColumnAction {
+public class GenerateSequence extends AbstractGenerateSequenceAction {
 
     public static final String ACTION_NAME = "generate_a_sequence";
-
-    /** The next value of sequence to calculate */
-    protected static final String SEQUENCE = "sequence"; //$NON-NLS-1$
-
-    /** The starting value of sequence */
-    protected static final String START_VALUE = "start_value";
-
-    /** The step value of sequence */
-    protected static final String STEP_VALUE = "step_value";
 
     /** Class logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateSequence.class);
@@ -126,23 +118,4 @@ public class GenerateSequence extends AbstractActionMetadata implements ColumnAc
         row.set(ActionsUtils.getTargetColumnId(context), sequence.getNextValue());
     }
 
-    /** this class is used to calculate the sequence next step */
-    protected static class CalcSequence {
-
-        BigInteger nextValue;
-
-        BigInteger step;
-
-        public CalcSequence(Map<String, String> parameters) {
-            this.nextValue = new BigInteger(parameters.get(START_VALUE));
-            this.step = new BigInteger(parameters.get(STEP_VALUE));
-        }
-
-        public String getNextValue() {
-            String toReturn = nextValue.toString();
-            nextValue = nextValue.add(step);
-            return toReturn;
-        }
-
-    }
 }

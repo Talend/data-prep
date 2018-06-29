@@ -193,5 +193,4 @@ public class PreparationStep extends DataPrepStep {
     protected String getSuffixedPrepName(@NotNull String prepFullName) {
         return suffixName(util.extractNameFromFullName(prepFullName));
     }
-
 }

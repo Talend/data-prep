@@ -31,7 +31,7 @@ import org.talend.dataprep.api.dataset.DataSet;
 @Component
 public class SimpleSuggestionEngine implements SuggestionEngine {
 
-    final Comparator<Suggestion> suggestionComparator = (s1, s2) -> Integer.compare(s2.getScore(), s1.getScore());
+    private final Comparator<Suggestion> suggestionComparator = (s1, s2) -> Integer.compare(s2.getScore(), s1.getScore());
 
     /** Available rules. */
     @Autowired(required = false)
@@ -46,8 +46,8 @@ public class SimpleSuggestionEngine implements SuggestionEngine {
     }
 
     /**
-     * @param actionDef
-     * @param column
+     * @param actionDef the ActionDefinition to score
+     * @param column the related column
      */
     public Suggestion score(ActionDefinition actionDef, ColumnMetadata column) {
         int score = 0;

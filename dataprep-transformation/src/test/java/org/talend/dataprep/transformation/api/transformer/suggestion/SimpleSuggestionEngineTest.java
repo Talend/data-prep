@@ -64,11 +64,7 @@ public class SimpleSuggestionEngineTest {
     private SimpleSuggestionEngine simpleSuggestionEnginengine;
 
     /** The transformation service. */
-    @InjectMocks
-    private TransformationService transformationService;
-
-    /** The suggestion engine to test. */
-    private SimpleSuggestionEngine suggestionEngine;
+    private TransformationService transformationService = new TransformationService();
 
     private ActionRegistry actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
 

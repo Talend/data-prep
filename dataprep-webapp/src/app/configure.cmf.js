@@ -2,6 +2,7 @@ import api, { store as cmfstore, sagaRouter, actions as cmfActions } from '@tale
 import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
 import dataset from '@talend/dataset';
+import '@talend/dataset/lib/app/index.scss';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
@@ -12,7 +13,6 @@ import App from './next/components/App.container';
 import { ALERT } from './next/constants/actions';
 import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
-
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;
@@ -33,7 +33,7 @@ export default function initialize(additionalConfiguration = {}) {
 	);
 
 	const rootSagas = [
-		fork(sagaRouter, browserHistory, {}),
+		fork(sagaRouter, browserHistory, dataset.datasetSagas),
 		fork(api.sagas.component.handle),
 	];
 	const rootSagasToStart = {
@@ -140,6 +140,7 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('headerbar:search:start', actions.search.start);
 		registerActionCreator('headerbar:search:select', actions.search.select);
 		registerActionCreator('headerbar:search:reset', actions.search.reset);
+		registerActionCreator('dataset:view', actions.dataset.open);
 
 		const additionalActionCreators = additionalConfiguration.actionCreators;
 		if (additionalActionCreators) {

@@ -54,7 +54,7 @@ class ActionsStaticProfiler {
         for (Map.Entry<Action, ActionDefinition> entry : metadataByAction.entrySet()) {
             final ActionDefinition actionMetadata = entry.getValue();
             final Action action = entry.getKey();
-            Set<ActionDefinition.Behavior> behavior = actionMetadata.getBehavior();
+            Set<ActionDefinition.Behavior> behavior = actionMetadata.getBehavior(action);
 
             boolean createColumn = false;
 

@@ -13,11 +13,6 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.talend.dataprep.command.Defaults.asString;
-import static org.talend.dataprep.command.Defaults.emptyString;
-
-import java.io.InputStream;
-
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.InputStreamEntity;
 import org.springframework.context.annotation.Scope;
@@ -26,8 +21,14 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 
+import java.io.InputStream;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.asString;
+import static org.talend.dataprep.command.Defaults.emptyString;
+
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class UpdateDataSet extends GenericCommand<String> {
 
     private UpdateDataSet(String id, InputStream dataSetContent) {

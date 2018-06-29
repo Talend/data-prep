@@ -13,8 +13,6 @@
 
 package org.talend.dataprep.api.service.settings.views.provider;
 
-import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +21,8 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 import org.talend.dataprep.security.Security;
+
+import static java.util.Arrays.asList;
 
 /**
  * Default views settings provider
@@ -48,7 +48,7 @@ public class CommonViewsProvider implements AppSettingsProvider<ViewSettings> {
             settings.add(HomeViewsForNonTDPUsers.sidePanel());
         }
 
-        settings.addAll(asList(ListViews.folderList(), ListViews.preparationList(), ListViews.datasetsList()));
+        settings.addAll(asList(ListViews.folderList(), ListViews.preparationList()));
 
         return settings;
 

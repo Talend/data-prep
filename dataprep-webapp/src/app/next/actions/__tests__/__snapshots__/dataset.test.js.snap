@@ -3,9 +3,8 @@
 exports[`Dataset action should create an open action 1`] = `
 Object {
   "payload": Object {
-    "id": 42,
-    "type": "test",
+    "url": "http://dataprep.com/#/playground/dataset?datasetid=42",
   },
-  "type": "TDP_OPEN_DATASET",
+  "type": "TDP_REDIRECT_WINDOW",
 }
 `;

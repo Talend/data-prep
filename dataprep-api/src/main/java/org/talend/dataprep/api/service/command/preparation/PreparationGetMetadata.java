@@ -33,13 +33,14 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.springframework.http.HttpStatus.OK;
 
 /**
  * Command used to retrieve the preparation content.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata> {
 
     /** The preparation id. */

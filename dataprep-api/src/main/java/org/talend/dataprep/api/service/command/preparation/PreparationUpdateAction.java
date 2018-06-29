@@ -12,16 +12,6 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.talend.dataprep.command.CommandHelper.toStream;
-import static org.talend.dataprep.command.Defaults.asNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Optional;
-
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.InputStreamEntity;
@@ -35,11 +25,22 @@ import org.talend.dataprep.api.service.command.common.ChainedCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+import static org.talend.dataprep.command.Defaults.asNull;
+
 /**
  * Command that updates an action on a preparation.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationUpdateAction extends ChainedCommand<Void, InputStream> {
 
     /**

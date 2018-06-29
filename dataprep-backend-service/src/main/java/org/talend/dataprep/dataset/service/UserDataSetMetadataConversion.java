@@ -10,39 +10,37 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.dataset.configuration;
-
-import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+package org.talend.dataprep.dataset.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
 
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+
 /**
  * A configuration for {@link DataSetMetadata} conversions. It adds all transient information (e.g. favorite flags)
  */
-@Configuration
-public class DataSetConversions extends BeanConversionServiceWrapper {
+@Component
+public class UserDataSetMetadataConversion extends BeanConversionServiceWrapper {
 
     @Override
     public BeanConversionService doWith(BeanConversionService conversionService, String beanName, ApplicationContext applicationContext) {
         conversionService.register(fromBean(DataSetMetadata.class) //
                 .toBeans(UserDataSetMetadata.class) //
                 .using(UserDataSetMetadata.class, (dataSetMetadata, userDataSetMetadata) -> {
-                    final Security security = applicationContext.getBean(Security.class);
-                    final UserDataRepository userDataRepository = applicationContext.getBean(UserDataRepository.class);
+                    Security security = applicationContext.getBean(Security.class);
                     String userId = security.getUserId();
 
                     // update the dataset favorites
-                    final UserData userData = userDataRepository.get(userId);
+                    final UserData userData = applicationContext.getBean(UserDataRepository.class).get(userId);
                     if (userData != null) {
                         userDataSetMetadata.setFavorite(userData.getFavoritesDatasets().contains(dataSetMetadata.getId()));
                     }

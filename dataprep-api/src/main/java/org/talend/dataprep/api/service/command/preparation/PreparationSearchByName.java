@@ -13,13 +13,6 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-
-import static org.talend.dataprep.command.Defaults.emptyStream;
-import static org.talend.dataprep.command.Defaults.pipeStream;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
@@ -30,11 +23,18 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.emptyStream;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
 /**
  * Command used to retrieve the preparations matching a name.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreparationSearchByName extends GenericCommand<InputStream> {
 
     /**

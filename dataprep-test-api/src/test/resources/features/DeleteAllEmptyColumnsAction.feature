@@ -1,3 +1,4 @@
+@EnvOS @EnvOnPremise @EnvCloud
 Feature: Perform scenarios with DeleteAllEmptyColumns related action
 
   @CleanAfter

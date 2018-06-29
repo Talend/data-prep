@@ -69,7 +69,7 @@ public class DataSetControllerTest {
 
         DataSet dataSet = objectMapper.readValue(resourceAsStream, DataSet.class);
 
-        when(dataSetService.getMetadata(anyString())).thenReturn(dataSet);
+        when(dataSetService.getDataset(anyString())).thenReturn(dataSet);
 
         //TODO mock the bean conversion
         when(beanConversionService.convert(any(DataSetMetadata.class), Dataset.class)).thenReturn(null);

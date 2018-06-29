@@ -65,7 +65,7 @@
 		display: flex;
 		align-items: center;
 
-		> a {
+		.btn-link {
 			padding: 10px 15px;
 			color: $medium-gray;
 			height: $sub-header-height;
@@ -81,7 +81,7 @@
 			}
 
 			> icon {
-				line-height: $svg-md-size;
+				line-height: 1rem;
 			}
 		}
 

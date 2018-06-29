@@ -16,6 +16,7 @@ package org.talend.dataprep.transformation.actions.column;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.COLUMN;
+import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
@@ -25,6 +26,7 @@ import static org.talend.dataprep.transformation.api.action.context.ActionContex
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +42,7 @@ import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
-import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
+import org.talend.dataprep.transformation.actions.common.AbstractGenerateSequenceAction;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -49,7 +51,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
  * duplicate a column
  */
 @Action(CreateNewColumn.ACTION_NAME)
-public class CreateNewColumn extends AbstractActionMetadata implements ColumnAction {
+public class CreateNewColumn extends AbstractGenerateSequenceAction {
 
     /**
      * The action name.
@@ -76,6 +78,10 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     public static final String CONSTANT_MODE = "a_constant_mode";
 
     public static final String COLUMN_MODE = "other_column_mode";
+
+    public static final String SEQUENCE_MODE = "sequence_mode";
+
+    public static final String PARAM_NAME = "paramName";
 
     /**
      * Name of the new column.
@@ -108,16 +114,11 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(parameter(locale).setName(NEW_COLUMN_NAME)
-                .setType(ParameterType.STRING)
-                .setDefaultValue(DEFAULT_NAME_FOR_NEW_COLUMN)
-                .setCanBeBlank(false)
-                .build(this));
+        parameters.add(parameter(locale).setName(NEW_COLUMN_NAME).setType(ParameterType.STRING)
+                .setDefaultValue(DEFAULT_NAME_FOR_NEW_COLUMN).setCanBeBlank(false).build(this));
 
-        Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
-                .setType(STRING)
-                .setDefaultValue(EMPTY)
-                .build(this);
+        Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER).setType(STRING)
+                .setDefaultValue(EMPTY).build(this);
 
         //@formatter:off
         parameters.add(selectParameter(locale)
@@ -125,6 +126,15 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
                         .item(EMPTY_MODE, EMPTY_MODE)
                         .item(CONSTANT_MODE, CONSTANT_MODE, constantParameter)
                         .item(COLUMN_MODE, COLUMN_MODE, parameter(locale).setName(SELECTED_COLUMN_PARAMETER).setType(COLUMN).setDefaultValue(EMPTY).setCanBeBlank(false).build(this))
+                        .item(SEQUENCE_MODE, SEQUENCE_MODE,
+                                parameter(locale).setName(START_VALUE)
+                                        .setType(INTEGER)
+                                        .setDefaultValue("1")
+                                        .build(this),
+                                parameter(locale).setName(STEP_VALUE)
+                                        .setType(INTEGER)
+                                        .setDefaultValue("1")
+                                        .build(this))
                         .defaultValue(COLUMN_MODE)
                         .build(this)
         );
@@ -134,13 +144,17 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     }
 
     @Override
-    public void compile(ActionContext context) {
-        super.compile(context);
-        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
-            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
+        if (ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), true)) {
+            ActionsUtils.createNewColumn(actionContext, getAdditionalColumns(actionContext));
         }
-        if (context.getActionStatus() == OK) {
-            checkParameters(context.getParameters(), context.getRowMetadata());
+        Map<String, String> parameters = actionContext.getParameters();
+        if (actionContext.getActionStatus() == OK) {
+            checkParameters(actionContext.getParameters(), actionContext.getRowMetadata());
+            if (parameters.get(MODE_PARAMETER).equals(SEQUENCE_MODE)) {
+                actionContext.get(SEQUENCE, values -> new CalcSequence(parameters));
+            }
         }
     }
 
@@ -152,10 +166,10 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         final RowMetadata rowMetadata = context.getRowMetadata();
         final Map<String, String> parameters = context.getParameters();
 
-        String newValue = "";
+        String newValue = EMPTY;
         switch (parameters.get(MODE_PARAMETER)) {
         case EMPTY_MODE:
-            newValue = "";
+            newValue = EMPTY;
             break;
         case CONSTANT_MODE:
             newValue = parameters.get(DEFAULT_VALUE_PARAMETER);
@@ -163,6 +177,13 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
         case COLUMN_MODE:
             ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             newValue = row.get(selectedColumn.getId());
+            break;
+        case SEQUENCE_MODE:
+            if (row.isDeleted()) {
+                return;
+            }
+            final CalcSequence sequence = context.get(SEQUENCE);
+            newValue = sequence.getNextValue();
             break;
         default:
         }
@@ -186,23 +207,37 @@ public class CreateNewColumn extends AbstractActionMetadata implements ColumnAct
     private void checkParameters(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (!parameters.containsKey(MODE_PARAMETER)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
-                    ExceptionContext.build().put("paramName", MODE_PARAMETER));
+                    ExceptionContext.build().put(PARAM_NAME, MODE_PARAMETER));
         }
 
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(DEFAULT_VALUE_PARAMETER)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
-                    ExceptionContext.build().put("paramName", DEFAULT_VALUE_PARAMETER));
+                    ExceptionContext.build().put(PARAM_NAME, DEFAULT_VALUE_PARAMETER));
         }
         if (parameters.get(MODE_PARAMETER).equals(COLUMN_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
                 || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
-                    ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
+                    ExceptionContext.build().put(PARAM_NAME, SELECTED_COLUMN_PARAMETER));
+        }
+        if (parameters.get(MODE_PARAMETER).equals(SEQUENCE_MODE)
+                && (!parameters.containsKey(START_VALUE) || !parameters.containsKey(STEP_VALUE))) {
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
+                    ExceptionContext.build().put("paramName1", START_VALUE).put("paramName2", STEP_VALUE));
         }
     }
 
     @Override
     public Set<Behavior> getBehavior() {
         return EnumSet.of(Behavior.METADATA_CREATE_COLUMNS);
+    }
+
+    @Override
+    public Set<Behavior> getBehavior(org.talend.dataprep.api.preparation.Action action) {
+        final Set<Behavior> behaviors = new HashSet<>(getBehavior());
+        if (SEQUENCE_MODE.equals(action.getParameters().get(MODE_PARAMETER))) {
+            behaviors.add(Behavior.FORBID_DISTRIBUTED);
+        }
+        return behaviors;
     }
 
 }

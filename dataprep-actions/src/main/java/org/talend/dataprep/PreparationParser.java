@@ -77,7 +77,7 @@ public class PreparationParser {
                 .map(action -> {
                     final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
                     // Distributed run check for action
-                    final Set<ActionDefinition.Behavior> behavior = actionDefinition.getBehavior();
+                    final Set<ActionDefinition.Behavior> behavior = actionDefinition.getBehavior(action);
                     // if non distributed actions are forbidden (e.g. running locally)
                     if (!allowNonDistributedActions) {
                         // if some actions cannot be run in distributed environment, let's see how bad it is...

@@ -12,16 +12,12 @@
 
 package org.talend.dataprep.transformation.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -37,8 +33,6 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.TransformationErrorCodes;
-import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.lock.LockFactory;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
@@ -109,14 +103,15 @@ public abstract class BaseExportStrategy {
         if (StringUtils.isBlank(preparationId) || StringUtils.isBlank(stepId)) {
             actions = "{\"actions\": []}";
         } else {
-            final PreparationGetActions getActionsCommand = applicationContext.getBean(PreparationGetActions.class, preparationId,
-                    stepId);
+            final PreparationGetActions getActionsCommand =
+                    applicationContext.getBean(PreparationGetActions.class, preparationId, stepId);
             try {
                 final String actionsAsString = mapper.writerFor(new TypeReference<List<Action>>() {
                 }).writeValueAsString(getActionsCommand.execute());
                 actions = "{\"actions\": " + actionsAsString + '}';
             } catch (IOException e) {
-                final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", stepId);
+                final ExceptionContext context =
+                        ExceptionContext.build().put("id", preparationId).put("version", stepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }
@@ -142,17 +137,18 @@ public abstract class BaseExportStrategy {
             actions = "{\"actions\": []}";
         } else {
             try {
-                final PreparationGetActions startStepActions = applicationContext.getBean(PreparationGetActions.class,
-                        preparationId, startStepId);
-                final PreparationGetActions endStepActions = applicationContext.getBean(PreparationGetActions.class,
-                        preparationId, endStepId);
+                final PreparationGetActions startStepActions =
+                        applicationContext.getBean(PreparationGetActions.class, preparationId, startStepId);
+                final PreparationGetActions endStepActions =
+                        applicationContext.getBean(PreparationGetActions.class, preparationId, endStepId);
                 final StringWriter actionsAsString = new StringWriter();
                 final Action[] startActions = startStepActions.execute().toArray(new Action[0]);
                 final Action[] endActions = endStepActions.execute().toArray(new Action[0]);
                 if (endActions.length > startActions.length) {
-                    final Action[] filteredActions = (Action[]) ArrayUtils.subarray(endActions, startActions.length,
-                            endActions.length);
-                    LOGGER.debug("Reduced actions list from {} to {} action(s)", endActions.length, filteredActions.length);
+                    final Action[] filteredActions =
+                            (Action[]) ArrayUtils.subarray(endActions, startActions.length, endActions.length);
+                    LOGGER.debug("Reduced actions list from {} to {} action(s)", endActions.length,
+                            filteredActions.length);
                     mapper.writeValue(actionsAsString, filteredActions);
                 } else {
                     LOGGER.debug("Unable to reduce list of actions (has {})", endActions.length);
@@ -161,7 +157,8 @@ public abstract class BaseExportStrategy {
 
                 return "{\"actions\": " + actionsAsString + '}';
             } catch (IOException e) {
-                final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", endStepId);
+                final ExceptionContext context =
+                        ExceptionContext.build().put("id", preparationId).put("version", endStepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }
@@ -187,14 +184,6 @@ public abstract class BaseExportStrategy {
         }
         final PreparationDetailsGet preparationDetailsGet =
                 applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
-        try (InputStream details = preparationDetailsGet.execute()) {
-            return mapper.readerFor(PreparationMessage.class).readValue(details);
-        } catch (Exception e) {
-            LOGGER.error("Unable to read preparation {}", preparationId, e);
-            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
-        }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
-                preparationId, stepId);
         return preparationDetailsGet.execute();
     }
 

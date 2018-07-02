@@ -89,11 +89,6 @@ public class FeatureContext {
         return name.substring(0, name.indexOf(TI_SUFFIX_UID));
     }
 
-    @PostConstruct
-    public void init() {
-        folders = folderUtil.getEmptyReverseSortedSet();
-    }
-
     /**
      * Add a suffix to a name depending of the execution instance.
      *
@@ -106,9 +101,14 @@ public class FeatureContext {
             return folderPath;
         }
         // 2 cases, following the path starts from the root or not
-        return folderPath.startsWith("/") ?
-                "/" + folderPath.substring(1).replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID :
-                folderPath.replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID;
+        return folderPath.startsWith("/")
+                ? "/" + folderPath.substring(1).replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID
+                : folderPath.replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID;
+    }
+
+    @PostConstruct
+    public void init() {
+        folders = folderUtil.getEmptyReverseSortedSet();
     }
 
     /**
@@ -188,9 +188,8 @@ public class FeatureContext {
         return new ArrayList<>(datasetIdByName.values());
     }
 
-
     @NotNull
-    public List<String> getDatasetNames(){
+    public List<String> getDatasetNames() {
         return new ArrayList<>(datasetIdByName.keySet());
     }
 

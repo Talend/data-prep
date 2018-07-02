@@ -12,20 +12,25 @@
 
 package org.talend.dataprep.conversions;
 
+import static java.util.stream.Stream.of;
+
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiFunction;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
-
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.function.BiFunction;
-
-import static java.util.stream.Stream.of;
 
 /**
  * This service provides methods to convert beans to other beans (DTOs, transient beans...). This service helps code to
@@ -37,8 +42,10 @@ public class BeanConversionService implements ConversionService {
     private final Map<Class<?>, Registration<Object>> registrations = new HashMap<>();
 
     /**
-     * The {@link BeanUtils#copyProperties(java.lang.Object, java.lang.Object)} method does <b>NOT</b> check if parametrized type
-     * are compatible when copying values, this helper method performs this additional check and ignore copy of those values.
+     * The {@link BeanUtils#copyProperties(java.lang.Object, java.lang.Object)} method does <b>NOT</b> check if
+     * parametrized type
+     * are compatible when copying values, this helper method performs this additional check and ignore copy of those
+     * values.
      *
      * @param source The source bean (from which values are read).
      * @param converted The target bean (to which values are written).
@@ -59,9 +66,11 @@ public class BeanConversionService implements ConversionService {
                     final Type sourceReturnType = readMethod.getGenericReturnType();
                     final Method targetPropertyWriteMethod = targetProperty.getWriteMethod();
                     if (targetPropertyWriteMethod != null) {
-                        final Type targetReturnType = targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
-                        boolean valid = Object.class.equals(targetPropertyType) ||
-                                sourcePropertyType.equals(targetPropertyType) && sourceReturnType.equals(targetReturnType);
+                        final Type targetReturnType =
+                                targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
+                        boolean valid =
+                                Object.class.equals(targetPropertyType) || sourcePropertyType.equals(targetPropertyType)
+                                        && sourceReturnType.equals(targetReturnType);
                         if (!valid) {
                             discardedProperties.add(sourceProperty.getName());
                         }
@@ -73,14 +82,15 @@ public class BeanConversionService implements ConversionService {
         }
 
         // Perform copy
-        BeanUtils.copyProperties(source, converted, discardedProperties.toArray(new String[discardedProperties.size()]));
+        BeanUtils.copyProperties(source, converted,
+                discardedProperties.toArray(new String[discardedProperties.size()]));
     }
 
     public static <T> RegistrationBuilder<T> fromBean(Class<T> source) {
         return new RegistrationBuilder<>(source);
     }
 
-    public  void register(Registration<?> registration) {
+    public void register(Registration<?> registration) {
         registrations.merge(registration.getModelClass(), (Registration<Object>) registration, Registration::merge);
     }
 
@@ -104,7 +114,8 @@ public class BeanConversionService implements ConversionService {
     }
 
     /**
-     * Similar {@link #convert(Object, Class)} but allow user to specify a constant conversion that overrides previously defined
+     * Similar {@link #convert(Object, Class)} but allow user to specify a constant conversion that overrides previously
+     * defined
      * conversions.
      *
      * @param source The bean to convert.
@@ -117,7 +128,7 @@ public class BeanConversionService implements ConversionService {
     public <U, T> T convert(U source, Class<T> aClass, BiFunction<U, T, T>... onTheFlyConvert) {
         try {
             T current = convert(source, aClass);
-            for (BiFunction<U, T, T> function: onTheFlyConvert) {
+            for (BiFunction<U, T, T> function : onTheFlyConvert) {
                 current = function.apply(source, current);
             }
             return current;
@@ -169,7 +180,7 @@ public class BeanConversionService implements ConversionService {
 
     /** Get all available transformations in this registration. */
     private <T, U> List<BiFunction<T, U, U>> getRegistrationFunctions(Class<U> targetClass,
-                                                                                  Registration<T> registration) {
+            Registration<T> registration) {
         List<BiFunction<T, U, U>> customs = new ArrayList<>();
         Class<U> currentClass = targetClass;
         while (currentClass != null) {

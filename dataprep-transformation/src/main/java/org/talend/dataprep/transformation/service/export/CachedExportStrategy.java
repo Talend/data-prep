@@ -22,15 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.PreparationErrorCodes;
-import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.transformation.format.CSVFormat;
+import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 /**
  * A {@link BaseExportStrategy strategy} to reuse previous preparation export if available (if no previous content found
@@ -71,9 +67,6 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
     public StreamingResponseBody execute(ExportParameters parameters) {
         formatService.setExportHeaders(parameters);
         final TransformationCacheKey contentKey = getCacheKey(parameters);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                getFormat(parameters.getExportType()));
         return outputStream -> {
             try (InputStream cachedContent = contentCache.get(contentKey)) {
                 IOUtils.copy(cachedContent, outputStream);
@@ -81,7 +74,8 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
         };
     }
 
-    @Override public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
+    @Override
+    public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
         throw new UnsupportedOperationException("Cache export strategy don't support write to cache.");
     }
 

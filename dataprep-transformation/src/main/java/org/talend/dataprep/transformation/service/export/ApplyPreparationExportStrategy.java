@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
@@ -80,7 +80,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
     private void doExecute(ExportParameters parameters, OutputStream outputStream, TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
         final ExportFormat format = formatService.getFormat(parameters.getExportType());
 

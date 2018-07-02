@@ -117,7 +117,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final PreparationDTO preparationDetails = getPreparation(preparation);
         for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD),
+                    ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -142,7 +143,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final PreparationDTO preparationDetails = getPreparation(preparation);
         for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD),
+                    ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -182,7 +184,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final PreparationDTO preparationDetails = getPreparation(preparation);
         for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD),
+                    ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }

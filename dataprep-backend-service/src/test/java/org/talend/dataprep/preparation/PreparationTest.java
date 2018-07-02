@@ -42,6 +42,18 @@ public class PreparationTest extends ServiceBaseTest {
     @Autowired
     private VersionService versionService;
 
+    public static List<Action> getSimpleAction(final String actionName, final String paramKey,
+            final String paramValue) {
+        final Action action = new Action();
+        action.setName(actionName);
+        action.getParameters().put(paramKey, paramValue);
+
+        final List<Action> actions = new ArrayList<>();
+        actions.add(action);
+
+        return actions;
+    }
+
     @Override
     @Before
     public void setUp() {
@@ -52,7 +64,8 @@ public class PreparationTest extends ServiceBaseTest {
     @Test
     public void testDefaultPreparation() throws Exception {
 
-        final Preparation preparation = new Preparation("#123", "12345", Step.ROOT_STEP.id(), versionService.version().getVersionId());
+        final Preparation preparation =
+                new Preparation("#123", "12345", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setCreationDate(0L);
 
         assertThat(preparation.id(), is("#123"));
@@ -68,12 +81,14 @@ public class PreparationTest extends ServiceBaseTest {
 
         assertThat(repository.get(Step.ROOT_STEP.getId(), PreparationActions.class), nullValue());
         assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class), notNullValue());
-        assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class).getId(), is("f6e172c33bdacbc69bca9d32b2bd78174712a171"));
+        assertThat(repository.get(Step.ROOT_STEP.getId(), Step.class).getId(),
+                is("f6e172c33bdacbc69bca9d32b2bd78174712a171"));
     }
 
     @Test
     public void testTimestamp() throws Exception {
-        Preparation preparation = new Preparation("#584284", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("#584284", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         final long time0 = preparation.getLastModificationDate();
         TimeUnit.MILLISECONDS.sleep(50);
         preparation.updateLastModificationDate();
@@ -84,7 +99,8 @@ public class PreparationTest extends ServiceBaseTest {
     @Test
     public void testId_withName() throws Exception {
         // Preparation id with name
-        Preparation preparation = new Preparation("#87374", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
+        Preparation preparation =
+                new Preparation("#87374", "1234", Step.ROOT_STEP.id(), versionService.version().getVersionId());
         preparation.setName("My Preparation");
         preparation.setCreationDate(0L);
         final String id0 = preparation.getId();
@@ -93,7 +109,8 @@ public class PreparationTest extends ServiceBaseTest {
         preparation.setName("");
         final String id1 = preparation.getId();
         assertThat(id1, is("#87374"));
-        // Same preparation (but with null name, null and empty names should be treated all the same): id must remain same
+        // Same preparation (but with null name, null and empty names should be treated all the same): id must remain
+        // same
         preparation.setName(null);
         final String id2 = preparation.getId();
         assertThat(id2, is("#87374"));
@@ -159,16 +176,5 @@ public class PreparationTest extends ServiceBaseTest {
         repository.add(preparation);
 
         assertThat(preparation.id(), Is.is("#54258728"));
-    }
-
-    public static List<Action> getSimpleAction(final String actionName, final String paramKey, final String paramValue) {
-        final Action action = new Action();
-        action.setName(actionName);
-        action.getParameters().put(paramKey, paramValue);
-
-        final List<Action> actions = new ArrayList<>();
-        actions.add(action);
-
-        return actions;
     }
 }

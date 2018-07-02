@@ -38,20 +38,20 @@ public class APIService {
     protected ApplicationContext context;
 
     @Autowired
-    private PoolingHttpClientConnectionManager connectionManager;
-
-    @Autowired
     protected ObjectMapper mapper;
 
     @Autowired
     protected BeanConversionService beanConversionService;
 
+    @Autowired
+    private PoolingHttpClientConnectionManager connectionManager;
+
     protected <T extends HystrixCommand> T getCommand(Class<T> clazz, Object... args) {
         try {
             return context.getBean(clazz, args);
         } catch (BeansException e) {
-            throw new TDPException(APIErrorCodes.UNABLE_TO_FIND_COMMAND, e, ExceptionContext.build().put("class", clazz)
-                    .put("args", args));
+            throw new TDPException(APIErrorCodes.UNABLE_TO_FIND_COMMAND, e,
+                    ExceptionContext.build().put("class", clazz).put("args", args));
         }
     }
 

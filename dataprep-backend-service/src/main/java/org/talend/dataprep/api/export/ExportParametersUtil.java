@@ -12,11 +12,7 @@
 
 package org.talend.dataprep.api.export;
 
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
-
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -27,12 +23,8 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
-import org.talend.dataprep.exception.TDPException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 @Component
 public class ExportParametersUtil {
@@ -66,10 +58,11 @@ public class ExportParametersUtil {
         }
 
         // we deal with a preparation export parameter. We need to populate stepId and datasetId
-        if(StringUtils.isNotEmpty(exportParam.getPreparationId())){
+        if (StringUtils.isNotEmpty(exportParam.getPreparationId())) {
             PreparationDTO prep = getPreparation(exportParam.getPreparationId(), exportParam.getStepId());
             result.setStepId(getCleanStepId(prep, exportParam.getStepId()));
-            // if we don't have dataSetId and don't have content to apply the preparation, we apply on the dataSet use for the preparation
+            // if we don't have dataSetId and don't have content to apply the preparation, we apply on the dataSet use
+            // for the preparation
             if (exportParam.getDatasetId() == null && exportParam.getContent() == null) {
                 result.setDatasetId(prep.getDataSetId());
             }
@@ -90,7 +83,8 @@ public class ExportParametersUtil {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
+        final PreparationDetailsGet preparationDetailsGet =
+                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
         return preparationDetailsGet.execute();
     }
 

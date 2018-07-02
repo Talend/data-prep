@@ -53,11 +53,26 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationConversions.class);
 
+    /**
+     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in
+     * TDP-4531 to
+     * avoid removing columns used by other actions.
+     * <p>
+     * Such method is not ideal as the system should be able to handle such removal in a much more generic way.
+     * </p>
+     */
+    private static ActionForm disallowColumnCreationChange(ActionForm form) {
+        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(
+                p -> p.setReadonly(true));
+        return form;
+    }
+
     @Override
     public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
-                                        ApplicationContext applicationContext) {
+            ApplicationContext applicationContext) {
         conversionService.register(fromBean(Preparation.class) //
-                .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class, PreparationDTO.class) //
+                .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class,
+                        PreparationDTO.class) //
                 .using(PreparationMessage.class, (s, t) -> toPreparationMessage(s, t, applicationContext)) //
                 .using(PreparationSummary.class, (s, t) -> toStudioPreparation(s, t, applicationContext)) //
                 .build());
@@ -65,7 +80,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
     }
 
     private PreparationSummary toStudioPreparation(Preparation source, PreparationSummary target,
-                                                   ApplicationContext applicationContext) {
+            ApplicationContext applicationContext) {
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
         final ActionRegistry actionRegistry = applicationContext.getBean(ActionRegistry.class);
 
@@ -87,12 +102,15 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
         return target;
     }
 
-    private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target, ApplicationContext applicationContext) {
+    private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target,
+            ApplicationContext applicationContext) {
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
         final ActionRegistry actionRegistry = applicationContext.getBean(ActionRegistry.class);
 
         // Steps diff metadata
-        final List<StepDiff> diffs = source.getSteps().stream() //
+        final List<StepDiff> diffs = source
+                .getSteps()
+                .stream() //
                 .filter(step -> !Step.ROOT_STEP.id().equals(step.id())) //
                 .map(Step::getDiff) //
                 .collect(toList());
@@ -104,7 +122,8 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             final String headId = source.getHeadId();
             final Step head = preparationRepository.get(headId, Step.class);
             if (head != null) {
-                final PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+                final PreparationActions prepActions =
+                        preparationRepository.get(head.getContent(), PreparationActions.class);
                 if (prepActions != null) {
                     final List<Action> actions = prepActions.getActions();
                     target.setActions(prepActions.getActions());
@@ -125,12 +144,16 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
 
                     // Actions metadata
                     if (actionRegistry == null) {
-                        LOGGER.debug("No action metadata available, unable to serialize action metadata for preparation {}.",
+                        LOGGER.debug(
+                                "No action metadata available, unable to serialize action metadata for preparation {}.",
                                 source.id());
                     } else {
-                        List<ActionForm> actionDefinitions = actions.stream() //
-                                .map(a -> actionRegistry.get(a.getName()) //
-                                .adapt(ScopeCategory.from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
+                        List<ActionForm> actionDefinitions = actions
+                                .stream() //
+                                .map(a -> actionRegistry
+                                        .get(a.getName()) //
+                                        .adapt(ScopeCategory
+                                                .from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
                                 .map(a -> a.getActionForm(getLocale())) //
                                 .map(PreparationConversions::disallowColumnCreationChange) //
                                 .collect(Collectors.toList());
@@ -149,17 +172,5 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             target.setMetadata(Collections.emptyList());
         }
         return target;
-    }
-
-    /**
-     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in TDP-4531 to
-     * avoid removing columns used by other actions.
-     * <p>
-     * Such method is not ideal as the system should be able to handle such removal in  a much more generic way.
-     * </p>
-     */
-    private static ActionForm disallowColumnCreationChange(ActionForm form) {
-        form.getParameters().stream().filter(p -> CREATE_NEW_COLUMN.equals(p.getName())).forEach(p -> p.setReadonly(true));
-        return form;
     }
 }

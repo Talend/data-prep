@@ -34,7 +34,7 @@ public interface FolderRepository {
 
     /**
      * Return true if the given folder exists.
-     * 
+     *
      * @param folderId the wanted folder folderId.
      * @return true if the given folder exists.
      */
@@ -99,7 +99,7 @@ public interface FolderRepository {
 
     /**
      * List the {@link FolderEntry} of the wanted type within the given folderId.
-     * 
+     *
      * @param folderId the parent folderId
      * @param contentType the contentClass to filter folder entries
      * @return A {@link java.lang.Iterable iterable} of {@link FolderEntry} content filtered for the given type
@@ -120,7 +120,7 @@ public interface FolderRepository {
 
     /**
      * <b>if the destination or entry doesn't exist a {@link IllegalArgumentException} will be thrown</b>
-     * 
+     *
      * @param folderEntry the {@link FolderEntry} to move.
      * @param fromId where to look for the folder entry.
      * @param toId the destination where to move the entry.
@@ -129,7 +129,7 @@ public interface FolderRepository {
 
     /**
      * Copy the given folder entry to the target destination.
-     * 
+     *
      * @param folderEntry the {@link FolderEntry} to move
      * @param toId the destination where to copy the entry
      */
@@ -149,6 +149,7 @@ public interface FolderRepository {
 
     /**
      * Use this method to get a {@link Folder} using a <code>path</code>.
+     *
      * @param path The path to be searched.
      * @return An {@link Optional} for searched <code>path</code>.
      */

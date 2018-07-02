@@ -20,9 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,16 +40,9 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.cache.TransformationMetadataCacheKey;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a preparation (using its default data set), using any information
@@ -85,19 +76,22 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
     public StreamingResponseBody execute(ExportParameters parameters) {
         formatService.setExportHeaders(parameters);
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
-        return outputStream -> performOptimizedTransform(parameters, new org.bouncycastle.util.io.TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
+        return outputStream -> performOptimizedTransform(parameters, new org.bouncycastle.util.io.TeeOutputStream(
+                outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
 
     @Override
     public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
         try {
-            performOptimizedTransform(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), cacheKeyGenerator.generateContentKey(parameters));
+            performOptimizedTransform(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT),
+                    cacheKeyGenerator.generateContentKey(parameters));
         } catch (IOException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
         }
     }
 
-    private void performOptimizedTransform(ExportParameters parameters, OutputStream outputStream, TransformationCacheKey key) throws IOException {
+    private void performOptimizedTransform(ExportParameters parameters, OutputStream outputStream,
+            TransformationCacheKey key) throws IOException {
         // Initial check
         final OptimizedPreparationInput optimizedPreparationInput = new OptimizedPreparationInput(parameters).invoke();
         if (optimizedPreparationInput == null) {
@@ -124,20 +118,6 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             preparation.setSteps(getMatchingSteps(preparation.getSteps(), previousVersion, version));
 
             LOGGER.debug("Running optimized strategy for preparation {} @ step #{}", preparationId, version);
-
-            // create tee to broadcast to cache + service output
-            final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
-                    dataSetId, //
-                    preparationId, //
-                    version, //
-                    parameters.getExportType(), //
-                    parameters.getFrom(), //
-                    parameters.getArguments(), //
-                    parameters.getFilter() //
-            );
-            LOGGER.debug("Cache key: " + key.getKey());
-            LOGGER.debug("Cache key details: " + key.toString());
-
             try {
                 final Configuration configuration = Configuration
                         .builder() //

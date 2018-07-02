@@ -249,7 +249,8 @@ public class PreparationService {
                     .entries(searchCriterion.getFolderId(), PREPARATION) //
                     .map(FolderEntry::getContentId) //
                     .collect(Collectors.toSet());
-            preparationStream = preparationStream.filter(p -> entries.contains(p.id())).peek(p -> p.setFolderId(searchCriterion.getFolderId()));
+            preparationStream = preparationStream.filter(p -> entries.contains(p.id())).peek(
+                    p -> p.setFolderId(searchCriterion.getFolderId()));
         }
         // filter on folder path
         if (searchCriterion.getFolderPath() != null) {
@@ -512,7 +513,8 @@ public class PreparationService {
         lockPreparation(preparationId);
 
         try {
-            final PersistentPreparation previousPreparation = preparationRepository.get(preparationId, PersistentPreparation.class);
+            final PersistentPreparation previousPreparation =
+                    preparationRepository.get(preparationId, PersistentPreparation.class);
             LOGGER.debug("Updating preparation with id {}: {}", preparation.getId(), previousPreparation);
 
             PersistentPreparation updated = previousPreparation.merge(preparation);

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
 
@@ -62,14 +62,14 @@ public class FolderAPITest extends ApiServiceTestBase {
 
     @Test
     public void should_create_folder_in_root() throws IOException {
-        //given
+        // given
         final List<Folder> originalFolders = getFolderChildren(home.getId());
         assertThat(originalFolders, hasSize(0));
 
-        //when
+        // when
         createFolder("beer", home.getId());
 
-        //then
+        // then
         final List<Folder> folders = getFolderChildren(home.getId());
         assertThat(folders, hasSize(1));
         assertThat(folders.get(0).getName(), is("beer"));
@@ -78,16 +78,16 @@ public class FolderAPITest extends ApiServiceTestBase {
 
     @Test
     public void should_create_nested_folder() throws IOException {
-        //given
+        // given
         createFolder("beer", home.getId());
         final Folder beer = getFolder(home.getId(), "beer");
         final List<Folder> originalFolders = getFolderChildren(beer.getId());
         assertThat(originalFolders, hasSize(0));
 
-        //when
+        // when
         createFolder("/beer/alcohol", home.getId());
 
-        //then
+        // then
         final List<Folder> folders = getFolderChildren(beer.getId());
         assertThat(folders, hasSize(1));
         assertThat(folders.get(0).getName(), is("alcohol"));
@@ -96,14 +96,14 @@ public class FolderAPITest extends ApiServiceTestBase {
 
     @Test
     public void should_remove_empty_folder() throws IOException {
-        //given
+        // given
         createFolder("beer", home.getId());
         final Folder beer = getFolder(home.getId(), "beer");
 
-        //when
+        // when
         final Response response = removeFolder(beer.getId());
 
-        //then
+        // then
         assertThat(response.getStatusCode(), is(200));
         final List<Folder> folders = getFolderChildren(home.getId());
         assertThat(folders, is(empty()));
@@ -120,16 +120,16 @@ public class FolderAPITest extends ApiServiceTestBase {
 
     @Test
     public void should_return_conflict_on_non_empty_folder_remove() throws IOException {
-        //given
+        // given
         createFolder("beer", home.getId());
         final Folder beer = getFolder(home.getId(), "beer");
         final FolderEntry folderEntry = new FolderEntry(DATASET, "6f8a54051bc454");
         createFolderEntry(folderEntry, beer.getId());
 
-        //when
+        // when
         final Response response = removeFolder(beer.getId());
 
-        //then
+        // then
         assertThat(response.getStatusCode(), is(409));
         final String content = response.asString();
         assertTrue(StringUtils.isNoneBlank(content));
@@ -155,7 +155,10 @@ public class FolderAPITest extends ApiServiceTestBase {
         // when
         final Response response = given() //
                 .when()//
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .get("/api/folders/{id}/preparations", home.getId());
 
         // then
@@ -191,7 +194,10 @@ public class FolderAPITest extends ApiServiceTestBase {
         // when
         final Response response = given() //
                 .when()//
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .get("/api/folders/{id}/preparations", home.getId());
 
         // then
@@ -205,19 +211,19 @@ public class FolderAPITest extends ApiServiceTestBase {
 
     @Test
     public void should_rename_folder() throws IOException {
-        //given
+        // given
         createFolder("beer", home.getId());
         final Folder beer = getFolder(home.getId(), "beer");
 
         final String name = "new beer";
 
-        //when
+        // when
         final Response response = given() //
                 .body(name) //
                 .when() //
                 .put("/api/folders/{id}/name", beer.getId());
 
-        //then
+        // then
         assertThat(response.getStatusCode(), is(200));
         final Folder updatedBeer = getFolder(home.getId(), name);
         assertNotNull(updatedBeer);
@@ -248,26 +254,27 @@ public class FolderAPITest extends ApiServiceTestBase {
         assertOnSearch("titi", strict, 1);
         assertOnSearch("good", strict, 0);
     }
+
     @Test
     public void shouldReturnEntireFolderTree() throws Exception {
         // given
-        //                        HOME
-        //              ___________|____________
-        //              |                       |
-        //             first                  second
-        //          ____|____                   |
-        //          |        |                  |
-        //first child 1   first child 2     second child
-        //                                      |
-        //                                      |
-        //                                  second child child
+        // HOME
+        // ___________|____________
+        // | |
+        // first second
+        // ____|____ |
+        // | | |
+        // first child 1 first child 2 second child
+        // |
+        // |
+        // second child child
 
         createFolder("first", home.getId());
         createFolder("second", home.getId());
 
         final Folder firstFolder = getFolder(home.getId(), "first");
         final Folder secondFolder = getFolder(home.getId(), "second");
-        createFolder( "first child one", firstFolder.getId());
+        createFolder("first child one", firstFolder.getId());
         createFolder("first child two", firstFolder.getId());
         createFolder("second child", secondFolder.getId());
 
@@ -276,44 +283,48 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         // when
         final Response response = given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/tree");
 
         // then
         final FolderTreeNode tree = mapper.readValue(response.asString(), new TypeReference<FolderTreeNode>() {
         });
-        assertTree(tree, "/", new String[]{"/first", "/second"});
+        assertTree(tree, "/", new String[] { "/first", "/second" });
 
         final FolderTreeNode firstFolderNode = getChild(tree, "first");
         final FolderTreeNode secondFolderNode = getChild(tree, "second");
-        assertTree(firstFolderNode, "/first", new String[]{"/first/first child one", "/first/first child two"});
-        assertTree(secondFolderNode, "/second", new String[]{"/second/second child"});
+        assertTree(firstFolderNode, "/first", new String[] { "/first/first child one", "/first/first child two" });
+        assertTree(secondFolderNode, "/second", new String[] { "/second/second child" });
 
         final FolderTreeNode secondChildFolderNode = getChild(secondFolderNode, "second child");
-        assertTree(secondChildFolderNode, "/second/second child", new String[]{"/second/second child/second child child"});
+        assertTree(secondChildFolderNode, "/second/second child",
+                new String[] { "/second/second child/second child child" });
     }
 
     @Test
     public void shouldFolderMetadataWithHierarchy() throws Exception {
         // given
-        //                        HOME
-        //              ___________|____________
-        //              |                       |
-        //             first                  second
-        //          ____|____                   |
-        //          |        |                  |
-        //first child 1   first child 2     second child
-        //                                      |
-        //                                      |
-        //                                  second child child
+        // HOME
+        // ___________|____________
+        // | |
+        // first second
+        // ____|____ |
+        // | | |
+        // first child 1 first child 2 second child
+        // |
+        // |
+        // second child child
 
         createFolder("first", home.getId());
         createFolder("second", home.getId());
 
         final Folder firstFolder = getFolder(home.getId(), "first");
         final Folder secondFolder = getFolder(home.getId(), "second");
-        createFolder( "first child one", firstFolder.getId());
+        createFolder("first child one", firstFolder.getId());
         createFolder("first child two", firstFolder.getId());
         createFolder("second child", secondFolder.getId());
 
@@ -324,14 +335,18 @@ public class FolderAPITest extends ApiServiceTestBase {
 
         // when
         final Response response = given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/{id}", firstChildTwo.getId());
 
         // then
         final FolderInfo infos = mapper.readValue(response.asString(), new TypeReference<FolderInfo>() {
         });
-        final List<Folder> hierarchy = StreamSupport.stream(infos.getHierarchy().spliterator(), false).collect(toList());
+        final List<Folder> hierarchy =
+                StreamSupport.stream(infos.getHierarchy().spliterator(), false).collect(toList());
         assertThat(infos.getFolder(), equalTo(firstChildTwo));
         assertThat(hierarchy, hasSize(2));
         assertThat(hierarchy.get(0).getId(), equalTo(home.getId()));
@@ -346,7 +361,10 @@ public class FolderAPITest extends ApiServiceTestBase {
         given() //
                 .queryParam("parentId", parentId) //
                 .queryParam("path", "ZAP%n%s%n%s%n%s%n%s%n%s") //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .when() //
                 .put("/api/folders");
     }
@@ -358,7 +376,10 @@ public class FolderAPITest extends ApiServiceTestBase {
         Response response = given() //
                 .queryParam("parentId", "ZAP%n%s%n%s%n%s%n%s%n%s") //
                 .queryParam("path", "new-folder") //
-                .expect().statusCode(400).log().ifError() //
+                .expect()
+                .statusCode(400)
+                .log()
+                .ifError() //
                 .when() //
                 .put("/api/folders");
 
@@ -370,23 +391,24 @@ public class FolderAPITest extends ApiServiceTestBase {
     private void assertTree(final FolderTreeNode node, final String nodePath, final String[] expectedChildrenPaths) {
         assertThat(node.getFolder().getPath(), is(nodePath));
         assertThat(node.getChildren(), hasSize(expectedChildrenPaths.length));
-        final List<String> actualChildrenPaths = node.getChildren()
-                .stream()
-                .map((folderTreeNode -> folderTreeNode.getFolder().getPath()))
-                .collect(toList());
+        final List<String> actualChildrenPaths =
+                node.getChildren().stream().map((folderTreeNode -> folderTreeNode.getFolder().getPath())).collect(
+                        toList());
         assertThat(actualChildrenPaths, containsInAnyOrder(expectedChildrenPaths));
     }
 
     private FolderTreeNode getChild(final FolderTreeNode tree, final String childName) {
-        return tree.getChildren()
+        return tree
+                .getChildren()
                 .stream()
                 .filter((child) -> child.getFolder().getName().equals(childName))
                 .findFirst()
                 .orElse(null);
     }
 
-    private void assertOnSearch(final String searchQuery, final boolean strict, final int expectedSize) throws Exception {
-        //when
+    private void assertOnSearch(final String searchQuery, final boolean strict, final int expectedSize)
+            throws Exception {
+        // when
         final Response response = given() //
                 .queryParam("name", searchQuery) //
                 .queryParam("strict", strict) //
@@ -395,7 +417,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         final List<Folder> folders = mapper.readValue(response.asString(), new TypeReference<List<Folder>>() {
         });
 
-        //then
+        // then
         assertThat(folders, hasSize(expectedSize));
     }
 
@@ -426,7 +448,8 @@ public class FolderAPITest extends ApiServiceTestBase {
         });
     }
 
-    private FolderEntry createFolderEntry(final FolderEntry folderEntry, String folderId) throws JsonProcessingException {
+    private FolderEntry createFolderEntry(final FolderEntry folderEntry, String folderId)
+            throws JsonProcessingException {
         return folderRepository.addFolderEntry(folderEntry, folderId);
     }
 

@@ -411,7 +411,8 @@ public class FileSystemFolderRepository implements FolderRepository {
             } else {
                 queryForFileSearch = path;
             }
-            return Files.walk(pathsConverter.getRootFolder()) //
+            return Files
+                    .walk(pathsConverter.getRootFolder()) //
                     .filter(p -> Files.isDirectory(p) && p.getFileName().toString().equals(queryForFileSearch)) //
                     .findFirst() //
                     .map(p -> toFolder(p, security.getUserId()));

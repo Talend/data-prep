@@ -159,11 +159,13 @@ export default function PlaygroundService(
 		FilterService.initFilters(dataset, preparation);
 
 		updateGridSelection(dataset, preparation);
+		updatePlayground(data);
 
 		// preparation specific init
 		if (preparation) {
 			ExportService.refreshTypes('preparations', preparation.id);
 			TitleService.setStrict(preparation.name);
+			RecipeService.refresh(preparation);
 		}
 
 		// dataset specific init
@@ -173,15 +175,9 @@ export default function PlaygroundService(
 			TitleService.setStrict(dataset.name);
 		}
 
-		return $q.all(
-			this.updateDatagrid(),
-			this.updatePreparationDetails()
-				.then(() => {
-					if (state.playground.recipe.current.steps.length) {
-						StateService.showRecipe();
-					}
-				}),
-		);
+		if (state.playground.recipe.current.steps.length) {
+			StateService.showRecipe();
+		}
 	}
 
 	/**
@@ -453,7 +449,7 @@ export default function PlaygroundService(
 	 * @description Move the preparation head to the specified step
 	 * @returns {promise} The process promise
 	 */
-	function setPreparationHead(preparationId, headId, columnToFocus) {
+	function setPreparationHead(preparationId, headId) {
 		startLoader();
 
 		let promise = PreparationService.setHead(preparationId, headId);
@@ -477,7 +473,7 @@ export default function PlaygroundService(
 		// load the recipe and grid head in parallel
 		else {
 			promise = promise.then(() => {
-				return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid(columnToFocus)]);
+				return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid()]);
 			});
 		}
 
@@ -502,10 +498,8 @@ export default function PlaygroundService(
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
 		return getCurrentPreparation()
-		// append step
-			.then((preparation) => {
-				return PreparationService.appendStep(preparation.id, actions);
-			})
+			// append step
+			.then(preparation => PreparationService.appendStep(preparation.id, actions))
 			// update recipe and datagrid
 			.then(() => {
 				return $q.all([this.updatePreparationDetails(), updatePreparationDatagrid()]);
@@ -649,13 +643,11 @@ export default function PlaygroundService(
 				currentStepId,
 				nextParentStepId,
 			)
-			// update recipe and datagrid
-				.then(() => {
-					return $q.all([
-						this.updatePreparationDetails(),
-						updatePreparationDatagrid(),
-					]);
-				})
+				// update recipe and datagrid (due to backend implementation:
+				// getContent should be called first so that updated stepRowMetadata
+				// is available for getContent)
+				.then(updatePreparationDatagrid)
+				.then(this.updatePreparationDetails)
 				// add entry in history for undo/redo
 				.then(() => {
 					const actualHead = StepUtilsService.getLastStep(recipe)
@@ -934,14 +926,14 @@ export default function PlaygroundService(
 	 * @description Perform an datagrid refresh with the preparation head
 	 */
 	function updatePreparationDatagrid() {
+		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			'head',
 			state.playground.sampleType
-		).then((response) => {
-			DatagridService.updateData(response);
-			PreviewService.reset(false);
-		});
+		)
+			.then(updatePlayground)
+			.finally(stopLoader);
 	}
 
 	function updateDatasetDatagrid(tql) {
@@ -949,14 +941,14 @@ export default function PlaygroundService(
 		if (!dataset) {
 			return;
 		}
+		startLoader();
 		return DatasetService.getContent(
 			dataset.id,
 			true,
 			tql
-		).then((response) => {
-			DatagridService.updateData(response);
-			PreviewService.reset(false);
-		});
+		)
+			.then(updatePlayground)
+			.finally(stopLoader);
 	}
 
 	function updateDatagrid() {
@@ -1103,5 +1095,10 @@ export default function PlaygroundService(
 		$timeout.cancel(fetchStatsTimeout);
 		$timeout(StateService.resetPlayground, 500, false);
 		$state.go(state.route.previous, state.route.previousOptions);
+	}
+
+	function updatePlayground(data) {
+		DatagridService.updateData(data);
+		PreviewService.reset(false);
 	}
 }

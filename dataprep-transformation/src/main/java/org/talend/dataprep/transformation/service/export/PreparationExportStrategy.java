@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.util.io.TeeOutputStream;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
@@ -37,8 +38,11 @@ import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
+import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
+import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,7 +90,8 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
-        final PreparationMessage preparation = getPreparation(preparationId, stepId);
+        final String formatName = parameters.getExportType();
+        final PreparationDTO preparation = getPreparation(preparationId, stepId);
         final String dataSetId = preparation.getDataSetId();
         final ExportFormat format = formatService.getFormat(parameters.getExportType());
 

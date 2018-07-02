@@ -176,7 +176,10 @@ export default class DatasetImportCtrl {
 	 * @param uiSpecs All data as form properties
 	 * @param definitionName ID attached to the form
 	 */
-	onDatastoreFormSubmit(uiSpecs, definitionName = (this.locationType || LIVE_LOCATION_TYPE)) {
+	onDatastoreFormSubmit(
+		uiSpecs,
+		definitionName = (this.locationType || this.item.location.componentType || LIVE_LOCATION_TYPE)
+	) {
 		const { formData } = uiSpecs;
 		if (this.submitLock) {
 			const formsData = {
@@ -221,7 +224,10 @@ export default class DatasetImportCtrl {
 					'DATASTORE_CONNECTION_SUCCESSFUL'
 				))
 				.then(() => {
-					if (!this.item && !this.datasetForm) {
+					if (!this.datasetForm) {
+						if (this.item && this.item.id) {
+							formData.datasetId = this.item.id;
+						}
 						return this._initDatasetForm(formData);
 					}
 				});

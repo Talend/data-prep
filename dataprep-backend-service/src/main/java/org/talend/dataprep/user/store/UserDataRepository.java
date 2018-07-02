@@ -12,8 +12,6 @@
 //  ============================================================================
 package org.talend.dataprep.user.store;
 
-import javax.validation.constraints.NotNull;
-
 import org.talend.dataprep.api.user.UserData;
 
 /**
@@ -27,7 +25,6 @@ public interface UserDataRepository<U extends UserData> {
      * @param userId, the identifier of the user
      * @return the {@link UserData} for the given userId
      */
-    @NotNull
     U get(String userId);
 
     /**

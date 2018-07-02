@@ -78,7 +78,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.export.ExportParametersUtil;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.async.AsyncExecutionId;
@@ -120,6 +121,7 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.api.action.dynamic.DynamicType;
 import org.talend.dataprep.transformation.api.action.dynamic.GenericParameter;
+import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.api.transformer.configuration.PreviewConfiguration;
 import org.talend.dataprep.transformation.api.transformer.suggestion.Suggestion;
@@ -248,7 +250,7 @@ public class TransformationService extends BaseTransformationService {
 
         LOG.debug("getting preparation metadata for #{}, step {}", preparationId, stepId);
 
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
         if (preparation.getSteps().size() > 1) {
             String headId = "head".equalsIgnoreCase(stepId) ? preparation.getHeadId() : stepId;
             final TransformationMetadataCacheKey cacheKey =
@@ -811,7 +813,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Get the available format types for the preparation")
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForPreparation(@PathVariable String preparationId) {
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
         final DataSetMetadata metadata =
                 context.getBean(DataSetGetMetadata.class, preparation.getDataSetId()).execute();
         return getPreparationExportTypesForDataSet(metadata.getId());
@@ -870,11 +872,11 @@ public class TransformationService extends BaseTransformationService {
                 stepId);
 
         // get the preparation
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
 
         // get the step (in case of 'head', the real step id must be found)
         final String version = StringUtils.equals("head", stepId) ? //
-                preparation.getSteps().get(preparation.getSteps().size() - 1).getId() : stepId;
+                preparation.getSteps().get(preparation.getSteps().size() - 1) : stepId;
 
         /*
          * OK, this one is a bit tricky so pay attention.
@@ -928,16 +930,9 @@ public class TransformationService extends BaseTransformationService {
      * @param preparationId the wanted preparation id.
      * @return the preparation from the preparation service.
      */
-    private Preparation getPreparation(@ApiParam(value = "The preparation id") @PathVariable String preparationId) {
-        final Preparation preparation;
-        try {
-            final PreparationDetailsGet details =
-                    applicationContext.getBean(PreparationDetailsGet.class, preparationId);
-            preparation = mapper.readerFor(Preparation.class).readValue(details.execute());
-        } catch (IOException e) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, e, build().put("id", preparationId));
-        }
-        return preparation;
+    private PreparationDTO getPreparation(String preparationId) {
+        final PreparationDetailsGet details = applicationContext.getBean(PreparationDetailsGet.class, preparationId);
+        return details.execute();
     }
 
     /**
@@ -984,7 +979,7 @@ public class TransformationService extends BaseTransformationService {
      * @param preparation the preparation to cache.
      * @param stepId the preparation step id.
      */
-    private void addPreparationInCache(Preparation preparation, String stepId) {
+    private void addPreparationInCache(PreparationDTO preparation, String stepId) {
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparation.getId());
         exportParameters.setExportType("JSON");
@@ -996,7 +991,6 @@ public class TransformationService extends BaseTransformationService {
         }
         exportParameters.setDatasetId(preparation.getDataSetId());
 
-        TransformationCacheKey key = cacheKeyGenerator.generateContentKey(exportParameters);
         final StreamingResponseBody streamingResponseBody = executeSampleExportStrategy(exportParameters);
         try {
             // the result is not important here as it will be cached !

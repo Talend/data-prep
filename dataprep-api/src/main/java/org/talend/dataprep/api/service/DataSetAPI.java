@@ -46,7 +46,6 @@ import org.talend.dataprep.api.service.command.dataset.UpdateColumn;
 import org.talend.dataprep.api.service.command.dataset.UpdateDataSet;
 import org.talend.dataprep.api.service.command.preparation.PreparationList;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByDataSetId;
-import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActions;
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
@@ -392,20 +391,15 @@ public class DataSetAPI extends APIService {
     @Timed
     public StreamingResponseBody suggestDatasetActions(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Data set id to get suggestions from.") String dataSetId) {
-        // Get dataset metadata
-        HystrixCommand<DataSetMetadata> retrieveMetadata = new HystrixCommand<DataSetMetadata>(GenericCommand.TRANSFORM_GROUP) {
+        HystrixCommand<InputStream> getLookupActions = getCommand(SuggestLookupActions.class,
+                new HystrixCommand<DataSetMetadata>(GenericCommand.TRANSFORM_GROUP) {
 
-            @Override
-            protected DataSetMetadata run() {
-                return getMetadata(dataSetId);
-            }
-        };
-        // Asks transformation service for suggested actions for column type and domain...
-        HystrixCommand<String> getSuggestedActions = getCommand(SuggestDataSetActions.class, retrieveMetadata);
-        // ... also adds lookup actions
-        HystrixCommand<InputStream> getLookupActions = getCommand(SuggestLookupActions.class, getSuggestedActions,
-                dataSetId);
-        // Returns actions
+                    @Override
+                    protected DataSetMetadata run() {
+                        return getMetadata(dataSetId);
+                    }
+                }, dataSetId);
+
         return toStreaming(getLookupActions);
     }
 

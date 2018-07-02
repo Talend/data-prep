@@ -52,7 +52,7 @@ import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
+public class SuggestLookupActions extends ChainedCommand<InputStream, DataSetMetadata> {
 
     @Autowired
     private ActionRegistry actionRegistry;
@@ -62,7 +62,7 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
      *
      * @param input the command to execute to get the input.
      */
-    public SuggestLookupActions(HystrixCommand<String> input, String dataSetId) {
+    public SuggestLookupActions(HystrixCommand<DataSetMetadata> input, String dataSetId) {
         super(input);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets"));
         on(HttpStatus.OK).then(process(dataSetId));
@@ -77,7 +77,8 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
     @Override
     protected InputStream getFallback() {
         // return the previous command result
-        return new ByteArrayInputStream(getInput().getBytes());
+        JsonNode jsonNode = objectMapper.valueToTree(getInput());
+        return new ByteArrayInputStream(jsonNode.toString().getBytes());
     }
 
     /**
@@ -89,15 +90,8 @@ public class SuggestLookupActions extends ChainedCommand<InputStream, String> {
         return (request, response) -> {
 
             // read suggested actions from previous command
-            ArrayNode suggestedActions;
+            ArrayNode suggestedActions = objectMapper.createArrayNode();
             try {
-                String jsonInput = getInput();
-                if (jsonInput.isEmpty()) {
-                    throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, new IllegalArgumentException("Source should not be empty"));
-                }
-                suggestedActions = (ArrayNode) objectMapper.readerFor(new TypeReference<Action>() {
-                }).readTree(jsonInput);
-
                 // list datasets from this command's response
                 List<DataSetMetadata> dataSets = objectMapper.readValue(response.getEntity().getContent(),
                         new TypeReference<List<DataSetMetadata>>() {

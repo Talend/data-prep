@@ -42,8 +42,6 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteAllEmptyColumns.class);
 
-    private boolean firstRow = true;
-
     /**
      * Case KEEP : test on the the DataFrequencies because empty and non-printing character are not the same.
      *

@@ -13,7 +13,6 @@
 package org.talend.dataprep.transformation.service.export;
 
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.security.SecurityProxy.SecurityReason.DATASET;
 
 import java.io.OutputStream;
 
@@ -90,7 +89,8 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         final ExportFormat format = getFormat(parameters.getExportType());
 
         boolean releasedIdentity = false;
-        securityProxy.asTechnicalUser(DATASET); // Allow get dataset and get dataset metadata access whatever share status is
+        // Allow get dataset and get dataset metadata access whatever share status is
+        securityProxy.asTechnicalUserForDataSet();
         try (DataSet dataSet = datasetClient.getDataSet(dataSetId)) {
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);

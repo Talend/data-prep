@@ -13,7 +13,6 @@
 package org.talend.dataprep.configuration;
 
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
-import static org.talend.dataprep.security.SecurityProxy.SecurityReason.DATASET;
 
 import java.util.LinkedList;
 
@@ -60,7 +59,7 @@ public class APIPreparationConversions extends BeanConversionServiceWrapper {
             DatasetClient datasetClient = applicationContext.getBean(DatasetClient.class);
             // get the dataset metadata
             try {
-                securityProxy.asTechnicalUser(DATASET); // because dataset are not shared
+                securityProxy.asTechnicalUserForDataSet();
                 final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparationMessage.getDataSetId());
                 enrichedPreparation.setSummary(new EnrichedPreparation.DataSetMetadataSummary(dataSetMetadata));
             } catch (Exception e) {

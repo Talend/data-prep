@@ -1,6 +1,5 @@
 package org.talend.dataprep.preparation.event;
 
-import static org.talend.dataprep.security.SecurityProxy.SecurityReason.DATASET;
 import static org.talend.tql.api.TqlBuilder.eq;
 import static org.talend.tql.api.TqlBuilder.in;
 
@@ -51,7 +50,7 @@ public class PreparationUpdateListenerUtil {
      */
     public void removePreparationStepRowMetadata(String dataSetId) {
         try {
-            securityProxy.asTechnicalUser(DATASET);
+            securityProxy.asTechnicalUserForDataSet();
             final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
             if (dataSetMetadata == null) {
                 LOGGER.error("Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).", dataSetId);

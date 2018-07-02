@@ -38,7 +38,7 @@ public class NoOpSecurityProxy implements SecurityProxy {
     }
 
     @Override
-    public void asTechnicalUser(SecurityReason reason) {
+    public void asTechnicalUserForDataSet() {
         // no op
     }
 

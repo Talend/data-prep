@@ -494,7 +494,7 @@ public class TransformationService extends BaseTransformationService {
     private void executeDiffOnDataset(final PreviewParameters previewParameters, final OutputStream output) {
 
         boolean identityReleased = false;
-        securityProxy.asTechnicalUser(SecurityProxy.SecurityReason.DATASET);
+        securityProxy.asTechnicalUserForDataSet();
         try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId())) {
             securityProxy.releaseIdentity();
             identityReleased = true;

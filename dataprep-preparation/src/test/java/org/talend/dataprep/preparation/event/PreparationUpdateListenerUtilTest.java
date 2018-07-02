@@ -5,7 +5,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.talend.dataprep.security.SecurityProxy.SecurityReason.DATASET;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -78,7 +77,7 @@ public class PreparationUpdateListenerUtilTest {
         // then
         verify(preparationRepository, times(1)).add(any(Preparation.class));
         verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class), eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
-        verify(securityProxy, times(1)).asTechnicalUser(DATASET);
+        verify(securityProxy, times(1)).asTechnicalUserForDataSet();
         verify(securityProxy, times(1)).releaseIdentity();
     }
 }

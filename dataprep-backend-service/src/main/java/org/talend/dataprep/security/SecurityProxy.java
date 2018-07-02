@@ -35,17 +35,12 @@ public interface SecurityProxy {
     /**
      * @deprecated This method should be deleted when the support of dataset legacy mode will be removed
      * @see DatasetConfiguration
-     * @param reason The reason why switching of identity
      */
-    void asTechnicalUser(SecurityReason reason);
+    void asTechnicalUserForDataSet();
 
     /**
      * Release the borrowed identity.
      */
     void releaseIdentity();
-
-    enum SecurityReason {
-        DATASET
-    }
 
 }

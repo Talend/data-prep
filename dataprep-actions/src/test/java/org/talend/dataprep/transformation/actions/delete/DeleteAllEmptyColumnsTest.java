@@ -1,5 +1,22 @@
 package org.talend.dataprep.transformation.actions.delete;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -13,14 +30,6 @@ import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.io.IOException;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAllEmptyColumns> {
 
@@ -45,6 +54,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         List<ColumnMetadata> columns = new ArrayList<>();
         Statistics statistics1 = new Statistics();
         statistics1.setDataFrequencies(Arrays.asList(new DataFrequency("blip", 10)));
+        statistics1.setCount(10);
         ColumnMetadata columnMetadata = column() //
                 .type(Type.INTEGER) //
                 .computedId("0000") //
@@ -54,6 +64,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         columns.add(columnMetadata);
         Statistics statistics2 = new Statistics();
         statistics2.setDataFrequencies(Arrays.asList(new DataFrequency("", 10)));
+        statistics2.setCount(10);
         columnMetadata = column() //
                 .type(Type.STRING) //
                 .computedId("0001") //
@@ -65,6 +76,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         columns.add(columnMetadata);
         Statistics statistics3 = new Statistics();
         statistics3.setDataFrequencies(Arrays.asList(new DataFrequency("blop", 10)));
+        statistics3.setCount(10);
         columnMetadata = column() //
                 .type(Type.STRING) //
                 .statistics(statistics3) //
@@ -74,12 +86,12 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         columns.add(columnMetadata);
         Statistics statistics4 = new Statistics();
         statistics4.setDataFrequencies(Arrays.asList(new DataFrequency("", 4), new DataFrequency(" ", 6)));
+        statistics4.setCount(10);
         columnMetadata = column() //
-            .type(Type.STRING) //
-            .computedId("0003") //
-            .empty(10) //
-            .statistics(statistics4)
-            .build();
+                .type(Type.STRING) //
+                .computedId("0003") //
+                .empty(10) //
+                .statistics(statistics4).build();
         columns.add(columnMetadata);
         rowMetadata = new RowMetadata();
         rowMetadata.setColumns(columns);
@@ -101,7 +113,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     }
 
     @Test
-    public void should_accept_column() {
+    public void shouldAcceptColumn() {
         assertTrue(action.acceptField(getColumn(Type.STRING)));
         assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
         assertTrue(action.acceptField(getColumn(Type.FLOAT)));
@@ -110,11 +122,17 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         assertTrue(action.acceptField(getColumn(Type.ANY)));
     }
 
+    @Test
+    public void shouldHaveExpectedBehavior() {
+        assertEquals(3, action.getBehavior().size());
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_DELETE_COLUMNS));
+    }
+
     /**
      * Next tests only use column metadatas and not the column content
      */
     @Test
-    public void should_delete_column() {
+    public void shouldDeleteColumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "1");
@@ -137,7 +155,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     }
 
     @Test
-    public void should_delete_only_one_column() {
+    public void shouldDeleteOnlyOneColumn() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "1");
@@ -158,11 +176,4 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
         assertNotNull(row.getRowMetadata().getById("0002"));
         assertNotNull(row.getRowMetadata().getById("0003"));
     }
-
-    @Test
-    public void should_have_expected_behavior() {
-        assertEquals(3, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_DELETE_COLUMNS));
-    }
-
 }

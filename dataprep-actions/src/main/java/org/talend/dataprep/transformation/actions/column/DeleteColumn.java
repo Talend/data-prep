@@ -15,6 +15,12 @@ package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.Action;
@@ -24,12 +30,6 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Deletes a column from a dataset. This action is available from column headers</b>
@@ -70,12 +70,12 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
         final String columnId = actionContext.getColumnId();
         LOGGER.debug("DeleteColumn for columnId {}", columnId);
         actionContext.getRowMetadata().deleteColumnById(columnId);
-        actionContext.setActionStatus(ActionContext.ActionStatus.DONE);
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        //nothing to do here
+    public void applyOnColumn(DataSetRow row, ActionContext actionContext) {
+        final String columnId = actionContext.getColumnId();
+        row.deleteColumnById(columnId);
     }
 
     @Override

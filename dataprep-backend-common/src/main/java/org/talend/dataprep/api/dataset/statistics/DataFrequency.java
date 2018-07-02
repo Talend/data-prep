@@ -40,6 +40,10 @@ public class DataFrequency implements Serializable {
         this.occurrences = occurrences;
     }
 
+    public String getData() {
+        return data;
+    }
+
     @Override
     public String toString() {
         return "DataFrequency{" + "data='" + data + '\'' + ", occurrences=" + occurrences + '}';

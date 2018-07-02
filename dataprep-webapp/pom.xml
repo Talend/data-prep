@@ -28,7 +28,7 @@
     <properties>
         <docker.image.name>kkarczmarczyk/node-yarn</docker.image.name>
         <node.version>v8.10.0</node.version>
-        <yarn.version>v1.3.2</yarn.version>
+        <yarn.version>v1.6.0</yarn.version>
         <git.branch.name></git.branch.name>
         <git.commit.id.abbrev></git.commit.id.abbrev>
     </properties>

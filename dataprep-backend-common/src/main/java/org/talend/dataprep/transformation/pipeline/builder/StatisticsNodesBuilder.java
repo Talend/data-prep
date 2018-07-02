@@ -34,6 +34,9 @@ import static org.talend.dataprep.transformation.actions.common.ImplicitParamete
 
 public class StatisticsNodesBuilder {
 
+    private static final Set<ActionDefinition.Behavior> BEHAVIORS = Stream.of(NEED_STATISTICS_PATTERN, NEED_STATISTICS_INVALID,
+            NEED_STATISTICS_QUALITY, NEED_STATISTICS_FREQUENCY).collect(Collectors.toSet());
+
     private static final Predicate<ColumnMetadata> ALL_COLUMNS = c -> true;
 
     private AnalyzerService analyzerService;
@@ -51,9 +54,6 @@ public class StatisticsNodesBuilder {
     private ActionsProfile actionsProfile;
 
     private Map<Action, ActionDefinition> actionToMetadata;
-
-    final private Set<ActionDefinition.Behavior> BEHAVIORS = Stream.of(NEED_STATISTICS_PATTERN, NEED_STATISTICS_INVALID,
-            NEED_STATISTICS_QUALITY, NEED_STATISTICS_FREQUENCY).collect(Collectors.toSet());
 
     private StatisticsNodesBuilder() {
     }
@@ -141,8 +141,10 @@ public class StatisticsNodesBuilder {
             performActionsProfiling();
 
             if (needIntermediateStatistics(nextAction)) {
-                final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+
+                final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior(nextAction);
                 NodeBuilder nodeBuilder = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()));
+
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
                     // the type detection is needed by some actions : see bug TDP-4926
                     // this modification needs performance analysis
@@ -169,7 +171,7 @@ public class StatisticsNodesBuilder {
 
     private boolean needIntermediateStatistics(final Action nextAction) {
         // next action indicates that it need fresh statistics
-        final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior();
+        final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior(nextAction);
         if (!Collections.disjoint(behavior, BEHAVIORS)) {
             return true;
         }

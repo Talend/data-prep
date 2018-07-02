@@ -180,17 +180,6 @@ public class DatasetStep extends DataPrepStep {
 
         final JsonPath jsonPath = response.body().jsonPath();
         final List<String> actual = jsonPath.getList("columns.name", String.class);
-        assertNotNull(new StringBuilder("No columns in dataset \"").append(datasetName).append("\".").toString(),
-                actual);
-        assertFalse(new StringBuilder("No columns in dataset \"").append(datasetName).append("\".").toString(),
-                actual.isEmpty());
-        assertEquals(new StringBuilder("Not the expected number of columns in dataset \"")
-                .append(datasetName)
-                .append("\".")
-                .toString(), columns.size(), actual.size());
-        assertTrue(new StringBuilder("The \"")
-                .append(datasetName)
-                .append("\" dataset doesn't contains the expected columns.")
-                .toString(), actual.containsAll(columns));
+        checkColumnNames(datasetName, columns, actual);
     }
 }

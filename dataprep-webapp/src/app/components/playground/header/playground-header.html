@@ -54,6 +54,7 @@
         <li insertion-playground-sub-header-right></li>
         <li ng-if="!$ctrl.isReadonly">
             <a id="playground-gear-icon"
+               class="btn btn-link"
                role="button"
                ng-click="$ctrl.onParameters()"
                ng-class="{pressed: $ctrl.parametersVisible}"
@@ -63,6 +64,7 @@
         </li>
         <li ng-if="$ctrl.preparationPicker">
             <a id="playground-preparation-picker-icon"
+               class="btn btn-link"
                role="button"
                ng-click="$ctrl.onPreparationPicker()"
                translate-once-title="CHOOSE_PREPARATION_TO_APPLY">
@@ -71,6 +73,7 @@
         </li>
         <li ng-if="!$ctrl.isReadonly">
             <a id="playground-lookup-icon"
+               class="btn btn-link"
                role="button"
                ng-click="$ctrl.onLookup()"
                ng-class="{pressed: $ctrl.lookupVisible}"
@@ -91,6 +94,7 @@
         </li>
         <li>
             <a id="playground-close-icon"
+               class="btn btn-link"
                role="button"
                ng-click="$ctrl.onClose()"
                translate-once-title="CLOSE_ICON_TOOLTIP">

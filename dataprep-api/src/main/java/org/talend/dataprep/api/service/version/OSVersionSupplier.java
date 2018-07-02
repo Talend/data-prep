@@ -30,9 +30,6 @@ public class OSVersionSupplier extends AbstractVersionSupplier {
     @Value("${transformation.service.url}")
     protected String transformationServiceUrl;
 
-    @Value("${dataset.service.url}")
-    protected String datasetServiceUrl;
-
     @Value("${preparation.service.url}")
     protected String preparationServiceUrl;
 
@@ -41,12 +38,11 @@ public class OSVersionSupplier extends AbstractVersionSupplier {
 
     @Override
     public List<Version> getVersions() {
-        final List<Version> versions = new ArrayList<>(4);
+        final List<Version> versions = new ArrayList<>(3);
 
         final Version apiVersion = versionService.version();
         apiVersion.setServiceName("API");
         versions.add(apiVersion);
-        versions.add(callVersionService(datasetServiceUrl, "Dataset", VERSION_ENTRY_POINT));
         versions.add(callVersionService(preparationServiceUrl, "Preparation", VERSION_ENTRY_POINT));
         versions.add(callVersionService(transformationServiceUrl, "Transformation", VERSION_ENTRY_POINT));
 

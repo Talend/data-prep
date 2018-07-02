@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.api.service.command;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -24,8 +21,13 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class QueueStatusCommand extends GenericCommand<AsyncExecutionMessage> {
 
     private QueueStatusCommand(ServiceType service, String idQueue) {

@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.security;
 
+import org.talend.dataprep.dataset.DatasetConfiguration;
+
 /**
  * Security Proxy to let a thread borrow the identity of a user out of its authentication token.
  */
@@ -30,6 +32,11 @@ public interface SecurityProxy {
      */
     void asTechnicalUser();
 
+    /**
+     * @deprecated This method should be deleted when the support of dataset legacy mode will be removed
+     * @see DatasetConfiguration
+     * @param reason The reason why switching of identity
+     */
     void asTechnicalUser(SecurityReason reason);
 
     /**

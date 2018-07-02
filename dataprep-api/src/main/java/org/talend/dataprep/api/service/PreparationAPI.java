@@ -103,6 +103,7 @@ import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.talend.dataprep.util.InjectorUtil;
 
 @RestController
 public class PreparationAPI extends APIService {
@@ -118,6 +119,9 @@ public class PreparationAPI extends APIService {
 
     @Autowired
     private ActionRegistry registry;
+
+    @Autowired
+    private InjectorUtil injectorUtil;
 
     @RequestMapping(value = "/api/preparations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all preparations.", notes = "Returns the list of preparations the current user is allowed to see.")
@@ -271,7 +275,7 @@ public class PreparationAPI extends APIService {
             final List<Action> actions = getCommand(PreparationGetActions.class, preparationId).execute();
             return beanConversionService.convert(preparationSummary, //
                     PreparationDetailsDTO.class, //
-                    (dto, details) -> injectPreparationDetails(actions, details) //
+                    (dto, details) -> injectorUtil.injectPreparationDetails(actions, details) //
             );
         } catch (Exception e) {
             LOG.error("Unable to get preparation {}", preparationId, e);
@@ -282,27 +286,6 @@ public class PreparationAPI extends APIService {
             }
             LOG.info("Preparation {} retrieved", preparationId);
         }
-    }
-
-    private PreparationDetailsDTO injectPreparationDetails(List<Action> actions, PreparationDetailsDTO details) {
-        // Append actions and action forms
-        details.setActions(actions);
-        final AtomicBoolean allowDistributedRun = new AtomicBoolean();
-        final List<ActionForm> metadata = actions.stream() //
-                .map(a -> registry.get(a.getName())) //
-                .peek(a -> {
-                    if (allowDistributedRun.get()) {
-                        allowDistributedRun.set(a.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
-                    }
-                }) //
-                .map(a -> a.getActionForm(LocaleContextHolder.getLocale(), Locale.US)) //
-                .collect(Collectors.toList());
-        details.setMetadata(metadata);
-
-        // Flag for allow distributed run (based on metadata).
-        details.setAllowDistributedRun(allowDistributedRun.get());
-
-        return details;
     }
 
     @RequestMapping(value = "/api/preparations/{id}/summary", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)

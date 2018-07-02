@@ -977,49 +977,4 @@ describe('Recipe controller', () => {
 			expect(ctrl.stepToBeDeleted).toBe(null);
 		});
 	});
-
-	describe('steps that should be removed', () => {
-		it('should return true when the current step should be removed', () => {
-			// given
-			const ctrl = createController();
-			const step = { transformation: { stepId: 'abc-def' } };
-			ctrl.stepToBeDeleted = step;
-
-			// when
-			const shouldBeRemoved = ctrl.shouldBeRemoved(step);
-
-			// then
-			expect(shouldBeRemoved).toBe(true);
-		});
-
-		it('should return true when the step parent should be also removed', () => {
-			// given
-			const ctrl = createController();
-			const parentStep = {
-				transformation: {
-					stepId: 'abc-def',
-				},
-				diff: {
-					createdColumns: ['0008'],
-				},
-			};
-			ctrl.stepToBeDeleted = parentStep;
-			const childStep = {
-				transformation: {
-					stepId: '123-abd',
-				},
-				actionParameters: {
-					parameters: {
-						column_id: '0008',
-					},
-				},
-			};
-
-			// when
-			const shouldBeRemoved = ctrl.shouldBeRemoved(childStep);
-
-			// then
-			expect(shouldBeRemoved).toBe(true);
-		});
-	});
 });

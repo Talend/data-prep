@@ -167,19 +167,6 @@ export default class RecipeCtrl {
 
 	/**
 	 * @ngdoc method
-	 * @name shouldBeRemoved
-	 * @methodOf data-prep.recipe.controller:RecipeCtrl
-	 * @description checks if the step should be removed
-	 * @param {object} step The step to be deleted
-	 * @returns {boolean} true if the step will be removed from the recipe
-	 */
-	shouldBeRemoved(step) {
-		return ((this.stepToBeDeleted && this.stepToBeDeleted.transformation.stepId === step.transformation.stepId)) ||
-			(this.stepToBeDeleted && (this.stepToBeDeleted.diff.createdColumns.indexOf(step.actionParameters.parameters.column_id) > -1));
-	}
-
-	/**
-	 * @ngdoc method
 	 * @name isHoveredStep
 	 * @methodOf data-prep.recipe.controller:RecipeCtrl
 	 * @param {object} step The hovered step

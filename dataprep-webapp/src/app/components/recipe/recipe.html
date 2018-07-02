@@ -31,8 +31,8 @@
     <sc-accordion>
         <li ng-repeat="step in $ctrl.state.playground.recipe.current.reorderedSteps track by step.transformation.stepId"
             as-sortable-item>
-            <div class="step-container"
-                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}">
+            <div class="step-container remove"
+                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview }">
 
                 <sc-accordion-item id="step-{{step.transformation.stepId}}"
                                    class="recipe-step"

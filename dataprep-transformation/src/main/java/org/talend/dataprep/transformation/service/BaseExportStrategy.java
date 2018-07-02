@@ -12,12 +12,16 @@
 
 package org.talend.dataprep.transformation.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -39,6 +43,7 @@ import org.talend.dataprep.lock.LockFactory;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
+import org.talend.dataprep.transformation.format.FormatService;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,6 +68,9 @@ public abstract class BaseExportStrategy {
     @Autowired
     protected FormatRegistrationService formatRegistrationService;
 
+    @Autowired
+    protected FormatService formatService;
+
     /** The transformer factory. */
     @Autowired
     protected TransformerFactory factory;
@@ -76,23 +84,8 @@ public abstract class BaseExportStrategy {
     protected SecurityProxy securityProxy;
 
     /**
-     * Return the format that matches the given name or throw an error if the format is unknown.
-     *
-     * @param formatName the format name.
-     * @return the format that matches the given name.
-     */
-    protected ExportFormat getFormat(String formatName) {
-        final ExportFormat format = formatRegistrationService.getByName(formatName.toUpperCase());
-        if (format == null) {
-            LOGGER.error("Export format {} not supported", formatName);
-            throw new TDPException(TransformationErrorCodes.OUTPUT_TYPE_NOT_SUPPORTED);
-        }
-        return format;
-    }
-
-
-    /**
      * Return the real step id in case of "head" or empty
+     *
      * @param preparation The preparation
      * @param stepId The step id
      */
@@ -191,6 +184,14 @@ public abstract class BaseExportStrategy {
     protected PreparationDTO getPreparation(String preparationId, String stepId) {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
+        }
+        final PreparationDetailsGet preparationDetailsGet =
+                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
+        try (InputStream details = preparationDetailsGet.execute()) {
+            return mapper.readerFor(PreparationMessage.class).readValue(details);
+        } catch (Exception e) {
+            LOGGER.error("Unable to read preparation {}", preparationId, e);
+            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
         }
         final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
                 preparationId, stepId);

@@ -23,6 +23,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
@@ -49,6 +50,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -92,6 +94,7 @@ import org.talend.dataprep.async.result.PreparationGetContentUrlGenerator;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
@@ -174,12 +177,6 @@ public class TransformationService extends BaseTransformationService {
     private SuggestionEngine suggestionEngine;
 
     /**
-     * The transformer factory.
-     */
-    @Autowired
-    private TransformerFactory factory;
-
-    /**
      * Task executor for asynchronous processing.
      */
     @Resource(name = "serializer#json#executor")
@@ -209,9 +206,6 @@ public class TransformationService extends BaseTransformationService {
     @Autowired
     private PreparationExportStrategy preparationExportStrategy;
 
-    @Autowired
-    private ExportParametersUtil exportParametersUtil;
-
     @RequestMapping(value = "/apply", method = POST)
     @ApiOperation(value = "Run the transformation given the provided export parameters",
             notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
@@ -224,19 +218,23 @@ public class TransformationService extends BaseTransformationService {
             value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
             throws IOException {
 
-        ExportParameters completeParameters = parameters;
-
-        if (StringUtils.isNotEmpty(completeParameters.getPreparationId())) {
-            // we deal with preparation transformation (not dataset)
-            completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-
-            ContentCacheKey cacheKey = cacheKeyGenerator.generateContentKey(completeParameters);
-
-            if (!contentCache.has(cacheKey)) {
-                preparationExportStrategy.performPreparation(completeParameters, new NullOutputStream());
+        final ExportParameters completeParameters =
+                exportParametersUtil.populateFromPreparationExportParameter(parameters);
+        TransformationCacheKey cacheKey = cacheKeyGenerator.generateContentKey(completeParameters);
+        if (StringUtils.isNotEmpty(parameters.getPreparationId())) {
+            if (contentCache.has(cacheKey)) {
+                LOG.debug("Cache entry exist, return cache");
+                formatService.setExportHeaders(parameters);
+                return outputStream -> {
+                    IOUtils.copy(contentCache.get(cacheKey), outputStream);
+                };
+            }
+            else {
+                executeSampleExportStrategyToCache(completeParameters, cacheKey);
+                return outputStream -> {
+                };
             }
         }
-
         return executeSampleExportStrategy(completeParameters);
     }
 
@@ -271,7 +269,8 @@ public class TransformationService extends BaseTransformationService {
 
                     // we regenerate cache
                     parameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-                    preparationExportStrategy.performPreparation(parameters, new NullOutputStream());
+                    preparationExportStrategy.performPreparation(parameters, new NullOutputStream(),
+                            cacheKeyGenerator.generateContentKey(parameters));
 
                 } catch (Exception e) {
                     throw new TDPException(TransformationErrorCodes.METADATA_NOT_FOUND, e);
@@ -297,11 +296,11 @@ public class TransformationService extends BaseTransformationService {
      * Apply the preparation to the dataset out of the given IDs.
      *
      * @param preparationId the preparation id to apply on the dataset.
-     * @param datasetId the dataset id to transform.
-     * @param formatName The output {@link ExportFormat format}. This format also set the MIME response type.
-     * @param stepId the preparation step id to use (default is 'head').
-     * @param name the transformation name.
-     * @param exportParams additional (optional) export parameters.
+     * @param datasetId     the dataset id to transform.
+     * @param formatName    The output {@link ExportFormat format}. This format also set the MIME response type.
+     * @param stepId        the preparation step id to use (default is 'head').
+     * @param name          the transformation name.
+     * @param exportParams  additional (optional) export parameters.
      */
     //@formatter:off
     @RequestMapping(value = "/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", method = GET)
@@ -312,7 +311,7 @@ public class TransformationService extends BaseTransformationService {
                                                 @ApiParam(value = "Output format") @PathVariable("format") final String formatName,
                                                 @ApiParam(value = "Step id", defaultValue = "head") @RequestParam(value = "stepId", required = false, defaultValue = "head") final String stepId,
                                                 @ApiParam(value = "Name of the transformation", defaultValue = "untitled") @RequestParam(value = "name", required = false, defaultValue = "untitled") final String name,
-                                                @RequestParam final Map<String, String> exportParams) {
+                                                @RequestParam final Map<String, String> exportParams) throws IOException {
         //@formatter:on
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparationId);
@@ -322,7 +321,10 @@ public class TransformationService extends BaseTransformationService {
         exportParameters.setExportName(name);
         exportParameters.getArguments().putAll(exportParams);
 
-        return executeSampleExportStrategy(exportParameters);
+        final ExportParameters completeParameters =
+                exportParametersUtil.populateFromPreparationExportParameter(exportParameters);
+
+        return executeSampleExportStrategy(completeParameters);
     }
 
     /**
@@ -341,7 +343,7 @@ public class TransformationService extends BaseTransformationService {
             @ApiParam(value = "DataSet id to transform.") @PathVariable(value = "datasetId") final String datasetId,
             @ApiParam(value = "Output format") @PathVariable("format") final String formatName,
             @ApiParam(value = "Name of the transformation", defaultValue = "untitled") @RequestParam(value = "name", required = false, defaultValue = "untitled") final String name,
-            @RequestParam final Map<String, String> exportParams) {
+            @RequestParam final Map<String, String> exportParams) throws IOException {
         //@formatter:on
         return applyOnDataset(null, datasetId, formatName, null, name, exportParams);
     }
@@ -981,7 +983,12 @@ public class TransformationService extends BaseTransformationService {
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparation.getId());
         exportParameters.setExportType("JSON");
-        exportParameters.setStepId(stepId);
+        if ("head".equals(stepId)) {
+            exportParameters.setStepId(preparation.getHeadId());
+        }
+        else {
+            exportParameters.setStepId(stepId);
+        }
         exportParameters.setDatasetId(preparation.getDataSetId());
 
         final StreamingResponseBody streamingResponseBody = executeSampleExportStrategy(exportParameters);

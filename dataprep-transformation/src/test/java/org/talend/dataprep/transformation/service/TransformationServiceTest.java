@@ -142,7 +142,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // then
         assertEquals(404, response.getStatusCode());
-        assertTrue(response.asString().contains("PREPARATION_DOES_NOT_EXIST"));
+        assertTrue(response.asString().contains("TDP_PS_PREPARATION_DOES_NOT_EXIST"));
     }
 
     @Test

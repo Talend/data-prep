@@ -592,7 +592,7 @@ public class OSDataPrepAPIHelper {
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");
     }
-      
+
     public boolean isEnableRestAssuredDebug() {
         return enableRestAssuredDebug;
     }

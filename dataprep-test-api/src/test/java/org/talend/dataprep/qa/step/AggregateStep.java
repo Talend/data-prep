@@ -14,6 +14,8 @@
 package org.talend.dataprep.qa.step;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
@@ -39,8 +41,8 @@ import cucumber.api.java.en.When;
  */
 public class AggregateStep extends DataPrepStep {
 
-    @When("^I apply an aggregation preparation \"(.*)\" with parameters :$")
-    public void applyAnAggregation(String preparationName, DataTable dataTable) throws Exception {
+    @When("^I apply an aggregation on the preparation \"(.*)\" with parameters :$")
+    public void applyAnAggregationOnPreparation(String preparationName, DataTable dataTable) throws Exception {
         Map<String, String> params = new HashMap<>(dataTable.asMap(String.class, String.class));
         params.put("preparationId", context.getPreparationId(suffixName(preparationName)));
 
@@ -54,12 +56,57 @@ public class AggregateStep extends DataPrepStep {
                 }));
     }
 
+    @When("^I fail to apply an aggregation preparation \"(.*)\" with parameters :$")
+    public void applyAnAggregationOnPreparationFailed(String preparationName, DataTable dataTable) throws Exception {
+        aggregationFailled(preparationName, null, dataTable, BAD_REQUEST.value());
+    }
+
+    @When("^I fail to apply an aggregation on non existing preparation \"(.*)\" with parameters :$")
+    public void applyAnAggregationOnNonExistingPreparationFailed(String preparationName, DataTable dataTable) throws Exception {
+        aggregationFailled(preparationName, null, dataTable, NOT_ACCEPTABLE.value());
+    }
+
+    @When("^I fail to apply an aggregation on preparation \"(.*)\" and dataSet \"(.*)\" with parameters :$")
+    public void applyAnAggregationOnNonExistingPreparationFailed(String preparationName, String dataSetName, DataTable dataTable) throws Exception {
+        aggregationFailled(preparationName, dataSetName, dataTable, BAD_REQUEST.value());
+    }
+
+    private void aggregationFailled(String preparationName, String dataSetName, DataTable dataTable, int value) throws Exception {
+        Map<String, String> params = new HashMap<>(dataTable.asMap(String.class, String.class));
+        if (preparationName != null ) {
+            params.put("preparationId", context.getPreparationId(suffixName(preparationName)));
+        }
+        if (dataSetName != null) {
+            params.put("dataSetId", context.getDatasetId(suffixName(dataSetName)));
+        }
+
+        Aggregate aggregate = createAggregate(params);
+
+        Response response = api.applyAggragate(aggregate);
+        response.then().statusCode(value);
+    }
+
     @Then("^The aggregate result with the operator \"(.*)\" is :$")
     public void testAggregate(String operator, DataTable dataTable) throws Exception {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
 
         List<AggregateResult> aggregateResults = (List<AggregateResult>) (context.getObject("aggregate"));
-        assertEquals(aggregateResults, toAggregateResult(params, operator));
+        assertEquals(toAggregateResult(params, operator), aggregateResults);
+    }
+
+    @When("^I apply an aggregation on the dataSet \"(.*)\" with parameters :$")
+    public void applyAnAggregationOnDataSet(String dataSetName, DataTable dataTable) throws Exception {
+        Map<String, String> params = new HashMap<>(dataTable.asMap(String.class, String.class));
+        params.put("dataSetId", context.getDatasetId(suffixName(dataSetName)));
+
+        Aggregate aggregate = createAggregate(params);
+
+        Response response = api.applyAggragate(aggregate);
+        response.then().statusCode(OK.value());
+
+        context.storeObject("aggregate",
+                objectMapper.readValue(response.body().print(), new TypeReference<List<AggregateResult>>() {
+                }));
     }
 
     private List<AggregateResult> toAggregateResult(Map<String, String> params, String operator) {
@@ -94,9 +141,18 @@ public class AggregateStep extends DataPrepStep {
         AggregateOperation aggregateOperation = new AggregateOperation(params.get("operator"), params.get("columnId"));
         aggregate.addOperation(aggregateOperation);
 
-        aggregate.preparationId = params.get("preparationId");
+        if (params.get("preparationId") != null) {
+            aggregate.preparationId = params.get("preparationId");
+            aggregate.stepId = getPreparationDetails(aggregate.preparationId).getHead();
+        }
+        if (params.get("dataSetId") != null) {
+            aggregate.datasetId = params.get("dataSetId");
+        }
         aggregate.addGroupBy(params.get("groupBy"));
-        aggregate.stepId = "head";
+        if (params.get("filter") != null) {
+            aggregate.filter = params.get("filter");
+        }
+
         return aggregate;
     }
 }

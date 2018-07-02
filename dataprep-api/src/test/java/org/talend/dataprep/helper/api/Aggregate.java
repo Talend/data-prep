@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 /**
  * Payload send for aggregate.
@@ -24,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Aggregate {
 
-    public String datadetId;
+    public String datasetId;
 
     public String preparationId;
 
@@ -33,6 +34,9 @@ public class Aggregate {
     public List<AggregateOperation> operations;
 
     public List<String> groupBy;
+
+    @JsonRawValue
+    public String filter;
 
     public void addGroupBy(String groupBy) {
         if (this.groupBy == null) {

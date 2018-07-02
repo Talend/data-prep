@@ -205,6 +205,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setPreparationId(preparation);
         exportParameters.setDatasetId(datasetId);
         exportParameters.setExportType(format);
+        exportParameters.setStepId(preparationDetails.getHeadId());
         exportParameters.setFrom(HEAD);
 
         // Then

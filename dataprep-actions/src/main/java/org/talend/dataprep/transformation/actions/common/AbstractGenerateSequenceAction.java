@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 public abstract class AbstractGenerateSequenceAction extends AbstractActionMetadata implements ColumnAction {
+
     /** The starting value of sequence */
     public static final String START_VALUE = "start_value";
 
@@ -16,16 +17,16 @@ public abstract class AbstractGenerateSequenceAction extends AbstractActionMetad
     /** this class is used to calculate the sequence next step */
     public static class CalcSequence {
 
-        BigInteger nextValue;
+        private final BigInteger step;
 
-        BigInteger step;
+        private BigInteger nextValue;
 
         public CalcSequence(Map<String, String> parameters) {
             this.nextValue = new BigInteger(parameters.get(START_VALUE));
             this.step = new BigInteger(parameters.get(STEP_VALUE));
         }
 
-        public String getNextValue() {
+        public synchronized String getNextValue() {
             String toReturn = nextValue.toString();
             nextValue = nextValue.add(step);
             return toReturn;

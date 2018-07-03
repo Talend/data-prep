@@ -29,16 +29,12 @@ import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,8 +44,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.PreparationAddAction;
-import org.talend.dataprep.api.action.ActionDefinition;
-import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Action;
@@ -89,6 +83,7 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
 import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
@@ -98,12 +93,12 @@ import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
+import org.talend.dataprep.util.InjectorUtil;
 
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.talend.dataprep.util.InjectorUtil;
 
 @RestController
 public class PreparationAPI extends APIService {
@@ -303,9 +298,9 @@ public class PreparationAPI extends APIService {
         }
 
         try {
-            final PreparationDTO preparationSummary = getPreparationSummary(preparationId, stepId);
+            final PreparationDetailsDTO preparationDetails = getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
             final List<Action> actions = getCommand(PreparationGetActions.class, preparationId).execute();
-            return beanConversionService.convert(preparationSummary, //
+            return beanConversionService.convert(preparationDetails, //
                     PreparationDetailsDTO.class, //
                     (dto, details) -> injectorUtil.injectPreparationDetails(actions, details) //
             );
@@ -331,7 +326,7 @@ public class PreparationAPI extends APIService {
         }
 
         try {
-            final PreparationDetailsGet enrichPreparation = getCommand(PreparationDetailsGet.class, preparationId, stepId);
+            final PreparationSummaryGet enrichPreparation = getCommand(PreparationSummaryGet.class, preparationId, stepId);
             return enrichPreparation.execute();
         } catch (Exception e) {
             LOG.error("Unable to get preparation {}", preparationId, e);
@@ -687,7 +682,7 @@ public class PreparationAPI extends APIService {
      * @return the preparation.
      */
     private PreparationDTO internalGetPreparation(String preparationId) {
-        GenericCommand<PreparationDTO> command = getCommand(PreparationDetailsGet.class, preparationId);
+        GenericCommand<PreparationDTO> command = getCommand(PreparationSummaryGet.class, preparationId);
         return command.execute();
     }
 

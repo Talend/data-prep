@@ -67,6 +67,7 @@ import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
@@ -603,6 +604,22 @@ public class PreparationService {
         }
 
         final PreparationDTO details = beanConversionService.convert(preparation, PreparationDTO.class);
+        LOGGER.debug("returning details for {} -> {}", id, details);
+        return details;
+    }
+
+    /**
+     * Return a preparation details.
+     *
+     * @param id the wanted preparation id.
+     * @param stepId the optional step id.
+     * @return the preparation details.
+     */
+    public PreparationDetailsDTO getPreparationDetailsFull(String id, String stepId) {
+
+        final PreparationDTO prep = getPreparationDetails(id, stepId);
+
+        final PreparationDetailsDTO details = beanConversionService.convert(prep, PreparationDetailsDTO.class);
         LOGGER.debug("returning details for {} -> {}", id, details);
         return details;
     }

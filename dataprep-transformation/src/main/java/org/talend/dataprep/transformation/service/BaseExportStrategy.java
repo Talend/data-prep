@@ -30,7 +30,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
@@ -192,9 +192,9 @@ public abstract class BaseExportStrategy {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
+        final PreparationSummaryGet preparationSummaryGet = applicationContext.getBean(PreparationSummaryGet.class,
                 preparationId, stepId);
-        return preparationDetailsGet.execute();
+        return preparationSummaryGet.execute();
     }
 
 }

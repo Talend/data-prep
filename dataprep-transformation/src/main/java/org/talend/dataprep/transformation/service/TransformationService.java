@@ -95,7 +95,7 @@ import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.exception.TDPException;
@@ -929,7 +929,7 @@ public class TransformationService extends BaseTransformationService {
      * @return the preparation from the preparation service.
      */
     private PreparationDTO getPreparation(String preparationId) {
-        final PreparationDetailsGet details = applicationContext.getBean(PreparationDetailsGet.class, preparationId);
+        final PreparationSummaryGet details = applicationContext.getBean(PreparationSummaryGet.class, preparationId);
         return details.execute();
     }
 

@@ -40,7 +40,7 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
@@ -83,7 +83,7 @@ public class PreparationExportStrategyTest {
     private Transformer transformer;
 
     @Mock
-    private PreparationDetailsGet preparationDetailsGet;
+    private PreparationSummaryGet preparationSummaryGet;
 
     @Before
     public void setUp() throws Exception {
@@ -127,9 +127,9 @@ public class PreparationExportStrategyTest {
     }
 
     private void configurePreparation(PreparationDTO preparation, String preparationId, String stepId) {
-        when(preparationDetailsGet.execute()).thenReturn(preparation);
-        when(applicationContext.getBean(eq(PreparationDetailsGet.class), eq(preparationId), eq(stepId)))
-                .thenReturn(preparationDetailsGet);
+        when(preparationSummaryGet.execute()).thenReturn(preparation);
+        when(applicationContext.getBean(eq(PreparationSummaryGet.class), eq(preparationId), eq(stepId)))
+                .thenReturn(preparationSummaryGet);
     }
 
     @Test

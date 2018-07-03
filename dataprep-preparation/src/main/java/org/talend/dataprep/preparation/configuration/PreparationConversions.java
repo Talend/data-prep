@@ -32,6 +32,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
 import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.PreparationSummary;
 import org.talend.dataprep.api.preparation.Step;
@@ -64,14 +65,17 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                 .using(PreparationMessage.class, (s, t) -> toPreparationMessage(s, t, applicationContext)) //
                 .using(PreparationSummary.class, (s, t) -> toStudioPreparation(s, t, applicationContext)) //
                 .build());
-        conversionService.register(fromBean(PersistentPreparation.class) //
-                .toBeans(PreparationDTO.class) //
-                .using(PreparationDTO.class, (s, t) -> toPreparationDTO(s, t, applicationContext)) //
+
+        // convert PreparationDTO to PreparationDetailsDTO
+        conversionService.register(fromBean(PreparationDTO.class) //
+                .toBeans(PreparationDetailsDTO.class) //
+                .using(PreparationDetailsDTO.class, (s, t) -> toPreparationDetailsDTO(s, t, applicationContext)) //
                 .build());
         return conversionService;
     }
 
-    private PreparationDTO toPreparationDTO(PersistentPreparation source, PreparationDTO target,
+    private PreparationDetailsDTO toPreparationDetailsDTO(PreparationDTO source, PreparationDetailsDTO target,
+
             ApplicationContext applicationContext) {
         // Steps diff metadata
 

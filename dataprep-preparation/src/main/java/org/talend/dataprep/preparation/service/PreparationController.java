@@ -41,6 +41,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -301,6 +302,23 @@ public class PreparationController {
             @ApiParam(value = "stepId", defaultValue = "head") @RequestParam(value = "stepId", defaultValue = "head") String stepId) {
         return preparationService.getPreparationDetails(id, stepId);
     }
+
+    /**
+     * Return a preparation details.
+     *
+     * @param id the wanted preparation id.
+     * @param stepId optional step id.
+     * @return the preparation details.
+     */
+    @RequestMapping(value = "/preparations/{id}/details/full", method = GET)
+    @ApiOperation(value = "Get preparation details", notes = "Return the details of the preparation with provided id.")
+    @Timed
+    public PreparationDetailsDTO getDetailsFull( //
+                                                 @ApiParam("id") @PathVariable("id") String id, //
+                                                 @ApiParam(value = "stepId", defaultValue = "head") @RequestParam(value = "stepId", defaultValue = "head") String stepId) {
+        return preparationService.getPreparationDetailsFull(id, stepId);
+    }
+
 
     /**
      * Return a preparation.

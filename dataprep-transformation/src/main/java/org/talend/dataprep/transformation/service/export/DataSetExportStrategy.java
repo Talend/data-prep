@@ -54,17 +54,18 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
         return outputStream -> {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
             final String datasetId = parameters.getDatasetId();
-            DataSet dataSet = datasetClient.getDataSet(datasetId);
-            // get the actions to apply (no preparation ==> dataset export ==> no actions)
-            Configuration configuration = Configuration.builder() //
-                    .args(parameters.getArguments()) //
-                    .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                    .format(format.getName()) //
-                    .volume(Configuration.Volume.SMALL) //
-                    .output(outputStream) //
-                    .limit(limit) //
-                    .build();
-            factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+            try(DataSet dataSet = datasetClient.getDataSet(datasetId)) {
+                // get the actions to apply (no preparation ==> dataset export ==> no actions)
+                Configuration configuration = Configuration.builder() //
+                        .args(parameters.getArguments()) //
+                        .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
+                        .format(format.getName()) //
+                        .volume(Configuration.Volume.SMALL) //
+                        .output(outputStream) //
+                        .limit(limit) //
+                        .build();
+                factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+            }
         };
     }
 }

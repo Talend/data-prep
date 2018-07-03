@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer.suggestion;
 
@@ -37,6 +37,21 @@ public interface SuggestionEngine {
      * @return A ordered collection of {@link Suggestion suggestions}.
      */
     Stream<Suggestion> score(Stream<ActionDefinition> actions, ColumnMetadata column);
+
+    /**
+     * <p>
+     * Scores one <code>action</code> for a given <code>column</code>.
+     * </p>
+     * <p>
+     * This method only operates on a {@link ColumnMetadata}, meaning it can <b>not</b> decide based on content, only
+     * based on metadata.
+     * </p>
+     *
+     * @param action an {@link ActionDefinition action} to be scored.
+     * @param column The {@link ColumnMetadata column information} to be used to rank actions.
+     * @return A ordered collection of {@link Suggestion suggestions}.
+     */
+    Suggestion score(ActionDefinition action, ColumnMetadata column);
 
     /**
      * Returns a list of {@link ActionDefinition actions} to improve quality of data set's content. Implementations may

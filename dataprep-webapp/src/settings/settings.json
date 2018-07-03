@@ -54,12 +54,12 @@
     "preparation:copy": {
       "id": "preparation:copy",
       "label": "Copy",
-      "bsStyle": "primary",
+      "bsStyle": "primary"
     },
     "preparation:move": {
       "id": "preparation:move",
       "label": "Move",
-      "bsStyle": "primary",
+      "bsStyle": "primary"
     },
     "preparation:copy:move:open": {
       "id": "preparation:copy:move:open",

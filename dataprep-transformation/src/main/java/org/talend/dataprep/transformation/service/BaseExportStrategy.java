@@ -12,7 +12,14 @@
 
 package org.talend.dataprep.transformation.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -31,20 +38,13 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.TransformationErrorCodes;
-import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.lock.LockFactory;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
+import org.talend.dataprep.transformation.format.FormatService;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class BaseExportStrategy {
 
@@ -66,6 +66,9 @@ public abstract class BaseExportStrategy {
     @Autowired
     protected FormatRegistrationService formatRegistrationService;
 
+    @Autowired
+    protected FormatService formatService;
+
     /** The transformer factory. */
     @Autowired
     protected TransformerFactory factory;
@@ -82,23 +85,8 @@ public abstract class BaseExportStrategy {
     protected DatasetClient datasetClient;
 
     /**
-     * Return the format that matches the given name or throw an error if the format is unknown.
-     *
-     * @param formatName the format name.
-     * @return the format that matches the given name.
-     */
-    protected ExportFormat getFormat(String formatName) {
-        final ExportFormat format = formatRegistrationService.getByName(formatName.toUpperCase());
-        if (format == null) {
-            LOGGER.error("Export format {} not supported", formatName);
-            throw new TDPException(TransformationErrorCodes.OUTPUT_TYPE_NOT_SUPPORTED);
-        }
-        return format;
-    }
-
-
-    /**
      * Return the real step id in case of "head" or empty
+     *
      * @param preparation The preparation
      * @param stepId The step id
      */
@@ -122,12 +110,13 @@ public abstract class BaseExportStrategy {
         if (StringUtils.isBlank(preparationId) || StringUtils.isBlank(stepId)) {
             actions = "{\"actions\": []}";
         } else {
-            final PreparationGetActions getActionsCommand = applicationContext.getBean(PreparationGetActions.class, preparationId,
-                    stepId);
+            final PreparationGetActions getActionsCommand =
+                    applicationContext.getBean(PreparationGetActions.class, preparationId, stepId);
             try {
                 actions = "{\"actions\": " + IOUtils.toString(getActionsCommand.execute(), UTF_8) + '}';
             } catch (IOException e) {
-                final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", stepId);
+                final ExceptionContext context =
+                        ExceptionContext.build().put("id", preparationId).put("version", stepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }
@@ -153,17 +142,18 @@ public abstract class BaseExportStrategy {
             actions = "{\"actions\": []}";
         } else {
             try {
-                final PreparationGetActions startStepActions = applicationContext.getBean(PreparationGetActions.class,
-                        preparationId, startStepId);
-                final PreparationGetActions endStepActions = applicationContext.getBean(PreparationGetActions.class,
-                        preparationId, endStepId);
+                final PreparationGetActions startStepActions =
+                        applicationContext.getBean(PreparationGetActions.class, preparationId, startStepId);
+                final PreparationGetActions endStepActions =
+                        applicationContext.getBean(PreparationGetActions.class, preparationId, endStepId);
                 final StringWriter actionsAsString = new StringWriter();
                 final Action[] startActions = mapper.readValue(startStepActions.execute(), Action[].class);
                 final Action[] endActions = mapper.readValue(endStepActions.execute(), Action[].class);
                 if (endActions.length > startActions.length) {
-                    final Action[] filteredActions = (Action[]) ArrayUtils.subarray(endActions, startActions.length,
-                            endActions.length);
-                    LOGGER.debug("Reduced actions list from {} to {} action(s)", endActions.length, filteredActions.length);
+                    final Action[] filteredActions =
+                            (Action[]) ArrayUtils.subarray(endActions, startActions.length, endActions.length);
+                    LOGGER.debug("Reduced actions list from {} to {} action(s)", endActions.length,
+                            filteredActions.length);
                     mapper.writeValue(actionsAsString, filteredActions);
                 } else {
                     LOGGER.debug("Unable to reduce list of actions (has {})", endActions.length);
@@ -172,7 +162,8 @@ public abstract class BaseExportStrategy {
 
                 return "{\"actions\": " + actionsAsString + '}';
             } catch (IOException e) {
-                final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", endStepId);
+                final ExceptionContext context =
+                        ExceptionContext.build().put("id", preparationId).put("version", endStepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }
@@ -196,8 +187,8 @@ public abstract class BaseExportStrategy {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
-                preparationId, stepId);
+        final PreparationDetailsGet preparationDetailsGet =
+                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
         try (InputStream details = preparationDetailsGet.execute()) {
             return mapper.readerFor(PreparationMessage.class).readValue(details);
         } catch (Exception e) {
@@ -205,5 +196,4 @@ public abstract class BaseExportStrategy {
             throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
         }
     }
-
 }

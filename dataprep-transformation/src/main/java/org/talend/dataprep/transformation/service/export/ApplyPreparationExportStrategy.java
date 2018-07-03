@@ -12,12 +12,9 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Objects;
 
@@ -34,19 +31,11 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
-
-import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * A {@link BaseExportStrategy strategy} to apply a preparation on a different dataset (different from the one initially
@@ -59,9 +48,6 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
-
-    @Autowired
-    private DatasetClient datasetClient;
 
     @Override
     public boolean accept(ExportParameters parameters) {
@@ -76,17 +62,14 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public StreamingResponseBody execute(ExportParameters parameters) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
-
+        formatService.setExportHeaders(parameters);
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
-        return outputStream -> doExecute(parameters, new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
+        return outputStream -> doExecute(parameters,
+                new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
 
-    @Override public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
+    @Override
+    public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
         doExecute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), key);
     }
 
@@ -95,7 +78,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final String preparationId = parameters.getPreparationId();
         final Preparation preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
-        final ExportFormat format = getFormat(parameters.getExportType());
+        final ExportFormat format = formatService.getFormat(parameters.getExportType());
 
         // dataset content must be retrieved as the technical user because it might not be shared
         boolean technicianIdentityReleased = false;
@@ -118,10 +101,12 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
             try {
-                final Configuration.Builder configurationBuilder = Configuration.builder() //
+                final Configuration.Builder configurationBuilder = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                        .sourceType(parameters.getFrom()).format(format.getName()) //
+                        .sourceType(parameters.getFrom())
+                        .format(format.getName()) //
                         .actions(actions) //
                         .preparation(getPreparation(preparationId)) //
                         .stepId(version) //

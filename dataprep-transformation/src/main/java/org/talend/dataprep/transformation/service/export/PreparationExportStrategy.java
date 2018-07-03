@@ -29,15 +29,12 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -70,21 +67,17 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
     @Override
     public StreamingResponseBody execute(final ExportParameters parameters) {
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
-        return outputStream -> execute(parameters, new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
+        return outputStream -> execute(parameters,
+                new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
 
     @Override
     public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
-        execute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), cacheKeyGenerator.generateContentKey(parameters));
+        performPreparation(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), key);
     }
 
     public void execute(ExportParameters parameters, OutputStream stream, TransformationCacheKey key) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
-
+        formatService.setExportHeaders(parameters);
         performPreparation(parameters, stream, key);
     }
 
@@ -92,10 +85,9 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
-        final String formatName = parameters.getExportType();
         final PreparationMessage preparation = getPreparation(preparationId, stepId);
         final String dataSetId = preparation.getDataSetId();
-        final ExportFormat format = getFormat(parameters.getExportType());
+        final ExportFormat format = formatService.getFormat(parameters.getExportType());
 
         boolean releasedIdentity = false;
         // Allow get dataset and get dataset metadata access whatever share status is
@@ -111,28 +103,28 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             // get the actions to apply (no preparation ==> dataset export ==> no actions)
             final String actions = getActions(preparationId, version);
 
-                try {
-                    final Configuration configuration = Configuration
-                            .builder() //
-                            .args(parameters.getArguments()) //
-                            .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                            .sourceType(parameters.getFrom())
-                            .format(format.getName()) //
-                            .actions(actions) //
-                            .preparation(preparation) //
-                            .stepId(version) //
-                            .volume(Configuration.Volume.SMALL) //
-                            .output(outputStream) //
-                            .limit(limit) //
-                            .build();
-                    factory.get(configuration).buildExecutable(dataSet, configuration).execute();
-                    outputStream.flush();
-                } catch (Throwable e) { // NOSONAR
-                    contentCache.evict(key);
-                    throw e;
-                } finally {
-                    outputStream.close();
-                }
+            try {
+                final Configuration configuration = Configuration
+                        .builder() //
+                        .args(parameters.getArguments()) //
+                        .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
+                        .sourceType(parameters.getFrom())
+                        .format(format.getName()) //
+                        .actions(actions) //
+                        .preparation(preparation) //
+                        .stepId(version) //
+                        .volume(Configuration.Volume.SMALL) //
+                        .output(outputStream) //
+                        .limit(limit) //
+                        .build();
+                factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+                outputStream.flush();
+            } catch (Throwable e) { // NOSONAR
+                contentCache.evict(key);
+                throw e;
+            } finally {
+                outputStream.close();
+            }
         } catch (TDPException e) {
             throw e;
         } catch (Exception e) {

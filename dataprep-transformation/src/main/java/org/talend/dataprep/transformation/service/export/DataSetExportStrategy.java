@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,13 +20,8 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
-import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
-
-import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * A {@link BaseExportStrategy strategy} to export a data set, without using a preparation.
@@ -50,26 +42,24 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
                 && StringUtils.isEmpty(parameters.getPreparationId());
     }
 
-    @Override public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
+    @Override
+    public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
         execute(parameters);
     }
 
     @Override
     public StreamingResponseBody execute(ExportParameters parameters) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
+        formatService.setExportHeaders(parameters);
         return outputStream -> {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
             final String datasetId = parameters.getDatasetId();
-            try(DataSet dataSet = datasetClient.getDataSet(datasetId)) {
+            try (DataSet dataSet = datasetClient.getDataSet(datasetId)) {
                 // get the actions to apply (no preparation ==> dataset export ==> no actions)
-                Configuration configuration = Configuration.builder() //
+                Configuration configuration = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                        .format(format.getName()) //
+                        .format(formatService.getFormat(parameters.getExportType()).getName()) //
                         .volume(Configuration.Volume.SMALL) //
                         .output(outputStream) //
                         .limit(limit) //

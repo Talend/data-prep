@@ -67,7 +67,11 @@ public class ExportParametersUtil {
         if (StringUtils.isNotEmpty(exportParam.getPreparationId())) {
             Preparation prep = getPreparation(exportParam.getPreparationId(), exportParam.getStepId());
             result.setStepId(getCleanStepId(prep, exportParam.getStepId()));
-            result.setDatasetId(prep.getDataSetId());
+            // if we don't have dataSetId and don't have content to apply the preparation, we apply on the dataSet use
+            // for the preparation
+            if (exportParam.getDatasetId() == null && exportParam.getContent() == null) {
+                result.setDatasetId(prep.getDataSetId());
+            }
         } else {
             // it'w a dataset export parameter. We need to switch stepId to empty
             result.setStepId("");

@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
+
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
@@ -76,7 +77,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.export.ExportParametersUtil;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
@@ -204,9 +204,6 @@ public class TransformationService extends BaseTransformationService {
     private PreparationExportStrategy preparationExportStrategy;
 
     @Autowired
-    private ExportParametersUtil exportParametersUtil;
-
-    @Autowired
     private DatasetClient datasetClient;
 
     @RequestMapping(value = "/apply", method = POST)
@@ -227,11 +224,11 @@ public class TransformationService extends BaseTransformationService {
         if (StringUtils.isNotEmpty(parameters.getPreparationId())) {
             if (contentCache.has(cacheKey)) {
                 LOG.debug("Cache entry exist, return cache");
+                formatService.setExportHeaders(parameters);
                 return outputStream -> {
                     IOUtils.copy(contentCache.get(cacheKey), outputStream);
                 };
-            }
-            else {
+            } else {
                 executeSampleExportStrategyToCache(completeParameters, cacheKey);
                 return outputStream -> {
                 };
@@ -299,11 +296,11 @@ public class TransformationService extends BaseTransformationService {
      * Apply the preparation to the dataset out of the given IDs.
      *
      * @param preparationId the preparation id to apply on the dataset.
-     * @param datasetId     the dataset id to transform.
-     * @param formatName    The output {@link ExportFormat format}. This format also set the MIME response type.
-     * @param stepId        the preparation step id to use (default is 'head').
-     * @param name          the transformation name.
-     * @param exportParams  additional (optional) export parameters.
+     * @param datasetId the dataset id to transform.
+     * @param formatName The output {@link ExportFormat format}. This format also set the MIME response type.
+     * @param stepId the preparation step id to use (default is 'head').
+     * @param name the transformation name.
+     * @param exportParams additional (optional) export parameters.
      */
     //@formatter:off
     @RequestMapping(value = "/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", method = GET)
@@ -314,7 +311,7 @@ public class TransformationService extends BaseTransformationService {
                                                 @ApiParam(value = "Output format") @PathVariable("format") final String formatName,
                                                 @ApiParam(value = "Step id", defaultValue = "head") @RequestParam(value = "stepId", required = false, defaultValue = "head") final String stepId,
                                                 @ApiParam(value = "Name of the transformation", defaultValue = "untitled") @RequestParam(value = "name", required = false, defaultValue = "untitled") final String name,
-                                                @RequestParam final Map<String, String> exportParams) {
+                                                @RequestParam final Map<String, String> exportParams) throws IOException {
         //@formatter:on
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparationId);
@@ -324,7 +321,10 @@ public class TransformationService extends BaseTransformationService {
         exportParameters.setExportName(name);
         exportParameters.getArguments().putAll(exportParams);
 
-        return executeSampleExportStrategy(exportParameters);
+        final ExportParameters completeParameters =
+                exportParametersUtil.populateFromPreparationExportParameter(exportParameters);
+
+        return executeSampleExportStrategy(completeParameters);
     }
 
     /**
@@ -343,7 +343,7 @@ public class TransformationService extends BaseTransformationService {
             @ApiParam(value = "DataSet id to transform.") @PathVariable(value = "datasetId") final String datasetId,
             @ApiParam(value = "Output format") @PathVariable("format") final String formatName,
             @ApiParam(value = "Name of the transformation", defaultValue = "untitled") @RequestParam(value = "name", required = false, defaultValue = "untitled") final String name,
-            @RequestParam final Map<String, String> exportParams) {
+            @RequestParam final Map<String, String> exportParams) throws IOException {
         //@formatter:on
         return applyOnDataset(null, datasetId, formatName, null, name, exportParams);
     }
@@ -371,7 +371,8 @@ public class TransformationService extends BaseTransformationService {
 
         // apply the aggregation
         try (InputStream contentToAggregate = getContentToAggregate(parameters);
-                JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
+                JsonParser parser =
+                        mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             return aggregationService.aggregate(parameters, dataSet);
         } catch (IOException e) {
@@ -707,16 +708,18 @@ public class TransformationService extends BaseTransformationService {
         }
 
         // look for all actions applicable to the column type
-        return actionRegistry.findAll() //
+        return actionRegistry
+                .findAll() //
                 .filter(am -> am.acceptScope(COLUMN) && am.acceptField(column)) //
                 .map(am -> suggestionEngine.score(am, column)) //
-                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
+                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not
+                                               // applicable)
                 .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
                 .map(am -> am.adapt(column)) // Adapt default values (e.g. column name)
                 .map(ad -> ad.getActionForm(getLocale()));
-        }
+    }
 
     /**
      * Returns all {@link ActionDefinition actions} data prep may apply to a line.
@@ -980,7 +983,11 @@ public class TransformationService extends BaseTransformationService {
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparation.getId());
         exportParameters.setExportType("JSON");
-        exportParameters.setStepId(stepId);
+        if ("head".equals(stepId)) {
+            exportParameters.setStepId(preparation.getHeadId());
+        } else {
+            exportParameters.setStepId(stepId);
+        }
         exportParameters.setDatasetId(preparation.getDataSetId());
 
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(exportParameters);

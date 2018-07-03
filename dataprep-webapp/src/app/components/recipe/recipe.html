@@ -53,14 +53,14 @@
                         <step-description index="$index" step="step"></step-description>
 
                         <a
-                                href
-                                class="remove-icon"
-                                ng-class="{'disabled': step.deleting}"
-                                id="step-remove-{{step.transformation.stepId}}"
-                                ng-click="$ctrl.remove(step, $event)"
-                                title="{{::'REMOVE_STEP' | translate }}"
-                                ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
-                                ng-mouseleave="$ctrl.resetStepToBeDeleted()">
+                            href
+                            class="remove-icon"
+                            ng-class="{'disabled': step.deleting}"
+                            id="step-remove-{{step.transformation.stepId}}"
+                            ng-click="$ctrl.remove(step, $event)"
+                            title="{{::'REMOVE_STEP' | translate }}"
+                            ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
+                            ng-mouseleave="$ctrl.resetStepToBeDeleted()">
                             <Icon name="'talend-trash'"/>
                         </a>
 

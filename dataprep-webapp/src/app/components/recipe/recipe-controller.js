@@ -28,7 +28,7 @@ const CLUSTER_TYPE = 'CLUSTER';
 export default class RecipeCtrl {
 
 	constructor($timeout, FilterAdapterService, LookupService, MessageService, ParametersService,
-							PlaygroundService, PreviewService, StateService, state, RecipeKnotService, RecipeService) {
+		PlaygroundService, PreviewService, StateService, state, RecipeKnotService, RecipeService) {
 		'ngInject';
 
 		this.$timeout = $timeout;

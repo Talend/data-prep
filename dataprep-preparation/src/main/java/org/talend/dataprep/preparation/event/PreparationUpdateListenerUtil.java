@@ -1,5 +1,8 @@
 package org.talend.dataprep.preparation.event;
 
+import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.in;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,6 @@ import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
-
-import static org.talend.tql.api.TqlBuilder.eq;
-import static org.talend.tql.api.TqlBuilder.in;
 
 /**
  * Utility class to remove all {@link StepRowMetadata} associated to a preparation that uses a given dataset.
@@ -50,7 +50,7 @@ public class PreparationUpdateListenerUtil {
      */
     public void removePreparationStepRowMetadata(String dataSetId) {
         try {
-            securityProxy.asTechnicalUser();
+            securityProxy.asTechnicalUserForDataSet();
             final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
             if (dataSetMetadata == null) {
                 LOGGER.error("Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).", dataSetId);

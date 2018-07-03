@@ -12,6 +12,10 @@
 
 package org.talend.dataprep.configuration;
 
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+
+import java.util.LinkedList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,10 +30,6 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 import org.talend.dataprep.security.SecurityProxy;
-
-import java.util.LinkedList;
-
-import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 @Component
 public class APIPreparationConversions extends BeanConversionServiceWrapper {
@@ -59,7 +59,7 @@ public class APIPreparationConversions extends BeanConversionServiceWrapper {
             DatasetClient datasetClient = applicationContext.getBean(DatasetClient.class);
             // get the dataset metadata
             try {
-                securityProxy.asTechnicalUser(); // because dataset are not shared
+                securityProxy.asTechnicalUserForDataSet();
                 final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparationMessage.getDataSetId());
                 enrichedPreparation.setSummary(new EnrichedPreparation.DataSetMetadataSummary(dataSetMetadata));
             } catch (Exception e) {

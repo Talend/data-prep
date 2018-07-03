@@ -12,6 +12,12 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
+import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
+
+import java.io.OutputStream;
+import java.util.Objects;
+
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -33,12 +39,6 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
-
-import java.io.OutputStream;
-import java.util.Objects;
-
-import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
-import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 /**
  * A {@link BaseExportStrategy strategy} to apply a preparation on a different dataset (different from the one initially
@@ -87,7 +87,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
         // dataset content must be retrieved as the technical user because it might not be shared
         boolean technicianIdentityReleased = false;
-        securityProxy.asTechnicalUser();
+        securityProxy.asTechnicalUserForDataSet();
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
 

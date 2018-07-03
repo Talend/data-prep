@@ -12,9 +12,26 @@
 
 package org.talend.dataprep.api.service;
 
-import com.netflix.hystrix.HystrixCommand;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.dataprep.command.CommandHelper.toPublisher;
+import static org.talend.dataprep.command.CommandHelper.toStreaming;
+import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +54,6 @@ import org.talend.dataprep.api.service.command.dataset.CopyDataSet;
 import org.talend.dataprep.api.service.command.dataset.CreateDataSet;
 import org.talend.dataprep.api.service.command.dataset.CreateOrUpdateDataSet;
 import org.talend.dataprep.api.service.command.dataset.DataSetDelete;
-import org.talend.dataprep.api.service.command.dataset.DataSetGetEncodings;
 import org.talend.dataprep.api.service.command.dataset.DataSetGetImportParameters;
 import org.talend.dataprep.api.service.command.dataset.DataSetPreview;
 import org.talend.dataprep.api.service.command.dataset.GetDataSetColumnTypes;
@@ -49,6 +65,7 @@ import org.talend.dataprep.api.service.command.preparation.PreparationSearchByDa
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
@@ -57,27 +74,13 @@ import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+
+import com.netflix.hystrix.HystrixCommand;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.dataprep.command.CommandHelper.toPublisher;
-import static org.talend.dataprep.command.CommandHelper.toStreaming;
-import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -275,11 +278,12 @@ public class DataSetAPI extends APIService {
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order,
             @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
-            @ApiParam(value = "Filter on favorite data sets") @RequestParam(required = false) Boolean favorite,
+            @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
         try {
             CertificationState certification = certified ? CERTIFIED : null;
-            Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, favorite);
+                Boolean filterOnFavorite = favorite ? Boolean.TRUE : null;
+                Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, filterOnFavorite);
 
             if (isNotBlank(name)) {
                 datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
@@ -426,7 +430,7 @@ public class DataSetAPI extends APIService {
     @Timed
     @PublicAPI
     public Stream<String> listEncodings() {
-        return CommandHelper.toStream(String.class, mapper, getCommand(DataSetGetEncodings.class));
+        return EncodingSupport.getSupportedCharsets().stream().map(Charset::displayName);
     }
 
     @RequestMapping(value = "/api/datasets/imports/{import}/parameters", method = GET, produces = APPLICATION_JSON_VALUE)

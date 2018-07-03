@@ -14,7 +14,11 @@
 package org.talend.dataprep.transformation.actions.datamasking;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
@@ -193,25 +197,21 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         assertEquals(expectedValues, row.values());
     }
 
-
     @Test
     public void testShouldUseDefaultMaskingForInvalid() {
-
         // given
         String inputValue="bla bla";
         final DataSetRow row = builder() //
                 .with(value(inputValue).type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name())) //
                 .build();
 
-        final Map<String, String> expectedValues = new HashMap<>();
-
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        String result=row.values().get("0000").toString();
-        assertFalse("The result should not be same with inputValue",inputValue.equals(result));
-        assertTrue("The length of result should be same with inputValue",inputValue.length()==result.length());
+        String result = row.values().get("0000").toString();
+        assertNotEquals("The result should not be same with inputValue", inputValue, result);
+        assertEquals("The length of result should be same with inputValue", inputValue.length(), result.length());
     }
 
     @Test

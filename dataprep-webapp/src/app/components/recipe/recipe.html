@@ -31,8 +31,8 @@
     <sc-accordion>
         <li ng-repeat="step in $ctrl.state.playground.recipe.current.reorderedSteps track by step.transformation.stepId"
             as-sortable-item>
-            <div class="step-container remove"
-                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview }">
+            <div class="step-container"
+                 ng-class="{'disabled-step': step.inactive, 'preview': step.preview, 'remove': $ctrl.shouldBeRemoved(step)}">
 
                 <sc-accordion-item id="step-{{step.transformation.stepId}}"
                                    class="recipe-step"
@@ -53,14 +53,14 @@
                         <step-description index="$index" step="step"></step-description>
 
                         <a
-                            href
-                            class="remove-icon"
-                            ng-class="{'disabled': step.deleting}"
-                            id="step-remove-{{step.transformation.stepId}}"
-                            ng-click="$ctrl.remove(step, $event)"
-                            title="{{::'REMOVE_STEP' | translate }}"
-                            ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
-                            ng-mouseleave="$ctrl.resetStepToBeDeleted()">
+                                href
+                                class="remove-icon"
+                                ng-class="{'disabled': step.deleting}"
+                                id="step-remove-{{step.transformation.stepId}}"
+                                ng-click="$ctrl.remove(step, $event)"
+                                title="{{::'REMOVE_STEP' | translate }}"
+                                ng-mouseenter="$ctrl.setStepToBeDeleted(step)"
+                                ng-mouseleave="$ctrl.resetStepToBeDeleted()">
                             <Icon name="'talend-trash'"/>
                         </a>
 

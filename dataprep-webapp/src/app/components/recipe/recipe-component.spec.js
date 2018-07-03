@@ -860,4 +860,41 @@ describe('Recipe component', () => {
 		expect(element.find('.recipe .step-container').eq(4).hasClass('disabled-step')).toBe(true);
 	});
 
+	it('should highlight steps that will be deleted on remove icon mouse over', inject(($timeout) => {
+		// given
+		stateMock.playground.recipe.current.steps = stepsWithDiff;
+		stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
+		scope.$digest();
+		$timeout.flush(1);
+
+		// when
+		element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseover();
+
+		// then
+		expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(true);
+		expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(true);
+		expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(true);
+	}));
+
+	it('should remove highlight class on remove icon mouse out', inject(($timeout) => {
+		// given
+		stateMock.playground.recipe.current.steps = stepsWithDiff;
+		stateMock.playground.recipe.current.reorderedSteps = stateMock.playground.recipe.current.steps;
+		scope.$digest();
+		$timeout.flush(1);
+		element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseover();
+
+		// then
+		expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(true);
+		expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(true);
+		expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(true);
+
+		// when
+		element.find('#step-remove-260a4b7a3d1f2c03509d865a7961a481e594142e').mouseout();
+
+		// then
+		expect(element.find('>.recipe .step-container').eq(3).hasClass('remove')).toBe(false);
+		expect(element.find('>.recipe .step-container').eq(4).hasClass('remove')).toBe(false);
+		expect(element.find('>.recipe .step-container').eq(5).hasClass('remove')).toBe(false);
+	}));
 });

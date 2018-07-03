@@ -28,7 +28,7 @@ const CLUSTER_TYPE = 'CLUSTER';
 export default class RecipeCtrl {
 
 	constructor($timeout, FilterAdapterService, LookupService, MessageService, ParametersService,
-		PlaygroundService, PreviewService, StateService, state, RecipeKnotService, RecipeService) {
+							PlaygroundService, PreviewService, StateService, state, RecipeKnotService, RecipeService) {
 		'ngInject';
 
 		this.$timeout = $timeout;
@@ -163,6 +163,19 @@ export default class RecipeCtrl {
 	 */
 	setStepToBeDeleted(step) {
 		this.stepToBeDeleted = step;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name shouldBeRemoved
+	 * @methodOf data-prep.recipe.controller:RecipeCtrl
+	 * @description checks if the step should be removed
+	 * @param {object} step The step to be deleted
+	 * @returns {boolean} true if the step will be removed from the recipe
+	 */
+	shouldBeRemoved(step) {
+		return ((this.stepToBeDeleted && this.stepToBeDeleted.transformation.stepId === step.transformation.stepId)) ||
+			(this.stepToBeDeleted && (this.stepToBeDeleted.diff.createdColumns.indexOf(step.actionParameters.parameters.column_id) > -1));
 	}
 
 	/**

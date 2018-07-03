@@ -38,6 +38,17 @@ public class PreparationDTO implements SharedResource {
 
     private String headId;
 
+    /** Diff between step (e.g. to know created/deleted columns) */
+    private List<StepDiff> diff;
+
+    public List<StepDiff> getDiff() {
+        return diff;
+    }
+
+    public void setDiff(List<StepDiff> diff) {
+        this.diff = diff;
+    }
+
     public String getDataSetId() {
         return dataSetId;
     }

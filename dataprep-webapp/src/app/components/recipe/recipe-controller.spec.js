@@ -373,21 +373,21 @@ describe('Recipe controller', () => {
 
 		it('should hide lookup panel when the deleted step is a lookup step',
 			inject((StateService) => {
-			// given
-			const ctrl = createController();
-			const event = angular.element.Event('click');
-			ctrl.stepToBeDeleted = {};
-			stateMock.playground.lookup.visibility = true;
-			stateMock.playground.stepInEditionMode = {};
+				// given
+				const ctrl = createController();
+				const event = angular.element.Event('click');
+				ctrl.stepToBeDeleted = {};
+				stateMock.playground.lookup.visibility = true;
+				stateMock.playground.stepInEditionMode = {};
 
-			// when
-			ctrl.remove(step, event);
-			scope.$digest();
+				// when
+				ctrl.remove(step, event);
+				scope.$digest();
 
-			// then
-			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
-			expect(StateService.setStepInEditionMode).toHaveBeenCalledWith(null);
-		}));
+				// then
+				expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
+				expect(StateService.setStepInEditionMode).toHaveBeenCalledWith(null);
+			}));
 
 		it('should stop click propagation', () => {
 			// given
@@ -975,6 +975,51 @@ describe('Recipe controller', () => {
 
 			// then
 			expect(ctrl.stepToBeDeleted).toBe(null);
+		});
+	});
+
+	describe('steps that should be removed', () => {
+		it('should return true when the current step should be removed', () => {
+			// given
+			const ctrl = createController();
+			const step = { transformation: { stepId: 'abc-def' } };
+			ctrl.stepToBeDeleted = step;
+
+			// when
+			const shouldBeRemoved = ctrl.shouldBeRemoved(step);
+
+			// then
+			expect(shouldBeRemoved).toBe(true);
+		});
+
+		it('should return true when the step parent should be also removed', () => {
+			// given
+			const ctrl = createController();
+			const parentStep = {
+				transformation: {
+					stepId: 'abc-def',
+				},
+				diff: {
+					createdColumns: ['0008'],
+				},
+			};
+			ctrl.stepToBeDeleted = parentStep;
+			const childStep = {
+				transformation: {
+					stepId: '123-abd',
+				},
+				actionParameters: {
+					parameters: {
+						column_id: '0008',
+					},
+				},
+			};
+
+			// when
+			const shouldBeRemoved = ctrl.shouldBeRemoved(childStep);
+
+			// then
+			expect(shouldBeRemoved).toBe(true);
 		});
 	});
 });

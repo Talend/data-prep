@@ -38,6 +38,7 @@ import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.exception.error.ActionErrorCodes;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
@@ -194,7 +195,11 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
     public List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
         String columnName = context.getParameters().get(NEW_COLUMN_NAME) != null ? context.getParameters().get(NEW_COLUMN_NAME)
                 : DEFAULT_NAME_FOR_NEW_COLUMN;
-        return Collections.singletonList(ActionsUtils.additionalColumn().withName(columnName));
+        ActionsUtils.AdditionalColumn additionalColumn = ActionsUtils.additionalColumn().withName(columnName);
+        if (SEQUENCE_MODE.equals(context.getParameters().get(MODE_PARAMETER))) {
+            additionalColumn.withType(Type.INTEGER);
+        }
+        return Collections.singletonList(additionalColumn);
     }
 
     /**

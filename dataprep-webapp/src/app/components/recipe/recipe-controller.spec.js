@@ -373,21 +373,21 @@ describe('Recipe controller', () => {
 
 		it('should hide lookup panel when the deleted step is a lookup step',
 			inject((StateService) => {
-				// given
-				const ctrl = createController();
-				const event = angular.element.Event('click');
-				ctrl.stepToBeDeleted = {};
-				stateMock.playground.lookup.visibility = true;
-				stateMock.playground.stepInEditionMode = {};
+			// given
+			const ctrl = createController();
+			const event = angular.element.Event('click');
+			ctrl.stepToBeDeleted = {};
+			stateMock.playground.lookup.visibility = true;
+			stateMock.playground.stepInEditionMode = {};
 
-				// when
-				ctrl.remove(step, event);
-				scope.$digest();
+			// when
+			ctrl.remove(step, event);
+			scope.$digest();
 
-				// then
-				expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
-				expect(StateService.setStepInEditionMode).toHaveBeenCalledWith(null);
-			}));
+			// then
+			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(false);
+			expect(StateService.setStepInEditionMode).toHaveBeenCalledWith(null);
+		}));
 
 		it('should stop click propagation', () => {
 			// given

@@ -26,7 +26,6 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
@@ -93,7 +92,7 @@ import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
@@ -921,7 +920,7 @@ public class TransformationService extends BaseTransformationService {
      * @return the preparation from the preparation service.
      */
     private PreparationDTO getPreparation(String preparationId) {
-        final PreparationDetailsGet details = applicationContext.getBean(PreparationDetailsGet.class, preparationId);
+        final PreparationSummaryGet details = applicationContext.getBean(PreparationSummaryGet.class, preparationId);
         return details.execute();
     }
 

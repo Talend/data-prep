@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -77,8 +77,8 @@ public class ExportParametersUtil {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
-        return preparationDetailsGet.execute();
+        final PreparationSummaryGet preparationSummaryGet = applicationContext.getBean(PreparationSummaryGet.class, preparationId, stepId);
+        return preparationSummaryGet.execute();
     }
 
     /**

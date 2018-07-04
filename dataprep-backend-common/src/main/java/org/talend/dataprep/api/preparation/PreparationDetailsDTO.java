@@ -28,6 +28,8 @@ public class PreparationDetailsDTO {
 
     private List<ActionForm> metadata;
 
+    private List<StepDiff> diff;
+
     private boolean allowDistributedRun;
 
     private boolean allowFullRun = false;
@@ -118,5 +120,13 @@ public class PreparationDetailsDTO {
 
     public boolean isAllowFullRun() {
         return allowFullRun;
+    }
+
+    public List<StepDiff> getDiff() {
+        return diff;
+    }
+
+    public void setDiff(List<StepDiff> diff) {
+        this.diff = diff;
     }
 }

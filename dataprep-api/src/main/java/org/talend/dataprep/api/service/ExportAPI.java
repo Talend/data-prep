@@ -42,7 +42,7 @@ import org.talend.dataprep.api.service.command.export.Export;
 import org.talend.dataprep.api.service.command.export.ExportTypes;
 import org.talend.dataprep.api.service.command.export.PreparationExportTypes;
 import org.talend.dataprep.command.CommandHelper;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -100,8 +100,8 @@ public class ExportAPI extends APIService {
 
         // deal with preparation (update the export name and dataset id if needed)
         if (StringUtils.isNotBlank(parameters.getPreparationId())) {
-            final PreparationDetailsGet preparationDetailsGet = getCommand(PreparationDetailsGet.class, parameters.getPreparationId());
-            final PreparationDTO preparation = preparationDetailsGet.execute();
+            final PreparationSummaryGet preparationSummaryGet = getCommand(PreparationSummaryGet.class, parameters.getPreparationId());
+            final PreparationDTO preparation = preparationSummaryGet.execute();
             if (StringUtils.isBlank(exportName)) {
                 exportName = preparation.getName();
             }

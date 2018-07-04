@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -393,9 +394,9 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets/{id}/actions", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get suggested actions for a whole data set.", notes = "Returns the suggested actions for the given dataset in decreasing order of likeness.")
     @Timed
-    public StreamingResponseBody suggestDatasetActions(
+    public List<ActionForm> suggestDatasetActions(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Data set id to get suggestions from.") String dataSetId) {
-        HystrixCommand<InputStream> getLookupActions = getCommand(SuggestLookupActions.class,
+        HystrixCommand<List<ActionForm>> getLookupActions = getCommand(SuggestLookupActions.class,
                 new HystrixCommand<DataSetMetadata>(GenericCommand.TRANSFORM_GROUP) {
 
                     @Override
@@ -404,7 +405,7 @@ public class DataSetAPI extends APIService {
                     }
                 }, dataSetId);
 
-        return toStreaming(getLookupActions);
+        return getLookupActions.execute();
     }
 
     @RequestMapping(value = "/api/datasets/favorite/{id}", method = POST, produces = TEXT_PLAIN_VALUE)

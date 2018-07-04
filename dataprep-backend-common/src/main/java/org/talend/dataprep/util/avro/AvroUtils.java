@@ -122,12 +122,12 @@ public class AvroUtils {
     }
 
     /** Build a converter to streamingly convert {@link GenericRecord} in {@link DataSetRow}. */
-    public static Function<GenericRecord, DataSetRow> getToDataSetRowConverter(RowMetadata dataSetMetadata) {
+    public static Function<GenericRecord, DataSetRow> buildToDataSetRowConverter(RowMetadata dataSetMetadata) {
         return new AvroToDatasetRow(dataSetMetadata);
     }
 
     /** Build a converter to streamingly convert {@link DataSetRow} in {@link GenericRecord}. */
-    public static Function<DataSetRow, GenericRecord> getToGenericRecordConverter(Schema schema) {
+    public static Function<DataSetRow, GenericRecord> buildToGenericRecordConverter(Schema schema) {
         return dsr -> toGenericRecord(schema, dsr);
     }
 

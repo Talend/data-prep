@@ -238,7 +238,7 @@ public class DatasetClient {
 
     // GenericRecord -> DataSetRow
     private Function<GenericRecord, DataSetRow> toDatasetRow(RowMetadata rowMetadata) {
-        return AvroUtils.getToDataSetRowConverter(rowMetadata);
+        return AvroUtils.buildToDataSetRowConverter(rowMetadata);
     }
 
     // Dataset -> DataSetMetadata

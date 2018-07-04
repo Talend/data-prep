@@ -89,8 +89,8 @@ public class AvroUtilsTest {
         inputRow.setTdpId(1L);
 
         Function<DataSetRow, GenericRecord> toAvro =
-                AvroUtils.toGenericRecordConverter(AvroUtils.toSchema(rowMetadata));
-        Function<GenericRecord, DataSetRow> converter = AvroUtils.toDataSetRowConverter(rowMetadata);
+                AvroUtils.getToGenericRecordConverter(AvroUtils.toSchema(rowMetadata));
+        Function<GenericRecord, DataSetRow> converter = AvroUtils.getToDataSetRowConverter(rowMetadata);
 
         DataSetRow dataSetRow = converter.apply(toAvro.apply(inputRow));
 

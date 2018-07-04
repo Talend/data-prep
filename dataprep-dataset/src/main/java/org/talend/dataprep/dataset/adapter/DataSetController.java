@@ -151,7 +151,7 @@ public class DataSetController {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
 
-            records.map(AvroUtils.toGenericRecordConverter(schema)) //
+            records.map(AvroUtils.getToGenericRecordConverter(schema)) //
                     .forEach(record -> {
                         try {
                             writer.write(record, encoder);

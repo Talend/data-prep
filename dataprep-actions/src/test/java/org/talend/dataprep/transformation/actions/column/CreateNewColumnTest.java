@@ -66,15 +66,28 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
     }
 
     @Test
-    public void testActionName() throws Exception {
+    public void testActionName() {
         assertEquals("create_new_column", action.getName());
     }
 
     @Test
-    public void testActionParameters() throws Exception {
+    public void testActionParameters() {
+        // when
         final List<Parameter> parameters = action.getParameters(Locale.US);
+
+        // then
         assertEquals(6, parameters.size());
         assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode_new_column")));
+
+        // then (start and step value cannot be blank)
+        assertTrue(parameters.stream() //
+                .filter(p -> p.getName().equalsIgnoreCase(CreateNewColumn.START_VALUE)) //
+                .noneMatch(Parameter::isCanBeBlank) //
+        );
+        assertTrue(parameters.stream() //
+                .filter(p -> p.getName().equalsIgnoreCase(CreateNewColumn.STEP_VALUE)) //
+                .noneMatch(Parameter::isCanBeBlank) //
+        );
     }
 
     @Test
@@ -90,7 +103,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
     }
 
     @Test
-    public void testActionScope() throws Exception {
+    public void testActionScope() {
         assertThat(action.getActionScope(), hasSize(2));
         assertThat(action.getActionScope(), hasItem(ActionScope.COLUMN_METADATA.getDisplayName()));
         assertThat(action.getActionScope(), hasItem(ActionScope.HIDDEN_IN_ACTION_LIST.getDisplayName()));
@@ -202,7 +215,7 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
     }
 
     @Test
-    public void shouldNotGenerateSequenceONDeletedRow() {
+    public void shouldNotGenerateSequenceOnDeletedRow() {
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
         values.put("0001", "Bacon ipsum");

@@ -397,7 +397,7 @@ public class DataSetAPI extends APIService {
     public List<ActionForm> suggestDatasetActions(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Data set id to get suggestions from.") String dataSetId) {
         HystrixCommand<List<ActionForm>> getLookupActions = getCommand(SuggestLookupActions.class,
-                new HystrixCommand<DataSetMetadata>(GenericCommand.TRANSFORM_GROUP) {
+                new HystrixCommand<DataSetMetadata>(GenericCommand.DATASET_GROUP) {
 
                     @Override
                     protected DataSetMetadata run() {

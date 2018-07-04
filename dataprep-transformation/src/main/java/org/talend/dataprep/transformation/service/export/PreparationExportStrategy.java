@@ -29,7 +29,6 @@ import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -49,9 +48,6 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
-
-    @Autowired
-    private DatasetClient datasetClient;
 
     @Override
     public boolean accept(final ExportParameters parameters) {

@@ -28,25 +28,32 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.ServiceBaseTest;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.talend.daikon.content.ResourceResolver;
 import org.talend.dataprep.cache.CacheJanitor;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.cache.noop.NoOpCacheJanitor;
+import org.talend.dataprep.cache.loader.ResourceLoaderContentCache;
 
 /**
  * Standard tests for a {@link ContentCache}
  *
  * @see LocalContentCacheTest
  */
-public abstract class ContentCacheTests extends ServiceBaseTest {
+@RunWith(MockitoJUnitRunner.class)
+public class ResourceLoaderContentCacheTest {
 
-    @Autowired
-    ContentCache cache;
+    @InjectMocks
+    private ResourceLoaderContentCache cache;
 
-    @Autowired
-    CacheJanitor janitor = new NoOpCacheJanitor();
+    @Mock
+    private ResourceResolver resolver;
+
+    @Mock
+    private CacheJanitor janitor;
 
     @After
     public void tearDown() throws Exception {

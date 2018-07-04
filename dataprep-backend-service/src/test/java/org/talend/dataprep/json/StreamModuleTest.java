@@ -22,18 +22,25 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.ServiceBaseTest;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class StreamModuleTest extends ServiceBaseTest {
+public class StreamModuleTest {
 
-    @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
+
+    @Before
+    public void setUp() throws Exception {
+        mapper = new ObjectMapper();
+        final StreamModule module = new StreamModule();
+        module.mapper = mapper;
+        module.registerSerializers();
+        mapper.registerModule(module);
+    }
 
     @Test
     public void shouldStreamWithNullValues() throws Exception {

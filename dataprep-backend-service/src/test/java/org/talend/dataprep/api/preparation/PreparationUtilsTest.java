@@ -22,25 +22,44 @@ import static org.talend.tql.api.TqlBuilder.eq;
 import java.util.*;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.ServiceBaseTest;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.talend.dataprep.Mocks;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.preparation.FixedIdPreparationContent;
 import org.talend.dataprep.preparation.FixedIdStep;
-import org.talend.dataprep.preparation.store.PersistentPreparationRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
+import org.talend.dataprep.preparation.store.inmemory.InMemoryPreparationRepository;
 
-public class PreparationUtilsTest extends ServiceBaseTest {
+@RunWith(MockitoJUnitRunner.class)
+public class PreparationUtilsTest {
 
-    @Autowired
-    private PreparationRepository repository;
+    @InjectMocks
+    private PreparationUtils preparationUtils;
 
-    @Autowired
+    @Mock
     private VersionService versionService;
 
-    @Autowired
-    private PreparationUtils preparationUtils;
+    private PreparationRepository repository;
+
+    @Before
+    public void setUp() throws Exception {
+        Mocks.configure(versionService);
+
+        repository = new InMemoryPreparationRepository();
+        repository.add(Step.ROOT_STEP);
+        repository.add(PreparationActions.ROOT_ACTIONS);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        repository.clear();
+    }
 
     @Test
     public void should_list_steps_ids_history_from_root() {
@@ -279,7 +298,6 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         repository.add(preparation);
 
         // Then
-        assertEquals(PersistentPreparationRepository.class, repository.getClass());
         assertTrue(repository.exist(Step.class, eq("id", "step-1234")));
         assertTrue(repository.exist(Step.class, eq("id", "step-5678")));
     }
@@ -307,7 +325,6 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final Preparation savedPreparation = repository.get("prep-1234", Preparation.class);
 
         // Then
-        assertEquals(PersistentPreparationRepository.class, repository.getClass());
         assertEquals(preparation.getId(), savedPreparation.getId());
         assertEquals(3, savedPreparation.getSteps().size());
         assertEquals(Step.ROOT_STEP.id(), savedPreparation.getSteps().get(0).getId());

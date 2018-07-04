@@ -25,16 +25,21 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.ServiceBaseTest;
+import org.talend.dataprep.Mocks;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetContent;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.exception.TDPException;
@@ -44,13 +49,21 @@ import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DataSetJSONTest extends ServiceBaseTest {
+@RunWith(MockitoJUnitRunner.class)
+public class DataSetJSONTest {
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
+    @InjectMocks
     private DataSetMetadataBuilder metadataBuilder;
+
+    @Mock
+    VersionService versionService;
+
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    @Before
+    public void setUp() throws Exception {
+        Mocks.configure(versionService);
+    }
 
     /**
      * @param json A valid JSON stream, may be <code>null</code>.

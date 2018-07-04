@@ -24,17 +24,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.ServiceBaseTest;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.talend.dataprep.Mocks;
 import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
+import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.schema.Schema;
 
-public class DataSetMetadataBuilderTest extends ServiceBaseTest {
+@RunWith(MockitoJUnitRunner.class)
+public class DataSetMetadataBuilderTest {
 
-    @Autowired
+    @InjectMocks
     private DataSetMetadataBuilder builder;
+
+    @Mock
+    VersionService versionService;
+
+    @Before
+    public void setUp() throws Exception {
+        Mocks.configure(versionService);
+    }
 
     @Test(expected = IllegalStateException.class)
     public void testExpectedId() {

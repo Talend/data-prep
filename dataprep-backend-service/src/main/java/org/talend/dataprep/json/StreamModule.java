@@ -45,7 +45,7 @@ public class StreamModule extends SimpleModule {
      * Register the serializer and deserializer.
      */
     @PostConstruct
-    private void registerSerializers() {
+    public void registerSerializers() {
         addSerializer(Stream.class, new JsonSerializer<Stream>() {
             @Override
             public void serialize(Stream stream, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {

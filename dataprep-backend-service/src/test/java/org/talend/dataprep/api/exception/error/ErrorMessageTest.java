@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.talend.ServiceBaseTest;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.test.SpringLocalizationRule;
@@ -32,7 +31,7 @@ import org.talend.dataprep.test.SpringLocalizationRule;
 /**
  * @TODO Add a support for internationalized messages
  */
-public class ErrorMessageTest extends ServiceBaseTest {
+public class ErrorMessageTest {
 
     @Rule
     public SpringLocalizationRule rule = new SpringLocalizationRule(Locale.US);

@@ -236,28 +236,28 @@ public class AvroUtils {
 
         @Override
         public Schema.Field apply(ColumnMetadata column) {
-            String columnName = column.getName();
+            String fieldName = column.getName();
             // normalize to Avro conventions
-            columnName = StringUtils.isEmpty(columnName) ?
+            fieldName = StringUtils.isEmpty(fieldName) ?
                     DATAPREP_FIELD_PREFIX + column.getId() :
-                    toAvroFieldName(columnName);
+                    toAvroFieldName(fieldName);
 
             // handle duplicates
-            final Integer suffix = uniqueSuffixes.get(columnName);
+            final Integer suffix = uniqueSuffixes.get(fieldName);
             if (suffix != null) {
                 // Modify column name
-                uniqueSuffixes.put(columnName, suffix + 1);
-                columnName = columnName + '_' + suffix;
+                uniqueSuffixes.put(fieldName, suffix + 1);
+                fieldName = fieldName + '_' + suffix;
             } else {
                 // Don't modify column name
-                uniqueSuffixes.put(columnName, 1);
+                uniqueSuffixes.put(fieldName, 1);
             }
 
             final Schema type = SchemaBuilder.builder().unionOf().nullBuilder().endNull().and().stringType().endUnion();
 
-            final Schema.Field field = new Schema.Field(columnName, type, EMPTY, ((Object) null));
+            final Schema.Field field = new Schema.Field(fieldName, type, EMPTY, ((Object) null));
             field.addProp(DP_COLUMN_ID, column.getId());
-            field.addProp(DP_COLUMN_NAME, columnName);
+            field.addProp(DP_COLUMN_NAME, column.getName());
             field.addProp(DP_COLUMN_TYPE, column.getType());
 
             return field;

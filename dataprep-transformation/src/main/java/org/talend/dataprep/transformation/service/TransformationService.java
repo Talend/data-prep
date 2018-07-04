@@ -268,7 +268,7 @@ public class TransformationService extends BaseTransformationService {
 
                     // we regenerate cache
                     parameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-                    preparationExportStrategy.performPreparation(parameters, new NullOutputStream(),
+                    preparationExportStrategy.doExecute(parameters, new NullOutputStream(),
                             cacheKeyGenerator.generateContentKey(parameters));
 
                 } catch (Exception e) {

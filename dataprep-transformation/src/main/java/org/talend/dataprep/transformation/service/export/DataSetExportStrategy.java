@@ -13,13 +13,11 @@
 package org.talend.dataprep.transformation.service.export;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 
@@ -28,9 +26,6 @@ import org.talend.dataprep.transformation.service.BaseExportStrategy;
  */
 @Component
 public class DataSetExportStrategy extends BaseSampleExportStrategy {
-
-    @Autowired
-    private DatasetClient datasetClient;
 
     @Override
     public boolean accept(ExportParameters parameters) {

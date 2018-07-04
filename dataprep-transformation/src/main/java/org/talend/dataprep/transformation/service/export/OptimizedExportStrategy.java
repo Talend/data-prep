@@ -77,21 +77,21 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
     public StreamingResponseBody execute(ExportParameters parameters) {
         formatService.setExportHeaders(parameters);
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
-        return outputStream -> performOptimizedTransform(parameters, new org.bouncycastle.util.io.TeeOutputStream(
+        return outputStream -> doExecute(parameters, new org.bouncycastle.util.io.TeeOutputStream(
                 outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
 
     @Override
     public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
         try {
-            performOptimizedTransform(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT),
+            doExecute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT),
                     cacheKeyGenerator.generateContentKey(parameters));
         } catch (IOException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
         }
     }
 
-    private void performOptimizedTransform(ExportParameters parameters, OutputStream outputStream,
+    private void doExecute(ExportParameters parameters, OutputStream outputStream,
             TransformationCacheKey key) throws IOException {
         // Initial check
         final OptimizedPreparationInput optimizedPreparationInput = new OptimizedPreparationInput(parameters).invoke();

@@ -63,21 +63,17 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
     @Override
     public StreamingResponseBody execute(final ExportParameters parameters) {
         TransformationCacheKey key = cacheKeyGenerator.generateContentKey(parameters);
-        return outputStream -> execute(parameters,
+        formatService.setExportHeaders(parameters);
+        return outputStream -> doExecute(parameters,
                 new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT)), key);
     }
 
     @Override
     public void writeToCache(ExportParameters parameters, TransformationCacheKey key) {
-        performPreparation(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), key);
+        doExecute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), key);
     }
 
-    public void execute(ExportParameters parameters, OutputStream stream, TransformationCacheKey key) {
-        formatService.setExportHeaders(parameters);
-        performPreparation(parameters, stream, key);
-    }
-
-    public void performPreparation(final ExportParameters parameters, OutputStream outputStream,
+    public void doExecute(final ExportParameters parameters, OutputStream outputStream,
             TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();

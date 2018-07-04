@@ -1356,7 +1356,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void toto() throws Exception {
+    public void datasetWithSameColumnsNameShouldBeHandled_TDP_5838() throws Exception {
         // given
         String inputFile = "/org/talend/dataprep/api/service/preparations/5L4Ccity_TDP-3858.csv";
         CSVReader baseFileReader = new CSVReader(new InputStreamReader(getClass().getResourceAsStream(inputFile)), ';', '"');

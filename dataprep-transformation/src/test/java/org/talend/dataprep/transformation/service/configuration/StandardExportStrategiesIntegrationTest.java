@@ -30,6 +30,7 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.RESERVOIR;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
@@ -43,6 +44,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParameters.SourceType;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.json.MixedContentMapModule;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
@@ -130,9 +132,10 @@ public class StandardExportStrategiesIntegrationTest {
     private void initPreparationDetails() throws Exception {
         doReturn(preparationDetailsGet).when(applicationContext).getBean(eq(PreparationDetailsGet.class), anyString(),
                 anyString());
+        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details.json"));
         when(preparationDetailsGet.execute())
-                .thenReturn(this.getClass().getResourceAsStream("preparation_details.json"))
-                .thenReturn(this.getClass().getResourceAsStream("preparation_details.json"));
+                .thenReturn(preparationDTO)
+                .thenReturn(preparationDTO);
     }
 
     private void initContentCache() {
@@ -208,11 +211,12 @@ public class StandardExportStrategiesIntegrationTest {
         assertElectedStrategyIsInstanceOf(electedStrategy, OptimizedExportStrategy.class);
     }
 
-    private String idOfPrepWith2StepsOrMore() {
+    private String idOfPrepWith2StepsOrMore() throws IOException {
         reset(preparationDetailsGet);
+        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
         when(preparationDetailsGet.execute())
-                .thenReturn(this.getClass().getResourceAsStream("two_steps_preparation_details.json"))
-                .thenReturn(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
+                .thenReturn(preparationDTO)
+                .thenReturn(preparationDTO);
         return "prepId-1234";
     }
 

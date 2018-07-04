@@ -76,7 +76,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             boolean allowDistributedRun = true;
             for (Action action : actions) {
                 final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
-                if (actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                if (actionDefinition.getBehavior(action).contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
                     allowDistributedRun = false; // Disallow distributed run
                     break;
                 }
@@ -113,7 +113,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                     boolean allowDistributedRun = true;
                     for (Action action : actions) {
                         final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
-                        if (actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                        if (actionDefinition.getBehavior(action).contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
                             allowDistributedRun = false;
                             break;
                         }

@@ -31,6 +31,26 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.dataprep.command.CommandHelper.toPublisher;
+import static org.talend.dataprep.command.CommandHelper.toStreaming;
+import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +73,6 @@ import org.talend.dataprep.api.service.command.dataset.CopyDataSet;
 import org.talend.dataprep.api.service.command.dataset.CreateDataSet;
 import org.talend.dataprep.api.service.command.dataset.CreateOrUpdateDataSet;
 import org.talend.dataprep.api.service.command.dataset.DataSetDelete;
-import org.talend.dataprep.api.service.command.dataset.DataSetGetEncodings;
 import org.talend.dataprep.api.service.command.dataset.DataSetGetImportParameters;
 import org.talend.dataprep.api.service.command.dataset.DataSetPreview;
 import org.talend.dataprep.api.service.command.dataset.GetDataSetColumnTypes;
@@ -66,6 +85,7 @@ import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActi
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
@@ -273,45 +293,43 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List data sets.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets the user can use.")
     @Timed
-    public Callable<Stream<UserDataSetMetadata>> list(
+    public Stream<UserDataSetMetadata> list(
             @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order,
             @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
-            @ApiParam(value = "Filter on favorite data sets") @RequestParam(required = false) Boolean favorite,
+            @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
-        return () -> {
-            try {
+        try {
+            CertificationState certification = certified ? CERTIFIED : null;
+                Boolean filterOnFavorite = favorite ? Boolean.TRUE : null;
+                Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, filterOnFavorite);
 
-                CertificationState certification = certified ? CERTIFIED : null;
-                Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, favorite);
-
-                if (isNotBlank(name)) {
-                    datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
-                }
-
-                if (certified) {
-                    datasetStream = datasetStream.filter(dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
-                }
-
-                if (limit) {
-                    datasetStream = datasetStream.limit(datasetListLimit);
-                }
-
-                return datasetStream //
-                        .map(dataSetMetadata -> beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class)) //
-                        .sorted(SortAndOrderHelper.getDataSetMetadataComparator(sort, order));
-            } finally {
-                LOG.info("listing datasets done [favorite: {}, certified: {}, name: {}, limit: {}]", favorite, certified, name,
-                        limit);
+            if (isNotBlank(name)) {
+                datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
             }
-        };
+
+            if (certified) {
+                datasetStream = datasetStream.filter(dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
+            }
+
+            if (limit) {
+                datasetStream = datasetStream.limit(datasetListLimit);
+            }
+
+            return datasetStream //
+                    .map(dataSetMetadata -> beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class)) //
+                    .sorted(SortAndOrderHelper.getDataSetMetadataComparator(sort, order));
+        } finally {
+            LOG.info("listing datasets done [favorite: {}, certified: {}, name: {}, limit: {}]", favorite, certified, name,
+                    limit);
+        }
     }
 
     @RequestMapping(value = "/api/datasets/summary", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List data sets summary.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets summary the user can use.")
     @Timed
-    public Callable<Stream<EnrichedDataSetMetadata>> listSummary(
+    public Stream<EnrichedDataSetMetadata> listSummary(
             @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order,
             @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
@@ -321,24 +339,22 @@ public class DataSetAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing datasets summary (pool: {})...", getConnectionStats());
         }
-        return () -> {
-            Callable<Stream<UserDataSetMetadata>> listDataSets = list(sort, order, name, certified, favorite, limit);
-            return listDataSets.call() //
-                    .map(m -> {
-                        LOG.debug("found dataset {} in the summary list" + m.getName());
-                        // Add the related preparations list to the given dataset metadata.
-                        final PreparationSearchByDataSetId getPreparations = getCommand(PreparationSearchByDataSetId.class,
-                                m.getId());
-                        return Flux.from(CommandHelper.toPublisher(Preparation.class, mapper, getPreparations)).collectList() //
-                                .map(preparations -> {
-                                    final List<Preparation> list = preparations.stream() //
-                                            .filter(p -> p.getSteps() != null) //
-                                            .collect(Collectors.toList());
-                                    return new EnrichedDataSetMetadata(m, list);
-                                }) //
-                                .block();
-                    });
-        };
+        Stream<UserDataSetMetadata> listDataSets = list(sort, order, name, certified, favorite, limit);
+        return listDataSets //
+                .map(m -> {
+                    LOG.debug("found dataset {} in the summary list" + m.getName());
+                    // Add the related preparations list to the given dataset metadata.
+                    final PreparationSearchByDataSetId getPreparations = getCommand(PreparationSearchByDataSetId.class,
+                            m.getId());
+                    return Flux.from(CommandHelper.toPublisher(Preparation.class, mapper, getPreparations)).collectList() //
+                            .map(preparations -> {
+                                final List<Preparation> list = preparations.stream() //
+                                        .filter(p -> p.getSteps() != null) //
+                                        .collect(Collectors.toList());
+                                return new EnrichedDataSetMetadata(m, list);
+                            }) //
+                            .block();
+                });
     }
 
     /**
@@ -352,30 +368,28 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets/{id}/compatiblepreparations", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List compatible preparations.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets that are compatible with the specified one.")
     @Timed
-    public Callable<Stream<Preparation>> listCompatiblePreparations(
+    public Stream<Preparation> listCompatiblePreparations(
             @ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String dataSetId,
             @ApiParam(value = "Sort key (by name or date), defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
-        return () -> {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Listing compatible preparations (pool: {})...", getConnectionStats());
-            }
-            // get the list of compatible data sets
-            GenericCommand<InputStream> compatibleDataSetList = getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
-            final Mono<List<DataSetMetadata>> compatibleList = Flux
-                    .from(toPublisher(DataSetMetadata.class, mapper, compatibleDataSetList)) //
-                    .collectList() //
-                    .cache(); // Keep it in cache for later reuse
-            // get list of preparations
-            GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, sort, order);
-            return Flux.from(toPublisher(Preparation.class, mapper, preparationList)) //
-                    .filter(p -> compatibleList.flatMapIterable(l -> l) //
-                            .map(DataSetMetadata::getId) //
-                            .any(id -> StringUtils.equals(id, p.getDataSetId()) || dataSetId.equals(p.getDataSetId())) //
-                            .block() //
-                    ) //
-                    .toStream(1);
-        };
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Listing compatible preparations (pool: {})...", getConnectionStats());
+        }
+        // get the list of compatible data sets
+        GenericCommand<InputStream> compatibleDataSetList = getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
+        final Mono<List<DataSetMetadata>> compatibleList = Flux
+                .from(toPublisher(DataSetMetadata.class, mapper, compatibleDataSetList)) //
+                .collectList() //
+                .cache(); // Keep it in cache for later reuse
+        // get list of preparations
+        GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, SortAndOrderHelper.Format.LONG, sort, order);
+        return Flux.from(toPublisher(Preparation.class, mapper, preparationList)) //
+                .filter(p -> compatibleList.flatMapIterable(l -> l) //
+                        .map(DataSetMetadata::getId) //
+                        .any(id -> StringUtils.equals(id, p.getDataSetId()) || dataSetId.equals(p.getDataSetId())) //
+                        .block() //
+                ) //
+                .toStream(1);
     }
 
     @RequestMapping(value = "/api/datasets/{id}", method = DELETE)
@@ -440,8 +454,8 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "List supported dataset encodings.", notes = "Returns the supported dataset encodings.")
     @Timed
     @PublicAPI
-    public Callable<Stream<String>> listEncodings() {
-        return () -> CommandHelper.toStream(String.class, mapper, getCommand(DataSetGetEncodings.class));
+    public Stream<String> listEncodings() {
+        return EncodingSupport.getSupportedCharsets().stream().map(Charset::displayName);
     }
 
     @RequestMapping(value = "/api/datasets/imports/{import}/parameters", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -463,12 +477,10 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "list the types of the wanted column", notes = "This list can be used by user to change the column type.")
     @Timed
     @PublicAPI
-    public Callable<Stream<SemanticDomain>> getDataSetColumnSemanticCategories(
+    public Stream<SemanticDomain> getDataSetColumnSemanticCategories(
             @ApiParam(value = "The dataset id") @PathVariable String datasetId,
             @ApiParam(value = "The column id") @PathVariable String columnId) {
-        return () -> {
-            LOG.debug("listing semantic types for dataset {}, column {}", datasetId, columnId);
-            return CommandHelper.toStream(SemanticDomain.class, mapper, getCommand(GetDataSetColumnTypes.class, datasetId, columnId));
-        };
+        LOG.debug("listing semantic types for dataset {}, column {}", datasetId, columnId);
+        return CommandHelper.toStream(SemanticDomain.class, mapper, getCommand(GetDataSetColumnTypes.class, datasetId, columnId));
     }
 }

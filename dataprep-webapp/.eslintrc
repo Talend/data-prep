@@ -39,8 +39,7 @@
     "prefer-template": 0,
     "prefer-arrow-callback": 0,
     "no-constant-condition": 0,
-    "import/prefer-default-export": 0,
-    "no-fallthrough": 0
+    "import/prefer-default-export": 0
   },
 
   "env": {

@@ -108,6 +108,7 @@ import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.SecurityProxy;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.aggregation.AggregationService;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
@@ -494,9 +495,8 @@ public class TransformationService extends BaseTransformationService {
     private void executeDiffOnDataset(final PreviewParameters previewParameters, final OutputStream output) {
 
         boolean identityReleased = false;
-        securityProxy.asTechnicalUser();
-        try {
-            final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId());
+        securityProxy.asTechnicalUserForDataSet();
+        try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId())) {
             securityProxy.releaseIdentity();
             identityReleased = true;
 
@@ -554,7 +554,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Evict content entries related to the preparation", notes = "This operation remove content entries related to the preparation.")
     @VolumeMetered
     public void evictCache(@ApiParam(value = "Preparation Id.") @PathVariable(value = "preparationId") final String preparationId) {
-        for(final ExportParameters.SourceType sourceType : ExportParameters.SourceType.values()) {
+        for (final ExportParameters.SourceType sourceType : ExportParameters.SourceType.values()) {
             evictCache(preparationId, sourceType);
         }
     }
@@ -707,16 +707,16 @@ public class TransformationService extends BaseTransformationService {
         }
 
         // look for all actions applicable to the column type
-        final Stream<Suggestion> suggestions = suggestionEngine
-                .score(actionRegistry.findAll().parallel().filter(am -> am.acceptField(column)), column);
-        return suggestions //
-                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not
-                                               // applicable)
+        return actionRegistry.findAll() //
+                .filter(am -> am.acceptScope(COLUMN) && am.acceptField(column)) //
+                .map(am -> suggestionEngine.score(am, column)) //
+                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
+                .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
                 .map(am -> am.adapt(column)) // Adapt default values (e.g. column name)
                 .map(ad -> ad.getActionForm(getLocale()));
-    }
+        }
 
     /**
      * Returns all {@link ActionDefinition actions} data prep may apply to a line.
@@ -746,8 +746,8 @@ public class TransformationService extends BaseTransformationService {
     public Stream<ActionForm> datasetActions() {
         return actionRegistry
                 .findAll() //
-                .filter(action -> action.acceptScope(DATASET)) //
-                .map(action -> action.adapt(DATASET))
+                .filter(action -> action.acceptScope(ScopeCategory.DATASET)) //
+                .map(action -> action.adapt(ScopeCategory.DATASET))
                 .map(ad -> ad.getActionForm(getLocale()));
     }
 

@@ -22,6 +22,7 @@ import java.util.function.Function;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -105,11 +106,23 @@ public interface ActionDefinition extends Serializable {
     /**
      * @return A set of {@link Behavior} that describes the expected behavior of the action. It helps Data Prep runtime to
      * optimize action executions.
+     * @deprecated Prefer use of {@link #getBehavior(Action)}.
      */
     Set<Behavior> getBehavior();
 
     /**
-     * Builds up a {@link Function} that takes an input {@link GenericRecord record} and returns the <i>eventually modified</i>
+     * @param action An instance of {@link ActionDefinition} instance that can be use to compute behavior based on
+     * parameters.
+     * @return A set of {@link Behavior} that describes the expected behavior of the action. It helps Data Prep runtime
+     * to optimize action executions.
+     */
+    default Set<Behavior> getBehavior(Action action) {
+        return getBehavior();
+    }
+
+    /**
+     * Builds up a {@link Function} that takes
+     * an input {@link GenericRecord record} and returns the <i>eventually modified</i>
      * record. The action can take as input the <code>parameters</code>.
      *
      * @param parameters The action parameters for construction, should be the expected ones from {@link #getParameters(Locale)}.
@@ -238,6 +251,14 @@ public interface ActionDefinition extends Serializable {
          * Action requires up-to-date statistics (for invalid) before it can be executed.
          */
         NEED_STATISTICS_INVALID,
+        /**
+         * Action requires up-to-date statistics (for quality) before it can be executed.
+         */
+        NEED_STATISTICS_QUALITY,
+        /**
+         * Action requires up-to-date statistics (for frequency) before it can be executed.
+         */
+        NEED_STATISTICS_FREQUENCY,
         /**
          * Action can not run in distributed environment (it needs a common context that can't be shared by multiple
          * nodes in case of distributed run). Example for this includes: fill empty with non-empty value from above,

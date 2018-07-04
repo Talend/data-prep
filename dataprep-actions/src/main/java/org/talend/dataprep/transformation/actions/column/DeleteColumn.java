@@ -15,7 +15,11 @@ package org.talend.dataprep.transformation.actions.column;
 
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +65,16 @@ public class DeleteColumn extends AbstractActionMetadata implements ColumnAction
     }
 
     @Override
-    public void applyOnColumn(DataSetRow row, ActionContext context) {
-        final String columnId = context.getColumnId();
+    public void compile(ActionContext actionContext) {
+        super.compile(actionContext);
+        final String columnId = actionContext.getColumnId();
         LOGGER.debug("DeleteColumn for columnId {}", columnId);
-        context.getRowMetadata().deleteColumnById(columnId);
+        actionContext.getRowMetadata().deleteColumnById(columnId);
+    }
+
+    @Override
+    public void applyOnColumn(DataSetRow row, ActionContext actionContext) {
+        final String columnId = actionContext.getColumnId();
         row.deleteColumnById(columnId);
     }
 

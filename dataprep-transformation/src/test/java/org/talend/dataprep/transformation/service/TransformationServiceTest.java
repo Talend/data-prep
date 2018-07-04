@@ -69,7 +69,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
     private CacheKeyGenerator cacheKeyGenerator;
 
     @Autowired
-    PreparationRepository preparationRepository;
+    private PreparationRepository preparationRepository;
 
     @Before
     public void customSetUp() throws Exception {
@@ -89,8 +89,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"),
-                UTF_8);
+        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -122,8 +121,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // when
         final Response response = given() //
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId,
-                        "unknown_dataset_id", "JSON");
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, "unknown_dataset_id",
+                        "JSON");
 
         // then
         assertEquals(400, response.getStatusCode());
@@ -180,8 +179,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("lowercase_filtered_expected.json"),
-                UTF_8);
+        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("lowercase_filtered_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -227,21 +225,10 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
     public void testEvictPreparationCache() throws Exception {
         // given
         final String preparationId = "prepId";
-        final ContentCacheKey metadataKey = cacheKeyGenerator
-                .metadataBuilder()
-                .preparationId(preparationId)
-                .stepId("step1")
-                .sourceType(FILTER)
-                .build();
-        final ContentCacheKey contentKey = cacheKeyGenerator
-                .contentBuilder()
-                .datasetId("datasetId")
-                .preparationId(preparationId)
-                .stepId("step1")
-                .format(JSON)
-                .parameters(emptyMap())
-                .sourceType(FILTER)
-                .build();
+        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder().preparationId(preparationId).stepId("step1")
+                .sourceType(FILTER).build();
+        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder().datasetId("datasetId").preparationId(preparationId)
+                .stepId("step1").format(JSON).parameters(emptyMap()).sourceType(FILTER).build();
         try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
             entry.write("metadata".getBytes());
             entry.flush();
@@ -341,11 +328,11 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // then
         /*
          * expected response array --> first element
-         *  {
+         * {
          * "id":"FR_COMMUNE",
          * "label":"FR Commune",
          * "frequency":99.19429
-         *  }
+         * }
          */
         assertEquals(200, response.getStatusCode());
         final JsonNode rootNode = mapper.readTree(response.asInputStream());
@@ -403,4 +390,5 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         assertEquals(2, dataSetResponseNode.size());
         assertEquals(preparationResponseNode, dataSetResponseNode);
     }
+
 }

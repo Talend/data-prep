@@ -1,0 +1,11 @@
+{
+  "actions": [
+    {
+      "action": "delete_all_empty_columns",
+      "parameters": {
+        "column_id": "0000",
+        "scope": "dataset"
+      }
+    }
+  ]
+}

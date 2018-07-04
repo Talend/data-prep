@@ -67,7 +67,6 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         if (parameters.getContent() != null) {
             return false;
         }
-
         if (StringUtils.isEmpty(parameters.getPreparationId())){
             return false;
         }
@@ -294,8 +293,8 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
                     sourceType, //
                     filter //
             );
-            LOGGER.debug("Previous content cache key: " + transformationCacheKey.getKey());
-            LOGGER.debug("Previous content cache key details: " + transformationCacheKey.toString());
+            LOGGER.debug("Previous content cache key: {}", transformationCacheKey.getKey());
+            LOGGER.debug("Previous content cache key details: {}", transformationCacheKey);
 
             if (!contentCache.has(transformationCacheKey)) {
                 LOGGER.debug("No content cached for previous version '{}'", previousVersion);

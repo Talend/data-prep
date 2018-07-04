@@ -1,0 +1,169 @@
+{
+  "name": "NOM",
+  "headerSize": 0,
+  "type": "string",
+  "quality": {
+    "empty": 0,
+    "invalid": 0,
+    "valid": 33
+  },
+  "id": "0000",
+  "statistics": {
+    "count": 33,
+    "valid": 33,
+    "invalid": 0,
+    "empty": 0,
+    "max": "NaN",
+    "min": "NaN",
+    "mean": "NaN",
+    "variance": "NaN",
+    "duplicateCount": 4,
+    "distinctCount": 29,
+    "frequencyTable": [
+      {
+        "data": "Pompe à vélo Haluchère",
+        "occurrences": 2
+      },
+      {
+        "data": "Pompe à vélo gare de Thouaré",
+        "occurrences": 2
+      },
+      {
+        "data": "Pompe à Vélo Gare de Bouaye",
+        "occurrences": 2
+      },
+      {
+        "data": "Pompe à Vélo Marcel Paul",
+        "occurrences": 2
+      },
+      {
+        "data": "Pompe à Vélo Porte de Vertou",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo François Mitterrand",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo P+R Haluchère Nord",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo /8 Mai",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo Gare Sud",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à Vélo Grande Ouche",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo Ranzay",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo Champ de Mars",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo Aven",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à vélo P+R Haluchère Sud",
+        "occurrences": 1
+      },
+      {
+        "data": "Pompe à Vélo Pont Rousseau",
+        "occurrences": 1
+      }
+    ],
+    "patternFrequencyTable": [
+      {
+        "pattern": "Aaaaa a aaaa Aaaaaaaaa",
+        "occurrences": 3
+      },
+      {
+        "pattern": "Aaaaa a aaaa Aaaa",
+        "occurrences": 2
+      },
+      {
+        "pattern": "Aaaaa a Aaaa Aaaa aa Aaaaaa",
+        "occurrences": 2
+      },
+      {
+        "pattern": "Aaaaa a Aaaa Aaaaaa Aaaa",
+        "occurrences": 2
+      },
+      {
+        "pattern": "Aaaaa a aaaa aaaa aa Aaaaaaa",
+        "occurrences": 2
+      },
+      {
+        "pattern": "Aaaaa a aaaa Aaaa Aaaaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a Aaaa Aaaaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a aaaa Aaaaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a aaaa A+A Aaaaaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "aaaaa a aaaa A+A Aaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a Aaaa Aaaaaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a aaaa Aaaaaaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a aaaa Aaaaaaaa Aaaaaaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a aaaa Aaaaaa",
+        "occurrences": 1
+      },
+      {
+        "pattern": "Aaaaa a Aaaa Aaaa Aaaaaaaa",
+        "occurrences": 1
+      }
+    ],
+    "quantiles": {
+      "median": "NaN",
+      "lowerQuantile": "NaN",
+      "upperQuantile": "NaN"
+    },
+    "textLengthSummary": {
+      "minimalLength": 17,
+      "maximalLength": 32,
+      "averageLength": 24.666666666666668
+    }
+  },
+  "domain": "",
+  "domainLabel": "",
+  "domainFrequency": 0,
+  "semanticDomains": [
+    {
+      "id": "ADDRESS_LINE",
+      "label": "Address Line",
+      "frequency": 6.06
+    }
+  ],
+  "domainForced": false,
+  "typeForced": false
+}

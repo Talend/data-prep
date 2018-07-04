@@ -19,6 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,10 +62,6 @@ class StepNodeTransformation extends Visitor {
      * @param previousStepRowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with step.
      */
     StepNodeTransformation(List<String> steps, Function<String, RowMetadata> previousStepRowMetadataSupplier) {
-        if (!steps.isEmpty() && !Step.ROOT_STEP.getId().equals(steps.get(0))) {
-            // Code expects root step to be located at the beginning of iterator.
-            Collections.reverse(steps);
-        }
         this.steps = steps.iterator();
         this.previousStepRowMetadataSupplier = previousStepRowMetadataSupplier;
     }

@@ -94,7 +94,6 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCache.TimeToLive;
-import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.StatisticsAdapter;
@@ -1104,15 +1103,6 @@ public class DataSetService extends BaseDataSetService {
             @RequestParam @ApiParam(value = "The searched name should be the full name") final boolean strict) {
         LOG.debug("search datasets metadata for {}", name);
         return list(null, null, name, strict, false, false, false);
-    }
-
-    @RequestMapping(value = "/datasets/encodings", method = GET)
-    @ApiOperation(value = "list the supported encodings for dataset",
-            notes = "This list can be used by user to change dataset encoding.")
-    @Timed
-    @PublicAPI
-    public Stream<String> listSupportedEncodings() {
-        return EncodingSupport.getSupportedCharsets().stream().map(Charset::displayName);
     }
 
     @RequestMapping(value = "/datasets/imports/{import}/parameters", method = GET, produces = APPLICATION_JSON_VALUE)

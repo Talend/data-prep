@@ -87,7 +87,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
         // dataset content must be retrieved as the technical user because it might not be shared
         boolean technicianIdentityReleased = false;
-        securityProxy.asTechnicalUser();
+        securityProxy.asTechnicalUserForDataSet();
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
 

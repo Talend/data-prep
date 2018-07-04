@@ -14,11 +14,6 @@ package org.talend.dataprep.transformation.pipeline;
 
 import static java.util.Optional.ofNullable;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

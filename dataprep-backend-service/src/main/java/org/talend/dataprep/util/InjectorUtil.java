@@ -12,6 +12,11 @@
 
 package org.talend.dataprep.util;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,11 +25,6 @@ import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 @Component
 public class InjectorUtil {

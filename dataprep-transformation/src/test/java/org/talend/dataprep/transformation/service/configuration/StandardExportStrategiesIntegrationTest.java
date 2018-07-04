@@ -44,7 +44,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParameters.SourceType;
-import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.json.MixedContentMapModule;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
@@ -132,7 +132,7 @@ public class StandardExportStrategiesIntegrationTest {
     private void initPreparationDetails() throws Exception {
         doReturn(preparationDetailsGet).when(applicationContext).getBean(eq(PreparationDetailsGet.class), anyString(),
                 anyString());
-        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details.json"));
+        final PreparationDetailsDTO preparationDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details.json"));
         when(preparationDetailsGet.execute())
                 .thenReturn(preparationDTO)
                 .thenReturn(preparationDTO);
@@ -213,7 +213,7 @@ public class StandardExportStrategiesIntegrationTest {
 
     private String idOfPrepWith2StepsOrMore() throws IOException {
         reset(preparationDetailsGet);
-        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
+        final PreparationDetailsDTO preparationDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
         when(preparationDetailsGet.execute())
                 .thenReturn(preparationDTO)
                 .thenReturn(preparationDTO);

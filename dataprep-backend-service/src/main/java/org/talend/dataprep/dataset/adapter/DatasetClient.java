@@ -1,9 +1,22 @@
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.netflix.hystrix.HystrixCommand;
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,22 +41,10 @@ import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
 
 /**
  * Adapter for legacy data model over the {@link DataCatalogClient}.
@@ -98,9 +99,16 @@ public class DatasetClient {
 
     // ------- Composite adapters -------
 
+    /**
+     * List all DataSetMetadata
+     * <p>{@link DataSetMetadata#getRowMetadata()} will returns null</p>
+     * @param certification filter with a specific certification state
+     * @param favorite filter with favorite only
+     * @return DataSetMetadata without rowMetadata
+     */
     public Stream<DataSetMetadata> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
-        Stream<Dataset> datasetStream = dataCatalogClient.listDataset(certification, favorite);
-        return datasetStream.map(this::toDataSetMetadata);
+        return dataCatalogClient.listDataset(certification, favorite)
+                .map(dataset -> conversionService.convert(dataset, DataSetMetadata.class));
     }
 
     public DataSetMetadata getDataSetMetadata(String id) {

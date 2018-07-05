@@ -33,8 +33,10 @@ public class DatasetBeanConversionTest {
 
     @Test
     public void defaultDatasetToDataSetMetadataConversion() {
+        // when
         DataSetMetadata dataSetMetadata = beanConversionService.convert(dataset, DataSetMetadata.class);
 
+        // then
         assertEquals(dataset.getId(), dataSetMetadata.getId());
         assertEquals(dataset.getCreated(), (Long) dataSetMetadata.getCreationDate());
         assertEquals(dataset.getUpdated(), (Long) dataSetMetadata.getLastModificationDate());
@@ -44,7 +46,7 @@ public class DatasetBeanConversionTest {
 
     @Test
     public void datasetToDataSetMetadataConversionWithLegacy() {
-        // when
+        // given
         // manage legacy DataSetMetadata fields that don't match the Dataset Catalog model
         Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = new Dataset.DataSetMetadataLegacy();
         dataSetMetadataLegacy.setDraft(true);
@@ -57,9 +59,10 @@ public class DatasetBeanConversionTest {
 
         dataset.setDataSetMetadataLegacy(dataSetMetadataLegacy);
 
-        // then
+        // when
         DataSetMetadata dataSetMetadata = beanConversionService.convert(dataset, DataSetMetadata.class);
 
+        // then
         assertEquals(dataset.getId(), dataSetMetadata.getId());
         assertEquals(dataset.getCreated(), (Long) dataSetMetadata.getCreationDate());
         assertEquals(dataset.getUpdated(), (Long) dataSetMetadata.getLastModificationDate());

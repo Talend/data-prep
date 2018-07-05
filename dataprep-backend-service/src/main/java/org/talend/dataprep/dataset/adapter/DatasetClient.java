@@ -261,10 +261,10 @@ public class DatasetClient {
         metadata.getContent().setLimit(limit(fullContent));
 
         if (rowMetadata != null && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
-                AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
-                metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
-                metadata.setDataSetSize(analysisResult.rowcount);
-                metadata.getContent().setNbRecords(analysisResult.rowcount);
+            AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
+            metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
+            metadata.setDataSetSize(analysisResult.rowcount);
+            metadata.getContent().setNbRecords(analysisResult.rowcount);
         }
 
         return metadata;

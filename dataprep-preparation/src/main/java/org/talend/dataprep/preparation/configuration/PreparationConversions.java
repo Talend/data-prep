@@ -123,6 +123,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
         return target;
     }
 
+    // TODO: check if it is always used
     private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target,
             ApplicationContext applicationContext) {
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);

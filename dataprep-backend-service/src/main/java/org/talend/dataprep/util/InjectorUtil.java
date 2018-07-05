@@ -1,16 +1,18 @@
-//  ============================================================================
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// ============================================================================
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.util;
+
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 
 import java.util.List;
 import java.util.Locale;
@@ -32,12 +34,13 @@ public class InjectorUtil {
     @Autowired
     private ActionRegistry registry;
 
-
     public PreparationDetailsDTO injectPreparationDetails(List<Action> actions, PreparationDetailsDTO details) {
         // Append actions and action forms
         details.setActions(actions);
+
         final AtomicBoolean allowDistributedRun = new AtomicBoolean();
-        final List<ActionForm> metadata = actions.stream() //
+        final List<ActionForm> metadata = actions
+                .stream() //
                 .map(a -> registry.get(a.getName())) //
                 .peek(a -> {
                     if (allowDistributedRun.get()) {
@@ -45,6 +48,7 @@ public class InjectorUtil {
                     }
                 }) //
                 .map(a -> a.getActionForm(LocaleContextHolder.getLocale(), Locale.US)) //
+                .map(InjectorUtil::disallowColumnCreationChange) //
                 .collect(Collectors.toList());
         details.setMetadata(metadata);
 
@@ -52,5 +56,22 @@ public class InjectorUtil {
         details.setAllowDistributedRun(allowDistributedRun.get());
 
         return details;
+    }
+
+    /**
+     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in
+     * TDP-4531 to
+     * avoid removing columns used by other actions.
+     * <p>
+     * Such method is not ideal as the system should be able to handle such removal in a much more generic way.
+     * </p>
+     */
+    private static ActionForm disallowColumnCreationChange(ActionForm form) {
+        form
+                .getParameters() //
+                .stream() //
+                .filter(p -> CREATE_NEW_COLUMN.equals(p.getName())) //
+                .forEach(p -> p.setReadonly(true));
+        return form;
     }
 }

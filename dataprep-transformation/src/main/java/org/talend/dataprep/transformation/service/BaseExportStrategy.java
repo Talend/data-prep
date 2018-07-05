@@ -115,8 +115,7 @@ public abstract class BaseExportStrategy {
             try {
                 actions = "{\"actions\": " + IOUtils.toString(getActionsCommand.execute(), UTF_8) + '}';
             } catch (IOException e) {
-                final ExceptionContext context =
-                        ExceptionContext.build().put("id", preparationId).put("version", stepId);
+                final ExceptionContext context = build().put("id", preparationId).put("version", stepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }
@@ -162,8 +161,7 @@ public abstract class BaseExportStrategy {
 
                 return "{\"actions\": " + actionsAsString + '}';
             } catch (IOException e) {
-                final ExceptionContext context =
-                        ExceptionContext.build().put("id", preparationId).put("version", endStepId);
+                final ExceptionContext context = build().put("id", preparationId).put("version", endStepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }

@@ -96,7 +96,7 @@ public abstract class BaseTransformationService {
      * @param parameters
      * @param key
      */
-    void executeSampleExportStrategyToCache(final ExportParameters parameters, TransformationCacheKey key) {
+    protected void executeSampleExportStrategyToCache(final ExportParameters parameters, TransformationCacheKey key) {
         LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
         // Full run execution (depends on the export parameters).
         try {
@@ -122,7 +122,7 @@ public abstract class BaseTransformationService {
      * @param parameters
      * @return
      */
-    StreamingResponseBody executeSampleExportStrategy(final ExportParameters parameters) {
+    protected StreamingResponseBody executeSampleExportStrategy(final ExportParameters parameters) {
         LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
         try {
             final Optional<? extends ExportStrategy> electedStrategy =

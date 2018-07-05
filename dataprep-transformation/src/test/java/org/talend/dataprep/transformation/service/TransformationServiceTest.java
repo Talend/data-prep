@@ -336,8 +336,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 "" // no filter
         );
 
-        Assert.assertFalse("content cache '" + key.getKey() + "' was not evicted from the cache",
-                contentCache.has(key));
+        assertFalse("content cache '" + key.getKey() + "' was not evicted from the cache", contentCache.has(key));
     }
 
     @Test

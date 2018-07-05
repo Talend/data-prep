@@ -56,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -682,7 +681,7 @@ public class TransformationService extends BaseTransformationService {
     public Stream<ActionForm> columnActions(@RequestBody(required = false) ColumnMetadata column) {
         return actionRegistry
                 .findAll() //
-                .filter(action -> !"TEST".equals(action.getCategory(LocaleContextHolder.getLocale()))
+                .filter(action -> !"TEST".equals(action.getCategory(getLocale()))
                         && action.acceptScope(COLUMN)) //
                 .map(am -> column != null ? am.adapt(column) : am)
                 .map(ad -> ad.getActionForm(getLocale()));
@@ -906,9 +905,9 @@ public class TransformationService extends BaseTransformationService {
 
         // run the analyzer service on the cached content
         try (final InputStream metadataCache = contentCache.get(metadataKey);
-                final InputStream contentCache = this.contentCache.get(contentKey)) {
+                final InputStream contentCacheStream = this.contentCache.get(contentKey)) {
             final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataCache);
-            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCache);
+            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCacheStream);
             LOG.debug("found {} for preparation #{}, column #{}", semanticDomains, preparationId, columnId);
             return semanticDomains;
 
@@ -990,7 +989,6 @@ public class TransformationService extends BaseTransformationService {
         }
         exportParameters.setDatasetId(preparation.getDataSetId());
 
-        TransformationCacheKey key = cacheKeyGenerator.generateContentKey(exportParameters);
         final StreamingResponseBody streamingResponseBody = executeSampleExportStrategy(exportParameters);
         try {
             // the result is not important here as it will be cached !

@@ -1,37 +1,75 @@
 package org.talend.dataprep.dataset.adapter.conversions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.Dataset;
-import org.talend.dataprep.dataset.adapter.Datastore;
+import org.talend.dataprep.schema.Schema;
 
-import static org.junit.Assert.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DatasetBeanConversionTest {
 
     private BeanConversionService beanConversionService = new BeanConversionService();
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    private Dataset dataset = new Dataset();
+
     @Before
-    public void registerBean() {
-        new DatasetBeanConversion(new ObjectMapper()).doWith(beanConversionService, "toto", null);
+    public void setUp() throws IOException {
+        // conversion registration
+        new DatasetBeanConversion(objectMapper).doWith(beanConversionService, "toto", null);
+        // create catalog dataset from json file
+        dataset = objectMapper.readValue(getClass().getResourceAsStream("../dataset_payload_example.json"), Dataset.class);
     }
 
     @Test
-    public void doWith() {
-        Dataset base = new Dataset();
-        base.setId("123456");
-        base.setCreated(System.currentTimeMillis());
-        base.setUpdated(System.currentTimeMillis());
-        base.setDatastore(new Datastore());
+    public void defaultDatasetToDataSetMetadataConversion() {
+        DataSetMetadata dataSetMetadata = beanConversionService.convert(dataset, DataSetMetadata.class);
+
+        assertEquals(dataset.getId(), dataSetMetadata.getId());
+        assertEquals(dataset.getCreated(), (Long) dataSetMetadata.getCreationDate());
+        assertEquals(dataset.getUpdated(), (Long) dataSetMetadata.getLastModificationDate());
+        assertEquals(dataset.getLabel(), dataSetMetadata.getName());
+        assertEquals(dataset.getOwner(), dataSetMetadata.getAuthor());
+    }
+
+    @Test
+    public void datasetToDataSetMetadataConversionWithLegacy() {
+        // when
+        // manage legacy DataSetMetadata fields that don't match the Dataset Catalog model
+        Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = new Dataset.DataSetMetadataLegacy();
+        dataSetMetadataLegacy.setDraft(true);
+        dataSetMetadataLegacy.setSheetName("xls-sheet-name");
+        dataSetMetadataLegacy.setEncoding(StandardCharsets.UTF_8.name());
+        dataSetMetadataLegacy.setTag("tag-from-studio");
+
+        Schema.Builder builder = new Schema.Builder();
+        dataSetMetadataLegacy.setSchemaParserResult(builder.build());
+
+        dataset.setDataSetMetadataLegacy(dataSetMetadataLegacy);
 
         // then
-        DataSetMetadata result = beanConversionService.convert(base, DataSetMetadata.class);
+        DataSetMetadata dataSetMetadata = beanConversionService.convert(dataset, DataSetMetadata.class);
 
-        assertEquals(base.getId(), result.getId());
-        assertEquals(base.getCreated(), (Long) result.getCreationDate());
-        assertEquals(base.getUpdated(), (Long) result.getLastModificationDate());
+        assertEquals(dataset.getId(), dataSetMetadata.getId());
+        assertEquals(dataset.getCreated(), (Long) dataSetMetadata.getCreationDate());
+        assertEquals(dataset.getUpdated(), (Long) dataSetMetadata.getLastModificationDate());
+        assertEquals(dataset.getLabel(), dataSetMetadata.getName());
+        assertEquals(dataset.getOwner(), dataSetMetadata.getAuthor());
+
+        assertEquals(dataSetMetadataLegacy.getSheetName(), dataSetMetadata.getSheetName());
+        assertNotNull(dataSetMetadata.getSchemaParserResult());
+        assertEquals(dataSetMetadataLegacy.isDraft(), dataSetMetadata.isDraft());
+        assertEquals(dataSetMetadataLegacy.getEncoding(), dataSetMetadata.getEncoding());
+        assertEquals(dataSetMetadataLegacy.getTag(), dataSetMetadata.getTag());
     }
 }

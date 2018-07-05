@@ -107,6 +107,18 @@ public class APIClientTest {
      */
     public String createDataset(final String file, final String name) throws IOException {
         final InputStream resourceAsStream = PreparationAPITest.class.getResourceAsStream(file);
+        return createDataset(resourceAsStream, name);
+    }
+
+    /**
+     * Create a dataset.
+     *
+     * @param resourceAsStream the stream to upload.
+     * @param name the dataset name.
+     * @return the dataset id.
+     * @throws IOException sh*t happens.
+     */
+    public String createDataset(final InputStream resourceAsStream, final String name) throws IOException {
         assertNotNull(resourceAsStream);
         final String datasetContent = IOUtils.toString(resourceAsStream, UTF_8);
         final Response post = given() //

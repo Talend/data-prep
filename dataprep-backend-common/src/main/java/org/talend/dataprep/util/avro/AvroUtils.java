@@ -5,6 +5,8 @@ import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.entity.ContentType;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -18,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,136 +72,42 @@ public class AvroUtils {
     private AvroUtils() {
     }
 
+    /** Create a reader for a stream of binary encoded Avro records. */
     public static AvroReader readBinaryStream(InputStream rawContent, Schema schema) throws IOException {
         return new AvroReader(rawContent, schema, true);
     }
 
+    /** Create a reader for a stream of JSON encoded Avro records. */
     public static AvroReader readJsonStream(InputStream rawContent, Schema schema) throws IOException {
         return new AvroReader(rawContent, schema, false);
     }
 
-    public static Function<GenericRecord, DataSetRow> toDataSetRowConverter(RowMetadata dataSetMetadata) {
-        return new AvroToDatasetRow(dataSetMetadata);
-    }
-
-    public static Function<DataSetRow, GenericRecord> toGenericRecordConverter(Schema schema) {
-        return dsr -> getGenericRecord(schema, dsr);
-    }
-
-    private static GenericRecord getGenericRecord(Schema schema, DataSetRow dsr) {
-        GenericData.Record record = new GenericData.Record(schema);
-        final Iterator<Object> iterator = dsr.order().values().values().iterator();
-        for (int j = 0; j < schema.getFields().size() && iterator.hasNext(); j++) {
-            record.put(j, iterator.next());
-        }
-        return record;
-    }
-
     /**
-     * From Avro value to dataprep string.
-     *
-     * @param currentRecord avro record
-     * @param column dataprep column
-     * @return row value
+     *  Convert an {@link Schema Avro Schema} in a dataprep {@link RowMetadata} using any dataprep specific properties.
      */
-    private static String toStringValue(GenericRecord currentRecord, ColumnMetadata column) {
-        String fieldName = toField(column).name();
-        final Schema fieldSchema = currentRecord.getSchema().getField(fieldName).schema();
-        Object recordFieldValue = currentRecord.get(fieldName);
-        return convertAvroFieldToString(fieldSchema, recordFieldValue);
-    }
-
-    private static String convertAvroFieldToString(Schema fieldSchema, Object recordFieldValue) {
-        final String result;
-        switch (fieldSchema.getType()) {
-        case BYTES:
-            result = new String(((ByteBuffer) recordFieldValue).array());
-            break;
-        case UNION:
-            String unionValue = EMPTY;
-            Iterator<Schema> iterator = fieldSchema.getTypes().iterator();
-            while (EMPTY.equals(unionValue) && iterator.hasNext()) {
-                Schema schema = iterator.next();
-                unionValue = convertAvroFieldToString(schema, recordFieldValue);
-            }
-            result = unionValue;
-            break;
-        case STRING:
-        case INT:
-        case LONG:
-        case FLOAT:
-        case DOUBLE:
-        case BOOLEAN:
-        case ENUM:
-            result = String.valueOf(recordFieldValue);
-            break;
-        case NULL:
-            result = EMPTY;
-            break;
-        default: // RECORD, ARRAY, MAP, FIXED
-            result = "Data Preparation cannot interpret this value";
-            break;
-        }
-        return result;
-    }
-
-    private static Optional<ColumnMetadata> getColumnMetadata(Schema.Field field) {
-        if (field.getProp(DP_COLUMN_ID) == null) {
-            return Optional.of(column() //
-                    .type(STRING) //
-                    .id(field.pos()) //
-                    .name(field.name()) //
-                    .build());
-        }
-        return Optional.of(column() //
-                .type(Type.get(field.getProp(DP_COLUMN_TYPE))) //
-                .computedId(field.getProp(DP_COLUMN_ID)) //
-                .name(field.getProp(DP_COLUMN_NAME)) //
-                .build() //
-        );
-    }
-
     public static RowMetadata toRowMetadata(Schema schema) {
         RowMetadata rowMetadata = new RowMetadata();
 
         final List<ColumnMetadata> columns = schema.getFields() //
                 .stream() //
-                .map(AvroUtils::getColumnMetadata) //
-                .filter(Optional::isPresent) //
-                .map(Optional::get) //
+                .map(AvroUtils::toColumnMetadata) //
                 .collect(Collectors.toList());
         rowMetadata.setColumns(columns);
         return rowMetadata;
     }
 
-    public static Schema toSchema(String name, RowMetadata rowMetadata) {
-        return toSchema(name, rowMetadata.getColumns());
-    }
-
+    /** Convert a dataprep {@link RowMetadata} to an {@link Schema Avro Schema} adding dataprep specific properties. */
     public static Schema toSchema(RowMetadata rowMetadata) {
-        return toSchema(rowMetadata.getColumns());
-    }
-
-    public static Schema toSchema(List<ColumnMetadata> columns) {
         final String name = "dataprep" + System.currentTimeMillis();
-        return toSchema(name, columns);
+        return toSchema(rowMetadata, name);
     }
 
-    public static Schema toSchema(final String name, List<ColumnMetadata> columns) {
-        final Map<String, Integer> uniqueSuffixes = new HashMap<>();
-        final List<Schema.Field> fields = columns.stream() //
-                .peek(columnMetadata -> {
-                    final Integer suffix = uniqueSuffixes.get(columnMetadata.getName());
-                    if (suffix != null) {
-                        // Modify column name
-                        uniqueSuffixes.put(columnMetadata.getName(), suffix + 1);
-                        columnMetadata.setName(columnMetadata.getName() + '_' + suffix);
-                    } else {
-                        // Don't modify column name
-                        uniqueSuffixes.put(columnMetadata.getName(), 1);
-                    }
-                }) //
-                .map(AvroUtils::toField) //
+    /**
+     * Convert a dataprep {@link RowMetadata} to a named {@link Schema Avro Schema} adding dataprep specific properties.
+     */
+    public static Schema toSchema(RowMetadata rowMetadata, String name) {
+        final List<Schema.Field> fields = rowMetadata.getColumns().stream() //
+                .map(new ColumnToAvroField()) //
                 .collect(Collectors.toList());
 
         final Schema schema = Schema.createRecord( //
@@ -214,43 +121,101 @@ public class AvroUtils {
         return schema;
     }
 
-    private static Schema.Field toField(ColumnMetadata column) {
-        final String name = StringUtils.isEmpty(column.getName()) ?
-                DATAPREP_FIELD_PREFIX + column.getId() :
-                toAvroFieldName(column);
-        final Schema type = SchemaBuilder.builder().unionOf().nullBuilder().endNull().and().stringType().endUnion();
-
-        final Schema.Field field = new Schema.Field(name, type, EMPTY, ((Object) null));
-        field.addProp(DP_COLUMN_ID, column.getId());
-        field.addProp(DP_COLUMN_NAME, column.getName());
-        field.addProp(DP_COLUMN_TYPE, column.getType());
-
-        return field;
+    /** Build a converter to streamingly convert {@link GenericRecord} in {@link DataSetRow}. */
+    public static Function<GenericRecord, DataSetRow> buildToDataSetRowConverter(RowMetadata dataSetMetadata) {
+        return new AvroToDatasetRow(dataSetMetadata);
     }
 
-    private static String toAvroFieldName(ColumnMetadata column) {
-        final char[] chars = column.getName().toCharArray();
-        final StringBuilder columnName = new StringBuilder();
-        for (int i = 0; i < chars.length; i++) {
-            final char currentChar = chars[i];
-            if (i == 0) {
-                if (!Character.isLetter(currentChar)) {
-                    columnName.append(DATAPREP_FIELD_PREFIX);
-                } else if (!Character.isJavaIdentifierPart(currentChar)) {
-                    columnName.append('_');
-                } else {
-                    columnName.append(currentChar);
-                }
-            }
-            if (i > 0) {
-                if (!Character.isJavaIdentifierPart(currentChar)) {
-                    columnName.append('_');
-                } else {
-                    columnName.append(currentChar);
-                }
-            }
+    /** Build a converter to streamingly convert {@link DataSetRow} in {@link GenericRecord}. */
+    public static Function<DataSetRow, GenericRecord> buildToGenericRecordConverter(Schema schema) {
+        return dsr -> toGenericRecord(schema, dsr);
+    }
+
+    private static ColumnMetadata toColumnMetadata(Schema.Field field) {
+        if (field.getProp(DP_COLUMN_ID) == null) {
+            return column() //
+                    .type(STRING) //
+                    .id(field.pos()) //
+                    .name(field.name()) //
+                    .build();
         }
-        return columnName.toString();
+        return column() //
+                .type(Type.get(field.getProp(DP_COLUMN_TYPE))) //
+                .computedId(field.getProp(DP_COLUMN_ID)) //
+                .name(field.getProp(DP_COLUMN_NAME)) //
+                .build();
+    }
+
+    private static GenericRecord toGenericRecord(Schema schema, DataSetRow dsr) {
+        GenericData.Record record = new GenericData.Record(schema);
+        final Iterator<Object> iterator = dsr.order().values().values().iterator();
+        for (int j = 0; j < schema.getFields().size() && iterator.hasNext(); j++) {
+            record.put(j, iterator.next());
+        }
+        return record;
+    }
+
+    /**
+     * Converter from {@link ColumnMetadata} to {@link Schema.Field}. It handles a stream of column metadata as a single
+     * schema to avoid name duplication and normalize name to avro conventions.
+     */
+    private static class ColumnToAvroField implements Function<ColumnMetadata, Schema.Field> {
+
+        private final Map<String, Integer> uniqueSuffixes = new HashMap<>();
+
+        @Override
+        public Schema.Field apply(ColumnMetadata column) {
+            String fieldName = column.getName();
+            // normalize to Avro conventions
+            fieldName = StringUtils.isEmpty(fieldName) ?
+                    DATAPREP_FIELD_PREFIX + column.getId() :
+                    toAvroFieldName(fieldName);
+
+            // handle duplicates
+            final Integer suffix = uniqueSuffixes.get(fieldName);
+            if (suffix != null) {
+                // Modify column name
+                uniqueSuffixes.put(fieldName, suffix + 1);
+                fieldName = fieldName + '_' + suffix;
+            } else {
+                // Don't modify column name
+                uniqueSuffixes.put(fieldName, 1);
+            }
+
+            final Schema type = SchemaBuilder.builder().unionOf().nullBuilder().endNull().and().stringType().endUnion();
+
+            final Schema.Field field = new Schema.Field(fieldName, type, EMPTY, ((Object) null));
+            field.addProp(DP_COLUMN_ID, column.getId());
+            field.addProp(DP_COLUMN_NAME, column.getName());
+            field.addProp(DP_COLUMN_TYPE, column.getType());
+
+            return field;
+        }
+
+        private static String toAvroFieldName(String dataprepColumnName) {
+            final char[] chars = dataprepColumnName.toCharArray();
+            final StringBuilder columnName = new StringBuilder();
+            for (int i = 0; i < chars.length; i++) {
+                final char currentChar = chars[i];
+                if (i == 0) {
+                    if (!Character.isLetter(currentChar)) {
+                        columnName.append(DATAPREP_FIELD_PREFIX);
+                    } else if (!Character.isJavaIdentifierPart(currentChar)) {
+                        columnName.append('_');
+                    } else {
+                        columnName.append(currentChar);
+                    }
+                }
+                if (i > 0) {
+                    if (!Character.isJavaIdentifierPart(currentChar)) {
+                        columnName.append('_');
+                    } else {
+                        columnName.append(currentChar);
+                    }
+                }
+            }
+            return columnName.toString();
+        }
     }
 
     /**
@@ -260,20 +225,74 @@ public class AvroUtils {
 
         private final RowMetadata rowMetadata;
 
+        private final List<Pair<String, String>> dpToAvroId;
+
         private long rowId = 1;
 
         AvroToDatasetRow(RowMetadata rowMetadata) {
             this.rowMetadata = rowMetadata;
+            List<ColumnMetadata> columns = rowMetadata.getColumns();
+            dpToAvroId = columns.stream() //
+                    .map(new ColumnToAvroField()) //
+                    .map(f -> new ImmutablePair<>(f.getProp(DP_COLUMN_ID), f.name()))
+                    .collect(Collectors.toList());
         }
 
         @Override
         public DataSetRow apply(GenericRecord nextRecord) {
             DataSetRow dataSetRow = new DataSetRow(rowMetadata);
-            for (ColumnMetadata cm : rowMetadata.getColumns()) {
-                dataSetRow.set(cm.getId(), toStringValue(nextRecord, cm));
+            for (Pair<String, String> dpToAvroIds : dpToAvroId) {
+                dataSetRow.set(dpToAvroIds.getKey(), toStringValue(nextRecord, dpToAvroIds.getValue()));
             }
             dataSetRow.setTdpId(rowId++);
             return dataSetRow;
+        }
+
+        /**
+         * From Avro value to dataprep string.
+         *
+         * @param currentRecord avro record
+         * @param fieldName
+         * @return row value
+         */
+        private static String toStringValue(GenericRecord currentRecord, String fieldName) {
+            final Schema fieldSchema = currentRecord.getSchema().getField(fieldName).schema();
+            Object recordFieldValue = currentRecord.get(fieldName);
+            return convertAvroFieldToString(fieldSchema, recordFieldValue);
+        }
+
+        private static String convertAvroFieldToString(Schema fieldSchema, Object recordFieldValue) {
+            final String result;
+            switch (fieldSchema.getType()) {
+            case BYTES:
+                result = new String(((ByteBuffer) recordFieldValue).array());
+                break;
+            case UNION:
+                String unionValue = EMPTY;
+                Iterator<Schema> iterator = fieldSchema.getTypes().iterator();
+                while (EMPTY.equals(unionValue) && iterator.hasNext()) {
+                    Schema schema = iterator.next();
+                    unionValue = convertAvroFieldToString(schema, recordFieldValue);
+                }
+                result = unionValue;
+                break;
+            case STRING:
+            case INT:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+            case BOOLEAN:
+            case ENUM:
+                result = String.valueOf(recordFieldValue);
+                break;
+            case NULL:
+                result = EMPTY;
+                break;
+            default: // RECORD, ARRAY, MAP, FIXED
+                result = "Data Preparation cannot interpret this value";
+                break;
+            }
+            return result;
         }
     }
 }

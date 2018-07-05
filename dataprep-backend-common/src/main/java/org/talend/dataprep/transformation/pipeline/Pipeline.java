@@ -30,6 +30,7 @@ import org.talend.dataprep.transformation.pipeline.builder.ActionNodesBuilder;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.FilteredNode;
+import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.LimitNode;
 
 import java.io.Serializable;
@@ -359,6 +360,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 current.to(new FilteredNode(outFilter));
             }
 
+            current.to(new InvalidDetectionNode(c -> true));
             Pipeline pipeline = new Pipeline();
 
             // set the maximum number of output rows

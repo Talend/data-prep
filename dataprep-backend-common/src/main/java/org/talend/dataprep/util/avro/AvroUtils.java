@@ -161,7 +161,7 @@ public class AvroUtils {
      */
     private static class ColumnToAvroField implements Function<ColumnMetadata, Schema.Field> {
 
-        final Map<String, Integer> uniqueSuffixes = new HashMap<>();
+        private final Map<String, Integer> uniqueSuffixes = new HashMap<>();
 
         @Override
         public Schema.Field apply(ColumnMetadata column) {
@@ -225,7 +225,7 @@ public class AvroUtils {
 
         private final RowMetadata rowMetadata;
 
-        private List<Pair<String, String>> dpToAvroId;
+        private final List<Pair<String, String>> dpToAvroId;
 
         private long rowId = 1;
 

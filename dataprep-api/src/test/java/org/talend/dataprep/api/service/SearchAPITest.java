@@ -228,11 +228,6 @@ public class SearchAPITest extends ApiServiceTestBase {
         assertSearchItems(rootNode, "folder", "path", expectedFoldersPath);
         assertSearchItems(rootNode, "dataset", "id", expectedDatasetsId);
         assertSearchItems(rootNode, "preparation", "id", expectedPreparationsId);
-
-        final JsonNode preparations = rootNode.get("preparation");
-        for (int i = 0; i < preparations.size(); ++i) {
-            assertTrue(preparations.get(i).has("folder"));
-        }
     }
 
     private void assertSearchItems(final JsonNode rootNode, final String prop, final String field,

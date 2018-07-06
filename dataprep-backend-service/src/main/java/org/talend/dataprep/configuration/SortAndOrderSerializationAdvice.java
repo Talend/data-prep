@@ -25,7 +25,6 @@ public class SortAndOrderSerializationAdvice {
         // URLs are cleaner in lowercase.
         binder.registerCustomEditor(SortAndOrderHelper.Sort.class, SortAndOrderHelper.getSortPropertyEditor());
         binder.registerCustomEditor(SortAndOrderHelper.Order.class, SortAndOrderHelper.getOrderPropertyEditor());
-        binder.registerCustomEditor(SortAndOrderHelper.Format.class, SortAndOrderHelper.getFormatPropertyEditor());
     }
 
 }

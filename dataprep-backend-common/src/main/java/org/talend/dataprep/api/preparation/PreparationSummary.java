@@ -12,9 +12,13 @@
 
 package org.talend.dataprep.api.preparation;
 
-import org.talend.dataprep.api.share.Owner;
+import java.util.Set;
 
-public class PreparationSummary {
+import org.talend.dataprep.api.share.Owner;
+import org.talend.dataprep.api.share.SharedResource;
+
+public class PreparationSummary implements SharedResource {
+
     private String id;
 
     private String name;
@@ -24,6 +28,12 @@ public class PreparationSummary {
     private long lastModificationDate;
 
     private boolean allowDistributedRun;
+
+    private boolean shared;
+
+    private boolean sharedByMe;
+
+    private Set<String> roles;
 
     public String getId() {
         return id;
@@ -47,6 +57,26 @@ public class PreparationSummary {
 
     public void setOwner(Owner owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public void setSharedResource(boolean shared) {
+        this.shared = shared;
+    }
+
+    @Override
+    public void setSharedByMe(boolean sharedByMe) {
+        this.sharedByMe = sharedByMe;
+    }
+
+    @Override
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String getOwnerId() {
+        return owner.getId();
     }
 
     public long getLastModificationDate() {

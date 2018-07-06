@@ -363,7 +363,7 @@ public class DataSetAPI extends APIService {
                 .collectList() //
                 .cache(); // Keep it in cache for later reuse
         // get list of preparations
-        GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, SortAndOrderHelper.Format.LONG, sort, order);
+        GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, sort, order);
         return Flux.from(toPublisher(Preparation.class, mapper, preparationList)) //
                 .filter(p -> compatibleList.flatMapIterable(l -> l) //
                         .map(DataSetMetadata::getId) //

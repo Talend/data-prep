@@ -12,10 +12,11 @@
 
 package org.talend.dataprep.preparation;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,40 +159,6 @@ public class PreparationTest extends ServiceBaseTest {
         repository.add(preparation);
 
         assertThat(preparation.id(), Is.is("#54258728"));
-    }
-
-    @Test
-    public void should_merge_from_other() {
-        Preparation source = new Preparation("#4837", versionService.version().getVersionId());
-
-        Preparation theOtherOne = new Preparation("#4837", versionService.version().getVersionId());
-        theOtherOne.setAuthor("Joss Stone");
-        theOtherOne.setCreationDate(source.getCreationDate() - 1000);
-        theOtherOne.setDataSetId("ds#123456");
-        theOtherOne.setLastModificationDate(theOtherOne.getCreationDate() + 12345682);
-        theOtherOne.setName("my preparation name");
-        theOtherOne.setHeadId(Step.ROOT_STEP.id());
-
-        Preparation actual = source.merge(theOtherOne);
-
-        assertEquals(actual, theOtherOne);
-    }
-
-    @Test
-    public void should_merge_from_source() {
-        Preparation theOtherOne = new Preparation("#23874", versionService.version().getVersionId());
-
-        Preparation source = new Preparation("#158387", versionService.version().getVersionId());
-        source.setAuthor("Bloc Party");
-        source.setCreationDate(theOtherOne.getCreationDate() - 1000);
-        source.setDataSetId("ds#65478");
-        source.setLastModificationDate(source.getCreationDate() + 2658483);
-        source.setName("banquet");
-        source.setHeadId(Step.ROOT_STEP.id());
-
-        Preparation actual = source.merge(theOtherOne);
-
-        assertEquals(actual, source);
     }
 
     public static List<Action> getSimpleAction(final String actionName, final String paramKey, final String paramValue) {

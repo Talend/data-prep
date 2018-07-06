@@ -13,7 +13,9 @@ package org.talend.dataprep.lock.store;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
 
 import org.junit.Test;
@@ -23,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,22 +38,22 @@ public class NoOpLockedResourceRepositoryTest {
     private PreparationRepository preparationRepository;
 
     @Test
-    public void tryLock() throws Exception {
+    public void tryLock() {
         // given
         String preparationId = "preparation id";
-        Preparation preparationMock = mock(Preparation.class);
-        when(preparationRepository.get(preparationId, Preparation.class)).thenReturn(preparationMock);
+        PersistentPreparation preparationMock = mock(PersistentPreparation.class);
+        when(preparationRepository.get(preparationId, PersistentPreparation.class)).thenReturn(preparationMock);
 
         // when
-        Preparation preparation = noOpLockedResourceRepository.tryLock(preparationId, "Toto", "toto de Charleville-Mézières");
+        PersistentPreparation preparation = noOpLockedResourceRepository.tryLock(preparationId, "Toto", "toto de Charleville-Mézières");
 
         // then
         assertEquals(preparationMock,preparation);
-        verify(preparationRepository).get(preparationId, Preparation.class);
+        verify(preparationRepository).get(preparationId, PersistentPreparation.class);
     }
 
     @Test
-    public void tryLock_nullPrepThenException() throws Exception {
+    public void tryLock_nullPrepThenException() {
         // given
         String preparationId = "preparation id";
         when(preparationRepository.get(preparationId, Preparation.class)).thenReturn(null);
@@ -64,7 +67,7 @@ public class NoOpLockedResourceRepositoryTest {
             // then
             assertEquals(e.getCode(), PREPARATION_DOES_NOT_EXIST);
         }
-        verify(preparationRepository).get(preparationId, Preparation.class);
+        verify(preparationRepository).get(preparationId, PersistentPreparation.class);
     }
 
 }

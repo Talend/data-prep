@@ -36,7 +36,6 @@ import org.talend.dataprep.api.preparation.MixedContentMap;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationSummary;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
@@ -68,8 +67,6 @@ import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -93,6 +90,58 @@ import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARAT
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.StandalonePreparation;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.MixedContentMap;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationListItemDTO;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.service.api.PreviewAddParameters;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.exception.TdpExceptionDto;
+import org.talend.dataprep.preparation.store.PersistentStep;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
+import org.talend.dataprep.transformation.actions.text.Trim;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -125,35 +174,32 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final JsonPath shortFormat = when().get("/api/preparations/?format=short").jsonPath();
 
         // then
-        final List<String> values = shortFormat.getList("");
+        final List<String> values = shortFormat.getList("id");
         assertThat(values.get(0), is(preparationId));
 
         // when : long format
         Response response1 = when().get("/api/preparations/?format=long");
 
         // then
-        List<UserPreparation> preparations = mapper.readerFor(UserPreparation.class).<UserPreparation>readValues(
+        List<PreparationListItemDTO> preparations = mapper.readerFor(PreparationListItemDTO.class).<PreparationListItemDTO>readValues(
                 response1.asInputStream()).readAll();
         assertEquals(1, preparations.size());
-        UserPreparation userPreparation = preparations.iterator().next();
-        assertThat(userPreparation.getDataSetId(), is(tagadaId));
-        assertThat(userPreparation.getAuthor(), is(security.getUserId()));
+        PreparationListItemDTO userPreparation = preparations.iterator().next();
+        assertThat(userPreparation.getDataSet().getDataSetName(), is("tagada"));
         assertThat(userPreparation.getId(), is(preparationId));
-        assertThat(userPreparation.getActions(), is(empty()));
 
         // when : summary format
         Response response = when().get("/api/preparations/?format=summary");
 
         // then
-        List<PreparationSummary> preparationSummaries =
-                mapper.readerFor(PreparationSummary.class).<PreparationSummary>readValues(
+        List<PreparationListItemDTO> preparationSummaries =
+                mapper.readerFor(PreparationListItemDTO.class).<PreparationListItemDTO>readValues(
                         response.asInputStream()).readAll();
         assertEquals(1, preparationSummaries.size());
-        PreparationSummary preparationSummary = preparationSummaries.iterator().next();
+        PreparationListItemDTO preparationSummary = preparationSummaries.iterator().next();
         assertThat(preparationSummary.getId(), is(preparationId));
         assertThat(preparationSummary.getName(), is("testPreparation"));
         assertThat(preparationSummary.getLastModificationDate(), is(notNullValue()));
-        assertThat(preparationSummary.isAllowDistributedRun(), is(notNullValue()));
     }
 
     @Test
@@ -166,13 +212,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Response response1 = when().get("/api/preparations/{preparationId}/details", preparationId);
 
         // then
-        EnrichedPreparation userPreparation =
-                mapper.readerFor(EnrichedPreparation.class).readValue(response1.asInputStream());
+        PreparationDTO userPreparation =
+                mapper.readerFor(PreparationDTO.class).readValue(response1.asInputStream());
         assertThat(userPreparation.getDataSetId(), is(tagadaId));
         assertThat(userPreparation.getAuthor(), is(security.getUserId()));
         assertThat(userPreparation.getId(), is(preparationId));
-        assertThat(userPreparation.getActions(), is(empty()));
-        assertThat(userPreparation.getFolder().getPath(), is(home.getPath()));
     }
 
     @Test
@@ -186,7 +230,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 when().get("/api/preparations/?format=short&name={name}", "testPreparation").jsonPath();
 
         // then
-        final List<String> values = shortFormat.getList("");
+        final List<String> values = shortFormat.getList("id");
         assertThat(values.get(0), is(preparationId));
     }
 
@@ -201,16 +245,16 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
 
         // then
-        List<String> result =
-                mapper.readerFor(String.class).<String>readValues(shouldNotBeEmpty.asInputStream()).readAll();
-        assertThat(result.get(0), is(preparationId));
+        List<PreparationDTO> result =
+                mapper.readerFor(PreparationDTO.class).<PreparationDTO>readValues(shouldNotBeEmpty.asInputStream()).readAll();
+        assertThat(result.get(0).getId(), is(preparationId));
 
         // when
         final JsonPath shouldBeEmpty =
                 when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto").jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
+        assertThat(shouldBeEmpty.<String>getList("id"), is(empty()));
     }
 
     @Test
@@ -225,14 +269,14 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 when().get("/api/preparations/?format=short&path={path}", "/" + preparationName).jsonPath();
 
         // then
-        assertThat(shouldNotBeEmpty.<String>getList("").get(0), is(preparationId));
+        assertThat(shouldNotBeEmpty.<String>getList("id").get(0), is(preparationId));
 
         // when
         final JsonPath shouldBeEmpty =
                 when().get("/api/preparations/?format=short&path={path}", "/toto/" + preparationName).jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String>getList(""), is(empty()));
+        assertThat(shouldBeEmpty.<String>getList("id"), is(empty()));
     }
 
     @Test
@@ -247,11 +291,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(longFormat.getString("author"), is(security.getUserId()));
         assertThat(longFormat.getString("id"), is(preparationId));
         assertThat(longFormat.getList("actions").size(), is(0));
-
-        assertNotNull(longFormat.getMap("rowMetadata"));
-        assertNotNull(longFormat.getMap("rowMetadata").get("columns"));
-        ArrayList rowMetaData = (ArrayList) longFormat.getMap("rowMetadata").get("columns");
-        assertThat(rowMetaData.size(), is(6));
 
         assertThat(longFormat.getString("allowFullRun"), is("false"));
         final List<String> steps = longFormat.getList("steps"); // make sure the "steps" node is a string array
@@ -397,7 +436,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(longFormat.getList("id").size(), is(1));
         assertThat(longFormat.getList("id").get(0), is(preparationId));
 
-        Preparation preparation = new Preparation();
+        PreparationDTO preparation = new PreparationDTO();
         preparation.setId(preparationId);
         String newName = "updated_name";
         preparation.setName(newName);
@@ -499,31 +538,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname_firstname.json");
 
         // then : it should have appended 2 actions
-        final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
+        final PreparationDTO preparationMessage = getPreparationDetails(preparationId);
         final List<String> steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
     }
 
-    private EnrichedPreparation getPreparationDetails(String preparationId) throws IOException {
+    private PreparationDTO getPreparationDetails(String preparationId) throws IOException {
         return mapper.readValue(given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(),
-                EnrichedPreparation.class);
-    }
-
-    @Test
-    public void should_save_created_columns_ids_on_append() throws Exception {
-        // when
-        final String preparationId =
-                testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", home.getId());
-
-        // when
-        testClient.applyActionFromFile(preparationId, "transformation/copy_firstname.json");
-
-        // then
-        final JsonPath jsonPath = given().get("/api/preparations/{preparation}/details", preparationId).jsonPath();
-        final List<String> createdColumns = jsonPath.getList("diff[0].createdColumns");
-        assertThat(createdColumns, hasSize(1));
-        assertThat(createdColumns, hasItem("0006"));
+                PreparationDTO.class);
     }
 
     @Test
@@ -574,34 +597,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
         steps = getPreparationDetails(preparationId).getSteps();
         assertThat(steps.size(), is(3));
         assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
-    }
-
-    @Test
-    public void should_save_created_columns_ids_on_update() throws Exception {
-        // given
-        final String preparationId =
-                testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", home.getId());
-        testClient.applyActionFromFile(preparationId, "transformation/upper_case_lastname.json");
-        testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
-
-        final List<String> steps = getPreparationDetails(preparationId).getSteps();
-
-        // when : Update first action (transformation/upper_case_lastname / "2b6ae58738239819df3d8c4063e7cb56f53c0d59")
-        // with another action that create a column
-        final String updateAction =
-                IOUtils.toString(PreparationAPITest.class.getResourceAsStream("transformation/copy_firstname.json"),
-                        UTF_8);
-        given().contentType(ContentType.JSON)
-                .body(updateAction)
-                .put("/api/preparations/{preparation}/actions/{action}", preparationId, steps.get(1))
-                .then()
-                .statusCode(is(200));
-
-        // then
-        final EnrichedPreparation preparation = getPreparationDetails(preparationId);
-        final List<String> createdColumns = preparation.getDiff().get(0).getCreatedColumns();
-        assertThat(createdColumns, hasSize(1));
-        assertThat(createdColumns, hasItem("0006"));
     }
 
     @Test
@@ -779,7 +774,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(entries.size(), is(0));
         String dataSetId = testClient.createDataset("dataset/dataset.csv", "testCreatePreparation");
 
-        final Response response = given() //
+        given() //
                 .contentType(ContentType.JSON) //
                 .body("{ \"name\": \"" + "my_preparation" + "\", \"dataSetId\": \"" + dataSetId + "\"}")
                 .queryParam("folder", home.getId()) //
@@ -833,7 +828,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // given
         final String preparationId =
                 testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGet", home.getId());
-        EnrichedPreparation preparation = getPreparationDetails(preparationId);
+        PreparationDTO preparation = getPreparationDetails(preparationId);
         List<String> steps = preparation.getSteps();
 
         assertThat(steps.size(), is(1));
@@ -843,7 +838,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
 
         // then
-        final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
+        final PreparationDTO preparationMessage = getPreparationDetails(preparationId);
         steps = preparationMessage.getSteps();
         assertThat(steps.size(), is(2));
         assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
@@ -947,7 +942,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.applyActionFromFile(preparationId, "preview/upper_case_firstname.json");
         testClient.applyActionFromFile(preparationId, "preview/delete_city.json");
 
-        final EnrichedPreparation preparationMessage = getPreparationDetails(preparationId);
+        final PreparationDTO preparationMessage = getPreparationDetails(preparationId);
         final List<String> steps = preparationMessage.getSteps();
         final String lastStep = steps.get(steps.size() - 1);
 
@@ -1150,14 +1145,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
         String testPrepId = testClient.createPreparationFromDataset(datasetId, "testPrep", home.getId());
 
         AppendStep appendStep = new AppendStep();
+        final Action actionToBeMoved = buildAction("uppercase",
+                buildParametersMap("column_id", "0001", "column_name", "firstname", "scope", "column"));
         appendStep.setActions(Arrays.asList(buildAction("uppercase",
                 buildParametersMap("column_id", "0002", "column_name", "lastname", "scope", "column")),
-                buildAction("uppercase",
-                        buildParametersMap("column_id", "0001", "column_name", "firstname", "scope", "column"))));
+                actionToBeMoved));
         appendStepsToPrep(testPrepId, appendStep);
 
         // Adding steps
-        EnrichedPreparation testPrepDetails = getPreparationDetails(testPrepId);
+        PreparationDTO testPrepDetails = getPreparationDetails(testPrepId);
 
         List<String> stepsCreated = testPrepDetails.getSteps();
 
@@ -1167,10 +1163,18 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // changing steps order
         changePreparationStepsOrder(testPrepId, rootStep, secondStep);
 
-        EnrichedPreparation testPrepDetailsAfter = getPreparationDetails(testPrepId);
+        PreparationDTO testPrepDetailsAfter = getPreparationDetails(testPrepId);
 
-        assertEquals(testPrepDetailsAfter.getActions().get(0), testPrepDetails.getActions().get(1));
-        assertEquals(testPrepDetailsAfter.getActions().get(1), testPrepDetails.getActions().get(0));
+        final Action initialUpperCaseAction = getActions(testPrepDetails.getSteps().get(2)).get(1);
+        assertEquals(actionToBeMoved, initialUpperCaseAction);
+        final Action movedAction = getActions(testPrepDetailsAfter.getSteps().get(1)).get(0);
+        assertEquals(initialUpperCaseAction, movedAction);
+    }
+
+    private List<Action> getActions(String id) {
+        final String content = preparationRepository.get(id, PersistentStep.class).getContent();
+        final PreparationActions preparationActions = preparationRepository.get(content, PreparationActions.class);
+        return preparationActions.getActions();
     }
 
     /**
@@ -1191,7 +1195,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // Try to delete lookup dataset => fail because used
         expect().statusCode(CONFLICT.value()).when().delete("/api/datasets/{id}", lookupDataSetId);
 
-        EnrichedPreparation preparationDetails = getPreparationDetails(carsPreparationId);
+        PreparationDTO preparationDetails = getPreparationDetails(carsPreparationId);
         String firstStepId = preparationDetails.getSteps().get(0);
 
         // Now undo

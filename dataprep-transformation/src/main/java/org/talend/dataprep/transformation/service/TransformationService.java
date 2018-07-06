@@ -751,21 +751,6 @@ public class TransformationService extends BaseTransformationService {
     }
 
     /**
-     * Suggest what {@link ActionDefinition actions} can be applied to <code>dataSetMetadata</code>.
-     *
-     * @param dataSet A {@link DataSetMetadata dataset} definition.
-     * @return A list of {@link ActionDefinition} that can be applied to this data set.
-     * @see #suggest(ColumnMetadata, int)
-     */
-    @RequestMapping(value = "/suggest/dataset", method = POST)
-    @ApiOperation(value = "Suggest actions for a given data set metadata",
-            notes = "This operation returns an array of suggested actions in decreasing order of importance.")
-    @ResponseBody
-    public List<ActionForm> suggest(DataSet dataSet) {
-        return Collections.emptyList();
-    }
-
-    /**
      * List all transformation related error codes.
      */
     @RequestMapping(value = "/transform/errors", method = RequestMethod.GET)

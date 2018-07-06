@@ -20,10 +20,10 @@ import org.talend.dataprep.api.user.UserData;
 public interface UserDataRepository<U extends UserData> {
 
     /**
-     * get the {@link UserData} for the given userId from the current storage
+     * get the {@link UserData} for the given userId from the current storage.
      *
-     * @param userId, the identifier of the user
-     * @return the {@link UserData} for the given userId
+     * @param userId, the identifier of the user.
+     * @return the {@link UserData} for the given userId or null.
      */
     U get(String userId);
 

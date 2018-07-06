@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -46,6 +47,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,6 +94,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -1301,6 +1305,39 @@ public class PreparationAPITest extends ApiServiceTestBase {
         TdpExceptionDto exception = response.as(TdpExceptionDto.class);
 
         assertTrue(exception.getCode().endsWith(UNABLE_TO_GET_PREPARATION_DETAILS.getCode()));
+    }
+
+    @Test
+    public void datasetWithSameColumnsNameShouldBeHandled_TDP_5838() throws Exception {
+        // given
+        String inputFile = "/org/talend/dataprep/api/service/preparations/5L4Ccity_TDP-3858.csv";
+        CSVReader baseFileReader = new CSVReader(new InputStreamReader(getClass().getResourceAsStream(inputFile)), ';', '"');
+        String[] headers = baseFileReader.readNext();
+        String[] record1 = baseFileReader.readNext();
+        String datasetId = testClient.createDataset(inputFile, "5L4C city");
+
+        // when
+        Response datasetResponse = testClient.exportDataset(datasetId, "head");
+
+        // then
+        CSVReader datasetFileReader = new CSVReader(new InputStreamReader(datasetResponse.asInputStream(), UTF_8), ';', '"');
+        String[] datasetHeaders = datasetFileReader.readNext();
+        String[] datasetRecord1 = datasetFileReader.readNext();
+        assertArrayEquals(headers, datasetHeaders);
+        assertArrayEquals(record1, datasetRecord1);
+
+        // and given
+        String preparationId = testClient.createPreparationFromDataset(datasetId, "5L4C city Preparation", home.getId());
+
+        // when
+        Response response = testClient.exportPreparation(preparationId, "head", ";");
+
+        // then
+        CSVReader resultFileReader = new CSVReader(new InputStreamReader(response.asInputStream(), UTF_8), ';', '"');
+        String[] resultHeaders = resultFileReader.readNext();
+        assertArrayEquals(headers, resultHeaders);
+        String[] resultRecord1 = resultFileReader.readNext();
+        assertArrayEquals(record1, resultRecord1);
     }
 
     private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {

@@ -105,7 +105,7 @@ public class DatasetClient {
      * <p>
      * {@link DataSetMetadata#getRowMetadata()} will returns null
      * </p>
-     * 
+     *
      * @param certification filter with a specific certification state
      * @param favorite filter with favorite only
      * @return DataSetMetadata without rowMetadata
@@ -135,7 +135,7 @@ public class DatasetClient {
 
     /**
      * Get a dataSet by id.
-     * 
+     *
      * @param id the dataset to fetch
      */
     public DataSet getDataSet(String id) {
@@ -144,7 +144,7 @@ public class DatasetClient {
 
     /**
      * Get a dataSet by id with invalid Marker.
-     * 
+     *
      * @param id the dataset to fetch
      */
     public DataSet getDataSetWithInvalidMarker(String id) {
@@ -153,7 +153,7 @@ public class DatasetClient {
 
     /**
      * Get a dataSet by id.
-     * 
+     *
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      */
@@ -163,7 +163,7 @@ public class DatasetClient {
 
     /**
      * Get a dataSet by id.
-     * 
+     *
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param filter TQL filter for content
@@ -175,39 +175,38 @@ public class DatasetClient {
     /**
      * Get a dataSet by id.
      * Convert metadata and records from {@link Dataset} to {@link DataSet}
-     * 
+     *
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param withRowValidityMarker perform a quality analysis on the dataset records
      * @param filter TQL filter for content
      */
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
-        try (DataSet dataset = new DataSet()) {
-            // convert metadata
-            Dataset metadata = dataCatalogClient.getMetadata(id);
-            if (metadata == null) {
-                return null;
-            }
-            DataSetMetadata dataSetMetadata = toDataSetMetadata(metadata, fullContent);
-            dataset.setMetadata(dataSetMetadata);
-
-            // convert records
-            Stream<GenericRecord> dataSetContent = dataCatalogClient.getDataSetContent(id, limit(fullContent));
-            Stream<DataSetRow> records = toDataSetRows(dataSetContent, dataSetMetadata.getRowMetadata());
-            if (withRowValidityMarker) {
-                records = records.peek(addValidity(dataSetMetadata.getRowMetadata().getColumns()));
-            }
-            if (filter != null) {
-                records = records.filter(filterService.build(filter, dataSetMetadata.getRowMetadata()));
-            }
-            dataset.setRecords(records);
-
-            // DataSet specifics
-            if (!fullContent) {
-                dataSetMetadata.getContent().getLimit().ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
-            }
-            return dataset;
+        DataSet dataset = new DataSet();
+        // convert metadata
+        Dataset metadata = dataCatalogClient.getMetadata(id);
+        if (metadata == null) {
+            return null;
         }
+        DataSetMetadata dataSetMetadata = toDataSetMetadata(metadata, fullContent);
+        dataset.setMetadata(dataSetMetadata);
+
+        // convert records
+        Stream<GenericRecord> dataSetContent = dataCatalogClient.getDataSetContent(id, limit(fullContent));
+        Stream<DataSetRow> records = toDataSetRows(dataSetContent, dataSetMetadata.getRowMetadata());
+        if (withRowValidityMarker) {
+            records = records.peek(addValidity(dataSetMetadata.getRowMetadata().getColumns()));
+        }
+        if (filter != null) {
+            records = records.filter(filterService.build(filter, dataSetMetadata.getRowMetadata()));
+        }
+        dataset.setRecords(records);
+
+        // DataSet specifics
+        if (!fullContent) {
+            dataSetMetadata.getContent().getLimit().ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
+        }
+        return dataset;
     }
 
     public Stream<DataSetMetadata> searchDataset(String name, boolean strict) {

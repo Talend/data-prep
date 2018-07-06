@@ -45,4 +45,14 @@ public class PreparationDetails extends NamedItem {
 
         public String dataSetNbRow;
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public String getHead() {
+        if (steps == null || steps.size() == 0) {
+            return "head";
+        }
+        else {
+            return steps.get(steps.size() - 1);
+        }
+    }
 }

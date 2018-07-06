@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.format.JsonFormat;
 import org.talend.dataprep.transformation.pipeline.Node;
@@ -75,7 +75,7 @@ public class Configuration {
 
     private String preparationId;
 
-    private PreparationMessage preparation;
+    private PreparationDTO preparation;
 
     /** Limit the output number of rows. */
     private Long limit = null;
@@ -91,12 +91,12 @@ public class Configuration {
                             final String format, //
                             final String actions, //
                             final Map<String, String> arguments, //
-                            final PreparationMessage preparation, //
+                            final PreparationDTO preparation, //
                             final String stepId, //
                             boolean allowMetadataChange, //
                             boolean globalStatistics, //
-            final Volume dataVolume, //
-            final Long limit) {
+                            final Volume dataVolume, //
+                            final Long limit) {
         this.output = output;
         this.filter = filter;
         this.outFilter = outFilter;
@@ -177,14 +177,14 @@ public class Configuration {
     }
 
     public String getPreparationId() {
-        return preparation == null ? StringUtils.EMPTY : preparation.id();
+        return preparation == null ? StringUtils.EMPTY : preparation.getId();
     }
 
     public ExportParameters.SourceType getSourceType() {
         return sourceType;
     }
 
-    public PreparationMessage getPreparation() {
+    public PreparationDTO getPreparation() {
         return preparation;
     }
 
@@ -234,7 +234,7 @@ public class Configuration {
 
         private String stepId;
 
-        private PreparationMessage preparation = null;
+        private PreparationDTO preparation = null;
 
         private boolean allowMetadataChange = true;
 
@@ -323,7 +323,7 @@ public class Configuration {
             return this;
         }
 
-        public Builder preparation(final PreparationMessage preparation) {
+        public Builder preparation(final PreparationDTO preparation) {
             this.preparation = preparation;
             return this;
         }

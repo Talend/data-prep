@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.dataset.adapter.conversions;
 
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -31,8 +33,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
-
+/**
+ * Bean Conversion from {@link Dataset} to {@link DataSetMetadata}
+ */
 @Component
 public class DatasetBeanConversion extends BeanConversionServiceWrapper {
 

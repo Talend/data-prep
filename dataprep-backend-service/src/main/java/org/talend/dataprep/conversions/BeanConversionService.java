@@ -127,10 +127,13 @@ public class BeanConversionService implements ConversionService {
      * @param <T> The target type.
      * @return The converted bean (typed as <code>T</code>).
      */
-    public <U, T> T convert(U source, Class<T> aClass, BiFunction<U, T, T> onTheFlyConvert) {
+    public <U, T> T convert(U source, Class<T> aClass, BiFunction<U, T, T>... onTheFlyConvert) {
         try {
-            T convert = convert(source, aClass);
-            return onTheFlyConvert.apply(source, convert);
+            T current = convert(source, aClass);
+            for (BiFunction<U, T, T> function: onTheFlyConvert) {
+                current = function.apply(source, current);
+            }
+            return current;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -141,6 +144,9 @@ public class BeanConversionService implements ConversionService {
     public <U> U convert(Object source, @SpanTag("target") Class<U> targetClass) {
         if (source == null) {
             return null;
+        }
+        if (source.getClass().equals(targetClass)) {
+            return (U) source;
         }
         if (tracer != null) {
             tracer.addTag(Span.SPAN_LOCAL_COMPONENT_TAG_NAME, BeanConversionService.class.getName());

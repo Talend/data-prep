@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 /**
@@ -42,8 +42,8 @@ public class NoOpLockedResourceRepository implements LockedResourceRepository {
     }
 
     @Override
-    public Preparation tryLock(String preparationId, String userId, String displayName) {
-        Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
+    public PersistentPreparation tryLock(String preparationId, String userId, String displayName) {
+        PersistentPreparation preparation = preparationRepository.get(preparationId, PersistentPreparation.class);
         if (preparation == null) {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         }

@@ -108,7 +108,7 @@ export default function PreparationService($q, $state, $window, $stateParams, St
 	 */
 	function setName(preparationId, name) {
 		return PreparationRestService.update(preparationId, { name })
-			.then(preparationId => PreparationRestService.getDetails(preparationId));
+			.then(preparationId => PreparationRestService.getSummary(preparationId));
 	}
 
 	/**

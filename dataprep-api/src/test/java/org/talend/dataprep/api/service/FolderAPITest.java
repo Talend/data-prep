@@ -13,6 +13,20 @@
 
 package org.talend.dataprep.api.service;
 
+import static com.jayway.restassured.RestAssured.given;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
+import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_NOT_EXIST;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -32,21 +46,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
-
-import static com.jayway.restassured.RestAssured.given;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
-import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_NOT_EXIST;
 
 /**
  * Unit tests for the folder API.
@@ -174,12 +173,7 @@ public class FolderAPITest extends ApiServiceTestBase {
             final JsonNode dataset = preparation.get("dataset");
             // check for dataset
             assertNotNull(dataset);
-            assertTrue(dataset.has("dataSetId"));
             assertTrue(dataset.has("dataSetName"));
-            assertTrue(dataset.has("dataSetNbRow"));
-            // check for owner
-            assertTrue(preparation.has("owner"));
-            assertFalse(preparation.get("owner").isNull());
         }
     }
 

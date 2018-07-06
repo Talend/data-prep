@@ -47,38 +47,30 @@ public class DataSetMetadata implements Serializable {
     private RowMetadata rowMetadata;
 
     /** Dataset life cycle status. */
-    @JsonProperty("lifecycle")
     private DataSetLifecycle lifecycle = new DataSetLifecycle();
 
-    @JsonProperty("content")
     @JsonUnwrapped
     private DataSetContent content = new DataSetContent();
 
     /** Dataset governance. */
-    @JsonProperty("governance")
     @JsonUnwrapped
     private DataSetGovernance governance = new DataSetGovernance();
 
     /** Dataset location. */
-    @JsonProperty("location")
     private DataSetLocation location;
 
     /** Dataset name. */
-    @JsonProperty("name")
     private String name;
 
     /** Dataset author ID. */
-    @JsonProperty("author")
     private String author;
 
     @JsonProperty("created")
     private long creationDate;
 
-    @JsonProperty("lastModificationDate")
     private long lastModificationDate;
 
     /** Sheet number in case of excel source. */
-    @JsonProperty("sheetName")
     private String sheetName;
 
     /** The application version. */
@@ -88,13 +80,11 @@ public class DataSetMetadata implements Serializable {
     /**
      * if <code>true</code> this dataset is still a draft as we need more information from the user
      */
-    @JsonProperty("draft")
     private boolean draft = false;
 
     /**
      * available only when draft is <code>true</code> i.e until some information has been confirmed by the user
      */
-    @JsonProperty("schemaParserResult")
     private Schema schemaParserResult;
 
     /**
@@ -103,13 +93,11 @@ public class DataSetMetadata implements Serializable {
      *
      * @see Serializer#serialize(java.io.InputStream, DataSetMetadata, long)
      */
-    @JsonProperty("encoding")
     private String encoding = "UTF-8";
 
     /**
      * Size of the data set, in bytes.
      */
-    @JsonProperty("dataSetSize")
     private long dataSetSize;
 
     /** A arbitrary tag for the data set (used by studio on creation for a visual distinction). */

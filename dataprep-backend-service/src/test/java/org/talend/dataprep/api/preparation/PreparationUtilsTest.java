@@ -16,10 +16,17 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.talend.tql.api.TqlBuilder.eq;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
@@ -293,7 +300,9 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         final Step step2 = new FixedIdStep("step-5678");
         final PreparationActions actions1 = new FixedIdPreparationContent("actions-1234");
         final PreparationActions actions2 = new FixedIdPreparationContent("actions-5678");
+        step1.setParent(Step.ROOT_STEP.id());
         step1.setContent(actions1.id());
+        step2.setParent(step1.id());
         step2.setContent(actions2.id());
         preparation.setHeadId(step2.id());
         final List<Step> expectedSteps = Arrays.asList(Step.ROOT_STEP, step1, step2);

@@ -13,7 +13,10 @@
 
 package org.talend.dataprep.api.service.test;
 
-import static com.jayway.restassured.RestAssured.*;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -29,10 +32,13 @@ import static org.springframework.http.HttpStatus.OK;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.MappingIterator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -52,6 +58,7 @@ import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.format.CSVFormat;
 
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -100,6 +107,18 @@ public class APIClientTest {
      */
     public String createDataset(final String file, final String name) throws IOException {
         final InputStream resourceAsStream = PreparationAPITest.class.getResourceAsStream(file);
+        return createDataset(resourceAsStream, name);
+    }
+
+    /**
+     * Create a dataset.
+     *
+     * @param resourceAsStream the stream to upload.
+     * @param name the dataset name.
+     * @return the dataset id.
+     * @throws IOException sh*t happens.
+     */
+    public String createDataset(final InputStream resourceAsStream, final String name) throws IOException {
         assertNotNull(resourceAsStream);
         final String datasetContent = IOUtils.toString(resourceAsStream, UTF_8);
         final Response post = given() //

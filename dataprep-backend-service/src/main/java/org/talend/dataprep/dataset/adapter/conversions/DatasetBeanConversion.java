@@ -69,16 +69,20 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                     }
 
                     Datastore datastore = dataset.getDatastore();
-                    //FIXME bypass for content / location information about local file
+                    //FIXME bypass for content / location information about local file or live dataset
                     if (datastore == null) {
                         try {
-                            DataSetContent content =
-                                    objectMapper.treeToValue(datasetProperties.get("content"), DataSetContent.class);
-                            dataSetMetadata.setContent(content);
+                            if (datasetProperties.has("content")) {
+                                DataSetContent content =
+                                        objectMapper.treeToValue(datasetProperties.get("content"), DataSetContent.class);
+                                dataSetMetadata.setContent(content);
+                            }
 
-                            DataSetLocation location =
-                                    objectMapper.treeToValue(datasetProperties.get("location"), DataSetLocation.class);
-                            dataSetMetadata.setLocation(location);
+                            if (datasetProperties.has("location")) {
+                                DataSetLocation location =
+                                        objectMapper.treeToValue(datasetProperties.get("location"), DataSetLocation.class);
+                                dataSetMetadata.setLocation(location);
+                            }
                         } catch (JsonProcessingException e) {
                             throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
                         }

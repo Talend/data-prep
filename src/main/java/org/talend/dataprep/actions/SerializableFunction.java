@@ -12,6 +12,15 @@
 
 package org.talend.dataprep.actions;
 
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
@@ -23,11 +32,6 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
 import org.talend.dataprep.util.avro.AvroUtils;
-
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.function.Function;
 
 class SerializableFunction implements Function<IndexedRecord, IndexedRecord>, Serializable {
 

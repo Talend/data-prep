@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.talend.dataprep.api.service.api.EnrichedPreparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.format.export.ExportFormatMessage;
 import org.talend.dataprep.parameters.Parameter;
@@ -161,8 +161,8 @@ public class ExportAPITest extends ApiServiceTestBase {
         final String expectedExport = IOUtils.toString(
                 this.getClass().getResourceAsStream("export/expected_export_preparation_uppercase_firstname.csv"), UTF_8);
 
-        final EnrichedPreparation preparationMessage = mapper.readValue(
-                given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(), EnrichedPreparation.class);
+        final PreparationDTO preparationMessage = mapper.readValue(
+                given().get("/api/preparations/{preparation}/details", preparationId).asInputStream(), PreparationDTO.class);
         final List<String> steps = preparationMessage.getSteps();
 
         // when
@@ -204,7 +204,7 @@ public class ExportAPITest extends ApiServiceTestBase {
                 UTF_8);
 
         // when
-        final String export = testClient.exportPreparation(preparationId, "").asString();
+        testClient.exportPreparation(preparationId, "").asString();
 
         // then
         assertFalse(expectedExport.isEmpty());
@@ -268,7 +268,7 @@ public class ExportAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void testExportCsvWithBadBodyInput_noExportType() throws Exception {
+    public void testExportCsvWithBadBodyInput_noExportType() {
         // when
         final Response response = given() //
                 .formParam("csv_fields_delimiter", ";") //
@@ -282,7 +282,7 @@ public class ExportAPITest extends ApiServiceTestBase {
     }
 
     @Test
-    public void testExportCsvWithBadBodyInput_noPrepId_noDatasetId() throws Exception {
+    public void testExportCsvWithBadBodyInput_noPrepId_noDatasetId() {
         // when
         final Response response = given().formParam("exportType", "CSV").formParam("csv_fields_delimiter", ";")
                 .formParam("stepId", "head").when().get("/api/export");

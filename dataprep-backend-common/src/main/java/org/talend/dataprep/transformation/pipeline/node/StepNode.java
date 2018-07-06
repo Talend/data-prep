@@ -14,8 +14,11 @@ package org.talend.dataprep.transformation.pipeline.node;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.transformation.pipeline.*;
+import org.talend.dataprep.transformation.pipeline.Link;
+import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RuntimeLink;
+import org.talend.dataprep.transformation.pipeline.Signal;
+import org.talend.dataprep.transformation.pipeline.Visitor;
 
 /**
  * <p>
@@ -30,7 +33,7 @@ import org.talend.dataprep.transformation.pipeline.*;
  */
 public class StepNode extends BasicNode {
 
-    private final Step step;
+    private final String step;
 
     private final Node entryNode;
 
@@ -40,7 +43,7 @@ public class StepNode extends BasicNode {
 
     private RowMetadata previousStepRowMetadata;
 
-    public StepNode(Step step, RowMetadata previousStepRowMetadata, Node entryNode, Node lastNode) {
+    public StepNode(String step, RowMetadata previousStepRowMetadata, Node entryNode, Node lastNode) {
         this.step = step;
         this.previousStepRowMetadata = previousStepRowMetadata;
         this.entryNode = entryNode;
@@ -51,7 +54,7 @@ public class StepNode extends BasicNode {
         return entryNode;
     }
 
-    public Step getStep() {
+    public String getStep() {
         return step;
     }
 

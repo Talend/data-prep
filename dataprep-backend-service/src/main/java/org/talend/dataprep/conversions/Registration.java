@@ -31,17 +31,6 @@ public interface Registration<T> {
      * @return The current registration with all custom merged from other's.
      */
     default Registration<T> merge(Registration<T> other) {
-
-//            List<Class<?>> convClasses = new ArrayList();
-//            convClasses.addAll(getConvertedClasses());
-//            convClasses.addAll(other.getConvertedClasses());
-//
-//            HashMap<Class<?>, BiFunction<T, Object, Object>> customs = new HashMap<>();
-//
-//            new RegistrationImpl<>(getModelClass(), convClasses, customs);
-
-
-
         return new Registration<T>() {
 
             private ArrayList<Class<?>> convertedClasses = new ArrayList<>(Registration.this.getConvertedClasses());

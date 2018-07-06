@@ -16,16 +16,17 @@ import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.PreparationErrorCodes;
-import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.TransformationCacheKey;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
@@ -36,6 +37,8 @@ import org.talend.dataprep.transformation.service.ExportUtils;
  */
 @Component
 public class CachedExportStrategy extends BaseSampleExportStrategy {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachedExportStrategy.class);
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
@@ -58,10 +61,8 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
             final TransformationCacheKey contentKey = getCacheKey(parameters);
             return contentCache.has(contentKey);
         } catch (TDPException e) {
-            if (e.getCode() == PreparationErrorCodes.UNABLE_TO_READ_PREPARATION) {
-                return false;
-            }
-            throw e;
+            LOGGER.debug("Unable to use cached export strategy.", e);
+            return false;
         }
     }
 
@@ -79,7 +80,7 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
     }
 
     private TransformationCacheKey getCacheKey(ExportParameters parameters) {
-        final PreparationMessage preparation = getPreparation(parameters.getPreparationId());
+        final PreparationDTO preparation = getPreparation(parameters.getPreparationId());
         return cacheKeyGenerator.generateContentKey(preparation.getDataSetId(), //
                 parameters.getPreparationId(), //
                 getCleanStepId(preparation, parameters.getStepId()), //

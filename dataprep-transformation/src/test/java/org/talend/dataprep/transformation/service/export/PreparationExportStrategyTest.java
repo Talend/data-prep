@@ -1,7 +1,20 @@
 package org.talend.dataprep.transformation.service.export;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.stream.Stream;
+
 import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +30,13 @@ import org.talend.dataprep.api.dataset.DataSetContent;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
@@ -32,21 +46,8 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 import org.talend.dataprep.transformation.format.JsonFormat;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreparationExportStrategyTest {
@@ -78,7 +79,7 @@ public class PreparationExportStrategyTest {
     private Transformer transformer;
 
     @Mock
-    private PreparationDetailsGet preparationDetailsGet;
+    private PreparationSummaryGet preparationSummaryGet;
 
     @Mock
     private DatasetClient datasetClient;
@@ -102,7 +103,7 @@ public class PreparationExportStrategyTest {
         //when(datasetClient.getDataSetMetadata(anyString())).thenReturn(dataSetMetadata);
 
         final PreparationGetActions preparationGetActions = mock(PreparationGetActions.class);
-        when(preparationGetActions.execute()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
+        when(preparationGetActions.execute()).thenReturn(Collections.emptyList());
         when(applicationContext.getBean(eq(PreparationGetActions.class), eq("prep-1234"), anyString()))
                 .thenReturn(preparationGetActions);
 
@@ -119,13 +120,10 @@ public class PreparationExportStrategyTest {
         when(contentCache.put(any(), any())).thenReturn(new NullOutputStream());
     }
 
-    private void configurePreparation(Preparation preparation, String preparationId, String stepId) throws IOException {
-        final StringWriter preparationAsString = new StringWriter();
-        mapper.writerFor(Preparation.class).writeValue(preparationAsString, preparation);
-        when(preparationDetailsGet.execute())
-                .thenReturn(new ByteArrayInputStream(preparationAsString.toString().getBytes()));
-        when(applicationContext.getBean(eq(PreparationDetailsGet.class), eq(preparationId), eq(stepId)))
-                .thenReturn(preparationDetailsGet);
+    private void configurePreparation(PreparationDTO preparation, String preparationId, String stepId) {
+        when(preparationSummaryGet.execute()).thenReturn(preparation);
+        when(applicationContext.getBean(eq(PreparationSummaryGet.class), eq(preparationId), eq(stepId)))
+                .thenReturn(preparationSummaryGet);
     }
 
     @Test
@@ -154,7 +152,7 @@ public class PreparationExportStrategyTest {
         parameters.setPreparationId("prep-1234");
         parameters.setStepId("step-1234");
 
-        final Preparation preparation = new Preparation();
+        final PreparationDTO preparation = new PreparationDTO();
         preparation.setId("prep-1234");
         preparation.setHeadId("step-1234");
         configurePreparation(preparation, "prep-1234", "step-1234");
@@ -178,7 +176,8 @@ public class PreparationExportStrategyTest {
         parameters.setPreparationId("prep-1234");
         parameters.setStepId("head");
 
-        final Preparation preparation = new Preparation();
+        final PreparationDTO preparation = new PreparationDTO();
+        preparation.getSteps().add(Step.ROOT_STEP.id());
         preparation.setId("prep-1234");
         preparation.setHeadId("head");
         configurePreparation(preparation, "prep-1234", "head");

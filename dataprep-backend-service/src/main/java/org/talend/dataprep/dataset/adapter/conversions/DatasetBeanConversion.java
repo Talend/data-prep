@@ -14,6 +14,8 @@ package org.talend.dataprep.dataset.adapter.conversions;
 
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -38,6 +40,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Component
 public class DatasetBeanConversion extends BeanConversionServiceWrapper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetBeanConversion.class);
 
     private final ObjectMapper objectMapper;
 
@@ -76,12 +80,16 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                                 DataSetContent content =
                                         objectMapper.treeToValue(datasetProperties.get("content"), DataSetContent.class);
                                 dataSetMetadata.setContent(content);
+                            } else {
+                                LOGGER.warn("no dataset content for the dataset [{}]", dataSetMetadata.getId());
                             }
 
                             if (datasetProperties.has("location")) {
                                 DataSetLocation location =
                                         objectMapper.treeToValue(datasetProperties.get("location"), DataSetLocation.class);
                                 dataSetMetadata.setLocation(location);
+                            } else {
+                                LOGGER.warn("no dataset location for the dataset [{}]", dataSetMetadata.getId());
                             }
                         } catch (JsonProcessingException e) {
                             throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

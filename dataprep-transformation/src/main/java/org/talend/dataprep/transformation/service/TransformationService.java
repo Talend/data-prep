@@ -38,13 +38,13 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
+
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
@@ -495,7 +495,7 @@ public class TransformationService extends BaseTransformationService {
 
         boolean identityReleased = false;
         securityProxy.asTechnicalUserForDataSet();
-        try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId())) {
+        try (final DataSet dataSet = datasetClient.getDataSetWithInvalidMarker(previewParameters.getDataSetId())) {
             securityProxy.releaseIdentity();
             identityReleased = true;
 
@@ -880,9 +880,9 @@ public class TransformationService extends BaseTransformationService {
 
         // run the analyzer service on the cached content
         try (final InputStream metadataCache = contentCache.get(metadataKey);
-             final InputStream contentCache = this.contentCache.get(contentKey)) {
+             final InputStream contentCacheStream = this.contentCache.get(contentKey)) {
             final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataCache);
-            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCache);
+            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCacheStream);
             LOG.debug("found {} for preparation #{}, column #{}", semanticDomains, preparationId, columnId);
             return semanticDomains;
 

@@ -91,7 +91,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         boolean releasedIdentity = false;
         // Allow get dataset and get dataset metadata access whatever share status is
         securityProxy.asTechnicalUserForDataSet();
-        try (DataSet dataSet = datasetClient.getDataSet(dataSetId)) {
+        try (DataSet dataSet = datasetClient.getDataSetWithInvalidMarker(dataSetId)) {
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
 
@@ -112,8 +112,8 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                     parameters.getFilter() //
             );
 
-            LOGGER.debug("Cache key: " + key.getKey());
-            LOGGER.debug("Cache key details: " + key.toString());
+            LOGGER.debug("Cache key: {}", key.getKey());
+            LOGGER.debug("Cache key details: {}", key.toString());
 
             try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
                     contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {

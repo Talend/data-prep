@@ -12,6 +12,21 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -30,23 +45,7 @@ import org.talend.dataprep.transformation.pipeline.builder.ActionNodesBuilder;
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.FilteredNode;
-import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.LimitNode;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 public class Pipeline implements Node, RuntimeNode, Serializable {
 
@@ -100,7 +99,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 AtomicLong counter = new AtomicLong();
 
                 // we use map/allMatch to stop the stream when isStopped = true
-                // with only forEach((row) -> if(isStopped)) for ex we just stop the processed code
+                // with only forEach(row -> if(isStopped)) for ex we just stop the processed code
                 // but we proceed all the rows of the stream
                 // to replace when java introduce more useful functions to stream (ex: takeWhile)
                 records //
@@ -314,7 +313,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                             final Map<String, String> parameters = a.getParameters();
                             final ScopeCategory scope = ScopeCategory.from(parameters.get(ImplicitParameters.SCOPE.getKey()));
                             final ActionDefinition actionDefinition = actionRegistry.get(a.getName());
-                            final CompileDataSetRowAction compile = new CompileDataSetRowAction(parameters, actionDefinition, scope);
+                            final CompileDataSetRowAction compile = new CompileDataSetRowAction(parameters, actionDefinition,
+                                    scope);
                             final ApplyDataSetRowAction apply = new ApplyDataSetRowAction(actionDefinition, parameters, scope);
 
                             // Create runnable action
@@ -348,7 +348,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (preparation != null) {
                 LOG.debug("Applying step node transformations...");
                 actionsNode.logStatus(LOG, "Before transformation\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), previousStepRowMetadataSupplier);
+                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
+                        previousStepRowMetadataSupplier);
                 current.to(node);
                 node.logStatus(LOG, "After transformation\n{}");
             } else {
@@ -360,7 +361,6 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 current.to(new FilteredNode(outFilter));
             }
 
-            current.to(new InvalidDetectionNode(c -> true));
             Pipeline pipeline = new Pipeline();
 
             // set the maximum number of output rows

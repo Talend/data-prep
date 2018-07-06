@@ -44,6 +44,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParameters.SourceType;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.json.MixedContentMapModule;
 import org.talend.dataprep.cache.CacheKeyGenerator;
@@ -51,6 +52,7 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportStrategy;
 import org.talend.dataprep.transformation.service.export.ApplyPreparationExportStrategy;
@@ -87,6 +89,9 @@ public class StandardExportStrategiesIntegrationTest {
 
     @Mock
     private PreparationDetailsGet preparationDetailsGet;
+
+    @Mock
+    private PreparationSummaryGet preparationSummaryGet;
 
     @Mock
     private CacheKeyGenerator cacheKeyGenerator;
@@ -132,10 +137,15 @@ public class StandardExportStrategiesIntegrationTest {
     private void initPreparationDetails() throws Exception {
         doReturn(preparationDetailsGet).when(applicationContext).getBean(eq(PreparationDetailsGet.class), anyString(),
                 anyString());
-        final PreparationDetailsDTO preparationDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details.json"));
+        final PreparationDetailsDTO preparationDetailsDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details.json"));
         when(preparationDetailsGet.execute())
-                .thenReturn(preparationDTO)
-                .thenReturn(preparationDTO);
+                .thenReturn(preparationDetailsDTO)
+                .thenReturn(preparationDetailsDTO);
+
+        doReturn(preparationSummaryGet).when(applicationContext).getBean(eq(PreparationSummaryGet.class), anyString(),
+                anyString());
+        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details_summary.json"));
+        when(preparationSummaryGet.execute()).thenReturn(preparationDTO, preparationDTO);
     }
 
     private void initContentCache() {
@@ -213,10 +223,16 @@ public class StandardExportStrategiesIntegrationTest {
 
     private String idOfPrepWith2StepsOrMore() throws IOException {
         reset(preparationDetailsGet);
-        final PreparationDetailsDTO preparationDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
+        final PreparationDetailsDTO preparationDetailsDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
         when(preparationDetailsGet.execute())
+                .thenReturn(preparationDetailsDTO)
+                .thenReturn(preparationDetailsDTO);
+
+        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details_summary.json"));
+        when(preparationSummaryGet.execute())
                 .thenReturn(preparationDTO)
                 .thenReturn(preparationDTO);
+
         return "prepId-1234";
     }
 

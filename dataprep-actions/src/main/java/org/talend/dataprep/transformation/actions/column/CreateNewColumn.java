@@ -131,10 +131,12 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
                                 parameter(locale).setName(START_VALUE)
                                         .setType(INTEGER)
                                         .setDefaultValue("1")
+                                        .setCanBeBlank(false)
                                         .build(this),
                                 parameter(locale).setName(STEP_VALUE)
                                         .setType(INTEGER)
                                         .setDefaultValue("1")
+                                        .setCanBeBlank(false)
                                         .build(this))
                         .defaultValue(COLUMN_MODE)
                         .build(this)

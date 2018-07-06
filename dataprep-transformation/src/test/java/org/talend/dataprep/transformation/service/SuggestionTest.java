@@ -33,23 +33,6 @@ import com.jayway.restassured.path.json.JsonPath;
 public class SuggestionTest extends TransformationServiceBaseTest {
 
     @Test
-    public void dataSetSuggest() throws Exception {
-        // given
-        final String dataSetMetadata = IOUtils.toString(Application.class.getResourceAsStream("suggestions/dataset_metadata.json"), UTF_8);
-
-        // when
-        final String response = given() //
-                .contentType(JSON) //
-                .body(dataSetMetadata) //
-                .when() //
-                .post("/suggest/dataset") //
-                .asString();
-
-        // then
-        assertEquals("[]", response, false);
-    }
-
-    @Test
     public void emptyColumnSuggest() throws Exception {
         // when
         final String response = given() //

@@ -37,9 +37,9 @@ public class AnalysisEventProcessingTest {
     public void testEventLaunchAnalysis() {
 
         DatasetImportedEvent event = new DatasetImportedEvent("datasetId");
-        listener.onEvent(event);
+         listener.onEvent(event);
 
-        verify(analysisEventProcessingUtil, times(1)).processAnalysisEvent(any());
+         verify(analysisEventProcessingUtil, times(1)).processAnalysisEvent(any());
     }
 
 }

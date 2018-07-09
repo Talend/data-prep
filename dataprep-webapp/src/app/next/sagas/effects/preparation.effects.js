@@ -38,7 +38,8 @@ export function* fetch({ folderId = 'Lw==' }) {
 }
 
 export function* copy({ id, folderId, destination, title }) {
-	const url = `/api/preparations/${id}/copy?destination=${destination}&newName=${title}`;
+	const dest = destination || folderId;
+	const url = `/api/preparations/${id}/copy?destination=${dest}&newName=${title}`;
 
 	const action = yield call(http.post, url);
 	if (!(action instanceof Error)) {
@@ -48,7 +49,8 @@ export function* copy({ id, folderId, destination, title }) {
 }
 
 export function* move({ id, folderId, destination, title }) {
-	const url = `/api/preparations/${id}/move?folder=${folderId}&destination=${destination}&newName=${title}`;
+	const dest = destination || folderId;
+	const url = `/api/preparations/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`;
 
 	const action = yield call(http.put, url);
 	if (!(action instanceof Error)) {

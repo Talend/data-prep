@@ -98,11 +98,12 @@ function closeCopyMoveModal() {
 	};
 }
 
-function copy(event, { id }, context) {
+function copy(event, { id, folderId }, context) {
 	return {
 		type: PREPARATION_COPY,
 		payload: {
 			...PreparationCopyMoveModal.getContent(context.store.getState()),
+			folderId,
 			id,
 		},
 	};

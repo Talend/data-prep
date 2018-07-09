@@ -23,6 +23,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.reactivestreams.Subscriber;
@@ -37,7 +38,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.service.api.EnrichedPreparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationListItemDTO;
 import org.talend.dataprep.api.service.command.folder.CreateChildFolder;
 import org.talend.dataprep.api.service.command.folder.FolderChildrenList;
 import org.talend.dataprep.api.service.command.folder.FolderTree;
@@ -48,12 +50,10 @@ import org.talend.dataprep.api.service.command.folder.SearchFolders;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationListByFolder;
-import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
-import org.talend.dataprep.preparation.service.UserPreparation;
-import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -68,11 +68,7 @@ import reactor.core.publisher.Flux;
 public class FolderAPI extends APIService {
 
     @Autowired
-    private DataSetMetadataBuilder metadataBuilder;
-
-    /** Security proxy let the current thread to borrow another identity for a while. */
-    @Autowired
-    private SecurityProxy securityProxy;
+    private DataSetNameInjection dataSetNameInjection;
 
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.", produces = APPLICATION_JSON_VALUE)
@@ -205,10 +201,10 @@ public class FolderAPI extends APIService {
                 // Preparation list
                 final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
 
-                final Flux<EnrichedPreparation> preparations = Flux
-                        .from(toPublisher(UserPreparation.class, mapper, listPreparations)) // From preparation list
-                        .map(preparation -> beanConversionService.convert(preparation, EnrichedPreparation.class));
-                writeFluxToJsonArray(preparations, "preparations", generator);
+                final Stream<PreparationListItemDTO> preparations = CommandHelper.toStream(PreparationDTO.class, mapper, listPreparations)
+                        .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+
+                generator.writeObjectField("preparations", preparations);
                 generator.writeEndObject();
             } catch (EOFException e) {
                 LOG.debug("Output stream has been closed before finishing preparation writing.", e);

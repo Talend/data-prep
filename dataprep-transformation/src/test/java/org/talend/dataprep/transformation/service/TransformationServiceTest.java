@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
@@ -139,8 +140,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", "no_preparation_id", dataSetId, "JSON");
 
         // then
-        assertEquals(500, response.getStatusCode());
-        assertTrue(response.asString().contains("UNABLE_TO_READ_PREPARATION"));
+        assertEquals(404, response.getStatusCode());
+        assertTrue(response.asString().contains("PREPARATION_DOES_NOT_EXIST"));
     }
 
     @Test
@@ -189,7 +190,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         String prepId = createEmptyPreparationFromDataset(dsId, "uppercase prep");
         applyActionFromFile(prepId, "uppercase_action.json");
 
-        final Preparation preparation = getPreparation(prepId);
+        final PreparationDTO preparation = getPreparation(prepId);
         final String headId = preparation.getHeadId();
 
         final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //

@@ -1,5 +1,9 @@
 package org.talend.dataprep.util.avro;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,11 +15,8 @@ import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.type.Type;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 
 public class AvroUtilsTest {
 
@@ -74,7 +75,7 @@ public class AvroUtilsTest {
     }
 
     @Test
-    public void toDataSetRowConverter_shouldHandleDuplicate() {
+    public void toDataSetRowConverterShouldHandleDuplicate() {
         RowMetadata rowMetadata = new RowMetadata();
         List<ColumnMetadata> columnMetadatas = new ArrayList<>();
         columnMetadatas.add(column().id(1).name("city").type(Type.STRING).build());
@@ -88,8 +89,7 @@ public class AvroUtilsTest {
         inputRow.set("0003", "value 3");
         inputRow.setTdpId(1L);
 
-        Function<DataSetRow, GenericRecord> toAvro =
-                AvroUtils.buildToGenericRecordConverter(AvroUtils.toSchema(rowMetadata));
+        Function<DataSetRow, GenericRecord> toAvro = AvroUtils.buildToGenericRecordConverter(AvroUtils.toSchema(rowMetadata));
         Function<GenericRecord, DataSetRow> converter = AvroUtils.buildToDataSetRowConverter(rowMetadata);
 
         DataSetRow dataSetRow = converter.apply(toAvro.apply(inputRow));
@@ -97,15 +97,41 @@ public class AvroUtilsTest {
         assertEquals(inputRow, dataSetRow);
     }
 
-
     @Test
-    public void toDataSetRowConverter_shouldHandleInvalidNames() {
+    public void toDataSetRowConverterShouldHandleInvalidNames() {
         RowMetadata rowMetadata = new RowMetadata();
         rowMetadata.setColumns(Collections.singletonList(column().id(2).name("date-of-birth").type(Type.STRING).build()));
 
         RowMetadata rowMetadataConverted = AvroUtils.toRowMetadata(AvroUtils.toSchema(rowMetadata));
 
         assertEquals(rowMetadata, rowMetadataConverted);
+    }
+
+    @Test
+    public void toDataSetRowConverterShouldHandleInvalid() {
+        RowMetadata rowMetadata = new RowMetadata();
+        List<ColumnMetadata> columnMetadatas = new ArrayList<>();
+        columnMetadatas.add(column().id(1).name("city").type(Type.STRING).build());
+        columnMetadatas.add(column().id(2).name("city").type(Type.STRING).invalid(1).build());
+        columnMetadatas.add(column().id(3).name("city").type(Type.STRING).build());
+        rowMetadata.setColumns(columnMetadatas);
+
+        DataSetRow inputRow = new DataSetRow(rowMetadata);
+        inputRow.set("0001", "value 1");
+        inputRow.set("0002", "value 2");
+        inputRow.set("0003", "value 3");
+        // flags are not taken account
+        inputRow.set(FlagNames.TDP_ID, "0");
+        inputRow.set(FlagNames.TDP_INVALID, "0001,0003");
+        inputRow.setTdpId(1L);
+        inputRow.setInvalid("0002");
+
+        Function<DataSetRow, GenericRecord> toAvro = AvroUtils.buildToGenericRecordConverter(AvroUtils.toSchema(rowMetadata));
+        Function<GenericRecord, DataSetRow> converter = AvroUtils.buildToDataSetRowConverter(rowMetadata);
+
+        DataSetRow dataSetRow = converter.apply(toAvro.apply(inputRow));
+
+        assertEquals(inputRow, dataSetRow);
     }
 
 }

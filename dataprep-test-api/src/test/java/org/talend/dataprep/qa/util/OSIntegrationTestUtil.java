@@ -103,21 +103,21 @@ public class OSIntegrationTestUtil {
     public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
         final Filter filter = new Filter();
         EnumMap<ActionFilterEnum, Object> filterMap = new EnumMap<>(ActionFilterEnum.class);
-        ;
         AtomicBoolean isInvalid = new AtomicBoolean(false);
 
-        long nbAfes = params.keySet().stream() //
-                .map(ActionFilterEnum::getActionFilterEnum) //
-                .filter(Objects::nonNull) //
-                .peek(afe -> {
-                    String value = params.get(afe.getName());
-                    if (afe.getJsonName().equals(ActionFilterEnum.INVALID.getJsonName())) {
-                        isInvalid.set(true);
-                    } else {
-                        filterMap.put(afe, afe.processValue(value));
-                    }
-                }) //
-                .count();
+        long nbAfes = 0L;
+        for (String s : params.keySet()) {
+            ActionFilterEnum afe = ActionFilterEnum.getActionFilterEnum(s);
+            if (afe != null) {
+                String value = params.get(afe.getName());
+                if (afe.getJsonName().equals(ActionFilterEnum.INVALID.getJsonName())) {
+                    isInvalid.set(true);
+                } else {
+                    filterMap.put(afe, afe.processValue(value));
+                }
+                nbAfes++;
+            }
+        }
         if (isInvalid.get())
             filter.invalid = filterMap;
         else

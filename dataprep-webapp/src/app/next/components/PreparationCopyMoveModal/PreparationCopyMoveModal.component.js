@@ -43,6 +43,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 		const show = state.get('show', false);
 		const model = state.get('model', new Immutable.Map());
 		const text = model.get('name', '');
+		const selectedId = model.get('folderId', '');
 
 		const bar = {
 			actions: {
@@ -98,7 +99,11 @@ export default class PreparationCopyMoveModal extends React.Component {
 					source={'folders'}
 					id={'folders'}
 					componentId={SELECT_OBJECT_ID}
-					tree={{}}
+					tree={{
+						initialState: {
+							selectedId,
+						},
+					}}
 				/>
 				<Form {...form} />
 			</Inject>

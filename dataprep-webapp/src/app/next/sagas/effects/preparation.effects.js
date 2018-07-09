@@ -26,6 +26,7 @@ export function* duplicate(prep) {
 }
 
 export function* fetch({ folderId = 'Lw==' }) {
+	yield put(actions.collections.addOrReplace('currentFolderId', folderId));
 	yield put(
 		actions.http.get(`/api/folders/${folderId}/preparations`, {
 			cmf: {
@@ -96,11 +97,15 @@ export function* openPreparationCreatorModal() {
 }
 
 export function* openCopyMoveModal(model) {
+	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 	yield put(
 		actions.components.mergeState('PreparationCopyMoveModal', 'default',
 			{
 				show: true,
-				model,
+				model: {
+					...model,
+					folderId,
+				},
 			},
 		)
 	);

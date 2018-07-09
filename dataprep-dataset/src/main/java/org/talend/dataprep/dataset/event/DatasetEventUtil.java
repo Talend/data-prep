@@ -44,7 +44,6 @@ public class DatasetEventUtil {
 
     private void analyseDataset(String datasetId) {
         analysisEventProcessingUtil.processAnalysisEvent(datasetId);
-
     }
 
     private void cleanDatasetCache(String datasetId) {

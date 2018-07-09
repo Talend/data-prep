@@ -143,15 +143,6 @@ public class DatasetClient {
     }
 
     /**
-     * Get a dataSet by id with invalid Marker.
-     *
-     * @param id the dataset to fetch
-     */
-    public DataSet getDataSetWithInvalidMarker(String id) {
-        return getDataSet(id, false, true, null);
-    }
-
-    /**
      * Get a dataSet by id.
      *
      * @param id the dataset to fetch
@@ -166,10 +157,10 @@ public class DatasetClient {
      *
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
-     * @param filter TQL filter for content
+     * @param withRowValidityMarker perform a quality analysis on the dataset records
      */
-    public DataSet getDataSet(String id, boolean fullContent, String filter) {
-        return getDataSet(id, fullContent, false, filter);
+    public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker) {
+        return getDataSet(id, fullContent, withRowValidityMarker, null);
     }
 
     /**
@@ -242,7 +233,7 @@ public class DatasetClient {
 
             @Override
             protected InputStream run() throws IOException {
-                DataSet dataSet = getDataSet(dataSetId, fullContent, false, null);
+                DataSet dataSet = getDataSet(dataSetId, fullContent, includeInternalContent);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 mapper.writerFor(DataSet.class).writeValue(out, dataSet);
                 return new ByteArrayInputStream(out.toByteArray());

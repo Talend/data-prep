@@ -91,7 +91,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         boolean releasedIdentity = false;
         // Allow get dataset and get dataset metadata access whatever share status is
         securityProxy.asTechnicalUserForDataSet();
-        try (DataSet dataSet = datasetClient.getDataSetWithInvalidMarker(dataSetId)) {
+        try (DataSet dataSet = datasetClient.getDataSet(dataSetId, false, true)) {
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
 

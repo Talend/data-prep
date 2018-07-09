@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
@@ -202,7 +203,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         String prepId = createEmptyPreparationFromDataset(dsId, "uppercase prep");
         applyActionFromFile(prepId, "uppercase_action.json");
 
-        final Preparation preparation = getPreparation(prepId);
+        final PreparationDTO preparation = getPreparation(prepId);
         final String headId = preparation.getHeadId();
 
         final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //

@@ -12,11 +12,9 @@
 
 package org.talend.dataprep.folder.store;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.talend.dataprep.api.folder.Folder;
@@ -24,17 +22,19 @@ import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.exception.TDPException;
 
-
 /**
  * Folder repository that manage folders and folder entries.
- * TODO: there is a real problem in this API: folderId and  folder path are two different concept that should not be interchangeable.
- * It might be better to remove folder ID concept to FolderPath or use it as a real ID that could be toatally decorellated from path.
+ * TODO: there is a real problem in this API: folderId and folder path are two different concept that should not be
+ * interchangeable.
+ * It might be better to remove folder ID concept to FolderPath or use it as a real ID that could be toatally
+ * decorellated from path.
  * It should be taken in account a path might not be enough to find a folder as two users might create the same folder.
  */
 public interface FolderRepository {
 
     /**
      * Return true if the given folder exists.
+     * 
      * @param folderId the wanted folder folderId.
      * @return true if the given folder exists.
      */
@@ -56,7 +56,8 @@ public interface FolderRepository {
     Folder addFolder(String parentFolderId, String path);
 
     /**
-     * @return A {@link java.lang.Iterable iterable} of children {@link Folder folder}. Returned folders are expected to be
+     * @return A {@link java.lang.Iterable iterable} of children {@link Folder folder}. Returned folders are expected to
+     * be
      * visible by current user.
      * @param folderId the parent folder in the format /ffo/blab/mm or <code>null</code> for root folder
      */
@@ -92,12 +93,13 @@ public interface FolderRepository {
      *
      * @param folderId the folder path containing the entry
      * @param contentId the id
-     * @param contentType  the type dataset, preparation
+     * @param contentType the type dataset, preparation
      */
     void removeFolderEntry(String folderId, String contentId, FolderContentType contentType);
 
     /**
      * List the {@link FolderEntry} of the wanted type within the given folderId.
+     * 
      * @param folderId the parent folderId
      * @param contentType the contentClass to filter folder entries
      * @return A {@link java.lang.Iterable iterable} of {@link FolderEntry} content filtered for the given type
@@ -110,14 +112,16 @@ public interface FolderRepository {
      * It's useful when you want to delete a dataset hence all its references.
      *
      * @param contentId the id
-     * @param contentType  the type dataset, preparation
-     * @return A {@link Iterable} of the {@link FolderEntry} containing the folderEntry as described by contentType and contentId.
+     * @param contentType the type dataset, preparation
+     * @return A {@link Iterable} of the {@link FolderEntry} containing the folderEntry as described by contentType and
+     * contentId.
      */
     Stream<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType);
 
     /**
      * <b>if the destination or entry doesn't exist a {@link IllegalArgumentException} will be thrown</b>
-     *  @param folderEntry the {@link FolderEntry} to move.
+     * 
+     * @param folderEntry the {@link FolderEntry} to move.
      * @param fromId where to look for the folder entry.
      * @param toId the destination where to move the entry.
      */
@@ -125,6 +129,7 @@ public interface FolderRepository {
 
     /**
      * Copy the given folder entry to the target destination.
+     * 
      * @param folderEntry the {@link FolderEntry} to move
      * @param toId the destination where to copy the entry
      */
@@ -143,12 +148,19 @@ public interface FolderRepository {
     long size();
 
     /**
+     * Use this method to get a {@link Folder} using a <code>path</code>.
+     * @param path The path to be searched.
+     * @return An {@link Optional} for searched <code>path</code>.
+     */
+    Optional<Folder> getFolder(String path);
+
+    /**
      *
-     * @param queryString part of the name to search in folder (not case sensitive)
+     * @param folderName part of the name to search in folder (not case sensitive)
      * @param strict strict mode means the name is the full name
      * @return A {@link Iterable} of {@link Folder} with the query string in the name
      */
-    Stream<Folder> searchFolders(String queryString, boolean strict);
+    Stream<Folder> searchFolders(String folderName, boolean strict);
 
     /**
      * Return the folder that holds the given content id and content type.
@@ -186,17 +198,17 @@ public interface FolderRepository {
         final List<Folder> hierarchy = new ArrayList<>();
 
         String nextParentId = folder.getParentId();
-        while(nextParentId != null) {
+        while (nextParentId != null) {
             try {
                 final Folder parent = this.getFolderById(nextParentId);
                 hierarchy.add(0, parent);
                 nextParentId = parent.getParentId();
-            } catch(final TDPException e) {
+            } catch (final TDPException e) {
                 // in case of shared folder, we can have a 403 during hierarchy construction
                 // ex: /folder/folderChild/folderGrandChild, with /folderChild shared but not /folder
                 // we just add the current user home because every top level shared folder is considered
                 // as the user's home child
-                if(e.getCode().getHttpStatus() == 403) {
+                if (e.getCode().getHttpStatus() == 403) {
                     hierarchy.add(0, this.getHome());
                     break;
                 }
@@ -206,16 +218,4 @@ public interface FolderRepository {
 
         return hierarchy;
     }
-
-    /**
-     * Builds a Map with preparations IDs as key and their folder path as values.
-     */
-    default Map<String, Folder> getPreparationsFolderPaths() {
-        return searchFolders("", false) //
-                .flatMap( //
-                        f -> entries(f.getId(), FolderContentType.PREPARATION).map(e -> new SimpleEntry<>(f, e.getContentId())) //
-                ) //
-                .collect(Collectors.toMap(SimpleEntry::getValue, SimpleEntry::getKey));
-    }
-
 }

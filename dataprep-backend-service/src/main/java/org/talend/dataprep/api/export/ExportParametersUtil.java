@@ -16,26 +16,19 @@ import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
-import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ExportParametersUtil {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExportParametersUtil.class);
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -65,7 +58,7 @@ public class ExportParametersUtil {
 
         // we deal with a preparation export parameter. We need to populate stepId and datasetId
         if (StringUtils.isNotEmpty(exportParam.getPreparationId())) {
-            Preparation prep = getPreparation(exportParam.getPreparationId(), exportParam.getStepId());
+            PreparationDTO prep = getPreparation(exportParam.getPreparationId(), exportParam.getStepId());
             result.setStepId(getCleanStepId(prep, exportParam.getStepId()));
             // if we don't have dataSetId and don't have content to apply the preparation, we apply on the dataSet use
             // for the preparation
@@ -85,18 +78,13 @@ public class ExportParametersUtil {
      * @param stepId the preparation step (might be different from head's to navigate through versions).
      * @return the preparation out of its id.
      */
-    public PreparationMessage getPreparation(String preparationId, String stepId) {
+    public PreparationDTO getPreparation(String preparationId, String stepId) {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet =
-                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
-        try (InputStream details = preparationDetailsGet.execute()) {
-            return mapper.readerFor(PreparationMessage.class).readValue(details);
-        } catch (IOException e) {
-            LOGGER.error("Unable to read preparation {}", preparationId, e);
-            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
-        }
+        final PreparationSummaryGet preparationSummaryGet =
+                applicationContext.getBean(PreparationSummaryGet.class, preparationId, stepId);
+        return preparationSummaryGet.execute();
     }
 
     /**
@@ -105,9 +93,9 @@ public class ExportParametersUtil {
      * @param preparation The preparation
      * @param stepId The step id
      */
-    public String getCleanStepId(final Preparation preparation, final String stepId) {
+    public String getCleanStepId(final PreparationDTO preparation, final String stepId) {
         if (StringUtils.equals("head", stepId) || StringUtils.isEmpty(stepId)) {
-            return preparation.getSteps().get(preparation.getSteps().size() - 1).id();
+            return preparation.getSteps().get(preparation.getSteps().size() - 1);
         }
         return stepId;
     }

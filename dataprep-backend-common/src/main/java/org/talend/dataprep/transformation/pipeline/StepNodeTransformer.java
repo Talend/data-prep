@@ -12,11 +12,11 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.Step;
-
 import java.util.List;
 import java.util.function.Function;
+
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.preparation.Step;
 
 /**
  * A utility class to transformer a pipeline (with nodes) and replace step-related nodes with
@@ -37,7 +37,7 @@ public class StepNodeTransformer {
      * @return The transformed pipeline, based on copies of the original <code>node</code> (no modification done on the pipeline
      * reachable from <code>node/code>).
      */
-    public static Node transform(Node node, List<Step> steps, Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
+    public static Node transform(Node node, List<String> steps, Function<String, RowMetadata> previousStepRowMetadataSupplier) {
         final StepNodeTransformation visitor = new StepNodeTransformation(steps, previousStepRowMetadataSupplier);
         node.accept(visitor);
         return visitor.getTransformedNode();

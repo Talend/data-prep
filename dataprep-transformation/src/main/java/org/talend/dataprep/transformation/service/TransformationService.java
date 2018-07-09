@@ -23,7 +23,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
 import static org.talend.dataprep.exception.error.TransformationErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.quality.AnalyzerService.Analysis.SEMANTIC;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
@@ -38,7 +37,6 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +74,7 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.async.AsyncExecutionId;
@@ -93,7 +91,7 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
@@ -248,7 +246,7 @@ public class TransformationService extends BaseTransformationService {
 
         LOG.debug("getting preparation metadata for #{}, step {}", preparationId, stepId);
 
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
         if (preparation.getSteps().size() > 1) {
             String headId = "head".equalsIgnoreCase(stepId) ? preparation.getHeadId() : stepId;
             final TransformationMetadataCacheKey cacheKey =
@@ -284,9 +282,7 @@ public class TransformationService extends BaseTransformationService {
         } else {
             LOG.debug("No step in preparation '{}', falls back to get dataset metadata (id: {})", preparationId,
                     preparation.getDataSetId());
-            DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
-            dataSetMetadata.setRowMetadata(preparation.getRowMetadata());
-            return dataSetMetadata;
+            return datasetClient.getDataSetMetadata(preparation.getDataSetId());
         }
         return null;
     }
@@ -791,7 +787,7 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Get the available format types for the preparation")
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForPreparation(@PathVariable String preparationId) {
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
         final DataSetMetadata metadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
         return getPreparationExportTypesForDataSet(metadata.getId());
     }
@@ -849,11 +845,11 @@ public class TransformationService extends BaseTransformationService {
                 stepId);
 
         // get the preparation
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
 
         // get the step (in case of 'head', the real step id must be found)
         final String version = StringUtils.equals("head", stepId) ? //
-                preparation.getSteps().get(preparation.getSteps().size() - 1).getId() : stepId;
+                preparation.getSteps().get(preparation.getSteps().size() - 1) : stepId;
 
         /*
          * OK, this one is a bit tricky so pay attention.
@@ -907,16 +903,10 @@ public class TransformationService extends BaseTransformationService {
      * @param preparationId the wanted preparation id.
      * @return the preparation from the preparation service.
      */
-    private Preparation getPreparation(@ApiParam(value = "The preparation id") @PathVariable String preparationId) {
-        final Preparation preparation;
-        try {
-            final PreparationDetailsGet details =
-                    applicationContext.getBean(PreparationDetailsGet.class, preparationId);
-            preparation = mapper.readerFor(Preparation.class).readValue(details.execute());
-        } catch (IOException e) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, e, build().put("id", preparationId));
-        }
-        return preparation;
+    private PreparationDTO getPreparation(String preparationId) {
+        final PreparationSummaryGet details =
+                    applicationContext.getBean(PreparationSummaryGet.class, preparationId);
+        return details.execute();
     }
 
     /**
@@ -963,7 +953,7 @@ public class TransformationService extends BaseTransformationService {
      * @param preparation the preparation to cache.
      * @param stepId the preparation step id.
      */
-    private void addPreparationInCache(Preparation preparation, String stepId) {
+    private void addPreparationInCache(PreparationDTO preparation, String stepId) {
         final ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparation.getId());
         exportParameters.setExportType("JSON");

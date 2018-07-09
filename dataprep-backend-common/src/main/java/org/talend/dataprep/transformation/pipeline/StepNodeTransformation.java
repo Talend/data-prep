@@ -37,9 +37,9 @@ class StepNodeTransformation extends Visitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StepNodeTransformation.class);
 
-    private final Iterator<Step> steps;
+    private final Iterator<String> steps;
 
-    private final Function<Step, RowMetadata> previousStepRowMetadataSupplier;
+    private final Function<String, RowMetadata> previousStepRowMetadataSupplier;
 
     private State DISPATCH = new Dispatch();
 
@@ -56,7 +56,7 @@ class StepNodeTransformation extends Visitor {
      * @param steps                           The {@link Step steps} to be used when creating new {@link StepNode}.
      * @param previousStepRowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with step.
      */
-    StepNodeTransformation(List<Step> steps, Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
+    StepNodeTransformation(List<String> steps, Function<String, RowMetadata> previousStepRowMetadataSupplier) {
         this.steps = steps.iterator();
         this.previousStepRowMetadataSupplier = previousStepRowMetadataSupplier;
     }
@@ -65,7 +65,7 @@ class StepNodeTransformation extends Visitor {
         if (steps.hasNext()) {
             AtomicInteger remainingCount = new AtomicInteger(0);
             steps.forEachRemaining(s -> {
-                if (!Step.ROOT_STEP.getId().equals(s.getId())) {
+                if (!Step.ROOT_STEP.getId().equals(s)) {
                     LOGGER.warn("Remaining step #{}: {}", remainingCount.get(), s);
                     remainingCount.incrementAndGet();
                 }
@@ -131,9 +131,9 @@ class StepNodeTransformation extends Visitor {
                 }
 
                 // insert a StepNode within the pipeline builder
-                Step nextStep = steps.next();
-                if (Step.ROOT_STEP.getId().equals(nextStep.getId())) {
-                    LOGGER.debug("Unable to use step '{}' (root step).", nextStep.getId());
+                String nextStep = steps.next();
+                if (Step.ROOT_STEP.getId().equals(nextStep)) {
+                    LOGGER.debug("Unable to use step '{}' (root step).", nextStep);
                     if (steps.hasNext()) {
                         nextStep = steps.next();
                     } else {
@@ -164,9 +164,9 @@ class StepNodeTransformation extends Visitor {
 
         private final Node previous;
 
-        private final Step step;
+        private final String step;
 
-        private StepState(Node previous, Step step) {
+        private StepState(Node previous, String step) {
             this.previous = previous;
             this.step = step;
         }

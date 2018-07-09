@@ -12,34 +12,6 @@
 
 package org.talend.dataprep.folder.store.file;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderContentType;
-import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.share.Owner;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
-import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.security.Security;
-import org.talend.dataprep.util.StringsHelper;
-
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderBuilder.folder;
 import static org.talend.dataprep.exception.error.DataSetErrorCodes.FOLDER_DOES_NOT_EXIST;
@@ -61,6 +33,36 @@ import static org.talend.dataprep.folder.store.file.FileSystemUtils.matches;
 import static org.talend.dataprep.folder.store.file.FileSystemUtils.toId;
 import static org.talend.dataprep.folder.store.file.FileSystemUtils.writeEntryToStream;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderContentType;
+import org.talend.dataprep.api.folder.FolderEntry;
+import org.talend.dataprep.api.share.Owner;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
+import org.talend.dataprep.folder.store.FolderRepository;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.util.StringsHelper;
+
 /**
  * File system folder repository implementation.
  */
@@ -73,6 +75,10 @@ public class FileSystemFolderRepository implements FolderRepository {
 
     @Autowired
     private PathsConverter pathsConverter;
+
+    private static String buildFileName(FolderEntry folderEntry) {
+        return folderEntry.getContentType().toString() + '@' + folderEntry.getContentId();
+    }
 
     /**
      * Make sure the root folder is there.
@@ -114,7 +120,9 @@ public class FileSystemFolderRepository implements FolderRepository {
             if (Files.notExists(folderPath)) {
                 children = Stream.empty();
             } else {
-                children = Files.list(folderPath).map(p -> toFolderIfDirectory(p, security.getUserId())) //
+                children = Files
+                        .list(folderPath)
+                        .map(p -> toFolderIfDirectory(p, security.getUserId())) //
                         .filter(Objects::nonNull);
             }
             return children;
@@ -129,15 +137,16 @@ public class FileSystemFolderRepository implements FolderRepository {
         // parent path must be set and exists
         FolderPath parentFolderPath = fromId(parentId);
 
-        List<String> pathToAppend = Arrays.stream(givenPath.split(PATH_SEPARATOR.toString()))
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList());
+        List<String> pathToAppend =
+                Arrays.stream(givenPath.split(PATH_SEPARATOR.toString())).filter(StringUtils::isNotBlank).collect(
+                        Collectors.toList());
 
         if (parentFolderPath == null || !exists(parentId)) {
             throw new TDPException(FOLDER_DOES_NOT_EXIST, build().put("parentId", parentId));
         }
 
-        FolderPath folderPathToCreate = new FolderPath(parentFolderPath, pathToAppend.toArray(new String[pathToAppend.size()]));
+        FolderPath folderPathToCreate =
+                new FolderPath(parentFolderPath, pathToAppend.toArray(new String[pathToAppend.size()]));
         try {
             Path pathToCreate = pathsConverter.toPath(folderPathToCreate);
             Files.createDirectories(pathToCreate);
@@ -244,7 +253,8 @@ public class FileSystemFolderRepository implements FolderRepository {
             Path path = pathsConverter.toPath(folderPath);
 
             try (Stream<Path> paths = Files.walk(path)) {
-                paths.filter(pathFound -> !Files.isDirectory(pathFound)) //
+                paths
+                        .filter(pathFound -> !Files.isDirectory(pathFound)) //
                         .filter(pathFile -> matches(pathFile, contentId, contentType)) //
                         .forEach(deleteFile());
             }
@@ -283,19 +293,22 @@ public class FileSystemFolderRepository implements FolderRepository {
         }
 
         try {
-            return Files.list(path) //
+            return Files
+                    .list(path) //
                     .filter(pathFound -> !Files.isDirectory(pathFound)) //
                     .map(FileSystemUtils::toFolderEntry) //
                     .filter(entry -> Objects.equals(contentType, entry.getContentType()));
         } catch (IOException e) {
-            throw new TDPException(UNABLE_TO_LIST_FOLDER_ENTRIES, e, build().put("path", path).put("type", contentType));
+            throw new TDPException(UNABLE_TO_LIST_FOLDER_ENTRIES, e,
+                    build().put("path", path).put("type", contentType));
         }
     }
 
     @Override
     public Stream<FolderEntry> findFolderEntries(String contentId, FolderContentType contentType) {
         try {
-            return Files.walk(pathsConverter.getRootFolder()) //
+            return Files
+                    .walk(pathsConverter.getRootFolder()) //
                     .filter(Files::isRegularFile) //
                     .map(FileSystemUtils::toFolderEntry) //
                     .filter(entry -> StringUtils.equals(entry.getContentId(), contentId) //
@@ -316,12 +329,19 @@ public class FileSystemFolderRepository implements FolderRepository {
     }
 
     @Override
-    public Stream<Folder> searchFolders(String queryString, boolean strict) {
+    public Stream<Folder> searchFolders(String folderName, boolean strict) {
         try {
-            return Files.walk(pathsConverter.getRootFolder()) //
+            final String queryForFileSearch;
+            if (folderName.startsWith("/")) {
+                queryForFileSearch = folderName.substring(1);
+            } else {
+                queryForFileSearch = folderName;
+            }
+            return Files
+                    .walk(pathsConverter.getRootFolder()) //
                     .filter(path -> //
-                            Files.isDirectory(path) //
-                                    && StringsHelper.match(path.getFileName().toString(), queryString, strict)) //
+                    Files.isDirectory(path) //
+                            && StringsHelper.match(path.getFileName().toString(), queryForFileSearch, strict)) //
                     .map(path -> toFolder(path, security.getUserId()));
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
@@ -379,8 +399,25 @@ public class FileSystemFolderRepository implements FolderRepository {
         return countSubDirectories(pathsConverter.getRootFolder());
     }
 
-    private static String buildFileName(FolderEntry folderEntry) {
-        return folderEntry.getContentType().toString() + '@' + folderEntry.getContentId();
+    @Override
+    public Optional<Folder> getFolder(String path) {
+        if ("/".equals(path)) {
+            return Optional.of(getHome());
+        }
+        try {
+            final String queryForFileSearch;
+            if (path.startsWith("/")) {
+                queryForFileSearch = path.substring(1);
+            } else {
+                queryForFileSearch = path;
+            }
+            return Files.walk(pathsConverter.getRootFolder()) //
+                    .filter(p -> Files.isDirectory(p) && p.getFileName().toString().equals(queryForFileSearch)) //
+                    .findFirst() //
+                    .map(p -> toFolder(p, security.getUserId()));
+        } catch (IOException e) {
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+        }
     }
 
     /** If the path represents a directory, build the {@link Folder} object based on it. */
@@ -398,7 +435,8 @@ public class FileSystemFolderRepository implements FolderRepository {
         FolderPath folderPath = pathsConverter.toFolderPath(filePath);
         FolderInfo folderInfo = FolderInfo.create(filePath);
         if (folderInfo == null) {
-            // TODO: we have a problem here: moving (or renaming) a file modify its parent, not itself at least on UNIX file system.
+            // TODO: we have a problem here: moving (or renaming) a file modify its parent, not itself at least on UNIX
+            // file system.
             long currentTime = System.currentTimeMillis();
             folderInfo = new FolderInfo(currentTime, currentTime);
         }

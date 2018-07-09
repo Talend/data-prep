@@ -1,13 +1,15 @@
 {
   "id": "8b6281c5e99c41313a83777c3ab43b06adda9e5c",
-  "dataSetId": "1234",
   "creationDate": 0,
   "lastModificationDate": 12345,
+  "dataSetId": "1234",
   "steps": [
-    {
-      "id": "f6e172c33bdacbc69bca9d32b2bd78174712a171"
-    }
+    "f6e172c33bdacbc69bca9d32b2bd78174712a171"
   ],
-  "allowDistributedRun": true,
-  "actions": []
+  "owner": {
+    "displayName": ""
+  },
+  "shared": false,
+  "sharedByMe": false,
+  "headId": "f6e172c33bdacbc69bca9d32b2bd78174712a171"
 }

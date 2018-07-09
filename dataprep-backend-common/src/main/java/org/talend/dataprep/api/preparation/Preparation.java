@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.api.preparation;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -219,19 +216,6 @@ public class Preparation extends Identifiable implements Serializable {
 
     public void updateLastModificationDate() {
         this.lastModificationDate = System.currentTimeMillis();
-    }
-
-    public Preparation merge(Preparation other) {
-        Preparation merge = new Preparation(id, other.getAppVersion());
-        merge.dataSetId = other.dataSetId != null ? other.dataSetId : dataSetId;
-        merge.rowMetadata = other.rowMetadata != null ? other.rowMetadata : rowMetadata;
-        merge.author = other.author != null ? other.author : author;
-        merge.name = other.name != null ? other.name : name;
-        merge.creationDate = min(other.creationDate, creationDate);
-        merge.lastModificationDate = max(other.lastModificationDate, lastModificationDate);
-        merge.headId = other.headId != null ? other.headId : headId;
-        merge.lock = other.lock != null ? other.lock : lock;
-        return merge;
     }
 
     @Override

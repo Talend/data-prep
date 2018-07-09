@@ -50,7 +50,7 @@ public class PreparationDetails extends NamedItem {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public String getHead() {
-        if (steps == null || steps.size() == 0) {
+        if (steps == null || steps.isEmpty()) {
             return "head";
         }
         else {

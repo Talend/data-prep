@@ -13,7 +13,10 @@
 
 package org.talend.dataprep.preparation.test;
 
-import static com.jayway.restassured.RestAssured.*;
+import static com.jayway.restassured.RestAssured.get;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.put;
+import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,7 +35,8 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.folder.FolderTreeNode;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.preparation.store.PreparationRepository;
@@ -135,7 +139,7 @@ public class PreparationClientTest {
      * @param preparationId the wanted preparation id.
      * @return the preparation details from its id.
      */
-    public PreparationMessage getDetails(String preparationId) {
+    public PreparationDetailsDTO getDetails(String preparationId) {
         return getDetails(preparationId, null);
     }
 
@@ -146,7 +150,7 @@ public class PreparationClientTest {
      * @param wantedStepId the optional wanted step id.
      * @return the details of a preparation at a given (optional) step.
      */
-    public PreparationMessage getDetails(String preparationId, String wantedStepId) {
+    public PreparationDetailsDTO getDetails(String preparationId, String wantedStepId) {
         final RequestSpecification specs = given();
 
         if (StringUtils.isNotBlank(wantedStepId)) {
@@ -159,7 +163,7 @@ public class PreparationClientTest {
         }
 
         try {
-            return mapper.readerFor(PreparationMessage.class).readValue(response.asString());
+            return mapper.readerFor(PreparationDetailsDTO.class).readValue(response.asString());
         } catch (IOException e) {
             throw new TDPException(UNABLE_TO_READ_CONTENT);
         }
@@ -175,11 +179,11 @@ public class PreparationClientTest {
         when().delete("/preparations/{id}", preparationId).then().statusCode(OK.value());
     }
 
-    public PreparationMessage getPreparation(String preparationId) {
-        return when().get("/preparations/{id}/details", preparationId).as(PreparationMessage.class);
+    public PreparationDTO getPreparation(String preparationId) {
+        return when().get("/preparations/{id}/details", preparationId).as(PreparationDTO.class);
     }
 
-    public PreparationMessage createPreparation(final Preparation preparation) {
+    public PreparationDTO createPreparation(final Preparation preparation) {
         Response post = given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails()
                 .post("/preparations?folderId={folderId}", homeFolderId);
         return getPreparation(post.asString());
@@ -191,7 +195,7 @@ public class PreparationClientTest {
      * @param folderId the id of folder where to c
      * @return the newly created preparation
      */
-    public PreparationMessage createPreparation(final Preparation preparation, final String folderId) {
+    public PreparationDTO createPreparation(final Preparation preparation, final String folderId) {
         Response post = given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails()
                 .post("/preparations?folderId={folderId}", folderId);
         return getPreparation(post.asString());

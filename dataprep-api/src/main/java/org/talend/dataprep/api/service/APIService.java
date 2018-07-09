@@ -12,9 +12,6 @@
 
 package org.talend.dataprep.api.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.hystrix.HystrixCommand;
-import io.swagger.annotations.Api;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
 import org.slf4j.Logger;
@@ -28,13 +25,18 @@ import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.hystrix.HystrixCommand;
+
+import io.swagger.annotations.Api;
+
 @Api(value = "api", basePath = "/api", description = "Data Preparation API")
 public class APIService {
 
     protected static final Logger LOG = LoggerFactory.getLogger(APIService.class);
 
     @Autowired
-    private ApplicationContext context;
+    protected ApplicationContext context;
 
     @Autowired
     private PoolingHttpClientConnectionManager connectionManager;
@@ -63,4 +65,5 @@ public class APIService {
     protected PoolStats getConnectionStats() {
         return connectionManager.getTotalStats();
     }
+
 }

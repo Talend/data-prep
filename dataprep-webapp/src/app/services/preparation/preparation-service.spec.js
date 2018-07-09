@@ -39,6 +39,10 @@ describe('Preparation Service', () => {
             id: newPreparationId,
             dataSetId: updatedDatasetId,
         }));
+        spyOn(PreparationRestService, 'getSummary').and.returnValue($q.when({
+            id: newPreparationId,
+            dataSetId: updatedDatasetId,
+        }));
         spyOn(PreparationRestService, 'getPreviewDiff').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'getPreviewUpdate').and.returnValue($q.when(true));
         spyOn(PreparationRestService, 'getPreviewAdd').and.returnValue($q.when(true));

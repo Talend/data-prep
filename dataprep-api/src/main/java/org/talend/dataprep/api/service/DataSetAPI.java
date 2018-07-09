@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -62,7 +63,6 @@ import org.talend.dataprep.api.service.command.dataset.UpdateColumn;
 import org.talend.dataprep.api.service.command.dataset.UpdateDataSet;
 import org.talend.dataprep.api.service.command.preparation.PreparationList;
 import org.talend.dataprep.api.service.command.preparation.PreparationSearchByDataSetId;
-import org.talend.dataprep.api.service.command.transformation.SuggestDataSetActions;
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
@@ -363,7 +363,7 @@ public class DataSetAPI extends APIService {
                 .collectList() //
                 .cache(); // Keep it in cache for later reuse
         // get list of preparations
-        GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, SortAndOrderHelper.Format.LONG, sort, order);
+        GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, sort, order);
         return Flux.from(toPublisher(Preparation.class, mapper, preparationList)) //
                 .filter(p -> compatibleList.flatMapIterable(l -> l) //
                         .map(DataSetMetadata::getId) //
@@ -394,23 +394,18 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets/{id}/actions", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get suggested actions for a whole data set.", notes = "Returns the suggested actions for the given dataset in decreasing order of likeness.")
     @Timed
-    public StreamingResponseBody suggestDatasetActions(
+    public List<ActionForm> suggestDatasetActions(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Data set id to get suggestions from.") String dataSetId) {
-        // Get dataset metadata
-        HystrixCommand<DataSetMetadata> retrieveMetadata = new HystrixCommand<DataSetMetadata>(GenericCommand.TRANSFORM_GROUP) {
+        HystrixCommand<List<ActionForm>> getLookupActions = getCommand(SuggestLookupActions.class,
+                new HystrixCommand<DataSetMetadata>(GenericCommand.DATASET_GROUP) {
 
-            @Override
-            protected DataSetMetadata run() {
-                return getMetadata(dataSetId);
-            }
-        };
-        // Asks transformation service for suggested actions for column type and domain...
-        HystrixCommand<String> getSuggestedActions = getCommand(SuggestDataSetActions.class, retrieveMetadata);
-        // ... also adds lookup actions
-        HystrixCommand<InputStream> getLookupActions = getCommand(SuggestLookupActions.class, getSuggestedActions,
-                dataSetId);
-        // Returns actions
-        return toStreaming(getLookupActions);
+                    @Override
+                    protected DataSetMetadata run() {
+                        return getMetadata(dataSetId);
+                    }
+                }, dataSetId);
+
+        return getLookupActions.execute();
     }
 
     @RequestMapping(value = "/api/datasets/favorite/{id}", method = POST, produces = TEXT_PLAIN_VALUE)

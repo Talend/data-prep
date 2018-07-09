@@ -41,8 +41,8 @@ import cucumber.api.java.en.When;
  */
 public class AggregateStep extends DataPrepStep {
 
-    @When("^I apply an aggregation on the preparation \"(.*)\" with parameters :$")
-    public void applyAnAggregationOnPreparation(String preparationName, DataTable dataTable) throws Exception {
+    @When("^I apply an aggregation \"(.*)\" on the preparation \"(.*)\" with parameters :$")
+    public void applyAnAggregationOnPreparation(String aggregationName, String preparationName, DataTable dataTable) throws Exception {
         Map<String, String> params = new HashMap<>(dataTable.asMap(String.class, String.class));
         params.put("preparationId", context.getPreparationId(suffixName(preparationName)));
 
@@ -51,7 +51,7 @@ public class AggregateStep extends DataPrepStep {
         Response response = api.applyAggragate(aggregate);
         response.then().statusCode(OK.value());
 
-        context.storeObject("aggregate",
+        context.storeObject(suffixName(aggregationName),
                 objectMapper.readValue(response.body().print(), new TypeReference<List<AggregateResult>>() {
                 }));
     }
@@ -89,16 +89,16 @@ public class AggregateStep extends DataPrepStep {
         response.then().statusCode(value);
     }
 
-    @Then("^The aggregate result with the operator \"(.*)\" is :$")
-    public void testAggregate(String operator, DataTable dataTable) throws Exception {
+    @Then("^The aggregation \"(.*)\" results with the operator \"(.*)\" is :$")
+    public void testAggregate(String aggregationName, String operator, DataTable dataTable) throws Exception {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
 
-        List<AggregateResult> aggregateResults = (List<AggregateResult>) (context.getObject("aggregate"));
+        List<AggregateResult> aggregateResults = (List<AggregateResult>) (context.getObject(suffixName(aggregationName)));
         assertEquals(toAggregateResult(params, operator), aggregateResults);
     }
 
-    @When("^I apply an aggregation on the dataSet \"(.*)\" with parameters :$")
-    public void applyAnAggregationOnDataSet(String dataSetName, DataTable dataTable) throws Exception {
+    @When("^I apply an aggregation \"(.*)\" on the dataSet \"(.*)\" with parameters :$")
+    public void applyAnAggregationOnDataSet(String aggregationName, String dataSetName, DataTable dataTable) throws Exception {
         Map<String, String> params = new HashMap<>(dataTable.asMap(String.class, String.class));
         params.put("dataSetId", context.getDatasetId(suffixName(dataSetName)));
 
@@ -107,7 +107,7 @@ public class AggregateStep extends DataPrepStep {
         Response response = api.applyAggragate(aggregate);
         response.then().statusCode(OK.value());
 
-        context.storeObject("aggregate",
+        context.storeObject(suffixName(aggregationName),
                 objectMapper.readValue(response.body().print(), new TypeReference<List<AggregateResult>>() {
                 }));
     }

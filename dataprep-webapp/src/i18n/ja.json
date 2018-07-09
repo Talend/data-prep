@@ -423,6 +423,7 @@
   "BUILD_ID": "ビルドID",
   "VERSION_ID": "バージョンID",
   "VERSION": "バージョン",
+  "COPYRIGHTS": "© {{year}} Talend. All Rights Reserved",
 
   "_comment": "オンボーディング",
   "ERROR_404_TITLE": "申し訳ありません…",
@@ -474,6 +475,8 @@
   "PREPARATIONS_STEP_3_CONTENT": "プレパレーションを追加し、データのクレンジングを開始するには、ここをクリックしてください。",
   "PREPARATIONS_STEP_4_TITLE": "ヘルプ",
   "PREPARATIONS_STEP_4_CONTENT": "ここをクリックしてヘルプを入手します(オンラインドキュメント、ガイド付きツアー、データプレパレーションについて)",
+  "PREPARATIONS_STEP_5_TITLE": "情報",
+  "PREPARATIONS_STEP_5_CONTENT": "追加のリソース(コミュニティフォーラム、製品バージョン)にアクセスしたり、フィードバックを送信したりするには、ここをクリックします。",
 
   "EMPTY_RECORDS_LABEL": "値が空の行",
   "INVALID_RECORDS_LABEL": "値が無効の行",

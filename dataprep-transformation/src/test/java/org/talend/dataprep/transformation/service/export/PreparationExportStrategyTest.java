@@ -139,7 +139,7 @@ public class PreparationExportStrategyTest {
     @Test
     public void shouldNotAcceptNullParameters() {
         // Then
-        assertFalse(strategy.accept(null));
+        assertFalse(strategy.test(null));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class PreparationExportStrategyTest {
         parameters.setFrom(ExportParameters.SourceType.HEAD);
         parameters.setPreparationId("prep-1234");
         parameters.setDatasetId("");
-        assertTrue(strategy.accept(parameters));
+        assertTrue(strategy.test(parameters));
     }
 
     @Test

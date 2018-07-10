@@ -12,16 +12,12 @@
 
 package org.talend.dataprep.dataset.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DatasetEventListener {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetEventListener.class);
 
     @Autowired
     private DatasetEventUtil datasetEventUtil;
@@ -32,7 +28,7 @@ public class DatasetEventListener {
     }
 
     @EventListener
-    public void onInsert(DatasetImportedEvent event){
+    public void onInsert(DatasetImportedEvent event) {
         datasetEventUtil.performImportEvent(event.getSource());
     }
 }

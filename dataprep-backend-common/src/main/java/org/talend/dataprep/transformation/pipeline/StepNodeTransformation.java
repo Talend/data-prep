@@ -40,7 +40,7 @@ class StepNodeTransformation extends Visitor {
 
     private final Iterator<String> steps;
 
-    private final Function<String, RowMetadata> previousStepRowMetadataSupplier;
+    private final Function<String, RowMetadata> stepRowMetadataSupplier;
 
     private State DISPATCH = new Dispatch();
 
@@ -55,15 +55,15 @@ class StepNodeTransformation extends Visitor {
      * applicable. For each new {@link StepNode}, one of the <code>steps</code> is consumed.
      *
      * @param steps                           The {@link Step steps} to be used when creating new {@link StepNode}.
-     * @param previousStepRowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with step.
+     * @param stepRowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with step.
      */
-    StepNodeTransformation(List<String> steps, Function<String, RowMetadata> previousStepRowMetadataSupplier) {
+    StepNodeTransformation(List<String> steps, Function<String, RowMetadata> stepRowMetadataSupplier) {
         if (!steps.isEmpty() && !Step.ROOT_STEP.getId().equals(steps.get(0))) {
             // Code expects root step to be located at the beginning of iterator.
             Collections.reverse(steps);
         }
         this.steps = steps.iterator();
-        this.previousStepRowMetadataSupplier = previousStepRowMetadataSupplier;
+        this.stepRowMetadataSupplier = stepRowMetadataSupplier;
     }
 
     Node getTransformedNode() {
@@ -126,6 +126,8 @@ class StepNodeTransformation extends Visitor {
 
         private Node previous = null;
 
+        private String previousStepId = Step.ROOT_STEP.id();
+
         @Override
         public State process(Node node) {
             final State newState;
@@ -149,7 +151,8 @@ class StepNodeTransformation extends Visitor {
 
                 if (nextStep != null) {
                     ofNullable(previous).ifPresent(n -> n.setLink(null));
-                    newState = new StepState(previous, nextStep);
+                    newState = new StepState(previous, nextStep, previousStepId);
+                    previousStepId = nextStep;
                 } else {
                     newState = DEFAULT;
                 }
@@ -170,10 +173,12 @@ class StepNodeTransformation extends Visitor {
         private final Node previous;
 
         private final String step;
+        private String parentStep;
 
-        private StepState(Node previous, String step) {
+        private StepState(Node previous, String step, String parentStep) {
             this.previous = previous;
             this.step = step;
+            this.parentStep = parentStep;
         }
 
         @Override
@@ -183,7 +188,7 @@ class StepNodeTransformation extends Visitor {
                 final NodeCopy copy = new NodeCopy();
                 node.accept(copy);
 
-                final StepNode stepNode = new StepNode(step, previousStepRowMetadataSupplier.apply(step), copy.getCopy(), copy.getLastNode());
+                final StepNode stepNode = new StepNode(step, stepRowMetadataSupplier.apply(parentStep), copy.getCopy(), copy.getLastNode());
                 // and plug the previous link to the new StepNode
                 ofNullable(previous).ifPresent(n -> n.setLink(new BasicLink(stepNode)));
                 builder.to(stepNode);

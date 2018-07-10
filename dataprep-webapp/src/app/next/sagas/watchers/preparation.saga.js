@@ -102,5 +102,5 @@ export default {
 	'preparation:rename': setTitleEditionMode,
 	'preparation:copy:move:open': openCopyMoveModal,
 	'preparation:copy:move:cancel': closeCopyMoveModal,
-	'preparation:about:open': openPreparationCreatorModal,
+	'preparation:creator:open': openPreparationCreatorModal,
 };

@@ -99,7 +99,7 @@ describe('preparation', () => {
 			const gen = sagas['preparation:creator:open']();
 
 			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
-			expect(gen.next().value).toEqual(call(effects.openPreparationCreator));
+			expect(gen.next().value).toEqual(call(effects.openPreparationCreatorModal));
 
 			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
 		});

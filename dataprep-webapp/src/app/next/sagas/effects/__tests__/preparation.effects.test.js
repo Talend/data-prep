@@ -39,7 +39,7 @@ describe('preparation', () => {
 
 	describe('openPreparationCreator', () => {
 		it('should update PreparationCreatorModal state in the cmf store', () => {
-			const gen = effects.openPreparationCreator();
+			const gen = effects.openPreparationCreatorModal();
 			const effect = gen.next().value.PUT.action;
 
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
@@ -66,7 +66,13 @@ describe('preparation', () => {
 	describe('fetch', () => {
 		it('should fetch the preparations of the default folder', () => {
 			const gen = effects.fetch({});
-			const effect = gen.next().value.PUT.action;
+
+			let effect = gen.next().value.PUT.action;
+			expect(effect.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effect.collectionId).toBe('currentFolderId');
+			expect(effect.data).toBe('Lw==');
+
+			effect = gen.next().value.PUT.action;
 			expect(effect.type).toEqual('GET');
 			expect(effect.url).toEqual('/api/folders/Lw==/preparations');
 			expect(effect.cmf).toEqual({ collectionId: 'preparations' });
@@ -77,7 +83,12 @@ describe('preparation', () => {
 
 		it('should fetch the preparations of a folder', () => {
 			const gen = effects.fetch({ folderId: 'abcd' });
-			const effect = gen.next().value.PUT.action;
+
+			let effect = gen.next().value.PUT.action;
+			expect(effect.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effect.collectionId).toBe('currentFolderId');
+			expect(effect.data).toBe('abcd');
+			effect = gen.next().value.PUT.action;
 			expect(effect.type).toEqual('GET');
 			expect(effect.url).toEqual('/api/folders/abcd/preparations');
 			expect(effect.cmf).toEqual({ collectionId: 'preparations' });

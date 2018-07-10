@@ -255,6 +255,19 @@ public class APIClientTest {
         return mapper.readerFor(Preparation.class).readValue(json);
     }
 
+    /**
+     * Fetch the preparation details with a specific version.
+     *
+     * @param preparationId id of the preparation to fetch
+     * @param versionId id of the preparation version
+     * @return the preparation details
+     */
+    public Response getPreparationDetails(String preparationId, String versionId) {
+        return expect() //
+                .when() //
+                .get("/api/preparations/{id}/versions/{versionId}/details", preparationId, versionId);
+    }
+
     public Response getPreparation(String preparationId) throws IOException {
         return getPreparation(preparationId, "head", "HEAD");
     }

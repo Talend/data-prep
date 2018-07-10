@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.dataset.event.DatasetImportedEvent;
+import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 
 /**
  * Synchronous analysis of a dataset used for unit / integration tests.
@@ -38,6 +39,12 @@ public class SyncBackgroundAnalysis {
     @EventListener
     public void onEvent(DatasetImportedEvent event) {
         String dataSetId = event.getSource();
+        backgroundAnalysis.analyze(dataSetId);
+    }
+
+    @EventListener
+    public void onEvent(DatasetUpdatedEvent event) {
+        String dataSetId = event.getSource().getId();
         backgroundAnalysis.analyze(dataSetId);
     }
 }

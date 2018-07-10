@@ -76,7 +76,7 @@ public class PipelineTransformer implements Transformer {
     private TransformationRowMetadataUtils transformationRowMetadataUtils;
 
     @Autowired
-    private StepMetadataRepository preparationUpdater;
+    private StepMetadataRepository stepMetadataRepository;
 
     @Autowired
     private Optional<Tracer> tracer;
@@ -95,8 +95,8 @@ public class PipelineTransformer implements Transformer {
                 configuration.stepId(), configuration.getSourceType());
         final PreparationDTO preparation = configuration.getPreparation();
         // function that from a step gives the rowMetadata associated to the previous/parent step
-        final Function<String, RowMetadata> previousStepRowMetadataSupplier = s -> Optional.ofNullable(s) //
-                .map(id -> preparationUpdater.get(id)) //
+        final Function<String, RowMetadata> stepRowMetadataSupplier = s -> Optional.ofNullable(s) //
+                .map(id -> stepMetadataRepository.get(id)) //
                 .orElse(null);
 
         final Pipeline pipeline = Pipeline.Builder.builder() //
@@ -111,7 +111,7 @@ public class PipelineTransformer implements Transformer {
                 .withFilterOut(configuration.getOutFilter()) //
                 .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, fallBackRowMetadata)) //
                 .withStatisticsAdapter(adapter) //
-                .withStepMetadataSupplier(previousStepRowMetadataSupplier) //
+                .withStepMetadataSupplier(stepRowMetadataSupplier) //
                 .withGlobalStatistics(configuration.isGlobalStatistics()) //
                 .allowMetadataChange(configuration.isAllowMetadataChange()) //
                 .build();
@@ -121,7 +121,12 @@ public class PipelineTransformer implements Transformer {
 
             @Override
             public void execute() {
-                final Optional<Span> span = tracer.map(t -> t.createSpan("pipeline-" + configuration.getPreparationId()));
+                final Optional<Span> span = tracer.map(t -> {
+                    final Span pipelineSpan = t.createSpan("transformer-pipeline");
+                    pipelineSpan.tag("preparation id", configuration.getPreparationId());
+                    pipelineSpan.tag("arguments", configuration.getArguments().toString());
+                    return pipelineSpan;
+                });
                 try {
                     LOGGER.debug("Before transformation: {}", pipeline);
                     pipeline.execute(input);
@@ -131,7 +136,7 @@ public class PipelineTransformer implements Transformer {
                 }
 
                 if (preparation != null) {
-                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(preparationUpdater);
+                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
                     pipeline.accept(visitor);
                 }
             }

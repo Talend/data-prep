@@ -549,9 +549,11 @@ public class OSDataPrepAPIHelper {
      */
     protected AsyncExecutionMessage waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;
+        int nbLoop = 0;
+
         AsyncExecutionMessage asyncExecutionMessage = null;
 
-        while (isAsyncMethodRunning) {
+        while (isAsyncMethodRunning && nbLoop < 1000) {
 
             String statusAsyncMethod = given()
                     .when() //
@@ -572,11 +574,12 @@ public class OSDataPrepAPIHelper {
                 Assert.fail("AsyncExecution failed");
             }
             try {
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(1000);
             } catch (InterruptedException e) {
                 LOGGER.error("Cannot Sleep", e);
                 Assert.fail();
             }
+            nbLoop++;
         }
 
         return asyncExecutionMessage;

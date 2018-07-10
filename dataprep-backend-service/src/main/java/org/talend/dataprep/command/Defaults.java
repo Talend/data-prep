@@ -12,10 +12,17 @@
 
 package org.talend.dataprep.command;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.talend.daikon.exception.ExceptionContext.build;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
@@ -30,16 +37,10 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.io.ReleasableInputStream;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.daikon.exception.ExceptionContext.build;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A helper class for common behavior definition.
@@ -136,12 +137,11 @@ public class Defaults {
      */
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, Class<T> clazz) {
         return (request, response) -> {
-            try (final InputStream content = response.getEntity().getContent()) {
-                final String contentAsString = IOUtils.toString(content, UTF_8);
-                if (StringUtils.isEmpty(contentAsString)) {
+            try (InputStream content = response.getEntity().getContent()) {
+                if (content.available() == 0) {
                     return null;
                 } else {
-                    return mapper.readerFor(clazz).readValue(contentAsString);
+                    return mapper.readerFor(clazz).readValue(content);
                 }
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

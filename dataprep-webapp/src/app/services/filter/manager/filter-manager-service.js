@@ -102,7 +102,6 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function addFilter(type, colId, colName, args, removeFilterFn, keyName) {
 		FilterService.addFilter(type, colId, colName, args, removeFilterFn, keyName);
 		StatisticsService.updateFilteredStatistics();
-		PlaygroundService.updateDatagrid();
 		_saveFilters();
 	}
 
@@ -131,7 +130,6 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function removeAllFilters() {
 		FilterService.removeAllFilters();
 		StatisticsService.updateFilteredStatistics();
-		PlaygroundService.updateDatagrid();
 		StorageService.removeFilter(state.playground.preparation ?
 			state.playground.preparation.id : state.playground.dataset.id);
 	}
@@ -146,7 +144,6 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function removeFilter(filter) {
 		FilterService.removeFilter(filter);
 		StatisticsService.updateFilteredStatistics();
-		PlaygroundService.updateDatagrid();
 		_saveFilters();
 	}
 
@@ -159,7 +156,6 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function toggleFilters() {
 		FilterService.toggleFilters();
 		StatisticsService.updateFilteredStatistics();
-		PlaygroundService.updateDatagrid();
 	}
 
 	/**
@@ -188,7 +184,6 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function updateFilter(oldFilter, newValue, keyName) {
 		FilterService.updateFilter(oldFilter, newValue, keyName);
 		StatisticsService.updateFilteredStatistics();
-		PlaygroundService.updateDatagrid();
 		_saveFilters();
 	}
 

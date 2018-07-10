@@ -57,7 +57,7 @@ class UpdatedStepVisitor extends Visitor {
                     case OK:
                     case DONE:
                         LOGGER.debug("Keeping metadata {} (action ended with status {}).", step, status);
-                        preparationUpdater.update(step, stepNode.getRowMetadata());
+                        preparationUpdater.update(step, actionNode.getActionContext().getRowMetadata());
                         break;
                 }
 

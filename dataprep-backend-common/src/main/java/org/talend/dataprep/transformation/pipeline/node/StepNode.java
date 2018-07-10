@@ -39,13 +39,11 @@ public class StepNode extends BasicNode {
 
     private final Node lastNode;
 
-    private RowMetadata lastRowMetadata;
+    private RowMetadata parentStepRowMetadata;
 
-    private RowMetadata previousStepRowMetadata;
-
-    public StepNode(String step, RowMetadata previousStepRowMetadata, Node entryNode, Node lastNode) {
+    public StepNode(String step, RowMetadata parentStepRowMetadata, Node entryNode, Node lastNode) {
         this.step = step;
-        this.previousStepRowMetadata = previousStepRowMetadata;
+        this.parentStepRowMetadata = parentStepRowMetadata;
         this.entryNode = entryNode;
         this.lastNode = lastNode;
     }
@@ -61,9 +59,9 @@ public class StepNode extends BasicNode {
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         RowMetadata processingRowMetadata = metadata;
-        if (previousStepRowMetadata != null) {
+        if (parentStepRowMetadata != null) {
             // Step node has associated metadata, use it instead of supplied one.
-            processingRowMetadata = previousStepRowMetadata;
+            processingRowMetadata = parentStepRowMetadata;
         }
 
         // make sure the last node (ActionNode) link is set to after the StepNode
@@ -71,7 +69,6 @@ public class StepNode extends BasicNode {
             final RuntimeLink stepLink = getLink().exec();
             lastNode.setLink(new StepLink(stepLink));
         }
-        lastRowMetadata = processingRowMetadata;
         entryNode.exec().receive(row, processingRowMetadata);
     }
 
@@ -82,15 +79,7 @@ public class StepNode extends BasicNode {
 
     @Override
     public Node copyShallow() {
-        return new StepNode(step, previousStepRowMetadata, entryNode, lastNode);
-    }
-
-    /**
-     * @return The last row metadata used in {@link #receive(DataSetRow, RowMetadata)}. Might be step's metadata (if
-     * any) or supplied metadata.
-     */
-    public RowMetadata getRowMetadata() {
-        return lastRowMetadata;
+        return new StepNode(step, parentStepRowMetadata, entryNode, lastNode);
     }
 
     private static class StepLink implements Link {

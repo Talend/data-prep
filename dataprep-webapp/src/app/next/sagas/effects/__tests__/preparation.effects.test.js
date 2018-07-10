@@ -4,6 +4,7 @@ import * as effects from '../../effects/preparation.effects';
 import { IMMUTABLE_STATE } from './preparation.effects.mock';
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
+import { closeCopyMoveModal } from '../preparation.effects';
 
 
 describe('preparation', () => {
@@ -106,6 +107,68 @@ describe('preparation', () => {
 			expect(effect.args[0]).toEqual('/api/preparations/id0');
 			expect(effect.args[1]).toEqual({ name: 'newPrep0' });
 			expect(gen.next().value).toEqual(call(effects.fetch));
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('copy', () => {
+		it('should copy the preparation', () => {
+			const gen = effects.copy({ id: 'id0', folderId: 'abcd', destination: 'efgh', title: 'newPrep0' });
+			const effect = gen.next().value.CALL;
+			expect(effect.fn).toEqual(http.post);
+			expect(effect.args[0]).toEqual('/api/preparations/id0/copy?destination=efgh&newName=newPrep0');
+			expect(gen.next().value).toEqual(call(effects.fetch, { folderId: 'abcd' }));
+			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('move', () => {
+		it('should move the preparation', () => {
+			const gen = effects.move({ id: 'id0', folderId: 'abcd', destination: 'efgh', title: 'newPrep0' });
+			const effect = gen.next().value.CALL;
+			expect(effect.fn).toEqual(http.put);
+			expect(effect.args[0]).toEqual('/api/preparations/id0/move?folder=abcd&destination=efgh&newName=newPrep0');
+			expect(gen.next().value).toEqual(call(effects.fetch, { folderId: 'abcd' }));
+			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('fetchTree', () => {
+		it('should fetch the folder Tree', () => {
+			const gen = effects.fetchTree();
+			const effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('GET');
+			expect(effect.url).toEqual('/api/folders/tree');
+			expect(effect.cmf).toEqual({ collectionId: 'folders' });
+			expect(effect.transform).toEqual(PreparationService.transformTree);
+		});
+	});
+
+	describe('closeCopyMoveModal', () => {
+		it('should close CopyMove Modal', () => {
+			const gen = effects.closeCopyMoveModal();
+			const effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('default');
+			expect(effect.componentName).toEqual('PreparationCopyMoveModal');
+			expect(effect.componentState).toEqual({ show: false });
+
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('openCopyMoveModal', () => {
+		it('should open CopyMove Modal', () => {
+			const gen = effects.openCopyMoveModal({ id: '0000' });
+			expect(gen.next().value.SELECT).toBeDefined();
+			const effect = gen.next('abcd').value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('default');
+			expect(effect.componentName).toEqual('PreparationCopyMoveModal');
+			expect(effect.componentState).toEqual({ show: true, model: { id: '0000', folderId: 'abcd' } });
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});

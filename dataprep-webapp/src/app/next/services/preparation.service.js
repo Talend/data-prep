@@ -21,11 +21,13 @@ function transform({ folders = [], preparations = [] }) {
 }
 
 function transformTree(input) {
-	const t = item => ({
-		id: item.folder.id,
-		name: item.folder.name || 'Home',
-		children: item.children.map(t),
-	});
+	const t = (item) => {
+		return {
+			id: item.folder.id,
+			name: item.folder.name || 'Home',
+			children: item.children.map(t),
+		};
+	};
 
 	return [t(input)];
 }

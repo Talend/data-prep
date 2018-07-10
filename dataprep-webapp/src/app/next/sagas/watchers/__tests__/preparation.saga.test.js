@@ -1,4 +1,4 @@
-import { call, take } from 'redux-saga/effects';
+import { call, take, all } from 'redux-saga/effects';
 import sagas from '../preparation.saga';
 import * as effects from '../../effects/preparation.effects';
 import {
@@ -9,6 +9,10 @@ import {
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
+	PREPARATION_COPY,
+	PREPARATION_MOVE,
+	CLOSE_COPY_MOVE_MODAL,
+	OPEN_COPY_MOVE_MODAL,
 } from '../../../constants/actions';
 
 describe('preparation', () => {
@@ -79,7 +83,32 @@ describe('preparation', () => {
 			expect(gen.next().value).toEqual(take(RENAME_PREPARATION));
 		});
 	});
+	describe('copy', () => {
+		it('should wait for PREPARATION_COPY action and call copy', () => {
+			const gen = sagas['preparation:copy']();
+			const action = {
+				payload: { id: 'prepId' },
+			};
 
+			expect(gen.next().value).toEqual(take(PREPARATION_COPY));
+			expect(gen.next(action).value).toEqual(call(effects.copy, action.payload));
+
+			expect(gen.next().value).toEqual(take(PREPARATION_COPY));
+		});
+	});
+	describe('move', () => {
+		it('should wait for PREPARATION_MOVE action and call move', () => {
+			const gen = sagas['preparation:move']();
+			const action = {
+				payload: { id: 'prepId' },
+			};
+
+			expect(gen.next().value).toEqual(take(PREPARATION_MOVE));
+			expect(gen.next(action).value).toEqual(call(effects.move, action.payload));
+
+			expect(gen.next().value).toEqual(take(PREPARATION_MOVE));
+		});
+	});
 	describe('setTitleEditionMode', () => {
 		it('should wait for SET_TITLE_EDITION_MODE action and call setTitleEditionMode', () => {
 			const gen = sagas['preparation:rename']();
@@ -102,6 +131,30 @@ describe('preparation', () => {
 			expect(gen.next().value).toEqual(call(effects.openPreparationCreatorModal));
 
 			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
+		});
+	});
+
+	describe('openCopyMoveModal', () => {
+		it('should wait for OPEN_COPY_MOVE_MODAL action and call fetchTree and openCopyMoveModal', () => {
+			const gen = sagas['preparation:copy:move:open']();
+			const action = {
+				payload: { id: 'prepId' },
+			};
+			expect(gen.next().value).toEqual(take(OPEN_COPY_MOVE_MODAL));
+			expect(gen.next(action).value).toEqual(all([call(effects.fetchTree), call(effects.openCopyMoveModal, action.payload)]));
+
+			expect(gen.next().value).toEqual(take(OPEN_COPY_MOVE_MODAL));
+		});
+	});
+
+	describe('closeCopyMoveModal', () => {
+		it('should wait for OPEN_PREPARATION_CREATOR action and call openPreparationCreator', () => {
+			const gen = sagas['preparation:copy:move:cancel']();
+
+			expect(gen.next().value).toEqual(take(CLOSE_COPY_MOVE_MODAL));
+			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
+
+			expect(gen.next().value).toEqual(take(CLOSE_COPY_MOVE_MODAL));
 		});
 	});
 });

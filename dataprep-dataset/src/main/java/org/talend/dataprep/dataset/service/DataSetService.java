@@ -704,6 +704,8 @@ public class DataSetService extends BaseDataSetService {
                 analyzeDataSet(currentDataSetMetadata.getId(), emptyList());
 
                 // publishing update event
+                //FIXME: this sould be a DatasetUpdateEvent and not DatasetImportedEvent
+                //FIXME: but if we use it cache is clean and we have strange behavior
                 publisher.publishEvent(new DatasetImportedEvent(currentDataSetMetadata.getId()));
 
             } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {

@@ -51,6 +51,7 @@ import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.service.PreparationAPITest;
 import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
@@ -253,6 +254,21 @@ public class APIClientTest {
                         .when() //
                         .get("/api/preparations/{id}/details", preparationId).asString();
         return mapper.readerFor(Preparation.class).readValue(json);
+    }
+
+    /**
+     * Fetch the preparation metadata.
+     *
+     * @param preparationId id of the preparation to fetch
+     * @return the preparation details
+     * @throws IOException if a connexion or parsing error happen
+     */
+    public PreparationDetailsDTO getPreparationDetails(String preparationId, String versionId) throws IOException {
+        return expect() //
+                .statusCode(200).log().ifValidationFails() //
+                .when() //
+                .get("/api/preparations/{id}/versions/{versionId}/details", preparationId, versionId).as(
+                        PreparationDetailsDTO.class);
     }
 
     public Response getPreparation(String preparationId) throws IOException {

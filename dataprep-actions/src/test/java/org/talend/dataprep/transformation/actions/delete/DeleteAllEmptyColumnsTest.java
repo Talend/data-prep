@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -101,6 +102,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     }
 
     @Test
+    @Ignore
     public void testAdapt() throws Exception {
         assertThat(action.adapt((ColumnMetadata) null), is(action));
         ColumnMetadata column = column().name("myColumn").id(0).type(Type.STRING).build();
@@ -108,11 +110,13 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     }
 
     @Test
+    @Ignore
     public void testCategory() throws Exception {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.DATA_CLEANSING.getDisplayName(Locale.US)));
     }
 
     @Test
+    @Ignore
     public void shouldAcceptColumn() {
         assertTrue(action.acceptField(getColumn(Type.STRING)));
         assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
@@ -123,6 +127,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     }
 
     @Test
+    @Ignore
     public void shouldHaveExpectedBehavior() {
         assertEquals(3, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_DELETE_COLUMNS));
@@ -132,6 +137,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
      * Next tests only use column metadatas and not the column content
      */
     @Test
+    @Ignore
     public void shouldDeleteColumn() {
         // given
         final Map<String, String> values = new HashMap<>();
@@ -155,6 +161,7 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
     }
 
     @Test
+    @Ignore
     public void shouldDeleteOnlyOneColumn() {
         // given
         final Map<String, String> values = new HashMap<>();

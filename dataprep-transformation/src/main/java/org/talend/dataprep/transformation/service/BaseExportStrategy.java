@@ -12,21 +12,13 @@
 
 package org.talend.dataprep.transformation.service;
 
+import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -46,10 +38,8 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.lock.LockFactory;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
-import org.talend.dataprep.transformation.format.FormatRegistrationService;
 import org.talend.dataprep.transformation.format.FormatService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -68,10 +58,6 @@ public abstract class BaseExportStrategy {
 
     @Autowired
     protected FilterService filterService;
-
-    /** The format registration service. */
-    @Autowired
-    protected FormatRegistrationService formatRegistrationService;
 
     @Autowired
     protected FormatService formatService;

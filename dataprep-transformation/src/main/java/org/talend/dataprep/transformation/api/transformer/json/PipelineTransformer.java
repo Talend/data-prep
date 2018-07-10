@@ -121,7 +121,12 @@ public class PipelineTransformer implements Transformer {
 
             @Override
             public void execute() {
-                final Optional<Span> span = tracer.map(t -> t.createSpan("pipeline-" + configuration.getPreparationId()));
+                final Optional<Span> span = tracer.map(t -> {
+                    final Span pipelineSpan = t.createSpan("transformer-pipeline");
+                    pipelineSpan.tag("preparation id", configuration.getPreparationId());
+                    pipelineSpan.tag("arguments", configuration.getArguments().toString());
+                    return pipelineSpan;
+                });
                 try {
                     LOGGER.debug("Before transformation: {}", pipeline);
                     pipeline.execute(input);

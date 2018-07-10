@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.parameters.Parameter;
@@ -24,7 +23,6 @@ import org.talend.dataprep.transformation.api.action.context.ActionContext;
 /**
  * Delete columns when they are empty.
  */
-@Action(DeleteAllEmptyColumns.DELETE_ALL_EMPTY_COLUMNS_ACTION_NAME)
 public class DeleteAllEmptyColumns extends AbstractActionMetadata implements DataSetAction {
 
     /**

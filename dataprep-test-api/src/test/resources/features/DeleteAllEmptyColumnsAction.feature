@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud
+@EnvOS @EnvOnPremise @EnvCloud @Unstable
 Feature: Perform scenarios with DeleteAllEmptyColumns related action
 
   @CleanAfter

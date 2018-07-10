@@ -14,6 +14,7 @@
 package org.talend.dataprep.helper;
 
 import static com.jayway.restassured.http.ContentType.JSON;
+import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
 import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
 import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 
@@ -552,7 +553,7 @@ public class OSDataPrepAPIHelper {
 
         AsyncExecutionMessage asyncExecutionMessage = null;
 
-        while (isAsyncMethodRunning && nbLoop < 100) {
+        while (isAsyncMethodRunning && nbLoop < 1000) {
 
             String statusAsyncMethod = given()
                     .when() //
@@ -568,10 +569,14 @@ public class OSDataPrepAPIHelper {
             AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
             isAsyncMethodRunning = asyncStatus == RUNNING || asyncStatus == NEW;
 
+            if (asyncStatus == FAILED) {
+                LOGGER.error("AsyncExecution failed");
+                Assert.fail("AsyncExecution failed");
+            }
             try {
-                TimeUnit.MILLISECONDS.sleep(50);
+                TimeUnit.MILLISECONDS.sleep(1000);
             } catch (InterruptedException e) {
-                LOGGER.error("cannot sleep", e);
+                LOGGER.error("Cannot Sleep", e);
                 Assert.fail();
             }
             nbLoop++;

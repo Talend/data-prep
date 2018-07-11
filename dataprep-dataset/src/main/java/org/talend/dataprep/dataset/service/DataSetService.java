@@ -105,6 +105,7 @@ import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
 import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
+import org.talend.dataprep.event.CacheEventProcessingUtil;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -205,6 +206,9 @@ public class DataSetService extends BaseDataSetService {
 
     @Resource(name = "serializer#dataset#executor")
     private TaskExecutor executor;
+
+    @Autowired
+    private CacheEventProcessingUtil cacheEventProcessingUtil;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked",
@@ -309,7 +313,7 @@ public class DataSetService extends BaseDataSetService {
      * @param content The raw content of the data set (might be a CSV, XLS...) or the connection parameter in case of a
      * remote csv.
      * @return The new data id.
-     * @see DataSetService#get(boolean, boolean, String, String)
+     * @see DataSetService#get(boolean, boolean, long, String, String)
      */
     //@formatter:off
     @RequestMapping(value = "/datasets", method = POST, produces = TEXT_PLAIN_VALUE)
@@ -696,17 +700,14 @@ public class DataSetService extends BaseDataSetService {
                 executor.execute(r);
                 contentStore.storeAsRaw(updatedDataSetMetadata, toContentStore);
 
+//                cacheEventProcessingUtil.processCleanCacheEvent(cacheKey, Boolean.FALSE);
+
                 // update the dataset metadata with its new size
                 updatedDataSetMetadata.setDataSetSize(sizeCalculator.getTotal());
                 dataSetMetadataRepository.save(updatedDataSetMetadata);
 
                 // Content was changed, so queue events (format analysis, content indexing for search...)
                 analyzeDataSet(currentDataSetMetadata.getId(), emptyList());
-
-                // publishing update event
-                //FIXME: this sould be a DatasetUpdateEvent and not DatasetImportedEvent
-                //FIXME: but if we use it cache is clean and we have strange behavior
-                publisher.publishEvent(new DatasetImportedEvent(currentDataSetMetadata.getId()));
 
             } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
                 LOG.warn("Dataset update {} cannot be done, new content is too big", currentDataSetMetadata.getId());
@@ -722,6 +723,10 @@ public class DataSetService extends BaseDataSetService {
                 }
                 lock.unlock();
             }
+
+            // publishing update event
+            publisher.publishEvent(new DatasetUpdatedEvent(currentDataSetMetadata));
+
             return currentDataSetMetadata.getId();
         }
     }

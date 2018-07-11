@@ -691,7 +691,7 @@ public class TransformationService extends BaseTransformationService {
      * @param column A {@link ColumnMetadata column} definition.
      * @param limit An optional limit parameter to return the first <code>limit</code> suggestions.
      * @return A list of {@link ActionDefinition} that can be applied to this column.
-     * @see #suggest(DataSet)
+     * @see SuggestionEngine#suggest(DataSet)
      */
     @RequestMapping(value = "/suggest/column", method = POST)
     @ApiOperation(value = "Suggest actions for a given column metadata",

@@ -30,9 +30,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.protocol.HTTP;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +64,24 @@ public class OSDataPrepAPIHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OSDataPrepAPIHelper.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    private static final String FOLDER = "folder";
+
+    private static final String VERSION = "version";
+
+    private static final String FROM = "from";
+
+    private static final String PARENT_ID = "parentId";
+
+    private static final String NEW_NAME = "newName";
+
+    private static final String DESTINATION = "destination";
+
+    private static final String PARENT_STEP_ID = "parentStepId";
+
+    private static final String NAME = "name";
+
+    private static final String PATH = "path";
 
     private boolean enableRestAssuredDebug = false;
 
@@ -109,7 +130,7 @@ public class OSDataPrepAPIHelper {
                 .when() //
                 .body(new PreparationRequest(datasetID, preparationName)) //
                 .urlEncodingEnabled(false) //
-                .queryParam("folder", homeFolderId) //
+                .queryParam(FOLDER, homeFolderId) //
                 .post("/api/preparations");
     }
 
@@ -168,7 +189,7 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .contentType(JSON) //
                 .when() //
-                .queryParam("parentStepId", parentStepId)
+                .queryParam(PARENT_STEP_ID, parentStepId)
                 .post("/api/preparations/{preparationId}/steps/{stepId}/order", preparationId, stepId);
     }
 
@@ -195,9 +216,9 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
+                .header(new Header(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8")) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
-                .queryParam("name", datasetName) //
+                .queryParam(NAME, datasetName) //
                 .when() //
                 .post("/api/datasets");
     }
@@ -212,10 +233,10 @@ public class OSDataPrepAPIHelper {
      */
     public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
-                .header(new Header("Content-Type", "text/plain")) //
+                .header(new Header(HttpHeaders.CONTENT_TYPE, HTTP.PLAIN_TEXT_TYPE)) //
                 .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))) //
                 .when() //
-                .queryParam("name", datasetName) //
+                .queryParam(NAME, datasetName) //
                 .post("/api/datasets");
     }
 
@@ -228,10 +249,10 @@ public class OSDataPrepAPIHelper {
      */
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
         return given() //
-                .header(new Header("Content-Type", "text/plain")) //
+                .header(new Header(HttpHeaders.CONTENT_TYPE, HTTP.PLAIN_TEXT_TYPE)) //
                 .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .when() //
-                .queryParam("name", datasetName) //
+                .queryParam(NAME, datasetName) //
                 .put("/api/datasets/{datasetId}", datasetId);
     }
 
@@ -268,20 +289,20 @@ public class OSDataPrepAPIHelper {
      */
     public Response getPreparationContent(String preparationId, String version, String from) throws IOException {
         Response response = given() //
-                .queryParam("version", version) //
-                .queryParam("from", from) //
+                .queryParam(VERSION, version) //
+                .queryParam(FROM, from) //
                 .when() //
                 .get("/api/preparations/{preparationId}/content", preparationId);
 
         if (HttpStatus.ACCEPTED.value() == response.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
-            final String asyncMethodStatusUrl = response.getHeader("Location");
+            final String asyncMethodStatusUrl = response.getHeader(HttpHeaders.LOCATION);
 
             waitForAsyncMethodToFinish(asyncMethodStatusUrl);
 
             response = given() //
-                    .queryParam("version", version) //
-                    .queryParam("from", from) //
+                    .queryParam(VERSION, version) //
+                    .queryParam(FROM, from) //
                     .when() //
                     .get("/api/preparations/{preparationId}/content", preparationId);
         }
@@ -339,7 +360,7 @@ public class OSDataPrepAPIHelper {
 
         if (HttpStatus.ACCEPTED.value() == response.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
-            final String asyncMethodStatusUrl = response.getHeader("Location");
+            final String asyncMethodStatusUrl = response.getHeader(HttpHeaders.LOCATION);
 
             waitForAsyncMethodToFinish(asyncMethodStatusUrl);
 
@@ -405,8 +426,8 @@ public class OSDataPrepAPIHelper {
     public Response createFolder(String parentFolderId, String folder) {
         return given() //
                 .urlEncodingEnabled(false) //
-                .queryParam("parentId", parentFolderId) //
-                .queryParam("path", folder) //
+                .queryParam(PARENT_ID, parentFolderId) //
+                .queryParam(PATH, folder) //
                 .when() //
                 .put("/api/folders");
     }
@@ -447,9 +468,9 @@ public class OSDataPrepAPIHelper {
     public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
         return given() //
                 .urlEncodingEnabled(false) //
-                .queryParam("folder", folderSrc) //
-                .queryParam("destination", folderDest) //
-                .queryParam("newName", prepName).when() //
+                .queryParam(FOLDER, folderSrc) //
+                .queryParam(DESTINATION, folderDest) //
+                .queryParam(NEW_NAME, prepName).when() //
                 .put("/api/preparations/{prepId}/move", prepId);
     }
 
@@ -466,8 +487,8 @@ public class OSDataPrepAPIHelper {
                 .contentType(JSON) //
                 .when() //
                 .urlEncodingEnabled(false) //
-                .queryParam("newName", prepName) //
-                .queryParam("destination", folderDest) //
+                .queryParam(NEW_NAME, prepName) //
+                .queryParam(DESTINATION, folderDest) //
                 .post("/api/preparations/{id}/copy", id);
     }
 
@@ -605,7 +626,7 @@ public class OSDataPrepAPIHelper {
 
     public Response applyAggragate(Aggregate aggregate) throws Exception {
         return given() //
-                .header(new Header("Content-Type", "application/json")) //
+                .header(new Header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)) //
                 .when() //
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");

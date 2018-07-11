@@ -105,7 +105,6 @@ import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
 import org.talend.dataprep.dataset.store.QuotaService;
 import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
-import org.talend.dataprep.event.CacheEventProcessingUtil;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -206,9 +205,6 @@ public class DataSetService extends BaseDataSetService {
 
     @Resource(name = "serializer#dataset#executor")
     private TaskExecutor executor;
-
-    @Autowired
-    private CacheEventProcessingUtil cacheEventProcessingUtil;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked",
@@ -699,8 +695,6 @@ public class DataSetService extends BaseDataSetService {
                 };
                 executor.execute(r);
                 contentStore.storeAsRaw(updatedDataSetMetadata, toContentStore);
-
-//                cacheEventProcessingUtil.processCleanCacheEvent(cacheKey, Boolean.FALSE);
 
                 // update the dataset metadata with its new size
                 updatedDataSetMetadata.setDataSetSize(sizeCalculator.getTotal());

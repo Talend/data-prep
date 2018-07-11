@@ -404,7 +404,8 @@ public class OSDataPrepAPIHelper {
     public Response createFolder(String parentFolderId, String folder) {
         return given() //
                 .urlEncodingEnabled(false) //
-                .queryParam("parentId", parentFolderId).queryParam("path", folder).when() //
+                .queryParam("parentId", parentFolderId) //
+                .queryParam("path", folder).when() //
                 .put("/api/folders");
     }
 
@@ -444,7 +445,9 @@ public class OSDataPrepAPIHelper {
     public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
         return given() //
                 .urlEncodingEnabled(false) //
-                .queryParam("folder", folderSrc).queryParam("destination", folderDest).queryParam("newName", prepName).when() //
+                .queryParam("folder", folderSrc) //
+                .queryParam("destination", folderDest) //
+                .queryParam("newName", prepName).when() //
                 .put("/api/preparations/{prepId}/move", prepId);
     }
 
@@ -599,7 +602,8 @@ public class OSDataPrepAPIHelper {
     }
 
     public Response applyAggragate(Aggregate aggregate) throws Exception {
-        return given().header(new Header("Content-Type", "application/json")) //
+        return given() //
+                .header(new Header("Content-Type", "application/json")) //
                 .when() //
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");

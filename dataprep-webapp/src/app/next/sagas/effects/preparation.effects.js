@@ -63,5 +63,8 @@ export function* setTitleEditionMode(payload) {
 
 export function* openAbout() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
-	yield put(creators.notification.success(null, { title: 'HAHAAH', message: 'HIHIHIH' }));
+	//  Test
+	yield put(creators.notification.success(null, { title: 'success', message: 'HIHIHIH' }));
+	yield put(creators.notification.error(null, { title: 'error', message: 'HIHIHIH' }));
+	yield put(creators.notification.warning(null, { title: 'warning', message: 'HIHIHIH' }));
 }

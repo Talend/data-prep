@@ -309,7 +309,7 @@ public class DataSetService extends BaseDataSetService {
      * @param content The raw content of the data set (might be a CSV, XLS...) or the connection parameter in case of a
      * remote csv.
      * @return The new data id.
-     * @see DataSetService#get(boolean, boolean, String, String)
+     * @see DataSetService#get(boolean, boolean, long, String, String)
      */
     //@formatter:off
     @RequestMapping(value = "/datasets", method = POST, produces = TEXT_PLAIN_VALUE)
@@ -703,11 +703,6 @@ public class DataSetService extends BaseDataSetService {
                 // Content was changed, so queue events (format analysis, content indexing for search...)
                 analyzeDataSet(currentDataSetMetadata.getId(), emptyList());
 
-                // publishing update event
-                //FIXME: this sould be a DatasetUpdateEvent and not DatasetImportedEvent
-                //FIXME: but if we use it cache is clean and we have strange behavior
-                publisher.publishEvent(new DatasetImportedEvent(currentDataSetMetadata.getId()));
-
             } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
                 LOG.warn("Dataset update {} cannot be done, new content is too big", currentDataSetMetadata.getId());
                 throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put("limit", e.getMaxSize()));
@@ -722,6 +717,10 @@ public class DataSetService extends BaseDataSetService {
                 }
                 lock.unlock();
             }
+
+            // publishing update event
+            publisher.publishEvent(new DatasetUpdatedEvent(currentDataSetMetadata));
+
             return currentDataSetMetadata.getId();
         }
     }

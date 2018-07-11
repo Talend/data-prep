@@ -542,6 +542,26 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
+     * Return the list of datasets
+     *
+     * @param asyncMethodStatusUrl Map containing the parameter names and their values to send with the request.
+     * @return The response of the request.
+     */
+    public AsyncExecutionMessage getAsyncResponse(String asyncMethodStatusUrl) throws IOException {
+        String statusAsyncMethod = given()
+                .when() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
+                .get(asyncMethodStatusUrl)
+                .asString();
+
+        return mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+    }
+
+
+    /**
      * Ping async method status url in order to wait the end of the execution
      *
      * @param asyncMethodStatusUrl the asynchronous method to ping.

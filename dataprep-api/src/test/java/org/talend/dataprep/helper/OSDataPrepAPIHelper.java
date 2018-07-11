@@ -539,17 +539,15 @@ public class OSDataPrepAPIHelper {
      * @return The response of the request.
      */
     public AsyncExecutionMessage getAsyncResponse(String asyncMethodStatusUrl) throws IOException {
-        AsyncExecutionMessage asyncExecutionMessage = //
-                given() //
-                        .when() //
-                        .expect() //
-                        .statusCode(200) //
-                        .log() //
-                        .ifError() //
-                        .get(asyncMethodStatusUrl) //
-                        .as(AsyncExecutionMessage.class);
+        return given() //
+                .when() //
+                .expect() //
+                .statusCode(200) //
+                .log() //
+                .ifError() //
+                .get(asyncMethodStatusUrl) //
+                .as(AsyncExecutionMessage.class);
 
-        return asyncExecutionMessage;
     }
 
     /**

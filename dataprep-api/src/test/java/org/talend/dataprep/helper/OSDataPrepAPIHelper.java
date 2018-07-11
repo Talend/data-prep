@@ -213,7 +213,8 @@ public class OSDataPrepAPIHelper {
     public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))).when() //
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))) //
+                .when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -405,7 +406,8 @@ public class OSDataPrepAPIHelper {
         return given() //
                 .urlEncodingEnabled(false) //
                 .queryParam("parentId", parentFolderId) //
-                .queryParam("path", folder).when() //
+                .queryParam("path", folder) //
+                .when() //
                 .put("/api/folders");
     }
 

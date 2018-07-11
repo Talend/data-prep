@@ -196,8 +196,7 @@ public class OSDataPrepAPIHelper {
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain; charset=UTF-8")) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
-                        Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .queryParam("name", datasetName) //
                 .when() //
                 .post("/api/datasets");
@@ -214,8 +213,7 @@ public class OSDataPrepAPIHelper {
     public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)))
-                .when() //
+                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))).when() //
                 .queryParam("name", datasetName) //
                 .post("/api/datasets");
     }
@@ -230,8 +228,7 @@ public class OSDataPrepAPIHelper {
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
         return given() //
                 .header(new Header("Content-Type", "text/plain")) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
-                        Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
                 .when() //
                 .queryParam("name", datasetName) //
                 .put("/api/datasets/{datasetId}", datasetId);
@@ -390,8 +387,7 @@ public class OSDataPrepAPIHelper {
      * @throws IOException in case of IO exception.
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
-        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename),
-                "." + FilenameUtils.getExtension(tempFilename));
+        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
         Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
         tempFile.deleteOnExit();
@@ -408,9 +404,7 @@ public class OSDataPrepAPIHelper {
     public Response createFolder(String parentFolderId, String folder) {
         return given() //
                 .urlEncodingEnabled(false) //
-                .queryParam("parentId", parentFolderId)
-                .queryParam("path", folder)
-                .when() //
+                .queryParam("parentId", parentFolderId).queryParam("path", folder).when() //
                 .put("/api/folders");
     }
 
@@ -450,10 +444,7 @@ public class OSDataPrepAPIHelper {
     public Response movePreparation(String prepId, String folderSrc, String folderDest, String prepName) {
         return given() //
                 .urlEncodingEnabled(false) //
-                .queryParam("folder", folderSrc)
-                .queryParam("destination", folderDest)
-                .queryParam("newName", prepName)
-                .when() //
+                .queryParam("folder", folderSrc).queryParam("destination", folderDest).queryParam("newName", prepName).when() //
                 .put("/api/preparations/{prepId}/move", prepId);
     }
 
@@ -537,7 +528,7 @@ public class OSDataPrepAPIHelper {
     public Response getDatasets(Map<String, String> queryParameters) {
         return given() //
                 .when() //
-                .queryParameters(queryParameters)
+                .queryParameters(queryParameters) //
                 .get("/api/datasets");
     }
 
@@ -548,18 +539,18 @@ public class OSDataPrepAPIHelper {
      * @return The response of the request.
      */
     public AsyncExecutionMessage getAsyncResponse(String asyncMethodStatusUrl) throws IOException {
-        String statusAsyncMethod = given()
-                .when() //
-                .expect()
-                .statusCode(200)
-                .log()
-                .ifError() //
-                .get(asyncMethodStatusUrl)
-                .asString();
+        AsyncExecutionMessage asyncExecutionMessage = //
+                given() //
+                        .when() //
+                        .expect() //
+                        .statusCode(200) //
+                        .log() //
+                        .ifError() //
+                        .get(asyncMethodStatusUrl) //
+                        .as(AsyncExecutionMessage.class);
 
-        return mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+        return asyncExecutionMessage;
     }
-
 
     /**
      * Ping async method status url in order to wait the end of the execution
@@ -575,14 +566,9 @@ public class OSDataPrepAPIHelper {
 
         while (isAsyncMethodRunning && nbLoop < 1000) {
 
-            String statusAsyncMethod = given()
-                    .when() //
-                    .expect()
-                    .statusCode(200)
-                    .log()
-                    .ifError() //
-                    .get(asyncMethodStatusUrl)
-                    .asString();
+            String statusAsyncMethod = given().when() //
+                    .expect().statusCode(200).log().ifError() //
+                    .get(asyncMethodStatusUrl).asString();
 
             asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
@@ -615,8 +601,7 @@ public class OSDataPrepAPIHelper {
     }
 
     public Response applyAggragate(Aggregate aggregate) throws Exception {
-        return given()
-                .header(new Header("Content-Type", "application/json")) //
+        return given().header(new Header("Content-Type", "application/json")) //
                 .when() //
                 .body(mapper.writeValueAsString(aggregate)) //
                 .post("/api/aggregate");

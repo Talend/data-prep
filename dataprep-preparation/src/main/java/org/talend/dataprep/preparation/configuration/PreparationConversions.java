@@ -97,6 +97,10 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                 .collect(toList());
         target.setDiff(diffs);
 
+        // TDP-5888: It is important for Spark runs to have a row metadata to describe initial data schema.
+        final PersistentPreparation preparation = preparationRepository.get(source.getId(), PersistentPreparation.class);
+        target.setRowMetadata(preparation.getRowMetadata());
+
         return target;
     }
 

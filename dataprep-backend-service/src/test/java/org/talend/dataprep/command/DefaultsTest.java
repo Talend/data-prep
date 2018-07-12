@@ -12,9 +12,7 @@
 
 package org.talend.dataprep.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.command.Defaults.toJson;
 
 import java.io.IOException;
@@ -165,6 +163,20 @@ public class DefaultsTest {
 
         // Then
         assertEquals("My Value", value.value);
+    }
+
+    @Test
+    public void shouldReadEmptyJsonResponse() throws Exception {
+        // Given
+        final ObjectMapper mapper = new ObjectMapper();
+        final BasicHttpResponse httpResponse = buildResponse();
+        httpResponse.setEntity(new StringEntity(""));
+
+        // When
+        final Response value = Defaults.convertResponse(mapper, Response.class).apply(buildRequest(), httpResponse);
+
+        // Then
+        assertNull(value);
     }
 
     @Test

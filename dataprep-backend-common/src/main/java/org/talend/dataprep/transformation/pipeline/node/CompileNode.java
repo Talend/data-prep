@@ -12,14 +12,18 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 
-public class CompileNode extends BasicNode {
+public class CompileNode extends BasicNode implements ApplyToColumn {
 
     private final RunnableAction action;
 
@@ -63,5 +67,10 @@ public class CompileNode extends BasicNode {
 
     public ActionContext getActionContext() {
         return actionContext;
+    }
+
+    @Override
+    public Set<String> getColumnNames() {
+        return Collections.singleton(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
     }
 }

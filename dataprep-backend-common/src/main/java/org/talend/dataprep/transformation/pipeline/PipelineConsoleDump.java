@@ -16,7 +16,9 @@ package org.talend.dataprep.transformation.pipeline;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
+import org.talend.dataprep.transformation.pipeline.node.ApplyToColumn;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
+import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
 
@@ -37,18 +39,26 @@ public class PipelineConsoleDump extends Visitor {
                 .append(speed).append(" rows/s) ");
     }
 
+    private void buildApplyToColumn(ApplyToColumn applyToColumn) {
+        builder.append(" (applies to ").append(applyToColumn.getColumnNames()).append(")");
+    }
+
     @Override
     public void visitAction(ActionNode actionNode) {
         buildMonitorInformation(actionNode);
         builder.append("ACTION").append(" [").append(actionNode.getAction().getName()).append("] ").append("(status: ")
-                .append(actionNode.getActionContext().getActionStatus()).append(")").append('\n');
+                .append(actionNode.getActionContext().getActionStatus()).append(")");
+        buildApplyToColumn(actionNode);
+        builder.append('\n');
         super.visitAction(actionNode);
     }
 
     @Override
     public void visitCompile(CompileNode compileNode) {
         builder.append("COMPILE").append(" [").append(compileNode.getAction().getName()).append("] ").append("(status: ")
-                .append(compileNode.getActionContext().getActionStatus()).append(")").append('\n');
+                .append(compileNode.getActionContext().getActionStatus()).append(")");
+        buildApplyToColumn(compileNode);
+        builder.append('\n');
         super.visitCompile(compileNode);
     }
 
@@ -76,7 +86,11 @@ public class PipelineConsoleDump extends Visitor {
         if (node instanceof Monitored) {
             buildMonitorInformation((Monitored) node);
         }
-        builder.append("UNKNOWN NODE (").append(node.getClass().getName()).append(")").append('\n');
+        builder.append("UNKNOWN NODE (").append(node.getClass().getName()).append(")");
+        if (node instanceof ApplyToColumn) {
+            buildApplyToColumn((ApplyToColumn) node);
+        }
+        builder.append('\n');
         super.visitNode(node);
     }
 

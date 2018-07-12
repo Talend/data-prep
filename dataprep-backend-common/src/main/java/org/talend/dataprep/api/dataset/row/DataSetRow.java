@@ -14,7 +14,6 @@
 package org.talend.dataprep.api.dataset.row;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.StreamSupport.stream;
 import static org.talend.dataprep.api.dataset.row.FlagNames.INTERNAL_PROPERTY_PREFIX;
 import static org.talend.dataprep.api.dataset.row.FlagNames.TDP_INVALID;
 
@@ -385,16 +384,15 @@ public class DataSetRow implements Cloneable, Serializable {
      */
     @SafeVarargs
     public final String[] toArray(Predicate<Map.Entry<String, String>>... filters) {
-        Stream<Map.Entry<String, String>> stream = stream(values.entrySet().spliterator(), false);
+        Stream<Map.Entry<String, String>> stream = values.entrySet().stream();
         // Apply filters
         for (Predicate<Map.Entry<String, String>> filter : filters) {
             stream = stream.filter(filter);
         }
         // Get as string array the selected columns
-        final List<String> strings = stream.map(Map.Entry::getValue) //
+        return stream.map(Map.Entry::getValue) //
                 .map(String::valueOf) //
-                .collect(Collectors.toList());
-        return strings.toArray(new String[strings.size()]);
+                .toArray(String[]::new);
     }
 
     public Long getTdpId() {

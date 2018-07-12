@@ -23,8 +23,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
-import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
@@ -37,7 +37,7 @@ import org.talend.dataquality.common.inference.Analyzers;
  * Please note this class does not perform invalid values detection (see {@link InvalidDetectionNode} for this).
  * </p>
  */
-public class StatisticsNode extends ColumnFilteredNode {
+public class StatisticsNode extends ColumnFilteredNode implements Monitored {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsNode.class);
 
@@ -47,20 +47,16 @@ public class StatisticsNode extends ColumnFilteredNode {
 
     private Analyzer<Analyzers.Result> configuredAnalyzer;
 
-    private RowMetadataFallbackProvider rowMetadataFallbackProvider;
+    private long totalTime;
+
+    private long count;
 
     public StatisticsNode(Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer,
-            Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter) {
-        this(analyzer, filter, adapter, null);
-    }
-
-    public StatisticsNode(Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer,
-            Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter,
-            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+                          Predicate<? super ColumnMetadata> filter,
+                          StatisticsAdapter adapter) {
         super(filter);
         this.analyzer = analyzer;
         this.adapter = adapter;
-        this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
     }
 
     /**
@@ -71,20 +67,17 @@ public class StatisticsNode extends ColumnFilteredNode {
      * @param filter the filter to apply on values of a column
      * @param adapter the adapter used to retrieve statistical information
      */
-    public StatisticsNode(AnalyzerService analyzerService, Predicate<? super ColumnMetadata> filter,
-            StatisticsAdapter adapter) {
+    public StatisticsNode(AnalyzerService analyzerService, Predicate<ColumnMetadata> filter, StatisticsAdapter adapter) {
         this(getDefaultAnalyzer(analyzerService), filter, adapter);
     }
 
     /**
      * Creates a default analyzer with te specified analyzer service.
-     * This analyzer performs quality, cardinality, frequency, patterns, the length, quantiles, summary and histogram
-     * analysis.
+     * This analyzer performs quality, cardinality, frequency, patterns, the length, quantiles, summary and histogram analysis.
      *
      * @param analyzerService the provided analyzer service
      */
-    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>>
-            getDefaultAnalyzer(AnalyzerService analyzerService) {
+    public static Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> getDefaultAnalyzer(AnalyzerService analyzerService) {
         return c -> analyzerService.build(c, //
                 AnalyzerService.Analysis.QUALITY, //
                 AnalyzerService.Analysis.CARDINALITY, //
@@ -98,13 +91,18 @@ public class StatisticsNode extends ColumnFilteredNode {
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
-        performColumnFilter(row, metadata);
-        if (configuredAnalyzer == null) {
-            this.configuredAnalyzer = analyzer.apply(filteredColumns);
-        }
-        if (!row.isDeleted()) {
-            configuredAnalyzer
-                    .analyze(row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
+        final long start = System.currentTimeMillis();
+        try {
+            performColumnFilter(row, metadata);
+            if (configuredAnalyzer == null) {
+                this.configuredAnalyzer = analyzer.apply(filteredColumns);
+            }
+            if (!row.isDeleted()) {
+                configuredAnalyzer.analyze(row.filter(filteredColumns).order(filteredColumns).toArray(DataSetRow.SKIP_TDP_ID));
+            }
+        } finally {
+            totalTime += System.currentTimeMillis() - start;
+            count++;
         }
         super.receive(row, metadata);
     }
@@ -112,22 +110,15 @@ public class StatisticsNode extends ColumnFilteredNode {
     @Override
     public void signal(Signal signal) {
         if (signal == Signal.END_OF_STREAM || signal == Signal.CANCEL || signal == Signal.STOP) {
-            // Inject Statistic Analysis to columns metaData
             if (configuredAnalyzer != null) {
-                adapter.adapt(filteredColumns, configuredAnalyzer.getResult());
+                final long start = System.currentTimeMillis();
+                try {
+                    adapter.adapt(filteredColumns, configuredAnalyzer.getResult());
+                } finally {
+                    totalTime += System.currentTimeMillis() - start;
+                }
             } else {
                 LOGGER.warn("No data received.");
-            }
-        }
-        if (signal == Signal.END_OF_STREAM || signal == Signal.STOP) {
-            // In the end of records the row metaData are correct, so we set this metaData as fallback
-            if (rowMetadata != null && rowMetadataFallbackProvider != null) {
-                rowMetadataFallbackProvider.setFallback(rowMetadata);
-            }
-            // To send number of records to front we use the number of count of statistic.
-            if (rowMetadata != null && rowMetadata.getColumns().size() > 0
-                    && rowMetadata.getColumns().get(0).getStatistics() != null) {
-                rowMetadata.setSampleNbRows(rowMetadata.getColumns().get(0).getStatistics().getCount());
             }
         }
         super.signal(signal);
@@ -135,6 +126,16 @@ public class StatisticsNode extends ColumnFilteredNode {
 
     @Override
     public Node copyShallow() {
-        return new StatisticsNode(analyzer, filter, adapter, rowMetadataFallbackProvider);
+        return new StatisticsNode(analyzer, filter, adapter);
+    }
+
+    @Override
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    @Override
+    public long getCount() {
+        return count;
     }
 }

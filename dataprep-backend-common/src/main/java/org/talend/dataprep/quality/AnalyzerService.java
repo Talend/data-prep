@@ -185,12 +185,11 @@ public class AnalyzerService {
         // Column types
         DataTypeEnum[] types = TypeUtils.convert(columns);
         // Semantic domains
-        List<String> domainList = columns
+        final String[] domains = columns
                 .stream() //
                 .map(ColumnMetadata::getDomain) //
                 .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d) //
-                .collect(Collectors.toList());
-        final String[] domains = domainList.toArray(new String[domainList.size()]);
+                .toArray(String[]::new);
 
         DictionarySnapshot dictionarySnapshot = dictionarySnapshotProvider.get();
 
@@ -213,7 +212,7 @@ public class AnalyzerService {
                 columns.forEach(c -> dataTypeQualityAnalyzer
                         .addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
                 analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
-                        new SemanticQualityAnalyzer(dictionarySnapshot, domains, false), true)); // NOSONAR
+                        new SemanticQualityAnalyzer(dictionarySnapshot, domains, false), false)); // NOSONAR
                 break;
             case CARDINALITY:
                 analyzers.add(new CardinalityAnalyzer());
@@ -263,7 +262,7 @@ public class AnalyzerService {
         }
 
         // Merge all analyzers into one
-        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(analyzers.toArray(new Analyzer[analyzers.size()]));
+        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(analyzers.toArray(new Analyzer[0]));
         analyzer.init();
         if (LOGGER.isDebugEnabled()) {
             // Wrap analyzer for usage monitoring (to diagnose non-closed analyzer issues).

@@ -2,7 +2,9 @@ package org.talend.dataprep.api.dataset.row;
 
 import java.util.BitSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataquality.common.inference.Analyzer;
@@ -26,8 +28,12 @@ public class InvalidMarker implements Function<DataSetRow, DataSetRow> {
      */
     private final List<ColumnMetadata> columns;
 
+    private final Set<String> columnIds;
+
     public InvalidMarker(List<ColumnMetadata> columns, Analyzer<Analyzers.Result> analyzer) {
         this.columns = columns;
+        this.columnIds = columns.stream().map(ColumnMetadata::getId).collect(Collectors.toSet());
+
         this.invalidCount = new long[columns.size()];
         this.analyzer = analyzer;
     }
@@ -35,7 +41,7 @@ public class InvalidMarker implements Function<DataSetRow, DataSetRow> {
     @Override
     public DataSetRow apply(DataSetRow dataSetRow) {
         // get the analyze from beginning
-        final String[] values = dataSetRow.filter(columns).order(columns).toArray(DataSetRow.SKIP_TDP_ID);
+        final String[] values = dataSetRow.toArray(DataSetRow.SKIP_TDP_ID.and(e -> columnIds.contains(e.getKey())));
         analyzer.analyze(values);
         final List<Analyzers.Result> columnsAnalysis = analyzer.getResult();
 

@@ -23,7 +23,7 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 
-abstract class ColumnFilteredNode extends BasicNode {
+abstract class ColumnFilteredNode extends BasicNode implements ApplyToColumn {
 
     RowMetadata rowMetadata;
 
@@ -38,7 +38,7 @@ abstract class ColumnFilteredNode extends BasicNode {
     }
 
     void performColumnFilter(DataSetRow row, RowMetadata metadata) {
-        final boolean needRefresh = rowMetadata == null || !metadata.equals(rowMetadata);
+        final boolean needRefresh = !metadata.equals(rowMetadata);
         List<ColumnMetadata> columns = metadata.getColumns();
         if (!columns.isEmpty()) {
             if (filteredColumns == null || needRefresh) {

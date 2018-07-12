@@ -81,7 +81,8 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
         this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
         try {
             reservoir = File.createTempFile("TypeDetection", ".zip");
-            JsonFactory factory = new JsonFactory();
+            final JsonFactory factory = new JsonFactory();
+            factory.configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
             generator = factory.createGenerator(new GZIPOutputStream(new FileOutputStream(reservoir), true));
             generator.writeStartObject();
             generator.writeFieldName("records");
@@ -93,10 +94,15 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
-        performColumnFilter(row, metadata);
-        store(row, metadata.getColumns());
-        analyze(row);
-        count++;
+        final long start = System.currentTimeMillis();
+        try {
+            performColumnFilter(row, metadata);
+            store(row, metadata.getColumns());
+            analyze(row);
+        } finally {
+            totalTime += System.currentTimeMillis() - start;
+            count++;
+        }
     }
 
     // Store row in temporary file

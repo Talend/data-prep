@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.pipeline;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
@@ -25,6 +26,10 @@ import org.talend.dataprep.transformation.pipeline.node.StepNode;
 public class NodeClassVisitor extends Visitor {
 
     List<Class> traversedClasses = new ArrayList<>();
+
+    public List<Class> getTraversedClasses() {
+        return Collections.unmodifiableList(traversedClasses);
+    }
 
     @Override
     public void visitAction(ActionNode actionNode) {

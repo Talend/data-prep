@@ -56,9 +56,10 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
                 this.configuredAnalyzer = getAnalyzerService().build(filteredColumns, AnalyzerService.Analysis.QUALITY);
                 this.invalidMarker = new InvalidMarker(filteredColumns, configuredAnalyzer);
             }
-            super.receive(invalidMarker.apply(row), metadata);
-        } finally {
+            final DataSetRow markedRow = invalidMarker.apply(row);
             totalTime += System.currentTimeMillis() - start;
+            super.receive(markedRow, metadata);
+        } finally {
             count++;
         }
     }
@@ -84,7 +85,7 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitNode(this);
+        visitor.visitInvalidDetection(this);
     }
 
     @Override

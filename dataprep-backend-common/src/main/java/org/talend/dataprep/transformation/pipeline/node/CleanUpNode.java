@@ -15,17 +15,22 @@ package org.talend.dataprep.transformation.pipeline.node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
+import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Signal;
 
 /**
  * A node implementation that cleans up transformation context when end of stream is reached.
  */
-public class CleanUpNode extends BasicNode {
+public class CleanUpNode extends BasicNode implements Monitored {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CleanUpNode.class);
 
     private final TransformationContext context;
+
+    private long totalTime;
+
+    private long count;
 
     public CleanUpNode(TransformationContext context) {
         this.context = context;
@@ -34,10 +39,14 @@ public class CleanUpNode extends BasicNode {
     @Override
     public void signal(Signal signal) {
         if (signal == Signal.END_OF_STREAM || signal == Signal.CANCEL || signal == Signal.STOP) {
+            final long start = System.currentTimeMillis();
             try {
                 context.cleanup();
             } catch (Exception e) {
                 LOGGER.error("Unable to clean context at {}.", signal, e);
+            } finally {
+                totalTime += System.currentTimeMillis() - start;
+                count++;
             }
         }
         super.signal(signal);
@@ -46,5 +55,15 @@ public class CleanUpNode extends BasicNode {
     @Override
     public Node copyShallow() {
         return new CleanUpNode(context);
+    }
+
+    @Override
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    @Override
+    public long getCount() {
+        return count;
     }
 }

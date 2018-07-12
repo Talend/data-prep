@@ -60,7 +60,7 @@ public class AvroUtilsTest {
     @Test
     public void shouldEscapeInvalidJavaCharacters() {
         // given
-        ColumnMetadata columnMetadata = column().id(1).name("#@!abc").type(Type.STRING).build();
+        ColumnMetadata columnMetadata = column().id(1).name("#@!abc$").type(Type.STRING).build();
         RowMetadata rowMetadata = new RowMetadata(Collections.singletonList(columnMetadata));
 
         // when
@@ -70,7 +70,7 @@ public class AvroUtilsTest {
         assertNotNull(schema);
         assertNotNull(schema.getName());
         assertEquals(1, schema.getFields().size());
-        assertEquals("DP___abc", schema.getFields().get(0).name());
+        assertEquals("DP___abc_", schema.getFields().get(0).name());
     }
 
     @Test

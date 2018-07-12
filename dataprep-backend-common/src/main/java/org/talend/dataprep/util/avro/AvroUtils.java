@@ -192,29 +192,50 @@ public class AvroUtils {
             return field;
         }
 
+        /**
+         * Replace all invalid characters with '_' following
+         * <a href="https://avro.apache.org/docs/current/spec.html#schemas">Avro Schema spec</a>. This method is nearly a copy
+         * of the {@link Schema#validateName(String)}.
+         *
+         * @param dataprepColumnName the dataprep column name
+         * @return the avro compatible escaped version
+         * @see Schema#validateName(String)
+         */
         private static String toAvroFieldName(String dataprepColumnName) {
-            final char[] chars = dataprepColumnName.toCharArray();
             final StringBuilder columnName = new StringBuilder();
-            for (int i = 0; i < chars.length; i++) {
-                final char currentChar = chars[i];
-                if (i == 0) {
-                    if (!Character.isLetter(currentChar)) {
-                        columnName.append(DATAPREP_FIELD_PREFIX);
-                    } else if (!Character.isJavaIdentifierPart(currentChar)) {
-                        columnName.append('_');
+            int length = dataprepColumnName.length();
+            if (length == 0) {
+                columnName.append('_');
+            } else {
+                char first = dataprepColumnName.charAt(0);
+                if (isValidFirstAvroCharacter(first)) {
+                    columnName.append(first);
+                } else {
+                    if (isValidNonFirstAvroCharacter(first)) {
+                        // useful when column name is a number identifier
+                        columnName.append(DATAPREP_FIELD_PREFIX).append(first);
                     } else {
-                        columnName.append(currentChar);
+                        columnName.append(DATAPREP_FIELD_PREFIX);
                     }
                 }
-                if (i > 0) {
-                    if (!Character.isJavaIdentifierPart(currentChar)) {
-                        columnName.append('_');
-                    } else {
+                for (int i = 1; i < length; i++) {
+                    char currentChar = dataprepColumnName.charAt(i);
+                    if (isValidNonFirstAvroCharacter(currentChar)) {
                         columnName.append(currentChar);
+                    } else {
+                        columnName.append('_');
                     }
                 }
             }
             return columnName.toString();
+        }
+
+        private static boolean isValidFirstAvroCharacter(char first) {
+            return Character.isLetter(first) || first == '_';
+        }
+
+        private static boolean isValidNonFirstAvroCharacter(char currentChar) {
+            return Character.isLetterOrDigit(currentChar) || currentChar == '_';
         }
     }
 

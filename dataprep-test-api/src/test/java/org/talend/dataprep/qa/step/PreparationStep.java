@@ -184,8 +184,6 @@ public class PreparationStep extends DataPrepStep {
         return isPrepPresent;
     }
 
-
-
     /**
      * Extract a preparation name from a full preparation name (i.e. with its path) and suffix it.
      *
@@ -198,7 +196,8 @@ public class PreparationStep extends DataPrepStep {
     }
 
     @Then("^The preparation \"(.*)\" should contain the following columns:$")
-    public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns) throws Exception {
+    public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
+            throws Exception {
         Response response =
                 api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD");
         response.then().statusCode(OK.value());

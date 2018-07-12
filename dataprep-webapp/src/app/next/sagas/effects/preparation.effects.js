@@ -2,7 +2,7 @@ import { call, put, select } from 'redux-saga/effects';
 import api, { actions } from '@talend/react-cmf';
 import http from './http';
 import PreparationService from '../../services/preparation.service';
-import { default as creators } from '../../actions';
+
 
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));
@@ -63,8 +63,4 @@ export function* setTitleEditionMode(payload) {
 
 export function* openAbout() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
-	//  Test
-	yield put(creators.notification.success(null, { title: 'success', message: 'HIHIHIH' }));
-	yield put(creators.notification.error(null, { title: 'error', message: 'HIHIHIH' }));
-	yield put(creators.notification.warning(null, { title: 'warning', message: 'HIHIHIH' }));
 }

@@ -8,14 +8,10 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -203,22 +199,24 @@ public class DatasetStep extends DataPrepStep {
 
     @And("^I wait for the dataset \"(.*)\" metadata to be computed$")
     public void iWaitForTheDatasetMetadataToBeComputed(String datasetName) throws Throwable {
+        waitResponse("Dataset metadata columns.statistics.frequencyTable", metadataTimeout,
+                metadataTimeToWait, 1) //
+                .until(checkDatasetMetadataStatus(datasetName));
+    }
 
-        boolean isMetadataReady;
-        LocalTime timeout = LocalTime.now().plusSeconds(metadataTimeout);
+    /**
+     * get dataset metadata status.
+     */
+    private Callable<Boolean> checkDatasetMetadataStatus(String datasetName) {
+        return new Callable<Boolean>() {
 
-        do {
-            Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
-            response.then().statusCode(OK.value());
+            public Boolean call() throws Exception {
+                Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
+                response.then().statusCode(OK.value());
 
-            final List<ArrayList> actual = response.body().jsonPath().get("columns.statistics.frequencyTable");
-            isMetadataReady  = !actual.get(0).isEmpty();
-
-            try {
-                TimeUnit.SECONDS.sleep(metadataTimeToWait);
-            } catch (InterruptedException iexception) {
-                LOGGER.info("Interrupted sleep (not the expected behaviour...)", iexception);
+                final List<ArrayList> actual = response.body().jsonPath().get("columns.statistics.frequencyTable");
+                return !actual.get(0).isEmpty();
             }
-        } while (!isMetadataReady && LocalTime.now().isBefore(timeout));
+        };
     }
 }

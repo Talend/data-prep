@@ -52,7 +52,6 @@ import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -933,11 +932,8 @@ public class DataSetService extends BaseDataSetService {
                 metadataForUpdate.getContent().setNbRecords(0);
                 dataSetMetadataRepository.save(metadataForUpdate);
 
-                // all good mate!! so send that to jms
                 // Asks for a in depth schema analysis (for column type information).
                 analyzeDataSet(dataSetId, singletonList(FormatAnalysis.class));
-
-                publisher.publishEvent(new DatasetUpdatedEvent(dataSetMetadata));
             } catch (TDPException e) {
                 throw e;
             } catch (Exception e) {
@@ -946,6 +942,7 @@ public class DataSetService extends BaseDataSetService {
         } finally {
             lock.unlock();
         }
+        publisher.publishEvent(new DatasetUpdatedEvent(dataSetMetadata));
     }
 
     /**

@@ -22,7 +22,7 @@ const BLOCKING_ACTION_TYPES = [
 
 export default class DatasetActionsService {
 	constructor($document, $stateParams, $translate, state, StateService, StorageService, DatasetService,
-				ImportService, UploadWorkflowService, MessageService, TalendConfirmService) {
+				ImportService, UploadWorkflowService, MessageService, ConfirmService) {
 		'ngInject';
 		this.$document = $document;
 		this.$stateParams = $stateParams;
@@ -33,7 +33,7 @@ export default class DatasetActionsService {
 		this.MessageService = MessageService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
-		this.TalendConfirmService = TalendConfirmService;
+		this.ConfirmService = ConfirmService;
 		this.UploadWorkflowService = UploadWorkflowService;
 
 		this.renamingList = [];
@@ -105,7 +105,7 @@ export default class DatasetActionsService {
 		}
 		case '@@dataset/REMOVE': {
 			const dataset = action.payload.model;
-			this.TalendConfirmService
+			this.ConfirmService
 				.confirm(
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: this.i18n.DATASET, name: dataset.name }

@@ -46,15 +46,14 @@ export default function TalendConfirmCtrl($scope, TalendConfirmService) {
      * Watch the modal state to reject confirm promise on modal dismiss
      */
 	$scope.$watch(
-        function () {
-	return vm.modalState;
-},
-
-        function (newValue) {
-	if (!newValue && !vm.buttonClicked) {
-		TalendConfirmService.reject('dismiss');
-	}
-}
+		function () {
+			return vm.modalState;
+		},
+		function (newValue) {
+			if (!newValue && !vm.buttonClicked) {
+				TalendConfirmService.reject('dismiss');
+			}
+		}
     );
 
     /**

@@ -1,0 +1,29 @@
+<pre style="border: 1px solid red;position: absolute;">
+	STATE VALUE: {{ $ctrl.confirmState | json }}
+	{{ $ctrl.state.confirm | json }}
+</pre>
+
+<talend-modal fullscreen="false"
+              close-button="true"
+              state="$ctrl.state.confirm.visible">
+
+    <p
+		class="confirm-content"
+		ng-repeat="text in $ctrl.state.confirm.texts track by $index"
+	>
+		{{text}}
+	</p>
+
+    <div class="modal-buttons">
+        <button
+            class="btn talend-modal-close btn-default modal-secondary-button"
+            ng-click="$ctrl.ConfirmService.reject()">
+            <span translate-once="NO"></span>
+        </button>
+        <button
+            class="btn talend-modal-close btn-primary modal-primary-button"
+            ng-click="$ctrl.ConfirmService.resolve()">
+            <span translate-once="YES"></span>
+        </button>
+    </div>
+</talend-modal>

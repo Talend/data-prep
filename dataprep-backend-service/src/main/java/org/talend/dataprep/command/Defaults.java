@@ -138,11 +138,7 @@ public class Defaults {
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, Class<T> clazz) {
         return (request, response) -> {
             try (InputStream content = response.getEntity().getContent()) {
-                if (content.available() == 0) {
-                    return null;
-                } else {
                     return mapper.readerFor(clazz).readValue(content);
-                }
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             } finally {
@@ -180,7 +176,7 @@ public class Defaults {
         return (request, response) -> {
             try (InputStream content = response.getEntity().getContent()) {
                 return mapper.readerFor(typeReference).readValue(content);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 return errorHandler.apply(e);
             } finally {
                 request.releaseConnection();

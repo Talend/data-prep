@@ -74,6 +74,38 @@ public class AvroUtilsTest {
     }
 
     @Test
+    public void shouldEscapeInvalidJavaCharacters_ifFirstIsValidItIsKept() {
+        // given
+        ColumnMetadata columnMetadata = column().id(1).name("1234").type(Type.STRING).build();
+        RowMetadata rowMetadata = new RowMetadata(Collections.singletonList(columnMetadata));
+
+        // when
+        Schema schema = AvroUtils.toSchema(rowMetadata);
+
+        // then
+        assertNotNull(schema);
+        assertNotNull(schema.getName());
+        assertEquals(1, schema.getFields().size());
+        assertEquals("DP_1234", schema.getFields().get(0).name());
+    }
+
+    @Test
+    public void shouldEscapeInvalidJavaCharacters_emptyIsNumbered() {
+        // given
+        ColumnMetadata columnMetadata = column().id(1).name("").type(Type.STRING).build();
+        RowMetadata rowMetadata = new RowMetadata(Collections.singletonList(columnMetadata));
+
+        // when
+        Schema schema = AvroUtils.toSchema(rowMetadata);
+
+        // then
+        assertNotNull(schema);
+        assertNotNull(schema.getName());
+        assertEquals(1, schema.getFields().size());
+        assertEquals("DP_0001", schema.getFields().get(0).name());
+    }
+
+    @Test
     public void toDataSetRowConverter_shouldHandleDuplicate() {
         RowMetadata rowMetadata = new RowMetadata();
         List<ColumnMetadata> columnMetadatas = new ArrayList<>();

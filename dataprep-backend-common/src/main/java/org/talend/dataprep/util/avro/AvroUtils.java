@@ -208,10 +208,10 @@ public class AvroUtils {
                 columnName.append('_');
             } else {
                 char first = dataprepColumnName.charAt(0);
-                if (isValidFirstAvroCharacter(first)) {
+                if (isAvroIdentifierStart(first)) {
                     columnName.append(first);
                 } else {
-                    if (isValidNonFirstAvroCharacter(first)) {
+                    if (isAvroIdentifierPart(first)) {
                         // useful when column name is a number identifier
                         columnName.append(DATAPREP_FIELD_PREFIX).append(first);
                     } else {
@@ -220,7 +220,7 @@ public class AvroUtils {
                 }
                 for (int i = 1; i < length; i++) {
                     char currentChar = dataprepColumnName.charAt(i);
-                    if (isValidNonFirstAvroCharacter(currentChar)) {
+                    if (isAvroIdentifierPart(currentChar)) {
                         columnName.append(currentChar);
                     } else {
                         columnName.append('_');
@@ -230,11 +230,11 @@ public class AvroUtils {
             return columnName.toString();
         }
 
-        private static boolean isValidFirstAvroCharacter(char first) {
+        private static boolean isAvroIdentifierStart(char first) {
             return Character.isLetter(first) || first == '_';
         }
 
-        private static boolean isValidNonFirstAvroCharacter(char currentChar) {
+        private static boolean isAvroIdentifierPart(char currentChar) {
             return Character.isLetterOrDigit(currentChar) || currentChar == '_';
         }
     }

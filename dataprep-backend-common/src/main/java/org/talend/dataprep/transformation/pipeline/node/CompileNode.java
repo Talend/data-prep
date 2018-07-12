@@ -13,17 +13,18 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 
-public class CompileNode extends BasicNode implements ApplyToColumn {
+public class CompileNode extends BasicNode implements ApplyToColumn, Monitored {
 
     private final RunnableAction action;
 
@@ -31,23 +32,31 @@ public class CompileNode extends BasicNode implements ApplyToColumn {
 
     private int hashCode = 0;
 
+    private long totalTime;
+
+    private long count;
+
     public CompileNode(RunnableAction action, ActionContext actionContext) {
         this.action = action;
         this.actionContext = actionContext;
+        if (actionContext != null) {
+            hashCode = actionContext.getRowMetadata().hashCode();
+        }
     }
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
-        boolean needCompile = actionContext.getActionStatus() == ActionContext.ActionStatus.NOT_EXECUTED;
-        if (actionContext.getRowMetadata() == null || hashCode != metadata.hashCode()) {
-            actionContext.setRowMetadata(metadata.clone());
-            hashCode = metadata.hashCode();
-            needCompile = true; // Metadata changed, force re-compile
+        final long start = System.currentTimeMillis();
+        try {
+            if (hashCode != metadata.hashCode()) { // Metadata changed, force re-compile
+                actionContext.setRowMetadata(metadata.clone());
+                action.getRowAction().compile(actionContext);
+            }
+            row.setRowMetadata(actionContext.getRowMetadata());
+        } finally {
+            totalTime += System.currentTimeMillis() - start;
+            count++;
         }
-        if (needCompile) {
-            action.getRowAction().compile(actionContext);
-        }
-        row.setRowMetadata(actionContext.getRowMetadata());
         link.exec().emit(row, actionContext.getRowMetadata());
     }
 
@@ -70,7 +79,17 @@ public class CompileNode extends BasicNode implements ApplyToColumn {
     }
 
     @Override
-    public Set<String> getColumnNames() {
-        return Collections.singleton(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
+    public List<String> getColumnNames() {
+        return Collections.singletonList(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
+    }
+
+    @Override
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    @Override
+    public long getCount() {
+        return count;
     }
 }

@@ -35,7 +35,6 @@ public class MetadataChangesOnActionsGenerator {
 
     public StepDiff computeCreatedColumns(final RowMetadata metadata, List<RunnableAction> currentActions,
             List<RunnableAction> newActions) {
-
         RowMetadata workingMetadata = compileActionsOnMetadata(currentActions, metadata);
         return computeCreatedColumns(newActions, workingMetadata);
     }
@@ -72,23 +71,20 @@ public class MetadataChangesOnActionsGenerator {
      * @return the updated row metadata from the actions compilation.
      */
     private RowMetadata compileActionsOnMetadata(List<RunnableAction> actions, final RowMetadata startingRowMetadata) {
-
         final RowMetadata updatedRowMetadata = startingRowMetadata.clone();
-
         TransformationContext transformationContext = new TransformationContext();
-
         // compile every action within the transformation context
-        for (RunnableAction action : actions) {
-            final DataSetRowAction rowAction = action.getRowAction();
-            final ActionContext actionContext = transformationContext.create(rowAction, updatedRowMetadata);
-            rowAction.compile(actionContext);
+        try {
+            for (RunnableAction action : actions) {
+                final DataSetRowAction rowAction = action.getRowAction();
+                final ActionContext actionContext = transformationContext.create(rowAction, updatedRowMetadata);
+                rowAction.compile(actionContext);
+            }
+        } finally {
+            // the cleanup is REALLY important (as it can close http connection in case of a lookup for instance)
+            transformationContext.cleanup();
         }
-
-        // the cleanup is REALLY important (as it can close http connection in case of a lookup for instance)
-        transformationContext.cleanup();
-
         return updatedRowMetadata;
-
     }
 
 }

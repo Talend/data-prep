@@ -1029,7 +1029,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         assertTrue(patternFrequencies.stream() //
                 .map(PatternFrequency::getPattern) //
-                .anyMatch("yyyy-MM-dd"::equals));
+                .anyMatch("9999-99-99"::equals));
 
         // create a preview of calculate time since action
         PreviewAddParameters previewAddParameters = new PreviewAddParameters();
@@ -1058,7 +1058,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // check non empty value for the new column
         assertEquals("new preview column should contains values according to calculate time since action", //
-                0, //
+                7, //
                 jsonPath.getList("records.0009").stream().map(String::valueOf).filter(StringUtils::isBlank).count());
 
     }

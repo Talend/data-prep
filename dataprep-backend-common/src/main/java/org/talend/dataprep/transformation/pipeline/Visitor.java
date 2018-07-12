@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
+import static java.util.Optional.ofNullable;
+
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
@@ -19,10 +21,11 @@ import org.talend.dataprep.transformation.pipeline.node.CompileNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
+import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 public abstract class Visitor {
 
-    private void doNodeVisit(Node node) {
+    protected void doNodeVisit(Node node) {
         if (node != null && node.getLink() != null) {
             node.getLink().accept(this);
         }
@@ -45,7 +48,7 @@ public abstract class Visitor {
     }
 
     public void visitPipeline(Pipeline pipeline) {
-        pipeline.getNode().accept(this);
+        ofNullable(pipeline.getNode()).ifPresent(n -> n.accept(this));
     }
 
     public void visitStepNode(StepNode stepNode) {
@@ -54,6 +57,14 @@ public abstract class Visitor {
 
     public void visitNode(Node node) {
         doNodeVisit(node);
+    }
+
+    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
+        doNodeVisit(typeDetectionNode);
+    }
+
+    public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
+        doNodeVisit(invalidDetectionNode);
     }
 
     public void visitCloneLink(CloneLink cloneLink) {

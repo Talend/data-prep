@@ -13,11 +13,20 @@
 package org.talend.dataprep.transformation.actions.conversions;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -116,7 +125,8 @@ public class DurationConverterTest extends BaseDateTest<DurationConverter> {
         // then
         assertEquals("1", row1.get("0001"));
 
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0001").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0001").type(Type.INTEGER).build();
+        expected.getStatistics().setValid(1);
         ColumnMetadata actual = row1.getRowMetadata().getById("0001");
         assertEquals(expected, actual);
     }

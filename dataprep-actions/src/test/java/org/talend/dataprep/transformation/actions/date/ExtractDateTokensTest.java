@@ -14,7 +14,12 @@
 package org.talend.dataprep.transformation.actions.date;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
@@ -22,7 +27,11 @@ import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.setStatistics;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -177,6 +186,7 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         expectedValues.put("0004", "0");
         expectedValues.put("0003", "0");
         expectedValues.put("0002", "tata");
+        expectedValues.put("__tdpInvalid", "0006,0005");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

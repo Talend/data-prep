@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
@@ -32,8 +33,8 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.ReactiveTypeDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.StatisticsNode;
-import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
@@ -45,7 +46,7 @@ public class StatisticsNodesBuilder {
             .of(NEED_STATISTICS_PATTERN, NEED_STATISTICS_INVALID, NEED_STATISTICS_QUALITY, NEED_STATISTICS_FREQUENCY)
             .collect(Collectors.toSet());
 
-    private static final Predicate<ColumnMetadata> ALL_COLUMNS = c -> true;
+    private static final Predicate<String> ALL_COLUMNS = c -> true;
 
     private AnalyzerService analyzerService;
 
@@ -101,33 +102,24 @@ public class StatisticsNodesBuilder {
     }
 
     public Node buildPreStatistics() {
-        // TODO remove this and fix tests
-        if (analyzerService == null) {
-            return new BasicNode();
-        }
-
         performActionsProfiling();
         return getTypeDetectionNode(ALL_COLUMNS);
     }
 
     public Node buildPostStatistics() {
-        // TODO remove this and fix tests
-        if (analyzerService == null) {
-            return new BasicNode();
-        }
-
         performActionsProfiling();
-
         // Handle case where only no type impact modification was done.
         boolean containsOnlyMetadataAction = true;
         for (RunnableAction action : actions) {
             final ActionDefinition actionDefinition = actionsProfile.getMetadataByAction().get(action);
-            containsOnlyMetadataAction &= actionDefinition
-                    .getBehavior(action) //
-                    .stream() //
-                    .allMatch(b -> b == METADATA_CHANGE_ROW //.
-                            || b == METADATA_COPY_COLUMNS //
-                            || b == METADATA_DELETE_COLUMNS);
+            if (actionDefinition != null) {
+                containsOnlyMetadataAction &= actionDefinition
+                        .getBehavior(action) //
+                        .stream() //
+                        .allMatch(b -> b == METADATA_CHANGE_ROW // .
+                                || b == METADATA_COPY_COLUMNS //
+                                || b == METADATA_DELETE_COLUMNS);
+            }
         }
         if (containsOnlyMetadataAction) {
             LOGGER.debug(
@@ -161,60 +153,55 @@ public class StatisticsNodesBuilder {
      * @return
      */
     public Node buildIntermediateStatistics(final Action nextAction) {
-        Node node = null;
-        // TODO remove this and fix tests
-        if (analyzerService == null) {
-            node = new BasicNode();
-        } else {
-            performActionsProfiling();
+        performActionsProfiling();
+        if (needIntermediateStatistics(nextAction)) {
+            // Profile *only* the next action
+            final ActionsStaticProfiler profiler = new ActionsStaticProfiler(actionRegistry);
+            final ActionsProfile intermediateActionProfile =
+                    profiler.profile(columns, Collections.singletonList(nextAction));
+            final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior(nextAction);
+            final NodeBuilder nodeBuilder =
+                    NodeBuilder.from(getTypeDetectionNode(intermediateActionProfile.getFilterForFullAnalysis()));
 
-            if (needIntermediateStatistics(nextAction)) {
-                // Profile *only* the next action
-                final ActionsStaticProfiler profiler = new ActionsStaticProfiler(actionRegistry);
-                final ActionsProfile intermediateActionProfile =
-                        profiler.profile(columns, Collections.singletonList(nextAction));
-                final Set<ActionDefinition.Behavior> behavior =
-                        actionToMetadata.get(nextAction).getBehavior(nextAction);
-                final NodeBuilder nodeBuilder =
-                        NodeBuilder.from(getTypeDetectionNode(intermediateActionProfile.getFilterForFullAnalysis()));
-
-                if (behavior.contains(NEED_STATISTICS_PATTERN)) {
-                    // the type detection is needed by some actions : see bug TDP-4926
-                    // this modification needs performance analysis
-                    nodeBuilder.to(getPatternDetectionNode(intermediateActionProfile.getFilterForPatternAnalysis()));
-                }
-                if (behavior.contains(NEED_STATISTICS_QUALITY)) {
-                    // the quality of the dataset is needed by some actions : see DeleteAllEmptyColumns
-                    nodeBuilder.to(getQualityStatisticsNode(intermediateActionProfile.getFilterForPatternAnalysis()));
-                }
-                if (behavior.contains(NEED_STATISTICS_FREQUENCY)) {
-                    // the frequency of each pattern is needed by some actions : see DeleteAllEmptyColumns
-                    nodeBuilder.to(getFrequencyStatisticsNode(intermediateActionProfile.getFilterForPatternAnalysis()));
-                }
-                if (nextAction.getParameters().containsKey(FILTER.getKey())
-                        || behavior.contains(NEED_STATISTICS_INVALID)) {
-                    // 2 cases remain as this point: action needs invalid values or filter attached to action does
-                    // equivalent to the default case
-                    nodeBuilder.to(getInvalidDetectionNode(intermediateActionProfile.getFilterForInvalidAnalysis()));
-                }
-                node = nodeBuilder.build();
+            if (behavior.contains(NEED_STATISTICS_PATTERN)) {
+                // the type detection is needed by some actions : see bug TDP-4926
+                // this modification needs performance analysis
+                nodeBuilder.to(getPatternDetectionNode(intermediateActionProfile.getFilterForPatternAnalysis()));
             }
+            if (behavior.contains(NEED_STATISTICS_QUALITY)) {
+                // the quality of the dataset is needed by some actions : see DeleteAllEmptyColumns
+                nodeBuilder.to(getQualityStatisticsNode(intermediateActionProfile.getFilterForPatternAnalysis()));
+            }
+            if (behavior.contains(NEED_STATISTICS_FREQUENCY)) {
+                // the frequency of each pattern is needed by some actions : see DeleteAllEmptyColumns
+                nodeBuilder.to(getFrequencyStatisticsNode(intermediateActionProfile.getFilterForPatternAnalysis()));
+            }
+            if (nextAction.getParameters().containsKey(FILTER.getKey()) || behavior.contains(NEED_STATISTICS_INVALID)) {
+                // 2 cases remain as this point: action needs invalid values or filter attached to action does
+                // equivalent to the default case
+                nodeBuilder.to(getInvalidDetectionNode(intermediateActionProfile.getFilterForInvalidAnalysis()));
+            }
+            return nodeBuilder.build();
+        } else {
+            return new BasicNode();
         }
-        return node;
     }
 
     private boolean needIntermediateStatistics(final Action nextAction) {
         // next action indicates that it need fresh statistics
-        final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior(nextAction);
-        if (!Collections.disjoint(behavior, BEHAVIORS)) {
-            return true;
-        }
+        final ActionDefinition actionDefinition = actionToMetadata.get(nextAction);
+        if (actionDefinition != null) {
+            final Set<ActionDefinition.Behavior> behavior = actionDefinition.getBehavior(nextAction);
+            if (!Collections.disjoint(behavior, BEHAVIORS)) {
+                return true;
+            }
 
-        // action has filter that is on valid/invalid
-        if (nextAction.getParameters().containsKey(FILTER.getKey())) {
-            // action has a filterForFullAnalysis, to cover cases where filters are on invalid values
-            final String filterAsString = nextAction.getParameters().get(FILTER.getKey());
-            return StringUtils.contains(filterAsString, "valid") || StringUtils.contains(filterAsString, "invalid");
+            // action has filter that is on valid/invalid
+            if (nextAction.getParameters().containsKey(FILTER.getKey())) {
+                // action has a filterForFullAnalysis, to cover cases where filters are on invalid values
+                final String filterAsString = nextAction.getParameters().get(FILTER.getKey());
+                return StringUtils.contains(filterAsString, "valid") || StringUtils.contains(filterAsString, "invalid");
+            }
         }
 
         return false;
@@ -264,32 +251,33 @@ public class StatisticsNodesBuilder {
         return c -> analyzerService.build(c, AnalyzerService.Analysis.FREQUENCY);
     }
 
-    private Node getTypeDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
+    private Node getTypeDetectionNode(final Predicate<String> columnFilter) {
         return allowSchemaAnalysis
-                ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis)
+                ? new ReactiveTypeDetectionNode(new RowMetadata(columns), columnFilter, statisticsAdapter,
+                        analyzerService::schemaAnalysis)
                 : new BasicNode();
     }
 
-    private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
+    private Node getPatternDetectionNode(final Predicate<String> columnFilter) {
         return allowSchemaAnalysis
-                ? new TypeDetectionNode(columnFilter, statisticsAdapter,
+                ? new ReactiveTypeDetectionNode(new RowMetadata(columns), columnFilter, statisticsAdapter,
                         c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS))
                 : new BasicNode();
     }
 
-    private Node getInvalidDetectionNode(final Predicate<ColumnMetadata> columnFilter) {
-        return new InvalidDetectionNode(columnFilter);
+    private Node getInvalidDetectionNode(final Predicate<String> columnFilter) {
+        return new InvalidDetectionNode(new RowMetadata(columns), columnFilter);
     }
 
-    private Node getQualityStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {
-        return new StatisticsNode(getQualityAnalyzer(), columnFilter, statisticsAdapter);
+    private Node getQualityStatisticsNode(final Predicate<String> columnFilter) {
+        return new StatisticsNode(new RowMetadata(columns), getQualityAnalyzer(), columnFilter, statisticsAdapter);
     }
 
-    private Node getFullStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {
-        return new StatisticsNode(getFullAnalyzer(), columnFilter, statisticsAdapter);
+    private Node getFullStatisticsNode(final Predicate<String> columnFilter) {
+        return new StatisticsNode(new RowMetadata(columns), getFullAnalyzer(), columnFilter, statisticsAdapter);
     }
 
-    private Node getFrequencyStatisticsNode(final Predicate<ColumnMetadata> columnFilter) {
-        return new StatisticsNode(getFrequencyAnalyzer(), columnFilter, statisticsAdapter);
+    private Node getFrequencyStatisticsNode(final Predicate<String> columnFilter) {
+        return new StatisticsNode(new RowMetadata(columns), getFrequencyAnalyzer(), columnFilter, statisticsAdapter);
     }
 }

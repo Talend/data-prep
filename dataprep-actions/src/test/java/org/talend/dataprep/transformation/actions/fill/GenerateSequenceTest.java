@@ -13,10 +13,17 @@
 package org.talend.dataprep.transformation.actions.fill;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -82,7 +89,8 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         // then
         final DataSetRow expectedRow = getRow("toto", "0012.50", "tata", "0");
         assertEquals(expectedRow.values(), row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_sequence").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_sequence").type(Type.INTEGER).build();
+        expected.getStatistics().setValid(1);
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

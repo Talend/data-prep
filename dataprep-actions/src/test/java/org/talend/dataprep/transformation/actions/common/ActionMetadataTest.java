@@ -18,15 +18,24 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
-import static org.talend.dataprep.transformation.actions.category.ScopeCategory.*;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.CELL;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.DATASET;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.LINE;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.ClassPathActionRegistry;
+import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
@@ -274,7 +283,7 @@ public class ActionMetadataTest {
 // ------------------------------------------------------------------------------------------------------------------
 // -----------------------------------------IMPLEMENTATIONS CLASSES--------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------
-
+@Action("CellTransformation")
 class CellTransformation extends AbstractActionMetadata implements CellAction {
 
     @Override
@@ -305,6 +314,7 @@ class CellTransformation extends AbstractActionMetadata implements CellAction {
     }
 }
 
+@Action("LineTransformation")
 class LineTransformation extends AbstractActionMetadata implements RowAction {
 
     @Override
@@ -335,6 +345,7 @@ class LineTransformation extends AbstractActionMetadata implements RowAction {
     }
 }
 
+@Action("ColumnTransformation")
 class ColumnTransformation extends AbstractActionMetadata implements ColumnAction {
 
     @Override
@@ -365,6 +376,7 @@ class ColumnTransformation extends AbstractActionMetadata implements ColumnActio
     }
 }
 
+@Action("TableTransformation")
 class TableTransformation extends AbstractActionMetadata implements DataSetAction {
 
     @Override

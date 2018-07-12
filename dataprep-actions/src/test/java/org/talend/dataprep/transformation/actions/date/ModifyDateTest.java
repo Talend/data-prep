@@ -13,6 +13,31 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.MONTHS;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
+import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.setStatistics;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.CONSTANT_VALUE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.MODE_PARAMETER;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
+import static org.talend.dataprep.transformation.actions.date.ModifyDate.TIME_UNIT_PARAMETER;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -24,23 +49,6 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.MONTHS;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
-import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.*;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.*;
-import static org.talend.dataprep.transformation.actions.date.ModifyDate.TIME_UNIT_PARAMETER;
 
 public class ModifyDateTest extends BaseDateTest<ModifyDate> {
 
@@ -146,7 +154,8 @@ public class ModifyDateTest extends BaseDateTest<ModifyDate> {
         // then
         final DataSetRow expectedRow1 = getRow("toto", "04/25/1999", "tata", "04/25/2000");
         assertEquals(expectedRow1.values(), row1.values());
-        ColumnMetadata expected1 = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.STRING).build();
+        ColumnMetadata expected1 = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.DATE).build();
+        expected1.getStatistics().setValid(1);
         ColumnMetadata actual1 = row1.getRowMetadata().getById("0003");
         assertEquals(expected1, actual1);
 
@@ -157,6 +166,7 @@ public class ModifyDateTest extends BaseDateTest<ModifyDate> {
         assertEquals(expected2, actual2);
 
         final DataSetRow expectedRow3 = getRow("titi louche", "culbutoqué", "tutu couche", "culbutoqué");
+        expectedRow3.setInvalid("0001");
         assertEquals(expectedRow3.values(), row3.values());
         ColumnMetadata expected3 = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.STRING).build();
         ColumnMetadata actual3 = row3.getRowMetadata().getById("0003");

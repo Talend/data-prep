@@ -14,7 +14,10 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
@@ -94,7 +97,8 @@ public class RemoveNonNumCharsTest extends AbstractMetadataBaseTest<RemoveNonNum
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_non_numeric").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_non_numeric").type(Type.INTEGER).build();
+        expected.getStatistics().setValid(1);
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

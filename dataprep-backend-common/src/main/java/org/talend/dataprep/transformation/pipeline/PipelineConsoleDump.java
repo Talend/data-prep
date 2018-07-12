@@ -21,6 +21,7 @@ import org.talend.dataprep.transformation.pipeline.node.CompileNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
+import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 public class PipelineConsoleDump extends Visitor {
 
@@ -40,7 +41,7 @@ public class PipelineConsoleDump extends Visitor {
     }
 
     private void buildApplyToColumn(ApplyToColumn applyToColumn) {
-        builder.append(" (applied to ").append(applyToColumn.getColumnNames()).append(")");
+        builder.append(" (applies to ").append(applyToColumn.getColumnNames()).append(")");
     }
 
     @Override
@@ -55,6 +56,7 @@ public class PipelineConsoleDump extends Visitor {
 
     @Override
     public void visitCompile(CompileNode compileNode) {
+        buildMonitorInformation(compileNode);
         builder.append("COMPILE").append(" [").append(compileNode.getAction().getName()).append("] ").append("(status: ")
                 .append(compileNode.getActionContext().getActionStatus()).append(")");
         buildApplyToColumn(compileNode);
@@ -64,7 +66,8 @@ public class PipelineConsoleDump extends Visitor {
 
     @Override
     public void visitSource(SourceNode sourceNode) {
-        builder.append("-> SOURCE").append('\n');
+        buildMonitorInformation(sourceNode);
+        builder.append("SOURCE").append('\n');
         super.visitSource(sourceNode);
     }
 
@@ -86,7 +89,7 @@ public class PipelineConsoleDump extends Visitor {
         if (node instanceof Monitored) {
             buildMonitorInformation((Monitored) node);
         }
-        builder.append("UNKNOWN NODE (").append(node.getClass().getName()).append(")");
+        builder.append(node.getClass().getName());
         if (node instanceof ApplyToColumn) {
             buildApplyToColumn((ApplyToColumn) node);
         }
@@ -102,7 +105,28 @@ public class PipelineConsoleDump extends Visitor {
 
     @Override
     public void visitStepNode(StepNode stepNode) {
-        builder.append("STEP NODE (").append(stepNode.getStep().toString()).append(")\n");
+        builder.append("STEP NODE (").append(stepNode.getStep()).append(")\n");
+        builder.append("{\n");
+        stepNode.getEntryNode().accept(this);
+        builder.append("}\n");
         super.visitStepNode(stepNode);
+    }
+
+    @Override
+    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
+        buildMonitorInformation(typeDetectionNode);
+        builder.append("TYPE DETECTION NODE ");
+        buildApplyToColumn(typeDetectionNode);
+        builder.append('\n');
+        super.visitTypeDetection(typeDetectionNode);
+    }
+
+    @Override
+    public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
+        buildMonitorInformation(invalidDetectionNode);
+        builder.append("INVALID DETECTION NODE ");
+        buildApplyToColumn(invalidDetectionNode);
+        builder.append('\n');
+        super.visitInvalidDetection(invalidDetectionNode);
     }
 }

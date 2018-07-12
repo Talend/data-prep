@@ -13,10 +13,15 @@
 package org.talend.dataprep.transformation.pipeline;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.pipeline.Signal.END_OF_STREAM;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,6 +34,7 @@ import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -36,7 +42,11 @@ import org.talend.dataprep.transformation.api.action.context.TransformationConte
 import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
-import org.talend.dataprep.transformation.pipeline.node.*;
+import org.talend.dataprep.transformation.pipeline.node.ActionNode;
+import org.talend.dataprep.transformation.pipeline.node.BasicNode;
+import org.talend.dataprep.transformation.pipeline.node.CleanUpNode;
+import org.talend.dataprep.transformation.pipeline.node.CompileNode;
+import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 
 public class PipelineTest {
 
@@ -70,7 +80,8 @@ public class PipelineTest {
         };
         final ActionContext actionContext = new ActionContext(new TransformationContext());
         final Node node = NodeBuilder.source().to(new CompileNode(mockAction, actionContext)).to(output).build();
-        final RowMetadata rowMetadata = new RowMetadata();
+        final ColumnMetadata column = ColumnMetadata.Builder.column().type(Type.STRING).build();
+        final RowMetadata rowMetadata = new RowMetadata(Collections.singletonList(column));
         final DataSetRow row = new DataSetRow(rowMetadata);
 
         // when
@@ -138,7 +149,7 @@ public class PipelineTest {
         node.exec().receive(row, rowMetadata);
 
         // then
-        assertEquals(2, compileCount.get());
+        assertEquals(1, compileCount.get());
     }
 
     @Test

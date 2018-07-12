@@ -13,11 +13,17 @@
 
 package org.talend.dataprep.dataset;
 
-import static org.talend.dataprep.api.type.Type.*;
+import static org.talend.dataprep.api.type.Type.DATE;
+import static org.talend.dataprep.api.type.Type.NUMERIC;
+import static org.talend.dataprep.api.type.Type.STRING;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -26,7 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.Quality;
-import org.talend.dataprep.api.dataset.statistics.*;
+import org.talend.dataprep.api.dataset.statistics.DataFrequency;
+import org.talend.dataprep.api.dataset.statistics.Histogram;
+import org.talend.dataprep.api.dataset.statistics.HistogramRange;
+import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.dataset.statistics.Quantiles;
+import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.dataset.statistics.TextLengthSummary;
 import org.talend.dataprep.api.dataset.statistics.date.DateHistogram;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramStatistics;
 import org.talend.dataprep.api.dataset.statistics.number.NumberHistogram;
@@ -82,7 +95,7 @@ public class StatisticsAdapter {
      * @param results The analysis results
      * @param filter A {@link Predicate predicate} to filter columns to adapt.
      */
-    public void adapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Predicate<ColumnMetadata> filter) {
+    public void adapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Predicate<String> filter) {
         genericAdapt(columns, results, filter);
     }
 
@@ -93,9 +106,9 @@ public class StatisticsAdapter {
      * @param results The analysis results
      * @param filter A {@link Predicate predicate} to filter columns to adapt.
      */
-    private void genericAdapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Predicate<ColumnMetadata> filter) {
+    private void genericAdapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Predicate<String> filter) {
         final Iterator<Analyzers.Result> resultIterator = results.iterator();
-        columns.stream().filter(filter).forEach(c -> {
+        columns.stream().filter(c -> filter.test(c.getId())).forEach(c -> {
             if (resultIterator.hasNext()) {
                 final Analyzers.Result result = resultIterator.next();
                 injectDataTypeAnalysis(c, result);

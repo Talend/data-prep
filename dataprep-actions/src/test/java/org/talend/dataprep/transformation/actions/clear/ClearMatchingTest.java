@@ -1,12 +1,18 @@
 package org.talend.dataprep.transformation.actions.clear;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.MapEntry;
@@ -237,10 +243,11 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
         // then
         Assertions.assertThat(row.values()) //
                 .isNotEmpty() //
-                .hasSize(3) //
+                .hasSize(4) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
                         MapEntry.entry("0001", "True"), //
-                        MapEntry.entry("0002", "Something"));
+                        MapEntry.entry("0002", "Something"), //
+                        MapEntry.entry("__tdpInvalid", "0002"));
     }
 
     @Test

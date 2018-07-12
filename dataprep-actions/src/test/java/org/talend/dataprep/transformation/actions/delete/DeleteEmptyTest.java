@@ -15,7 +15,10 @@ package org.talend.dataprep.transformation.actions.delete;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
@@ -239,7 +242,7 @@ public class DeleteEmptyTest extends AbstractMetadataBaseTest<DeleteEmpty> {
     @Test
     public void should_have_expected_behavior() {
         assertEquals(1, action.getBehavior().size());
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_ALL));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
 }

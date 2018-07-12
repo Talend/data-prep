@@ -3,10 +3,18 @@ package org.talend.dataprep.transformation.pipeline.builder;
 import static java.util.stream.Collectors.toSet;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.preparation.Action;
@@ -14,10 +22,11 @@ import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.ParameterType;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
-import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 class ActionsStaticProfiler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActionsStaticProfiler.class);
 
     private final ActionRegistry actionRegistry;
 
@@ -31,17 +40,23 @@ class ActionsStaticProfiler {
     /**
      * Get the actions metadata by actions
      */
-    private Map<Action, ActionDefinition> getActionMetadataByAction(final List<RunnableAction> actions) {
+    private Map<Action, ActionDefinition> getActionMetadataByAction(final List<? extends Action> actions) {
         final Map<Action, ActionDefinition> actionToMetadata = new HashMap<>(actions.size());
         for (final Action action : actions) {
-            final ActionDefinition actionMetadata = actionRegistry.get(action.getName()) //
-                    .adapt(ScopeCategory.from(action.getParameters().get(ImplicitParameters.SCOPE.getKey())));
-            actionToMetadata.put(action, actionMetadata);
+            final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
+            if (actionDefinition != null) {
+                final ActionDefinition actionMetadata = actionDefinition.adapt(
+                        ScopeCategory.from(action.getParameters().get(ImplicitParameters.SCOPE.getKey()))
+                );
+                actionToMetadata.put(action, actionMetadata);
+            } else {
+                LOGGER.warn("No action definition for '{}'.", action.getName());
+            }
         }
         return actionToMetadata;
     }
 
-    public ActionsProfile profile(final List<ColumnMetadata> columns, final List<RunnableAction> actions) {
+    public ActionsProfile profile(final List<ColumnMetadata> columns, final List<? extends Action> actions) {
         final Map<Action, ActionDefinition> metadataByAction = getActionMetadataByAction(actions);
 
         // Compile actions
@@ -108,10 +123,10 @@ class ActionsStaticProfiler {
         // when only metadata is modified, we need to re-evaluate the invalids entries
         boolean needOnlyInvalidAnalysis = !needFullAnalysis && !metadataModifiedColumns.isEmpty();
         // only the columns with modified values or new columns need the schema + stats analysis
-        SerializablePredicate<ColumnMetadata> filterForFullAnalysis = new FilterForFullAnalysis(originalColumns,
+        SerializablePredicate<String> filterForFullAnalysis = new FilterForFullAnalysis(originalColumns,
                 valueModifiedColumns);
         // only the columns with metadata change or value changes need to re-evaluate invalids
-        Predicate<ColumnMetadata> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns, invalidNeededColumns);
+        Predicate<String> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns, invalidNeededColumns);
 
         return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis, filterForInvalidAnalysis,
                 filterForInvalidAnalysis, metadataByAction);
@@ -125,7 +140,7 @@ class ActionsStaticProfiler {
                 .anyMatch(e -> Objects.equals(e.getKey(), CREATE_NEW_COLUMN) && Boolean.parseBoolean(e.getValue()));
     }
 
-    private static class FilterForFullAnalysis implements SerializablePredicate<ColumnMetadata> {
+    private static class FilterForFullAnalysis implements SerializablePredicate<String> {
 
         private static final long serialVersionUID = 1L;
 
@@ -139,21 +154,22 @@ class ActionsStaticProfiler {
         }
 
         @Override
-        public boolean test(ColumnMetadata columnMetadata) {
-            return valueModifiedColumns.contains(columnMetadata.getId()) || !originalColumns.contains(columnMetadata.getId());
+        public boolean test(String id) {
+            return valueModifiedColumns.contains(id) || !originalColumns.contains(id);
         }
     }
 
-    private static class FilterForInvalidAnalysis implements SerializablePredicate<ColumnMetadata> {
+    private static class FilterForInvalidAnalysis implements SerializablePredicate<String> {
 
         private static final long serialVersionUID = 1L;
 
-        private final SerializablePredicate<ColumnMetadata> filterForFullAnalysis;
+        private final SerializablePredicate<String> filterForFullAnalysis;
 
         private final Set<String> metadataModifiedColumns;
+
         private Set<String> invalidNeededColumns;
 
-        private FilterForInvalidAnalysis(SerializablePredicate<ColumnMetadata> filterForFullAnalysis,
+        private FilterForInvalidAnalysis(SerializablePredicate<String> filterForFullAnalysis,
                                          Set<String> metadataModifiedColumns, Set<String> invalidNeededColumns) {
             this.filterForFullAnalysis = filterForFullAnalysis;
             this.metadataModifiedColumns = metadataModifiedColumns;
@@ -161,10 +177,10 @@ class ActionsStaticProfiler {
         }
 
         @Override
-        public boolean test(ColumnMetadata columnMetadata) {
-            return filterForFullAnalysis.test(columnMetadata) //
-                    || metadataModifiedColumns.contains(columnMetadata.getId()) //
-                    || invalidNeededColumns.contains(columnMetadata.getId());
+        public boolean test(String columnMetadataId) {
+            return filterForFullAnalysis.test(columnMetadataId) //
+                    || metadataModifiedColumns.contains(columnMetadataId) //
+                    || invalidNeededColumns.contains(columnMetadataId);
         }
     }
 

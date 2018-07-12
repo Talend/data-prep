@@ -11,19 +11,19 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import org.apache.commons.lang.StringUtils;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.transformation.api.action.context.ActionContext;
+import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.talend.dataprep.parameters.ParameterType.BOOLEAN;
+import org.apache.commons.lang.StringUtils;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
 public class ActionsUtils {
 
@@ -37,7 +37,7 @@ public class ActionsUtils {
     /**
      * Key for the context map to retrieve column created by "Create new column" parameter.
      */
-    private static final String TARGET_COLUMN_CONTEXT_KEY = "target";
+    public static final String TARGET_COLUMN_CONTEXT_KEY = "target";
 
     private ActionsUtils() {
     }
@@ -86,8 +86,14 @@ public class ActionsUtils {
                 ColumnMetadata newColumn = context.getRowMetadata().getById(additionalColumn.getCopyMetadataFromId());
                 brandNewColumnBuilder.copy(newColumn).computedId(StringUtils.EMPTY);
                 brandNewColumnBuilder.type(Type.get(newColumn.getType()));
+                if (additionalColumn.typeSpecified()) {
+                    brandNewColumnBuilder.typeForce(true);
+                }
             } else {
                 brandNewColumnBuilder.type(additionalColumn.getType());
+                if (additionalColumn.typeSpecified()) {
+                    brandNewColumnBuilder.typeForce(true);
+                }
             }
             brandNewColumnBuilder.name(additionalColumn.getName());
             ColumnMetadata columnMetadata = brandNewColumnBuilder.build();
@@ -165,6 +171,8 @@ public class ActionsUtils {
         /** Id of the column to copy metadata from */
         private String copyMetadataFromId;
 
+        private boolean typeSpecified;
+
         public String getKey() {
             return key;
         }
@@ -188,8 +196,13 @@ public class ActionsUtils {
         }
 
         public AdditionalColumn withType(Type type) {
+            typeSpecified = true;
             this.type = type;
             return this;
+        }
+
+        public boolean typeSpecified() {
+            return typeSpecified;
         }
 
         public String getCopyMetadataFromId() {

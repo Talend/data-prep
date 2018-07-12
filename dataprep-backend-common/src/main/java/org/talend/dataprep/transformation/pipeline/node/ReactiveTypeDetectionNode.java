@@ -2,9 +2,10 @@ package org.talend.dataprep.transformation.pipeline.node;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,81 +34,81 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
 
     private final StatisticsAdapter adapter;
 
-    private Analyzer<Analyzers.Result> resultAnalyzer;
+    private final Analyzer<Analyzers.Result> resultAnalyzer;
 
     private long totalTime;
 
     private long count;
 
-    public ReactiveTypeDetectionNode(Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter,
+    private RowMetadata workingMetadata;
+
+    public ReactiveTypeDetectionNode(RowMetadata initialRowMetadata, //
+            Predicate<String> filter, //
+            StatisticsAdapter adapter, //
             Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer) {
-        super(filter);
+        super(filter, initialRowMetadata);
         this.analyzer = analyzer;
         this.adapter = adapter;
+        this.workingMetadata = initialRowMetadata;
+
+        final List<ColumnMetadata> filteredColumns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
+        resultAnalyzer = analyzer.apply(filteredColumns);
 
         this.processor = ReplayProcessor.create(10000, false);
         this.sink = processor.connectSink();
-        final Random random = new Random();
         processor.subscribe(row -> {
-            performColumnFilter(row, row.getRowMetadata());
-            if (random.nextDouble() <= 0.3d) {
-                LOGGER.trace("Analyze row: {}", row);
-                final long start = System.currentTimeMillis();
-                try {
-                    analyze(row);
-                } finally {
-                    totalTime += System.currentTimeMillis() - start;
-                }
-            } else {
-                LOGGER.trace("Skip row (probabilistic analysis skipped row).");
+            LOGGER.trace("Analyze row: {}", row);
+            final long start = System.currentTimeMillis();
+            try {
+                analyze(row);
+            } finally {
+                totalTime += System.currentTimeMillis() - start;
             }
         });
     }
 
     private void analyze(DataSetRow row) {
         if (!row.isDeleted()) {
-            // Lazy initialization of the result analyzer
-            if (resultAnalyzer == null) {
-                resultAnalyzer = analyzer.apply(filteredColumns);
-            }
-
-            final String[] values = row.toArray(DataSetRow.SKIP_TDP_ID.and(e -> getColumnNames().contains(e.getKey())));
+            final List<String> columnNames = getColumnNames();
+            final String[] values = row.toArray(DataSetRow.SKIP_TDP_ID.and(e -> columnNames.contains(e.getKey())));
             try {
                 resultAnalyzer.analyze(values);
             } catch (Exception e) {
                 LOGGER.debug("Unable to analyze row '{}'.", Arrays.toString(values), e);
             }
-
             count++;
         }
     }
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
-        sink.emit(row);
+        this.workingMetadata = metadata;
+        sink.emit(row.clone());
     }
 
     @Override
     public void signal(Signal signal) {
         try {
-            if (signal == Signal.END_OF_STREAM || signal == Signal.CANCEL || signal == Signal.STOP) {
+            switch (signal) {
+            case END_OF_STREAM:
+            case STOP:
+            case CANCEL:
+            default:
                 final long start = System.currentTimeMillis();
                 try {
-                    if (rowMetadata != null && resultAnalyzer != null) {
-                        // Adapt row metadata to infer type (adapter takes care of type-forced columns)
-                        resultAnalyzer.end();
-                        final List<ColumnMetadata> columns = rowMetadata.getColumns();
-                        adapter.adapt(columns, resultAnalyzer.getResult(), (Predicate<ColumnMetadata>) filter);
-                        resultAnalyzer.close();
-                    }
+                    // Adapt row metadata to infer type (adapter takes care of type-forced columns)
+                    resultAnalyzer.end();
+                    final List<ColumnMetadata> columns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
+                    adapter.adapt(columns, resultAnalyzer.getResult(), filter);
                 } finally {
                     totalTime += System.currentTimeMillis() - start;
+                    resultAnalyzer.close();
                 }
 
                 processor.onComplete();
                 processor.subscribe(row -> {
                     LOGGER.trace("forward row: {}", row);
-                    link.exec().emit(row, rowMetadata);
+                    link.exec().emit(row, workingMetadata);
                 });
             }
         } catch (Exception e) {
@@ -128,6 +129,15 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
 
     @Override
     public Node copyShallow() {
-        return new ReactiveTypeDetectionNode(filter, adapter, analyzer);
+        return new ReactiveTypeDetectionNode(workingMetadata, filter, adapter, analyzer);
+    }
+
+    @Override
+    public List<String> getColumnNames() {
+        return getFilteredColumns(workingMetadata).map(ColumnMetadata::getId).collect(Collectors.toList());
+    }
+
+    private Stream<ColumnMetadata> getFilteredColumns(RowMetadata metadata) {
+        return metadata.getColumns().stream().filter(c -> filter.test(c.getId()) && !c.isTypeForced());
     }
 }

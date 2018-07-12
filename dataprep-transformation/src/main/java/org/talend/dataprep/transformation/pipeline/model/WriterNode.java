@@ -27,7 +27,6 @@ import org.talend.dataprep.transformation.api.transformer.ConfiguredCacheWriter;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
-import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.RuntimeNode;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
@@ -42,8 +41,6 @@ public class WriterNode extends BasicNode implements Monitored {
     private final ConfiguredCacheWriter metadataCacheWriter;
 
     private final ContentCacheKey metadataKey;
-
-    private RowMetadataFallbackProvider rowMetadataFallbackProvider;
 
     /** Fall back row metadata when no row (hence no row metadata) is received. */
     private RowMetadata fallBackRowMetadata;
@@ -77,11 +74,10 @@ public class WriterNode extends BasicNode implements Monitored {
     }
 
     public WriterNode(TransformerWriter writer, ConfiguredCacheWriter metadataCacheWriter,
-            TransformationMetadataCacheKey metadataKey, RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+                      TransformationMetadataCacheKey metadataKey) {
         this.writer = writer;
         this.metadataCacheWriter = metadataCacheWriter;
         this.metadataKey = metadataKey;
-        this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
     }
 
     /**
@@ -166,11 +162,7 @@ public class WriterNode extends BasicNode implements Monitored {
         try {
             // no row received, let's switch to the fallback row metadata
             if (!startRecords) {
-                if (rowMetadataFallbackProvider != null) {
-                    lastRowMetadata = rowMetadataFallbackProvider.getFallback();
-                } else {
-                    lastRowMetadata = fallBackRowMetadata;
-                }
+                lastRowMetadata = fallBackRowMetadata;
             }
             writer.write(lastRowMetadata);
 

@@ -14,15 +14,42 @@ package org.talend.dataprep.transformation.pipeline.node;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 
-public class SourceNode extends BasicNode {
+public class SourceNode extends BasicNode implements Monitored {
 
-    private long count = 0;
+    private long totalTime;
+
+    private long count;
 
     private RowMetadata lastRowMetadata;
+
+    @Override
+    public void receive(DataSetRow row, RowMetadata metadata) {
+        final long start = System.currentTimeMillis();
+        try {
+            super.receive(row, metadata);
+        } finally {
+            totalTime += System.currentTimeMillis() - start;
+            count++;
+        }
+    }
+
+    @Override
+    public void signal(Signal signal) {
+        final long start = System.currentTimeMillis();
+        try {
+            if (lastRowMetadata != null) {
+                lastRowMetadata.setSampleNbRows(count);
+            }
+            super.signal(signal);
+        } finally {
+            totalTime += System.currentTimeMillis() - start;
+        }
+    }
 
     @Override
     public void accept(Visitor visitor) {
@@ -38,17 +65,12 @@ public class SourceNode extends BasicNode {
     }
 
     @Override
-    public void signal(Signal signal) {
-        if (lastRowMetadata != null) {
-            lastRowMetadata.setSampleNbRows(count);
-        }
-        super.signal(signal);
+    public long getTotalTime() {
+        return totalTime;
     }
 
     @Override
-    public void receive(DataSetRow row, RowMetadata metadata) {
-        super.receive(row, metadata);
-        lastRowMetadata = metadata;
-        count++;
+    public long getCount() {
+        return count;
     }
 }

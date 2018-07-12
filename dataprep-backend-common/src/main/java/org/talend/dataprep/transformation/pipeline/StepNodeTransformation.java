@@ -101,6 +101,18 @@ class StepNodeTransformation extends Visitor {
         super.visitNode(node);
     }
 
+    @Override
+    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
+        processNode(typeDetectionNode);
+        super.visitTypeDetection(typeDetectionNode);
+    }
+
+    @Override
+    public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
+        processNode(invalidDetectionNode);
+        super.visitInvalidDetection(invalidDetectionNode);
+    }
+
     /**
      * Internal state for the visitor.
      */
@@ -257,6 +269,12 @@ class StepNodeTransformation extends Visitor {
             public void visitNode(Node node) {
                 builder.to(node.copyShallow());
                 super.visitNode(node);
+            }
+
+            @Override
+            public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
+                visitNode(typeDetectionNode);
+                super.visitTypeDetection(typeDetectionNode);
             }
 
             /**

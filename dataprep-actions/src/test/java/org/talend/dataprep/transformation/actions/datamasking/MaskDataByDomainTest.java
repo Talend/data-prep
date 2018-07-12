@@ -180,7 +180,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         String realValueAsDtr = (String) row.values().get("0000");
         LOGGER.info("Row value: {}", realValueAsDtr);
         assertSame(7, realValueAsDtr.codePointCount(0, realValueAsDtr.length()));
-        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", realValueAsDtr);
+        assertEquals("XXXXXXX", realValueAsDtr);
     }
 
     @Test

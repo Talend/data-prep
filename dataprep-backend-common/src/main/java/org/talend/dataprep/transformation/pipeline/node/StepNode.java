@@ -12,8 +12,14 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.pipeline.Flattener;
 import org.talend.dataprep.transformation.pipeline.Link;
 import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.RuntimeLink;
@@ -31,7 +37,7 @@ import org.talend.dataprep.transformation.pipeline.Visitor;
  *
  * @see org.talend.dataprep.transformation.pipeline.StepNodeTransformer
  */
-public class StepNode extends BasicNode {
+public class StepNode extends BasicNode implements ApplyToColumn {
 
     private final String step;
 
@@ -80,6 +86,19 @@ public class StepNode extends BasicNode {
     @Override
     public Node copyShallow() {
         return new StepNode(step, parentStepRowMetadata, entryNode, lastNode);
+    }
+
+    @Override
+    public List<String> getColumnNames() {
+        final Flattener flattener = new Flattener();
+        entryNode.accept(flattener);
+        final Set<String> columnNames = new HashSet<>();
+        for (Node node : flattener.getNodes()) {
+            if (node instanceof ApplyToColumn) {
+                columnNames.addAll(((ApplyToColumn) node).getColumnNames());
+            }
+        }
+        return new ArrayList<>(columnNames);
     }
 
     private static class StepLink implements Link {

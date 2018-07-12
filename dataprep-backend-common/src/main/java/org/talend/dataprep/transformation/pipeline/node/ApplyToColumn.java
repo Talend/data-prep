@@ -1,8 +1,8 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ApplyToColumn {
 
-    Set<String> getColumnNames();
+    List<String> getColumnNames();
 }

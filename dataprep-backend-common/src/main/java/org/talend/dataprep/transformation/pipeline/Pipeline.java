@@ -106,7 +106,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                             node.exec().receive(row, rowMetadata);
                             counter.addAndGet(1L);
                         }) //
-                        .allMatch(row -> !isStopped.get());
+                        .noneMatch(row -> isStopped.get());
                 LOG.debug("{} rows sent in the pipeline", counter.get());
                 node.exec().signal(Signal.END_OF_STREAM);
             }
@@ -219,8 +219,6 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
         private Long limit = null;
 
-        private RowMetadataFallbackProvider rowMetadataFallbackProvider;
-
         public static Builder builder() {
             return new Builder();
         }
@@ -296,11 +294,6 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return this;
         }
 
-        public Builder withRowMetadataFallbackProvider(RowMetadataFallbackProvider rowMetadataFallbackProvider) {
-            this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
-            return this;
-        }
-
         public Pipeline build() {
             final NodeBuilder current;
             if (inFilter != null) {
@@ -345,7 +338,6 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             // Build nodes for actions
             final Node actionsNode = ActionNodesBuilder
                     .builder() //
-                    .rowMetadataFallbackProvider(rowMetadataFallbackProvider) //
                     .initialMetadata(rowMetadata) //
                     .actions(runnableActions) //
                     // statistics requests
@@ -359,12 +351,12 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                     .build();
 
             if (preparation != null) {
-                LOG.debug("Applying step node transformations...");
-                actionsNode.logStatus(LOG, "Before transformation\n{}");
+                LOG.debug("Adding step nodes...");
+                actionsNode.logStatus(LOG, "Before add step nodes\n{}");
                 final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
                         parentStepRowMetadataSupplier);
                 current.to(node);
-                node.logStatus(LOG, "After transformation\n{}");
+                node.logStatus(LOG, "After add step nodes\n{}");
             } else {
                 current.to(actionsNode);
             }
@@ -384,7 +376,13 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             current.to(outputSupplier.get());
             current.to(monitorSupplier.get());
 
-            pipeline.setNode(current.build());
+            final Node sourceNode = current.build();
+            pipeline.setNode(sourceNode);
+            pipeline.logStatus(LOG, "Before optimizations: {}");
+            final Optimizer optimizer = new Optimizer();
+            sourceNode.accept(optimizer);
+            pipeline.setNode(optimizer.getOptimized());
+            pipeline.logStatus(LOG, "After optimizations: {}");
 
             // Finally build pipeline
             return pipeline;

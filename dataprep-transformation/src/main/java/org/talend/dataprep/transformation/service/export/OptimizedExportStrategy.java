@@ -263,6 +263,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
                 // Not applicable (need preparation to work on).
                 return null;
             }
+            // head is not allowed as step id
             version = stepId;
             previousVersion = Step.ROOT_STEP.getId();
             final List<String> steps = new ArrayList<>(preparation.getSteps());

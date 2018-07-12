@@ -16,7 +16,6 @@ import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_CO
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -144,7 +143,7 @@ public class StatisticsNodesBuilderTest {
             @Override
             public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
                 super.visitInvalidDetection(invalidDetectionNode);
-                final Set<String> columnsForInvalidDetection = invalidDetectionNode.getColumnNames();
+                final List<String> columnsForInvalidDetection = invalidDetectionNode.getColumnNames();
                 assertNotNull(columnsForInvalidDetection);
                 assertEquals(1, columnsForInvalidDetection.size());
                 assertEquals("0001", columnsForInvalidDetection.iterator().next());

@@ -14,7 +14,9 @@
 package org.talend.dataprep.transformation.actions.delete;
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
 import java.io.IOException;
@@ -95,7 +97,7 @@ public class DeleteInvalidTest extends AbstractMetadataBaseTest<DeleteInvalid> {
     public void should_have_expected_behavior() {
         assertEquals(2, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.NEED_STATISTICS_INVALID));
-        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_ALL));
+        assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
 
 }

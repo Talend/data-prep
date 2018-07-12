@@ -12,7 +12,10 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,29 +36,29 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidDetectionNode.class);
 
+    private transient final InvalidMarker invalidMarker;
+
+    private transient final Analyzer<Analyzers.Result> configuredAnalyzer;
+
+    private transient AnalyzerService analyzerService;
+
     private long totalTime;
 
     private long count;
 
-    private transient InvalidMarker invalidMarker;
+    public InvalidDetectionNode(RowMetadata initialRowMetadata, Predicate<String> filter) {
+        super(filter, initialRowMetadata);
 
-    private transient Analyzer<Analyzers.Result> configuredAnalyzer;
-
-    private transient AnalyzerService analyzerService;
-
-    public InvalidDetectionNode(final Predicate<? super ColumnMetadata> filter) {
-        super(filter);
+        final List<ColumnMetadata> filteredColumns = getFilteredColumns().collect(Collectors.toList());
+        this.configuredAnalyzer = getAnalyzerService().build(filteredColumns, AnalyzerService.Analysis.QUALITY);
+        this.invalidMarker = new InvalidMarker(filteredColumns, configuredAnalyzer);
     }
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         final long start = System.currentTimeMillis();
         try {
-            performColumnFilter(row, metadata);
-            if (configuredAnalyzer == null) {
-                this.configuredAnalyzer = getAnalyzerService().build(filteredColumns, AnalyzerService.Analysis.QUALITY);
-                this.invalidMarker = new InvalidMarker(filteredColumns, configuredAnalyzer);
-            }
+
             final DataSetRow markedRow = invalidMarker.apply(row);
             totalTime += System.currentTimeMillis() - start;
             super.receive(markedRow, metadata);
@@ -74,9 +77,7 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
     @Override
     public void signal(Signal signal) {
         try {
-            if (configuredAnalyzer != null) {
-                configuredAnalyzer.close();
-            }
+            configuredAnalyzer.close();
         } catch (Exception e) {
             LOGGER.error("Unable to close analyzer.", e);
         }
@@ -90,7 +91,7 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
 
     @Override
     public Node copyShallow() {
-        return new InvalidDetectionNode(filter);
+        return new InvalidDetectionNode(initialRowMetadata, filter);
     }
 
     @Override
@@ -101,5 +102,19 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
     @Override
     public long getCount() {
         return count;
+    }
+
+    @Override
+    public List<String> getColumnNames() {
+        return getFilteredColumns() //
+                .map(ColumnMetadata::getId) //
+                .collect(Collectors.toList());
+    }
+
+    private Stream<ColumnMetadata> getFilteredColumns() {
+        return initialRowMetadata
+                .getColumns()
+                .stream() //
+                .filter(c -> filter.test(c.getId()));
     }
 }

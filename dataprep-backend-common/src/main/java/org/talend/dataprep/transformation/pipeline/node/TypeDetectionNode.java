@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -40,7 +42,6 @@ import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
-import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataprep.util.FilesHelper;
@@ -70,15 +71,15 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     private long count;
 
-    private RowMetadataFallbackProvider rowMetadataFallbackProvider;
+    private RowMetadata metadata;
 
-    public TypeDetectionNode(Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter,
-            Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer,
-            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
-        super(filter);
+    public TypeDetectionNode(RowMetadata initialRowMetadata, //
+            Predicate<String> filter, //
+            StatisticsAdapter adapter, //
+            Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer) {
+        super(filter, initialRowMetadata);
         this.analyzer = analyzer;
         this.adapter = adapter;
-        this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
         try {
             reservoir = File.createTempFile("TypeDetection", ".zip");
             final JsonFactory factory = new JsonFactory();
@@ -94,9 +95,9 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
+        this.metadata = metadata;
         final long start = System.currentTimeMillis();
         try {
-            performColumnFilter(row, metadata);
             store(row, metadata.getColumns());
             analyze(row);
         } finally {
@@ -135,14 +136,15 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
     // Analyze row using lazily configured analyzer
     private void analyze(DataSetRow row) {
         if (!row.isDeleted()) {
+            final List<ColumnMetadata> filteredColumns = getFilteredColumns().collect(Collectors.toList());
             // Lazy initialization of the result analyzer
             if (resultAnalyzer == null) {
                 resultAnalyzer = analyzer.apply(filteredColumns);
             }
             final String[] values = row
                     .filter(filteredColumns) //
-                    .order(rowMetadata.getColumns()) //
-                    .toArray(DataSetRow.SKIP_TDP_ID.and(e -> filteredColumnNames.contains(e.getKey())));
+                    .order(metadata.getColumns()) //
+                    .toArray(DataSetRow.SKIP_TDP_ID.and(e -> filter.test(e.getKey())));
             try {
                 resultAnalyzer.analyze(values);
             } catch (Exception e) {
@@ -153,12 +155,12 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitNode(this);
+        visitor.visitTypeDetection(this);
     }
 
     @Override
     public Node copyShallow() {
-        return new TypeDetectionNode(filter, adapter, analyzer, rowMetadataFallbackProvider);
+        return new TypeDetectionNode(initialRowMetadata, filter, adapter, analyzer);
     }
 
     @Override
@@ -174,23 +176,20 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                 generator.close();
                 // Send stored records to next steps
                 final ObjectMapper mapper = new ObjectMapper();
-                if (rowMetadata != null && resultAnalyzer != null) {
+                if (metadata != null && resultAnalyzer != null) {
                     // Adapt row metadata to infer type (adapter takes care of type-forced columns)
                     resultAnalyzer.end();
-                    final List<ColumnMetadata> columns = rowMetadata.getColumns();
-                    adapter.adapt(columns, resultAnalyzer.getResult(), (Predicate<ColumnMetadata>) filter);
+                    final List<ColumnMetadata> columns = metadata.getColumns();
+                    adapter.adapt(columns, resultAnalyzer.getResult(), filter);
                     resultAnalyzer.close();
-                }
-                if (rowMetadata != null && rowMetadataFallbackProvider != null) {
-                    rowMetadataFallbackProvider.setFallback(rowMetadata);
                 }
                 // Continue process
                 try (JsonParser parser = mapper.getFactory().createParser(
                         new InputStreamReader(new GZIPInputStream(new FileInputStream(reservoir)), UTF_8))) {
                     final DataSet dataSet = mapper.reader(DataSet.class).readValue(parser);
                     dataSet.getRecords().forEach(r -> {
-                        r.setRowMetadata(rowMetadata);
-                        link.exec().emit(r, rowMetadata);
+                        r.setRowMetadata(metadata);
+                        link.exec().emit(r, metadata);
                     });
 
                 }
@@ -217,5 +216,19 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
     @Override
     public long getCount() {
         return count;
+    }
+
+    @Override
+    public List<String> getColumnNames() {
+        return getFilteredColumns() //
+                .map(ColumnMetadata::getId) //
+                .collect(Collectors.toList());
+    }
+
+    private Stream<ColumnMetadata> getFilteredColumns() {
+        return initialRowMetadata
+                .getColumns()
+                .stream() //
+                .filter(c -> filter.test(c.getId()) && !c.isTypeForced());
     }
 }

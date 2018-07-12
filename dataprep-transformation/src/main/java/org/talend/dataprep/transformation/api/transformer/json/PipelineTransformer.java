@@ -41,7 +41,6 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
-import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
 import org.talend.dataprep.transformation.service.StepMetadataRepository;
@@ -87,9 +86,6 @@ public class PipelineTransformer implements Transformer {
 
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
 
-        // prepare the fallback row metadata
-        RowMetadataFallbackProvider rowMetadataFallbackProvider = new RowMetadataFallbackProvider(rowMetadata);
-
         final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(),
                 configuration.output(), configuration.getArguments());
         final ConfiguredCacheWriter metadataWriter = new ConfiguredCacheWriter(contentCache, DEFAULT);
@@ -104,7 +100,6 @@ public class PipelineTransformer implements Transformer {
 
         final Pipeline pipeline = Pipeline.Builder
                 .builder() //
-                .withRowMetadataFallbackProvider(rowMetadataFallbackProvider) //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
                 .withPreparation(preparation) //
@@ -114,7 +109,7 @@ public class PipelineTransformer implements Transformer {
                 .withFilter(configuration.getFilter()) //
                 .withLimit(configuration.getLimit()) //
                 .withFilterOut(configuration.getOutFilter()) //
-                .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, rowMetadataFallbackProvider)) //
+                .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey)) //
                 .withStatisticsAdapter(adapter) //
                 .withStepMetadataSupplier(stepRowMetadataSupplier) //
                 .withGlobalStatistics(configuration.isGlobalStatistics()) //
@@ -133,10 +128,10 @@ public class PipelineTransformer implements Transformer {
                     return pipelineSpan;
                 });
                 try {
-                    LOGGER.debug("Before transformation: {}", pipeline);
+                    LOGGER.debug("Before execution: {}", pipeline);
                     pipeline.execute(input);
                 } finally {
-                    LOGGER.debug("After transformation: {}", pipeline);
+                    LOGGER.debug("After execution: {}", pipeline);
                     span.ifPresent(s -> tracer.ifPresent(t -> t.close(s)));
                 }
 

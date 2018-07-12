@@ -12,7 +12,12 @@
 
 package org.talend.dataprep.transformation.api.action;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -22,6 +27,7 @@ import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
+import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
@@ -60,7 +66,7 @@ public class ActionTestWorkbench {
                 .withActionRegistry(actionRegistry)
                 .withInitialMetadata(rowMetadata, true) //
                 .withActions(allActions) //
-                .withAnalyzerService(analyzerService)
+                .withAnalyzerService(analyzerService == null ? new AnalyzerService() : analyzerService) //
                 .withStatisticsAdapter(new StatisticsAdapter(40)) //
                 .withOutput(() -> outputNode) //
                 .build();
@@ -105,5 +111,9 @@ public class ActionTestWorkbench {
             }
         }
 
+        @Override
+        public Node copyShallow() {
+            return this;
+        }
     }
 }

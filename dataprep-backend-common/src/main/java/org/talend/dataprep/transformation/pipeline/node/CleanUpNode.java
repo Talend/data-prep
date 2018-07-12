@@ -14,6 +14,8 @@ package org.talend.dataprep.transformation.pipeline.node;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.api.action.context.TransformationContext;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
@@ -37,6 +39,15 @@ public class CleanUpNode extends BasicNode implements Monitored {
     }
 
     @Override
+    public void receive(DataSetRow row, RowMetadata metadata) {
+        try {
+            super.receive(row, metadata);
+        } finally {
+            count++;
+        }
+    }
+
+    @Override
     public void signal(Signal signal) {
         if (signal == Signal.END_OF_STREAM || signal == Signal.CANCEL || signal == Signal.STOP) {
             final long start = System.currentTimeMillis();
@@ -46,7 +57,6 @@ public class CleanUpNode extends BasicNode implements Monitored {
                 LOGGER.error("Unable to clean context at {}.", signal, e);
             } finally {
                 totalTime += System.currentTimeMillis() - start;
-                count++;
             }
         }
         super.signal(signal);

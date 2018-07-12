@@ -12,11 +12,14 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -94,7 +97,13 @@ public class ActionNode extends BasicNode implements Monitored, ApplyToColumn {
     }
 
     @Override
-    public Set<String> getColumnNames() {
-        return Collections.singleton(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
+    public List<String> getColumnNames() {
+        final List<String> columnNames = new ArrayList<>();
+        columnNames.add(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
+        if (actionContext.contains(ActionsUtils.TARGET_COLUMN_CONTEXT_KEY)) {
+            final Map<String, String> targetColumns = actionContext.get(ActionsUtils.TARGET_COLUMN_CONTEXT_KEY, r -> Collections.emptyMap());
+            columnNames.addAll(targetColumns.values());
+        }
+        return columnNames;
     }
 }

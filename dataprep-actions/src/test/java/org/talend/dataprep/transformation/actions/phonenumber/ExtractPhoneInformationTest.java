@@ -214,6 +214,7 @@ public class ExtractPhoneInformationTest extends AbstractMetadataBaseTest<Extrac
         expectedValues.put("0007", "");
         expectedValues.put("0008", "America/Los_Angeles");
         expectedValues.put("0002", "tata");
+        expectedValues.put("__tdpInvalid", "0001");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

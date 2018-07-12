@@ -1,0 +1,140 @@
+package org.talend.dataprep.transformation.pipeline;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.transformation.pipeline.builder.NodeBuilder;
+import org.talend.dataprep.transformation.pipeline.link.BasicLink;
+import org.talend.dataprep.transformation.pipeline.link.CloneLink;
+import org.talend.dataprep.transformation.pipeline.node.ActionNode;
+import org.talend.dataprep.transformation.pipeline.node.ApplyToColumn;
+import org.talend.dataprep.transformation.pipeline.node.BasicNode;
+import org.talend.dataprep.transformation.pipeline.node.CompileNode;
+import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.ReactiveTypeDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.StepNode;
+import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
+
+/**
+ * <p>
+ * This class performs clean up and optimizations in nodes to be found in {@link Pipeline}.
+ * </p>
+ * <h3>BasicNode removal</h3>
+ * <p>
+ * {@link BasicNode} are used as fillers for no-op and can be removed.
+ * </p>
+ * <h3>Node that applies on 0 columns</h3>
+ * <p>
+ * Any node that implements {@link ApplyToColumn} that returns empty list for {@link ApplyToColumn#getColumnNames()} is
+ * also removed from pipeline because it won't perform any operation.
+ * </p>
+ * <h3>Useless type detection</h3>
+ * <p>
+ * If a type detection node is located in a place where no modification was done before, the type detection is ignored,
+ * since input metadata already provides enough type information.
+ * </p>
+ */
+public class Optimizer extends Visitor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Optimizer.class);
+
+    private final Set<String> currentlyModifiedColumns = new HashSet<>();
+
+    private NodeBuilder builder = NodeBuilder.source();
+
+    private Function<Node[], Link> lastLink;
+
+    public Pipeline getOptimized() {
+        return new Pipeline(builder.build());
+    }
+
+    private void discard(Node node, String reason) {
+        LOGGER.debug("Discard node '{}': {}", node, reason);
+    }
+
+    private void keep(Node node) {
+        LOGGER.debug("Keep node '{}'.", node);
+        builder.to(lastLink, node.copyShallow());
+    }
+
+    private void handleApplyToColumn(Node node) {
+        final ApplyToColumn applyToColumn = (ApplyToColumn) node;
+        if (applyToColumn.getColumnNames().isEmpty()) {
+            discard(node, "Applies to 0 columns.");
+        } else {
+            if (node.getClass().equals(ActionNode.class) || node.getClass().equals(StepNode.class)) {
+                currentlyModifiedColumns.addAll(applyToColumn.getColumnNames());
+                keep(node);
+            } else if (node.getClass().equals(ReactiveTypeDetectionNode.class)
+                    || node.getClass().equals(TypeDetectionNode.class)) {
+                if (applyToColumn.getColumnNames().stream().anyMatch(currentlyModifiedColumns::contains)) {
+                    keep(node);
+                    currentlyModifiedColumns.clear();
+                } else if (currentlyModifiedColumns.isEmpty()) {
+                    discard(node, "No modified column. No need to detect types.");
+                } else {
+                    discard(node, "Targeted columns are not modified.");
+                }
+            } else {
+                keep(node);
+            }
+        }
+    }
+
+    @Override
+    public void visitAction(ActionNode actionNode) {
+        handleApplyToColumn(actionNode);
+        super.visitAction(actionNode);
+    }
+
+    @Override
+    public void visitCompile(CompileNode compileNode) {
+        handleApplyToColumn(compileNode);
+        super.visitCompile(compileNode);
+    }
+
+    @Override
+    public void visitBasicLink(BasicLink basicLink) {
+        lastLink = nodes -> new BasicLink(nodes[0]);
+        super.visitBasicLink(basicLink);
+    }
+
+    @Override
+    public void visitStepNode(StepNode stepNode) {
+        handleApplyToColumn(stepNode);
+        super.visitStepNode(stepNode);
+    }
+
+    @Override
+    public void visitNode(Node node) {
+        if (node.getClass().equals(BasicNode.class)) {
+            discard(node, "Remove no-op node.");
+        } else if (node instanceof ApplyToColumn) {
+            handleApplyToColumn(node);
+        } else {
+            keep(node);
+        }
+        super.visitNode(node);
+    }
+
+    @Override
+    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
+        handleApplyToColumn(typeDetectionNode);
+        super.visitTypeDetection(typeDetectionNode);
+    }
+
+    @Override
+    public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
+        handleApplyToColumn(invalidDetectionNode);
+        super.visitInvalidDetection(invalidDetectionNode);
+    }
+
+    @Override
+    public void visitCloneLink(CloneLink cloneLink) {
+        lastLink = CloneLink::new;
+        super.visitCloneLink(cloneLink);
+    }
+}

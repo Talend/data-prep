@@ -13,6 +13,19 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,19 +42,6 @@ import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 /**
  * Change the date pattern on a 'date' column.
@@ -106,7 +106,10 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
         boolean doesCreateNewColumn = ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
 
         if (doesCreateNewColumn) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX).withCopyMetadataFromId(actionContext.getColumnId())));
+            final ActionsUtils.AdditionalColumn additionalColumn = ActionsUtils.additionalColumn() //
+                    .withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX) //
+                    .withCopyMetadataFromId(actionContext.getColumnId());
+            ActionsUtils.createNewColumn(actionContext, singletonList(additionalColumn));
         }
 
         if (actionContext.getActionStatus() == OK) {
@@ -127,7 +130,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
                 final String columnId = actionContext.getColumnId();
                 final ColumnMetadata column = rowMetadata.getById(columnId);
 
-                // if the target column is not the original column, we souldn't use the same statitics object
+                // if the target column is not the original column, we shouldn't use the same statistics object
                 final Statistics statistics;
                 if (doesCreateNewColumn) {
                     statistics = new Statistics(column.getStatistics());

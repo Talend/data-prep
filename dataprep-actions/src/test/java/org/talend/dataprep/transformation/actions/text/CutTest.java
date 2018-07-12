@@ -14,7 +14,10 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
@@ -172,7 +175,7 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, regexpParameters));
 
         // then
-        assertEquals(expected, row);
+        assertEquals(expected.values(), row.values());
     }
 
     @Test

@@ -12,6 +12,20 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.dataquality;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,12 +41,6 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 
 /**
  * Test class for StandardizeInvalid action
@@ -104,7 +112,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         final Map<String, Object> expectedValues = new LinkedHashMap<>();
         expectedValues.put(columnId0, fixedName);
         expectedValues.put(columnId1, "Russian Federation");
-        expectedValues.put("__tdpInvalid", columnId1);
+        expectedValues.put("__tdpInvalid", ",0001");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -121,8 +129,6 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         values.put(columnId1, "Russian Federatio");
 
         final DataSetRow row = createRow(values, columnId1, "");
-
-        values.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -154,6 +160,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         final Map<String, String> values = new HashMap<>();
         values.put(columnId0, fixedName);
         values.put(columnId1,"中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put("__tdpInvalid", "0001");
 
         // set semantic domain
         final DataSetRow row = createRow(values, null, "COUNTRY");
@@ -173,10 +180,9 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         final Map<String, String> values = new HashMap<>();
         values.put(columnId0, fixedName);
         values.put(columnId1, "Ferrand");
+        values.put("__tdpInvalid", ",0001");
 
         final DataSetRow row = createRow(values, columnId1, "FR_COMMUNE");
-
-        values.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -194,8 +200,6 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
 
         // set semantic domain
         final DataSetRow row = createRow(values, columnId1, "COUNTRY");
-
-        values.put("__tdpInvalid", columnId1);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

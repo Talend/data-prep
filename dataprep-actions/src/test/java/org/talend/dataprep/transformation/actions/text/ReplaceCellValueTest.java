@@ -22,13 +22,20 @@ import static org.talend.dataprep.api.action.ActionDefinition.Behavior.FORBID_DI
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.VALUES_COLUMN;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.*;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.COLUMN_ID;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.ROW_ID;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
 import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.NEW_VALUE_PARAMETER;
 import static org.talend.dataprep.transformation.actions.text.ReplaceCellValue.ORIGINAL_VALUE_PARAMETER;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.CANCELED;
 
-import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Test;
@@ -37,7 +44,6 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
 import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
@@ -220,12 +226,11 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest<ReplaceCellVa
         final Map<String, String> parameters = getParameters(1L, "True", "NotABoolean");
 
         // when
-        final AnalyzerService analyzerService = new AnalyzerService();
-        ActionTestWorkbench.test(Collections.singleton(row), analyzerService, actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singleton(row), actionRegistry, factory.create(action, parameters));
 
         // then
         assertThat(row.get("0000"), is("NotABoolean"));
-        assertThat(row.getInternalValues().get(FlagNames.TDP_INVALID), is(",0000"));
+        assertThat(row.getInternalValues().get(FlagNames.TDP_INVALID), is("0000"));
     }
 
     @Test

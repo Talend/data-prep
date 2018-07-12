@@ -13,6 +13,38 @@
 
 package org.talend.dataprep.transformation.actions.math;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.Behavior;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.CH_PATTERN;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.CH_SEPARATORS;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.CUSTOM;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.DECIMAL;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.EU_PATTERN;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.EU_SEPARATORS;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.FROM;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.FROM_SEPARATORS;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.GROUPING;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.SCIENTIFIC;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.SEPARATOR;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.TARGET;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.TARGET_PATTERN;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.US_PATTERN;
+import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.US_SEPARATORS;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
@@ -24,16 +56,6 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
-
-import java.io.IOException;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
-import static org.talend.dataprep.transformation.actions.math.ChangeNumberFormat.*;
 
 /**
  * Unit test for the ChangeNumberFormat action.
@@ -118,7 +140,8 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest<ChangeNumbe
         // then
         final DataSetRow expectedRow = getRow("toto", "0012.50", "tata", "12.5");
         assertEquals(expectedRow.values(), row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0001_formatted").type(Type.STRING).build();
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0001_formatted").type(Type.DOUBLE).build();
+        expected.getStatistics().setValid(1);
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

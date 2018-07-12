@@ -1,6 +1,5 @@
 package org.talend.dataprep.conversions.inject;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
@@ -10,6 +9,8 @@ import org.talend.dataprep.api.preparation.PreparationListItemDTO;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
+import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -25,6 +26,9 @@ public class DataSetNameInjection implements BiFunction<PreparationDTO, Preparat
 
     @Autowired
     private SecurityProxy securityProxy;
+
+    @Autowired
+    private PreparationRepository preparationRepository;
 
     @Autowired
     private DatasetClient datasetClient;
@@ -53,7 +57,12 @@ public class DataSetNameInjection implements BiFunction<PreparationDTO, Preparat
                     }
                 }
                 dataSetName = tenantCache.getIfPresent(dto.getDataSetId());
-            } catch (ExecutionException e) {
+
+                // On-the-fly update
+                final PersistentPreparation preparation = preparationRepository.get(dto.getId(), PersistentPreparation.class);
+                preparation.setDataSetName(dataSetName);
+                preparationRepository.add(preparation);
+            } catch (Exception e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
         }

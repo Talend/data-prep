@@ -57,6 +57,6 @@ public abstract class AbstractDelete extends AbstractActionMetadata implements C
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_ALL);
+        return EnumSet.of(Behavior.VALUES_COLUMN);
     }
 }

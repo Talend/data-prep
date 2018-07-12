@@ -40,7 +40,7 @@ public class PipelineConsoleDump extends Visitor {
     }
 
     private void buildApplyToColumn(ApplyToColumn applyToColumn) {
-        builder.append(" (applies to ").append(applyToColumn.getColumnNames()).append(")");
+        builder.append(" (applied to ").append(applyToColumn.getColumnNames()).append(")");
     }
 
     @Override

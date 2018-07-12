@@ -41,9 +41,7 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -67,7 +65,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         if (parameters.getContent() != null) {
             return false;
         }
-        if (StringUtils.isEmpty(parameters.getPreparationId())){
+        if (StringUtils.isEmpty(parameters.getPreparationId())) {
             return false;
         }
         final OptimizedPreparationInput optimizedPreparationInput = new OptimizedPreparationInput(parameters);
@@ -76,12 +74,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public StreamingResponseBody execute(ExportParameters parameters) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
-
+        formatService.setExportHeaders(parameters);
         return outputStream -> performOptimizedTransform(parameters, outputStream);
     }
 
@@ -100,7 +93,8 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // Get content from previous step
-        try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8))) {
+        try (JsonParser parser = mapper.getFactory().createParser(
+                new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8))) {
             // Create dataset
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             dataSet.setMetadata(metadata);
@@ -125,8 +119,10 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
 
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                final Configuration configuration = Configuration.builder() //
+            try (final TeeOutputStream tee =
+                    new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+                final Configuration configuration = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
                         .sourceType(parameters.getFrom())
@@ -179,7 +175,8 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
     }
 
     /**
-     * A utility class to both extract information to run optimized strategy <b>and</b> check if there's enough information
+     * A utility class to both extract information to run optimized strategy <b>and</b> check if there's enough
+     * information
      * to use the strategy.
      */
     private class OptimizedPreparationInput {
@@ -276,7 +273,8 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
                 previousVersion = steps.get(steps.size() - 2);
             }
             // Get metadata of previous step
-            final TransformationMetadataCacheKey transformationMetadataCacheKey = cacheKeyGenerator.generateMetadataKey(preparationId, previousVersion, sourceType);
+            final TransformationMetadataCacheKey transformationMetadataCacheKey =
+                    cacheKeyGenerator.generateMetadataKey(preparationId, previousVersion, sourceType);
             if (!contentCache.has(transformationMetadataCacheKey)) {
                 LOGGER.debug("No metadata cached for previous version '{}' (key for lookup: '{}')", previousVersion,
                         transformationMetadataCacheKey.getKey());

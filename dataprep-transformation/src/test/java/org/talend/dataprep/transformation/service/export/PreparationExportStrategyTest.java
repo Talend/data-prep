@@ -44,6 +44,7 @@ import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
+import org.talend.dataprep.transformation.format.FormatService;
 import org.talend.dataprep.transformation.format.JsonFormat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,6 +60,9 @@ public class PreparationExportStrategyTest {
 
     @Mock
     private TransformerFactory factory;
+
+    @Mock
+    private FormatService formatService;
 
     @Mock
     private FormatRegistrationService formatRegistrationService;
@@ -91,6 +95,7 @@ public class PreparationExportStrategyTest {
         strategy.setMapper(new ObjectMapper());
 
         when(formatRegistrationService.getByName(eq("JSON"))).thenReturn(new JsonFormat());
+        when(formatService.getFormat(anyString())).thenReturn(new JsonFormat());
 
         DataSet dataSet = new DataSet();
         final DataSetMetadata dataSetMetadata = new DataSetMetadata("ds-1234", "", "", 0L, 0L, new RowMetadata(), "");

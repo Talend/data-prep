@@ -29,20 +29,17 @@ import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationCacheKey;
-import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
-import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
+ * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with
+ * {@link ExportParameters.SourceType HEAD} sample.
  */
 @Component
 public class PreparationExportStrategy extends BaseSampleExportStrategy {
@@ -51,12 +48,6 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
-
-    @Autowired
-    private SecurityProxy securityProxy;
-
-    @Autowired
-    private DatasetClient datasetClient;
 
     @Override
     public boolean accept(final ExportParameters parameters) {
@@ -71,12 +62,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Override
     public StreamingResponseBody execute(final ExportParameters parameters) {
-        final String formatName = parameters.getExportType();
-        final ExportFormat format = getFormat(formatName);
-        ExportUtils.setExportHeaders(parameters.getExportName(), //
-                parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
-                format);
-
+        formatService.setExportHeaders(parameters);
         return outputStream -> performPreparation(parameters, outputStream);
     }
 
@@ -115,9 +101,10 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             LOGGER.debug("Cache key: {}", key.getKey());
             LOGGER.debug("Cache key details: {}", key.toString());
 
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
-                    contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                final Configuration configuration = Configuration.builder() //
+            try (final TeeOutputStream tee =
+                    new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+                final Configuration configuration = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
                         .sourceType(parameters.getFrom())

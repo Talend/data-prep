@@ -175,7 +175,8 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 };
 
 getAppConfiguration().then((appSettings) => {
-	// appSettings.context.provider = 'catalog';
+	// FIXME
+	appSettings.context.provider = 'catalog';
 	const { provider = 'legacy' } = appSettings.context;
 
 	store.set('settings', appSettings);

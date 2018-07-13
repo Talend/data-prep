@@ -26,14 +26,25 @@ const registerRouteFunction = api.route.registerFunction;
  * - Register action creators in CMF actions dictionary
  */
 export default function initialize(additionalConfiguration = {}) {
+	// FIXME
+	window.registry = api.registry;
+
 	// register all saga api
 	api.registry.addToRegistry(
 		'SEARCH_CATEGORIES_BY_PROVIDER',
 		constants.search.SEARCH_CATEGORIES_BY_PROVIDER,
 	);
 
+	const routerSagas = {
+		...dataset.datasetSagas,
+	};
+	const additionalRouterSagas = additionalConfiguration.routerSagas;
+	if (additionalRouterSagas) {
+		Object.assign(routerSagas, additionalRouterSagas);
+	}
+
 	const rootSagas = [
-		fork(sagaRouter, browserHistory, dataset.datasetSagas),
+		fork(sagaRouter, browserHistory, routerSagas),
 		fork(api.sagas.component.handle),
 	];
 	const rootSagasToStart = {
@@ -83,8 +94,16 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register your app reducers
 		 */
+		let reducers = {};
+		const additionalReducers = additionalConfiguration.reducers;
+		if (additionalReducers) {
+			reducers = {
+				...additionalReducers,
+			};
+		}
+
 		const sagaMiddleware = createSagaMiddleware();
-		const store = cmfstore.initialize(undefined, initialState, undefined, [sagaMiddleware]);
+		const store = cmfstore.initialize(reducers, initialState, undefined, [sagaMiddleware]);
 		sagaMiddleware.run(rootSaga);
 
 		api.registerInternals();

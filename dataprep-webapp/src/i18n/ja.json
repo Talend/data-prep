@@ -161,7 +161,6 @@
   "IMPORT_DATASET": "データセットの追加",
   "COLLECTING_DATA": "{{datasetName}}のデータを収集しています。 お待ちください…",
   "DATASET_NAME": "データセット名:",
-  "PREPARATION": "プレパレーション",
   "DATASTORE_TEST_CONNECTION": "テスト接続",
   "DATASTORE_CONNECTION_SUCCESSFUL": "接続成功",
 
@@ -406,7 +405,6 @@
   "DATASET_PARAMETERS_TEXT_ENCLOSURE_CHARACTER": "テキスト囲み文字",
 
   "ACTION_HELP": "詳細情報…",
-  "NAME": "名前",
   "SIZE": "サイズ",
 
   "_comment": "オンボーディング",
@@ -435,6 +433,14 @@
   "HEADERBAR_HELP": "ヘルプ",
   "HEADERBAR_APPS": "アプリ",
   "HEADERBAR_INFO": "情報",
+  "LISTVIEW_NO_RESULT": "結果が見つかりません。",
+  "LISTVIEW_EMPTY": "このリストは空です。",
+  "LISTVIEW_HEADER_TITLE": "値",
+  "LISTVIEW_HEADER_SELECTED": "{{count}}/{{total}}選択済み",
+  "LISTVIEW_HEADERINPUT_SEARCH_PLACEHOLDER": "検索",
+  "LISTVIEW_ITEMS_TOGGLE_ALL": "すべて切り替え",
+  "LISTVIEW_WIDGET_SEARCH": "Rechercher",
+  "LISTVIEW_WIDGET_ABORT": "Annuler",
   "SIDEPANEL_COLLAPSE": "折りたたみ",
   "SIDEPANEL_EXPAND": "展開",
   "VIRTUALIZEDLIST_NO_RESULT": "結果が見つかりません。",

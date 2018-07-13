@@ -2,22 +2,21 @@ package org.talend.dataprep.qa.step;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import cucumber.api.java.en.And;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.DatasetMeta;
 
@@ -38,6 +37,12 @@ import cucumber.api.java.en.When;
 public class DatasetStep extends DataPrepStep {
 
     private static final String NB_ROW = "nbRow";
+
+    @Value("${metadata.timeout.sec}")
+    private int metadataTimeout;
+
+    @Value("${metadata.wait.time.sec}")
+    private int metadataTimeToWait;
 
     /**
      * This class' logger.
@@ -181,5 +186,37 @@ public class DatasetStep extends DataPrepStep {
         final JsonPath jsonPath = response.body().jsonPath();
         final List<String> actual = jsonPath.getList("columns.name", String.class);
         checkColumnNames(datasetName, columns, actual);
+    }
+
+    @Then("^I check that the dataSet \"(.*)\" has \"(.*)\" records$")
+    public void thenICheckTheDataSetRecordsNumber(String datasetName, String recordNumber) throws IOException {
+        Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
+        response.then().statusCode(OK.value());
+
+        final JsonPath jsonPath = response.body().jsonPath();
+        assertEquals(recordNumber, jsonPath.get("records").toString());
+    }
+
+    @And("^I wait for the dataset \"(.*)\" metadata to be computed$")
+    public void iWaitForTheDatasetMetadataToBeComputed(String datasetName) throws Throwable {
+        waitResponse("Dataset metadata columns.statistics.frequencyTable", metadataTimeout,
+                metadataTimeToWait, 1) //
+                .until(checkDatasetMetadataStatus(datasetName));
+    }
+
+    /**
+     * get dataset metadata status.
+     */
+    private Callable<Boolean> checkDatasetMetadataStatus(String datasetName) {
+        return new Callable<Boolean>() {
+
+            public Boolean call() throws Exception {
+                Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
+                response.then().statusCode(OK.value());
+
+                final List<ArrayList> actual = response.body().jsonPath().get("columns.statistics.frequencyTable");
+                return !actual.get(0).isEmpty();
+            }
+        };
     }
 }

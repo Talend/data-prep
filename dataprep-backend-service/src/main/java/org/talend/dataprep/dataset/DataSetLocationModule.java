@@ -35,7 +35,7 @@ public class DataSetLocationModule extends SimpleModule {
         mappings.forEach(mapping -> registerLocationMapping(mapping.getLocationType(), mapping.getLocationClass()));
     }
 
-    protected void registerLocationMapping(String type, Class<? extends DataSetLocation> locationClass){
+    private void registerLocationMapping(String type, Class<? extends DataSetLocation> locationClass){
         LOGGER.debug("register dataset location type [{}] for [{}]", type, locationClass);
         this.registerSubtypes(new NamedType(locationClass, type));
     }

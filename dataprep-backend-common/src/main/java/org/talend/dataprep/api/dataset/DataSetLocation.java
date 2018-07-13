@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
-import org.talend.dataprep.api.dataset.location.LocalStoreLocation;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
 import org.talend.dataprep.schema.FormatFamily;
@@ -28,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * Information about the dataset location.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type", defaultImpl = LocalStoreLocation.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
 public interface DataSetLocation extends Serializable {
 
     /**

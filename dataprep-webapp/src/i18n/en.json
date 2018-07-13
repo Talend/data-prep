@@ -494,5 +494,6 @@
   "LIST_TOOLBAR_DISPLAY": "Display",
   "LIST_TOOLBAR_SORT_BY": "Sort by",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "Descending",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending"
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending",
+  "LIST_OPEN_ACTION_MENU": "Open menu"
 }

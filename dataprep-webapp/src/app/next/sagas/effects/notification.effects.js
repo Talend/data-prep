@@ -7,34 +7,32 @@ export const COMPONENT_KEY = 'Notification';
 
 export function* push(notification) {
 	const path = [COMPONENT_NAME, COMPONENT_KEY, 'notifications'];
-	let notifications = yield select(state => state.cmf.components.getIn(path));
-	notifications = notifications.push(notification);
-	yield put(actions.components.mergeState(COMPONENT_NAME, COMPONENT_KEY, { notifications }));
+	const notifications = yield select(state => state.cmf.components.getIn(path));
+	yield put(actions.components.mergeState(COMPONENT_NAME, COMPONENT_KEY,
+		{ notifications: notifications.push(notification) }
+	));
 }
 
 export function* success({ payload }) {
-	const newNotification = {
+	yield* push({
 		...payload,
 		id: objectId(),
 		type: 'info',
-	};
-	yield* push(newNotification);
+	});
 }
 
 export function* error({ payload }) {
-	const newNotification = {
+	yield* push({
 		...payload,
 		id: objectId(),
 		type: 'error',
-	};
-	yield* push(newNotification);
+	});
 }
 
 export function* warning({ payload }) {
-	const newNotification = {
+	yield* push({
 		...payload,
 		id: objectId(),
 		type: 'warning',
-	};
-	yield* push(newNotification);
+	});
 }

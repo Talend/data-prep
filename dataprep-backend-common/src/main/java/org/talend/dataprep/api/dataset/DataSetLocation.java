@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * Information about the dataset location.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", defaultImpl = LocalStoreLocation.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type", defaultImpl = LocalStoreLocation.class)
 public interface DataSetLocation extends Serializable {
 
     /**

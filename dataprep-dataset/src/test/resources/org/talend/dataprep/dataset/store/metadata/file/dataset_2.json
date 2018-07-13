@@ -17,7 +17,7 @@
   "formatGuess": "formatGuess#xls",
   "certificationStep": "NONE",
   "location": {
-    "type": "local"
+    "type": "org.talend.dataprep.api.dataset.location.LocalStoreLocation"
   },
   "name": "bands",
   "author": "anonymousUser",

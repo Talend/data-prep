@@ -1,16 +1,10 @@
-<pre style="border: 1px solid red;position: absolute;">
-	STATE VALUE: {{ $ctrl.confirmState | json }}
-	{{ $ctrl.state.confirm | json }}
-</pre>
-
 <talend-modal fullscreen="false"
               close-button="true"
-              state="$ctrl.state.confirm.visible">
+              class="confirm-modal"
+              state="$ctrl.state.confirm.visible"
+              ng-if="$ctrl.state.confirm.visible">
 
-    <p
-		class="confirm-content"
-		ng-repeat="text in $ctrl.state.confirm.texts track by $index"
-	>
+    <p class="confirm-content" ng-repeat="text in $ctrl.state.confirm.texts track by $index">
 		{{text}}
 	</p>
 

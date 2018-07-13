@@ -23,10 +23,10 @@ describe('confirm state service', () => {
 
 	it('should set visible to true', inject((ConfirmStateService, confirmState) => {
 		expect(confirmState.visible).toBe(false);
-		expect(confirmState.texts).toBe([]);
+		expect(confirmState.texts).toEqual([]);
 		ConfirmStateService.show(['test']);
 		expect(confirmState.visible).toBe(true);
-		expect(confirmState.texts).toBe(['test']);
+		expect(confirmState.texts).toEqual(['test']);
 	}));
 
 	it('should set visible to false', inject((ConfirmStateService, confirmState) => {
@@ -34,7 +34,7 @@ describe('confirm state service', () => {
 		confirmState.texts = ['hey'];
 		ConfirmStateService.hide();
 		expect(confirmState.visible).toBe(false);
-		expect(confirmState.texts).toBe([]);
+		expect(confirmState.texts).toEqual([]);
 	}));
 
 	it('should reset visible state', inject((ConfirmStateService, confirmState) => {
@@ -42,6 +42,6 @@ describe('confirm state service', () => {
 		confirmState.texts = ['yo'];
 		ConfirmStateService.reset();
 		expect(confirmState.visible).toBe(false);
-		expect(confirmState.texts).toBe([]);
+		expect(confirmState.texts).toEqual([]);
 	}));
 });

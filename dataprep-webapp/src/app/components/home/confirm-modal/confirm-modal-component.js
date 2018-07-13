@@ -1,4 +1,6 @@
+import './confirm-modal.scss';
 import template from './confirm-modal.html';
+
 /**
  * @ngdoc component
  * @name data-prep.confirm-modal.component:ConfirmModal

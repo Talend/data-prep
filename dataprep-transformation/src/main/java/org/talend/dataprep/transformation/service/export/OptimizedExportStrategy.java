@@ -271,7 +271,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
                 LOGGER.debug("Not enough steps ({}) in preparation.", steps.size());
                 return null;
             }
-            if (StringUtils.equals("head", stepId) || StringUtils.isEmpty(stepId)) {
+            if ("head".equals(stepId)  || StringUtils.isEmpty(stepId) || steps.get(steps.size() - 1).equals(stepId)) {
                 version = steps.get(steps.size() - 1);
                 previousVersion = steps.get(steps.size() - 2);
             }

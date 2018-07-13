@@ -22,7 +22,7 @@ import PREPARATION_COPY_MOVE_MODULE from '../preparation/copy-move/preparation-c
 import STEP_PROGRESS_MODULE from '../step-progress/step-progress-module';
 import SERVICES_DATASET_MODULE from '../../services/dataset/dataset-module';
 import SERVICES_DATASET_WORKFLOW_MODULE from '../../services/dataset-workflow/dataset-workflow-module';
-import SERVICES_CONFIRM from '../../services/confirm/confirm-module';
+import SERVICES_CONFIRM_MODULE from '../../services/confirm/confirm-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
 import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
@@ -69,7 +69,7 @@ angular.module(MODULE_NAME,
 
 		SERVICES_DATASET_MODULE,
 		SERVICES_DATASET_WORKFLOW_MODULE,
-		SERVICES_CONFIRM,
+		SERVICES_CONFIRM_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])

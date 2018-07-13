@@ -120,6 +120,7 @@ import org.talend.dataprep.schema.FormatFamilyFactory;
 import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.user.store.UserDataRepository;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
@@ -204,6 +205,9 @@ public class DataSetService extends BaseDataSetService {
 
     @Resource(name = "serializer#dataset#executor")
     private TaskExecutor executor;
+
+    @Autowired
+    private SecurityProxy securityProxy;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked",
@@ -495,7 +499,13 @@ public class DataSetService extends BaseDataSetService {
 
         LOG.debug("get dataset metadata for {}", dataSetId);
 
-        DataSetMetadata metadata = dataSetMetadataRepository.get(dataSetId);
+        DataSetMetadata metadata;
+        securityProxy.asTechnicalUserForDataSet();
+        try {
+            metadata = dataSetMetadataRepository.get(dataSetId);
+        } finally {
+            securityProxy.releaseIdentity();
+        }
         if (metadata == null) {
             throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, build().put("id", dataSetId));
         }

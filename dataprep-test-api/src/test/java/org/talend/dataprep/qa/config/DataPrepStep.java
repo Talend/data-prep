@@ -152,17 +152,12 @@ public abstract class DataPrepStep {
     }
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames, List<String> actual) {
-        assertNotNull(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(),
-                actual);
+        assertNotNull(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(), actual);
         assertFalse(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(),
                 actual.isEmpty());
-        assertEquals(new StringBuilder("Not the expected number of columns in \"")
-                .append(datasetOrPreparationName)
-                .append("\".")
+        assertEquals(new StringBuilder("Not the expected number of columns in \"").append(datasetOrPreparationName).append("\".")
                 .toString(), expectedColumnNames.size(), actual.size());
-        assertTrue(new StringBuilder("\"")
-                .append(datasetOrPreparationName)
-                .append("\" doesn't contain all expected columns.")
+        assertTrue(new StringBuilder("\"").append(datasetOrPreparationName).append("\" doesn't contain all expected columns.")
                 .toString(), actual.containsAll(expectedColumnNames));
     }
 
@@ -174,10 +169,12 @@ public abstract class DataPrepStep {
         return waitResponse(message, timeOut, POLL_DELAY, POLL_INTERVAL);
     }
 
+    protected ConditionFactory waitResponse(String message, int timeOut, int pollInterval) {
+        return waitResponse(message, timeOut, POLL_DELAY, pollInterval);
+    }
+
     protected ConditionFactory waitResponse(String message, int timeOut, int pollDelay, int pollInterval) {
-        return with()
-                .pollInterval(pollInterval, TimeUnit.SECONDS)
-                .and() //
+        return with().pollInterval(pollInterval, TimeUnit.SECONDS).and() //
                 .with() //
                 .pollDelay(pollDelay, TimeUnit.SECONDS) //
                 .await(message) //

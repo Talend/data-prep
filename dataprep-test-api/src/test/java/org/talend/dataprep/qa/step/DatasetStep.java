@@ -1,21 +1,10 @@
 package org.talend.dataprep.qa.step;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.response.ResponseBody;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.DatasetMeta;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,11 +15,24 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.DatasetMeta;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.ResponseBody;
+
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with dataset.
@@ -39,9 +41,11 @@ public class DatasetStep extends DataPrepStep {
 
     private static final String NB_ROW = "nbRow";
 
-    @Value("${metadata.timeout.sec}") private int metadataTimeout;
+    @Value("${metadata.timeout.sec}")
+    private int metadataTimeout;
 
-    @Value("${metadata.wait.time.sec}") private int metadataTimeToWait;
+    @Value("${metadata.wait.time.sec}")
+    private int metadataTimeToWait;
 
     /**
      * This class' logger.
@@ -73,12 +77,13 @@ public class DatasetStep extends DataPrepStep {
      * {@link List}.
      *
      * @param datasetMetas the {@link List} of {@link DatasetMeta} to filter.
-     * @param datasetName  the searched dataset name.
-     * @param nbRows       the searched number of row.
+     * @param datasetName the searched dataset name.
+     * @param nbRows the searched number of row.
      * @return the number of corresponding {@link DatasetMeta}.
      */
     private long countFilteredDatasetList(List<DatasetMeta> datasetMetas, String datasetName, String nbRows) {
-        return datasetMetas.stream() //
+        return datasetMetas //
+                .stream() //
                 .filter(d -> (suffixName(datasetName).equals(d.name)) //
                         && nbRows.equals(d.records)) //
                 .count();
@@ -114,23 +119,30 @@ public class DatasetStep extends DataPrepStep {
         switch (util.getFilenameExtension(fileName)) {
         case "xls":
         case "xlsx":
-            datasetId = api.uploadBinaryDataset(fileName, suffixedName) //
-                    .then().statusCode(OK.value()) //
-                    .extract().body().asString();
+            datasetId = api //
+                    .uploadBinaryDataset(fileName, suffixedName) //
+                    .then() //
+                    .statusCode(OK.value()) //
+                    .extract() //
+                    .body() //
+                    .asString();
             break;
         case "csv":
         default:
             datasetId = api.uploadTextDataset(fileName, suffixedName) //
-                    .then().statusCode(OK.value()) //
-                    .extract().body().asString();
+                    .then() //
+                    .statusCode(OK.value()) //
+                    .extract() //
+                    .body() //
+                    .asString();
             break;
 
         }
         context.storeDatasetRef(datasetId, suffixedName);
     }
 
-    @Given("^I have a dataset with parameters:$") public void iHaveADatasetWithParameters(DataTable dataTable)
-            throws Throwable {
+    @Given("^I have a dataset with parameters:$")
+    public void iHaveADatasetWithParameters(DataTable dataTable) throws Throwable {
         Map<String, String> parameters = new HashMap<>(dataTable.asMap(String.class, String.class));
 
         // in case of only name parameter, we should use a suffixed dataSet name
@@ -190,7 +202,7 @@ public class DatasetStep extends DataPrepStep {
 
     @And("^I wait for the dataset \"(.*)\" metadata to be computed$")
     public void iWaitForTheDatasetMetadataToBeComputed(String datasetName) throws Throwable {
-        waitResponse("Dataset metadata columns.statistics.frequencyTable", metadataTimeout, metadataTimeToWait, 1) //
+        waitResponse("Dataset metadata columns.statistics.frequencyTable", metadataTimeout, metadataTimeToWait) //
                 .until(checkDatasetMetadataStatus(datasetName));
     }
 

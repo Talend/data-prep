@@ -234,7 +234,6 @@ public class TransformationService extends BaseTransformationService {
             // write to cache
             executeSampleExportStrategy(completeParameters).writeTo(new NullOutputStream());
             return outputStream -> {
-                outputStream.close();
             };
         } else {
             // sync behavior

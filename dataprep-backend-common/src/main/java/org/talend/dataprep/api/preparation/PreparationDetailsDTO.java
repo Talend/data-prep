@@ -3,6 +3,7 @@ package org.talend.dataprep.api.preparation;
 import java.util.List;
 
 import org.talend.dataprep.api.action.ActionForm;
+import org.talend.dataprep.api.dataset.RowMetadata;
 
 public class PreparationDetailsDTO {
 
@@ -33,6 +34,16 @@ public class PreparationDetailsDTO {
     private boolean allowDistributedRun;
 
     private boolean allowFullRun = false;
+
+    private RowMetadata rowMetadata;
+
+    public RowMetadata getRowMetadata() {
+        return rowMetadata;
+    }
+
+    public void setRowMetadata(RowMetadata rowMetadata) {
+        this.rowMetadata = rowMetadata;
+    }
 
     public String getId() {
         return id;

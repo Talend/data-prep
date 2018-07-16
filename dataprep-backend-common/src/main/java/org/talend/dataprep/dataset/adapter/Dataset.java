@@ -88,6 +88,8 @@ public class Dataset {
         private String sheetName;
         private String tag;
 
+        private long nbRecords;
+
         public DataSetMetadataLegacy() {
         }
 
@@ -131,6 +133,13 @@ public class Dataset {
             this.tag = tag;
         }
 
+        public long getNbRecords() {
+            return nbRecords;
+        }
+
+        public void setNbRecords(long nbRecords) {
+            this.nbRecords = nbRecords;
+        }
     }
 
     public Dataset() {

@@ -15,6 +15,8 @@
 
 package org.talend.dataprep.dataset.adapter.conversion;
 
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetGovernance;
@@ -29,8 +31,6 @@ import org.talend.dataprep.processor.BeanConversionServiceWrapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 
 @Component
 public class DataSetMetadataBeanConversion extends BeanConversionServiceWrapper {
@@ -80,6 +80,7 @@ public class DataSetMetadataBeanConversion extends BeanConversionServiceWrapper 
                     metadataLegacy.setSchemaParserResult(dataSetMetadata.getSchemaParserResult());
                     metadataLegacy.setEncoding(dataSetMetadata.getEncoding());
                     metadataLegacy.setTag(dataSetMetadata.getTag());
+                    metadataLegacy.setNbRecords(dataSetMetadata.getContent().getNbRecords());
                     dataset.setDataSetMetadataLegacy(metadataLegacy);
 
                     return dataset;

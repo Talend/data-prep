@@ -16,7 +16,7 @@ public class Injections {
     @Bean
     @Scope("prototype")
     public OwnerInjection ownerInjection() {
-        return new OwnerInjection();
+        return new DefaultOwnerInjection();
     }
 
 }

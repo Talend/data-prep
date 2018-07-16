@@ -80,7 +80,7 @@ public class DataSetMetadataBeanConversion extends BeanConversionServiceWrapper 
                     metadataLegacy.setSchemaParserResult(dataSetMetadata.getSchemaParserResult());
                     metadataLegacy.setEncoding(dataSetMetadata.getEncoding());
                     metadataLegacy.setTag(dataSetMetadata.getTag());
-                    metadataLegacy.setRecords(dataSetMetadata.getContent().getNbRecords());
+                    metadataLegacy.setNbRecords(dataSetMetadata.getContent().getNbRecords());
                     dataset.setDataSetMetadataLegacy(metadataLegacy);
 
                     return dataset;

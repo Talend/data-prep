@@ -88,7 +88,7 @@ public class Dataset {
         private String sheetName;
         private String tag;
 
-        private long records;
+        private long nbRecords;
 
         public DataSetMetadataLegacy() {
         }
@@ -133,12 +133,12 @@ public class Dataset {
             this.tag = tag;
         }
 
-        public long getRecords() {
-            return records;
+        public long getNbRecords() {
+            return nbRecords;
         }
 
-        public void setRecords(long records) {
-            this.records = records;
+        public void setNbRecords(long nbRecords) {
+            this.nbRecords = nbRecords;
         }
     }
 

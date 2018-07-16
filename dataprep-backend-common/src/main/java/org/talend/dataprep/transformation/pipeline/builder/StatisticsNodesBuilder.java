@@ -1,6 +1,5 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
-import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_CHANGE_NAME;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_CHANGE_ROW;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_COPY_COLUMNS;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.METADATA_DELETE_COLUMNS;
@@ -126,8 +125,7 @@ public class StatisticsNodesBuilder {
             containsOnlyMetadataAction &= actionDefinition
                     .getBehavior(action) //
                     .stream() //
-                    .allMatch(b -> b == METADATA_CHANGE_ROW //
-                            || b == METADATA_CHANGE_NAME //
+                    .allMatch(b -> b == METADATA_CHANGE_ROW //.
                             || b == METADATA_COPY_COLUMNS //
                             || b == METADATA_DELETE_COLUMNS);
         }

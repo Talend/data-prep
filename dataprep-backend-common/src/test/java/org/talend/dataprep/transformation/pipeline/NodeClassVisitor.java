@@ -20,8 +20,10 @@ import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
+import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
+import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 public class NodeClassVisitor extends Visitor {
 
@@ -77,5 +79,17 @@ public class NodeClassVisitor extends Visitor {
     public void visitStepNode(StepNode stepNode) {
         traversedClasses.add(stepNode.getClass());
         super.visitStepNode(stepNode);
+    }
+
+    @Override
+    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
+        traversedClasses.add(typeDetectionNode.getClass());
+        super.visitTypeDetection(typeDetectionNode);
+    }
+
+    @Override
+    public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
+        traversedClasses.add(invalidDetectionNode.getClass());
+        super.visitInvalidDetection(invalidDetectionNode);
     }
 }

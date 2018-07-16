@@ -48,6 +48,7 @@ class ActionsStaticProfiler {
         final Set<String> originalColumns = columns.stream().map(ColumnMetadata::getId).collect(toSet());
         final Set<String> valueModifiedColumns = new HashSet<>();
         final Set<String> metadataModifiedColumns = new HashSet<>();
+        final Set<String> invalidNeededColumns = new HashSet<>();
         int createColumnActions = 0;
 
         // Analyze what columns to look at during analysis
@@ -60,6 +61,9 @@ class ActionsStaticProfiler {
 
             for (ActionDefinition.Behavior currentBehavior : behavior) {
                 switch (currentBehavior) {
+                case NEED_STATISTICS_INVALID:
+                    invalidNeededColumns.add(action.getParameters().get(COLUMN_ID.getKey()));
+                    break;
                 case VALUES_ALL:
                     // All values are going to be changed, and all original columns are going to be modified.
                     valueModifiedColumns.addAll(originalColumns);
@@ -107,7 +111,7 @@ class ActionsStaticProfiler {
         SerializablePredicate<ColumnMetadata> filterForFullAnalysis = new FilterForFullAnalysis(originalColumns,
                 valueModifiedColumns);
         // only the columns with metadata change or value changes need to re-evaluate invalids
-        Predicate<ColumnMetadata> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns);
+        Predicate<ColumnMetadata> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns, invalidNeededColumns);
 
         return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis, filterForInvalidAnalysis,
                 filterForInvalidAnalysis, metadataByAction);
@@ -147,16 +151,20 @@ class ActionsStaticProfiler {
         private final SerializablePredicate<ColumnMetadata> filterForFullAnalysis;
 
         private final Set<String> metadataModifiedColumns;
+        private Set<String> invalidNeededColumns;
 
         private FilterForInvalidAnalysis(SerializablePredicate<ColumnMetadata> filterForFullAnalysis,
-                Set<String> metadataModifiedColumns) {
+                                         Set<String> metadataModifiedColumns, Set<String> invalidNeededColumns) {
             this.filterForFullAnalysis = filterForFullAnalysis;
             this.metadataModifiedColumns = metadataModifiedColumns;
+            this.invalidNeededColumns = invalidNeededColumns;
         }
 
         @Override
         public boolean test(ColumnMetadata columnMetadata) {
-            return filterForFullAnalysis.test(columnMetadata) || metadataModifiedColumns.contains(columnMetadata.getId());
+            return filterForFullAnalysis.test(columnMetadata) //
+                    || metadataModifiedColumns.contains(columnMetadata.getId()) //
+                    || invalidNeededColumns.contains(columnMetadata.getId());
         }
     }
 

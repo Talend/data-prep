@@ -41,8 +41,8 @@ import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.ReactiveTypeDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.StatisticsNode;
-import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsNodesBuilderTest {
@@ -106,7 +106,7 @@ public class StatisticsNodesBuilderTest {
         final NodeClassVisitor nodeClassVisitor = new NodeClassVisitor();
         node.accept(nodeClassVisitor);
         final List<Class> traversedClasses = nodeClassVisitor.getTraversedClasses();
-        final List<Class> expected = asList(TypeDetectionNode.class, //
+        final List<Class> expected = asList(ReactiveTypeDetectionNode.class, //
                 BasicLink.class, //
                 InvalidDetectionNode.class, //
                 BasicLink.class, //
@@ -130,7 +130,7 @@ public class StatisticsNodesBuilderTest {
         final NodeClassVisitor nodeClassVisitor = new NodeClassVisitor();
         node.accept(nodeClassVisitor);
         final List<Class> traversedClasses = nodeClassVisitor.getTraversedClasses();
-        final List<Class> expected = asList(TypeDetectionNode.class, //
+        final List<Class> expected = asList(ReactiveTypeDetectionNode.class, //
                 BasicLink.class,
                 InvalidDetectionNode.class
         );

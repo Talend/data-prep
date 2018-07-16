@@ -274,9 +274,6 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             if (StringUtils.equals("head", stepId) || StringUtils.isEmpty(stepId)) {
                 version = steps.get(steps.size() - 1);
                 previousVersion = steps.get(steps.size() - 2);
-            } else {
-                version = stepId;
-                previousVersion = steps.get(preparation.getSteps().indexOf(version) - 1);
             }
             // Get metadata of previous step
             final TransformationMetadataCacheKey transformationMetadataCacheKey = cacheKeyGenerator.generateMetadataKey(preparationId, previousVersion, sourceType);

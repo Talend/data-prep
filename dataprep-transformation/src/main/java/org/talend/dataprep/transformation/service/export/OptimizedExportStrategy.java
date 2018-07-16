@@ -274,7 +274,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             if (StringUtils.equals("head", stepId) || StringUtils.isEmpty(stepId)) {
                 version = steps.get(steps.size() - 1);
                 previousVersion = steps.get(steps.size() - 2);
-            } else {
+            } else if (preparation.getSteps().indexOf(version) >= 0) {
                 version = stepId;
                 previousVersion = steps.get(preparation.getSteps().indexOf(version) - 1);
             }

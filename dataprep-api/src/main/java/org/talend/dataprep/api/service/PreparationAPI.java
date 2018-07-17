@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
@@ -143,7 +142,7 @@ public class PreparationAPI extends APIService {
     @Timed
     public String createPreparation(
             @ApiParam(name = "folder", value = "Where to store the preparation.") @RequestParam(value = "folder") String folder,
-            @ApiParam(name = "body", value = "The original preparation. You may set all values, service will override values you can't write to.") @RequestBody Preparation preparation) {
+            @ApiParam(name = "body", value = "The original preparation. You may set all values, service will override values you can't write to.") @Valid @RequestBody Preparation preparation) {
     //@formatter:on
 
         if (LOG.isDebugEnabled()) {

@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Notification action error should create an error notification action 1`] = `
+Object {
+  "payload": Object {
+    "message": "message",
+    "title": "error",
+  },
+  "type": "TDP_ERROR_NOTIFICATION",
+}
+`;
+
+exports[`Notification action success should create an success notification action 1`] = `
+Object {
+  "payload": Object {
+    "message": "message",
+    "title": "success",
+  },
+  "type": "TDP_SUCCESS_NOTIFICATION",
+}
+`;
+
+exports[`Notification action warning should create an warning notification action 1`] = `
+Object {
+  "payload": Object {
+    "message": "message",
+    "title": "warning",
+  },
+  "type": "TDP_WARNING_NOTIFICATION",
+}
+`;

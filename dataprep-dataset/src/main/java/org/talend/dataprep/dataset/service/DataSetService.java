@@ -52,7 +52,6 @@ import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -121,6 +120,7 @@ import org.talend.dataprep.schema.FormatFamilyFactory;
 import org.talend.dataprep.schema.Schema;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.user.store.UserDataRepository;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
@@ -205,6 +205,9 @@ public class DataSetService extends BaseDataSetService {
 
     @Resource(name = "serializer#dataset#executor")
     private TaskExecutor executor;
+
+    @Autowired
+    private SecurityProxy securityProxy;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked",
@@ -496,7 +499,13 @@ public class DataSetService extends BaseDataSetService {
 
         LOG.debug("get dataset metadata for {}", dataSetId);
 
-        DataSetMetadata metadata = dataSetMetadataRepository.get(dataSetId);
+        DataSetMetadata metadata;
+        securityProxy.asTechnicalUserForDataSet();
+        try {
+            metadata = dataSetMetadataRepository.get(dataSetId);
+        } finally {
+            securityProxy.releaseIdentity();
+        }
         if (metadata == null) {
             throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, build().put("id", dataSetId));
         }
@@ -933,11 +942,8 @@ public class DataSetService extends BaseDataSetService {
                 metadataForUpdate.getContent().setNbRecords(0);
                 dataSetMetadataRepository.save(metadataForUpdate);
 
-                // all good mate!! so send that to jms
                 // Asks for a in depth schema analysis (for column type information).
                 analyzeDataSet(dataSetId, singletonList(FormatAnalysis.class));
-
-                publisher.publishEvent(new DatasetUpdatedEvent(dataSetMetadata));
             } catch (TDPException e) {
                 throw e;
             } catch (Exception e) {
@@ -946,6 +952,7 @@ public class DataSetService extends BaseDataSetService {
         } finally {
             lock.unlock();
         }
+        publisher.publishEvent(new DatasetUpdatedEvent(dataSetMetadata));
     }
 
     /**

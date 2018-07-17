@@ -104,6 +104,7 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                         dataSetMetadata.setDraft(dataSetMetadataLegacy.isDraft());
                         dataSetMetadata.setEncoding(dataSetMetadataLegacy.getEncoding());
                         dataSetMetadata.setTag(dataSetMetadataLegacy.getTag());
+                        dataSetMetadata.getContent().setNbRecords(dataSetMetadataLegacy.getNbRecords());
                     }
 
                     return dataSetMetadata;

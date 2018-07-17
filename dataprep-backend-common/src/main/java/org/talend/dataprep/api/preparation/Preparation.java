@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -33,7 +34,6 @@ public class Preparation extends Identifiable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** The dataset id. */
-    @NotNull
     private String dataSetId;
 
     /** Metadata on which the preparation is based. **/
@@ -44,7 +44,6 @@ public class Preparation extends Identifiable implements Serializable {
     private String author;
 
     /** The preparation name. */
-    @NotNull
     private String name;
 
     /** The creation date. */

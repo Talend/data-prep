@@ -60,7 +60,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +94,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -1340,52 +1338,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertArrayEquals(headers, resultHeaders);
         String[] resultRecord1 = resultFileReader.readNext();
         assertArrayEquals(record1, resultRecord1);
-    }
-
-    @Test
-    public void shouldNotCreatePreparationWithoutName() throws Exception {
-        // given
-        Folder home = folderRepository.getHome();
-        String folderId = home.getId();
-        // when
-        RequestSpecification request = given() //
-                .contentType(ContentType.JSON) //
-                .queryParam("folder", folderId)
-                .body("{}");
-
-        final Response response = request //
-                .when() //
-                .expect()
-                .statusCode(406)
-                .log()
-                .ifError() //
-                .post("/api/preparations");
-
-        // then
-        Assert.assertThat(response.getStatusCode(), Matchers.is(406));
-    }
-
-    @Test
-    public void shouldNotCreatePreparationWithoutDataSetId() throws Exception {
-        // given
-        Folder home = folderRepository.getHome();
-        String folderId = home.getId();
-        // when
-        RequestSpecification request = given() //
-                .contentType(ContentType.JSON) //
-                .queryParam("folder", folderId)
-                .body("{ \"name\": \"prep-name\" }");
-
-        final Response response = request //
-                .when() //
-                .expect()
-                .statusCode(406)
-                .log()
-                .ifError() //
-                .post("/api/preparations");
-
-        // then
-        Assert.assertThat(response.getStatusCode(), Matchers.is(406));
     }
 
     private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {

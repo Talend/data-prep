@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.util;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
@@ -167,7 +168,7 @@ public final class SortAndOrderHelper {
                     // in order to just call a method to retrieve the author name
                     if (dataSetMetadata instanceof UserDataSetMetadata) {
                         Owner owner = ((UserDataSetMetadata) dataSetMetadata).getOwner();
-                        return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
+                        return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : EMPTY;
                     }
                     return dataSetMetadata.getAuthor();
                 };
@@ -208,20 +209,20 @@ public final class SortAndOrderHelper {
         // Select comparator for sort (either by name or date)
         Function<PreparationDTO, Comparable> keyExtractor;
         if (sortKey == null) { // default to NAME sort
-            keyExtractor = preparation -> preparation.getName().toUpperCase();
+            keyExtractor = SortAndOrderHelper::extractPreparationName;
         } else {
             switch (sortKey) {
             // In case of API call error, default to NAME sort
             case NB_RECORDS:
             case NAME:
-                keyExtractor = preparation -> Optional.ofNullable(preparation).map(p -> p.getName().toUpperCase())
-                        .orElse(StringUtils.EMPTY);
+                keyExtractor = SortAndOrderHelper::extractPreparationName;
                 break;
             case AUTHOR:
-                keyExtractor = preparation -> {
-                    Owner owner = preparation.getOwner();
-                    return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
-                };
+                keyExtractor = preparationDTO -> Optional.ofNullable(preparationDTO)
+                        .filter(p -> p.getOwner() != null)
+                        .filter(p -> p.getOwner().getDisplayName() != null)
+                        .map(p -> p.getOwner().getDisplayName().toUpperCase())
+                        .orElse(EMPTY);
                 break;
             case CREATION_DATE:
             case DATE:
@@ -235,12 +236,16 @@ public final class SortAndOrderHelper {
                 break;
             case DATASET_NAME:
                 if (dataSetFinder != null) {
-                    keyExtractor = p -> getUpperCaseNameFromNullable(dataSetFinder.apply(p));
+                    keyExtractor = p ->
+                            Optional.ofNullable(dataSetFinder.apply(p))
+                                    .filter(ds -> ds.getName() != null)
+                                    .map(ds -> ds.getName().toUpperCase())
+                                    .orElse(EMPTY);
                 } else {
                     LOGGER.debug(
                             "There is no dataset finding function to sort preparations on dataset name. Default to natural name order.");
                     // default to sort on name
-                    keyExtractor = preparation -> preparation.getName().toUpperCase();
+                    keyExtractor = SortAndOrderHelper::extractPreparationName;
                 }
                 break;
             default:
@@ -249,6 +254,13 @@ public final class SortAndOrderHelper {
             }
         }
         return Comparator.comparing(keyExtractor, comparisonOrder);
+    }
+
+    private static String extractPreparationName(PreparationDTO preparation) {
+        return Optional.ofNullable(preparation)
+                .filter(p -> p.getName() != null)
+                .map(p -> p.getName().toUpperCase())
+                .orElse(EMPTY);
     }
 
     @Nullable

@@ -270,7 +270,9 @@ public class SortAndOrderHelperTest {
         final int userDatasetMetadataOrder = preparationComparator.compare(firstUserDatasetMetadata, secondUserDatasetMetadata);
         final int datasetMetadataOrder = preparationComparator.compare(firstDatasetMetadata, secondDatasetMetadata);
         // Make sure that when using DatasetMetadata instead of UserDatasetMetada the behaviour of the comparison remains the same
-        assertEquals(userDatasetMetadataOrder, datasetMetadataOrder);
+        if (sort != Sort.AUTHOR) { // because only user dataset metadata have author
+            assertEquals(userDatasetMetadataOrder, datasetMetadataOrder);
+        }
         return userDatasetMetadataOrder;
     }
 

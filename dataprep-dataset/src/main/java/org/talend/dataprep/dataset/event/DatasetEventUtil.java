@@ -12,14 +12,13 @@
 
 package org.talend.dataprep.dataset.event;
 
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.event.CacheEventProcessingUtil;
 
 @Component
@@ -30,6 +29,9 @@ public class DatasetEventUtil {
 
     @Autowired
     private AnalysisEventProcessingUtil analysisEventProcessingUtil;
+
+    @Autowired
+    private CacheKeyGenerator cacheKeyGenerator;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetEventUtil.class);
 
@@ -55,24 +57,10 @@ public class DatasetEventUtil {
         LOGGER.debug("Evicting sample cache entry for #{} done.", datasetId);
 
         LOGGER.debug("Evicting transformation cache entry for dataset #{}", datasetId);
-        final ContentCacheKey matchDatasetKey = new ContentCacheKey() {
+        TransformationCacheKey transformationCacheKey =
+                cacheKeyGenerator.generateContentKey(datasetId, null, null, null, null, null);
+        cacheEventProcessingUtil.processCleanCacheEvent(transformationCacheKey, Boolean.TRUE);
 
-            @Override
-            public String getKey() {
-                return datasetId;
-            }
-
-            @Override
-            public Predicate<String> getMatcher() {
-                String regex = "transformation.*" + getKey() + ".*";
-
-                // Build regular expression matcher
-                final Pattern pattern = Pattern.compile(regex);
-                return str -> pattern.matcher(str).matches();
-            }
-
-        };
-        cacheEventProcessingUtil.processCleanCacheEvent(matchDatasetKey, Boolean.TRUE);
         LOGGER.debug("Evicting transformation cache entry for dataset #{} done.", datasetId);
     }
 }

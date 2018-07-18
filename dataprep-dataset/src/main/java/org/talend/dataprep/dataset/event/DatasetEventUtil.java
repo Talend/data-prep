@@ -64,7 +64,7 @@ public class DatasetEventUtil {
 
             @Override
             public Predicate<String> getMatcher() {
-                String regex = "transformation.*_" + getKey() + ".*";
+                String regex = "transformation.*" + getKey() + ".*";
 
                 // Build regular expression matcher
                 final Pattern pattern = Pattern.compile(regex);

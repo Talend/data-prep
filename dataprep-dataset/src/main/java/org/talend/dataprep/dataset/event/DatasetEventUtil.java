@@ -49,8 +49,12 @@ public class DatasetEventUtil {
     }
 
     private void cleanDatasetCache(String datasetId) {
-        // when we update a dataset we need to clean cache
-        LOGGER.debug("Evicting cache entry for dataset #{}", datasetId);
+        final ContentCacheKey sampleKey = () -> "dataset-sample_" + datasetId;
+        LOGGER.debug("Evicting sample cache entry for #{}", datasetId);
+        cacheEventProcessingUtil.processCleanCacheEvent(sampleKey, Boolean.FALSE);
+        LOGGER.debug("Evicting sample cache entry for #{} done.", datasetId);
+
+        LOGGER.debug("Evicting transformation cache     entry for dataset #{}", datasetId);
         final ContentCacheKey matchDatasetKey = new ContentCacheKey() {
 
             @Override
@@ -60,7 +64,7 @@ public class DatasetEventUtil {
 
             @Override
             public Predicate<String> getMatcher() {
-                String regex = ".*_" + getKey() + ".*";
+                String regex = "transformation.*_" + getKey() + ".*";
 
                 // Build regular expression matcher
                 final Pattern pattern = Pattern.compile(regex);
@@ -69,6 +73,6 @@ public class DatasetEventUtil {
 
         };
         cacheEventProcessingUtil.processCleanCacheEvent(matchDatasetKey, Boolean.TRUE);
-        LOGGER.debug("Evicting cache entry for dataset  #{} done.", datasetId);
+        LOGGER.debug("Evicting transformation cache entry for dataset #{} done.", datasetId);
     }
 }

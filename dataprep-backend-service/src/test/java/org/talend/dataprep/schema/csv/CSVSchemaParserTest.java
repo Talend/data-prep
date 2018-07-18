@@ -105,13 +105,8 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         }
     }
 
-    /**
-     * When trying to guess an input with | as separator separator should be found.
-     *
-     * @throws IOException
-     */
     @Test
-    public void shouldFindSemicolonSeparator_TDP_5925() throws IOException {
+    public void shouldPassOnNbLinesHeaderParameter_TDP_5925() throws IOException {
         // given
         String str = "1;2;3;4;5;6\n" + "1;John;Lennon;40;10/09/1940;false\n" + "2;David;Bowie;67;01/08/1947;true\n";
         try (InputStream inputStream = new ByteArrayInputStream(str.getBytes())) {

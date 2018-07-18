@@ -54,7 +54,7 @@ public class DatasetEventUtil {
         cacheEventProcessingUtil.processCleanCacheEvent(sampleKey, Boolean.FALSE);
         LOGGER.debug("Evicting sample cache entry for #{} done.", datasetId);
 
-        LOGGER.debug("Evicting transformation cache     entry for dataset #{}", datasetId);
+        LOGGER.debug("Evicting transformation cache entry for dataset #{}", datasetId);
         final ContentCacheKey matchDatasetKey = new ContentCacheKey() {
 
             @Override

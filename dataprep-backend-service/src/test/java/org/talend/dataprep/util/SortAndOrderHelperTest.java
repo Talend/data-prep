@@ -76,11 +76,7 @@ public class SortAndOrderHelperTest {
         assertTrue(getPreparationComparisonByName("aaa", "bbb", ASC) < 0);
         assertTrue(getPreparationComparisonByName("aaa", "bbb", DESC) > 0);
         assertEquals(0, getPreparationComparisonByName("aaa", "aaa", DESC));
-    }
-
-    @Test
-    public void getPreparationComparator_byNameWithNullDoesNotThrowException() throws Exception {
-        getPreparationComparisonByName("aaa", null, ASC);
+        getPreparationComparisonByName("aaa", null, ASC); // does not throw exception
     }
 
     @Test
@@ -270,7 +266,7 @@ public class SortAndOrderHelperTest {
         final int userDatasetMetadataOrder = preparationComparator.compare(firstUserDatasetMetadata, secondUserDatasetMetadata);
         final int datasetMetadataOrder = preparationComparator.compare(firstDatasetMetadata, secondDatasetMetadata);
         // Make sure that when using DatasetMetadata instead of UserDatasetMetada the behaviour of the comparison remains the same
-        if (sort != Sort.AUTHOR) { // because only user dataset metadata have author
+        if (sort != AUTHOR) { // because only user dataset metadata have author
             assertEquals(userDatasetMetadataOrder, datasetMetadataOrder);
         }
         return userDatasetMetadataOrder;

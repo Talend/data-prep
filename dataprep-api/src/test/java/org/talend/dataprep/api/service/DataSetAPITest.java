@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.json.JsonErrorCode;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -396,6 +398,27 @@ public class DataSetAPITest extends ApiServiceTestBase {
         response.then().contentType(ContentType.JSON);
         final String contentAsString = response.asString();
         assertThat(contentAsString, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void testDataSetCreate_TDP5925() throws Exception {
+        // given
+        final String dataSetId = testClient.createDataset("dataset/dataset_in_column_name.csv", "tagada");
+        final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_metadata.json");
+
+        // when
+        Response response = when().get("/api/datasets/{id}?metadata=true&columns=false", dataSetId);
+
+        // then
+        response.then().contentType(ContentType.JSON);
+        DataSet dataset = response.as(DataSet.class);
+        assertNotNull(dataset.getMetadata());
+        assertNotNull(dataset.getMetadata().getRowMetadata());
+        List<ColumnMetadata> columns = dataset.getMetadata().getRowMetadata().getColumns();
+        assertNotNull(columns);
+        assertEquals(6, columns.size());
+        ColumnMetadata firstCol = columns.get(0);
+        assertEquals("1", firstCol.getName());
     }
 
     @Test

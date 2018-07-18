@@ -101,7 +101,7 @@ public class OSDataPrepAPIHelper {
         } else {
             executionContext = ITExecutionContext.ON_PREMISE;
         }
-        LOGGER.info("Start Integration Test with {}", executionContext == ITExecutionContext.CLOUD ? "Cloud" : "On Premise");
+        LOGGER.info("Start Integration Test on '{}'", executionContext == ITExecutionContext.CLOUD ? "Cloud" : "On Premise");
     }
 
     /**

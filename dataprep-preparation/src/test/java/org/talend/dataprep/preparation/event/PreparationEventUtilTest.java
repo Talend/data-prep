@@ -91,6 +91,7 @@ public class PreparationEventUtilTest {
         verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class),
                 eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
         verify(securityProxy, times(2)).asTechnicalUser();
-        verify(securityProxy, times(2)).releaseIdentity();
+        verify(securityProxy, times(1)).asTechnicalUserForDataSet();
+        verify(securityProxy, times(3)).releaseIdentity();
     }
 }

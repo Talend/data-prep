@@ -91,17 +91,21 @@ public class PreparationEventUtil {
      * that use this <code>dataSetId</code>).
      */
     private void removePreparationStepRowMetadata(String dataSetId) {
+        DataSetMetadata dataSetMetadata;
+        try {
+            securityProxy.asTechnicalUserForDataSet();
+            dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
+        } finally {
+            securityProxy.releaseIdentity();
+        }
+        if (dataSetMetadata == null) {
+            LOGGER.error("Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).",
+                    dataSetId);
+            return;
+        }
+        final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
         try {
             securityProxy.asTechnicalUser();
-            final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
-            if (dataSetMetadata == null) {
-                LOGGER.error(
-                        "Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).",
-                        dataSetId);
-                return;
-            }
-            final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
-
             preparationRepository
                     .list(PersistentPreparation.class, eq("dataSetId", dataSetId)) //
                     .forEach(preparation -> {

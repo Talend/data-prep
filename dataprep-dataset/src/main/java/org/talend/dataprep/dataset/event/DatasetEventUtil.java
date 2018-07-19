@@ -51,16 +51,9 @@ public class DatasetEventUtil {
     }
 
     private void cleanDatasetCache(String datasetId) {
-        final ContentCacheKey sampleKey = () -> "dataset-sample_" + datasetId;
         LOGGER.debug("Evicting sample cache entry for #{}", datasetId);
+        final ContentCacheKey sampleKey = cacheKeyGenerator.generateDatasetSampleKey(datasetId);
         cacheEventProcessingUtil.processCleanCacheEvent(sampleKey, Boolean.FALSE);
         LOGGER.debug("Evicting sample cache entry for #{} done.", datasetId);
-
-        LOGGER.debug("Evicting transformation cache entry for dataset #{}", datasetId);
-        TransformationCacheKey transformationCacheKey =
-                cacheKeyGenerator.generateContentKey(datasetId, null, null, null, null, null);
-        cacheEventProcessingUtil.processCleanCacheEvent(transformationCacheKey, Boolean.TRUE);
-
-        LOGGER.debug("Evicting transformation cache entry for dataset #{} done.", datasetId);
     }
 }

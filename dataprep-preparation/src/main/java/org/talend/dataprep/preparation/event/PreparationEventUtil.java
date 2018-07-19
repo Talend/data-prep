@@ -13,7 +13,11 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.ContentCacheKey;
+import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
+import org.talend.dataprep.event.CacheEventProcessingUtil;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -23,9 +27,9 @@ import org.talend.dataprep.security.SecurityProxy;
  * @see #removePreparationStepRowMetadata(String)
  */
 @Component
-public class PreparationUpdateListenerUtil {
+public class PreparationEventUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationUpdateListenerUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreparationEventUtil.class);
 
     /**
      * The preparation repository.
@@ -40,7 +44,37 @@ public class PreparationUpdateListenerUtil {
     private DatasetClient datasetClient;
 
     @Autowired
+    private CacheKeyGenerator cacheKeyGenerator;
+
+    @Autowired
+    private CacheEventProcessingUtil cacheEventProcessingUtil;
+
+    @Autowired
     private SecurityProxy securityProxy;
+
+    public void performUpdateEvent(String datasetId) {
+        LOGGER.debug("Performing update event for dataset {}", datasetId);
+        this.cleanTransformationCache(datasetId);
+        this.removePreparationStepRowMetadata(datasetId);
+    }
+
+    private void cleanTransformationCache(String datasetId) {
+        LOGGER.debug("Evicting transformation cache entry for dataset #{}", datasetId);
+        TransformationCacheKey transformationCacheKey =
+                cacheKeyGenerator.generateContentKey(datasetId, null, null, null, null, null);
+        cacheEventProcessingUtil.processCleanCacheEvent(transformationCacheKey, Boolean.TRUE);
+        LOGGER.debug("Evicting transformation cache entry for dataset #{} done.", datasetId);
+
+        LOGGER.debug("Evicting transformation metadata cache entry for dataset #{}", datasetId);
+        preparationRepository
+                .list(Preparation.class, eq("dataSetId", datasetId)) //
+                .forEach(preparation -> {
+                    ContentCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(preparation.getId(), null, null);
+                    cacheEventProcessingUtil.processCleanCacheEvent(metadataKey, Boolean.TRUE);
+                });
+        LOGGER.debug("Evicting transformation metadata cache entry for dataset #{} done.", datasetId);
+    }
+
 
     /**
      * Removes all {@link StepRowMetadata} of preparations that use the provided {@link DataSetMetadata} metadata.
@@ -48,7 +82,7 @@ public class PreparationUpdateListenerUtil {
      * @param dataSetId The data set id to be used in preparation search (code searches preparations
      * that use this <code>dataSetId</code>).
      */
-    public void removePreparationStepRowMetadata(String dataSetId) {
+    private void removePreparationStepRowMetadata(String dataSetId) {
         try {
             securityProxy.asTechnicalUserForDataSet();
             final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);

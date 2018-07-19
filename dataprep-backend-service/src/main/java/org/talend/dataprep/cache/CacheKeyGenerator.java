@@ -35,6 +35,15 @@ public class CacheKeyGenerator {
     private Security security;
 
     /**
+     * Build a cache key for dataset-sample
+     * @param datasetId the id of the dataset
+     * @return the cache key of the dataset sample
+     */
+    public DataSetSampleCacheKey generateDatasetSampleKey(final  String datasetId){
+        return new DataSetSampleCacheKey(datasetId);
+    }
+
+    /**
      * Build a cache key to identify the transformation result content
      */
     public TransformationCacheKey generateContentKey(final String datasetId, final String preparationId, //

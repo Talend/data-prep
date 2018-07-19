@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
@@ -18,6 +17,7 @@ import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.event.CacheEventProcessingUtil;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -55,6 +55,7 @@ public class PreparationEventUtil {
     public void performUpdateEvent(String datasetId) {
         LOGGER.debug("Performing update event for dataset {}", datasetId);
         this.cleanTransformationCache(datasetId);
+        this.cleanTransformationMetadataCache(datasetId);
         this.removePreparationStepRowMetadata(datasetId);
     }
 
@@ -64,17 +65,24 @@ public class PreparationEventUtil {
                 cacheKeyGenerator.generateContentKey(datasetId, null, null, null, null, null);
         cacheEventProcessingUtil.processCleanCacheEvent(transformationCacheKey, Boolean.TRUE);
         LOGGER.debug("Evicting transformation cache entry for dataset #{} done.", datasetId);
-
-        LOGGER.debug("Evicting transformation metadata cache entry for dataset #{}", datasetId);
-        preparationRepository
-                .list(Preparation.class, eq("dataSetId", datasetId)) //
-                .forEach(preparation -> {
-                    ContentCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(preparation.getId(), null, null);
-                    cacheEventProcessingUtil.processCleanCacheEvent(metadataKey, Boolean.TRUE);
-                });
-        LOGGER.debug("Evicting transformation metadata cache entry for dataset #{} done.", datasetId);
     }
 
+    private void cleanTransformationMetadataCache(String datasetId) {
+        LOGGER.debug("Evicting transformation metadata cache entry for dataset #{}", datasetId);
+        try {
+            securityProxy.asTechnicalUser();
+            preparationRepository
+                    .list(PersistentPreparation.class, eq("dataSetId", datasetId)) //
+                    .forEach(preparation -> {
+                        ContentCacheKey metadataKey =
+                                cacheKeyGenerator.generateMetadataKey(preparation.getId(), null, null);
+                        cacheEventProcessingUtil.processCleanCacheEvent(metadataKey, Boolean.TRUE);
+                    });
+        } finally {
+            securityProxy.releaseIdentity();
+        }
+        LOGGER.debug("Evicting transformation metadata cache entry for dataset #{} done.", datasetId);
+    }
 
     /**
      * Removes all {@link StepRowMetadata} of preparations that use the provided {@link DataSetMetadata} metadata.
@@ -87,13 +95,15 @@ public class PreparationEventUtil {
             securityProxy.asTechnicalUserForDataSet();
             final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
             if (dataSetMetadata == null) {
-                LOGGER.error("Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).", dataSetId);
+                LOGGER.error(
+                        "Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).",
+                        dataSetId);
                 return;
             }
             final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
 
             preparationRepository
-                    .list(Preparation.class, eq("dataSetId", dataSetId)) //
+                    .list(PersistentPreparation.class, eq("dataSetId", dataSetId)) //
                     .forEach(preparation -> {
                         // Reset preparation row metadata.
                         preparation.setRowMetadata(rowMetadata);

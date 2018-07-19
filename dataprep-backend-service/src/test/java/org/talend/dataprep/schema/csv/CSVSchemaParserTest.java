@@ -34,7 +34,7 @@ import org.talend.dataprep.schema.SchemaParser;
 
 /**
  * Unit test for the CSVSchemaParser class.
- *
+ * 
  * @see CSVSchemaParser
  */
 public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
@@ -67,7 +67,7 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
 
     /**
      * When trying to guess the columns data type an IndexOutOfBoundsException should not be thrown.
-     *
+     * 
      * @throws IOException
      */
     @Test
@@ -102,26 +102,6 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
             final Map<String, String> parameters = request.getMetadata().getContent().getParameters();
             char actual = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals('|', actual);
-        }
-    }
-
-    @Test
-    public void shouldPassOnNbLinesHeaderParameter_TDP_5925() throws IOException {
-        // given
-        String str = "1;2;3;4;5;6\n" + "1;John;Lennon;40;10/09/1940;false\n" + "2;David;Bowie;67;01/08/1947;true\n";
-        try (InputStream inputStream = new ByteArrayInputStream(str.getBytes())) {
-            // We do know the format and therefore we go directly to the CSV schema guessing
-            SchemaParser.Request request = getRequest(inputStream, "#3");
-            request.getMetadata().setEncoding("UTF-8");
-
-            // when
-            csvSchemaParser.parse(request);
-
-            // then
-            final Map<String, String> parameters = request.getMetadata().getContent().getParameters();
-            int actual = Integer.parseInt(parameters.get(CSVFormatFamily.HEADER_NB_LINES_PARAMETER));
-            // first line is not recognize by detector so just fallback to no header
-            assertEquals(0, actual);
         }
     }
 

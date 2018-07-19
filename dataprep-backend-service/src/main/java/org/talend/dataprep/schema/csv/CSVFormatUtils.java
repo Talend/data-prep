@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -76,7 +75,7 @@ public class CSVFormatUtils {
      */
     Map<String, String> compileParameterProperties(Separator separator, Map<String, String> updatedParameters) {
 
-        List<String> header = separator.getHeaders().stream().map(Pair::getKey).collect(Collectors.toList());
+        List<String> header = separator.getHeaders().stream().map(p -> p.getKey()).collect(Collectors.toList());
         // header
         String jsonHeader;
         try {
@@ -86,7 +85,6 @@ public class CSVFormatUtils {
         }
         updatedParameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
 
-        updatedParameters.put(HEADER_NB_LINES_PARAMETER, separator.isFirstLineAHeader() && separator.isHeaderInfoReliable() ? "1" : "0");
         // separator
         updatedParameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
 

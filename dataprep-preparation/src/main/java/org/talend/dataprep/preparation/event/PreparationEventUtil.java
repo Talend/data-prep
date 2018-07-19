@@ -92,7 +92,7 @@ public class PreparationEventUtil {
      */
     private void removePreparationStepRowMetadata(String dataSetId) {
         try {
-            securityProxy.asTechnicalUserForDataSet();
+            securityProxy.asTechnicalUser();
             final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
             if (dataSetMetadata == null) {
                 LOGGER.error(

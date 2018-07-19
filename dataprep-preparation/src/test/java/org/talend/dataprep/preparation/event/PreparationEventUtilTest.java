@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
@@ -75,7 +74,8 @@ public class PreparationEventUtilTest {
         final PersistentPreparation preparation = new PersistentPreparation();
         preparation.setHeadId(step3.id());
 
-        when(preparationUtils.listSteps(eq(preparation.getHeadId()), eq(preparationRepository))).thenReturn(Arrays.asList(Step.ROOT_STEP, step1, step2, step3));
+        when(preparationUtils.listSteps(eq(preparation.getHeadId()), eq(preparationRepository)))
+                .thenReturn(Arrays.asList(Step.ROOT_STEP, step1, step2, step3));
         when(preparationRepository.list(eq(PersistentPreparation.class), eq(TqlBuilder.eq("dataSetId", "ds-1234"))))
                 .thenReturn(Stream.of(preparation), Stream.of(preparation));
         when(preparationRepository.get(eq(step1.id()), eq(Step.class))).thenReturn(step1);
@@ -88,7 +88,8 @@ public class PreparationEventUtilTest {
         // then
         verify(cacheEventProcessingUtil, times(2)).processCleanCacheEvent(any(ContentCacheKey.class), any());
         verify(preparationRepository, times(1)).add(any(Preparation.class));
-        verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class), eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
+        verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class),
+                eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
         verify(securityProxy, times(2)).asTechnicalUser();
         verify(securityProxy, times(2)).releaseIdentity();
     }

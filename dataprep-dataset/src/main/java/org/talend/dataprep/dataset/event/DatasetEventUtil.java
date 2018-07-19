@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCacheKey;
-import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.event.CacheEventProcessingUtil;
 
 @Component

@@ -33,7 +33,6 @@ It is possible to launch a specific test by specifying it in the command line:
 $ mvn verify -DskipITs=false -Dcucumber.options="classpath:features/ExportPreparationFromCSV.feature"
 ```
 
-By default cucumber tests call the backend api on `http://dev.data-prep.talend.lan:8888`.
 By default cucumber tests call the backend api on `http://localhost:8888`.
 You can set another url value by using the following maven parameter:
 ```

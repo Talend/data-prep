@@ -13,23 +13,28 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 import java.io.InputStream;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 
 /**
  * Command used to retrieve a preview when adding an action to a dataset/preparation.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class PreviewAdd extends PreviewAbstract {
 
     /** The parameters to perform the preview on the Add Action request. */
@@ -42,7 +47,7 @@ public class PreviewAdd extends PreviewAbstract {
      * @param preparation the preparation to deal with (may be null if dealing with dataset).
      * @param actions the preparation actions (may be empty if dealing with dataset).
      */
-    private PreviewAdd(final PreviewAddParameters parameters, Preparation preparation, List<Action> actions) {
+    private PreviewAdd(final PreviewAddParameters parameters, PreparationDTO preparation, List<Action> actions) {
         super(preparation, actions);
         this.addParameters = parameters;
     }
@@ -60,7 +65,7 @@ public class PreviewAdd extends PreviewAbstract {
             dataSetId = preparation.getDataSetId();
 
             // Get steps from first transformation
-            final List<String> steps = preparation.getSteps().stream().map(Step::getId).collect(Collectors.toList());
+            final List<String> steps = preparation.getSteps();
             steps.remove(0);
 
             // extract actions by steps in chronological order, until defined last active step (from input)

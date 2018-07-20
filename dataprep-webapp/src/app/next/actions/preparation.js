@@ -1,5 +1,4 @@
 import matchPath from '@talend/react-cmf/lib/sagaRouter/matchPath';
-
 import folder from './folder';
 import {
 	CANCEL_RENAME_PREPARATION,

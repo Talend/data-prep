@@ -23,15 +23,12 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
 import org.talend.dataprep.api.dataset.row.Flag;
-import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -74,6 +71,17 @@ public class RowMetadata implements Serializable {
      */
     public RowMetadata(List<ColumnMetadata> columns) {
         setColumns(columns);
+    }
+
+    /**
+     * Copy constructor to replace {@link #clone()}.
+     */
+    public RowMetadata(RowMetadata original) {
+        List<ColumnMetadata> copyColumns = new ArrayList<>(original.columns.size());
+        original.columns.forEach(col -> copyColumns.add(ColumnMetadata.Builder.column().copy(col).build()));
+        setColumns(new ArrayList<>(copyColumns));
+        nextId = original.nextId;
+        sampleNbRows = original.sampleNbRows;
     }
 
     public int getNextId() {
@@ -312,17 +320,7 @@ public class RowMetadata implements Serializable {
 
     @Override
     public RowMetadata clone() {
-        // also copy the columns !
-        List<ColumnMetadata> copyColumns = new ArrayList<>(columns.size());
-        columns.forEach(col -> copyColumns.add(ColumnMetadata.Builder.column().copy(col).build()));
-        final RowMetadata clone = new RowMetadata(new ArrayList<>(copyColumns));
-        clone.nextId = nextId;
-        clone.sampleNbRows = sampleNbRows;
-        return clone;
-    }
-
-    public Schema toSchema() {
-        return RowMetadataUtils.toSchema(this);
+        return new RowMetadata(this);
     }
 
     /**

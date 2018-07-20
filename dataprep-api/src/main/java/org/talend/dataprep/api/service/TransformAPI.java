@@ -12,16 +12,9 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.talend.dataprep.command.CommandHelper.toStream;
-
-import java.io.InputStream;
-import java.util.stream.Stream;
-
-import javax.validation.Valid;
-
+import com.netflix.hystrix.HystrixCommand;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,13 +27,16 @@ import org.talend.dataprep.api.service.command.preparation.PreparationGetContent
 import org.talend.dataprep.api.service.command.transformation.*;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.command.dataset.DataSetGet;
 import org.talend.dataprep.metrics.Timed;
 
-import com.netflix.hystrix.HystrixCommand;
+import javax.validation.Valid;
+import java.io.InputStream;
+import java.util.stream.Stream;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.command.CommandHelper.toStream;
 
 @RestController
 public class TransformAPI extends APIService {
@@ -113,7 +109,7 @@ public class TransformAPI extends APIService {
         if (isNotBlank(preparationId)) {
             inputData = getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId());
         } else {
-            inputData = getCommand(DataSetGet.class, dynamicParamsInput.getDatasetId(), false, false);
+            inputData = datasetClient.getDataSetGetCommand(dynamicParamsInput.getDatasetId(), false, false);
         }
 
         // get params, passing content in the body

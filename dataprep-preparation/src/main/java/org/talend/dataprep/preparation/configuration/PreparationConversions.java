@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
+import static org.talend.tql.api.TqlBuilder.in;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,18 +37,19 @@ import org.talend.dataprep.api.filter.TQLFilterService;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.PreparationMessage;
 import org.talend.dataprep.api.preparation.PreparationSummary;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
+import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
-import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
@@ -83,22 +85,52 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
     public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
             ApplicationContext applicationContext) {
         conversionService.register(fromBean(Preparation.class) //
-                .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class) //
+                .toBeans(PreparationMessage.class, UserPreparation.class, PersistentPreparation.class,
+                        PreparationDTO.class) //
                 .using(PreparationMessage.class, (s, t) -> toPreparationMessage(s, t, applicationContext)) //
                 .using(PreparationSummary.class, (s, t) -> toStudioPreparation(s, t, applicationContext)) //
-                .using(UserPreparation.class, (s, t) -> toUserPreparation(t, applicationContext)) //
+                .build());
+
+        // convert PreparationDTO to PreparationDetailsDTO
+        conversionService.register(fromBean(PreparationDTO.class) //
+                .toBeans(PreparationDetailsDTO.class) //
+                .using(PreparationDetailsDTO.class, (s, t) -> toPreparationDetailsDTO(s, t, applicationContext)) //
                 .build());
         return conversionService;
     }
 
+    private PreparationDetailsDTO toPreparationDetailsDTO(PreparationDTO source, PreparationDetailsDTO target,
+
+            ApplicationContext applicationContext) {
+        // Steps diff metadata
+
+        final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
+
+        List<String> idsStep = source.getSteps();
+
+        final List<StepDiff> diffs = preparationRepository
+                .list(PersistentStep.class, in("id", idsStep.toArray(new String[] {})))
+                .filter(step -> !Step.ROOT_STEP.id().equals(step.getId())) //
+                .sorted((step1, step2) -> {
+                    // we need to keep the order from the original list (source.getSteps())
+                    int idPosStep1 = idsStep.indexOf(step1.getId());
+                    int idPosStep2 = idsStep.indexOf(step2.getId());
+
+                    return idPosStep1 - idPosStep2;
+                })
+                .map(PersistentStep::getDiff) //
+                .collect(toList());
+        target.setDiff(diffs);
+
+        // TDP-5888: It is important for Spark runs to have a row metadata to describe initial data schema.
+        final PersistentPreparation preparation = preparationRepository.get(source.getId(), PersistentPreparation.class);
+        target.setRowMetadata(preparation.getRowMetadata());
+
+        return target;
+    }
+
     private PreparationSummary toStudioPreparation(Preparation source, PreparationSummary target,
             ApplicationContext applicationContext) {
-        if (target.getOwner() == null) {
-            final Security security = applicationContext.getBean(Security.class);
-            Owner owner = new Owner(security.getUserId(), security.getUserDisplayName(), StringUtils.EMPTY);
-            target.setOwner(owner);
-        }
-
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
         final ActionRegistry actionRegistry = applicationContext.getBean(ActionRegistry.class);
 
@@ -109,7 +141,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
             boolean allowDistributedRun = true;
             for (Action action : actions) {
                 final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
-                if (actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                if (actionDefinition.getBehavior(action).contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
                     allowDistributedRun = false; // Disallow distributed run
                     break;
                 }
@@ -120,15 +152,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
         return target;
     }
 
-    private UserPreparation toUserPreparation(UserPreparation target, ApplicationContext applicationContext) {
-        if (target.getOwner() == null) {
-            final Security security = applicationContext.getBean(Security.class);
-            Owner owner = new Owner(security.getUserId(), security.getUserDisplayName(), StringUtils.EMPTY);
-            target.setOwner(owner);
-        }
-        return target;
-    }
-
+    // TODO: check if it is always used
     private PreparationMessage toPreparationMessage(Preparation source, PreparationMessage target,
             ApplicationContext applicationContext) {
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
@@ -197,7 +221,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                     boolean allowDistributedRun = true;
                     for (Action action : actions) {
                         final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
-                        if (actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                        if (actionDefinition.getBehavior(action).contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
                             allowDistributedRun = false;
                             break;
                         }

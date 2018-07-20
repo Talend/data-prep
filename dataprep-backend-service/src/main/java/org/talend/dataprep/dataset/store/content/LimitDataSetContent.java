@@ -1,12 +1,12 @@
 package org.talend.dataprep.dataset.store.content;
 
-import java.io.InputStream;
-import java.util.stream.Stream;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+
+import java.io.InputStream;
+import java.util.stream.Stream;
 
 @Component
 class LimitDataSetContent implements DataSetContentLimit {
@@ -22,6 +22,11 @@ class LimitDataSetContent implements DataSetContentLimit {
     @Override
     public boolean limitContentSize() {
         return true;
+    }
+
+    @Override
+    public Long getLimit() {
+        return limit;
     }
 
     private class LimitDataSetContentStore extends DataSetContentStore {

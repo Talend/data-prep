@@ -21,11 +21,12 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.TransformationMetadataCacheKey;
@@ -76,7 +77,10 @@ public class PipelineTransformer implements Transformer {
     private TransformationRowMetadataUtils transformationRowMetadataUtils;
 
     @Autowired
-    private StepMetadataRepository preparationUpdater;
+    private StepMetadataRepository stepMetadataRepository;
+
+    @Autowired
+    private Optional<Tracer> tracer;
 
     @Override
     public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
@@ -90,11 +94,11 @@ public class PipelineTransformer implements Transformer {
         final ConfiguredCacheWriter metadataWriter = new ConfiguredCacheWriter(contentCache, DEFAULT);
         final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(
                 configuration.getPreparationId(), configuration.stepId(), configuration.getSourceType());
-        final PreparationMessage preparation = configuration.getPreparation();
+        final PreparationDTO preparation = configuration.getPreparation();
         // function that from a step gives the rowMetadata associated to the previous/parent step
-        final Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> Optional
-                .ofNullable(s.getParent()) //
-                .map(id -> preparationUpdater.get(id)) //
+        final Function<String, RowMetadata> stepRowMetadataSupplier = s -> Optional
+                .ofNullable(s) //
+                .map(id -> stepMetadataRepository.get(id)) //
                 .orElse(null);
 
         final Pipeline pipeline = Pipeline.Builder
@@ -111,7 +115,7 @@ public class PipelineTransformer implements Transformer {
                 .withFilterOut(configuration.getOutFilter()) //
                 .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, rowMetadataFallbackProvider)) //
                 .withStatisticsAdapter(adapter) //
-                .withStepMetadataSupplier(previousStepRowMetadataSupplier) //
+                .withStepMetadataSupplier(stepRowMetadataSupplier) //
                 .withGlobalStatistics(configuration.isGlobalStatistics()) //
                 .allowMetadataChange(configuration.isAllowMetadataChange()) //
                 .build();
@@ -121,15 +125,22 @@ public class PipelineTransformer implements Transformer {
 
             @Override
             public void execute() {
+                final Optional<Span> span = tracer.map(t -> {
+                    final Span pipelineSpan = t.createSpan("transformer-pipeline");
+                    pipelineSpan.tag("preparation id", configuration.getPreparationId());
+                    pipelineSpan.tag("arguments", configuration.getArguments().toString());
+                    return pipelineSpan;
+                });
                 try {
                     LOGGER.debug("Before transformation: {}", pipeline);
                     pipeline.execute(input);
                 } finally {
                     LOGGER.debug("After transformation: {}", pipeline);
+                    span.ifPresent(s -> tracer.ifPresent(t -> t.close(s)));
                 }
 
                 if (preparation != null) {
-                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(preparationUpdater);
+                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
                     pipeline.accept(visitor);
                 }
             }

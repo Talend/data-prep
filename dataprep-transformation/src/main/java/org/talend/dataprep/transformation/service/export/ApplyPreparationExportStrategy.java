@@ -12,12 +12,9 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Objects;
 
@@ -30,20 +27,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.command.dataset.DataSetGet;
+import org.talend.dataprep.cache.TransformationCacheKey;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
-import org.talend.dataprep.cache.CacheKeyGenerator;
-import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
-
-import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * A {@link BaseExportStrategy strategy} to apply a preparation on a different dataset (different from the one initially
@@ -56,6 +51,9 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
+
+    @Autowired
+    private DatasetClient datasetClient;
 
     @Override
     public boolean accept(ExportParameters parameters) {
@@ -83,28 +81,23 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
         final String formatName = parameters.getExportType();
-        final Preparation preparation = getPreparation(preparationId);
+        final PreparationDTO preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // dataset content must be retrieved as the technical user because it might not be shared
         boolean technicianIdentityReleased = false;
-        securityProxy.asTechnicalUser();
+        securityProxy.asTechnicalUserForDataSet();
         // get the dataset content (in an auto-closable block to make sure it is properly closed)
         final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
-        final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, dataSetId, fullContent, true);
 
-        try (final InputStream datasetContent = dataSetGet.execute();
-                final JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
+        try (DataSet dataSet = datasetClient.getDataSet(dataSetId, fullContent, true)) {
 
             // release the technical user identity
             securityProxy.releaseIdentity();
             technicianIdentityReleased = true;
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
-
-            // Create dataset
-            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
 
             // get the actions to apply (no preparation ==> dataset export ==> no actions)
             final String actions = getActions(preparationId, version);

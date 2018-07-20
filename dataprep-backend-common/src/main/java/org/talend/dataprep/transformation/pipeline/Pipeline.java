@@ -32,8 +32,7 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.PreparationMessage;
-import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
@@ -214,9 +213,9 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
         private AnalyzerService analyzerService;
 
-        private PreparationMessage preparation;
+        private PreparationDTO preparation;
 
-        private Function<Step, RowMetadata> previousStepRowMetadataSupplier = s -> null;
+        private Function<String, RowMetadata> parentStepRowMetadataSupplier = s -> null;
 
         private Long limit = null;
 
@@ -226,8 +225,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return new Builder();
         }
 
-        public Builder withStepMetadataSupplier(Function<Step, RowMetadata> previousStepRowMetadataSupplier) {
-            this.previousStepRowMetadataSupplier = previousStepRowMetadataSupplier;
+        public Builder withStepMetadataSupplier(Function<String, RowMetadata> previousStepRowMetadataSupplier) {
+            this.parentStepRowMetadataSupplier = previousStepRowMetadataSupplier;
             return this;
         }
 
@@ -252,7 +251,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return this;
         }
 
-        public Builder withPreparation(PreparationMessage preparation) {
+        public Builder withPreparation(PreparationDTO preparation) {
             this.preparation = preparation;
             return this;
         }
@@ -362,8 +361,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (preparation != null) {
                 LOG.debug("Applying step node transformations...");
                 actionsNode.logStatus(LOG, "Before transformation\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
-                        previousStepRowMetadataSupplier);
+                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), parentStepRowMetadataSupplier);
                 current.to(node);
                 node.logStatus(LOG, "After transformation\n{}");
             } else {

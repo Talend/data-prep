@@ -47,20 +47,20 @@ class UpdatedStepVisitor extends Visitor {
             @Override
             public void visitAction(ActionNode actionNode) {
                 final ActionContext.ActionStatus status = actionNode.getActionContext().getActionStatus();
-                final Step step = stepNode.getStep();
+                final String step = stepNode.getStep();
                 switch (status) {
                     case NOT_EXECUTED:
                     case CANCELED:
-                        LOGGER.debug("Not updating metadata for {} (action ended with status {}).", step.getId(), status);
-                        step.setRowMetadata(null);
+                        LOGGER.debug("Not updating metadata for {} (action ended with status {}).", step, status);
+                        preparationUpdater.invalidate(step);
                         break;
                     case OK:
                     case DONE:
-                        LOGGER.debug("Keeping metadata {} (action ended with status {}).", step.getId(), status);
+                        LOGGER.debug("Keeping metadata {} (action ended with status {}).", step, status);
+                        preparationUpdater.update(step, actionNode.getActionContext().getRowMetadata());
                         break;
                 }
 
-                preparationUpdater.update(step.id(), actionNode.getActionContext().getRowMetadata());
             }
         });
         super.visitStepNode(stepNode);

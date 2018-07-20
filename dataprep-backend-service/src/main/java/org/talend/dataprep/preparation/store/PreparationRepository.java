@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.talend.dataprep.api.preparation.Identifiable;
+import org.talend.dataprep.metrics.Timed;
 import org.talend.tql.model.Expression;
 
 /**
@@ -35,11 +36,13 @@ public interface PreparationRepository {
      * @param filter A TQL filter (i.e. storage-agnostic)
      * @return <code>true</code> if at least one <code>clazz</code> matches <code>filter</code>.
      */
+    @Timed
     <T extends Identifiable> boolean exist(Class<T> clazz, Expression filter);
 
     /**
      * @return A {@link java.lang.Iterable iterable} of <code>clazz</code>.
      */
+    @Timed
     <T extends Identifiable> Stream<T> list(Class<T> clazz);
 
     /**
@@ -47,6 +50,7 @@ public interface PreparationRepository {
      * @param filter A TQL filter (i.e. storage-agnostic)
      * @return A {@link java.lang.Iterable iterable} of <code>clazz</code> that match given <code>filter</code>.
      */
+    @Timed
     <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression filter);
 
     /**
@@ -54,12 +58,14 @@ public interface PreparationRepository {
      *
      * @param object the identifiable to save.
      */
+    @Timed
     void add(Identifiable object);
 
     /**
      * Save of update a collection of {@link Identifiable} objects.
      * @param objects The objects to save.
      */
+    @Timed
     void add(Collection<? extends Identifiable> objects);
 
     /**
@@ -70,11 +76,13 @@ public interface PreparationRepository {
      * @param <T> the type of Identifiable.
      * @return the Identifiable that matches the id and the class or <code>null</code> if none match.
      */
+    @Timed
     <T extends Identifiable> T get(String id, Class<T> clazz);
 
     /**
      * Removes all {@link Identifiable} stored in this repository.
      */
+    @Timed
     void clear();
 
     /**
@@ -83,6 +91,7 @@ public interface PreparationRepository {
      * @param object The {@link Identifiable identifiable} to be deleted (only {@link Identifiable#getId()} will be used for
      * delete).
      */
+    @Timed
     void remove(Identifiable object);
 
     /**
@@ -90,7 +99,15 @@ public interface PreparationRepository {
      * @param clazz The wanted Identifiable class.
      * @param filter A TQL filter (i.e. storage-agnostic)
      */
+    @Timed
     <T extends Identifiable> void remove(Class<T> clazz, Expression filter);
 
+    /**
+     * Count how many {@link Identifiable} objects match given filter.
+     * @param clazz The {@link Identifiable} to apply the filter on.
+     * @param filter A TQL filter.
+     * @return how many {@link Identifiable} objects match given filter (greater or equals to 0).
+     */
+    @Timed
     long count(Class<? extends Identifiable> clazz, Expression filter);
 }

@@ -19,7 +19,7 @@ public class PreparationDetails extends NamedItem {
 
     public Folder folder;
 
-    public Dataset dataset;
+    public String dataSetId;
 
     /**
      * Update the {@link Action#id} from the steps information.
@@ -34,6 +34,7 @@ public class PreparationDetails extends NamedItem {
         public String parentId;
 
         public String path;
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -44,5 +45,16 @@ public class PreparationDetails extends NamedItem {
         public String dataSetName;
 
         public String dataSetNbRow;
+
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public String getHead() {
+        if (steps == null || steps.isEmpty()) {
+            return "head";
+        }
+        else {
+            return steps.get(steps.size() - 1);
+        }
     }
 }

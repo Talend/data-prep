@@ -18,6 +18,7 @@ public enum ActionFilterEnum {
     START("filter.start", "start", INTEGER), //
     END("filter.end", "end", INTEGER), //
     TYPE("filter.type", "type", STRING), //
+    INVALID("filter.invalid", "invalid", STRING), //
     LABEL("filter.label", "label", STRING);
 
     private String name;

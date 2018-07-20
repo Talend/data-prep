@@ -12,33 +12,27 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.command.dataset.DataSetGet;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.TransformationErrorCodes;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
-import com.fasterxml.jackson.core.JsonParser;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * A {@link BaseExportStrategy strategy} to export a data set, without using a preparation.
  */
 @Component
 public class DataSetExportStrategy extends BaseSampleExportStrategy {
+
+    @Autowired
+    private DatasetClient datasetClient;
 
     @Override
     public boolean accept(ExportParameters parameters) {
@@ -60,28 +54,17 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
         return outputStream -> {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
             final String datasetId = parameters.getDatasetId();
-            final DataSetGet dataSetGet = applicationContext.getBean(DataSetGet.class, datasetId, false, true);
-            final DataSetGetMetadata dataSetGetMetadata = applicationContext.getBean(DataSetGetMetadata.class, datasetId);
-            try (InputStream datasetContent = dataSetGet.execute()) {
-                try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(datasetContent, UTF_8))) {
-                    // Create dataset
-                    final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
-                    dataSet.setMetadata(dataSetGetMetadata.execute());
-                    // get the actions to apply (no preparation ==> dataset export ==> no actions)
-                    Configuration configuration = Configuration.builder() //
-                            .args(parameters.getArguments()) //
-                            .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                            .format(format.getName()) //
-                            .volume(Configuration.Volume.SMALL) //
-                            .output(outputStream) //
-                            .limit(limit) //
-                            .build();
-                    factory.get(configuration).buildExecutable(dataSet, configuration).execute();
-                }
-            } catch (TDPException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
+            try(DataSet dataSet = datasetClient.getDataSet(datasetId, false, true)) {
+                // get the actions to apply (no preparation ==> dataset export ==> no actions)
+                Configuration configuration = Configuration.builder() //
+                        .args(parameters.getArguments()) //
+                        .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
+                        .format(format.getName()) //
+                        .volume(Configuration.Volume.SMALL) //
+                        .output(outputStream) //
+                        .limit(limit) //
+                        .build();
+                factory.get(configuration).buildExecutable(dataSet, configuration).execute();
             }
         };
     }

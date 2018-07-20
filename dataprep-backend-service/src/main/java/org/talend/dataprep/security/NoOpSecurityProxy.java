@@ -37,6 +37,11 @@ public class NoOpSecurityProxy implements SecurityProxy {
         // no op
     }
 
+    @Override
+    public void asTechnicalUserForDataSet() {
+        // no op
+    }
+
     /**
      * @see SecurityProxy#releaseIdentity()
      */

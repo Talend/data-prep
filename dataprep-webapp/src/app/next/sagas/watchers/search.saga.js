@@ -1,5 +1,7 @@
+import { delay } from 'redux-saga';
 import { call, cancel, fork, take, takeLatest } from 'redux-saga/effects';
 import { SEARCH, SEARCH_SELECT, SEARCH_RESET } from '../../constants/actions';
+import { DEBOUNCE_TIMEOUT } from '../../constants/search';
 import * as effects from '../effects/search.effects';
 
 
@@ -23,7 +25,10 @@ function* search() {
 			yield cancel(task);
 		}
 
-		task = yield fork(effects.search, payload);
+		task = yield fork(function* (p) {
+			yield call(delay, DEBOUNCE_TIMEOUT);
+			yield call(effects.search, p);
+		}, payload);
 	}
 }
 

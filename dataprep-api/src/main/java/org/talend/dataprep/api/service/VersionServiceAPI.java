@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -34,6 +36,8 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class VersionServiceAPI extends APIService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionServiceAPI.class);
 
     @Value("${dataprep.display.version}")
     private String applicationVersion;
@@ -53,13 +57,13 @@ public class VersionServiceAPI extends APIService {
     @Timed
     @PublicAPI
     public BuildDetails allVersions() {
-        List<Version> versions = new ArrayList<>();
+        final List<Version> versions = new ArrayList<>();
 
         for (VersionsSupplier versionsSupplier : versionsSuppliers) {
             versions.addAll(versionsSupplier.getVersions());
         }
         CollectionUtils.filter(versions, PredicateUtils.notNullPredicate());
 
-        return new BuildDetails(applicationVersion, versions.toArray(new Version[versions.size()]));
+        return new BuildDetails(applicationVersion, versions.toArray(new Version[0]));
     }
 }

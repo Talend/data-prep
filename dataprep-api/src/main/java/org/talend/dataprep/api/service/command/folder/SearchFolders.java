@@ -13,12 +13,6 @@
 
 package org.talend.dataprep.api.service.command.folder;
 
-import static org.talend.dataprep.command.Defaults.pipeStream;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -28,8 +22,15 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
+
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class SearchFolders extends GenericCommand<InputStream> {
 
     private SearchFolders(final String name, final Boolean strict, String path) {

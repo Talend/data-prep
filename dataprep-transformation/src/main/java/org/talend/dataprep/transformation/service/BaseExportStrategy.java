@@ -12,15 +12,12 @@
 
 package org.talend.dataprep.transformation.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -30,12 +27,12 @@ import org.springframework.context.ApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -44,6 +41,7 @@ import org.talend.dataprep.security.SecurityProxy;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class BaseExportStrategy {
@@ -78,6 +76,9 @@ public abstract class BaseExportStrategy {
     @Autowired
     protected SecurityProxy securityProxy;
 
+    @Autowired
+    protected DatasetClient datasetClient;
+
     /**
      * Return the format that matches the given name or throw an error if the format is unknown.
      *
@@ -99,9 +100,9 @@ public abstract class BaseExportStrategy {
      * @param preparation The preparation
      * @param stepId The step id
      */
-    protected String getCleanStepId(final Preparation preparation, final String stepId) {
+    protected String getCleanStepId(final PreparationDTO preparation, final String stepId) {
         if (StringUtils.equals("head", stepId) || StringUtils.isEmpty(stepId)) {
-            return preparation.getSteps().get(preparation.getSteps().size() - 1).id();
+            return preparation.getSteps().get(preparation.getSteps().size() - 1);
         }
         return stepId;
     }
@@ -122,7 +123,9 @@ public abstract class BaseExportStrategy {
             final PreparationGetActions getActionsCommand = applicationContext.getBean(PreparationGetActions.class, preparationId,
                     stepId);
             try {
-                actions = "{\"actions\": " + IOUtils.toString(getActionsCommand.execute(), UTF_8) + '}';
+                final String actionsAsString = mapper.writerFor(new TypeReference<List<Action>>() {
+                }).writeValueAsString(getActionsCommand.execute());
+                actions = "{\"actions\": " + actionsAsString + '}';
             } catch (IOException e) {
                 final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", stepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
@@ -155,8 +158,8 @@ public abstract class BaseExportStrategy {
                 final PreparationGetActions endStepActions = applicationContext.getBean(PreparationGetActions.class,
                         preparationId, endStepId);
                 final StringWriter actionsAsString = new StringWriter();
-                final Action[] startActions = mapper.readValue(startStepActions.execute(), Action[].class);
-                final Action[] endActions = mapper.readValue(endStepActions.execute(), Action[].class);
+                final Action[] startActions = startStepActions.execute().toArray(new Action[0]);
+                final Action[] endActions = endStepActions.execute().toArray(new Action[0]);
                 if (endActions.length > startActions.length) {
                     final Action[] filteredActions = (Action[]) ArrayUtils.subarray(endActions, startActions.length,
                             endActions.length);
@@ -180,7 +183,7 @@ public abstract class BaseExportStrategy {
      * @param preparationId the wanted preparation id.
      * @return the preparation out of its id.
      */
-    protected PreparationMessage getPreparation(String preparationId) {
+    protected PreparationDTO getPreparation(String preparationId) {
         return getPreparation(preparationId, null);
     }
 
@@ -189,18 +192,13 @@ public abstract class BaseExportStrategy {
      * @param stepId the preparation step (might be different from head's to navigate through versions).
      * @return the preparation out of its id.
      */
-    protected PreparationMessage getPreparation(String preparationId, String stepId) {
+    protected PreparationDTO getPreparation(String preparationId, String stepId) {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationDetailsGet preparationDetailsGet = applicationContext.getBean(PreparationDetailsGet.class,
+        final PreparationSummaryGet preparationSummaryGet = applicationContext.getBean(PreparationSummaryGet.class,
                 preparationId, stepId);
-        try (InputStream details = preparationDetailsGet.execute()) {
-            return mapper.readerFor(PreparationMessage.class).readValue(details);
-        } catch (Exception e) {
-            LOGGER.error("Unable to read preparation {}", preparationId, e);
-            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId));
-        }
+        return preparationSummaryGet.execute();
     }
 
 }

@@ -161,11 +161,13 @@ export default function PlaygroundService(
 		FilterService.initFilters(dataset, preparation);
 
 		updateGridSelection(dataset, preparation);
+		updatePlayground(data);
 
 		// preparation specific init
 		if (preparation) {
 			ExportService.refreshTypes('preparations', preparation.id);
 			TitleService.setStrict(preparation.name);
+			RecipeService.refresh(preparation);
 		}
 
 		// dataset specific init
@@ -175,15 +177,9 @@ export default function PlaygroundService(
 			TitleService.setStrict(dataset.name);
 		}
 
-		return $q.all(
-			this.updateDatagrid(),
-			this.updatePreparationDetails()
-				.then(() => {
-					if (state.playground.recipe.current.steps.length) {
-						StateService.showRecipe();
-					}
-				}),
-		);
+		if (state.playground.recipe.current.steps.length) {
+			StateService.showRecipe();
+		}
 	}
 
 	/**
@@ -509,7 +505,7 @@ export default function PlaygroundService(
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
 		return getCurrentPreparation()
-		// append step
+			// append step
 			.then(preparation => PreparationService.appendStep(preparation.id, actions))
 			// update recipe and datagrid
 			.then(() => {
@@ -655,7 +651,9 @@ export default function PlaygroundService(
 				currentStepId,
 				nextParentStepId,
 			)
-			// update recipe and datagrid (due to backend implementation: getContent should be called first so that updated stepRowMetadata is available for getContent)
+				// update recipe and datagrid (due to backend implementation:
+				// getContent should be called first so that updated stepRowMetadata
+				// is available for getContent)
 				.then(updatePreparationDatagrid)
 				.then(this.updatePreparationDetails)
 				// add entry in history for undo/redo
@@ -1148,5 +1146,10 @@ export default function PlaygroundService(
 		else {
 			$state.go(state.route.previous, state.route.previousOptions);
 		}
+	}
+
+	function updatePlayground(data) {
+		DatagridService.updateData(data);
+		PreviewService.reset(false);
 	}
 }

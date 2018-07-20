@@ -41,14 +41,13 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Return the differences of metadata for some actions to add within a preparation.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class DiffMetadata extends ChainedCommand<InputStream, InputStream> {
+public class DiffMetadata extends ChainedCommand<InputStream, List<Action>> {
 
     /**
      * Default constructor.
@@ -67,15 +66,7 @@ public class DiffMetadata extends ChainedCommand<InputStream, InputStream> {
 
     private HttpRequestBase onExecute(final String dataSetId, final String preparationId, final List<Action> actionsToAdd) {
         // original actions (currently applied on the preparation)
-        final List<Action> originalActions;
-        try {
-            originalActions = objectMapper
-                    .readerFor(new TypeReference<List<Action>>() {
-                    })
-                    .readValue(getInput());
-        } catch (final IOException e) {
-            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).build());
-        }
+        final List<Action> originalActions = getInput();
 
         // prepare the preview parameters out of the preparation actions
         final List<PreviewParameters> previewParameters = IntStream.range(0, actionsToAdd.size())

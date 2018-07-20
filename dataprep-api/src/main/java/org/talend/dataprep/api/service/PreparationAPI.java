@@ -20,17 +20,16 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.daikon.exception.ExceptionContext.withBuilder;
+import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_HEAD_STEP_USING_DELETED_DATASET;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order;
 import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
@@ -46,17 +45,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
+import org.talend.dataprep.api.preparation.PreparationListItemDTO;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.api.service.api.EnrichedPreparation;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
 import org.talend.dataprep.api.service.api.PreviewDiffParameters;
 import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
-import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.preparation.CachePreparationEviction;
 import org.talend.dataprep.api.service.command.preparation.DiffMetadata;
 import org.talend.dataprep.api.service.command.preparation.FindStep;
@@ -80,19 +80,21 @@ import org.talend.dataprep.api.service.command.preparation.PreviewUpdate;
 import org.talend.dataprep.api.service.command.transformation.GetPreparationColumnTypes;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
+import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
+import org.talend.dataprep.conversions.inject.DataSetNameInjection;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
-import org.talend.dataprep.util.SortAndOrderHelper.Format;
+import org.talend.dataprep.transformation.pipeline.ActionRegistry;
+import org.talend.dataprep.util.InjectorUtil;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
@@ -104,69 +106,37 @@ public class PreparationAPI extends APIService {
     @Autowired
     private DataSetAPI dataSetAPI;
 
+    @Autowired
+    private DatasetClient datasetClient;
+
+    @Autowired
+    private DataSetNameInjection dataSetNameInjection;
+
+    @Autowired
+    private ActionRegistry registry;
+
+    @Autowired
+    private InjectorUtil injectorUtil;
+
     @RequestMapping(value = "/api/preparations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all preparations.",
             notes = "Returns the list of preparations the current user is allowed to see.")
     @Timed
-    public ResponseEntity<StreamingResponseBody> listPreparations(@ApiParam(name = "format",
-            value = "Format of the returned document (can be 'long', 'short' or 'summary'). Defaults to 'summary'.") @RequestParam(
-                    value = "format", defaultValue = "summary") Format format,
-            @ApiParam(name = "name",
-                    value = "Filter preparations by name.") @RequestParam(required = false) String name,
-            @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(
-                    required = false, name = "folder_path") String folderPath,
-            @ApiParam(name = "path",
-                    value = "Filter preparations by full path. Should always return one preparation") @RequestParam(
-                            required = false, name = "path") String path,
-            @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(
-                    defaultValue = "lastModificationDate") Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
-                    defaultValue = "desc") Order order) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Listing preparations (pool: {} )...", getConnectionStats());
-        }
+    public Stream<PreparationListItemDTO> listPreparations(
+            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
+            @RequestParam(name = "format", required = false) String format,
+            @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
+            @ApiParam(name = "path", value = "Filter preparations by full path. Should always return one preparation") @RequestParam(required = false, name = "path") String path,
+            @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
 
-        GenericCommand<InputStream> command =
-                getCommand(PreparationList.class, format, name, folderPath, path, sort, order);
-        return CommandHelper.toStreaming(command);
-    }
 
-    /**
-     * Returns a list containing all data sets metadata that are compatible with a preparation identified by
-     * <tt>preparationId</tt>: its id. If no compatible data set is found an empty list is returned. The base data set
-     * of the preparation with id <tt>preparationId</tt> is never returned in the list.
-     *
-     * @param preparationId the specified preparation id
-     * @param sort the sort criterion: either name or date.
-     * @param order the sorting order: either asc or desc
-     */
-    @RequestMapping(value = "/api/preparations/{id}/basedatasets", method = RequestMethod.GET,
-            produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get all data sets that are compatible with a preparation.",
-            notes = "Returns the list of data sets the current user is allowed to see and that are compatible with the preparation.")
-    @Timed
-    public StreamingResponseBody listCompatibleDatasets(
-            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId,
-            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(
-                    defaultValue = "creationDate", required = false) Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
-                    defaultValue = "desc", required = false) Order order) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Listing compatible datasets (pool: {} )...", getConnectionStats());
-        }
-
-        try {
-            // get the preparation
-            final Preparation preparation = internalGetPreparation(preparationId);
-
-            // to list compatible datasets
-            String dataSetId = preparation.getDataSetId();
-            HystrixCommand<InputStream> listCommand = getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
-            return CommandHelper.toStreaming(listCommand);
-        } finally {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Listing compatible datasets (pool: {}) done.", getConnectionStats());
-            }
+        GenericCommand<InputStream> command = getCommand(PreparationList.class,  name, folderPath, path, sort, order);
+        if ("summary".equalsIgnoreCase(format)) {return toStream(PreparationDTO.class, mapper,command)//
+    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+} else {
+    return toStream(PreparationDTO.class, mapper, command)//
+            .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
         }
     }
 
@@ -183,9 +153,9 @@ public class PreparationAPI extends APIService {
             LOG.debug("Creating a preparation in {} (pool: {} )...", folder, getConnectionStats());
         }
 
-        DataSetGetMetadata dataSetMetadata = getCommand(DataSetGetMetadata.class, preparation.getDataSetId());
-        DataSetMetadata execute = dataSetMetadata.execute();
-        preparation.setRowMetadata(execute.getRowMetadata());
+        RowMetadata rowMetadata = datasetClient.getDataSetRowMetadata(preparation.getDataSetId());
+
+        preparation.setRowMetadata(rowMetadata);
 
         PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation, folder);
         final String preparationId = preparationCreate.execute();
@@ -202,7 +172,7 @@ public class PreparationAPI extends APIService {
     public String updatePreparation(
             @ApiParam(name = "id", value = "The id of the preparation to update.") @PathVariable("id") String id,
             @ApiParam(name = "body",
-                    value = "The updated preparation. Null values are ignored during update. You may set all values, service will override values you can't write to.") @RequestBody Preparation preparation) {
+                    value = "The updated preparation. Null values are ignored during update. You may set all values, service will override values you can't write to.") @RequestBody PreparationDTO preparation) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Updating preparation (pool: {} )...", getConnectionStats());
         }
@@ -277,7 +247,7 @@ public class PreparationAPI extends APIService {
     public void move(@PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the preparation to move") String id,
                      @ApiParam(value = "The original folder path of the preparation.") @RequestParam(defaultValue = "", required = false) String folder,
                      @ApiParam(value = "The new folder path of the preparation.") @RequestParam() String destination,
-                     @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName) throws IOException {
+                     @ApiParam(value = "The new name of the moved dataset.") @RequestParam(defaultValue = "", required = false) String newName) {
     //@formatter:on
 
         if (LOG.isDebugEnabled()) {
@@ -294,7 +264,7 @@ public class PreparationAPI extends APIService {
             produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
     @Timed
-    public EnrichedPreparation getPreparation(
+    public PreparationDetailsDTO getPreparation(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
             @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId",
                     value = "optional step id", defaultValue = "head") String stepId) {
@@ -302,17 +272,42 @@ public class PreparationAPI extends APIService {
             LOG.debug("Retrieving preparation details (pool: {} )...", getConnectionStats());
         }
 
-        final PreparationDetailsGet enrichPreparation = getCommand(PreparationDetailsGet.class, preparationId, stepId);
         try {
-            PreparationMessage preparationMessage =
-                    mapper.readerFor(PreparationMessage.class).readValue(enrichPreparation.execute());
-            return beanConversionService.convert(preparationMessage, EnrichedPreparation.class);
+            final PreparationDetailsDTO preparationDetails = getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
+            final List<Action> actions = getCommand(PreparationGetActions.class, preparationId).execute();
+            return beanConversionService.convert(preparationDetails, //
+                    PreparationDetailsDTO.class, //
+                    (dto, details) -> injectorUtil.injectPreparationDetails(actions, details) //);
         } catch (Exception e) {
             LOG.error("Unable to get preparation {}", preparationId, e);
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Retrieved preparation details (pool: {} )...", getConnectionStats());
+            }
+            LOG.info("Preparation {} retrieved", preparationId);
+        }
+    }
+
+    @RequestMapping(value = "/api/preparations/{id}/summary", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
+    @Timed
+    public PreparationDTO getPreparationSummary(
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
+            @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId", value = "optional step id", defaultValue = "head") String stepId) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Retrieving preparation summary (pool: {} )...", getConnectionStats());
+        }
+
+        try {
+            final PreparationSummaryGet enrichPreparation = getCommand(PreparationSummaryGet.class, preparationId, stepId);
+            return enrichPreparation.execute();
+        } catch (Exception e) {
+            LOG.error("Unable to get preparation {}", preparationId, e);
+            throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Retrieved preparation summary (pool: {} )...", getConnectionStats());
             }
             LOG.info("Preparation {} retrieved", preparationId);
         }
@@ -416,11 +411,11 @@ public class PreparationAPI extends APIService {
         }
 
         // get the preparation
-        Preparation preparation = internalGetPreparation(preparationId);
+        PreparationDTO preparation = internalGetPreparation(preparationId);
 
         // get the preparation actions for up to the updated action
-        final int stepIndex = preparation.getSteps().stream().map(Step::getId).collect(toList()).indexOf(stepId);
-        final String parentStepId = preparation.getSteps().get(stepIndex - 1).id();
+        final int stepIndex = new ArrayList<>(preparation.getSteps()).indexOf(stepId);
+        final String parentStepId = preparation.getSteps().get(stepIndex - 1);
         final PreparationGetActions getActionsCommand =
                 getCommand(PreparationGetActions.class, preparationId, parentStepId);
 
@@ -590,7 +585,7 @@ public class PreparationAPI extends APIService {
     //@formatter:on
 
         // get preparation details
-        final Preparation preparation = internalGetPreparation(input.getPreparationId());
+        final PreparationDTO preparation = internalGetPreparation(input.getPreparationId());
         final List<Action> lastActiveStepActions = internalGetActions(preparation.getId(), input.getCurrentStepId());
         final List<Action> previewStepActions = internalGetActions(preparation.getId(), input.getPreviewStepId());
 
@@ -606,7 +601,7 @@ public class PreparationAPI extends APIService {
     //@formatter:on
 
         // get preparation details
-        final Preparation preparation = internalGetPreparation(input.getPreparationId());
+        final PreparationDTO preparation = internalGetPreparation(input.getPreparationId());
         final List<Action> actions = internalGetActions(preparation.getId());
 
         final HystrixCommand<InputStream> transformation = getCommand(PreviewUpdate.class, input, preparation, actions);
@@ -619,7 +614,7 @@ public class PreparationAPI extends APIService {
     public StreamingResponseBody previewAdd(@RequestBody @Valid final PreviewAddParameters input) {
     //@formatter:on
 
-        Preparation preparation = null;
+        PreparationDTO preparation = null;
         List<Action> actions = new ArrayList<>(0);
 
         // get preparation details with dealing with preparations
@@ -678,13 +673,7 @@ public class PreparationAPI extends APIService {
      */
     private List<Action> internalGetActions(String preparationId, String stepId) {
         final PreparationGetActions getActionsCommand = getCommand(PreparationGetActions.class, preparationId, stepId);
-        try {
-            return mapper.readerFor(new TypeReference<List<Action>>() {
-
-            }).readValue(getActionsCommand.execute());
-        } catch (IOException e) {
-            throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);
-        }
+        return getActionsCommand.execute();
     }
 
     /**
@@ -693,13 +682,9 @@ public class PreparationAPI extends APIService {
      * @param preparationId the preparation id.
      * @return the preparation.
      */
-    private Preparation internalGetPreparation(String preparationId) {
-        try {
-            GenericCommand<InputStream> command = getCommand(PreparationDetailsGet.class, preparationId);
-            return mapper.readerFor(Preparation.class).readValue(command.execute());
-        } catch (IOException e) {
-            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).build());
-        }
+    private PreparationDTO internalGetPreparation(String preparationId) {
+        GenericCommand<PreparationDTO> command = getCommand(PreparationSummaryGet.class, preparationId);
+        return command.execute();
     }
 
     private boolean isHeadStepDependingOnDeletedDataSet(String preparationId, String stepId) {

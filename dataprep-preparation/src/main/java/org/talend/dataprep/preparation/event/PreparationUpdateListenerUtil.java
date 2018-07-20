@@ -6,7 +6,6 @@ import static org.talend.tql.api.TqlBuilder.in;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -14,7 +13,7 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
-import org.talend.dataprep.command.dataset.DataSetGetMetadata;
+import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -38,7 +37,7 @@ public class PreparationUpdateListenerUtil {
     private PreparationUtils preparationUtils;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private DatasetClient datasetClient;
 
     @Autowired
     private SecurityProxy securityProxy;
@@ -51,9 +50,8 @@ public class PreparationUpdateListenerUtil {
      */
     public void removePreparationStepRowMetadata(String dataSetId) {
         try {
-            securityProxy.asTechnicalUser();
-            final DataSetGetMetadata metadataRetriever = applicationContext.getBean(DataSetGetMetadata.class, dataSetId);
-            final DataSetMetadata dataSetMetadata = metadataRetriever.execute();
+            securityProxy.asTechnicalUserForDataSet();
+            final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(dataSetId);
             if (dataSetMetadata == null) {
                 LOGGER.error("Unable to clean step row metadata of preparations using dataset '{}' (dataset not found).", dataSetId);
                 return;

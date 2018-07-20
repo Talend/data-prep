@@ -1,0 +1,511 @@
+{
+  "schema": {
+    "type": "record",
+    "name": "typeConverterPrimitives",
+    "fields": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "srcString",
+        "type": "string"
+      },
+      {
+        "name": "srcInt",
+        "type": "int"
+      },
+      {
+        "name": "srcLong",
+        "type": "long"
+      },
+      {
+        "name": "srcFloat",
+        "type": "float"
+      },
+      {
+        "name": "srcDouble",
+        "type": "double"
+      },
+      {
+        "name": "srcBoolean",
+        "type": "boolean"
+      },
+      {
+        "name": "srcBytes",
+        "type": ["null", "bytes"]
+      }
+    ]
+  },
+  "data": [
+    {
+      "name": "boolean (false)",
+      "srcString": "false",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": ""
+      }
+    },
+    {
+      "name": "boolean (false)",
+      "srcString": "YES",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:0001"
+      }
+    },
+    {
+      "name": "boolean (false)",
+      "srcString": "1",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:00FF"
+      }
+    },
+    {
+      "name": "boolean (false)",
+      "srcString": "0",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:00FFFF"
+      }
+    },
+    {
+      "name": "boolean (true)",
+      "srcString": "true",
+      "srcInt": 1,
+      "srcLong": 1,
+      "srcFloat": 0.0001,
+      "srcDouble": 0.000001,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:01"
+      }
+    },
+    {
+      "name": "boolean (true)",
+      "srcString": "tRuE",
+      "srcInt": 1,
+      "srcLong": 1,
+      "srcFloat": -1,
+      "srcDouble": -1,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:0100"
+      }
+    },
+    {
+      "name": "string (hello)",
+      "srcString": "hello",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "hello"
+      }
+    },
+    {
+      "name": "string ()",
+      "srcString": "",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": ""
+      }
+    },
+    {
+      "name": "int long float double string (0) bb4",
+      "srcString": "0",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:00000000"
+      }
+    },
+    {
+      "name": "int long float double string (1) bb4",
+      "srcString": "1",
+      "srcInt": 1,
+      "srcLong": 1,
+      "srcFloat": 1,
+      "srcDouble": 1,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:00000001"
+      }
+    },
+    {
+      "name": "int long float double string (-1) bb4",
+      "srcString": "-1",
+      "srcInt": -1,
+      "srcLong": -1,
+      "srcFloat": -1,
+      "srcDouble": -1,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:FFFFFFFF"
+      }
+    },
+    {
+      "name": "int long float double string (123) bb4",
+      "srcString": "123",
+      "srcInt": 123,
+      "srcLong": 123,
+      "srcFloat": 123,
+      "srcDouble": 123,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:0000007B"
+      }
+    },
+    {
+      "name": "int long float double string (-123) bb4",
+      "srcString": "-123",
+      "srcInt": -123,
+      "srcLong": -123,
+      "srcFloat": -123,
+      "srcDouble": -123,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:FFFFFF85"
+      }
+    },
+    {
+      "name": "int long float double string (0) bb8",
+      "srcString": "0",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:0000000000000000"
+      }
+    },
+    {
+      "name": "int long float double string (1) bb8",
+      "srcString": "1",
+      "srcInt": 1,
+      "srcLong": 1,
+      "srcFloat": 1,
+      "srcDouble": 1,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:0000000000000001"
+      }
+    },
+    {
+      "name": "int long float double string (-1) bb8",
+      "srcString": "-1",
+      "srcInt": -1,
+      "srcLong": -1,
+      "srcFloat": -1,
+      "srcDouble": -1,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:FFFFFFFFFFFFFFFF"
+      }
+    },
+    {
+      "name": "int long float double string (123) bb8",
+      "srcString": "123",
+      "srcInt": 123,
+      "srcLong": 123,
+      "srcFloat": 123,
+      "srcDouble": 123,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:000000000000007B"
+      }
+    },
+    {
+      "name": "int long float double string (-123) bb8",
+      "srcString": "-123",
+      "srcInt": -123,
+      "srcLong": -123,
+      "srcFloat": -123,
+      "srcDouble": -123,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:FFFFFFFFFFFFFF85"
+      }
+    },
+    {
+      "name": "int long float double string (0.5) bb4",
+      "srcString": "0.5",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0.5,
+      "srcDouble": 0.5,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:3F000000"
+      }
+    },
+    {
+      "name": "int long float double string (-0.5) bb4",
+      "srcString": "-0.5",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": -0.5,
+      "srcDouble": -0.5,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:BF000000"
+      }
+    },
+    {
+      "name": "int long float double string (123.456) bb4",
+      "srcString": "123.456",
+      "srcInt": 123,
+      "srcLong": 123,
+      "srcFloat": 123.456,
+      "srcDouble": 123.45600128173828,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:42F6E979"
+      }
+    },
+    {
+      "name": "int long float double string (-123.456) bb4",
+      "srcString": "-123.456",
+      "srcInt": -123,
+      "srcLong": -123,
+      "srcFloat": -123.456,
+      "srcDouble": -123.45600128173828,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:C2F6E979"
+      }
+    },
+    {
+      "name": "int long float double string (0.5) bb4",
+      "srcString": "0.5",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0.5,
+      "srcDouble": 0.5,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:3FE0000000000000"
+      }
+    },
+    {
+      "name": "int long float double string (-0.5) bb4",
+      "srcString": "-0.5",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": -0.5,
+      "srcDouble": -0.5,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:BFE0000000000000"
+      }
+    },
+    {
+      "name": "int long float double string (123.456) bb4",
+      "srcString": "123.456",
+      "srcInt": 123,
+      "srcLong": 123,
+      "srcFloat": 123.456,
+      "srcDouble": 123.456,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:405EDD2F1A9FBE77"
+      }
+    },
+    {
+      "name": "int long float double string (-123.456) bb4",
+      "srcString": "-123.456",
+      "srcInt": -123,
+      "srcLong": -123,
+      "srcFloat": -123.456,
+      "srcDouble": -123.456,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:C05EDD2F1A9FBE77"
+      }
+    },
+    {
+      "name": "int long float double string (Integer.MAX_VALUE: 2147483647) bb4",
+      "srcString": "2147483647",
+      "srcInt": 2147483647,
+      "srcLong": 2147483647,
+      "srcFloat": 2147483650,
+      "srcDouble": 2147483647,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:7FFFFFFF"
+      }
+    },
+    {
+      "name": "int long float double string (Integer.MIN_VALUE: -2147483648) bb4",
+      "srcString": "-2147483648",
+      "srcInt": -2147483648,
+      "srcLong": -2147483648,
+      "srcFloat": -2147483650,
+      "srcDouble": -2147483648,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:80000000"
+      }
+    },
+    {
+      "name": "int long float double string (Integer.MAX_VALUE: 9223372036854775807) bb8",
+      "srcString": "9223372036854775807",
+      "srcInt": -1,
+      "srcLong": 9223372036854775807,
+      "srcFloat": 9223372000000000000,
+      "srcDouble": 9223372036854776000,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:7FFFFFFFFFFFFFFF"
+      }
+    },
+    {
+      "name": "int long float double string (Integer.MIN_VALUE: -9223372036854775808) bb8",
+      "srcString": "-9223372036854775808",
+      "srcInt": 0,
+      "srcLong": -9223372036854775808,
+      "srcFloat": -9223372000000000000,
+      "srcDouble": -9223372036854776000,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:8000000000000000"
+      }
+    },
+    {
+      "name": "date1 (2017.11.28 AD / yyyy.MM.dd G: 17498)",
+      "srcString": "2017.11.28 AD",
+      "srcInt": 17498,
+      "srcLong": 17498,
+      "srcFloat": 17498,
+      "srcDouble": 17498,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:0000445A"
+      }
+    },
+    {
+      "name": "date1 (1970.01.01 AD / yyyy.MM.dd G: 0)",
+      "srcString": "1970.01.01 AD",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:00000000"
+      }
+    },
+    {
+      "name": "date1 (1922.02.04 AD / yyyy.MM.dd G: -17498)",
+      "srcString": "1922.02.04 AD",
+      "srcInt": -17498,
+      "srcLong": -17498,
+      "srcFloat": -17498,
+      "srcDouble": -17498,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:FFFFBBA6"
+      }
+    },
+    {
+      "name": "time1 (12:44:22 / HH:mm:ss[ z]: 45862123)",
+      "srcString": "12:44:22",
+      "srcInt": 45862123,
+      "srcLong": 45862123,
+      "srcFloat": 45862124,
+      "srcDouble": 45862123,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:02BBCCEB"
+      }
+    },
+    {
+      "name": "time1 (00:00:00 / HH:mm:ss[ z]: 0)",
+      "srcString": "00:00:00",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:00000000"
+      }
+    },
+    {
+      "name": "time1 (11:15:37 / HH:mm:ss[ z]: -45862123)",
+      "srcString": "11:15:37",
+      "srcInt": -45862123,
+      "srcLong": -45862123,
+      "srcFloat": -45862124,
+      "srcDouble": -45862123,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:FD443315"
+      }
+    },
+    {
+      "name": "datetime1 (2017.11.28 AD at 12:44:22 / yyyy.MM.dd G 'at' HH:mm:ss[ z]: 1511873062123)",
+      "srcString": "2017.11.28 AD at 12:44:22",
+      "srcInt": 44573931,
+      "srcLong": 1511873062123,
+      "srcFloat": 1511873050000,
+      "srcDouble": 1511873062123,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:0000000002A824EB"
+      }
+    },
+    {
+      "name": "datetime1 (1970.01.01 AD at 00:00:00 / yyyy.MM.dd G 'at' HH:mm:ss[ z]: 0)",
+      "srcString": "1970.01.01 AD at 00:00:00",
+      "srcInt": 0,
+      "srcLong": 0,
+      "srcFloat": 0,
+      "srcDouble": 0,
+      "srcBoolean": false,
+      "srcBytes": {
+        "bytes": "HEX:0000000000000000"
+      }
+    },
+    {
+      "name": "datetime1 (1922.02.03 AD at 11:15:37 / yyyy.MM.dd G 'at' HH:mm:ss[ z]: -1511873062123)",
+      "srcString": "1922.02.03 AD at 11:15:37",
+      "srcInt": -44573931,
+      "srcLong": -1511873062123,
+      "srcFloat": -1511873050000,
+      "srcDouble": -1511873062123,
+      "srcBoolean": true,
+      "srcBytes": {
+        "bytes": "HEX:FFFFFFFFFD57DB15"
+      }
+    }
+  ],
+  "encoding": "JSON"
+}

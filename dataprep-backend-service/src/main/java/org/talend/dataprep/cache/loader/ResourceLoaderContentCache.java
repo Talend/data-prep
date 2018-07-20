@@ -80,13 +80,7 @@ public class ResourceLoaderContentCache implements ContentCache {
 
                     final long i1 = parseLong(suffix1);
                     final long i2 = parseLong(suffix2);
-                    if (i1 > i2) {
-                        return 1;
-                    } else if (i1 < i2) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
+                    return Long.compare(i1, i2);
                 }));
                 return reduce.filter(r -> {
                     final String suffix = StringUtils.substringAfterLast(r.getFilename(), ".");
@@ -110,6 +104,7 @@ public class ResourceLoaderContentCache implements ContentCache {
         return ofNullable(getResource(key)).isPresent();
     }
 
+    @Timed
     @VolumeMetered
     @Override
     public InputStream get(ContentCacheKey key) {
@@ -122,6 +117,7 @@ public class ResourceLoaderContentCache implements ContentCache {
         }).orElse(null);
     }
 
+    @Timed
     @VolumeMetered
     @Override
     public OutputStream put(ContentCacheKey key, TimeToLive timeToLive) {

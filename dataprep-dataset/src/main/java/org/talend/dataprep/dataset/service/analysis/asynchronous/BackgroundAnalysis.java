@@ -90,7 +90,7 @@ public class BackgroundAnalysis {
                 try (final Stream<DataSetRow> stream = store.stream(metadata)) {
                     try (Analyzer<Analyzers.Result> analyzer = analyzerService.schemaAnalysis(columns)) {
                         computeStatistics(analyzer, columns, stream);
-                        LOGGER.debug("Base statistics analysis done for{}", dataSetId);
+                        LOGGER.debug("Base statistics analysis done for {}", dataSetId);
                         // Save base analysis
                         saveAnalyzerResults(dataSetId, analyzer);
                     }

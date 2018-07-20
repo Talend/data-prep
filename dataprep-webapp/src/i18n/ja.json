@@ -161,7 +161,6 @@
   "IMPORT_DATASET": "データセットの追加",
   "COLLECTING_DATA": "{{datasetName}}のデータを収集しています。 お待ちください…",
   "DATASET_NAME": "データセット名:",
-  "PREPARATION": "プレパレーション",
   "DATASTORE_TEST_CONNECTION": "テスト接続",
   "DATASTORE_CONNECTION_SUCCESSFUL": "接続成功",
 
@@ -406,7 +405,6 @@
   "DATASET_PARAMETERS_TEXT_ENCLOSURE_CHARACTER": "テキスト囲み文字",
 
   "ACTION_HELP": "詳細情報…",
-  "NAME": "名前",
   "SIZE": "サイズ",
 
   "_comment": "オンボーディング",
@@ -423,6 +421,7 @@
   "BUILD_ID": "ビルドID",
   "VERSION_ID": "バージョンID",
   "VERSION": "バージョン",
+  "COPYRIGHTS": "© {{year}} Talend. All Rights Reserved",
 
   "_comment": "オンボーディング",
   "ERROR_404_TITLE": "申し訳ありません…",
@@ -434,6 +433,14 @@
   "HEADERBAR_HELP": "ヘルプ",
   "HEADERBAR_APPS": "アプリ",
   "HEADERBAR_INFO": "情報",
+  "LISTVIEW_NO_RESULT": "結果が見つかりません。",
+  "LISTVIEW_EMPTY": "このリストは空です。",
+  "LISTVIEW_HEADER_TITLE": "値",
+  "LISTVIEW_HEADER_SELECTED": "{{count}}/{{total}}選択済み",
+  "LISTVIEW_HEADERINPUT_SEARCH_PLACEHOLDER": "検索",
+  "LISTVIEW_ITEMS_TOGGLE_ALL": "すべて切り替え",
+  "LISTVIEW_WIDGET_SEARCH": "検索",
+  "LISTVIEW_WIDGET_ABORT": "キャンセル",
   "SIDEPANEL_COLLAPSE": "折りたたみ",
   "SIDEPANEL_EXPAND": "展開",
   "VIRTUALIZEDLIST_NO_RESULT": "結果が見つかりません。",
@@ -474,6 +481,8 @@
   "PREPARATIONS_STEP_3_CONTENT": "プレパレーションを追加し、データのクレンジングを開始するには、ここをクリックしてください。",
   "PREPARATIONS_STEP_4_TITLE": "ヘルプ",
   "PREPARATIONS_STEP_4_CONTENT": "ここをクリックしてヘルプを入手します(オンラインドキュメント、ガイド付きツアー、データプレパレーションについて)",
+  "PREPARATIONS_STEP_5_TITLE": "情報",
+  "PREPARATIONS_STEP_5_CONTENT": "追加のリソース(コミュニティフォーラム、製品バージョン)にアクセスしたり、フィードバックを送信したりするには、ここをクリックします。",
 
   "EMPTY_RECORDS_LABEL": "値が空の行",
   "INVALID_RECORDS_LABEL": "値が無効の行",
@@ -485,5 +494,6 @@
   "LIST_TOOLBAR_DISPLAY": "ディスプレイ",
   "LIST_TOOLBAR_SORT_BY": "ソート条件",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "降順",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "昇順"
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "昇順",
+  "LIST_OPEN_ACTION_MENU": "メニューを開く"
 }

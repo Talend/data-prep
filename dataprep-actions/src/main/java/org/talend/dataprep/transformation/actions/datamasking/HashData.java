@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.talend.dataprep.transformation.actions.common.ActionsUtils.appendColumnCreationParameter;
 
 @Action(HashData.ACTION_NAME)
@@ -52,7 +53,7 @@ public class HashData extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public String getCategory(Locale locale) {
-        return ActionCategory.COLUMNS.getDisplayName(locale);
+        return ActionCategory.DATA_MASKING.getDisplayName(locale);
     }
 
     @Override
@@ -78,9 +79,10 @@ public class HashData extends AbstractActionMetadata implements ColumnAction {
     public void applyOnColumn(DataSetRow row, ActionContext context) {
         final String columnId = context.getColumnId();
         final String toHash = row.get(columnId);
-        if (toHash != null) {
-            row.set(ActionsUtils.getTargetColumnId(context), sha256Hex(toHash));
+        if (isEmpty(toHash)) {
+            return;
         }
+        row.set(ActionsUtils.getTargetColumnId(context), sha256Hex(toHash));
     }
 
     @Override

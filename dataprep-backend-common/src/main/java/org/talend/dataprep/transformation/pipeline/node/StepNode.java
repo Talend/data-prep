@@ -14,8 +14,11 @@ package org.talend.dataprep.transformation.pipeline.node;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.transformation.pipeline.*;
+import org.talend.dataprep.transformation.pipeline.Link;
+import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RuntimeLink;
+import org.talend.dataprep.transformation.pipeline.Signal;
+import org.talend.dataprep.transformation.pipeline.Visitor;
 
 /**
  * <p>
@@ -30,19 +33,17 @@ import org.talend.dataprep.transformation.pipeline.*;
  */
 public class StepNode extends BasicNode {
 
-    private final Step step;
+    private final String step;
 
     private final Node entryNode;
 
     private final Node lastNode;
 
-    private RowMetadata lastRowMetadata;
+    private RowMetadata parentStepRowMetadata;
 
-    private RowMetadata previousStepRowMetadata;
-
-    public StepNode(Step step, RowMetadata previousStepRowMetadata, Node entryNode, Node lastNode) {
+    public StepNode(String step, RowMetadata parentStepRowMetadata, Node entryNode, Node lastNode) {
         this.step = step;
-        this.previousStepRowMetadata = previousStepRowMetadata;
+        this.parentStepRowMetadata = parentStepRowMetadata;
         this.entryNode = entryNode;
         this.lastNode = lastNode;
     }
@@ -51,16 +52,16 @@ public class StepNode extends BasicNode {
         return entryNode;
     }
 
-    public Step getStep() {
+    public String getStep() {
         return step;
     }
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         RowMetadata processingRowMetadata = metadata;
-        if (previousStepRowMetadata != null) {
+        if (parentStepRowMetadata != null) {
             // Step node has associated metadata, use it instead of supplied one.
-            processingRowMetadata = previousStepRowMetadata;
+            processingRowMetadata = parentStepRowMetadata;
         }
 
         // make sure the last node (ActionNode) link is set to after the StepNode
@@ -68,7 +69,6 @@ public class StepNode extends BasicNode {
             final RuntimeLink stepLink = getLink().exec();
             lastNode.setLink(new StepLink(stepLink));
         }
-        lastRowMetadata = processingRowMetadata;
         entryNode.exec().receive(row, processingRowMetadata);
     }
 
@@ -79,15 +79,7 @@ public class StepNode extends BasicNode {
 
     @Override
     public Node copyShallow() {
-        return new StepNode(step, previousStepRowMetadata, entryNode, lastNode);
-    }
-
-    /**
-     * @return The last row metadata used in {@link #receive(DataSetRow, RowMetadata)}. Might be step's metadata (if
-     * any) or supplied metadata.
-     */
-    public RowMetadata getRowMetadata() {
-        return lastRowMetadata;
+        return new StepNode(step, parentStepRowMetadata, entryNode, lastNode);
     }
 
     private static class StepLink implements Link {

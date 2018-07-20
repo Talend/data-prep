@@ -13,6 +13,7 @@
 package org.talend.dataprep.api.preparation;
 
 import static java.util.stream.Collectors.toList;
+import static org.talend.tql.api.TqlBuilder.in;
 
 import java.beans.PropertyDescriptor;
 import java.io.BufferedWriter;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.BaseErrorCodes;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
+import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 
 @Component
@@ -155,7 +159,8 @@ public class PreparationUtils {
      * @return The list of step ids from starting (limit) to step
      */
     public List<String> listStepsIds(final String stepId, final String limit, final PreparationRepository repository) {
-        return listSteps(repository.get(stepId, Step.class), limit, repository).stream() //
+        return listSteps(repository.get(stepId, Step.class), limit, repository)
+                .stream() //
                 .map(Step::id) //
                 .collect(toList());
     }
@@ -201,5 +206,21 @@ public class PreparationUtils {
         final List<Step> steps = new LinkedList<>();
         __listSteps(steps, limit, step, repository);
         return steps;
+    }
+
+    public static List<String> getPreparationIdForStepRowMetadata(final List<String> stepRowMetadataUpdated,
+            final PreparationRepository repository) {
+
+        // we get all step from SRMD Id
+        List<String> stepsId = repository //
+                .list(PersistentStep.class, in("rowMetadata", stepRowMetadataUpdated.toArray(new String[] {}))) //
+                .map(PersistentStep::getId) //
+                .collect(Collectors.toList());
+
+        // we get all prep from previous step
+        return repository //
+                .list(PersistentPreparation.class, in("steps", stepsId.toArray(new String[0]))) //
+                .map(PersistentPreparation::getId)
+                .collect(Collectors.toList());
     }
 }

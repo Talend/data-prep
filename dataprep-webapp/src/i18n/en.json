@@ -166,7 +166,6 @@
   "IMPORT_DATASET": "Add dataset",
   "COLLECTING_DATA": "Collecting {{datasetName}} data. Please wait…",
   "DATASET_NAME": "Dataset name:",
-  "PREPARATION": "Preparation",
   "DATASTORE_TEST_CONNECTION": "Test connection",
   "DATASTORE_CONNECTION_SUCCESSFUL": "Connection successful",
 
@@ -411,7 +410,6 @@
   "DATASET_PARAMETERS_TEXT_ENCLOSURE_CHARACTER": "Text enclosure character",
 
   "ACTION_HELP": "Learn more…",
-  "NAME": "Name",
   "SIZE": "Size",
 
   "_comment": "Upgrade version parameters",
@@ -440,6 +438,14 @@
   "HEADERBAR_HELP": "Help",
   "HEADERBAR_APPS": "Apps",
   "HEADERBAR_INFO": "Information",
+  "LISTVIEW_NO_RESULT": "No result found.",
+  "LISTVIEW_EMPTY": "This list is empty.",
+  "LISTVIEW_HEADER_TITLE": "Values",
+  "LISTVIEW_HEADER_SELECTED": "{{count}}/{{total}} selected",
+  "LISTVIEW_HEADERINPUT_SEARCH_PLACEHOLDER": "Search",
+  "LISTVIEW_ITEMS_TOGGLE_ALL": "Toggle all",
+  "LISTVIEW_WIDGET_SEARCH": "Search for specific values",
+  "LISTVIEW_WIDGET_ABORT": "Abort",
   "SIDEPANEL_COLLAPSE": "Collapse",
   "SIDEPANEL_EXPAND": "Expand",
   "VIRTUALIZEDLIST_NO_RESULT": "No result found.",
@@ -479,9 +485,9 @@
   "PREPARATIONS_STEP_3_TITLE": "Add preparation",
   "PREPARATIONS_STEP_3_CONTENT": "Click here to add a preparation and start cleansing your data.",
   "PREPARATIONS_STEP_4_TITLE": "Online Documentation",
-  "PREPARATIONS_STEP_4_CONTENT": "Click here to access the online help",
+  "PREPARATIONS_STEP_4_CONTENT": "Click here to access the online help.",
   "PREPARATIONS_STEP_5_TITLE": "Information",
-  "PREPARATIONS_STEP_5_CONTENT": "Click here to access additional resources (Community forum, Product version) or send feedback",
+  "PREPARATIONS_STEP_5_CONTENT": "Click here to access additional resources (Community forum, Product version) or send feedback.",
 
   "EMPTY_RECORDS_LABEL": "rows with empty values",
   "INVALID_RECORDS_LABEL": "rows with invalid values",
@@ -493,5 +499,6 @@
   "LIST_TOOLBAR_DISPLAY": "Display",
   "LIST_TOOLBAR_SORT_BY": "Sort by",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "Descending",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending"
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending",
+  "LIST_OPEN_ACTION_MENU": "Open menu"
 }

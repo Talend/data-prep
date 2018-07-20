@@ -18,7 +18,6 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER
 import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
 
 import java.beans.PropertyEditor;
-import java.beans.PropertyEditorSupport;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
@@ -30,11 +29,10 @@ import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
-import org.talend.dataprep.preparation.service.UserPreparation;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -91,22 +89,7 @@ public final class SortAndOrderHelper {
         }
     }
 
-    /**
-     * Representation style of entities. Create for Preparations formats available.
-     */
-    public enum Format {
-        /** Smallest size only IDs. */
-        SHORT,
-        /** Small summary. */
-        SUMMARY,
-        /** Complete detailed format. */
-        LONG
-    }
-
     private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
-
-    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
-            .converterTo(CaseFormat.UPPER_UNDERSCORE);
 
     private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
             .converterTo(CaseFormat.LOWER_CAMEL);
@@ -114,75 +97,12 @@ public final class SortAndOrderHelper {
     private SortAndOrderHelper() {
     }
 
-    private static class SortPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Sort value;
-            try {
-                value = Sort.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.trace("Could not read Sort parameter as camel case.", e);
-                try {
-                    value = Sort.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.trace("Could not read Sort parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
-    }
-
-    private static class OrderPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Order value;
-            try {
-                value = Order.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.trace("Could not read Order parameter as camel case.", e);
-                try {
-                    value = Order.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.trace("Could not read Order parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
-    }
-
-    private static class FormatPropertyEditor extends PropertyEditorSupport {
-
-        @Override
-        public void setAsText(String text) {
-            String fromCamelCase = camelToSnakeCaseConverter.convert(text);
-            Enum value;
-            try {
-                value = Format.valueOf(fromCamelCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.trace("Could not read Sort parameter as camel case.", e);
-                try {
-                    value = Format.valueOf(text.toUpperCase());
-                } catch (IllegalArgumentException e2) {
-                    LOGGER.trace("Could not read Sort parameter as snake case.", e2);
-                    throw new TDPException(CommonErrorCodes.ILLEGAL_SORT_FOR_LIST, e2);
-                }
-            }
-            setValue(value);
-        }
-    }
-
     /**
      * Create a {@link PropertyEditor} to allow binding of lower-case {@link Order} in
      * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
      */
     public static PropertyEditor getOrderPropertyEditor() {
-        return new OrderPropertyEditor();
+        return new ConverterBasedPropertyEditor<>(Order::valueOf);
     }
 
     /**
@@ -190,15 +110,7 @@ public final class SortAndOrderHelper {
      * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
      */
     public static PropertyEditor getSortPropertyEditor() {
-        return new SortPropertyEditor();
-    }
-
-    /**
-     * Create a {@link PropertyEditor} to allow binding of lower-case {@link Format} in
-     * {@link org.springframework.web.bind.annotation.RequestParam @RequestParam}.
-     */
-    public static PropertyEditor getFormatPropertyEditor() {
-        return new FormatPropertyEditor();
+        return new ConverterBasedPropertyEditor<>(Sort::valueOf);
     }
 
     /**
@@ -285,16 +197,16 @@ public final class SortAndOrderHelper {
      * @param orderKey the order comparator to use.
      * @return a preparation comparator from the given parameters.
      */
-    public static Comparator<Preparation> getPreparationComparator(Sort sortKey, Order orderKey) {
+    public static Comparator<PreparationDTO> getPreparationComparator(Sort sortKey, Order orderKey) {
         return getPreparationComparator(sortKey, orderKey, null);
     }
 
-    public static Comparator<Preparation> getPreparationComparator(Sort sortKey, Order orderKey,
-            Function<? super Preparation, ? extends DataSetMetadata> dataSetFinder) {
+    public static Comparator<PreparationDTO> getPreparationComparator(Sort sortKey, Order orderKey,
+            Function<? super PreparationDTO, ? extends DataSetMetadata> dataSetFinder) {
         Comparator<Comparable> comparisonOrder = getOrderComparator(orderKey);
 
         // Select comparator for sort (either by name or date)
-        Function<Preparation, Comparable> keyExtractor;
+        Function<PreparationDTO, Comparable> keyExtractor;
         if (sortKey == null) { // default to NAME sort
             keyExtractor = preparation -> preparation.getName().toUpperCase();
         } else {
@@ -307,21 +219,16 @@ public final class SortAndOrderHelper {
                 break;
             case AUTHOR:
                 keyExtractor = preparation -> {
-                    // TODO: make this class agnostic of the subclass of DatasetMetadata it is using
-                    // in order to just call a method to retrieve the author name
-                    if (preparation instanceof UserPreparation) {
-                        Owner owner = ((UserPreparation) preparation).getOwner();
-                        return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
-                    }
-                    return preparation.getAuthor();
+                    Owner owner = preparation.getOwner();
+                    return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
                 };
                 break;
             case CREATION_DATE:
             case DATE:
-                keyExtractor = Preparation::getCreationDate;
+                keyExtractor = PreparationDTO::getCreationDate;
                 break;
             case LAST_MODIFICATION_DATE:
-                keyExtractor = Preparation::getLastModificationDate;
+                keyExtractor = PreparationDTO::getLastModificationDate;
                 break;
             case NB_STEPS:
                 keyExtractor = preparation -> preparation.getSteps().size();

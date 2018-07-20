@@ -31,7 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
 
@@ -62,7 +64,7 @@ public class HashDataTest extends AbstractMetadataBaseTest<HashData> {
 
     @Test
     public void testCategory() throws Exception {
-        assertThat(action.getCategory(Locale.US), is(ActionCategory.COLUMNS.getDisplayName(Locale.US)));
+        assertThat(action.getCategory(Locale.US), is(ActionCategory.DATA_MASKING.getDisplayName(Locale.US)));
     }
 
     @Override
@@ -108,6 +110,27 @@ public class HashDataTest extends AbstractMetadataBaseTest<HashData> {
 
         final Map<String, String> expectedValues = new LinkedHashMap<>();
         expectedValues.put("0000", "ef0841710e395c63f12a3aeb8dc9e712e57758cd39702bd669c3d5b835d6b4a0");
+        expectedValues.put("0001", "Pomme de terre");
+        expectedValues.put("0002", "06/06/2018");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void should_not_hash_empty() {
+        //given
+        final Map<String, String> values = new LinkedHashMap<>();
+        values.put("0000", "");
+        values.put("0001", "Pomme de terre");
+        values.put("0002", "06/06/2018");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "");
         expectedValues.put("0001", "Pomme de terre");
         expectedValues.put("0002", "06/06/2018");
 

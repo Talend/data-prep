@@ -71,7 +71,8 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationActions;
-import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.preparation.BasePreparationTest;
@@ -348,11 +349,11 @@ public class PreparationControllerTest extends BasePreparationTest {
         clientTest.addStep(preparationId, step);
 
         // when
-        final PreparationMessage details = clientTest.getDetails(preparationId, wantedStepId);
+        final PreparationDetailsDTO details = clientTest.getDetails(preparationId, wantedStepId);
 
         // then
         assertNotNull(details);
-        assertEquals(wantedStepId, details.getHeadId());
+        assertEquals(wantedStepId, details.getSteps().get(details.getSteps().size() - 1));
         assertEquals(3, details.getSteps().size());
     }
 
@@ -814,9 +815,8 @@ public class PreparationControllerTest extends BasePreparationTest {
                 .getId();
         final Preparation preparation = repository.get(preparationId, Preparation.class);
 
-        final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"app-version\":\""
-                + preparation.getAppVersion() + "\"," + "\"dataSetId\":\"7535\","
-                + "\"rowMetadata\":{\"nextId\":0,\"columns\":[]}," + "\"author\":\"" + preparation.getAuthor() + "\","
+        final String expected = "{" + "\"id\":\"" + preparation.getId() + "\"," + "\"dataSetId\":\"7535\","
+                + "\"author\":\"" + preparation.getAuthor() + "\","
                 + "\"name\":\"yap\"," + "\"creationDate\":" + preparation.getCreationDate() + "," + "\"lastModificationDate\":"
                 + preparation.getCreationDate() + "," + "\"headId\":\"f6e172c33bdacbc69bca9d32b2bd78174712a171\"" + "}";
 
@@ -867,7 +867,7 @@ public class PreparationControllerTest extends BasePreparationTest {
 
         // when
         final String preparationId = clientTest
-                .createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId()).id();
+                .createPreparation(createTestPreparation("another_preparation", "75368"), folder.getId()).getId();
 
         // then
         final FolderEntry entry = assertThatPreparationIsFirstInsideFolder(preparationId, folder.getId());
@@ -881,7 +881,7 @@ public class PreparationControllerTest extends BasePreparationTest {
         assertThat(list.size(), is(0));
 
         // when
-        final String preparationId = clientTest.createPreparation(createTestPreparation("éàçè", "1234")).id();
+        final String preparationId = clientTest.createPreparation(createTestPreparation("éàçè", "1234")).getId();
 
         // then
         final Collection<Preparation> preparations = repository.list(Preparation.class).collect(Collectors.toList());
@@ -931,16 +931,12 @@ public class PreparationControllerTest extends BasePreparationTest {
         applyTransformation(preparationId, "actions/append_copy_lastname.json");
 
         assertThat(repository.list(Preparation.class).count(), is(1L));
-        assertThat(repository.list(Step.class).count(), is(2L));
-        assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
         clientTest.deletePreparation(preparationId);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(0L));
-        assertThat(repository.list(Step.class).count(), is(1L));
-        assertThat(repository.list(PreparationActions.class).count(), is(1L));
     }
 
     @Test
@@ -955,16 +951,12 @@ public class PreparationControllerTest extends BasePreparationTest {
         applyTransformation(preparationId2, "actions/append_copy_lastname.json");
 
         assertThat(repository.list(Preparation.class).count(), is(2L));
-        assertThat(repository.list(Step.class).count(), is(3L));
-        assertThat(repository.list(PreparationActions.class).count(), is(2L));
 
         // when
         clientTest.deletePreparation(preparationId1);
 
         // then
         assertThat(repository.list(Preparation.class).count(), is(1L));
-        assertThat(repository.list(Step.class).count(), is(2L));
-        assertThat(repository.list(PreparationActions.class).count(), is(2L));
     }
 
     @Test
@@ -977,8 +969,11 @@ public class PreparationControllerTest extends BasePreparationTest {
         final long oldModificationDate = createdPreparation.getLastModificationDate();
 
         // Test preparation details update
+        PreparationDTO forUpdate = new PreparationDTO();
+        forUpdate.setName("test_name_updated");
+        forUpdate.setDataSetId("1234");
         final String updatedId = given().contentType(ContentType.JSON) //
-                .body(createTestPreparation("test_name_updated", "1234")) //
+                .body(forUpdate) //
                 .when() //
                 .put("/preparations/{id}", preparationId) //
                 .asString();
@@ -1004,8 +999,13 @@ public class PreparationControllerTest extends BasePreparationTest {
         final String preparationId = clientTest.createPreparation(createdPreparation).getId();
 
         // when
-        final String updatedId = given().contentType(ContentType.JSON.withCharset(UTF_8))
-                .body(createTestPreparation("éàçè", "1234")).when().put("/preparations/{id}", preparationId).asString();
+        final PreparationDTO forUpdate = new PreparationDTO();
+        forUpdate.setName("éàçè");
+        forUpdate.setDataSetId("1234");
+        final String updatedId = given().contentType(ContentType.JSON.withCharset(UTF_8)) //
+                .body(forUpdate) //
+                .when() //
+                .put("/preparations/{id}", preparationId).asString();
 
         // then
         // Preparation id should not change (new name)
@@ -1473,8 +1473,6 @@ public class PreparationControllerTest extends BasePreparationTest {
         Response response = when().get("/preparations/{id}/details", preparationId);
 
         // then
-        assertNotNull(response.path("metadata"));
-        response.then().assertThat().body("metadata[0].name", is("copy"));
         Preparation newPreparation = repository.get(preparationId, Preparation.class);
         String newHead = stepIds.get(1);
         assertEquals(newHead, newPreparation.getHeadId());
@@ -1789,21 +1787,6 @@ public class PreparationControllerTest extends BasePreparationTest {
         // then
         // Because the lookup action is not used in any preparation:
         assertThat(response.getStatusCode(), is(404));
-    }
-
-    @Test
-    public void shouldMakePreparationNotDistributed() throws Exception {
-        // given
-        final String preparationId = createPreparation("1234", "my preparation");
-        applyTransformation(preparationId, "actions/append_make_line_header.json"); // Make line header can't be distributed
-        applyTransformation(preparationId, "actions/append_upper_case.json");
-        Preparation preparation = repository.get(preparationId, Preparation.class);
-
-        // when
-        final String preparationDetails = when().get("/preparations/{id}/details", preparation.id()).asString();
-
-        // then
-        assertThat(JsonPath.given(preparationDetails).get("allowDistributedRun"), is(false));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,98 @@
+
+{
+  "id": "31d70fea-9857-4e24-b727-7c0fdfb361cd",
+  "dataSetId": "a9372160-ed8e-4af7-aa32-7fe93c8ebfbe",
+  "author": "40bf2a81-5457-468c-ae2b-e0a5bca7c77a",
+  "name": "20000L8C Preparation 5733",
+  "creationDate": 1528813016406,
+  "lastModificationDate": 1528894243451,
+  "steps": ["f6e172c33bdacbc69bca9d32b2bd78174712a171", "9183d5bc-019b-4ea4-9669-a61acbae276d"],
+  "metadata": [
+    {
+      "name": "keep_only",
+      "category": "filtered",
+      "alternateCategory": "filtered",
+      "parameters": [
+        {
+          "name": "column_id",
+          "type": "string",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "label": "Column",
+          "description": "The column to which you want to apply this action",
+          "default": ""
+        },
+        {
+          "name": "row_id",
+          "type": "string",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "label": "Row",
+          "description": "The row to which you want to apply this action",
+          "default": ""
+        },
+        {
+          "name": "scope",
+          "type": "string",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "label": "Scope",
+          "description": "The transformation scope (CELL | ROW | COLUMN | DATASET)",
+          "default": ""
+        },
+        {
+          "name": "filter",
+          "type": "filter",
+          "implicit": true,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "label": "Filter",
+          "description": "An optional filter to apply action on matching values only.",
+          "default": ""
+        }
+      ],
+      "actionScope": ["column_filtered"],
+      "description": "Keep only the rows that match the current filters",
+      "alternateDescription": "Keep only the rows that match the current filters",
+      "label": "Keep these filtered rows",
+      "alternateLabel": "Keep these filtered rows",
+      "docUrl": "",
+      "dynamic": false
+    }
+  ],
+  "actions": [
+    {
+      "action": "keep_only",
+      "parameters":
+      {
+        "column_id": "0000",
+        "filter":
+        {
+          "range":
+          {
+            "field": "0000",
+            "start": 342273,
+            "end": 445831,
+            "type": "integer",
+            "label": "[342,273 .. 445,831["
+          }
+        },
+        "scope": "column",
+        "column_name": "id",
+        "row_id": null
+      }
+    }
+  ],
+  "allowFullRun": true,
+  "diff": [
+    {
+      "createdColumns": []
+    },
+    {
+      "createdColumns": []
+    }
+  ]
+}

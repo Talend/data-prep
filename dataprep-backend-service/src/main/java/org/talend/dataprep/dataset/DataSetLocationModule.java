@@ -1,10 +1,12 @@
 package org.talend.dataprep.dataset;
 
-import java.util.ArrayList;
-import java.util.List;
+import static java.util.Collections.emptyList;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetLocation;
@@ -23,15 +25,18 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 @Component
 public class DataSetLocationModule extends SimpleModule {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataSetLocationModule.class);
+
     @Autowired(required = false)
-    private List<DataSetLocationMapping> mappings = new ArrayList<>();
+    private List<DataSetLocationMapping> mappings = emptyList();
 
     @PostConstruct
     public void init(){
         mappings.forEach(mapping -> registerLocationMapping(mapping.getLocationType(), mapping.getLocationClass()));
     }
 
-    protected void registerLocationMapping(String type, Class<? extends DataSetLocation> locationClass){
+    private void registerLocationMapping(String type, Class<? extends DataSetLocation> locationClass){
+        LOGGER.debug("register dataset location type [{}] for [{}]", type, locationClass);
         this.registerSubtypes(new NamedType(locationClass, type));
     }
 }

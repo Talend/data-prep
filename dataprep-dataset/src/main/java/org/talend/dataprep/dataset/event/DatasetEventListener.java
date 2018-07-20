@@ -13,12 +13,10 @@
 package org.talend.dataprep.dataset.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
 public class DatasetEventListener {
 
     @Autowired

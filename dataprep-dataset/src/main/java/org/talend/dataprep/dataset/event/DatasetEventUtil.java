@@ -12,11 +12,13 @@
 
 package org.talend.dataprep.dataset.event;
 
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.event.CacheEventProcessingUtil;
 
@@ -28,9 +30,6 @@ public class DatasetEventUtil {
 
     @Autowired
     private AnalysisEventProcessingUtil analysisEventProcessingUtil;
-
-    @Autowired
-    private CacheKeyGenerator cacheKeyGenerator;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetEventUtil.class);
 
@@ -50,9 +49,31 @@ public class DatasetEventUtil {
     }
 
     private void cleanDatasetCache(String datasetId) {
+        // when we update a dataset we need to clean cache
+        final ContentCacheKey sampleKey = () -> "dataset-sample_" + datasetId;
         LOGGER.debug("Evicting sample cache entry for #{}", datasetId);
-        final ContentCacheKey sampleKey = cacheKeyGenerator.generateDatasetSampleKey(datasetId);
         cacheEventProcessingUtil.processCleanCacheEvent(sampleKey, Boolean.FALSE);
         LOGGER.debug("Evicting sample cache entry for #{} done.", datasetId);
+
+        LOGGER.debug("Evicting transformation cache entry for dataset #{}", datasetId);
+        final ContentCacheKey matchDatasetKey = new ContentCacheKey() {
+
+            @Override
+            public String getKey() {
+                return datasetId;
+            }
+
+            @Override
+            public Predicate<String> getMatcher() {
+                String regex = ".*_" + getKey() + "_.*";
+
+                // Build regular expression matcher
+                final Pattern pattern = Pattern.compile(regex);
+                return str -> pattern.matcher(str).matches();
+            }
+
+        };
+        cacheEventProcessingUtil.processCleanCacheEvent(matchDatasetKey, Boolean.TRUE);
+        LOGGER.debug("Evicting transformation cache entry for dataset  #{} done.", datasetId);
     }
 }

@@ -349,7 +349,7 @@ public class APIClientTest {
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter, String fileName)
             throws IOException, InterruptedException {
-        return export(preparationId, "", stepId, csvDelimiter, fileName);
+        return export(preparationId, null, stepId, csvDelimiter, fileName);
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter)
@@ -389,8 +389,11 @@ public class APIClientTest {
                 .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE, //
                         CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
-                .formParam("stepId", stepId) //
-                .formParam("datasetId", datasetId); //
+                .formParam("stepId", stepId);
+
+        if (datasetId != null) {
+            exportRequest.formParam("datasetId", datasetId);
+        }
 
         if (StringUtils.isNotEmpty(csvDelimiter)) {
             exportRequest.formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER, csvDelimiter);

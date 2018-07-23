@@ -7,13 +7,12 @@ Feature: Row count of current sample
     When I add a "delete_column" step on the preparation "12L5C_preparation" with parameters :
       | column_name | firstname |
       | column_id   | 0001      |
-      | scope       | column    |
     Then The characteristics of the preparation "12L5C_preparation" match:
       | sample_records_count | 12 |
 
   Scenario: Apply an action which triggers statistics analysis
     Given I create a preparation with name "12L5C_preparation 2", based on "12L5C_dataset" dataset
-    When I add a "upper_case" step on the preparation "12L5C_preparation 2" with parameters :
+    When I add a "uppercase" step on the preparation "12L5C_preparation 2" with parameters :
       | column_name | firstname |
       | column_id   | 0001      |
     Then The characteristics of the preparation "12L5C_preparation 2" match:

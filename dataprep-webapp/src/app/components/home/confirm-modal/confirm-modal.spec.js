@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-fdescribe('confirm modal component', () => {
+describe('confirm modal component', () => {
 	let scope;
 	let element;
 	let createElement;

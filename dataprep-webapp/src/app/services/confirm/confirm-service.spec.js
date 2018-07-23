@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-fdescribe('confirm service', () => {
+describe('confirm service', () => {
 	beforeEach(angular.mock.module('data-prep.services.confirm'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
@@ -29,7 +29,7 @@ fdescribe('confirm service', () => {
 	}));
 
 	it('should prompt', inject(($rootScope, StateService, ConfirmService) => {
-		ConfirmService.confirm();
+		ConfirmService.confirm(['a']);
 		$rootScope.$digest();
 		$rootScope.$digest();
 		expect(StateService.showConfirmationModal).toHaveBeenCalled();

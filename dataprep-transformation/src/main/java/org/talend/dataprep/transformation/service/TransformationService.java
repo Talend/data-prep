@@ -82,6 +82,7 @@ import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.async.AsyncExecutionId;
 import org.talend.dataprep.async.AsyncOperation;
 import org.talend.dataprep.async.AsyncParameter;
+import org.talend.dataprep.async.conditional.ConditionalTest;
 import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
 import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
 import org.talend.dataprep.async.generator.ExportParametersExecutionIdGenerator;
@@ -226,20 +227,19 @@ public class TransformationService extends BaseTransformationService {
             value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
             throws IOException {
 
-        ExportParameters completeParameters = parameters;
+        ExportParameters completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
 
-        if (StringUtils.isNotEmpty(completeParameters.getPreparationId())) {
-            // we deal with preparation transformation (not dataset)
-            completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-
-            ContentCacheKey cacheKey = cacheKeyGenerator.generateContentKey(completeParameters);
-
-            if (!contentCache.has(cacheKey)) {
-                preparationExportStrategy.performPreparation(completeParameters, new NullOutputStream());
-            }
+        // Async behavior
+        final ConditionalTest conditionalTest = applicationContext.getBean(GetPrepContentAsyncCondition.class);
+        if (conditionalTest.apply(completeParameters)) {
+            // write to cache
+            executeSampleExportStrategy(completeParameters).writeTo(new NullOutputStream());
+            return outputStream -> {
+            };
+        } else {
+            // sync behavior
+            return executeSampleExportStrategy(completeParameters);
         }
-
-        return executeSampleExportStrategy(completeParameters);
     }
 
     @RequestMapping(value = "/apply/preparation/{preparationId}/{stepId}/metadata", method = GET)

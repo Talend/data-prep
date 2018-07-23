@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.filter.FilterTranslator;
 import org.talend.dataprep.api.filter.TQLFilterService;
 import org.talend.dataprep.api.preparation.Action;
@@ -45,6 +46,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.preparation.service.PreparationService;
 import org.talend.dataprep.preparation.service.UserPreparation;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PersistentStep;
@@ -100,9 +102,7 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
     }
 
     private PreparationDetailsDTO toPreparationDetailsDTO(PreparationDTO source, PreparationDetailsDTO target,
-
             ApplicationContext applicationContext) {
-        // Steps diff metadata
 
         final PreparationRepository preparationRepository = applicationContext.getBean(PreparationRepository.class);
 
@@ -123,10 +123,62 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
         target.setDiff(diffs);
 
         // TDP-5888: It is important for Spark runs to have a row metadata to describe initial data schema.
-        final PersistentPreparation preparation = preparationRepository.get(source.getId(), PersistentPreparation.class);
+        // and also to display column names in filter labels of steps
+        final PersistentPreparation preparation =
+                preparationRepository.get(source.getId(), PersistentPreparation.class);
         target.setRowMetadata(preparation.getRowMetadata());
 
+        injectColumnNamesIntoActions(source.getHeadId(), target, applicationContext.getBean(PreparationService.class));
+
         return target;
+    }
+
+    /**
+     * Inject column names into actions to display correctly every action label and filter label.
+     *
+     * @param headId the id of the head step of the version
+     * @param target the already converted object to enrich
+     * @param preparationService the service to find actions to enrich and inject into the converted object
+     */
+    private void injectColumnNamesIntoActions(String headId, PreparationDetailsDTO target,
+            PreparationService preparationService) {
+
+        final List<Action> actions = preparationService.getVersionedAction(target.getId(), headId);
+        target.setActions(actions);
+        for (Action action : actions) {
+            Map<String, String> parameters = action.getParameters();
+            List<ColumnMetadata> filterColumns = new ArrayList<>();
+
+            // Fetch column metadata relative to the filtered action
+            // Ask for (n-1) metadata (necessary if some columns are deleted during last step)
+            RowMetadata rowMetadata =
+                    preparationService.getPreparationStep(target.getSteps().get(actions.indexOf(action)));
+            if (rowMetadata == null) {
+                rowMetadata = target.getRowMetadata();
+            }
+            if (StringUtils.isNotBlank(parameters.get(ImplicitParameters.FILTER.getKey()))) {
+                // Translate filter from JSON to TQL
+                parameters.put(ImplicitParameters.FILTER.getKey(),
+                        translator.toTQL(parameters.get(ImplicitParameters.FILTER.getKey())));
+                filterColumns = tqlFilterService
+                        .getFilterColumnsMetadata(parameters.get(ImplicitParameters.FILTER.getKey()), rowMetadata);
+            }
+            // add metadata of the scope column if not already added (useful when there is a column rename for
+            // example)
+            if (filterColumns
+                    .stream()
+                    .filter(column -> column.getId().equals(parameters.get(ImplicitParameters.COLUMN_ID.getKey())))
+                    .findFirst()
+                    .orElse(null) == null) {
+                filterColumns.addAll(rowMetadata
+                        .getColumns()
+                        .stream()
+                        .filter(column -> column.getId().equals(
+                                parameters.get(ImplicitParameters.COLUMN_ID.getKey())))
+                        .collect(Collectors.toList()));
+            }
+            action.setFilterColumns(filterColumns);
+        }
     }
 
     private PreparationSummary toStudioPreparation(Preparation source, PreparationSummary target,
@@ -201,12 +253,21 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                                             parameters.get(ImplicitParameters.FILTER.getKey()),
                                             stepRowMetadata.getRowMetadata());
                                 }
-                                //add metadata of the scope column if not already added(use when there is a column rename for example)
-                                if(filterColumns.stream().filter(column -> parameters.get(ImplicitParameters.COLUMN_ID.getKey()).equals(column.getId())).findFirst().orElse(null) == null) {
-                                    filterColumns.addAll(stepRowMetadata.getRowMetadata()
+                                // add metadata of the scope column if not already added(use when there is a column
+                                // rename for example)
+                                if (filterColumns
+                                        .stream()
+                                        .filter(column -> parameters.get(ImplicitParameters.COLUMN_ID.getKey()).equals(
+                                                column.getId()))
+                                        .findFirst()
+                                        .orElse(null) == null) {
+                                    filterColumns.addAll(stepRowMetadata
+                                            .getRowMetadata()
                                             .getColumns()
                                             .stream()
-                                            .filter(column -> parameters.get(ImplicitParameters.COLUMN_ID.getKey()).equals(column.getId()))
+                                            .filter(column -> parameters
+                                                    .get(ImplicitParameters.COLUMN_ID.getKey())
+                                                    .equals(column.getId()))
                                             .collect(Collectors.toList()));
                                 }
                             }
@@ -221,7 +282,8 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                     boolean allowDistributedRun = true;
                     for (Action action : actions) {
                         final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
-                        if (actionDefinition.getBehavior(action).contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                        if (actionDefinition.getBehavior(action).contains(
+                                ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
                             allowDistributedRun = false;
                             break;
                         }

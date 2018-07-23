@@ -150,23 +150,28 @@ public class StatisticsNodesBuilder {
 
             if (needIntermediateStatistics(nextAction)) {
 
-                final Set<ActionDefinition.Behavior> behavior = actionToMetadata.get(nextAction).getBehavior(nextAction);
-                NodeBuilder nodeBuilder = NodeBuilder.from(getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis()));
+                final Set<ActionDefinition.Behavior> behavior =
+                        actionToMetadata.get(nextAction).getBehavior(nextAction);
+                NodeBuilder nodeBuilder = NodeBuilder.from(
+                        getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis(), rowMetadataFallbackProvider));
 
                 if (behavior.contains(NEED_STATISTICS_PATTERN)) {
                     // the type detection is needed by some actions : see bug TDP-4926
                     // this modification needs performance analysis
-                    nodeBuilder.to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis(), rowMetadataFallbackProvider));
+                    nodeBuilder.to(getPatternDetectionNode(actionsProfile.getFilterForPatternAnalysis(),
+                            rowMetadataFallbackProvider));
                 }
                 if (behavior.contains(NEED_STATISTICS_QUALITY)) {
                     // the quality of the dataset is needed by some actions : see DeleteAllEmptyColumns
-                    nodeBuilder.to(getQualityStatisticsNode(actionsProfile.getFilterForPatternAnalysis(), rowMetadataFallbackProvider));
+                    nodeBuilder.to(getQualityStatisticsNode(actionsProfile.getFilterForPatternAnalysis(),
+                            rowMetadataFallbackProvider));
                 }
                 if (behavior.contains(NEED_STATISTICS_FREQUENCY)) {
                     // the frequency of each pattern is needed by some actions : see DeleteAllEmptyColumns
                     nodeBuilder.to(getFrequencyStatisticsNode(actionsProfile.getFilterForPatternAnalysis()));
                 }
-                if (nextAction.getParameters().containsKey(FILTER.getKey()) || behavior.contains(NEED_STATISTICS_INVALID)) {
+                if (nextAction.getParameters().containsKey(FILTER.getKey())
+                        || behavior.contains(NEED_STATISTICS_INVALID)) {
                     // 2 cases remain as this point: action needs invalid values or filter attached to action does
                     // equivalent to the default case
                     nodeBuilder.to(getInvalidDetectionNode(actionsProfile.getFilterForInvalidAnalysis()));

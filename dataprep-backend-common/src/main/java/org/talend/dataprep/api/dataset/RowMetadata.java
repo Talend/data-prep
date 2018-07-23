@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
 import org.talend.dataprep.api.dataset.row.Flag;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

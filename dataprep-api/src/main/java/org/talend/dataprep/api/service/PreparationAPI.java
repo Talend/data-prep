@@ -273,11 +273,9 @@ public class PreparationAPI extends APIService {
         }
 
         try {
-            final PreparationDetailsDTO preparationDetails = getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
-            final List<Action> actions = getCommand(PreparationGetActions.class, preparationId).execute();
-            return beanConversionService.convert(preparationDetails, //
-                    PreparationDetailsDTO.class, //
-                    (dto, details) -> injectorUtil.injectPreparationDetails(actions, details) //);
+            final PreparationDetailsDTO preparationDetails =
+                    getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
+            return injectorUtil.injectPreparationDetails(preparationDetails.getActions(), preparationDetails);
         } catch (Exception e) {
             LOG.error("Unable to get preparation {}", preparationId, e);
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);

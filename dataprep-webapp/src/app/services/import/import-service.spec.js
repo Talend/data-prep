@@ -622,7 +622,7 @@ describe('Import service', () => {
 				expect(DatasetService.update).not.toHaveBeenCalled();
 			}));
 
-			it('should create dataset with modified name', inject(($rootScope, $q, ConfirmService, DatasetService, ImportService) => {
+			it('should create dataset with modified name', inject(($rootScope, $q, DatasetService, ImportService) => {
 				// given
 				spyOn(DatasetService, 'getUniqueName').and.returnValue($q.when('my cool dataset (1)'));
 				ImportService.onImportNameValidation();

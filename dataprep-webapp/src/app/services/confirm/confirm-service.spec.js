@@ -24,8 +24,7 @@ describe('confirm service', () => {
 	}));
 
 	beforeEach(inject((StateService) => {
-		spyOn(StateService, 'showConfirmationModal').and.returnValue();
-		spyOn(StateService, 'hideConfirmationModal').and.returnValue();
+		spyOn(StateService, 'showConfirmationModal');
 	}));
 
 	it('should prompt', inject(($rootScope, StateService, ConfirmService) => {

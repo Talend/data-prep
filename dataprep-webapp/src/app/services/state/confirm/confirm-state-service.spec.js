@@ -12,8 +12,6 @@
   ============================================================================*/
 
 describe('confirm state service', () => {
-	let stateMock;
-
 	beforeEach(angular.mock.module('data-prep.services.state'));
 
 	beforeEach(inject(confirmState => {

@@ -4,6 +4,7 @@ import { default as http } from './http.saga';
 import { default as preparation } from './preparation.saga';
 import { default as redirect } from './redirect.saga';
 import { default as search } from './search.saga';
+import { default as notification } from './notification.saga';
 
 export default {
 	bootstrap,
@@ -12,4 +13,5 @@ export default {
 	preparation,
 	redirect,
 	search,
+	notification,
 };

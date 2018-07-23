@@ -432,7 +432,7 @@ public class DataSetRow implements Cloneable, Serializable {
                 .map(Map.Entry::getKey) //
                 .collect(Collectors.toSet());
         final RowMetadata rowMetadataClone = rowMetadata.clone();
-        final LinkedHashMap<String, String> filteredValues = new LinkedHashMap<>(this.values);
+        final Map<String, String> filteredValues = new LinkedHashMap<>(this.values);
         for (String columnId : columnsToDelete) {
             filteredValues.remove(columnId);
             rowMetadataClone.deleteColumnById(columnId);

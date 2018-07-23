@@ -76,7 +76,7 @@ public class SchemaAnalysis implements SynchronousDataSetAnalyzer {
                 return;
             }
             // Schema analysis
-            try (Stream<DataSetRow> stream = store.stream(metadata, 100)) {
+            try (Stream<DataSetRow> stream = store.stream(metadata)) {
                 LOGGER.info("Analyzing schema in dataset #{}...", dataSetId);
                 // Configure analyzers
                 final List<ColumnMetadata> columns = metadata.getRowMetadata().getColumns();

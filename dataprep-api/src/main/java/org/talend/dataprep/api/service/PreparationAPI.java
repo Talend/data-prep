@@ -85,7 +85,6 @@ import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
 import org.talend.dataprep.conversions.inject.DataSetNameInjection;
-import org.talend.dataprep.conversions.inject.OwnerInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -130,9 +129,8 @@ public class PreparationAPI extends APIService {
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
         if ("summary".equalsIgnoreCase(format)) {
-            final OwnerInjection ownerInjection = context.getBean(OwnerInjection.class);
             return toStream(PreparationDTO.class, mapper, command) //
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection, ownerInjection));
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
         } else {
             return toStream(PreparationDTO.class, mapper, command) //
                     .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));

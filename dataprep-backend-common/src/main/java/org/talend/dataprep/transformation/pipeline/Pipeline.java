@@ -312,7 +312,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                             final Map<String, String> parameters = a.getParameters();
                             final ScopeCategory scope = ScopeCategory.from(parameters.get(ImplicitParameters.SCOPE.getKey()));
                             final ActionDefinition actionDefinition = actionRegistry.get(a.getName());
-                            final CompileDataSetRowAction compile = new CompileDataSetRowAction(parameters, actionDefinition, scope);
+                            final CompileDataSetRowAction compile = new CompileDataSetRowAction(parameters, actionDefinition,
+                                    scope);
                             final ApplyDataSetRowAction apply = new ApplyDataSetRowAction(actionDefinition, parameters, scope);
 
                             // Create runnable action
@@ -346,7 +347,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             if (preparation != null) {
                 LOG.debug("Applying step node transformations...");
                 actionsNode.logStatus(LOG, "Before transformation\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(), parentStepRowMetadataSupplier);
+                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
+                        parentStepRowMetadataSupplier);
                 current.to(node);
                 node.logStatus(LOG, "After transformation\n{}");
             } else {

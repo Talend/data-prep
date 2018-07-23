@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 /**
  * All sample export step should implements this interface.
  */
@@ -25,5 +27,5 @@ public interface ExportSampleStep {
      * @return a {@link Map} of sample export specific parameters.
      */
     @NotNull
-    Map<String, String> extractParameters(@NotNull Map<String, String> params);
+    Map<String, String> extractParameters(@NotNull Map<String, String> params) throws JsonProcessingException;
 }

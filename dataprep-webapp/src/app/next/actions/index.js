@@ -5,6 +5,7 @@ import { default as help } from './help';
 import { default as version } from './version';
 import { default as search } from './search';
 import { default as folder } from './folder';
+import { default as notification } from './notification';
 
 export default {
 	redirect,
@@ -14,4 +15,5 @@ export default {
 	version,
 	search,
 	folder,
+	notification,
 };

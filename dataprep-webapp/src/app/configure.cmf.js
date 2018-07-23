@@ -42,6 +42,7 @@ export default function initialize(additionalConfiguration = {}) {
 		...sagas.search,
 		...sagas.preparation,
 		...sagas.redirect,
+		...sagas.notification,
 	};
 	const additionalRootSagas = additionalConfiguration.rootSagas;
 	if (additionalRootSagas) {

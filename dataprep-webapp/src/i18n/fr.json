@@ -101,8 +101,11 @@
   "RECENT_DATASETS":"Jeux de données récents",
   "RECENT_DATASETS_DESCRIPTION":"10 dernières modifications",
   "FAVORITE_DATASETS":"Jeux de données favoris",
+  "FAVORITE_DATASETS_DESCRIPTION":"",
   "CERTIFIED_DATASETS":"Jeux de données certifiés",
+  "CERTIFIED_DATASETS_DESCRIPTION":"",
   "ALL_DATASETS":"Tous les jeux de données",
+  "ALL_DATASETS_DESCRIPTION":"",
   "IMPORT_FILE": "Importer un fichier",
   "IMPORT_FILE_DESCRIPTION": "Importer un fichier local",
   "NEW_PREPARATION_NAME": "Nom de la préparation",
@@ -492,5 +495,6 @@
   "LIST_TOOLBAR_DISPLAY": "Affichage",
   "LIST_TOOLBAR_SORT_BY": "Trier par",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "Descendant",
-  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant"
+  "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascendant",
+  "LIST_OPEN_ACTION_MENU": "Ouvrir le menu"
 }

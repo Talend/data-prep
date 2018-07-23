@@ -222,6 +222,45 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         // then
         assertEquals("haand", row.get("0000"));
     }
+    @Test
+    public void should_remove_custom_surrogate_pair_end_characters() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄𠀄𠀄𠀄");
+        final DataSetRow row = new DataSetRow(values);
+        initParameterCustom("𠀄");
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row.get("0000"));
+    }
+    @Test
+    public void should_remove_custom_surrogate_pair_start_characters() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "𠀄𠀄𠀄中崎𠀀𠀁𠀂𠀃𠀄");
+        final DataSetRow row = new DataSetRow(values);
+        initParameterCustom("𠀄");
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("𠀄中崎𠀀𠀁𠀂𠀃𠀄", row.get("0000"));
+    }
+    @Test
+    public void should_remove_custom_surrogate_pair_middle_characters() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "中崎𠀀𠀄𠀄𠀄𠀁𠀂𠀃𠀄");
+        final DataSetRow row = new DataSetRow(values);
+        initParameterCustom("𠀄");
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("中崎𠀀𠀄𠀁𠀂𠀃𠀄", row.get("0000"));
+    }
 
     @Test
     public void should_accept_column() {

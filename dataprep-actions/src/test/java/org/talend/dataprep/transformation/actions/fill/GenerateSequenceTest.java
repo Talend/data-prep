@@ -149,6 +149,47 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         assertEquals(expectedValues2, row2.values());
         assertEquals(expectedValues3, row3.values());
     }
+    @Test
+    public void should_generate_even_surrogate_pair() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
+        parameters.put(GenerateSequence.START_VALUE, "0");
+        parameters.put(GenerateSequence.STEP_VALUE, "3");
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+
+        //row1
+        Map<String, String> values = new HashMap<>();
+        values.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄");
+        DataSetRow row1 = new DataSetRow(values);
+        row1.setTdpId(1L);
+
+        // row2
+        Map<String, String> values2 = new HashMap<>();
+        values2.put("0000", "菊地𠀐𠀑𠀒𠀓𠀔");
+        DataSetRow row2 = new DataSetRow(values2);
+        row2.setTdpId(2L);
+
+        // row3
+        Map<String, String> values3 = new HashMap<>();
+        values3.put("0000", "肥田𠀠𠀡𠀢𠀣𠀤");
+        DataSetRow row3 = new DataSetRow(values3);
+        row3.setTdpId(3L);
+
+        Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "0");
+
+        Map<String, Object> expectedValues2 = new LinkedHashMap<>();
+        expectedValues2.put("0000", "3");
+
+        Map<String, Object> expectedValues3 = new LinkedHashMap<>();
+        expectedValues3.put("0000", "6");
+
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+        assertEquals(expectedValues, row1.values());
+        assertEquals(expectedValues2, row2.values());
+        assertEquals(expectedValues3, row3.values());
+    }
 
     @Test
     public void should_generate_odd() {
@@ -231,6 +272,22 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
         // then
         assertEquals("Lily", row.get("0000"));
+    }
+    @Test
+    public void should_not_generate_with_empty_step_value_with_surrogate_pair() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "000");
+        parameters.put(GenerateSequence.START_VALUE, "1");
+        parameters.put(GenerateSequence.STEP_VALUE, " ");
+
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄");
+        final DataSetRow row = new DataSetRow(values);
+
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+        // then
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row.get("0000"));
     }
 
     @Test

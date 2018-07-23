@@ -146,6 +146,38 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         LOGGER.info("Row value: {}", realValueAsFloat);
         assertTrue(realValueAsFloat >= 10 && realValueAsFloat <= 14);
     }
+    @Test
+    public void testShouldNotMask_surrogate_pair_as_string_type() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING)) //
+                .build();
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        // Function is ReplaceCharactersWithGeneration so that surrogate pair will not mask
+        String realValueAsDtr = (String) row.values().get("0000");
+        LOGGER.info("Row value: {}", realValueAsDtr);
+        assertTrue("中崎𠀀𠀁𠀂𠀃𠀄".equalsIgnoreCase(realValueAsDtr));
+    }
+    @Test
+    public void testShouldMask_surrogate_pair_as_string_type_address_line() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING).domain(MaskableCategoryEnum.ADDRESS_LINE.name())) //
+                .build();
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        // Function is ReplaceCharactersWithGeneration so that surrogate pair will not mask
+        String realValueAsDtr = (String) row.values().get("0000");
+        LOGGER.info("Row value: {}", realValueAsDtr);
+        assertEquals("XXXXXXX",realValueAsDtr);
+    }
 
     @Test
     public void testShouldMaskDecimal_wrongly_typed() {

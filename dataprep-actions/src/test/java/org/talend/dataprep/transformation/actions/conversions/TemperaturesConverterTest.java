@@ -22,6 +22,7 @@ import static org.talend.dataprep.transformation.actions.conversions.Temperature
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -89,6 +90,30 @@ public class TemperaturesConverterTest extends AbstractMetadataBaseTest<Temperat
         // then
         // assertEquals("365", row1.get("0001"));
         assertEquals("32", row1.get("0001"));
+    }
+    @Test
+    public void test_apply_inplace_surrogate_pair() {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄");
+        rowContent.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.setTdpId(123L);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_temperature", CELSIUS.name());
+        parameters.put("to_temperature", FAHRENHEIT.name());
+        parameters.put("precision", "0");
+
+        // when
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
+
+        // then
+        // assertEquals("365", row1.get("0001"));
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0000"));
+        assertEquals(StringUtils.EMPTY, row1.get("0001"));
     }
 
     @Test

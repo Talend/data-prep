@@ -170,6 +170,64 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         // then
         assertEquals(expectedValues, row.order().values());
     }
+    @Test
+    public void test_invalid_surrogate_pair_values() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄_www.中崎𠀀𠀁𠀂𠀃𠀄.com");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄_www.中崎𠀀𠀁𠀂𠀃𠀄.com");
+        expectedValues.put("0003", "");
+        expectedValues.put("0004", "");
+        expectedValues.put("0005", "");
+        expectedValues.put("0006", "中崎𠀀𠀁𠀂𠀃𠀄_www.中崎𠀀𠀁𠀂𠀃𠀄.com");
+        expectedValues.put("0007", "");
+        expectedValues.put("0008", "");
+        expectedValues.put("0009", "");
+        expectedValues.put("0010", "");
+        expectedValues.put("0002", "01/01/2015");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.order().values());
+    }
+
+    @Test
+    public void test_values_port_as_int_take_surrogate_pair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", "http://stef:pwd@10.42.10.99:80/home/datasets/中崎𠀀𠀁𠀂𠀃𠀄?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001",
+                "http://stef:pwd@10.42.10.99:80/home/datasets/中崎𠀀𠀁𠀂𠀃𠀄?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
+        expectedValues.put("0003", "http");
+        expectedValues.put("0004", "10.42.10.99");
+        expectedValues.put("0005", "80");
+        expectedValues.put("0006", "/home/datasets/中崎𠀀𠀁𠀂𠀃𠀄");
+        expectedValues.put("0007", "datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4");
+        expectedValues.put("0008", "frag");
+        expectedValues.put("0009", "stef");
+        expectedValues.put("0010", "pwd");
+        expectedValues.put("0002", "01/01/2015");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
 
     @Test
     public void test_empty_values() {

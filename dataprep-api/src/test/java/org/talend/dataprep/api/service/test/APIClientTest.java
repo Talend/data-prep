@@ -20,6 +20,7 @@ import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
@@ -85,7 +86,7 @@ public class APIClientTest {
         } else {
             result = when().get("/api/datasets?name={name}", name).asInputStream();
         }
-        CollectionType resultType =
+        CollectionType resultType = //
                 TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, UserDataSetMetadata.class);
         return mapper.readValue(result, resultType);
     }
@@ -177,9 +178,9 @@ public class APIClientTest {
 
         final Response response = request //
                 .when() //
-                .expect()
-                .statusCode(200)
-                .log()
+                .expect() //
+                .statusCode(200) //
+                .log() //
                 .ifError() //
                 .post("/api/preparations");
 
@@ -212,8 +213,8 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public void applyAction(final String preparationId, final String action) throws IOException {
-        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then().statusCode(
-                is(200));
+        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then()
+                .statusCode(is(200));
     }
 
     /**
@@ -231,12 +232,12 @@ public class APIClientTest {
         action.setName(actionName);
         action.setParameters(MixedContentMap.convert(parameters));
         actions.setActions(Collections.singletonList(action));
-        given()
-                .contentType(JSON.withCharset(UTF_8))
+        given() //
+                .contentType(JSON.withCharset(UTF_8)) //
                 .content(actions) //
-                .when()
+                .when() //
                 .post("/api/preparations/{id}/actions", preparationId) //
-                .then()
+                .then() //
                 .statusCode(is(200));
     }
 
@@ -307,11 +308,11 @@ public class APIClientTest {
 
             waitForAsyncMethodTofinish(asyncMethodStatusUrl);
 
-            ResponseSpecification contentRequest = given()
+            ResponseSpecification contentRequest = given() //
                     .when() //
-                    .expect()
-                    .statusCode(200)
-                    .log()
+                    .expect() //
+                    .statusCode(200) //
+                    .log() //
                     .ifError();
             if (filter.isEmpty()) {
                 transformedResponse = contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
@@ -332,24 +333,24 @@ public class APIClientTest {
     public void waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;
         int nbLoop = 0;
-
+        AsyncExecution.Status asyncStatus = null;
         while (isAsyncMethodRunning && nbLoop < 100) {
 
-            String statusAsyncMethod = given()
+            String statusAsyncMethod = given() //
                     .when() //
-                    .expect()
-                    .statusCode(200)
-                    .log()
+                    .expect() //
+                    .statusCode(200) //
+                    .log() //
                     .ifError() //
-                    .get(asyncMethodStatusUrl)
+                    .get(asyncMethodStatusUrl) //
                     .asString();
 
-            AsyncExecutionMessage asyncExecutionMessage =
-                    mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+            AsyncExecutionMessage asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class)
+                    .readValue(statusAsyncMethod);
 
-            AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
-            isAsyncMethodRunning =
-                    asyncStatus.equals(AsyncExecution.Status.RUNNING) || asyncStatus.equals(AsyncExecution.Status.NEW);
+            asyncStatus = asyncExecutionMessage.getStatus();
+            isAsyncMethodRunning = asyncStatus.equals(AsyncExecution.Status.RUNNING)
+                    || asyncStatus.equals(AsyncExecution.Status.NEW);
 
             try {
                 TimeUnit.MILLISECONDS.sleep(50);
@@ -359,6 +360,7 @@ public class APIClientTest {
             }
             nbLoop++;
         }
+        assertEquals(AsyncExecution.Status.DONE, asyncStatus);
     }
 
     public Response getFailedPreparationWithFilter(String preparationId, String malformedFilter) throws IOException {
@@ -385,7 +387,7 @@ public class APIClientTest {
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter, String fileName)
             throws IOException, InterruptedException {
-        return export(preparationId, "", stepId, csvDelimiter, fileName);
+        return export(preparationId, null, stepId, csvDelimiter, fileName);
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter)
@@ -422,11 +424,14 @@ public class APIClientTest {
             String fileName, Integer expectedStatus) {
         RequestSpecification exportRequest = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE, //
                         CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
-                .formParam("stepId", stepId) //
-                .formParam("datasetId", datasetId); //
+                .formParam("stepId", stepId);
+
+        if (datasetId != null) {
+            exportRequest.formParam("datasetId", datasetId);
+        }
 
         if (StringUtils.isNotEmpty(csvDelimiter)) {
             exportRequest.formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER, csvDelimiter);
@@ -437,7 +442,7 @@ public class APIClientTest {
         }
 
         if (expectedStatus != null) {
-            exportRequest
+            exportRequest //
                     .when() //
                     .expect() //
                     .statusCode(expectedStatus) //
@@ -461,9 +466,14 @@ public class APIClientTest {
 
             waitForAsyncMethodTofinish(asyncMethodStatusUrl);
 
-            Response response = given().when().expect().statusCode(200).log().ifError() //
+            Response response = given() //
+                    .when() //
+                    .expect() //
+                    .statusCode(200) //
+                    .log() //
+                    .ifError() //
                     .get("/api/preparations/{id}/metadata", preparationId);
-            metadata =  mapper.readValue(response.asInputStream(), DataSetMetadata.class);
+            metadata = mapper.readValue(response.asInputStream(), DataSetMetadata.class);
         } else if (OK.equals(responseStatus)) {
             metadata = mapper.readValue(transformedResponse.asInputStream(), DataSetMetadata.class);
         } else {

@@ -512,10 +512,11 @@ public class DataSetService extends BaseDataSetService {
         if (metadata == null) {
             throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, build().put("id", dataSetId));
         }
+
         if (!metadata.getLifecycle().schemaAnalyzed()) {
-            HttpResponseContext.status(HttpStatus.ACCEPTED);
-            return DataSet.empty();
+            LOG.warn("Schema analyzed is not finished for #{}", dataSetId);
         }
+
         DataSet dataSet = new DataSet();
         dataSet.setMetadata(conversionService.convert(metadata, UserDataSetMetadata.class));
         LOG.debug("found dataset {} for #{}", dataSet.getMetadata().getName(), dataSetId);

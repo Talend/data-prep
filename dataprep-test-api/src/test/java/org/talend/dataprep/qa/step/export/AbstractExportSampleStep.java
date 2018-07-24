@@ -19,10 +19,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.export.ExportParam;
 import org.talend.dataprep.qa.util.export.ExportUtil;
 import org.talend.dataprep.qa.util.export.MandatoryParameters;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * CSV Exporter.
@@ -54,7 +57,7 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
     }
 
     @Override
-    public Map<String, String> extractParameters(Map<String, String> params) {
+    public Map<String, String> extractParameters(Map<String, String> params) throws JsonProcessingException {
         Map<String, String> ret = new HashMap<>();
 
         // Preparation
@@ -71,16 +74,14 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         String filename = params.get(FILENAME.getName());
 
         // TODO manage export from step ? (or from version)
-        List<String> steps =
-                api
-                        .getPreparationDetails(preparationId)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .body()
-                        .jsonPath()
-                        .getJsonObject(
-                        "steps");
+        // TODO this call should be in OSDataPrepAPIHelper
+        List<String> steps = api //
+                .getPreparationDetails(preparationId) //
+                .then().statusCode(200) //
+                .extract() //
+                .body() //
+                .jsonPath() //
+                .getJsonObject("steps");
 
         exportUtil.feedExportParam(ret, PREPARATION_ID, preparationId);
         exportUtil.feedExportParam(ret, STEP_ID, steps.get(steps.size() - 1));
@@ -92,6 +93,14 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
 
         for (ExportParam exportParam : getExtraExportParameter()) {
             exportUtil.feedExportParam(ret, exportParam, params);
+        }
+
+        // manage filter : for example for fetchmore
+        Filter filter = util.mapParamsToFilter(params);
+        if (filter != null) {
+            String jsonFilter = objectMapper.writeValueAsString(filter);
+            ret.put("filter", jsonFilter);
+            ret.put("from", "FILTER");
         }
 
         return ret;

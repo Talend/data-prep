@@ -84,6 +84,7 @@ public class PipelineTransformer implements Transformer {
 
     @Override
     public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
+
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
 
         // prepare the fallback row metadata

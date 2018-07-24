@@ -34,11 +34,11 @@ import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 public class PreparationUpdateListener {
 
     @Autowired
-    private PreparationUpdateListenerUtil preparationUpdateListenerUtil;
+    private PreparationEventUtil preparationEventUtil;
 
     @EventListener
     public void onUpdate(DatasetUpdatedEvent event) {
-        preparationUpdateListenerUtil.removePreparationStepRowMetadata(event.getSource().getId());
+        preparationEventUtil.performUpdateEvent(event.getSource().getId());
     }
 
 }

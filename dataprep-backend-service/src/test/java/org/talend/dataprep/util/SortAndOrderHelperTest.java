@@ -75,6 +75,8 @@ public class SortAndOrderHelperTest {
     public void getPreparationComparator_byName() throws Exception {
         assertTrue(getPreparationComparisonByName("aaa", "bbb", ASC) < 0);
         assertTrue(getPreparationComparisonByName("aaa", "bbb", DESC) > 0);
+        assertEquals(0, getPreparationComparisonByName("aaa", "aaa", DESC));
+        getPreparationComparisonByName("aaa", null, ASC); // does not throw exception
     }
 
     @Test
@@ -89,6 +91,8 @@ public class SortAndOrderHelperTest {
     public void getPreparationComparator_byDatasetName() throws Exception {
         assertTrue(getPreparationComparisonByDatasetName("aaa", "bbb", ASC) < 0);
         assertTrue(getPreparationComparisonByDatasetName("aaa", "bbb", DESC) > 0);
+        assertEquals(0, getPreparationComparisonByDatasetName("aaa", "aaa", DESC));
+        getPreparationComparisonByDatasetName("aaa", null, DESC);
     }
 
     @Test
@@ -107,6 +111,8 @@ public class SortAndOrderHelperTest {
     public void getPreparationComparator_byAuthor() throws Exception {
         assertTrue(getPreparationComparisonByAuthor("aaa", "bbb", ASC) < 0);
         assertTrue(getPreparationComparisonByAuthor("aaa", "bbb", DESC) > 0);
+        assertEquals(0, getPreparationComparisonByAuthor("aaa", "aaa", DESC));
+        getPreparationComparisonByAuthor("aaa", null, DESC); // No exception
     }
 
     @Test
@@ -260,7 +266,9 @@ public class SortAndOrderHelperTest {
         final int userDatasetMetadataOrder = preparationComparator.compare(firstUserDatasetMetadata, secondUserDatasetMetadata);
         final int datasetMetadataOrder = preparationComparator.compare(firstDatasetMetadata, secondDatasetMetadata);
         // Make sure that when using DatasetMetadata instead of UserDatasetMetada the behaviour of the comparison remains the same
-        assertEquals(userDatasetMetadataOrder, datasetMetadataOrder);
+        if (sort != AUTHOR) { // because only user dataset metadata have author
+            assertEquals(userDatasetMetadataOrder, datasetMetadataOrder);
+        }
         return userDatasetMetadataOrder;
     }
 

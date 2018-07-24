@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.share.Owner;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.security.Security;
 
 /**
@@ -24,7 +25,7 @@ public class DefaultOwnerInjection implements OwnerInjection {
     }
 
     @Override
-    public PreparationDTO apply(Object o, PreparationDTO dto) {
+    public PreparationDTO apply(PersistentPreparation source, PreparationDTO dto) {
         if (dto.getOwner() == null) {
             dto.setOwner(defaultOwner);
         }

@@ -306,7 +306,7 @@ public class APIClientTest {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinishWithSuccess(asyncMethodStatusUrl);
 
             ResponseSpecification contentRequest = given() //
                     .when() //
@@ -324,13 +324,19 @@ public class APIClientTest {
         return transformedResponse;
     }
 
+    public void waitForAsyncMethodToFinishWithSuccess(String asyncMethodStatusUrl) throws IOException {
+        AsyncExecution.Status asyncStatus = waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+        assertEquals(AsyncExecution.Status.DONE, asyncStatus);
+    }
+
     /**
      * Ping (100 times max) async method status url in order to wait the end of the execution
      *
      * @param asyncMethodStatusUrl
+     * @return the status of the async execution (is likely DONE or FAILED)
      * @throws IOException
      */
-    public void waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
+    public AsyncExecution.Status waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;
         int nbLoop = 0;
         AsyncExecution.Status asyncStatus = null;
@@ -360,7 +366,7 @@ public class APIClientTest {
             }
             nbLoop++;
         }
-        assertEquals(AsyncExecution.Status.DONE, asyncStatus);
+        return asyncStatus;
     }
 
     public Response getFailedPreparationWithFilter(String preparationId, String malformedFilter) throws IOException {
@@ -372,7 +378,8 @@ public class APIClientTest {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            AsyncExecution.Status asyncStatus = waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+            assertEquals(AsyncExecution.Status.FAILED, asyncStatus);
 
             return given()
                     .expect() //
@@ -412,7 +419,7 @@ public class APIClientTest {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = export.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinishWithSuccess(asyncMethodStatusUrl);
 
             export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, 200);
         }
@@ -464,7 +471,7 @@ public class APIClientTest {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinishWithSuccess(asyncMethodStatusUrl);
 
             Response response = given() //
                     .when() //

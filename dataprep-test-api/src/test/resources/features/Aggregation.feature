@@ -64,7 +64,7 @@ Feature: Make a aggregation
       | operator | SUM     |
       | columnId | 0001    |
       | groupBy  | 0002    |
-      | filter   | { "eq": { "field": "0002", "value": "BACK"}} |
+      | filter   | 0002 = 'BACK' |
 
     Then The aggregation "scores_aggregation" results with the operator "SUM" is :
       | BACK  | 69.0 |
@@ -84,7 +84,7 @@ Feature: Make a aggregation
       | operator | MIN     |
       | columnId | 0001    |
       | groupBy  | 0002    |
-      | filter   | { "eq": { "field": "0002", "value": "back"}} |
+      | filter   | 0002 = 'back' |
 
     Then The aggregation "scores_aggregation" results with the operator "MIN" is :
       | back  | 12.0 |
@@ -94,7 +94,6 @@ Feature: Make a aggregation
       | operator | MIN     |
       | columnId | 0001    |
       | groupBy  | 0002    |
-      | filter   | null    |
 
     Then The aggregation "scores_aggregation" results with the operator "MIN" is :
       | back  | 12.0 |

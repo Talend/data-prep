@@ -19,7 +19,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.export.ExportParam;
 import org.talend.dataprep.qa.util.export.ExportUtil;
@@ -96,10 +95,9 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         }
 
         // manage filter : for example for fetchmore
-        Filter filter = util.mapParamsToFilter(params);
-        if (filter != null) {
-            String jsonFilter = objectMapper.writeValueAsString(filter);
-            ret.put("filter", jsonFilter);
+        String tqlFilter = params.get(FILTER.getName());
+        if (tqlFilter != null) {
+            ret.put("filter", tqlFilter);
             ret.put("from", "FILTER");
         }
 

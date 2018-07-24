@@ -68,6 +68,9 @@ public class ApplyDataSetRowAction implements DataSetRowAction {
             case COLUMN:
                 ((ColumnAction) metadata).applyOnColumn(actionRow, context);
                 break;
+            case MULTI_COLUMNS:
+                ((MultiColumnsAction) metadata).applyOnMultiColumns(actionRow, context);
+                break;
             case DATASET:
                 ((DataSetAction) metadata).applyOnDataSet(actionRow, context);
                 break;

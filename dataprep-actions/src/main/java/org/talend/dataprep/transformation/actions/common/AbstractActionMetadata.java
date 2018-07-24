@@ -152,6 +152,8 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
             return this instanceof ColumnAction;
         case DATASET:
             return this instanceof DataSetAction;
+        case MULTI_COLUMNS:
+            return this instanceof MultiColumnsAction;
         default:
             return false;
         }

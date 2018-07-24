@@ -23,6 +23,7 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 public enum ScopeCategory {
     CELL(ImplicitParameters.ROW_ID, ImplicitParameters.COLUMN_ID),
     COLUMN(ImplicitParameters.COLUMN_ID),
+    MULTI_COLUMNS(ImplicitParameters.COLUMN_ID),
     LINE(ImplicitParameters.ROW_ID),
     DATASET;
 

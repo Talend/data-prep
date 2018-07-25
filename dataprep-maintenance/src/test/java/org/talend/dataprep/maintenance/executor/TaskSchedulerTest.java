@@ -9,7 +9,6 @@ import org.talend.dataprep.maintenance.BaseMaintenanceTest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,12 +34,9 @@ public class TaskSchedulerTest extends BaseMaintenanceTest {
         listTask.add(spy(MockScheduledNightlyTask.class)); // conditional = true
 
         for (int i = 0; i < listTask.size(); i++) {
-            // return true if i is odd, false if i is even
+            // return true if it is odd, false if i is even
             boolean condition = (i % 2 == 0);
-            when(listTask.get(i).condition()).thenReturn(() -> {
-                System.out.println("condition = " + condition);
-                return condition;
-            });
+            when(listTask.get(i).condition()).thenReturn(() -> condition);
         }
     }
 
@@ -49,21 +45,57 @@ public class TaskSchedulerTest extends BaseMaintenanceTest {
 
         scheduler.launchOnceTask();
 
+        // only task with ScheduleFrequency = ONCE are call
         verify(listTask.get(0), times(1)).performTask();
         verify(listTask.get(1), times(0)).performTask();
 
+        listTask
+                .stream() //
+                .filter(task -> !(task instanceof MockScheduledOnceTask))
+                .forEach(task -> {
+                    verify(task, times(0)).performTask();
+                    verify(task, times(0)).condition();
+                    verify(task, times(0)).execute();
+                });
     }
 
-    private static MaintenanceTaskProcess createMaintenanceTask(ScheduleFrequency frequency, boolean conditionResult) {
-        switch (frequency) {
-            case ONCE:
-                return new MockScheduledOnceTask(conditionResult);
-            case NIGHT:
-                return new MockScheduledNightlyTask(conditionResult);
-            case REPEAT:
-                return new MockScheduledRepeatTask(conditionResult);
-        }
+    @Test
+    public void testScheduleNight() {
 
-        throw new IllegalArgumentException("Unkown frequency");
+        scheduler.launchNightlyTask();
+
+        // only task with ScheduleFrequency = ONCE are call
+        verify(listTask.get(2), times(1)).performTask();
+        verify(listTask.get(3), times(0)).performTask();
+        verify(listTask.get(6), times(1)).performTask();
+
+        listTask
+                .stream() //
+                .filter(task -> !(task instanceof MockScheduledNightlyTask))
+                .forEach(task -> {
+                    verify(task, times(0)).performTask();
+                    verify(task, times(0)).condition();
+                    verify(task, times(0)).execute();
+                });
+    }
+
+    @Test
+    public void testScheduleRepeat() {
+
+        scheduler.launchRepeatlyTask();
+
+        // only task with ScheduleFrequency = ONCE are call
+        verify(listTask.get(4), times(1)).performTask();
+        verify(listTask.get(5), times(0)).performTask();
+
+
+        listTask
+                .stream() //
+                .filter(task -> !(task instanceof MockScheduledRepeatTask))
+                .forEach(task -> {
+                    verify(task, times(0)).performTask();
+                    verify(task, times(0)).condition();
+                    verify(task, times(0)).execute();
+                });
     }
 }

@@ -12,7 +12,6 @@ public class MockScheduledNightlyTask extends MaintenanceTaskProcess {
 
     @Override
     protected Supplier<Boolean> condition() {
-        System.out.println("MockScheduledOnceTask.condition");
         return () -> true;
     }
 }

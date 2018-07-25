@@ -31,7 +31,12 @@ public class ConcatColumnsTest extends AbstractMetadataBaseTest<ConcatColumns> {
 
     @Override
     protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
-        return CreateNewColumnPolicy.VISIBLE_DISABLED;
+        return CreateNewColumnPolicy.INVISIBLE_ENABLED;
+    }
+
+    @Test
+    public void test_apply_inplace() {
+        //nothing to do here, can't be apply in place
     }
 
     @Test

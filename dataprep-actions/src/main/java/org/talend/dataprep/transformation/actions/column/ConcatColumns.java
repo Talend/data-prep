@@ -2,9 +2,7 @@ package org.talend.dataprep.transformation.actions.column;
 
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
@@ -27,7 +25,7 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
      */
     public static final String CONCAT_COLUMNS_ACTION_NAME = "concat_columns";
 
-    private static final String NEW_COLUMN_SUFFIX = "_concatened";
+    private static final String NEW_COLUMN_NAME = "concatenate_columns";
 
 
     @Override
@@ -46,8 +44,8 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)
-                .withType(STRING).withCopyMetadataFromId(context.getColumnId()));
+        return singletonList(ActionsUtils.additionalColumn().withName(NEW_COLUMN_NAME)
+                .withType(STRING).withCopyMetadataFromId(getMetadataFromFirstColumn(context.getColumnId())));
     }
 
     @Override
@@ -75,6 +73,11 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
 
     private String[] extractColumnsId(String columnId) {
         return columnId.split(",");
+    }
+
+    private String getMetadataFromFirstColumn(String columnId) {
+        String[] columnsId = extractColumnsId(columnId);
+        return columnsId[0];
     }
 
 }

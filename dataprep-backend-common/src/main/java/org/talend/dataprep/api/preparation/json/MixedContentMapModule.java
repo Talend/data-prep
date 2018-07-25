@@ -13,7 +13,6 @@
 package org.talend.dataprep.api.preparation.json;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;

@@ -224,7 +224,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
     }
     @Test
     public void shouldRemoveCustomSurrogatePairEndCharacters() {
-        // given
+        // given 4 duplicate 𠀄 in the end of string and user want to remove duplicate 𠀄(for TDQ-15120)
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄𠀄𠀄𠀄");
         final DataSetRow row = new DataSetRow(values);
@@ -237,7 +237,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
     }
     @Test
     public void shouldRemoveCustomSurrogatePairStartCharacters() {
-        // given
+        // given 3 duplicate 𠀄 at start of string and user want to remove duplicate 𠀄(for TDQ-15120)
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "𠀄𠀄𠀄中崎𠀀𠀁𠀂𠀃𠀄");
         final DataSetRow row = new DataSetRow(values);
@@ -250,7 +250,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
     }
     @Test
     public void shouldRemoveCustomSurrogatePairMiddleCharacters() {
-        // given
+        // given 3 duplicate 𠀄 at middle of string and user want to remove duplicate 𠀄(for TDQ-15120)
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "中崎𠀀𠀄𠀄𠀄𠀁𠀂𠀃𠀄");
         final DataSetRow row = new DataSetRow(values);

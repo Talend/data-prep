@@ -141,6 +141,7 @@ public class DurationConverterTest extends BaseDateTest<DurationConverter> {
 
         // then
         assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0000"));
+        //TODO There should return EMPTY instead of return original value try to fix it and then modify this test case
         assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0001"));
 
         ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0001").type(Type.STRING).build();

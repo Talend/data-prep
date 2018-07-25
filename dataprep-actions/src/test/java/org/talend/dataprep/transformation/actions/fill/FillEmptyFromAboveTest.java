@@ -193,7 +193,7 @@ public class FillEmptyFromAboveTest extends AbstractMetadataBaseTest<FillEmptyFr
         assertEquals("aaa", row10.get("0001"));
     }
     @Test
-    public void test_apply_inplace_with_surrogate_pair() throws Exception {
+    public void testWithSurrogatePair() throws Exception {
         // given
         Map<String, String> rowContent = new HashMap<>();
 

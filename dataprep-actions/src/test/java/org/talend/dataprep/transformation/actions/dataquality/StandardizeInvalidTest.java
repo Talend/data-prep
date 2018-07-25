@@ -149,7 +149,7 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
 
     }
     @Test
-    public void should_not_standardize_value_is_surrogate_pair() {
+    public void shouldNotStandardizeValueWithSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put(columnId0, fixedName);

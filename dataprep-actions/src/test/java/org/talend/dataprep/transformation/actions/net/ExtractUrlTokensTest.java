@@ -170,6 +170,10 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         // then
         assertEquals(expectedValues, row.order().values());
     }
+
+    /**
+     * Test work well when the url is invalid and contains surrogate pair(TDQ-15120)
+     */
     @Test
     public void testInvalidSurrogatePairValues() {
         // given
@@ -199,6 +203,9 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         assertEquals(expectedValues, row.order().values());
     }
 
+    /**
+     * Test work well when the url is valid and contains surrogate pair(TDQ-15120)
+     */
     @Test
     public void testWithSurrogatePair() {
         // given

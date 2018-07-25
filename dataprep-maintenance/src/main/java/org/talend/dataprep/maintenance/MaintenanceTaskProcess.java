@@ -2,10 +2,19 @@ package org.talend.dataprep.maintenance;
 
 import java.util.function.Supplier;
 
-public interface MaintenanceTaskProcess {
+public abstract class MaintenanceTaskProcess {
 
-    void executeTask();
+    /**
+     * Execute maintenance task only if condition is TRUE
+     */
+    public void execute() {
+        if( this.condition().get()){
+            this.performTask();
+        }
+    }
 
-    Supplier<Boolean> conditionTask();
+    protected abstract void performTask();
+
+    protected abstract Supplier<Boolean> condition();
 
 }

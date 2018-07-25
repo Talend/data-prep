@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.maintenance.cache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.CacheJanitor;
@@ -22,26 +20,20 @@ import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 
 import java.util.function.Supplier;
 
-import static org.talend.dataprep.maintenance.executor.Schedule.NIGHT;
+import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 
 @MaintenanceTask(NIGHT)
 @Component
-public class ScheduledCacheJanitor implements MaintenanceTaskProcess {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledCacheJanitor.class);
+public class ScheduledCacheJanitor extends MaintenanceTaskProcess {
 
     @Autowired
     private CacheJanitor janitor;
 
-    @Override
-    public void executeTask() {
-        LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
+    protected void performTask() {
         janitor.janitor();
-        LOGGER.debug("Janitor process ended @ {}.", System.currentTimeMillis());
     }
 
-    @Override
-    public Supplier<Boolean> conditionTask() {
+    protected Supplier<Boolean> condition() {
         return () -> true;
     }
 

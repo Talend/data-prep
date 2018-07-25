@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static org.talend.dataprep.maintenance.executor.Schedule.NIGHT;
+import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 import static org.talend.tql.api.TqlBuilder.neq;
 
 /**
@@ -37,7 +37,7 @@ import static org.talend.tql.api.TqlBuilder.neq;
 @MaintenanceTask(NIGHT)
 @ConditionalOnProperty(value = "preparation.store.orphan.cleanup", havingValue = "true", matchIfMissing = true)
 @Component
-public class PreparationCleaner implements MaintenanceTaskProcess {
+public class PreparationCleaner extends MaintenanceTaskProcess {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
 
@@ -52,13 +52,12 @@ public class PreparationCleaner implements MaintenanceTaskProcess {
     @Autowired
     private List<StepMarker> markers = new ArrayList<>();
 
-    @Override
-    public void executeTask() {
+    protected void performTask() {
         this.removeCurrentOrphanSteps();
     }
 
-    @Override
-    public Supplier<Boolean> conditionTask() {
+
+    protected Supplier<Boolean> condition() {
         return () -> true;
     }
 

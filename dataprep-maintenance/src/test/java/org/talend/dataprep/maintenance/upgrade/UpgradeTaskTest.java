@@ -52,7 +52,7 @@ public class UpgradeTaskTest {
         }).when(executor).execute(any());
 
         // when
-        upgradeTask.upgradeTask();
+        upgradeTask.execute();
 
         // then
         verify(security, times(2)).getTenantId();
@@ -70,7 +70,7 @@ public class UpgradeTaskTest {
         }).when(forAll).execute(any(), any());
 
         // when
-        upgradeTask.upgradeTask();
+        upgradeTask.execute();
 
         // then
         verify(security, times(0)).getTenantId();

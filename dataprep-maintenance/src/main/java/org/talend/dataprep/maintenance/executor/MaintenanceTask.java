@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public @interface MaintenanceTask {
 
-    Schedule value();
+    ScheduleFrequency value();
 
 }

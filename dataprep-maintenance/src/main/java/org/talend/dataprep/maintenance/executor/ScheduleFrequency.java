@@ -1,9 +1,9 @@
 package org.talend.dataprep.maintenance.executor;
 
 /**
- * Schedule of a {@link MaintenanceTask task}.
+ * ScheduleFrequency of a {@link MaintenanceTask task}.
  */
-public enum Schedule {
+public enum ScheduleFrequency {
     /**
      * {@link MaintenanceTask} to be executed only once (one time and only).
      */

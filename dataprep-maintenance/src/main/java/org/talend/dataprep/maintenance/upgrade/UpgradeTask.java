@@ -12,14 +12,14 @@ import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
 import java.util.function.Supplier;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.dataprep.maintenance.executor.Schedule.ONCE;
+import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
 
 /**
  *
  */
 @MaintenanceTask(ONCE)
 @Component
-public class UpgradeTask implements MaintenanceTaskProcess {
+public class UpgradeTask extends MaintenanceTaskProcess {
 
     /**
      * This class' logger.
@@ -38,16 +38,14 @@ public class UpgradeTask implements MaintenanceTaskProcess {
     @Autowired
     private Security security;
 
-    @Override
-    public void executeTask() {
+    protected void performTask() {
         LOG.info("Performing upgrade for '{}'...", security.getTenantId());
         upgradeService.upgradeVersion();
         LOG.info("Performing upgrade done for '{}'.", security.getTenantId());
 
     }
 
-    @Override
-    public Supplier<Boolean> conditionTask() {
+    protected Supplier<Boolean> condition() {
         return () -> upgradeService.needUpgrade();
     }
 

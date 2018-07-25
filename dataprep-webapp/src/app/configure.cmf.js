@@ -154,7 +154,8 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('preparation:move', actions.preparation.move);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openPreparationCreatorModal);
-		registerActionCreator('preparation:copy:move:open', actions.preparation.openCopyMoveModal);
+		registerActionCreator('preparation:copy:open', actions.preparation.openCopyModal);
+		registerActionCreator('preparation:move:open', actions.preparation.openMoveModal);
 		registerActionCreator('preparation:copy:move:cancel', actions.preparation.closeCopyMoveModal);
 		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
 		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));

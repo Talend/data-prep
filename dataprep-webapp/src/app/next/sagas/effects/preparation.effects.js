@@ -98,12 +98,28 @@ export function* openPreparationCreatorModal() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
 }
 
-export function* openCopyMoveModal(model) {
+export function* openCopyModal(model) {
 	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 	yield put(
 		actions.components.mergeState('PreparationCopyMoveModal', 'default',
 			{
 				show: true,
+				model: {
+					...model,
+					folderId,
+				},
+			},
+		)
+	);
+}
+
+export function* openCopyMoveModal(model, action) {
+	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
+	yield put(
+		actions.components.mergeState('PreparationCopyMoveModal', 'default',
+			{
+				show: true,
+				action,
 				model: {
 					...model,
 					folderId,

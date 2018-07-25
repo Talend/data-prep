@@ -61,17 +61,23 @@
       "label": "Move",
       "bsStyle": "primary"
     },
-    "preparation:copy:move:open": {
-      "id": "preparation:copy:move:open",
+    "preparation:copy:open": {
+      "id": "preparation:copy:open",
       "icon": "talend-files-o",
-      "label": "Copy/Move preparation",
-      "actionCreator": "preparation:copy:move:open"
+      "label": "Copy preparation",
+      "actionCreator": "preparation:copy:open"
     },
     "preparation:copy:move:cancel": {
       "id": "preparation:copy:move:cancel",
       "label": "Cancel",
       "bsStyle": "link",
       "actionCreator": "preparation:copy:move:cancel"
+    },
+    "preparation:move:open": {
+      "id": "preparation:move:open",
+      "icon": "talend-files-o",
+      "label": "Move preparation",
+      "actionCreator": "preparation:move:open"
     },
     "preparation:rename": {
       "id": "preparation:rename",
@@ -249,7 +255,8 @@
           "items": [
             "preparation:rename",
             "preparation:duplicate",
-            "preparation:copy:move:open"
+            "preparation:copy:open",
+            "preparation:move:open"
           ],
           "editSubmit": "preparation:edit:submit",
           "editCancel": "preparation:edit:cancel"

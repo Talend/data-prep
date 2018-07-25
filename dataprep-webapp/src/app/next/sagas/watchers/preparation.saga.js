@@ -5,7 +5,8 @@ import {
 	PREPARATION_MOVE,
 	RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
-	OPEN_COPY_MOVE_MODAL,
+	OPEN_COPY_MODAL,
+	OPEN_MOVE_MODAL,
 	CLOSE_COPY_MOVE_MODAL,
 	PREPARATION_DUPLICATE,
 	SET_TITLE_EDITION_MODE,
@@ -77,10 +78,17 @@ function* openPreparationCreatorModal() {
 	}
 }
 
-function* openCopyMoveModal() {
+function* openCopyModal() {
 	while (true) {
-		const { payload } = yield take(OPEN_COPY_MOVE_MODAL);
-		yield all([call(effects.fetchTree), call(effects.openCopyMoveModal, payload)]);
+		const { payload } = yield take(OPEN_COPY_MODAL);
+		yield all([call(effects.fetchTree), call(effects.openCopyMoveModal, payload, 'copy')]);
+	}
+}
+
+function* openMoveModal() {
+	while (true) {
+		const { payload } = yield take(OPEN_MOVE_MODAL);
+		yield all([call(effects.fetchTree), call(effects.openCopyMoveModal, payload, 'move')]);
 	}
 }
 
@@ -100,7 +108,8 @@ export default {
 	'preparation:folder:open': openFolder,
 	'preparation:rename:cancel': cancelRename,
 	'preparation:rename': setTitleEditionMode,
-	'preparation:copy:move:open': openCopyMoveModal,
+	'preparation:copy:open': openCopyModal,
+	'preparation:move:open': openMoveModal,
 	'preparation:copy:move:cancel': closeCopyMoveModal,
 	'preparation:creator:open': openPreparationCreatorModal,
 };

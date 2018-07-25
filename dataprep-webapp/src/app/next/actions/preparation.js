@@ -2,17 +2,18 @@ import matchPath from '@talend/react-cmf/lib/sagaRouter/matchPath';
 import folder from './folder';
 import PreparationCopyMoveModal from '../components/PreparationCopyMoveModal';
 import {
+	REDIRECT_WINDOW,
+	OPEN_COPY_MODAL,
+	OPEN_MOVE_MODAL,
 	PREPARATION_COPY,
 	PREPARATION_MOVE,
-	CANCEL_RENAME_PREPARATION,
-	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
-	SET_TITLE_EDITION_MODE,
 	FETCH_PREPARATIONS,
-	OPEN_PREPARATION_CREATOR,
-	REDIRECT_WINDOW,
-	OPEN_COPY_MOVE_MODAL,
+	PREPARATION_DUPLICATE,
 	CLOSE_COPY_MOVE_MODAL,
+	SET_TITLE_EDITION_MODE,
+	OPEN_PREPARATION_CREATOR,
+	CANCEL_RENAME_PREPARATION,
 } from '../constants/actions';
 
 // FIXME [NC]: folder management has nothing to do here
@@ -85,9 +86,16 @@ function openPreparationCreatorModal() {
 	return { type: OPEN_PREPARATION_CREATOR };
 }
 
-function openCopyMoveModal(event, { model }) {
+function openCopyModal(event, { model }) {
 	return {
-		type: OPEN_COPY_MOVE_MODAL,
+		type: OPEN_COPY_MODAL,
+		payload: model,
+	};
+}
+
+function openMoveModal(event, { model }) {
+	return {
+		type: OPEN_MOVE_MODAL,
 		payload: model,
 	};
 }
@@ -128,7 +136,8 @@ export default {
 	rename,
 	duplicate,
 	cancelRename,
-	openCopyMoveModal,
+	openCopyModal,
+	openMoveModal,
 	closeCopyMoveModal,
 	setTitleEditionMode,
 	openPreparationCreatorModal,

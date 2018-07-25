@@ -41,6 +41,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 	render() {
 		const state = this.props.state;
 		const show = state.get('show', false);
+		const action = state.get('action');
 		const model = state.get('model', new Immutable.Map());
 		const text = model.get('name', '');
 		const selectedId = model.get('folderId', '');
@@ -52,11 +53,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 				],
 				right: [
 					{
-						actionId: 'preparation:move',
-						onClick: this.proceed,
-					},
-					{
-						actionId: 'preparation:copy',
+						actionId: `preparation:${action}`,
 						onClick: this.proceed,
 					},
 				],
@@ -90,7 +87,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 		return (
 			<Inject
 				component="Dialog"
-				header={'Copy/Move preparation - Select target folder'}
+				header={`${action} preparation - Select target folder`}
 				onHide={this.close}
 				actionbar={bar}
 				show={show}

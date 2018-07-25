@@ -12,40 +12,35 @@
 
 package org.talend.dataprep.maintenance.cache;
 
-import static org.talend.dataprep.maintenance.executor.Schedule.NIGHT;
-
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.cache.CacheJanitor;
+import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
-import org.talend.tenancy.ForAll;
+
+import java.util.function.Supplier;
+
+import static org.talend.dataprep.maintenance.executor.Schedule.NIGHT;
 
 @MaintenanceTask(NIGHT)
-public class ScheduledCacheJanitor {
+public class ScheduledCacheJanitor implements MaintenanceTaskProcess {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledCacheJanitor.class);
 
     @Autowired
     private CacheJanitor janitor;
 
-    @Autowired
-    private ForAll forAll;
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Starting scheduled cache clean up.");
+    @Override
+    public void executeTask() {
+        LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
+        janitor.janitor();
+        LOGGER.debug("Janitor process ended @ {}.", System.currentTimeMillis());
     }
 
-    /**
-     * Cleans the cache every minute.
-     */
-    public void scheduledJanitor() {
-        LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
-        forAll.execute(() -> janitor.janitor());
-        LOGGER.debug("Janitor process ended @ {}.", System.currentTimeMillis());
+    @Override
+    public Supplier<Boolean> conditionTask() {
+        return () -> true;
     }
 
 }

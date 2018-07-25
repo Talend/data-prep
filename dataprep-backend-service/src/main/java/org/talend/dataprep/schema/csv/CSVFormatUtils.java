@@ -86,7 +86,7 @@ public class CSVFormatUtils {
         }
         updatedParameters.put(HEADER_COLUMNS_PARAMETER, jsonHeader);
 
-        updatedParameters.put(HEADER_NB_LINES_PARAMETER, separator.isFirstLineAHeader() && separator.isHeaderInfoReliable() ? "1" : "0");
+        updatedParameters.put(HEADER_NB_LINES_PARAMETER, separator.isFirstLineAHeader() ? "1" : "0");
         // separator
         updatedParameters.put(SEPARATOR_PARAMETER, String.valueOf(separator.getSeparator()));
 

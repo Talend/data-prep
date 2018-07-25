@@ -82,6 +82,8 @@
     "AppLoader#default": {
       "saga": "bootstrap"
     },
+    "Breadcrumbs#default": {},
+
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {
@@ -187,6 +189,11 @@
       "header": {},
       "sidepanel": {},
       "list": {
+        "components": {
+          "before-component": [
+            { "component": "Breadcrumbs" }
+          ]
+        },
         "collectionId": "preparations",
         "list": {
           "columns": [

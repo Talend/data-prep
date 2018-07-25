@@ -8,8 +8,9 @@ import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import { all, call, fork } from 'redux-saga/effects';
 import actions from './next/actions';
-import components from './next/components/index';
+import components from './next/components';
 import App from './next/components/App.container';
+import Breadcrumbs from './next/components/Breadcrumbs/Breadcrumbs.connect';
 import { ALERT } from './next/constants/actions';
 import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
@@ -135,6 +136,7 @@ export default function initialize(additionalConfiguration = {}) {
 		 * Register components in CMF Components dictionary
 		 */
 		registerComponent('App', App);
+		registerComponent('Breadcrumbs', Breadcrumbs);
 		registerComponents(components);
 		const additionalComponents = additionalConfiguration.components;
 		if (additionalComponents) {

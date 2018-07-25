@@ -20,6 +20,22 @@ function transform({ folders = [], preparations = [] }) {
 	return adaptedFolders.concat(adaptedPreparations);
 }
 
+function transformFolder({ folder, hierarchy }) {
+	const breadcrumbs = [
+		...hierarchy,
+		folder,
+	].map(folder =>
+		({
+			id: folder.id,
+			text: folder.name || 'HOME',
+			title: folder.name || 'HOME',
+			onClick: 'folder:open',
+		}));
+	return breadcrumbs;
+}
+
 export default {
 	transform,
+	transformFolder,
 };
+

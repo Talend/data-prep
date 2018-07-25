@@ -121,7 +121,7 @@ public class DurationConverterTest extends BaseDateTest<DurationConverter> {
         assertEquals(expected, actual);
     }
     @Test
-    public void test_apply_inplace_surrogate_pair() {
+    public void testOnSurrogatePair() {
         // given
         Map<String, String> rowContent = new HashMap<>();
         rowContent.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄");
@@ -140,7 +140,7 @@ public class DurationConverterTest extends BaseDateTest<DurationConverter> {
         ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0001"));
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0000"));
         assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0001"));
 
         ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0001").type(Type.STRING).build();

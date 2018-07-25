@@ -150,7 +150,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         assertEquals(expectedValues3, row3.values());
     }
     @Test
-    public void should_generate_even_surrogate_pair() {
+    public void shouldGenerateEvenSurrogatePair() {
         Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "0000");
@@ -274,7 +274,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         assertEquals("Lily", row.get("0000"));
     }
     @Test
-    public void should_not_generate_with_empty_step_value_with_surrogate_pair() {
+    public void testWithSurrogatePair() {
         Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(ImplicitParameters.COLUMN_ID.getKey().toLowerCase(), "000");

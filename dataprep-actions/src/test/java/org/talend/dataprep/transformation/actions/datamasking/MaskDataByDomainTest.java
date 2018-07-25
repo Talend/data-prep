@@ -147,7 +147,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         assertTrue(realValueAsFloat >= 10 && realValueAsFloat <= 14);
     }
     @Test
-    public void testShouldNotMask_surrogate_pair_as_string_type() {
+    public void testShouldNotMaskSurrogatePairAsStringType() {
         // given
         final DataSetRow row = builder() //
                 .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING)) //
@@ -163,7 +163,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         assertTrue("中崎𠀀𠀁𠀂𠀃𠀄".equalsIgnoreCase(realValueAsDtr));
     }
     @Test
-    public void testShouldMask_surrogate_pair_as_string_type_address_line() {
+    public void testShouldMaskSurrogatePairAsStringTypeAddressLine() {
         // given
         final DataSetRow row = builder() //
                 .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING).domain(MaskableCategoryEnum.ADDRESS_LINE.name())) //
@@ -173,7 +173,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        // Function is ReplaceCharactersWithGeneration so that surrogate pair will not mask
+        // Function is MaskAddress so that surrogate pair will mask
         String realValueAsDtr = (String) row.values().get("0000");
         LOGGER.info("Row value: {}", realValueAsDtr);
         assertEquals("XXXXXXX",realValueAsDtr);

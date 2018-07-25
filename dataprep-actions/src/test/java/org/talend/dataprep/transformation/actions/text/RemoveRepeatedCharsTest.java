@@ -223,7 +223,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         assertEquals("haand", row.get("0000"));
     }
     @Test
-    public void should_remove_custom_surrogate_pair_end_characters() {
+    public void shouldRemoveCustomSurrogatePairEndCharacters() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄𠀄𠀄𠀄");
@@ -236,7 +236,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row.get("0000"));
     }
     @Test
-    public void should_remove_custom_surrogate_pair_start_characters() {
+    public void shouldRemoveCustomSurrogatePairStartCharacters() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "𠀄𠀄𠀄中崎𠀀𠀁𠀂𠀃𠀄");
@@ -249,7 +249,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         assertEquals("𠀄中崎𠀀𠀁𠀂𠀃𠀄", row.get("0000"));
     }
     @Test
-    public void should_remove_custom_surrogate_pair_middle_characters() {
+    public void shouldRemoveCustomSurrogatePairMiddleCharacters() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "中崎𠀀𠀄𠀄𠀄𠀁𠀂𠀃𠀄");

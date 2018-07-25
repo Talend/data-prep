@@ -171,7 +171,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         assertEquals(expectedValues, row.order().values());
     }
     @Test
-    public void test_invalid_surrogate_pair_values() {
+    public void testInvalidSurrogatePairValues() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
@@ -200,7 +200,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     }
 
     @Test
-    public void test_values_port_as_int_take_surrogate_pair() {
+    public void testWithSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");

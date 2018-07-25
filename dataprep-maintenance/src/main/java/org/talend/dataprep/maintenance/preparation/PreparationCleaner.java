@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
+import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;

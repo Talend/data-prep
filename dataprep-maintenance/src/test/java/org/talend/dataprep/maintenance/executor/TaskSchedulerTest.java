@@ -5,12 +5,12 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.talend.dataprep.maintenance.BaseMaintenanceTest;
-import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,21 +26,22 @@ public class TaskSchedulerTest extends BaseMaintenanceTest {
     @Before
     public void init() {
 
-        listTask.add(mock(MockScheduledOnceTask.class));
-        listTask.add(mock(MockScheduledOnceTask.class));
-        listTask.add(mock(MockScheduledNightlyTask.class));
-        listTask.add(mock(MockScheduledNightlyTask.class));
-        listTask.add(mock(MockScheduledRepeatTask.class));
-        listTask.add(mock(MockScheduledRepeatTask.class));
-        listTask.add(mock(MockScheduledNightlyTask.class));
+        listTask.add(spy(MockScheduledOnceTask.class)); // conditional = true
+        listTask.add(spy(MockScheduledOnceTask.class)); // conditional = false
+        listTask.add(spy(MockScheduledNightlyTask.class)); // conditional = true
+        listTask.add(spy(MockScheduledNightlyTask.class)); // conditional = false
+        listTask.add(spy(MockScheduledRepeatTask.class)); // conditional = true
+        listTask.add(spy(MockScheduledRepeatTask.class)); // conditional = false
+        listTask.add(spy(MockScheduledNightlyTask.class)); // conditional = true
 
-//        listTask.add(TaskSchedulerTest.createMaintenanceTask(ScheduleFrequency.ONCE, true));
-//        listTask.add(TaskSchedulerTest.createMaintenanceTask(ScheduleFrequency.ONCE, false));
-//        listTask.add(TaskSchedulerTest.createMaintenanceTask(ScheduleFrequency.NIGHT, true));
-//        listTask.add(TaskSchedulerTest.createMaintenanceTask(ScheduleFrequency.NIGHT, false));
-//        listTask.add(TaskSchedulerTest.createMaintenanceTask(ScheduleFrequency.REPEAT, true));
-//        listTask.add(TaskSchedulerTest.createMaintenanceTask(ScheduleFrequency.REPEAT, false));
-//        listTask.add(TaskSchedulerTest.createMaintenanceTask(ScheduleFrequency.NIGHT, true));
+        for (int i = 0; i < listTask.size(); i++) {
+            // return true if i is odd, false if i is even
+            boolean condition = (i % 2 == 0);
+            when(listTask.get(i).condition()).thenReturn(() -> {
+                System.out.println("condition = " + condition);
+                return condition;
+            });
+        }
     }
 
     @Test
@@ -48,8 +49,8 @@ public class TaskSchedulerTest extends BaseMaintenanceTest {
 
         scheduler.launchOnceTask();
 
-        verify(listTask.get(0), times(1)).execute();
-        verify(listTask.get(1), times(0)).execute();
+        verify(listTask.get(0), times(1)).performTask();
+        verify(listTask.get(1), times(0)).performTask();
 
     }
 

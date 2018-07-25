@@ -15,7 +15,7 @@ package org.talend.dataprep.maintenance.cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.CacheJanitor;
-import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
+import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 
 import java.util.function.Supplier;

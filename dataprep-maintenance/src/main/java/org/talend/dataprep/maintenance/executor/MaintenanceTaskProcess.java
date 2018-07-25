@@ -1,4 +1,4 @@
-package org.talend.dataprep.maintenance;
+package org.talend.dataprep.maintenance.executor;
 
 import java.util.function.Supplier;
 

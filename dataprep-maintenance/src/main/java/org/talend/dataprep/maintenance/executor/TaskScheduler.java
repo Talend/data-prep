@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
 import org.talend.tenancy.ForAll;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.REPEAT;
@@ -63,7 +61,6 @@ public class TaskScheduler {
     }
 
     private Stream<MaintenanceTaskProcess> getTaskForFrequency(ScheduleFrequency frequency) {
-        System.out.println("maintenanceTasks = " + maintenanceTasks.size());
         return maintenanceTasks
                 .stream()
                 .filter(task -> getFrequency(task) == frequency);

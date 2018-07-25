@@ -3,7 +3,7 @@ package org.talend.dataprep.maintenance.upgrade;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
+import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.upgrade.UpgradeService;

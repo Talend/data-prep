@@ -1,17 +1,9 @@
 package org.talend.dataprep.maintenance.executor;
 
-import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
-
 import java.util.function.Supplier;
 
 @MaintenanceTask(ScheduleFrequency.REPEAT)
 public class MockScheduledRepeatTask extends MaintenanceTaskProcess {
-
-    private Boolean condition;
-
-    public MockScheduledRepeatTask(boolean condition){
-        this.condition = condition;
-    }
 
     @Override
     protected void performTask() {
@@ -20,6 +12,7 @@ public class MockScheduledRepeatTask extends MaintenanceTaskProcess {
 
     @Override
     protected Supplier<Boolean> condition() {
-        return () -> condition;
+        System.out.println("MockScheduledOnceTask.condition");
+        return () -> true;
     }
 }

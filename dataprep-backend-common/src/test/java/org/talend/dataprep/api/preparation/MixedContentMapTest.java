@@ -47,12 +47,13 @@ public class MixedContentMapTest {
         assertThat(map.get("string"), is("string value"));
         assertThat(map.get("numeric"), is("10"));
         assertThat(map.get("boolean"), is("true"));
-        assertThat(map.get("double"), is("10.1k"));
+        assertThat(map.get("double"), is("10.1"));
         assertThat(map.get("null"), nullValue());
         assertThat(map.get("empty"), is(""));
         final String object = map.get("object");
         assertThat(object, sameJSONAs("{\"eq\": { \"field\": \"nbCommands\",\"value\": \"13\" }}"));
-        assertThat(map.get("array"), is("1,2,3"));
+        final String array = map.get("array");
+        assertThat(array, sameJSONAs("[1, 2, 3]"));
     }
 
     @Test

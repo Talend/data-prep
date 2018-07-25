@@ -85,7 +85,10 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
     }
 
     private String[] extractColumnsId(String columnId) {
-        return columnId.split(",");
+        String result = columnId.replaceAll("\\[", "")
+                .replaceAll("]", "")
+                .replaceAll("\"", "");
+        return result.split(",");
     }
 
     private String getMetadataFromFirstColumn(String columnId) {

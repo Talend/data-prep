@@ -122,16 +122,9 @@ public class MixedContentMapModule extends SimpleModule {
                         map.put(currentKey, String.valueOf(jsonParser.getValueAsDouble()));
                     } else if (token == JsonToken.VALUE_TRUE || token == JsonToken.VALUE_FALSE) {
                         map.put(currentKey, String.valueOf(jsonParser.getValueAsBoolean()));
-                    } else if (token == JsonToken.START_OBJECT) {
+                    } else if (token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY) {
                         // Value is a JSON object, get content as is
                         map.put(currentKey, jsonParser.readValueAsTree().toString());
-                        jsonParser.skipChildren();
-                    } else if (token == JsonToken.START_ARRAY) {
-                        Iterator<String[]> iterator = jsonParser.readValuesAs(String[].class);
-                        if (iterator.hasNext()) {
-                            String value = Stream.of(iterator.next()).collect(Collectors.joining(","));
-                            map.put(currentKey, value);
-                        }
                         jsonParser.skipChildren();
                     } else if (token == JsonToken.VALUE_NULL) {
                         map.put(currentKey, null);

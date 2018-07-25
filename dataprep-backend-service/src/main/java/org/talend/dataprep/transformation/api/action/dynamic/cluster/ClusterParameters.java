@@ -1,21 +1,23 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.action.dynamic.cluster;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -37,6 +39,9 @@ import org.talend.dataquality.record.linkage.constant.AttributeMatcherType;
 @Component
 public class ClusterParameters implements DynamicParameters {
 
+    /** This class' logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterParameters.class);
+
     @Override
     public GenericParameter getParameters(final String columnId, final DataSet content) {
         // Analyze clusters service
@@ -47,11 +52,12 @@ public class ClusterParameters implements DynamicParameters {
             String value = row.get(columnId);
             clusterAnalyzer.analyze(value);
         });
+        // TDP-5860 : this use Soundex (Soundex is a phonetic algorithm for indexing names by sound, as pronounced in English)
+        // So it can log IllegalArgumentException if a character is not mapped
+        // see SoundexMatcher on DQ side
         clusterAnalyzer.end();
         // Build results
-        final Clusters.Builder builder = Clusters
-                .builder()
-                .title(DataprepBundle.message("parameter.textclustering.title.1"))
+        final Clusters.Builder builder = Clusters.builder().title(DataprepBundle.message("parameter.textclustering.title.1"))
                 .title(DataprepBundle.message("parameter.textclustering.title.2"));
         final StringClusters result = clusterAnalyzer.getResult().get(0);
         for (StringClusters.StringCluster cluster : result) {
@@ -62,9 +68,7 @@ public class ClusterParameters implements DynamicParameters {
                     currentCluster.parameter(new ConstantParameter(value, ParameterType.BOOLEAN));
                 }
                 currentCluster.replace(Parameter.parameter(LocaleContextHolder.getLocale()).setName("replaceValue")
-                        .setType(ParameterType.STRING)
-                        .setDefaultValue(cluster.survivedValue)
-                        .build(null));
+                        .setType(ParameterType.STRING).setDefaultValue(cluster.survivedValue).build(null));
                 builder.cluster(currentCluster);
             }
         }

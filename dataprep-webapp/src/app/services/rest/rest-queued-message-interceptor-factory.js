@@ -14,6 +14,8 @@
 const ACCEPTED_CODE = 202;
 const LOOP_DELAY = 1000;
 const FOLLOWED_STATUS = ['NEW', 'RUNNING'];
+const FAILED_STATUS = 'FAILED';
+const CANCELLED_STATUS = 'CANCELLED';
 
 const METHODS = {
 	POST: 'POST',
@@ -28,7 +30,7 @@ const NOOP = () => {};
  * @name data-prep.services.rest.service:RestQueuedMessageHandler
  * @description Queued message interceptor
  */
-export default function RestQueuedMessageHandler($q, $injector, $timeout, RestURLs) {
+export default function RestQueuedMessageHandler($q, $injector, $timeout, RestURLs, MessageService) {
 	'ngInject';
 
 	function checkStatus(url) {
@@ -70,10 +72,18 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {
 						const $http = $injector.get('$http');
-						return data.result.downloadUrl ? $http({
-							method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
-							url: `${RestURLs.context}${data.result.downloadUrl}`,
-						}) : $q.resolve(data);
+
+						switch (data.status) {
+						case FAILED_STATUS:
+							MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+						case CANCELLED_STATUS:
+							return $q.reject();
+						default:
+							return data.result.downloadUrl ? $http({
+								method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,
+								url: `${RestURLs.context}${data.result.downloadUrl}`,
+							}) : $q.resolve(data);
+						}
 					});
 			}
 

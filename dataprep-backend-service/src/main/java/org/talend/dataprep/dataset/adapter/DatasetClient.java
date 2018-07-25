@@ -67,7 +67,7 @@ public class DatasetClient {
     private BeanConversionService conversionService;
 
     @Autowired
-    private DataSetContentLimit limit;
+    private DataSetContentLimit dataSetContentLimit;
 
     @Value("${dataset.records.limit:10000}")
     private long sampleSize;
@@ -75,9 +75,9 @@ public class DatasetClient {
     @Autowired
     private FilterService filterService;
 
-    private final Cache<String, AnalysisResult> computedMetadataCache = CacheBuilder.newBuilder()
-            .maximumSize(50)
-            .softValues()
+    private final Cache<String, AnalysisResult> computedMetadataCache = CacheBuilder.newBuilder() //
+            .maximumSize(50) //
+            .softValues() //
             .build();
 
     private Function<String, AnalysisResult> datasetAnalysisSupplier;
@@ -101,7 +101,10 @@ public class DatasetClient {
 
     /**
      * List all DataSetMetadata
-     * <p>{@link DataSetMetadata#getRowMetadata()} will returns null</p>
+     * <p>
+     * {@link DataSetMetadata#getRowMetadata()} will returns null
+     * </p>
+     *
      * @param certification filter with a specific certification state
      * @param favorite filter with favorite only
      * @return DataSetMetadata without rowMetadata
@@ -131,6 +134,7 @@ public class DatasetClient {
 
     /**
      * Get a dataSet by id.
+     *
      * @param id the dataset to fetch
      */
     public DataSet getDataSet(String id) {
@@ -139,6 +143,7 @@ public class DatasetClient {
 
     /**
      * Get a dataSet by id.
+     *
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      */
@@ -148,17 +153,19 @@ public class DatasetClient {
 
     /**
      * Get a dataSet by id.
+     *
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
-     * @param filter TQL filter for content
+     * @param withRowValidityMarker perform a quality analysis on the dataset records
      */
-    public DataSet getDataSet(String id, boolean fullContent, String filter) {
-        return getDataSet(id, fullContent, false, filter);
+    public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker) {
+        return getDataSet(id, fullContent, withRowValidityMarker, null);
     }
 
     /**
      * Get a dataSet by id.
      * Convert metadata and records from {@link Dataset} to {@link DataSet}
+     *
      * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param withRowValidityMarker perform a quality analysis on the dataset records
@@ -206,8 +213,8 @@ public class DatasetClient {
 
     private Long limit(boolean fullContent) {
         Long recordsLimitApply = null;
-        if (limit.limitContentSize() && limit.getLimit() != null) {
-            recordsLimitApply = this.limit.getLimit();
+        if (dataSetContentLimit.limitContentSize() && dataSetContentLimit.getLimit() != null) {
+            recordsLimitApply = this.dataSetContentLimit.getLimit();
         }
         if (!fullContent) {
             recordsLimitApply = sampleSize;
@@ -216,15 +223,16 @@ public class DatasetClient {
     }
 
     /**
-     * Still present because Chained commands still need this one.
+     * @deprecated : Still present because Chained commands still need this one.
      */
     @Deprecated
-    public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent, final boolean includeInternalContent) {
+    public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent,
+            final boolean includeInternalContent) {
         return new HystrixCommand<InputStream>(DATASET_GROUP) {
 
             @Override
             protected InputStream run() throws IOException {
-                DataSet dataSet = getDataSet(dataSetId, fullContent, false, null);
+                DataSet dataSet = getDataSet(dataSetId, fullContent, includeInternalContent);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 mapper.writerFor(DataSet.class).writeValue(out, dataSet);
                 return new ByteArrayInputStream(out.toByteArray());
@@ -260,10 +268,10 @@ public class DatasetClient {
         metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 
-        if (rowMetadata != null && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
+        if (rowMetadata != null
+                && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
             AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
-            metadata.setDataSetSize(analysisResult.rowcount);
             metadata.getContent().setNbRecords(analysisResult.rowcount);
         }
 

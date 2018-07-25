@@ -37,7 +37,6 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +81,7 @@ import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.async.AsyncExecutionId;
 import org.talend.dataprep.async.AsyncOperation;
 import org.talend.dataprep.async.AsyncParameter;
+import org.talend.dataprep.async.conditional.ConditionalTest;
 import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
 import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
 import org.talend.dataprep.async.generator.ExportParametersExecutionIdGenerator;
@@ -226,20 +226,19 @@ public class TransformationService extends BaseTransformationService {
             value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
             throws IOException {
 
-        ExportParameters completeParameters = parameters;
+        ExportParameters completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
 
-        if (StringUtils.isNotEmpty(completeParameters.getPreparationId())) {
-            // we deal with preparation transformation (not dataset)
-            completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-
-            ContentCacheKey cacheKey = cacheKeyGenerator.generateContentKey(completeParameters);
-
-            if (!contentCache.has(cacheKey)) {
-                preparationExportStrategy.performPreparation(completeParameters, new NullOutputStream());
-            }
+        // Async behavior
+        final ConditionalTest conditionalTest = applicationContext.getBean(GetPrepContentAsyncCondition.class);
+        if (conditionalTest.apply(completeParameters)) {
+            // write to cache
+            executeSampleExportStrategy(completeParameters).writeTo(new NullOutputStream());
+            return outputStream -> {
+            };
+        } else {
+            // sync behavior
+            return executeSampleExportStrategy(completeParameters);
         }
-
-        return executeSampleExportStrategy(completeParameters);
     }
 
     @RequestMapping(value = "/apply/preparation/{preparationId}/{stepId}/metadata", method = GET)
@@ -495,7 +494,7 @@ public class TransformationService extends BaseTransformationService {
 
         boolean identityReleased = false;
         securityProxy.asTechnicalUserForDataSet();
-        try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId())) {
+        try (final DataSet dataSet = datasetClient.getDataSet(previewParameters.getDataSetId(), false, true)) {
             securityProxy.releaseIdentity();
             identityReleased = true;
 
@@ -692,7 +691,7 @@ public class TransformationService extends BaseTransformationService {
      * @param column A {@link ColumnMetadata column} definition.
      * @param limit An optional limit parameter to return the first <code>limit</code> suggestions.
      * @return A list of {@link ActionDefinition} that can be applied to this column.
-     * @see #suggest(DataSet)
+     * @see SuggestionEngine#suggest(DataSet)
      */
     @RequestMapping(value = "/suggest/column", method = POST)
     @ApiOperation(value = "Suggest actions for a given column metadata",
@@ -887,9 +886,9 @@ public class TransformationService extends BaseTransformationService {
 
         // run the analyzer service on the cached content
         try (final InputStream metadataCache = contentCache.get(metadataKey);
-                final InputStream contentCache = this.contentCache.get(contentKey)) {
+                final InputStream contentCacheStream = this.contentCache.get(contentKey)) {
             final DataSetMetadata metadata = mapper.readerFor(DataSetMetadata.class).readValue(metadataCache);
-            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCache);
+            final List<SemanticDomain> semanticDomains = getSemanticDomains(metadata, columnId, contentCacheStream);
             LOG.debug("found {} for preparation #{}, column #{}", semanticDomains, preparationId, columnId);
             return semanticDomains;
 

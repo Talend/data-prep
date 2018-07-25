@@ -322,10 +322,10 @@ describe('Preparation actions service', () => {
 	describe('dispatch @@preparation/REMOVE', () => {
 		const preparation = { id: 'prep 1' };
 
-		beforeEach(inject(($rootScope, $q, MessageService, TalendConfirmService,
+		beforeEach(inject(($rootScope, $q, MessageService, ConfirmService,
 		                   FolderService, PreparationService, PreparationActionsService) => {
 			// given
-			spyOn(TalendConfirmService, 'confirm').and.returnValue($q.when());
+			spyOn(ConfirmService, 'confirm').and.returnValue($q.when());
 			spyOn(PreparationService, 'delete').and.returnValue();
 			spyOn(FolderService, 'refresh').and.returnValue();
 			spyOn(MessageService, 'success').and.returnValue();
@@ -344,9 +344,9 @@ describe('Preparation actions service', () => {
 			$rootScope.$digest();
 		}));
 
-		it('should ask confirmation', inject((TalendConfirmService) => {
+		it('should ask confirmation', inject((ConfirmService) => {
 			// then
-			expect(TalendConfirmService.confirm).toHaveBeenCalledWith(
+			expect(ConfirmService.confirm).toHaveBeenCalledWith(
 				['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 				{ type: 'Preparation', name: preparation.name }
 			);

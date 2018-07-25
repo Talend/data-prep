@@ -1,11 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { I18nextProvider } from 'react-i18next';
+import { List, Map } from 'immutable';
+
 import { IconsProvider } from '@talend/react-components';
 import { Notification, ShortcutManager } from '@talend/react-containers';
 import AppLoader from '@talend/react-containers/lib/AppLoader';
 import { default as components } from './';
 import i18n from './../../i18n';
+
+const initialNotificationsState = new Map({
+	notifications: new List([]),
+});
 
 export default function App(props) {
 	return (
@@ -14,7 +20,7 @@ export default function App(props) {
 				<div className="tdp">
 					<IconsProvider />
 					<ShortcutManager />
-					<Notification />
+					<Notification initialState={initialNotificationsState} />
 					<components.AboutModal />
 					<components.PreparationCreatorModal />
 					<components.PreparationCopyMoveModal />

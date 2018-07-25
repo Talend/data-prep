@@ -12,9 +12,12 @@
 
 package org.talend.dataprep.transformation.service.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Objects;
 
@@ -28,8 +31,10 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
@@ -40,9 +45,11 @@ import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
+import com.fasterxml.jackson.core.JsonParser;
+
 /**
- * A {@link BaseExportStrategy strategy} to apply a preparation on a different dataset (different from the one initially
- * in the preparation).
+ * A {@link BaseExportStrategy strategy} to apply a preparation on a different dataset
+ * (A dataset different from the one initially in the preparation).
  */
 @Component
 public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
@@ -53,7 +60,9 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
     private CacheKeyGenerator cacheKeyGenerator;
 
     @Autowired
-    private DatasetClient datasetClient;
+    private DatasetClient dataSetClient;
+
+    private Boolean technicianIdentityReleased = true;
 
     @Override
     public boolean accept(ExportParameters parameters) {
@@ -83,24 +92,12 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final String formatName = parameters.getExportType();
         final PreparationDTO preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
-        final ExportFormat format = getFormat(parameters.getExportType());
 
-        // dataset content must be retrieved as the technical user because it might not be shared
-        boolean technicianIdentityReleased = false;
-        securityProxy.asTechnicalUserForDataSet();
-        // get the dataset content (in an auto-closable block to make sure it is properly closed)
-        final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
+        try {
+            DataSet dataSet = getDatatset(parameters, dataSetId, preparationId);
 
-        try (DataSet dataSet = datasetClient.getDataSet(dataSetId, fullContent, false, null)) {
-
-            // release the technical user identity
-            securityProxy.releaseIdentity();
-            technicianIdentityReleased = true;
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
-
-            // get the actions to apply (no preparation ==> dataset export ==> no actions)
-            final String actions = getActions(preparationId, version);
 
             // create tee to broadcast to cache + service output
             final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
@@ -112,43 +109,103 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
                     parameters.getArguments(), //
                     parameters.getFilter() //
             );
-            LOGGER.debug("Cache key: " + key.getKey());
-            LOGGER.debug("Cache key details: " + key.toString());
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
-                    contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                final Configuration.Builder configurationBuilder = Configuration.builder() //
-                        .args(parameters.getArguments()) //
-                        .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                        .sourceType(parameters.getFrom()).format(format.getName()) //
-                        .actions(actions) //
-                        .preparation(getPreparation(preparationId)) //
-                        .stepId(version) //
-                        .volume(SMALL) //
-                        .output(tee) //
-                        .limit(this.limit);
 
-                // no need for statistics if it's not JSON output
-                if (!Objects.equals(format.getName(), JSON)) {
-                    configurationBuilder.globalStatistics(false);
-                }
-
-                final Configuration configuration = configurationBuilder.build();
-
-                factory.get(configuration).buildExecutable(dataSet, configuration).execute();
-                tee.flush();
-            } catch (Throwable e) { // NOSONAR
-                LOGGER.debug("evicting cache {}", key.getKey());
-                contentCache.evict(key);
-                throw e;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Transformation Cache Key : {}", key.getKey());
+                LOGGER.debug("Cache key details: {}", key);
             }
-        } catch (TDPException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
+
+            executePipeline(parameters, outputStream, key, preparationId, version, dataSet);
+
+        } catch (IOException e1) {
+            LOGGER.error("Unable to recover dataset sample from {}", dataSetId);
         } finally {
             if (!technicianIdentityReleased) {
                 securityProxy.releaseIdentity();
             }
         }
+
+    }
+
+    /**
+     * Return the dataset sample.
+     *
+     * @param parameters the export parameters
+     * @param
+     * @param dataSet the sample
+     * @param preparationId the id of the corresponding preparation
+     *
+     */
+    private void executePipeline(ExportParameters parameters, OutputStream outputStream, TransformationCacheKey key,
+            String preparationId, String version, DataSet dataSet) {
+
+        final ExportFormat format = getFormat(parameters.getExportType());
+        // get the actions to apply (no preparation ==> dataset export ==> no actions)
+        final String actions = getActions(preparationId, version);
+
+        try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
+                contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+            final Configuration.Builder configurationBuilder = Configuration.builder() //
+                    .args(parameters.getArguments()) //
+                    .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
+                    .sourceType(parameters.getFrom()).format(format.getName()) //
+                    .actions(actions) //
+                    .preparation(getPreparation(preparationId)) //
+                    .stepId(version) //
+                    .volume(SMALL) //
+                    .output(tee) //
+                    .limit(this.limit);
+
+            // no need for statistics if it's not JSON output
+            if (!Objects.equals(format.getName(), JSON)) {
+                configurationBuilder.globalStatistics(false);
+            }
+
+            final Configuration configuration = configurationBuilder.build();
+
+            factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+
+        } catch (IOException e1) { // NOSONAR
+            LOGGER.debug("evicting cache {}", key.getKey());
+            contentCache.evict(key);
+            throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e1);
+        }
+    }
+
+    /**
+     * Return the dataset sample.
+     *
+     * @param parameters the export parameters
+     * @param dataSetId the id of the corresponding dataset
+     * @param preparationId the id of the corresponding preparation
+     *
+     * @return the dataset sample either from cache if the key corresponding key exists either the full sample.
+     */
+    private DataSet getDatatset(ExportParameters parameters, String dataSetId, String preparationId) throws IOException {
+
+        final ContentCacheKey asyncSampleKey = cacheKeyGenerator.generateContentKey(//
+                dataSetId, //
+                preparationId, //
+                Step.ROOT_STEP.id(), //
+                JSON, //
+                parameters.getFrom(), //
+                parameters.getFilter() //
+        );
+        LOGGER.info("using {} as content input", asyncSampleKey.getKey());
+
+        if (contentCache.has(asyncSampleKey)) {
+            JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentCache.get(asyncSampleKey), UTF_8));
+            return mapper.readerFor(DataSet.class).readValue(parser);
+        }
+
+        final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
+        // dataset content must be retrieved as the technical user because it might not be shared
+        technicianIdentityReleased = false;
+        securityProxy.asTechnicalUserForDataSet();
+
+        DataSet dataSet = dataSetClient.getDataSet(dataSetId, fullContent, true);
+        securityProxy.releaseIdentity();
+        technicianIdentityReleased = true;
+        return dataSet;
     }
 }

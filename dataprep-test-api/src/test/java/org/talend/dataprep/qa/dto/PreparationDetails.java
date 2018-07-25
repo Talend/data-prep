@@ -48,4 +48,13 @@ public class PreparationDetails extends NamedItem {
 
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public String getHead() {
+        if (steps == null || steps.isEmpty()) {
+            return "head";
+        }
+        else {
+            return steps.get(steps.size() - 1);
+        }
+    }
 }

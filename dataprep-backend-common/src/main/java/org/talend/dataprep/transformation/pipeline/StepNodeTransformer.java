@@ -33,12 +33,12 @@ public class StepNodeTransformer {
      *
      * @param node                            : The pipeline (as {@link Node}) to transform.
      * @param steps                           : The {@link Step steps} to use when creating group nodes.
-     * @param previousStepRowMetadataSupplier : A function that allows visitor code to associate a row metadata with a step.
+     * @param stepRowMetadataSupplier : A function that allows visitor code to associate a row metadata with a step.
      * @return The transformed pipeline, based on copies of the original <code>node</code> (no modification done on the pipeline
      * reachable from <code>node/code>).
      */
-    public static Node transform(Node node, List<String> steps, Function<String, RowMetadata> previousStepRowMetadataSupplier) {
-        final StepNodeTransformation visitor = new StepNodeTransformation(steps, previousStepRowMetadataSupplier);
+    public static Node transform(Node node, List<String> steps, Function<String, RowMetadata> stepRowMetadataSupplier) {
+        final StepNodeTransformation visitor = new StepNodeTransformation(steps, stepRowMetadataSupplier);
         node.accept(visitor);
         return visitor.getTransformedNode();
     }

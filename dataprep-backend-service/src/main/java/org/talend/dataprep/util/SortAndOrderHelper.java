@@ -12,30 +12,26 @@
 
 package org.talend.dataprep.util;
 
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
+import org.slf4j.Logger;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.exception.TDPException;
 
 import java.beans.PropertyEditor;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationDTO;
-import org.talend.dataprep.api.share.Owner;
-import org.talend.dataprep.dataset.service.UserDataSetMetadata;
-import org.talend.dataprep.exception.TDPException;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
 
 /**
  * Utility class used to sort and order DataSets or Preparations.
@@ -152,25 +148,22 @@ public final class SortAndOrderHelper {
         // Select comparator for sort (either by name or date)
         Function<DataSetMetadata, Comparable> keyExtractor;
         if (sortKey == null) { // default to NAME sort
-            keyExtractor = dataSetMetadata -> dataSetMetadata.getName().toUpperCase();
+            keyExtractor = SortAndOrderHelper::extractDataSetName;
         } else {
             switch (sortKey) {
             // In case of API call error, default to NAME sort
             case DATASET_NAME:
             case NB_STEPS:
             case NAME:
-                keyExtractor = dataSetMetadata -> dataSetMetadata.getName().toUpperCase();
+                keyExtractor = SortAndOrderHelper::extractDataSetName;
                 break;
             case AUTHOR:
-                keyExtractor = dataSetMetadata -> {
-                    // TODO: make this class agnostic of the subclass of DatasetMetadata it is using
-                    // in order to just call a method to retrieve the author name
-                    if (dataSetMetadata instanceof UserDataSetMetadata) {
-                        Owner owner = ((UserDataSetMetadata) dataSetMetadata).getOwner();
-                        return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
-                    }
-                    return dataSetMetadata.getAuthor();
-                };
+                keyExtractor = dataSetMetadata -> Optional.ofNullable(dataSetMetadata)
+                        .filter(ds -> ds instanceof UserDataSetMetadata)
+                        .filter(ds -> ((UserDataSetMetadata) ds).getOwner() != null)
+                        .filter(ds -> ((UserDataSetMetadata) ds).getOwner().getDisplayName() != null)
+                        .map(ds -> ((UserDataSetMetadata) ds).getOwner().getDisplayName().toUpperCase())
+                        .orElse(EMPTY);
                 break;
             case CREATION_DATE:
             case DATE:
@@ -180,7 +173,10 @@ public final class SortAndOrderHelper {
                 keyExtractor = DataSetMetadata::getLastModificationDate;
                 break;
             case NB_RECORDS:
-                keyExtractor = metadata -> metadata.getContent().getNbRecords();
+                keyExtractor = metadata -> Optional.ofNullable(metadata)
+                        .filter(m -> m.getContent() != null)
+                        .map(m -> m.getContent().getNbRecords())
+                        .orElse(Long.MIN_VALUE);
                 break;
             default:
                 // this should not be possible
@@ -188,6 +184,13 @@ public final class SortAndOrderHelper {
             }
         }
         return Comparator.comparing(keyExtractor, comparisonOrder);
+    }
+
+    private static String extractDataSetName(DataSetMetadata dataSetMetadata) {
+        return Optional.ofNullable(dataSetMetadata)
+                .filter(p -> p.getName() != null)
+                .map(p -> p.getName().toUpperCase())
+                .orElse(EMPTY);
     }
 
     /**
@@ -208,20 +211,20 @@ public final class SortAndOrderHelper {
         // Select comparator for sort (either by name or date)
         Function<PreparationDTO, Comparable> keyExtractor;
         if (sortKey == null) { // default to NAME sort
-            keyExtractor = preparation -> preparation.getName().toUpperCase();
+            keyExtractor = SortAndOrderHelper::extractPreparationName;
         } else {
             switch (sortKey) {
             // In case of API call error, default to NAME sort
             case NB_RECORDS:
             case NAME:
-                keyExtractor = preparation -> Optional.ofNullable(preparation).map(p -> p.getName().toUpperCase())
-                        .orElse(StringUtils.EMPTY);
+                keyExtractor = SortAndOrderHelper::extractPreparationName;
                 break;
             case AUTHOR:
-                keyExtractor = preparation -> {
-                    Owner owner = preparation.getOwner();
-                    return (owner != null) ? StringUtils.upperCase(owner.getDisplayName()) : StringUtils.EMPTY;
-                };
+                keyExtractor = preparationDTO -> Optional.ofNullable(preparationDTO)
+                        .filter(p -> p.getOwner() != null)
+                        .filter(p -> p.getOwner().getDisplayName() != null)
+                        .map(p -> p.getOwner().getDisplayName().toUpperCase())
+                        .orElse(EMPTY);
                 break;
             case CREATION_DATE:
             case DATE:
@@ -235,12 +238,12 @@ public final class SortAndOrderHelper {
                 break;
             case DATASET_NAME:
                 if (dataSetFinder != null) {
-                    keyExtractor = p -> getUpperCaseNameFromNullable(dataSetFinder.apply(p));
+                    keyExtractor = p -> extractDataSetName(dataSetFinder.apply(p));
                 } else {
                     LOGGER.debug(
                             "There is no dataset finding function to sort preparations on dataset name. Default to natural name order.");
                     // default to sort on name
-                    keyExtractor = preparation -> preparation.getName().toUpperCase();
+                    keyExtractor = SortAndOrderHelper::extractPreparationName;
                 }
                 break;
             default:
@@ -251,15 +254,11 @@ public final class SortAndOrderHelper {
         return Comparator.comparing(keyExtractor, comparisonOrder);
     }
 
-    @Nullable
-    private static Comparable getUpperCaseNameFromNullable(@Nullable DataSetMetadata dsm) {
-        if (dsm != null) {
-            String name = dsm.getName();
-            if (name != null) {
-                return name.toUpperCase();
-            }
-        }
-        return null;
+    private static String extractPreparationName(PreparationDTO preparation) {
+        return Optional.ofNullable(preparation)
+                .filter(p -> p.getName() != null)
+                .map(p -> p.getName().toUpperCase())
+                .orElse(EMPTY);
     }
 
     /**
@@ -275,7 +274,7 @@ public final class SortAndOrderHelper {
         // Select comparator for sort (either by name or date)
         Function<Folder, Comparable> keyExtractor;
         if (sortKey == null) { // default to NAME sort
-            keyExtractor = folder -> folder.getName().toUpperCase();
+            keyExtractor = SortAndOrderHelper::extractFolderName;
         } else {
             switch (sortKey) {
             // In case of API call error, default to NAME sort
@@ -284,7 +283,7 @@ public final class SortAndOrderHelper {
             case NB_RECORDS:
             case NB_STEPS:
             case NAME:
-                keyExtractor = folder -> folder.getName().toUpperCase();
+                keyExtractor = SortAndOrderHelper::extractFolderName;
                 break;
             case CREATION_DATE:
             case DATE:
@@ -299,5 +298,12 @@ public final class SortAndOrderHelper {
             }
         }
         return Comparator.comparing(keyExtractor, order);
+    }
+
+    private static String extractFolderName(Folder folder) {
+        return Optional.ofNullable(folder)
+                .filter(f -> f.getName() != null)
+                .map(f -> f.getName().toUpperCase())
+                .orElse(EMPTY);
     }
 }

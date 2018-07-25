@@ -19,7 +19,16 @@ import static org.talend.dataprep.api.dataset.row.FlagNames.INTERNAL_PROPERTY_PR
 import static org.talend.dataprep.api.dataset.row.FlagNames.TDP_INVALID;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -119,7 +128,6 @@ public class DataSetRow implements Cloneable, Serializable {
         } else {
             values.put(id, value);
         }
-
         return this;
     }
 
@@ -340,7 +348,6 @@ public class DataSetRow implements Cloneable, Serializable {
         return dataSetRow;
     }
 
-
     /**
      * Order values of this data set row according to its own <code>columns</code>. This method clones the current
      * record, so no need to call {@link #clone()}.
@@ -420,12 +427,12 @@ public class DataSetRow implements Cloneable, Serializable {
 
     public DataSetRow filter(List<ColumnMetadata> filteredColumns) {
         final Set<String> columnsToKeep = filteredColumns.stream().map(ColumnMetadata::getId).collect(Collectors.toSet());
-        final Set<String> columnsToDelete = values.entrySet().stream()
+        final Set<String> columnsToDelete = values.entrySet().stream() //
                 .filter(e -> !columnsToKeep.contains(e.getKey())) //
-                .map(Map.Entry::getKey)
+                .map(Map.Entry::getKey) //
                 .collect(Collectors.toSet());
         final RowMetadata rowMetadataClone = rowMetadata.clone();
-        final LinkedHashMap<String, String> filteredValues = new LinkedHashMap<>(this.values);
+        final Map<String, String> filteredValues = new LinkedHashMap<>(this.values);
         for (String columnId : columnsToDelete) {
             filteredValues.remove(columnId);
             rowMetadataClone.deleteColumnById(columnId);

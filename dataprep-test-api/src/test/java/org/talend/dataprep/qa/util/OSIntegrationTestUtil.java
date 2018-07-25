@@ -1,27 +1,30 @@
 package org.talend.dataprep.qa.util;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.ActionFilterEnum;
-import org.talend.dataprep.helper.api.Filter;
-import org.talend.dataprep.qa.dto.Folder;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.ActionFilterEnum;
+import org.talend.dataprep.helper.api.Filter;
+import org.talend.dataprep.qa.dto.Folder;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.
@@ -34,7 +37,7 @@ public class OSIntegrationTestUtil {
     /**
      * Split a folder in a {@link Set} folder and subfolders.
      *
-     * @param folder  the folder to split.
+     * @param folder the folder to split.
      * @param folders existing folders.
      * @return a {@link Set} of folders and subfolders.
      */
@@ -48,8 +51,7 @@ public class OSIntegrationTestUtil {
 
         String[] folderPaths = folder.getPath().split("/");
         StringBuilder folderBuilder = new StringBuilder();
-        Arrays
-                .stream(folderPaths) //
+        Arrays.stream(folderPaths) //
                 .filter(f -> !f.isEmpty() && !f.equals("/")) //
                 .forEach(f -> { //
                     if (folderBuilder.length() > 0) {
@@ -75,11 +77,9 @@ public class OSIntegrationTestUtil {
      */
     @NotNull
     public Map<String, Object> mapParamsToActionParameters(@NotNull Map<String, String> params) {
-        Map<String, Object> actionParameters = params
-                .entrySet()
-                .stream() //
+        Map<String, Object> actionParameters = params.entrySet().stream() //
                 .filter(entry -> !entry.getKey().startsWith(FILTER.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> {
+                .filter(entry -> !entry.getKey().startsWith(ActionFilterEnum.INVALID.getJsonName())).collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     if (parametersToBeSuffixed.contains(e.getKey())) {
                         return suffixName(e.getValue());
                     } else {
@@ -102,16 +102,26 @@ public class OSIntegrationTestUtil {
     @Nullable
     public Filter mapParamsToFilter(@NotNull Map<String, String> params) {
         final Filter filter = new Filter();
-        long nbAfes = params
-                .keySet()
-                .stream() //
-                .map(ActionFilterEnum::getActionFilterEnum) //
-                .filter(Objects::nonNull) //
-                .peek(afe -> {
-                    String v = params.get(afe.getName());
-                    filter.range.put(afe, afe.processValue(v));
-                }) //
-                .count();
+        EnumMap<ActionFilterEnum, Object> filterMap = new EnumMap<>(ActionFilterEnum.class);
+        AtomicBoolean isInvalid = new AtomicBoolean(false);
+
+        long nbAfes = 0L;
+        for (String s : params.keySet()) {
+            ActionFilterEnum afe = ActionFilterEnum.getActionFilterEnum(s);
+            if (afe != null) {
+                String value = params.get(afe.getName());
+                if (afe.getJsonName().equals(ActionFilterEnum.INVALID.getJsonName())) {
+                    isInvalid.set(true);
+                } else {
+                    filterMap.put(afe, afe.processValue(value));
+                }
+                nbAfes++;
+            }
+        }
+        if (isInvalid.get())
+            filter.invalid = filterMap;
+        else
+            filter.range = filterMap;
         return nbAfes > 0 ? filter : null;
     }
 

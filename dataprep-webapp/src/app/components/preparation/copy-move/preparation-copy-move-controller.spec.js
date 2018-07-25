@@ -123,7 +123,7 @@ describe('Preparation copy/move controller', () => {
 			);
 		}));
 
-		it('should refresh folder content', inject(($q, TalendConfirmService, FolderService) => {
+		it('should refresh folder content', inject(($q, ConfirmService, FolderService) => {
 			//then
 			expect(FolderService.refresh).toHaveBeenCalledWith(initialFolder.id);
 		}));

@@ -10,45 +10,27 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.event;
+package org.talend.dataprep.dataset.event;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-/**
- * Spring listener on cache event
- */
 @Component
 @ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
-public class CleanCacheListener {
+public class DatasetEventListener {
 
-    /**
-     * This class' logger.
-     */
-    private static final Logger LOGGER = getLogger(CleanCacheListener.class);
-
-    /**
-     * Utility to process event
-     */
     @Autowired
-    private CacheEventProcessingUtil eventProcessingUtil;
-
-    /**
-     * Clean the whole dataset cache.
-     *
-     * @param event the event to respond to.
-     */
+    private DatasetEventUtil datasetEventUtil;
 
     @EventListener
-    public void onEvent(CleanCacheEvent event) {
-        LOGGER.debug("Processing spring clean cache event: {}", event);
+    public void onUpdate(DatasetUpdatedEvent event) {
+        datasetEventUtil.performUpdateEvent(event.getSource().getId());
+    }
 
-        // We delete content cache key
-        eventProcessingUtil.processCleanCacheEvent(event.getSource(), event.isPartialKey());
+    @EventListener
+    public void onInsert(DatasetImportedEvent event) {
+        datasetEventUtil.performImportEvent(event.getSource());
     }
 }

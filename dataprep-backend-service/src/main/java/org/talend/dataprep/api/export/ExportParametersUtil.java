@@ -82,8 +82,8 @@ public class ExportParametersUtil {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationSummaryGet preparationSummaryGet =
-                applicationContext.getBean(PreparationSummaryGet.class, preparationId, stepId);
+        final PreparationSummaryGet preparationSummaryGet = applicationContext.getBean(PreparationSummaryGet.class, preparationId,
+                stepId);
         return preparationSummaryGet.execute();
     }
 

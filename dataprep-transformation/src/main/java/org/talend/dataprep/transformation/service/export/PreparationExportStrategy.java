@@ -73,8 +73,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         doExecute(parameters, contentCache.put(key, ContentCache.TimeToLive.DEFAULT), key);
     }
 
-    public void doExecute(final ExportParameters parameters, OutputStream outputStream,
-            TransformationCacheKey key) {
+    public void doExecute(final ExportParameters parameters, OutputStream outputStream, TransformationCacheKey key) {
         final String stepId = parameters.getStepId();
         final String preparationId = parameters.getPreparationId();
         final PreparationDTO preparation = getPreparation(preparationId, stepId);
@@ -84,7 +83,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
         boolean releasedIdentity = false;
         // Allow get dataset and get dataset metadata access whatever share status is
         securityProxy.asTechnicalUserForDataSet();
-        try (DataSet dataSet = datasetClient.getDataSet(dataSetId)) {
+        try (DataSet dataSet = datasetClient.getDataSet(dataSetId, false, true)) {
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
 
@@ -96,34 +95,39 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             final String actions = getActions(preparationId, version);
 
             try {
-                final Configuration configuration = Configuration
-                        .builder() //
-                        .args(parameters.getArguments()) //
-                        .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
-                        .sourceType(parameters.getFrom())
-                        .format(format.getName()) //
-                        .actions(actions) //
-                        .preparation(preparation) //
-                        .stepId(version) //
-                        .volume(Configuration.Volume.SMALL) //
-                        .output(outputStream) //
-                        .limit(limit) //
-                        .build();
-                factory.get(configuration).buildExecutable(dataSet, configuration).execute();
-                outputStream.flush();
-            } catch (Throwable e) { // NOSONAR
-                contentCache.evict(key);
+                LOGGER.debug("Cache key: {}", key.getKey());
+                LOGGER.debug("Cache key details: {}", key.toString());
+
+                try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
+                        contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+                    final Configuration configuration = Configuration.builder() //
+
+                            .args(parameters.getArguments()) //
+                            .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
+                            .sourceType(parameters.getFrom()).format(format.getName()) //
+                            .actions(actions) //
+                            .preparation(preparation) //
+                            .stepId(version) //
+                            .volume(Configuration.Volume.SMALL) //
+                            .output(outputStream) //
+                            .limit(limit) //
+                            .build();
+                    factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+                    outputStream.flush();
+                } catch (Throwable e) { // NOSONAR
+                    contentCache.evict(key);
+                    throw e;
+                } finally {
+                    outputStream.close();
+                }
+            } catch (TDPException e) {
                 throw e;
+            } catch (Exception e) {
+                throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
             } finally {
-                outputStream.close();
-            }
-        } catch (TDPException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
-        } finally {
-            if (!releasedIdentity) {
-                securityProxy.releaseIdentity(); // Release identity in case of error.
+                if (!releasedIdentity) {
+                    securityProxy.releaseIdentity(); // Release identity in case of error.
+                }
             }
         }
     }

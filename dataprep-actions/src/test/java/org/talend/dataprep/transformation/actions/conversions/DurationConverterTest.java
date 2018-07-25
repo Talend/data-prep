@@ -120,6 +120,34 @@ public class DurationConverterTest extends BaseDateTest<DurationConverter> {
         ColumnMetadata actual = row1.getRowMetadata().getById("0001");
         assertEquals(expected, actual);
     }
+    @Test
+    public void testOnSurrogatePair() {
+        // given
+        Map<String, String> rowContent = new HashMap<>();
+        rowContent.put("0000", "中崎𠀀𠀁𠀂𠀃𠀄");
+        rowContent.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        final DataSetRow row1 = new DataSetRow(rowContent);
+        row1.setTdpId(123L);
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
+        parameters.put("column_id", "0001");
+        parameters.put("from_unit", ChronoUnit.DAYS.name());
+        parameters.put("to_unit", ChronoUnit.YEARS.name());
+        parameters.put("precision", "0");
+
+        // when
+        ActionTestWorkbench.test(Collections.singletonList(row1), actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0000"));
+        //TODO There should return EMPTY instead of return original value try to fix it and then modify this test case
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row1.get("0001"));
+
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0001").type(Type.STRING).build();
+        ColumnMetadata actual = row1.getRowMetadata().getById("0001");
+        assertEquals(expected, actual);
+    }
 
     @Test
     public void test_apply_in_newcolumn() {

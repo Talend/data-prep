@@ -1204,6 +1204,7 @@ public class PreparationService {
     private void setPreparationHead(final PersistentPreparation preparation, final PersistentStep head) {
         preparation.setHeadId(head.id());
         preparation.setLastModificationDate(System.currentTimeMillis());
+        preparation.setSteps(preparationUtils.listStepsIds(head.id(), preparationRepository));
         preparationRepository.add(preparation);
     }
 

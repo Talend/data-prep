@@ -15,6 +15,7 @@ package org.talend.dataprep.maintenance.cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.CacheJanitor;
 import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
@@ -24,6 +25,7 @@ import java.util.function.Supplier;
 import static org.talend.dataprep.maintenance.executor.Schedule.NIGHT;
 
 @MaintenanceTask(NIGHT)
+@Component
 public class ScheduledCacheJanitor implements MaintenanceTaskProcess {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledCacheJanitor.class);

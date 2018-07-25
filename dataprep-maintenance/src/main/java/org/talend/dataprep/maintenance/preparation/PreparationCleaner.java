@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.maintenance.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
@@ -35,6 +36,7 @@ import static org.talend.tql.api.TqlBuilder.neq;
  */
 @MaintenanceTask(NIGHT)
 @ConditionalOnProperty(value = "preparation.store.orphan.cleanup", havingValue = "true", matchIfMissing = true)
+@Component
 public class PreparationCleaner implements MaintenanceTaskProcess {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);

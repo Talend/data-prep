@@ -66,11 +66,10 @@ describe('Filter service', () => {
 
 		it('should get the filter from localStorage and add it', inject((StateService, FilterService) => {
 			//given
-			const preparation = { id: '0000' };
-			const dataset = { id: '0000' };
+			const preparationId = '0000';
 
 			//when
-			FilterService.initFilters(dataset, preparation);
+			FilterService.initFilters(preparationId);
 
 			//then
 			expect(FilterService.addFilter).toHaveBeenCalledWith('exact', 'col2', 'column 2', {

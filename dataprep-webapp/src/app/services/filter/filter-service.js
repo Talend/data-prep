@@ -59,12 +59,11 @@ export default class FilterService {
 	 * @ngdoc method
 	 * @name initFilters
 	 * @methodOf data-prep.services.filter.service:FilterService
-	 * @param {object} dataset The dataset
-	 * @param {object} preparation The preparation
+	 * @param {string} entityId The preparation (or the dataset) id
 	 * @description Init filter in the playground
 	 */
-	initFilters(dataset, preparation) {
-		const filters = this.StorageService.getFilter(preparation ? preparation.id : dataset.id);
+	initFilters(entityId) {
+		const filters = this.StorageService.getFilter(entityId);
 		filters.forEach((filter) => {
 			this.addFilter(filter.type, filter.colId, filter.colName, filter.args, null, '');
 		});

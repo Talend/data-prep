@@ -27,9 +27,8 @@ function transformFolder({ folder, hierarchy }) {
 	].map(folder =>
 		({
 			id: folder.id,
-			text: folder.name || 'HOME',
-			title: folder.name || 'HOME',
-			onClick: 'folder:open',
+			text: folder.name || 'Home',
+			title: folder.name || 'Home',
 		}));
 	return breadcrumbs;
 }

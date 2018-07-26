@@ -66,6 +66,6 @@ public class DatasetConfiguration {
     }
 
     public boolean isLegacy() {
-        return getService().getProvider() == Service.Provider.LEGACY;
+        return service.getProvider() == Service.Provider.LEGACY;
     }
 }

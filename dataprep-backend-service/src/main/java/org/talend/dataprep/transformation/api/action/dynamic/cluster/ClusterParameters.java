@@ -16,8 +16,6 @@ package org.talend.dataprep.transformation.api.action.dynamic.cluster;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
@@ -39,14 +37,11 @@ import org.talend.dataquality.record.linkage.constant.AttributeMatcherType;
 @Component
 public class ClusterParameters implements DynamicParameters {
 
-    /** This class' logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterParameters.class);
-
     @Override
     public GenericParameter getParameters(final String columnId, final DataSet content) {
         // Analyze clusters service
         StringsClusterAnalyzer clusterAnalyzer = new StringsClusterAnalyzer();
-        clusterAnalyzer.withPostMerges(new PostMerge(AttributeMatcherType.SOUNDEX, 0.8f));
+        clusterAnalyzer.withPostMerges(new PostMerge(AttributeMatcherType.DOUBLE_METAPHONE, 0.8f));
         clusterAnalyzer.init();
         content.getRecords().forEach(row -> {
             String value = row.get(columnId);

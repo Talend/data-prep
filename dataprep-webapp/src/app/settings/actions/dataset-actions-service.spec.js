@@ -295,7 +295,7 @@ describe('Datasets actions service', () => {
 			expect(StateService.setDatasetToUpdate).toHaveBeenCalledWith({ id: 'dataset' });
 		}));
 
-		it('should remove dataset', inject(($q, $rootScope, DatasetService, DatasetActionsService, MessageService, TalendConfirmService) => {
+		it('should remove dataset', inject(($q, $rootScope, DatasetService, DatasetActionsService, MessageService, ConfirmService) => {
 			// given
 			const action = {
 				type: '@@dataset/REMOVE',
@@ -306,7 +306,7 @@ describe('Datasets actions service', () => {
 				}
 			};
 
-			spyOn(TalendConfirmService, 'confirm').and.returnValue($q.when());
+			spyOn(ConfirmService, 'confirm').and.returnValue($q.when());
 			spyOn(MessageService, 'success').and.returnValue();
 
 			// when
@@ -314,7 +314,7 @@ describe('Datasets actions service', () => {
 			$rootScope.$digest();
 
 			// then
-			expect(TalendConfirmService.confirm).toHaveBeenCalled();
+			expect(ConfirmService.confirm).toHaveBeenCalled();
 			expect(DatasetService.delete).toHaveBeenCalledWith({ id: 'dataset', name: 'dataset' });
 			expect(MessageService.success).toHaveBeenCalled();
 		}));

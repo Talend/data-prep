@@ -29,7 +29,8 @@ export function StateService(RouteStateService, routeState,
                              HomeStateService, homeState,
                              ProgressStateService, progressState,
                              SearchStateService, searchState,
-                             MessageStateService, messageState) {
+                             MessageStateService, messageState,
+                             ConfirmStateService, confirmState) {
 	'ngInject';
 
 	state.route = routeState;
@@ -44,6 +45,7 @@ export function StateService(RouteStateService, routeState,
 	state.search = searchState;
 	state.progress = progressState;
 	state.message = messageState;
+	state.confirm = confirmState;
 
 	return {
 		// route
@@ -212,5 +214,9 @@ export function StateService(RouteStateService, routeState,
 		// message
 		pushMessage: MessageStateService.push,
 		popMessage: MessageStateService.pop,
+
+		// confirm
+		showConfirmationModal: ConfirmStateService.show,
+		hideConfirmationModal: ConfirmStateService.hide,
 	};
 }

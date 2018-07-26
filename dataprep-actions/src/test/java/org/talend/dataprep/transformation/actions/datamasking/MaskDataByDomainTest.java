@@ -14,11 +14,7 @@
 package org.talend.dataprep.transformation.actions.datamasking;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
@@ -145,6 +141,39 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         float realValueAsFloat = Float.parseFloat((String) row.values().get("0000"));
         LOGGER.info("Row value: {}", realValueAsFloat);
         assertTrue(realValueAsFloat >= 10 && realValueAsFloat <= 14);
+    }
+    @Test
+    public void testShouldNotMaskSurrogatePairAsStringType() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING)) //
+                .build();
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        // Function is ReplaceCharactersWithGeneration so that surrogate pair will not mask
+        String realValueAsDtr = (String) row.values().get("0000");
+        LOGGER.info("Row value: {}", realValueAsDtr);
+        assertTrue("中崎𠀀𠀁𠀂𠀃𠀄".equalsIgnoreCase(realValueAsDtr));
+    }
+    @Test
+    public void testShouldMaskSurrogatePairAsStringTypeAddressLine() {
+        // given
+        final DataSetRow row = builder() //
+                .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING).domain(MaskableCategoryEnum.ADDRESS_LINE.name())) //
+                .build();
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        // Function is MaskAddress so that surrogate pair will mask
+        String realValueAsDtr = (String) row.values().get("0000");
+        LOGGER.info("Row value: {}", realValueAsDtr);
+        assertSame(7,realValueAsDtr.length());
+        assertEquals("XXXXXXX",realValueAsDtr);
     }
 
     @Test

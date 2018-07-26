@@ -14,7 +14,7 @@
  * @requires data-prep.services.import.service:ImportService
  */
 export default class ImportService {
-	constructor($document, $rootScope, state, DatasetService, ImportRestService, StateService, TalendConfirmService, UploadWorkflowService, UpdateWorkflowService) {
+	constructor($document, $rootScope, state, DatasetService, ImportRestService, StateService, ConfirmService, UploadWorkflowService, UpdateWorkflowService) {
 		'ngInject';
 
 		this.$document = $document;
@@ -25,7 +25,7 @@ export default class ImportService {
 		this.DatasetService = DatasetService;
 		this.ImportRestService = ImportRestService;
 		this.StateService = StateService;
-		this.TalendConfirmService = TalendConfirmService;
+		this.ConfirmService = ConfirmService;
 		this.UpdateWorkflowService = UpdateWorkflowService;
 		this.UploadWorkflowService = UploadWorkflowService;
 
@@ -317,26 +317,22 @@ export default class ImportService {
 	 * Update : update the content of the existing dataset
 	 */
 	updateOrCreate(file, existingDataset, importType, name) {
-		return this.TalendConfirmService.confirm(['UPDATE_EXISTING_DATASET'], { dataset: name })
+		return this.ConfirmService.confirm(['UPDATE_EXISTING_DATASET'], { dataset: name })
 		// user confirm : let's update the dataset
-			.then(() => {
-				this.UpdateWorkflowService.updateDataset(file, existingDataset);
-			})
+			.then(() => this.UpdateWorkflowService.updateDataset(file, existingDataset))
 			// user dismiss : cancel
 			// user select no : get unique name and create a new dataset
 			.catch((cause) => {
-				if (cause === 'dismiss') {
-					return;
+				if (cause !== 'dismiss') {
+					return this.DatasetService.getUniqueName(name)
+						.then((name) => {
+							return this.importDataset(
+								file,
+								name,
+								importType
+							);
+						});
 				}
-
-				return this.DatasetService.getUniqueName(name)
-					.then((name) => {
-						return this.importDataset(
-							file,
-							name,
-							importType
-						);
-					});
 			});
 	}
 }

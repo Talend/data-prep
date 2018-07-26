@@ -18,10 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
+import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
+import org.talend.tenancy.ForAll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +53,16 @@ public class PreparationCleaner extends MaintenanceTaskProcess {
     @Autowired
     private List<StepMarker> markers = new ArrayList<>();
 
+    @Autowired
+    private ForAll forAll;
+
     protected void performTask() {
         this.removeCurrentOrphanSteps();
     }
 
 
     protected Supplier<Boolean> condition() {
-        return () -> true;
+        return forAll.condition().operational(repository);
     }
 
     /**

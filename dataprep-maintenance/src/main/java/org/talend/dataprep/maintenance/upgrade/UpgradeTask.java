@@ -8,6 +8,7 @@ import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.upgrade.UpgradeService;
 import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
+import org.talend.tenancy.ForAll;
 
 import java.util.function.Supplier;
 
@@ -36,17 +37,21 @@ public class UpgradeTask extends MaintenanceTaskProcess {
     private UpgradeTaskRepository repository;
 
     @Autowired
+    private ForAll forAll;
+
+    @Autowired
     private Security security;
 
     protected void performTask() {
         LOG.info("Performing upgrade for '{}'...", security.getTenantId());
         upgradeService.upgradeVersion();
         LOG.info("Performing upgrade done for '{}'.", security.getTenantId());
-
     }
 
     protected Supplier<Boolean> condition() {
-        return () -> upgradeService.needUpgrade();
+        final Supplier<Boolean> needUpgradeCondition = () -> upgradeService.needUpgrade();
+        final Supplier<Boolean> hasRepositoryConfiguration = forAll.condition().operational(repository);
+        return () -> needUpgradeCondition.get() && hasRepositoryConfiguration.get();
     }
 
 }

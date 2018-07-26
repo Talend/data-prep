@@ -68,6 +68,7 @@ public class UpgradeTaskTest {
             ((Runnable) invocation.getArguments()[1]).run();
             return null;
         }).when(forAll).execute(any(), any());
+        when(forAll.condition()).thenReturn(o -> () -> true);
 
         // when
         upgradeTask.execute();

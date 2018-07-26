@@ -70,6 +70,7 @@ public class MaintenanceScheduler {
                             }
                     );
         });
+        LOGGER.info("Scheduled task with frequency {} is finished", frequency);
     }
 
     private void executeTask(String tenantId, MaintenanceTaskProcess task, String taskKey) {

@@ -29,14 +29,9 @@ export function* duplicate(prep) {
 
 export function* fetch(payload) {
 	const defaultFolderId = 'Lw==';
-	yield put(
-		actions.http.get(`/api/folders/${payload.folderId || defaultFolderId}/preparations`, {
-			cmf: {
-				collectionId: 'preparations',
-			},
-			transform: PreparationService.transform,
-		}),
-	);
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}/preparations`);
+	yield put(actions.collections.addOrReplace('preparations', PreparationService.transform(JSON.parse(data))));
 	yield* fetchFolder(payload);
 }
 
@@ -68,16 +63,11 @@ export function* openAbout() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
 }
 
-
 export function* fetchFolder(payload) {
 	const defaultFolderId = 'Lw==';
-	const currentFolderPromise = yield put(
-		actions.http.get(`/api/folders/${payload.folderId || defaultFolderId}`, {
-			transform: PreparationService.transformFolder,
-		}),
-	);
-	const currentFolder = yield call(() => currentFolderPromise);
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}`);
 	yield put(actions.components.mergeState('Breadcrumbs', 'default', new Map({
-		items: currentFolder.response,
+		items: PreparationService.transformFolder(JSON.parse(data)),
 	})));
 }

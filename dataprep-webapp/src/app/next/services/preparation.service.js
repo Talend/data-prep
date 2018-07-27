@@ -21,7 +21,7 @@ function transform({ folders = [], preparations = [] }) {
 }
 
 function transformFolder({ folder, hierarchy }) {
-	const breadcrumbs = [
+	return [
 		...hierarchy,
 		folder,
 	].map(folder =>
@@ -30,7 +30,6 @@ function transformFolder({ folder, hierarchy }) {
 			text: folder.name || 'Home',
 			title: folder.name || 'Home',
 		}));
-	return breadcrumbs;
 }
 
 export default {

@@ -1,5 +1,19 @@
 package org.talend.dataprep.qa.util;
 
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
@@ -8,30 +22,14 @@ import org.talend.dataprep.helper.api.ActionParamEnum;
 import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.dto.Folder;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
-
 /**
  * Utility class for Integration Tests in Data-prep OS.
  */
 @Component
 public class OSIntegrationTestUtil {
 
-    static final String ACTION_NAME = "actionName";
-
-    private final List<String> parametersToBeSuffixed = Collections.singletonList("new_domain_id");
+    private static final List<String>
+            PARAMETERS_TO_BE_SUFFIXED = Arrays.asList("new_domain_id", "new_domain_label", "lookup_ds_name");
 
     /**
      * Split a folder in a {@link Set} folder and subfolders.
@@ -79,7 +77,7 @@ public class OSIntegrationTestUtil {
                 ActionParamEnum.getActionParamEnum(k)
                         .ifPresent(actionParamEnum -> {
                             Object value;
-                            if (parametersToBeSuffixed.contains(actionParamEnum.getName())) {
+                            if (PARAMETERS_TO_BE_SUFFIXED.contains(actionParamEnum.getName())) {
                                 value = suffixName(v);
                             } else {
                                 value = StringUtils.isEmpty(v) ? null : v;

@@ -12,13 +12,21 @@
 
 package org.talend.dataprep.exception.error;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.MOVED_PERMANENTLY;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.api.dataset.DataSetLifecycle;
 
@@ -181,11 +189,11 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * A dataSet used by a preparation with a given name have not the expected format.
      */
-    PREPARATION_DATASET_BAD_FORMAT(NOT_FOUND.value(), "name"),
+    PREPARATION_DATASET_BAD_FORMAT(NOT_ACCEPTABLE.value(), "name"),
     /**
      * A lookup dataSet used by a preparation with a given name have not the expected format.
      */
-    PREPARATION_LOOKUP_BAD_FORMAT(NOT_FOUND.value(), "name"),
+    PREPARATION_LOOKUP_BAD_FORMAT(NOT_ACCEPTABLE.value(), "name"),
     /**
      * A user tries to run a live dataset without any TIC access.
      */

@@ -162,16 +162,11 @@ public enum Type implements Serializable {
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null.");
         }
-        List<Type> types = ANY.list();
 
-        Optional<Type> type = types.stream().filter(type1 -> type1.getName().equalsIgnoreCase(name)).findFirst();
-
-        if (type.isPresent()) {
-            return type.get();
-        }
-
-        // default type to String
-        return STRING;
+        return ANY.list().stream()
+                .filter(type -> type.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(STRING);
     }
 
     /**

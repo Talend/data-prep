@@ -68,7 +68,10 @@ public class ActionStep extends DataPrepStep {
         Action action = new Action();
         action.action = actionName;
         action.parameters.putAll(util.mapParamsToActionParameters(params));
-        api.addAction(prepId, action);
+
+        api.addAction(prepId, action)
+                .then().statusCode(200)
+                .log().ifValidationFails();
     }
 
     @When("^I add a \"(.*)\" step identified by \"(.*)\" on the preparation \"(.*)\" with parameters :$")

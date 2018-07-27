@@ -37,7 +37,7 @@ public abstract class BaseMaintenanceTest {
     protected TaskExecutor executor;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(forAll.condition()).thenReturn(bean -> () -> true);
         doAnswer(invocation -> {
             final Runnable runnable = (Runnable) invocation.getArguments()[1];

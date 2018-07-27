@@ -54,9 +54,8 @@ public class MaintenanceScheduler {
 
     private void runMaintenanceTask(ScheduleFrequency frequency) {
         LOGGER.info("Starting scheduled task with frequency {}", frequency);
-        forAll.execute(() -> true, () -> {
-
-            String tenantId = security.getTenantId();
+        forAll.execute(() -> {
+            final String tenantId = security.getTenantId();
             // filter maintenance task marked as with this frequency and run it
             maintenanceTasks.stream()
                     .filter(task -> task.getFrequency() == frequency) //

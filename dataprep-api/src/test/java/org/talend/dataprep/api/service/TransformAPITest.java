@@ -99,9 +99,9 @@ public class TransformAPITest extends ApiServiceTestBase {
     public void testSuggestActionParams_should_return_dynamic_params_with_dataset() throws Exception {
         // given
         final String dataSetId = testClient.createDataset("transformation/cluster_dataset.csv", "testClustering");
-        final String expectedClusterParameters = IOUtils
-                .toString(this.getClass()
-                        .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
+
+        final String expectedClusterParameters = IOUtils.toString(
+                this.getClass().getResourceAsStream("transformation/expected_cluster_params_double_metaphone.json"), UTF_8);
 
         // when
         final String actualClusterParameters = given().formParam("datasetId", dataSetId).formParam("columnId", "0001")
@@ -114,11 +114,14 @@ public class TransformAPITest extends ApiServiceTestBase {
     @Test
     public void testSuggestActionParams_should_return_dynamic_params_with_preparation_head() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("transformation/cluster_dataset.csv", "testClustering",
-                home.getId());
-        final String expectedClusterParameters = IOUtils
-                .toString(this.getClass()
-                        .getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
+
+        final String preparationId = testClient.createPreparationFromFile("transformation/cluster_dataset.csv",
+                "testClustering", home.getId());
+        final String expectedClusterParameters = IOUtils.toString(
+                this.getClass().getResourceAsStream("transformation/expected_cluster_params_double_metaphone.json"), UTF_8);
+
+        // update cache preparation
+        testClient.getPreparation(preparationId);
 
         // when
         final String actualClusterParameters = given().formParam("preparationId", preparationId)

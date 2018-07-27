@@ -9,77 +9,24 @@
       {
         "parameters": [
           {
-            "name": "t@t@",
+            "name": "Tex@s",
             "type": "boolean",
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "description": "t@t@",
-            "label": "t@t@"
+            "label": "Tex@s",
+            "description": "Tex@s",
+            "readonly": true
           },
-          {
-            "name": "T@T@",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "T@T@",
-            "label": "T@T@"
-          }
-        ],
-        "replace": {
-          "name": "replaceValue",
-          "type": "string",
-          "implicit": false,
-          "canBeBlank": true,
-          "placeHolder": "",
-          "description": "Replace value",
-          "label": "Replace value",
-          "default": "T@T@"
-        }
-      },
-      {
-        "parameters": [
-          {
-            "name": "tata",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "tata",
-            "label": "tata"
-          },
-          {
-            "name": "Tata",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "description": "Tata",
-            "label": "Tata"
-          }
-        ],
-        "replace": {
-          "name": "replaceValue",
-          "type": "string",
-          "implicit": false,
-          "canBeBlank": true,
-          "placeHolder": "",
-          "description": "Replace value",
-          "label": "Replace value",
-          "default": "tata"
-        }
-      },
-      {
-        "parameters": [
           {
             "name": "Texas",
             "type": "boolean",
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
+            "label": "Texas",
             "description": "Texas",
-            "label": "Texas"
+            "readonly": true
           },
           {
             "name": "Tixass",
@@ -87,8 +34,9 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
+            "label": "Tixass",
             "description": "Tixass",
-            "label": "Tixass"
+            "readonly": true
           }
         ],
         "replace": {
@@ -97,9 +45,9 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "description": "Replace value",
           "label": "Replace value",
-          "default": "Tixass"
+          "description": "Replace value",
+          "default": "Tex@s"
         }
       },
       {
@@ -110,8 +58,9 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
+            "label": "Massachussetts",
             "description": "Massachussetts",
-            "label": "Massachussetts"
+            "readonly": true
           },
           {
             "name": "Masachussets",
@@ -119,8 +68,9 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
+            "label": "Masachussets",
             "description": "Masachussets",
-            "label": "Masachussets"
+            "readonly": true
           },
           {
             "name": "Massachusetts",
@@ -128,8 +78,9 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
+            "label": "Massachusetts",
             "description": "Massachusetts",
-            "label": "Massachusetts"
+            "readonly": true
           },
           {
             "name": "Masachusetts",
@@ -137,8 +88,9 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
+            "label": "Masachusetts",
             "description": "Masachusetts",
-            "label": "Masachusetts"
+            "readonly": true
           },
           {
             "name": "Massachusets",
@@ -146,8 +98,9 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
+            "label": "Massachusets",
             "description": "Massachusets",
-            "label": "Massachusets"
+            "readonly": true
           }
         ],
         "replace": {
@@ -156,9 +109,63 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "description": "Replace value",
           "label": "Replace value",
+          "description": "Replace value",
           "default": "Masachusetts"
+        }
+      },
+      {
+        "parameters": [
+          {
+            "name": "tata",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "label": "tata",
+            "description": "tata",
+            "readonly": true
+          },
+          {
+            "name": "Tata",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "label": "Tata",
+            "description": "Tata",
+            "readonly": true
+          },
+          {
+            "name": "t@t@",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "label": "t@t@",
+            "description": "t@t@",
+            "readonly": true
+          },
+          {
+            "name": "T@T@",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "label": "T@T@",
+            "description": "T@T@",
+            "readonly": true
+          }
+        ],
+        "replace": {
+          "name": "replaceValue",
+          "type": "string",
+          "implicit": false,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "label": "Replace value",
+          "description": "Replace value",
+          "default": "tata"
         }
       }
     ]

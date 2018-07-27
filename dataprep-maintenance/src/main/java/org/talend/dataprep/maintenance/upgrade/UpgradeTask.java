@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
+import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.upgrade.UpgradeService;
 import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
@@ -18,9 +19,8 @@ import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
 /**
  *
  */
-@MaintenanceTask(ONCE)
 @Component
-public class UpgradeTask extends MaintenanceTaskProcess {
+public class UpgradeTask implements MaintenanceTaskProcess {
 
     /**
      * This class' logger.
@@ -42,16 +42,20 @@ public class UpgradeTask extends MaintenanceTaskProcess {
     @Autowired
     private Security security;
 
-    protected void performTask() {
+    public void performTask() {
         LOG.info("Performing upgrade for '{}'...", security.getTenantId());
         upgradeService.upgradeVersion();
         LOG.info("Performing upgrade done for '{}'.", security.getTenantId());
     }
 
-    protected Supplier<Boolean> condition() {
+    public Supplier<Boolean> condition() {
         final Supplier<Boolean> needUpgradeCondition = () -> upgradeService.needUpgrade();
         final Supplier<Boolean> hasRepositoryConfiguration = forAll.condition().operational(repository);
         return () -> needUpgradeCondition.get() && hasRepositoryConfiguration.get();
     }
 
+    @Override
+    public ScheduleFrequency getFrequency() {
+        return ScheduleFrequency.ONCE;
+    }
 }

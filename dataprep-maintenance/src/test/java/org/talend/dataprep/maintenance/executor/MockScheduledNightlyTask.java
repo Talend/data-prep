@@ -2,16 +2,20 @@ package org.talend.dataprep.maintenance.executor;
 
 import java.util.function.Supplier;
 
-@MaintenanceTask(ScheduleFrequency.NIGHT)
-public class MockScheduledNightlyTask extends MaintenanceTaskProcess {
+public class MockScheduledNightlyTask implements MaintenanceTaskProcess {
 
     @Override
-    protected void performTask() {
+    public void performTask() {
         // do nothing
     }
 
     @Override
-    protected Supplier<Boolean> condition() {
+    public Supplier<Boolean> condition() {
         return () -> true;
+    }
+
+    @Override
+    public ScheduleFrequency getFrequency() {
+        return ScheduleFrequency.NIGHT;
     }
 }

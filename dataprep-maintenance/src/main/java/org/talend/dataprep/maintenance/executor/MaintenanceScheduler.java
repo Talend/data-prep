@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
@@ -23,8 +22,6 @@ import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.REPEAT;
 public class MaintenanceScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceScheduler.class);
-
-    private static final ScheduleFrequency DEFAULT_SCHEDULE_FREQUENCY = REPEAT;
 
     private static final String EVERY_DAY_CRON_EXPRESSION = "0 0 3 * * *";
 
@@ -60,17 +57,17 @@ public class MaintenanceScheduler {
 
             String tenantId = security.getTenantId();
             // filter maintenance task marked as with this frequency and run it
-            getTaskForFrequency(frequency)
-                    .forEach(
-                            task -> {
-                                String taskKey = task.getClass() + "_" + tenantId;
-                                if (!isAlreadyRunning(taskKey)) {
-                                    executeTask(tenantId, task, taskKey);
-                                } else {
-                                    LOGGER.warn("Scheduled task {} for tenant {} is already running", task.getClass(), tenantId);
-                                }
-                            }
-                    );
+            maintenanceTasks.stream()
+                    .filter(task -> task.getFrequency() == frequency) //
+                    .forEach(task -> {
+                        String taskKey = task.getClass() + "_" + tenantId;
+                        if (isAlreadyRunning(taskKey)) {
+                            LOGGER.warn("Scheduled task {} for tenant {} is already running", task.getClass(),
+                                    tenantId);
+                        } else {
+                            executeTask(tenantId, task, taskKey);
+                        }
+                    });
         });
         LOGGER.info("Scheduled task with frequency {} is finished", frequency);
     }
@@ -90,25 +87,5 @@ public class MaintenanceScheduler {
     protected boolean isAlreadyRunning(String taskKey) {
         return runningTask.containsKey(taskKey);
     }
-
-    private Stream<MaintenanceTaskProcess> getTaskForFrequency(ScheduleFrequency frequency) {
-        return maintenanceTasks
-                .stream()
-                .filter(task -> getFrequency(task) == frequency);
-    }
-
-    private ScheduleFrequency getFrequency(MaintenanceTaskProcess task) {
-        final MaintenanceTask annotation = AnnotationUtils.findAnnotation(task.getClass(), MaintenanceTask.class);
-        final ScheduleFrequency value;
-        if (annotation == null) {
-            LOGGER.warn("Maintenance task '{}' has no schedule indication, default to {}", task.getClass(),
-                    DEFAULT_SCHEDULE_FREQUENCY);
-            value = DEFAULT_SCHEDULE_FREQUENCY;
-        } else {
-            value = annotation.value();
-        }
-        return value;
-    }
-
 
 }

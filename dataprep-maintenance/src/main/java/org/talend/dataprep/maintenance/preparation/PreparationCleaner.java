@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
+import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tenancy.ForAll;
@@ -35,10 +36,9 @@ import static org.talend.tql.api.TqlBuilder.neq;
 /**
  * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.
  */
-@MaintenanceTask(NIGHT)
 @ConditionalOnProperty(value = "preparation.store.orphan.cleanup", havingValue = "true", matchIfMissing = true)
 @Component
-public class PreparationCleaner extends MaintenanceTaskProcess {
+public class PreparationCleaner implements MaintenanceTaskProcess {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
 
@@ -56,13 +56,19 @@ public class PreparationCleaner extends MaintenanceTaskProcess {
     @Autowired
     private ForAll forAll;
 
-    protected void performTask() {
+    @Override
+    public void performTask() {
         this.removeCurrentOrphanSteps();
     }
 
-
-    protected Supplier<Boolean> condition() {
+    @Override
+    public Supplier<Boolean> condition() {
         return forAll.condition().operational(repository);
+    }
+
+    @Override
+    public ScheduleFrequency getFrequency() {
+        return ScheduleFrequency.NIGHT;
     }
 
     /**

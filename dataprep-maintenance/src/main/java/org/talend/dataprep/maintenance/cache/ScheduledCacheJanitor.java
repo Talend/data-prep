@@ -17,24 +17,28 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.CacheJanitor;
 import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.MaintenanceTask;
+import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 
 import java.util.function.Supplier;
 
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 
-@MaintenanceTask(NIGHT)
 @Component
-public class ScheduledCacheJanitor extends MaintenanceTaskProcess {
+public class ScheduledCacheJanitor implements MaintenanceTaskProcess {
 
     @Autowired
     private CacheJanitor janitor;
 
-    protected void performTask() {
+    public void performTask() {
         janitor.janitor();
     }
 
-    protected Supplier<Boolean> condition() {
+    public Supplier<Boolean> condition() {
         return () -> true;
     }
 
+    @Override
+    public ScheduleFrequency getFrequency() {
+        return ScheduleFrequency.NIGHT;
+    }
 }

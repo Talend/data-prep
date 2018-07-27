@@ -50,23 +50,21 @@ public class MaintenanceScheduler {
     }
 
     private void runMaintenanceTask(ScheduleFrequency frequency) {
-        LOGGER.info("Starting scheduled task with frequency {}", frequency);
-        forAll.execute(() -> {
+        forAll.execute(() -> true, () -> {
             final String tenantId = security.getTenantId();
-            // filter maintenance task marked as with this frequency and run it
+            LOGGER.info("Starting scheduled task with frequency {} for tenant {}", frequency, tenantId);
             maintenanceTasks.stream()
                     .filter(task -> task.getFrequency() == frequency) //
                     .forEach(task -> {
                         String taskKey = task.getClass() + "_" + tenantId;
                         if (isAlreadyRunning(taskKey)) {
-                            LOGGER.warn("Scheduled task {} for tenant {} is already running", task.getClass(),
-                                    tenantId);
+                            LOGGER.warn("Scheduled task {} for tenant {} is already running", task.getClass(), tenantId);
                         } else {
                             executeTask(tenantId, task, taskKey);
                         }
                     });
+            LOGGER.info("Scheduled task with frequency {} for tenant {} is finished", frequency, tenantId);
         });
-        LOGGER.info("Scheduled task with frequency {} is finished", frequency);
     }
 
     private void executeTask(String tenantId, MaintenanceTaskProcess task, String taskKey) {

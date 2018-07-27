@@ -1,5 +1,9 @@
 package org.talend.dataprep.maintenance.upgrade;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.util.function.Supplier;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,10 +13,6 @@ import org.talend.dataprep.security.Security;
 import org.talend.dataprep.upgrade.UpgradeService;
 import org.talend.dataprep.upgrade.repository.UpgradeTaskRepository;
 import org.talend.tenancy.ForAll;
-
-import java.util.function.Supplier;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *

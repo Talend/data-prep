@@ -12,6 +12,13 @@
 
 package org.talend.dataprep.maintenance.preparation;
 
+import static org.talend.tql.api.TqlBuilder.neq;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Supplier;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +30,6 @@ import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tenancy.ForAll;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static org.talend.tql.api.TqlBuilder.neq;
 
 /**
  * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.

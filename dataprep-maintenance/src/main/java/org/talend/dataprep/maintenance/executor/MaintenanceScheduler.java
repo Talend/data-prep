@@ -1,32 +1,27 @@
 package org.talend.dataprep.maintenance.executor;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.security.Security;
-import org.talend.tenancy.ForAll;
-
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.REPEAT;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.security.Security;
+import org.talend.tenancy.ForAll;
+
 @Component
 public class MaintenanceScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceScheduler.class);
-
-    private static final String EVERY_DAY_CRON_EXPRESSION = "0 0 3 * * *";
 
     @Autowired
     private List<MaintenanceTaskProcess> maintenanceTasks;
@@ -44,12 +39,12 @@ public class MaintenanceScheduler {
         runMaintenanceTask(ONCE);
     }
 
-    @Scheduled(cron = EVERY_DAY_CRON_EXPRESSION)
+    @Scheduled(cron = "${maintenance.scheduled.cron}")
     public void launchNightlyTask() {
         runMaintenanceTask(NIGHT);
     }
 
-    @Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000) // Every hour
+    @Scheduled(fixedDelayString = "${maintenance.scheduled.fixed-delay}", initialDelayString = "${maintenance.scheduled.initial-delay}")
     public void launchRepeatlyTask() {
         runMaintenanceTask(REPEAT);
     }

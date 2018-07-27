@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
-import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.upgrade.UpgradeService;
@@ -14,7 +13,6 @@ import org.talend.tenancy.ForAll;
 import java.util.function.Supplier;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
 
 /**
  *

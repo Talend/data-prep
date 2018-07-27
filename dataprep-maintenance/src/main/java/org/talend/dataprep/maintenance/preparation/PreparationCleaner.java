@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Step;
-import org.talend.dataprep.maintenance.executor.MaintenanceTask;
 import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
 import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 import org.talend.dataprep.preparation.store.PreparationRepository;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 import static org.talend.tql.api.TqlBuilder.neq;
 
 /**

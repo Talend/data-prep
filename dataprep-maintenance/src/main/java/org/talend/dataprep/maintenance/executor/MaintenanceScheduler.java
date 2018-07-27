@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
+import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.REPEAT;
 
 @Component
@@ -39,17 +41,17 @@ public class MaintenanceScheduler {
 
     @PostConstruct
     public void launchOnceTask() {
-        runMaintenanceTask(ScheduleFrequency.ONCE);
+        runMaintenanceTask(ONCE);
     }
 
     @Scheduled(cron = EVERY_DAY_CRON_EXPRESSION)
     public void launchNightlyTask() {
-        runMaintenanceTask(ScheduleFrequency.NIGHT);
+        runMaintenanceTask(NIGHT);
     }
 
     @Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000) // Every hour
     public void launchRepeatlyTask() {
-        runMaintenanceTask(ScheduleFrequency.REPEAT);
+        runMaintenanceTask(REPEAT);
     }
 
     private void runMaintenanceTask(ScheduleFrequency frequency) {

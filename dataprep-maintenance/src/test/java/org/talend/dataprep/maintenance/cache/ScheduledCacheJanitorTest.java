@@ -18,10 +18,8 @@ import org.mockito.Mock;
 import org.talend.dataprep.cache.CacheJanitor;
 import org.talend.dataprep.maintenance.BaseMaintenanceTest;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class ScheduledCacheJanitorTest extends BaseMaintenanceTest {
 

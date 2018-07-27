@@ -169,7 +169,11 @@ public class DistanceConverterTest extends AbstractMetadataBaseTest<DistanceConv
     public void mile2kilometer() { testConversion("1.0", DistanceEnum.MILE, "1.609344000", DistanceEnum.KILOMETER, "9"); }
 
     @Test
-    public void test_apply_inplace() { testConversion("1.0", DistanceEnum.KILOMETER, "0.621371192", DistanceEnum.MILE, "9"); }
+    public void test_apply_inplace() {
+        testConversion("1.0", DistanceEnum.KILOMETER, "0.621371192", DistanceEnum.MILE, "9");
+        //TODO There should return EMPTY instead of return original value try to fix it and then modify this test case
+        testConversion("中崎𠀀𠀁𠀂𠀃𠀄", DistanceEnum.KILOMETER, "中崎𠀀𠀁𠀂𠀃𠀄", DistanceEnum.MILE, "9");
+    }
 
     private void testConversion(String from, DistanceEnum deFrom, String expected, DistanceEnum deTo, String precision) {
         // given

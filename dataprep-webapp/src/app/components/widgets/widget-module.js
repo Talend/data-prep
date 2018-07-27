@@ -28,9 +28,6 @@ import HorizontalBarchart from './charts/horizontal-barchart/horizontal-barchart
 import RangeSliderCtrl from './charts/range-slider/range-slider-controller';
 import RangeSlider from './charts/range-slider/range-slider-directive';
 import VerticalBarchart from './charts/vertical-barchart/vertical-barchart-directive';
-import TalendConfirmService from './confirm/widget-confirm-service';
-import TalendConfirmCtrl from './confirm/widget-confirm-controller';
-import TalendConfirm from './confirm/widget-confirm-directive';
 import TalendDatetimePicker from './datetimepicker/widget-datetimepicker-directive';
 import TalendDropdown from './dropdown/widget-dropdown-directive';
 import TalendEditableRegexCtrl from './editable-regex/widget-editable-regex-controller';
@@ -76,10 +73,6 @@ angular.module(MODULE_NAME, [
     .controller('RangeSliderCtrl', RangeSliderCtrl)
     .directive('rangeSlider', RangeSlider)
     .directive('verticalBarchart', VerticalBarchart)
-
-    .service('TalendConfirmService', TalendConfirmService)
-    .controller('TalendConfirmCtrl', TalendConfirmCtrl)
-    .directive('talendConfirm', TalendConfirm)
 
     .directive('talendDatetimePicker', TalendDatetimePicker)
 

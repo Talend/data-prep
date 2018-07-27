@@ -4,6 +4,7 @@ Feature: Perform scenarios with DeleteAllEmptyColumns related action
   @CleanAfter
   Scenario Outline: Apply the DeleteAllEmptyColumns action and test export
     Given I upload the dataset "/data/dataset_with_empty_columns.csv" with name "dataset_with_empty_columns_dataset"
+    Then I wait for the dataset "dataset_with_empty_columns_dataset" metadata to be computed
     Given I create a preparation with name "dataset_with_empty_columns_prep", based on "dataset_with_empty_columns_dataset" dataset
     Given I add a "delete_all_empty_columns" step identified by "deleteAllEmptyColumns" on the preparation "dataset_with_empty_columns_prep" with parameters :
       | column_id                    | 0000    |

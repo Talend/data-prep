@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -53,7 +54,7 @@ public class MaintenanceSchedulerTest extends BaseMaintenanceTest {
     @Test
     public void testLaunchAlreadyRunningTask() {
 
-        when(scheduler.isAlreadyRunning(any(String.class))).thenReturn(false);
+        when(scheduler.isAlreadyRunning(anyString())).thenReturn(false);
         scheduler.launchOnceTask();
 
         // task are not running. We should call execute
@@ -62,7 +63,7 @@ public class MaintenanceSchedulerTest extends BaseMaintenanceTest {
         // we reset the number of called method on the mock
         reset(listTask.get(0));
 
-        when(scheduler.isAlreadyRunning(any(String.class))).thenReturn(true);
+        when(scheduler.isAlreadyRunning(anyString())).thenReturn(true);
         scheduler.launchOnceTask();
 
         // task are running. We should call execute

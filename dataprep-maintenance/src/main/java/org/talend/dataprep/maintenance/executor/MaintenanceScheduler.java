@@ -1,5 +1,6 @@
 package org.talend.dataprep.maintenance.executor;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.REPEAT;
@@ -85,7 +87,7 @@ public class MaintenanceScheduler {
     }
 
     protected boolean isAlreadyRunning(String taskKey) {
-        return runningTask.containsKey(taskKey);
+        return isNotEmpty(taskKey) && runningTask.containsKey(taskKey);
     }
 
 }

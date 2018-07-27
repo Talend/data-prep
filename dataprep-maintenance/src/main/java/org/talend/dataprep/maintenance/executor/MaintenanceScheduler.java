@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
@@ -34,7 +35,7 @@ public class MaintenanceScheduler {
     @Autowired
     private Security security;
 
-    private Map<String, Long> runningTask = new HashMap<>();
+    private Map<String, Long> runningTask = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void launchOnceTask() {

@@ -31,7 +31,6 @@ import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -200,9 +199,8 @@ public class SortAndOrderHelperTest {
                 secondDsId);
 
         // when
-        Comparator<PreparationDTO> preparationComparator = SortAndOrderHelper.getPreparationComparator(sort, order,
-                p -> Objects.equals(p.getDataSetId(), firstDsId) ? firstDs
-                        : (Objects.equals(p.getDataSetId(), secondDsId) ? secondDs : null));
+        Comparator<PreparationDTO> preparationComparator = SortAndOrderHelper.getPreparationComparator(sort, order
+        );
 
         // then
         assertNotNull(preparationComparator);

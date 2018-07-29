@@ -177,6 +177,7 @@ public class PreparationService {
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
         toCreate.setRowMetadata(preparation.getRowMetadata());
+        toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
 
         preparationRepository.add(toCreate);
 
@@ -268,7 +269,7 @@ public class PreparationService {
         final OwnerInjection ownerInjection = springContext.getBean(OwnerInjection.class);
         return preparationStream
                 .map(p -> beanConversionService.convert(p, PreparationDTO.class, ownerInjection)) //
-                .sorted(getPreparationComparator(sort, order, p -> datasetClient.getDataSetMetadata(p.getDataSetId())));
+                .sorted(getPreparationComparator(sort, order));
     }
 
     /**

@@ -13,7 +13,6 @@
 package org.talend.dataprep.util;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
@@ -23,7 +22,6 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -85,8 +83,6 @@ public final class SortAndOrderHelper {
             return snakeToCamelCaseConverter.convert(name());
         }
     }
-
-    private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
 
     private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
             .converterTo(CaseFormat.LOWER_CAMEL);
@@ -233,7 +229,7 @@ public final class SortAndOrderHelper {
                 keyExtractor = preparation -> preparation.getSteps().size();
                 break;
             case DATASET_NAME:
-                keyExtractor = PreparationDTO::getDataSetName;
+                keyExtractor = p -> Optional.ofNullable(p.getDataSetName()).orElse(EMPTY);
                 break;
             default:
                 // this should not be possible

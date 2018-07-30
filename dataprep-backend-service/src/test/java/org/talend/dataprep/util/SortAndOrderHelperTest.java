@@ -183,20 +183,16 @@ public class SortAndOrderHelperTest {
             long firstSize, long secondSize, //
             String firstDsName, String secondDsName, //
             Sort sort, Order order) {
-        String firstDsId = "firstDsId";
         PreparationDTO firstUserPrep = createUserPreparation(firstName, firstAuthor, firstCreation, firstModification, firstSize,
-                firstDsId);
-        DataSetMetadata firstDs = new DataSetMetadata(firstDsId, firstDsName, null, 0, 0, null, null);
+                firstDsName);
 
-        String secondDsId = "secondDsId";
         PreparationDTO secondUserPrep = createUserPreparation(secondName, secondAuthor, secondCreation, secondModification,
-                secondSize, secondDsId);
-        DataSetMetadata secondDs = new DataSetMetadata(secondDsId, secondDsName, null, 0, 0, null, null);
+                secondSize, secondDsName);
 
-        PreparationDTO firstPrep = createUserPreparation(firstName, firstAuthor, firstCreation, firstModification, firstSize, firstDsId);
+        PreparationDTO firstPrep = createUserPreparation(firstName, firstAuthor, firstCreation, firstModification, firstSize, firstDsName);
 
         PreparationDTO secondPrep = createUserPreparation(secondName, secondAuthor, secondCreation, secondModification, secondSize,
-                secondDsId);
+                secondDsName);
 
         // when
         Comparator<PreparationDTO> preparationComparator = SortAndOrderHelper.getPreparationComparator(sort, order
@@ -298,9 +294,9 @@ public class SortAndOrderHelperTest {
     }
 
     private PreparationDTO createUserPreparation(String name, String author, long creation, long modification, long size,
-                                                 String dsId) {
+                                                 String dataSetName) {
         PreparationDTO firstPrep = new PreparationDTO();
-        firstPrep.setDataSetId(dsId);
+        firstPrep.setDataSetName(dataSetName);
         firstPrep.setName(name);
         firstPrep.setAuthor("1234");
         firstPrep.setOwner(new Owner("1234", author, ""));

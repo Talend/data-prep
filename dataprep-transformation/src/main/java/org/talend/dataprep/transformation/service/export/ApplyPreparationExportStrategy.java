@@ -131,7 +131,6 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
      * Return the dataset sample.
      *
      * @param parameters the export parameters
-     * @param
      * @param dataSet the sample
      * @param preparationId the id of the corresponding preparation
      *
@@ -164,6 +163,8 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             final Configuration configuration = configurationBuilder.build();
 
             factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+
+            tee.flush();
 
         } catch (IOException e1) { // NOSONAR
             LOGGER.debug("evicting cache {}", key.getKey());

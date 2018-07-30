@@ -177,7 +177,12 @@ public class PreparationService {
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
         toCreate.setRowMetadata(preparation.getRowMetadata());
-        toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
+        try {
+            toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
+        } catch (Exception e) {
+            LOGGER.warn("Unable to find dataset name for preparation '{}'", preparation.getId());
+            toCreate.setDataSetId(preparation.getDataSetId());
+        }
 
         preparationRepository.add(toCreate);
 

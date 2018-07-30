@@ -12,6 +12,14 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.fill;
 
+import static java.util.Collections.singletonList;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
+
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -22,18 +30,11 @@ import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
-
-import static java.util.Collections.singletonList;
-
 @Action(GenerateUUID.ACTION_NAME)
 public class GenerateUUID extends AbstractActionMetadata implements ColumnAction {
 
     public static final String ACTION_NAME = "generate_a_uuid";
+
     private static final String NEW_COLUMN_SUFFIX = "_uuid";
 
     @Override

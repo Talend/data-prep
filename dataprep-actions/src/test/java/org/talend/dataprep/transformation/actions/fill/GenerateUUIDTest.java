@@ -12,6 +12,18 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.fill;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
+
+import java.io.InputStream;
+import java.util.Locale;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -21,21 +33,15 @@ import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getRow;
-
 public class GenerateUUIDTest extends AbstractMetadataBaseTest<GenerateUUID> {
 
     public GenerateUUIDTest() {
         super(new GenerateUUID());
     }
 
-    /** The action parameters. */
+    /**
+     * The action parameters.
+     */
     private Map<String, String> parameters;
 
     @Before
@@ -43,6 +49,7 @@ public class GenerateUUIDTest extends AbstractMetadataBaseTest<GenerateUUID> {
         final InputStream parametersSource = GenerateUUIDTest.class.getResourceAsStream("generateUUIDAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
+
     @Test
     public void test_action_name() throws Exception {
         assertEquals("generate_a_uuid", action.getName());
@@ -65,7 +72,7 @@ public class GenerateUUIDTest extends AbstractMetadataBaseTest<GenerateUUID> {
 
     @Test
     public void test_apply_inplace() throws Exception {
-        //given
+        // given
         final DataSetRow row = getRow("toto", "0012.50", "tata");
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
 
@@ -80,7 +87,7 @@ public class GenerateUUIDTest extends AbstractMetadataBaseTest<GenerateUUID> {
 
     @Test
     public void test_apply_in_newcolumn() {
-        //given
+        // given
         final DataSetRow row = getRow("toto", "0012.50", "tata");
 
         // when

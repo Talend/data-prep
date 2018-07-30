@@ -17,6 +17,9 @@ import static com.jayway.restassured.http.ContentType.JSON;
 import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
 import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
 import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
+import static org.talend.dataprep.helper.VerboseMode.ALL;
+import static org.talend.dataprep.helper.VerboseMode.NONE;
+import static org.talend.dataprep.helper.VerboseMode.REQUESTS_ONLY;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +86,7 @@ public class OSDataPrepAPIHelper {
 
     private static final String PATH = "path";
 
-    private boolean enableRestAssuredDebug = false;
+    private VerboseMode restAssuredDebugLogging = NONE;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -111,7 +114,12 @@ public class OSDataPrepAPIHelper {
      */
     public RequestSpecification given() {
         RequestSpecification given = RestAssured.given().baseUri(apiBaseUrl);
-        if (enableRestAssuredDebug) {
+        // just to add a line separator before log the method and the path
+        RestAssured.config().getLogConfig().defaultStream().append(System.lineSeparator());
+        if (REQUESTS_ONLY.equals(restAssuredDebugLogging)) {
+            given = given.log().method().log().path();
+        }
+        if (ALL.equals(restAssuredDebugLogging)) {
             given = given.log().all(true);
         }
         return given;
@@ -616,12 +624,8 @@ public class OSDataPrepAPIHelper {
         return asyncExecutionMessage;
     }
 
-    public boolean isEnableRestAssuredDebug() {
-        return enableRestAssuredDebug;
-    }
-
-    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
-        this.enableRestAssuredDebug = enableRestAssuredDebug;
+    public OSDataPrepAPIHelper setRestAssuredDebugLogging(VerboseMode restAssuredDebugLogging) {
+        this.restAssuredDebugLogging = restAssuredDebugLogging;
         return this;
     }
 

@@ -306,8 +306,9 @@ export default class FilterService {
 		if ((!sameColAndTypeFilter &&
 			!hasEmptyRecordsExactFilter &&
 			!hasEmptyRecordsMatchFilter) || type === QUALITY) {
-			const filterInfo = createFilter();
-			this.pushFilter(filterInfo);
+			if (createFilter) {
+				this.pushFilter(createFilter());
+			}
 		}
 		else if (filterExists()) {
 			this.removeFilter(sameColAndTypeFilter);

@@ -6,8 +6,8 @@ import { App } from '@talend/react-cmf';
 
 import configure from './configure.cmf';
 
-function bootstrap() {
-	return configure()
+function bootstrap(appSettings) {
+	return configure(appSettings)
 		.then(({ browserHistory, store }) => {
 			/**
 			 * Render the CMF App

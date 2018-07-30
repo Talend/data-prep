@@ -26,7 +26,7 @@ const registerRouteFunction = api.route.registerFunction;
  * - Register your components in the CMF dictionary
  * - Register action creators in CMF actions dictionary
  */
-export default function initialize(additionalConfiguration = {}) {
+export default function initialize(appSettings, additionalConfiguration = {}) {
 	// window.registry = api.registry;
 
 	// register all saga api
@@ -169,7 +169,9 @@ export default function initialize(additionalConfiguration = {}) {
 				registerActionCreator(k, additionalActionCreators[k]),
 			);
 		}
-
+		store.dispatch(
+			cmfActions.collectionsActions.addOrReplaceCollection('settings', appSettings)
+		);
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */

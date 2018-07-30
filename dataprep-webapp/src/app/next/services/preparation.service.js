@@ -29,6 +29,7 @@ function transformFolder({ folder, hierarchy }) {
 			id: folder.id,
 			text: folder.name || 'Home',
 			title: folder.name || 'Home',
+			actionCreator: 'folder:open',
 		}));
 }
 

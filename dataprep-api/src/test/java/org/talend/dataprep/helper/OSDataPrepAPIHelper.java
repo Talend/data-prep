@@ -116,10 +116,16 @@ public class OSDataPrepAPIHelper {
         RequestSpecification given = RestAssured.given().baseUri(apiBaseUrl);
         // just to add a line separator before log the method and the path
         RestAssured.config().getLogConfig().defaultStream().append(System.lineSeparator());
-        if (REQUESTS_ONLY.equals(restAssuredDebug)) {
-            given = given.log().method().log().path();
-        } else if (ALL.equals(restAssuredDebug)) {
+        switch (restAssuredDebug) {
+        case ALL:
             given = given.log().all(true);
+            break;
+        case REQUESTS_ONLY:
+            given = given.log().method().log().path();
+            break;
+        case NONE:
+        default:
+            break;
         }
         return given;
     }

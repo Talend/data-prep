@@ -91,11 +91,11 @@ public abstract class DataPrepStep {
     protected FolderUtil folderUtil;
 
     @Value("${restassured.debug:NONE}")
-    private VerboseMode restAssuredDebugLogging;
+    private VerboseMode restAssuredDebug;
 
     @PostConstruct
     public void init() {
-        api.setRestAssuredDebugLogging(restAssuredDebugLogging);
+        api.setRestAssuredDebug(restAssuredDebug);
     }
 
     /**

@@ -86,7 +86,7 @@ public class OSDataPrepAPIHelper {
 
     private static final String PATH = "path";
 
-    private VerboseMode restAssuredDebugLogging = NONE;
+    private VerboseMode restAssuredDebug = NONE;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -116,9 +116,9 @@ public class OSDataPrepAPIHelper {
         RequestSpecification given = RestAssured.given().baseUri(apiBaseUrl);
         // just to add a line separator before log the method and the path
         RestAssured.config().getLogConfig().defaultStream().append(System.lineSeparator());
-        if (REQUESTS_ONLY.equals(restAssuredDebugLogging)) {
+        if (REQUESTS_ONLY.equals(restAssuredDebug)) {
             given = given.log().method().log().path();
-        } else if (ALL.equals(restAssuredDebugLogging)) {
+        } else if (ALL.equals(restAssuredDebug)) {
             given = given.log().all(true);
         }
         return given;
@@ -623,8 +623,8 @@ public class OSDataPrepAPIHelper {
         return asyncExecutionMessage;
     }
 
-    public OSDataPrepAPIHelper setRestAssuredDebugLogging(VerboseMode restAssuredDebugLogging) {
-        this.restAssuredDebugLogging = restAssuredDebugLogging;
+    public OSDataPrepAPIHelper setRestAssuredDebug(VerboseMode restAssuredDebug) {
+        this.restAssuredDebug = restAssuredDebug;
         return this;
     }
 

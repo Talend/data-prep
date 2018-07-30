@@ -52,7 +52,6 @@ import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
@@ -173,7 +172,7 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders/{id}/preparations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all preparations for a given id.", notes = "Returns the list of preparations for the given id the current user is allowed to see.")
     @Timed
-    public ListPreparationsByFolder listPreparationsByFolder(
+    public PreparationsByFolder listPreparationsByFolder(
             @PathVariable @ApiParam(name = "id", value = "The destination to search preparations from.") final String id, //
             @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") final Sort sort, //
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") final Order order) {
@@ -185,24 +184,35 @@ public class FolderAPI extends APIService {
 
         LOG.info("Listing preparations in folder {}", id);
 
-        final ListPreparationsByFolder result = new ListPreparationsByFolder();
         final FolderChildrenList commandListFolders = getCommand(FolderChildrenList.class, id, sort, order);
-        result.folders = toStream(Folder.class, mapper, commandListFolders);
+        final Stream<Folder> folders = toStream(Folder.class, mapper, commandListFolders);
 
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
-        result.preparations = toStream(PreparationDTO.class, mapper, listPreparations)
-                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        final Stream<PreparationListItemDTO> preparations =
+                toStream(PreparationDTO.class, mapper, listPreparations) //
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
 
-        return result;
+        return new PreparationsByFolder(folders, preparations);
     }
 
-    public static class ListPreparationsByFolder {
-        @JsonProperty("folders")
-        Stream<Folder> folders;
+    public static class PreparationsByFolder {
 
-        @JsonProperty("preparations")
-        Stream<PreparationListItemDTO> preparations;
+        private final Stream<Folder> folders;
 
+        private final Stream<PreparationListItemDTO> preparations;
+
+        public PreparationsByFolder(Stream<Folder> folders, Stream<PreparationListItemDTO> preparations) {
+            this.folders = folders;
+            this.preparations = preparations;
+        }
+
+        public Stream<Folder> getFolders() {
+            return folders;
+        }
+
+        public Stream<PreparationListItemDTO> getPreparations() {
+            return preparations;
+        }
     }
 
 }

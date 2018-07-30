@@ -35,14 +35,14 @@ import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 
 public class GenerateUUIDTest extends AbstractMetadataBaseTest<GenerateUUID> {
 
-    public GenerateUUIDTest() {
-        super(new GenerateUUID());
-    }
-
     /**
      * The action parameters.
      */
     private Map<String, String> parameters;
+
+    public GenerateUUIDTest() {
+        super(new GenerateUUID());
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -100,4 +100,5 @@ public class GenerateUUIDTest extends AbstractMetadataBaseTest<GenerateUUID> {
         assertEquals(row.get("0002"), "tata");
         assertNotNull(row.get("0003"));
     }
+
 }

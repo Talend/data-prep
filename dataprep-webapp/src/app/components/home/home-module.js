@@ -22,6 +22,7 @@ import PREPARATION_COPY_MOVE_MODULE from '../preparation/copy-move/preparation-c
 import STEP_PROGRESS_MODULE from '../step-progress/step-progress-module';
 import SERVICES_DATASET_MODULE from '../../services/dataset/dataset-module';
 import SERVICES_DATASET_WORKFLOW_MODULE from '../../services/dataset-workflow/dataset-workflow-module';
+import SERVICES_CONFIRM_MODULE from '../../services/confirm/confirm-module';
 import SERVICES_STATE_MODULE from '../../services/state/state-module';
 import SERVICES_UTILS_MODULE from '../../services/utils/utils-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
@@ -31,6 +32,7 @@ import HomeComponent from './home-component';
 import HomeDatasetComponent from './dataset/home-dataset-container';
 import HomePreparationComponent from './preparation/home-preparation-container';
 import NameModalComponent from './name-modal/name-modal-component';
+import ConfirmModalComponent from './confirm-modal/confirm-modal-component';
 
 const MODULE_NAME = 'data-prep.home';
 
@@ -67,10 +69,12 @@ angular.module(MODULE_NAME,
 
 		SERVICES_DATASET_MODULE,
 		SERVICES_DATASET_WORKFLOW_MODULE,
+		SERVICES_CONFIRM_MODULE,
 		SERVICES_STATE_MODULE,
 		SERVICES_UTILS_MODULE,
 	])
 	.component('home', HomeComponent)
 	.component('homeDataset', HomeDatasetComponent)
 	.component('homePreparation', HomePreparationComponent)
-	.component('nameModal', NameModalComponent);
+	.component('nameModal', NameModalComponent)
+	.component('confirmModal', ConfirmModalComponent);

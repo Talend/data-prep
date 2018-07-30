@@ -17,6 +17,9 @@ import static com.jayway.restassured.http.ContentType.JSON;
 import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
 import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
 import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
+import static org.talend.dataprep.helper.VerboseMode.ALL;
+import static org.talend.dataprep.helper.VerboseMode.NONE;
+import static org.talend.dataprep.helper.VerboseMode.REQUESTS_ONLY;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +86,7 @@ public class OSDataPrepAPIHelper {
 
     private static final String PATH = "path";
 
-    private boolean enableRestAssuredDebug = false;
+    private VerboseMode restAssuredDebug = NONE;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -101,6 +104,7 @@ public class OSDataPrepAPIHelper {
         } else {
             executionContext = ITExecutionContext.ON_PREMISE;
         }
+        LOGGER.info("Start Integration Test on '{}'", executionContext == ITExecutionContext.CLOUD ? "Cloud" : "On Premise");
     }
 
     /**
@@ -110,8 +114,18 @@ public class OSDataPrepAPIHelper {
      */
     public RequestSpecification given() {
         RequestSpecification given = RestAssured.given().baseUri(apiBaseUrl);
-        if (enableRestAssuredDebug) {
+        // just to add a line separator before log the method and the path
+        RestAssured.config().getLogConfig().defaultStream().append(System.lineSeparator());
+        switch (restAssuredDebug) {
+        case ALL:
             given = given.log().all(true);
+            break;
+        case REQUESTS_ONLY:
+            given = given.log().method().log().path();
+            break;
+        case NONE:
+        default:
+            break;
         }
         return given;
     }
@@ -615,12 +629,8 @@ public class OSDataPrepAPIHelper {
         return asyncExecutionMessage;
     }
 
-    public boolean isEnableRestAssuredDebug() {
-        return enableRestAssuredDebug;
-    }
-
-    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
-        this.enableRestAssuredDebug = enableRestAssuredDebug;
+    public OSDataPrepAPIHelper setRestAssuredDebug(VerboseMode restAssuredDebug) {
+        this.restAssuredDebug = restAssuredDebug;
         return this;
     }
 

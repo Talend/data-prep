@@ -17,14 +17,16 @@ import static org.talend.tql.api.TqlBuilder.neq;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
+import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tenancy.ForAll;
@@ -32,9 +34,9 @@ import org.talend.tenancy.ForAll;
 /**
  * Cleans the preparation repository. It removes all the steps that do NOT belong to a preparation any more.
  */
-@Component
 @ConditionalOnProperty(value = "preparation.store.orphan.cleanup", havingValue = "true", matchIfMissing = true)
-public class PreparationCleaner {
+@Component
+public class PreparationCleaner implements MaintenanceTaskProcess {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreparationCleaner.class);
 
@@ -52,8 +54,19 @@ public class PreparationCleaner {
     @Autowired
     private ForAll forAll;
 
-    public void setMarkers(List<StepMarker> markers) {
-        this.markers = markers;
+    @Override
+    public void performTask() {
+        this.removeCurrentOrphanSteps();
+    }
+
+    @Override
+    public Supplier<Boolean> condition() {
+        return forAll.condition().operational(repository);
+    }
+
+    @Override
+    public ScheduleFrequency getFrequency() {
+        return ScheduleFrequency.NIGHT;
     }
 
     /**
@@ -90,11 +103,7 @@ public class PreparationCleaner {
         }
     }
 
-    /**
-     * Remove the orphan steps (that do NOT belong to any preparation) for all available tenants.
-     */
-    @Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000) // Every hour
-    public void removeOrphanSteps() {
-        forAll.execute(forAll.condition().operational(repository), this::removeCurrentOrphanSteps);
+    public void setMarkers(List<StepMarker> markers) {
+        this.markers = markers;
     }
 }

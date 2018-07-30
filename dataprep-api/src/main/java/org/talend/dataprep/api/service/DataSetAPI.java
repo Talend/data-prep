@@ -323,7 +323,7 @@ public class DataSetAPI extends APIService {
         Stream<UserDataSetMetadata> listDataSets = list(sort, order, name, certified, favorite, limit);
         return listDataSets //
                 .map(m -> {
-                    LOG.debug("found dataset {} in the summary list" + m.getName());
+                    LOG.debug("found dataset [{}] in the summary list", m.getName());
                     // Add the related preparations list to the given dataset metadata.
                     final PreparationSearchByDataSetId getPreparations = getCommand(PreparationSearchByDataSetId.class,
                             m.getId());

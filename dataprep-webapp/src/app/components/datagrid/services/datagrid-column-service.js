@@ -250,14 +250,14 @@ export default function DatagridColumnService($rootScope, $compile, $translate,
 	 * @description Destroy the angular scope and header element
 	 */
 	function destroyHeader(headerDefinition) {
-	    if (headerDefinition) {
-	    	if (headerDefinition.scope) {
-	    	    headerDefinition.scope.$destroy();
-            }
-            if (headerDefinition.header) {
-                headerDefinition.header.remove();
-            }
-	    }
+		if (headerDefinition) {
+			if (headerDefinition.scope) {
+				headerDefinition.scope.$destroy();
+			}
+			if (headerDefinition.header) {
+				headerDefinition.header.remove();
+			}
+		}
 	}
 
 	/**

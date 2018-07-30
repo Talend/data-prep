@@ -33,6 +33,7 @@ import { progressState, ProgressStateService } from './progress/progress-state-s
 import { state, StateService } from './state-service';
 import { searchState, SearchStateService } from './search/search-state-service';
 import { messageState, MessageStateService } from './message/message-state-service';
+import { confirmState, ConfirmStateService } from './confirm/confirm-state-service';
 
 import SERVICES_UTILS_MODULE from '../utils/utils-module';
 
@@ -102,6 +103,9 @@ angular.module(MODULE_NAME, [SERVICES_UTILS_MODULE])
 	.constant('searchState', searchState)
 
 	.service('MessageStateService', MessageStateService)
-	.constant('messageState', messageState);
+	.constant('messageState', messageState)
+
+	.service('ConfirmStateService', ConfirmStateService)
+	.constant('confirmState', confirmState);
 
 export default MODULE_NAME;

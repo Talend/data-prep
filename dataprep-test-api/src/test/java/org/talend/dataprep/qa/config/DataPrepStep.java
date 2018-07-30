@@ -14,16 +14,19 @@
 package org.talend.dataprep.qa.config;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 
+import org.awaitility.core.ConditionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
+import org.talend.dataprep.helper.VerboseMode;
 import org.talend.dataprep.qa.SpringContextConfiguration;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.PreparationDetails;
@@ -61,6 +65,12 @@ public abstract class DataPrepStep {
 
     protected static final String DATASET_ID_KEY = "dataSetId";
 
+    private static final int TIME_OUT = 20;
+
+    private static final int POLL_DELAY = 1;
+
+    private static final int POLL_INTERVAL = 1;
+
     /**
      * This class' logger.
      */
@@ -80,12 +90,12 @@ public abstract class DataPrepStep {
     @Autowired
     protected FolderUtil folderUtil;
 
-    @Value("${restassured.debug:false}")
-    private boolean enableRestAssuredDebug;
+    @Value("${restassured.debug:NONE}")
+    private VerboseMode restAssuredDebug;
 
     @PostConstruct
     public void init() {
-        api.setEnableRestAssuredDebug(enableRestAssuredDebug);
+        api.setRestAssuredDebug(restAssuredDebug);
     }
 
     /**
@@ -143,17 +153,32 @@ public abstract class DataPrepStep {
     }
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames, List<String> actual) {
-        assertNotNull(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(),
-                actual);
+        assertNotNull(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(), actual);
         assertFalse(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(),
                 actual.isEmpty());
-        assertEquals(new StringBuilder("Not the expected number of columns in \"")
-                .append(datasetOrPreparationName)
-                .append("\".")
+        assertEquals(new StringBuilder("Not the expected number of columns in \"").append(datasetOrPreparationName).append("\".")
                 .toString(), expectedColumnNames.size(), actual.size());
-        assertTrue(new StringBuilder("\"")
-                .append(datasetOrPreparationName)
-                .append("\" doesn't contain all expected columns.")
+        assertTrue(new StringBuilder("\"").append(datasetOrPreparationName).append("\" doesn't contain all expected columns.")
                 .toString(), actual.containsAll(expectedColumnNames));
+    }
+
+    protected ConditionFactory waitResponse(String message) {
+        return waitResponse(message, TIME_OUT);
+    }
+
+    protected ConditionFactory waitResponse(String message, int timeOut) {
+        return waitResponse(message, timeOut, POLL_DELAY, POLL_INTERVAL);
+    }
+
+    protected ConditionFactory waitResponse(String message, int timeOut, int pollInterval) {
+        return waitResponse(message, timeOut, POLL_DELAY, pollInterval);
+    }
+
+    protected ConditionFactory waitResponse(String message, int timeOut, int pollDelay, int pollInterval) {
+        return with().pollInterval(pollInterval, TimeUnit.SECONDS).and() //
+                .with() //
+                .pollDelay(pollDelay, TimeUnit.SECONDS) //
+                .await(message) //
+                .atMost(timeOut, TimeUnit.SECONDS);
     }
 }

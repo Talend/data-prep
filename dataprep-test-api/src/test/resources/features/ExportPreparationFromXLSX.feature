@@ -3,6 +3,7 @@ Feature: Export Preparation from XLSX file
 
   Scenario: Create a preparation with one step from a XLSX
     Given I upload the dataset "/data/6L3C.xlsx" with name "6L3C_dataset"
+    Then I wait for the dataset "6L3C_dataset" metadata to be computed
     And I create a preparation with name "6L3C_preparation", based on "6L3C_dataset" dataset
     And I add a "uppercase" step on the preparation "6L3C_preparation" with parameters :
       | column_name | lastname |

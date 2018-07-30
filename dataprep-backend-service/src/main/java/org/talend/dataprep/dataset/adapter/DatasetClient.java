@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
 import javax.annotation.PostConstruct;
 
 import org.apache.avro.Schema;
@@ -273,7 +272,6 @@ public class DatasetClient {
                 && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
             AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
-            metadata.setDataSetSize(analysisResult.rowcount);
             metadata.getContent().setNbRecords(analysisResult.rowcount);
         }
 

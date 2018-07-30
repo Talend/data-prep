@@ -21,7 +21,7 @@ const BLOCKING_ACTION_TYPES = [
 
 export default class PreparationActionsService {
 	constructor($stateParams, $translate, state, FolderService, MessageService, PreparationService,
-				StateService, StorageService, TalendConfirmService) {
+				StateService, StorageService, ConfirmService) {
 		'ngInject';
 		this.$stateParams = $stateParams;
 		this.state = state;
@@ -30,7 +30,7 @@ export default class PreparationActionsService {
 		this.PreparationService = PreparationService;
 		this.StateService = StateService;
 		this.StorageService = StorageService;
-		this.TalendConfirmService = TalendConfirmService;
+		this.ConfirmService = ConfirmService;
 
 		this.i18n = {
 			PREPARATION: $translate.instant('PREPARATION'),
@@ -92,7 +92,7 @@ export default class PreparationActionsService {
 		}
 		case '@@preparation/REMOVE': {
 			const preparation = action.payload.model;
-			this.TalendConfirmService
+			this.ConfirmService
 				.confirm(
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: this.i18n.PREPARATION, name: preparation.name }

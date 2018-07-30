@@ -4,6 +4,7 @@ Feature: Dataset cache features
   @CleanAfter
   Scenario: Clean preparation dataset when updating a dataset used by a preparation
     Given I upload the dataset "/data/8L3C.csv" with name "8L3C_dataset"
+    Then I wait for the dataset "8L3C_dataset" metadata to be computed
     And I create a preparation with name "8L3C_preparation", based on "8L3C_dataset" dataset
     And I add a "uppercase" step on the preparation "8L3C_preparation" with parameters :
       | column_name      | firstname        |

@@ -20,16 +20,20 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationUtils;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
+import org.talend.dataprep.cache.CacheKeyGenerator;
+import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
+import org.talend.dataprep.event.CacheEventProcessingUtil;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.SecurityProxy;
 import org.talend.tql.api.TqlBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PreparationUpdateListenerUtilTest {
+public class PreparationEventUtilTest {
 
     @InjectMocks
-    private PreparationUpdateListenerUtil preparationUpdateListenerUtil;
+    private PreparationEventUtil preparationEventUtil;
 
     @Mock
     private PreparationRepository preparationRepository;
@@ -42,6 +46,12 @@ public class PreparationUpdateListenerUtilTest {
 
     @Mock
     private SecurityProxy securityProxy;
+
+    @Mock
+    private CacheKeyGenerator cacheKeyGenerator;
+
+    @Mock
+    private CacheEventProcessingUtil cacheEventProcessingUtil;
 
     @Test
     public void shouldRemoveStepRowMetadata() {
@@ -61,23 +71,27 @@ public class PreparationUpdateListenerUtilTest {
         step3.setRowMetadata(null); // Intentionally left to null
         step3.setParent(step2.id());
 
-        final Preparation preparation = new Preparation();
+        final PersistentPreparation preparation = new PersistentPreparation();
         preparation.setHeadId(step3.id());
 
-        when(preparationUtils.listSteps(eq(preparation.getHeadId()), eq(preparationRepository))).thenReturn(Arrays.asList(Step.ROOT_STEP, step1, step2, step3));
-        when(preparationRepository.list(eq(Preparation.class), eq(TqlBuilder.eq("dataSetId", "ds-1234"))))
-                .thenReturn(Stream.of(preparation));
+        when(preparationUtils.listSteps(eq(preparation.getHeadId()), eq(preparationRepository)))
+                .thenReturn(Arrays.asList(Step.ROOT_STEP, step1, step2, step3));
+        when(preparationRepository.list(eq(PersistentPreparation.class), eq(TqlBuilder.eq("dataSetId", "ds-1234"))))
+                .thenReturn(Stream.of(preparation), Stream.of(preparation));
         when(preparationRepository.get(eq(step1.id()), eq(Step.class))).thenReturn(step1);
         when(preparationRepository.get(eq(step2.id()), eq(Step.class))).thenReturn(step2);
         when(datasetClient.getDataSetMetadata(any())).thenReturn(metadata);
 
         // when
-        preparationUpdateListenerUtil.removePreparationStepRowMetadata(metadata.getId());
+        preparationEventUtil.performUpdateEvent(metadata.getId());
 
         // then
+        verify(cacheEventProcessingUtil, times(2)).processCleanCacheEvent(any(ContentCacheKey.class), any());
         verify(preparationRepository, times(1)).add(any(Preparation.class));
-        verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class), eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
+        verify(preparationRepository, times(1)).remove(eq(StepRowMetadata.class),
+                eq(TqlBuilder.in("id", "srmd-1", "srmd-2")));
+        verify(securityProxy, times(2)).asTechnicalUser();
         verify(securityProxy, times(1)).asTechnicalUserForDataSet();
-        verify(securityProxy, times(1)).releaseIdentity();
+        verify(securityProxy, times(3)).releaseIdentity();
     }
 }

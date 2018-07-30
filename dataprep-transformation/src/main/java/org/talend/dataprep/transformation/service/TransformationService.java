@@ -232,12 +232,12 @@ public class TransformationService extends BaseTransformationService {
         final ConditionalTest conditionalTest = applicationContext.getBean(GetPrepContentAsyncCondition.class);
         if (conditionalTest.apply(completeParameters)) {
             // write to cache
-            executeSampleExportStrategy(completeParameters).writeTo(new NullOutputStream());
+            executeSampleExportStrategy(parameters).writeTo(new NullOutputStream());
             return outputStream -> {
             };
         } else {
             // sync behavior
-            return executeSampleExportStrategy(completeParameters);
+            return executeSampleExportStrategy(parameters);
         }
     }
 

@@ -118,8 +118,7 @@ public class OSDataPrepAPIHelper {
         RestAssured.config().getLogConfig().defaultStream().append(System.lineSeparator());
         if (REQUESTS_ONLY.equals(restAssuredDebugLogging)) {
             given = given.log().method().log().path();
-        }
-        if (ALL.equals(restAssuredDebugLogging)) {
+        } else if (ALL.equals(restAssuredDebugLogging)) {
             given = given.log().all(true);
         }
         return given;

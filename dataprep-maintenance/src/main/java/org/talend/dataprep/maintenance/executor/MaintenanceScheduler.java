@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.security.Security;
@@ -32,11 +33,14 @@ public class MaintenanceScheduler {
     @Autowired
     private Security security;
 
+    @Autowired
+    private TaskExecutor taskExecutor;
+
     private Map<String, Long> runningTask = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void launchOnceTask() {
-        runMaintenanceTask(ONCE);
+        taskExecutor.execute(() -> runMaintenanceTask(ONCE));
     }
 
     @Scheduled(cron = "${maintenance.scheduled.cron}")

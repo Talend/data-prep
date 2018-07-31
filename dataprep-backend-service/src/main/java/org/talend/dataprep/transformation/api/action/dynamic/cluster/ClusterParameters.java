@@ -47,9 +47,10 @@ public class ClusterParameters implements DynamicParameters {
             String value = row.get(columnId);
             clusterAnalyzer.analyze(value);
         });
-        // TDP-5860 : this use Soundex (Soundex is a phonetic algorithm for indexing names by sound, as pronounced in English)
-        // So it can log IllegalArgumentException if a character is not mapped
-        // see SoundexMatcher on DQ side
+        // TDP-5860 : this use Double Metaphone algorithm which is better than Soundex
+        // (Soundex is a phonetic algorithm for indexing names by sound, as pronounced in, only for English)
+        // But it can log IllegalArgumentException if a character is not mapped
+        // see SoundexMatcher and Double Metaphone on DQ side
         clusterAnalyzer.end();
         // Build results
         final Clusters.Builder builder = Clusters.builder().title(DataprepBundle.message("parameter.textclustering.title.1"))
@@ -62,8 +63,10 @@ public class ClusterParameters implements DynamicParameters {
                 for (String value : cluster.originalValues) {
                     currentCluster.parameter(new ConstantParameter(value, ParameterType.BOOLEAN));
                 }
-                currentCluster.replace(Parameter.parameter(LocaleContextHolder.getLocale()).setName("replaceValue")
-                        .setType(ParameterType.STRING).setDefaultValue(cluster.survivedValue).build(null));
+                currentCluster.replace(Parameter.parameter(LocaleContextHolder.getLocale()) //
+                        .setName("replaceValue") //
+                        .setType(ParameterType.STRING) //
+                        .setDefaultValue(cluster.survivedValue).build(null));
                 builder.cluster(currentCluster);
             }
         }

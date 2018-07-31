@@ -39,10 +39,8 @@ public class DataSetNameInjection implements BiFunction<PreparationDTO, Preparat
 
     @Override
     public PreparationListItemDTO apply(PreparationDTO dto, PreparationListItemDTO item) {
-        if (dto.getDataSetName() != null) {
-            item.getDataSet().setDataSetName(dto.getDataSetName());
-            return item;
-        } else {
+        String dataSetName = dto.getDataSetName();
+        if (dataSetName == null) {
             try {
                 final String tenantId = security.getTenantId();
                 final Cache<String, String> tenantCache = cache.get(tenantId, this::initTenant);
@@ -54,12 +52,13 @@ public class DataSetNameInjection implements BiFunction<PreparationDTO, Preparat
                         securityProxy.releaseIdentity();
                     }
                 }
-                item.getDataSet().setDataSetName(tenantCache.getIfPresent(dto.getDataSetId()));
-                return item;
+                dataSetName = tenantCache.getIfPresent(dto.getDataSetId());
             } catch (ExecutionException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
         }
+        item.getDataSet().setDataSetName(dataSetName);
+        return item;
     }
 
     private Cache<String, String> initTenant() {

@@ -115,10 +115,7 @@ public class PreparationEventUtil {
             preparationRepository
                     .list(PersistentPreparation.class, eq("dataSetId", dataSetId)) //
                     .forEach(preparation -> {
-                        // Update dataset name in preparation
                         preparation.setDataSetName(dataSetMetadata.getName());
-
-                        // Reset preparation row metadata.
                         preparation.setRowMetadata(rowMetadata);
                         preparationRepository.add(preparation);
 

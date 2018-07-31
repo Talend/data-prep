@@ -93,8 +93,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final PreparationDTO preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
 
-        try {
-            DataSet dataSet = getDatatset(parameters, dataSetId, preparationId);
+        try (DataSet dataSet = getDatatset(parameters, dataSetId, preparationId)) {
 
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
@@ -124,7 +123,6 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
                 securityProxy.releaseIdentity();
             }
         }
-
     }
 
     /**

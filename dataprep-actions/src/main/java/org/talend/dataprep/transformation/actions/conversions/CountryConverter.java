@@ -77,8 +77,6 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
     private static final Dictionary trieRoot = new Dictionary();
 
-    private SelectParameter.SelectParameterBuilder secondBuilder;
-
     public CountryConverter() {
         // nothing to do here
     }
@@ -141,7 +139,7 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
         parameters.add(builder.build(this));
 
-        secondBuilder = selectParameter(locale)
+        SelectParameter.SelectParameterBuilder secondBuilder = selectParameter(locale)
                 .item(ENGLISH_COUNTRY_NAME, ENGLISH_COUNTRY_NAME)
                 .item(FRENCH_COUNTRY_NAME, FRENCH_COUNTRY_NAME)
                 .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2)
@@ -304,7 +302,6 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
             }
 
             if (string.length() == 1) {
-                nextChild.endOfWord = true;
                 nextChild.value = value;
             } else {
                 insertWord(string.substring(1), nextChild, value);
@@ -329,11 +326,9 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
         protected Node parent;
 
-        protected Boolean endOfWord = false; // Does this Node mark the end of a particular word?
-
         protected int value = -1;
 
-        protected HashMap<Character, Node> children = new HashMap<Character, Node>();
+        protected HashMap<Character, Node> children = new HashMap<>();
     }
 
 }

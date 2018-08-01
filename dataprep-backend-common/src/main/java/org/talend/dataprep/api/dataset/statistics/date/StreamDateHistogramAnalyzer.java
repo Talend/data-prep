@@ -89,8 +89,7 @@ public class StreamDateHistogramAnalyzer implements Analyzer<StreamDateHistogram
             final ColumnMetadata column = this.columns.get(index);
             final String value = record[index];
             if (type == DataTypeEnum.DATE) {
-                final String mostUsedDatePattern = RowMetadataUtils.getMostUsedDatePattern(column);
-                if (!TypeInferenceUtils.isDate(value, Collections.singletonList(mostUsedDatePattern))) {
+                if (!TypeInferenceUtils.isDate(value)) {
                     LOGGER.trace("Skip date value '{}' (not valid date)", value);
                     continue;
                 }

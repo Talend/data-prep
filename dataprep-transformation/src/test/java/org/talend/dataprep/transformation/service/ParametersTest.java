@@ -34,7 +34,7 @@ public class ParametersTest extends TransformationServiceBaseTest {
         // given
         final String datasetContent = IOUtils.toString(this.getClass().getResourceAsStream("../parameters/dataset.json"),
                 UTF_8);
-        final String expectedParameters = IOUtils.toString(this.getClass().getResourceAsStream("../parameters/expected_cluster_params_double_metaphone.json"),
+        final String expectedParameters = IOUtils.toString(this.getClass().getResourceAsStream("../parameters/expected_cluster_params_soundex.json"),
                 UTF_8);
 
         // when

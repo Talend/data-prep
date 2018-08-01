@@ -9,57 +9,13 @@
       {
         "parameters": [
           {
-            "name": "Tex@s",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "label": "Tex@s",
-            "description": "Tex@s",
-            "readonly": true
-          },
-          {
-            "name": "Texas",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "label": "Texas",
-            "description": "Texas",
-            "readonly": true
-          },
-          {
-            "name": "Tixass",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "label": "Tixass",
-            "description": "Tixass",
-            "readonly": true
-          }
-        ],
-        "replace": {
-          "name": "replaceValue",
-          "type": "string",
-          "implicit": false,
-          "canBeBlank": true,
-          "placeHolder": "",
-          "label": "Replace value",
-          "description": "Replace value",
-          "default": "Tex@s"
-        }
-      },
-      {
-        "parameters": [
-          {
             "name": "Massachussetts",
             "type": "boolean",
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "label": "Massachussetts",
             "description": "Massachussetts",
+            "label": "Massachussetts",
             "readonly": true
           },
           {
@@ -68,8 +24,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "label": "Masachussets",
             "description": "Masachussets",
+            "label": "Masachussets",
             "readonly": true
           },
           {
@@ -78,8 +34,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "label": "Massachusetts",
             "description": "Massachusetts",
+            "label": "Massachusetts",
             "readonly": true
           },
           {
@@ -88,8 +44,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "label": "Masachusetts",
             "description": "Masachusetts",
+            "label": "Masachusetts",
             "readonly": true
           },
           {
@@ -98,8 +54,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "label": "Massachusets",
             "description": "Massachusets",
+            "label": "Massachusets",
             "readonly": true
           }
         ],
@@ -109,9 +65,43 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "label": "Replace value",
           "description": "Replace value",
+          "label": "Replace value",
           "default": "Masachusetts"
+        }
+      },
+      {
+        "parameters": [
+          {
+            "name": "t@t@",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "t@t@",
+            "label": "t@t@",
+            "readonly": true
+          },
+          {
+            "name": "T@T@",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "T@T@",
+            "label": "T@T@",
+            "readonly": true
+          }
+        ],
+        "replace": {
+          "name": "replaceValue",
+          "type": "string",
+          "implicit": false,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "description": "Replace value",
+          "label": "Replace value",
+          "default": "T@T@"
         }
       },
       {
@@ -122,8 +112,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "label": "tata",
             "description": "tata",
+            "label": "tata",
             "readonly": true
           },
           {
@@ -132,28 +122,8 @@
             "implicit": false,
             "canBeBlank": true,
             "placeHolder": "",
-            "label": "Tata",
             "description": "Tata",
-            "readonly": true
-          },
-          {
-            "name": "t@t@",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "label": "t@t@",
-            "description": "t@t@",
-            "readonly": true
-          },
-          {
-            "name": "T@T@",
-            "type": "boolean",
-            "implicit": false,
-            "canBeBlank": true,
-            "placeHolder": "",
-            "label": "T@T@",
-            "description": "T@T@",
+            "label": "Tata",
             "readonly": true
           }
         ],
@@ -163,9 +133,43 @@
           "implicit": false,
           "canBeBlank": true,
           "placeHolder": "",
-          "label": "Replace value",
           "description": "Replace value",
+          "label": "Replace value",
           "default": "tata"
+        }
+      },
+      {
+        "parameters": [
+          {
+            "name": "Texas",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "Texas",
+            "label": "Texas",
+            "readonly": true
+          },
+          {
+            "name": "Tixass",
+            "type": "boolean",
+            "implicit": false,
+            "canBeBlank": true,
+            "placeHolder": "",
+            "description": "Tixass",
+            "label": "Tixass",
+            "readonly": true
+          }
+        ],
+        "replace": {
+          "name": "replaceValue",
+          "type": "string",
+          "implicit": false,
+          "canBeBlank": true,
+          "placeHolder": "",
+          "description": "Replace value",
+          "label": "Replace value",
+          "default": "Tixass"
         }
       }
     ]

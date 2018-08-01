@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.transformation.actions.conversions.CountryConverter;
 import org.talend.dataprep.transformation.actions.datamasking.MaskDataByDomain;
 import org.talend.dataprep.transformation.actions.date.ChangeDatePattern;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
@@ -114,6 +115,14 @@ public class TypeDomainRules extends BasicRules {
         return forActions(MaskDataByDomain.ACTION_NAME) //
                 .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain())) //
                 .then(columnMetadata -> MEDIUM) //
+                .build();
+    }
+
+    @Bean
+    public static SuggestionEngineRule countryRule() {
+        return forActions(CountryConverter.ACTION_NAME) //
+                .when(IS_COUNTRY) //
+                .then(columnMetadata -> HIGH) //
                 .build();
     }
 

@@ -137,14 +137,18 @@ public class StandardExportStrategiesIntegrationTest {
     private void initPreparationDetails() throws Exception {
         doReturn(preparationDetailsGet).when(applicationContext).getBean(eq(PreparationDetailsGet.class), anyString(),
                 anyString());
-        final PreparationDetailsDTO preparationDetailsDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details.json"));
-        when(preparationDetailsGet.execute())
-                .thenReturn(preparationDetailsDTO)
+        final PreparationDetailsDTO preparationDetailsDTO = mapper
+                .readerFor(PreparationDetailsDTO.class) //
+                .readValue(this.getClass().getResourceAsStream("preparation_details.json"));
+        when(preparationDetailsGet.execute()) //
+                .thenReturn(preparationDetailsDTO) //
                 .thenReturn(preparationDetailsDTO);
 
         doReturn(preparationSummaryGet).when(applicationContext).getBean(eq(PreparationSummaryGet.class), anyString(),
                 anyString());
-        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("preparation_details_summary.json"));
+        final PreparationDTO preparationDTO = mapper
+                .readerFor(PreparationDTO.class) //
+                .readValue(this.getClass().getResourceAsStream("preparation_details_summary.json"));
         when(preparationSummaryGet.execute()).thenReturn(preparationDTO, preparationDTO);
     }
 
@@ -185,7 +189,8 @@ public class StandardExportStrategiesIntegrationTest {
                 .findFirst();
     }
 
-    protected void assertElectedStrategyIsInstanceOf(Optional<? extends ExportStrategy> electedStrategy, Class<?> clazz) {
+    protected void assertElectedStrategyIsInstanceOf(Optional<? extends ExportStrategy> electedStrategy,
+            Class<?> clazz) {
         assertTrue("An ExportStrategy should be chosen but none was found", electedStrategy.isPresent());
         assertThat("The chosen ExportStrategy is not the expected one", electedStrategy.get(), instanceOf(clazz));
     }
@@ -193,6 +198,11 @@ public class StandardExportStrategiesIntegrationTest {
     @Test
     public void testCachedExportStrategyShouldBeChosenFromHEAD() throws Exception {
         doTestCachedExportStrategyShouldBeChosen(HEAD);
+    }
+
+    @Test
+    public void testCachedExportStrategyShouldBeChosenFromFilter() throws Exception {
+        doTestCachedExportStrategyShouldBeChosen(FILTER);
     }
 
     @Test
@@ -205,7 +215,8 @@ public class StandardExportStrategiesIntegrationTest {
         doTestCachedExportStrategyShouldBeChosen(null);
     }
 
-    private void doTestOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFrom(SourceType from) throws Exception {
+    private void doTestOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFrom(
+            SourceType from) throws Exception {
         // Given
         ExportParameters parameters = new ExportParameters();
         parameters.setFrom(from);
@@ -223,40 +234,49 @@ public class StandardExportStrategiesIntegrationTest {
 
     private String idOfPrepWith2StepsOrMore() throws IOException {
         reset(preparationDetailsGet);
-        final PreparationDetailsDTO preparationDetailsDTO = mapper.readerFor(PreparationDetailsDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
-        when(preparationDetailsGet.execute())
-                .thenReturn(preparationDetailsDTO)
+        final PreparationDetailsDTO preparationDetailsDTO = mapper
+                .readerFor(PreparationDetailsDTO.class) //
+                .readValue(this.getClass().getResourceAsStream("two_steps_preparation_details.json"));
+        when(preparationDetailsGet.execute()) //
+                .thenReturn(preparationDetailsDTO) //
                 .thenReturn(preparationDetailsDTO);
 
-        final PreparationDTO preparationDTO = mapper.readerFor(PreparationDTO.class).readValue(this.getClass().getResourceAsStream("two_steps_preparation_details_summary.json"));
-        when(preparationSummaryGet.execute())
-                .thenReturn(preparationDTO)
+        final PreparationDTO preparationDTO = mapper
+                .readerFor(PreparationDTO.class) //
+                .readValue(this.getClass().getResourceAsStream("two_steps_preparation_details_summary.json"));
+        when(preparationSummaryGet.execute())//
+                .thenReturn(preparationDTO) //
                 .thenReturn(preparationDTO);
 
         return "prepId-1234";
     }
 
     @Test
-    public void testOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFromHEAD() throws Exception {
-        doTestOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFrom(HEAD);
+    public void testOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFromHEAD()
+            throws Exception {
+        doTestOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFrom(HEAD);
     }
 
     @Test
-    public void testOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFromFILTER() throws Exception {
-        doTestOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFrom(FILTER);
+    public void testOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFromFILTER()
+            throws Exception {
+        doTestOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFrom(FILTER);
     }
 
     @Test
-    public void testOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFromRESERVOIR() throws Exception {
-        doTestOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFrom(RESERVOIR);
+    public void testOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFromRESERVOIR()
+            throws Exception {
+        doTestOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFrom(RESERVOIR);
     }
 
     @Test
-    public void testOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFromNull() throws Exception {
-        doTestOptimizedExportStrategyShouldBeChosenWhenPrepHasAtLeastTwoStepsFrom(null);
+    public void testOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFromNull()
+            throws Exception {
+        doTestOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFrom(null);
     }
 
-    private void doTestOptimizedExportStrategyShouldNotBeChosenWhenPrepHasOnlyOneStep(SourceType from) throws Exception {
+    private void doTestOptimizedExportStrategyShouldNotBeChosenWhenPrepHasOnlyOneStep(SourceType from)
+            throws Exception {
         // Given
         ExportParameters parameters = new ExportParameters();
         parameters.setFrom(from);

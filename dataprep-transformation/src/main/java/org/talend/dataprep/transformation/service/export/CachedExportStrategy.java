@@ -33,7 +33,7 @@ import org.talend.dataprep.transformation.service.ExportUtils;
 
 /**
  * A {@link BaseExportStrategy strategy} to reuse previous preparation export if available (if no previous content found
- * {@link #accept(ExportParameters)} returns <code>false</code>).
+ * {@link #accept(ExportParameters)} returns <code>false</code>). This strategy works fine when from equals to FILTER.
  */
 @Component
 public class CachedExportStrategy extends BaseSampleExportStrategy {

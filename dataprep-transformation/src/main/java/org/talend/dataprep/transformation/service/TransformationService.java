@@ -226,11 +226,9 @@ public class TransformationService extends BaseTransformationService {
             value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
             throws IOException {
 
-        ExportParameters completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-
         // Async behavior
         final ConditionalTest conditionalTest = applicationContext.getBean(GetPrepContentAsyncCondition.class);
-        if (conditionalTest.apply(completeParameters)) {
+        if (conditionalTest.apply(parameters)) {
             // write to cache
             executeSampleExportStrategy(parameters).writeTo(new NullOutputStream());
             return outputStream -> {

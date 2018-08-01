@@ -1,5 +1,15 @@
 package org.talend.dataprep.maintenance.executor;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -7,17 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.talend.dataprep.maintenance.BaseMaintenanceTest;
 import org.talend.dataprep.security.Security;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class MaintenanceSchedulerTest extends BaseMaintenanceTest {
 

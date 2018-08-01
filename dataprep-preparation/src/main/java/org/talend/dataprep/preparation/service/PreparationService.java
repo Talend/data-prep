@@ -177,6 +177,11 @@ public class PreparationService {
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
         toCreate.setRowMetadata(preparation.getRowMetadata());
+        try {
+            toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
+        } catch (Exception e) {
+            LOGGER.warn("Unable to find dataset name for preparation '{}'", preparation.getId());
+        }
 
         preparationRepository.add(toCreate);
 
@@ -268,7 +273,7 @@ public class PreparationService {
         final OwnerInjection ownerInjection = springContext.getBean(OwnerInjection.class);
         return preparationStream
                 .map(p -> beanConversionService.convert(p, PreparationDTO.class, ownerInjection)) //
-                .sorted(getPreparationComparator(sort, order, p -> datasetClient.getDataSetMetadata(p.getDataSetId())));
+                .sorted(getPreparationComparator(sort, order));
     }
 
     /**
@@ -791,9 +796,10 @@ public class PreparationService {
      * <ul>
      * <li>1. Extract the actions from STD (excluded) to the head. The actions list contains all the actions from the
      * STD's child to the head.</li>
-     * <li>2. Filter the preparations that apply on a column created by the step to delete. Those steps will be removed
+     * <li>2. Filter the actions that apply on a column created by the step to delete. Those steps will be removed
      * too.</li>
-     * <li>2bis. Change the actions that apply on columns > STD last created column id. The created columns ids after
+     * <li>2bis. Change the actions that apply on columns whose id is higher than the STD last created column id. The
+     * created columns ids after
      * the STD are shifted.</li>
      * <li>3. Set preparation head to STD's parent, so STD will be excluded</li>
      * <li>4. Append each action after the new preparation head</li>
@@ -1175,9 +1181,13 @@ public class PreparationService {
         return step -> {
             final Action firstAction = step.getActions().get(0);
             final Map<String, String> parameters = firstAction.getParameters();
+            if (parameters.get(ImplicitParameters.COLUMN_ID.getKey()) == null) {
+                // this action is not applied on a column so no need to do a shift
+                return step;
+            }
             final int columnId = Integer.parseInt(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
             if (columnId > shiftColumnAfterId) {
-                parameters.put("column_id", format.format(columnId + (long) shiftNumber)); //$NON-NLS-1$
+                parameters.put(ImplicitParameters.COLUMN_ID.getKey(), format.format(columnId + (long) shiftNumber)); //$NON-NLS-1$
             }
             return step;
         };

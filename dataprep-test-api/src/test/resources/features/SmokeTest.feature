@@ -3,6 +3,7 @@ Feature: Perform an OS Smoke Test
 
   Scenario: Upload a dataset 10L3C_dataset on OS side from csv
     Given I upload the dataset "/data/10L3C.csv" with name "10L3C_dataset"
+    Then I wait for the dataset "10L3C_dataset" metadata to be computed
     Then A dataset with the following parameters exists :
       | name  | 10L3C_dataset |
       | nbRow | 10            |

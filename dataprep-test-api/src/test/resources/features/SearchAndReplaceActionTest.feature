@@ -3,8 +3,9 @@ Feature: Perform scenarios with SearchAndReplace related action
 
   Scenario: See bug TDP-5243 on SearchAndReplace related action
     Given I upload the dataset "/data/best_sad_songs_of_all_time.csv" with name "best_sad_songs_of_all_time_dataset"
-    Given I create a preparation with name "best_sad_songs_of_all_time_prep", based on "best_sad_songs_of_all_time_dataset" dataset
-    Given I add a "replace_on_value" step identified by "searchReplace" on the preparation "best_sad_songs_of_all_time_prep" with parameters :
+    And I wait for the dataset "best_sad_songs_of_all_time_dataset" metadata to be computed
+    When I create a preparation with name "best_sad_songs_of_all_time_prep", based on "best_sad_songs_of_all_time_dataset" dataset
+    And I add a "replace_on_value" step identified by "searchReplace" on the preparation "best_sad_songs_of_all_time_prep" with parameters :
       | column_id         | 0007                                |
       | replace_value     | 1                                   |
       | cell_value        | {"token":"0","operator":"contains"} |

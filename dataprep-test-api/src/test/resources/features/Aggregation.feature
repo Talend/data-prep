@@ -3,6 +3,7 @@ Feature: Make a aggregation
 
   Scenario: Make an aggregation on a preparation (Average)
     Given I upload the dataset "/data/scores.csv" with name "scores_dataset"
+    Then I wait for the dataset "scores_dataset" metadata to be computed
     And I create a preparation with name "scores_preparation", based on "scores_dataset" dataset
     And I add a "uppercase" step on the preparation "scores_preparation" with parameters :
       | column_name | Name |

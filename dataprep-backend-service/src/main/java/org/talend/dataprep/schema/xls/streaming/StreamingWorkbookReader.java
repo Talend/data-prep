@@ -132,7 +132,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         } catch (GeneralSecurityException e) {
             throw new ReadException("Unable to read workbook - Decryption failed", e);
         } catch (SAXException e) {
-            e.printStackTrace();
+            throw new ReadException("Unable to read workbook", e);
         }
     }
 

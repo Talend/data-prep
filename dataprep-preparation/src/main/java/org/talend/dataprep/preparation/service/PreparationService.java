@@ -180,7 +180,7 @@ public class PreparationService {
         try {
             toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
         } catch (Exception e) {
-            LOGGER.warn("Unable to find dataset name for preparation '{}'", preparation.getId());
+            LOGGER.warn("Unable to find dataset name for preparation '{}'", preparation.getId(), e);
         }
 
         preparationRepository.add(toCreate);

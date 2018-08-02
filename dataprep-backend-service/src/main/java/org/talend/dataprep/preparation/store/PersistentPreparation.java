@@ -36,8 +36,14 @@ public class PersistentPreparation extends PersistentIdentifiable {
     @Version
     private Long version;
 
-    /** The dataset id. */
+    /**
+     * The dataset id.
+     * @deprecated Use {@link #dataSetName} instead.
+     */
+    @Deprecated
     private String dataSetId;
+
+    private String dataSetName;
 
     /** Metadata on which the preparation is based. **/
     private RowMetadata rowMetadata;
@@ -95,10 +101,20 @@ public class PersistentPreparation extends PersistentIdentifiable {
         this.name = name;
     }
 
+    public String getDataSetName() {
+        return dataSetName;
+    }
+
+    public void setDataSetName(String dataSetName) {
+        this.dataSetName = dataSetName;
+    }
+
+    @Deprecated
     public String getDataSetId() {
         return dataSetId;
     }
 
+    @Deprecated
     public void setDataSetId(String dataSetId) {
         this.dataSetId = dataSetId;
     }
@@ -205,6 +221,7 @@ public class PersistentPreparation extends PersistentIdentifiable {
         merge.creationDate = min(other.getCreationDate(), creationDate);
         merge.id = other.getId() != null ? other.getId() : this.id;
         merge.dataSetId = other.getDataSetId() != null ? other.getDataSetId() : dataSetId;
+        merge.dataSetName = other.getDataSetName() != null ? other.getDataSetName() : dataSetName;
         merge.author = other.getAuthor() != null ? other.getAuthor() : author;
         merge.name = other.getName() != null ? other.getName() : name;
         merge.lastModificationDate = max(other.getLastModificationDate(), lastModificationDate);

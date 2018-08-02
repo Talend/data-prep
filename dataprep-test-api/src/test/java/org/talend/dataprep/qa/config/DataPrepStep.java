@@ -35,6 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
+import org.talend.dataprep.helper.VerboseMode;
 import org.talend.dataprep.qa.SpringContextConfiguration;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.PreparationDetails;
@@ -89,12 +90,12 @@ public abstract class DataPrepStep {
     @Autowired
     protected FolderUtil folderUtil;
 
-    @Value("${restassured.debug:false}")
-    private boolean enableRestAssuredDebug;
+    @Value("${restassured.debug:NONE}")
+    private VerboseMode restAssuredDebug;
 
     @PostConstruct
     public void init() {
-        api.setEnableRestAssuredDebug(enableRestAssuredDebug);
+        api.setRestAssuredDebug(restAssuredDebug);
     }
 
     /**

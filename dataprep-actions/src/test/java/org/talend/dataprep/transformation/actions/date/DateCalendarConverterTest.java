@@ -406,6 +406,12 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         rowContent.put("0001", "foo");
         final DataSetRow row2 = new DataSetRow(rowContent);
 
+        // row 3
+        rowContent = new HashMap<>();
+        rowContent.put("0000", "John");
+        rowContent.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        final DataSetRow row3 = new DataSetRow(rowContent);
+
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(ImplicitParameters.SCOPE.getKey().toLowerCase(), "column");
         parameters.put(COLUMN_ID.getKey(), "0001");
@@ -413,11 +419,12 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         parameters.put(TO_CALENDAR_TYPE_PARAMETER, toUnit.name());
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2,row3), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expected, row1.get("0001"));
         assertEquals("foo", row2.get("0001"));
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row3.get("0001"));
     }
 
     @Test

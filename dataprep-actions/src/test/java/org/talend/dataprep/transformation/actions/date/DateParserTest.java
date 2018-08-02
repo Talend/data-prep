@@ -81,6 +81,8 @@ public class DateParserTest {
         assertEquals(expected, actual);
     }
 
+
+
     @Test
     public void parseDateFromPatterns_should_parse_from_multiple_patterns() throws ParseException {
         // given
@@ -92,11 +94,13 @@ public class DateParserTest {
         patterns.add(new DatePattern("yyyy/MM/dd", 1));
         patterns.add(new DatePattern("MM-dd-yy", 1));
         patterns.add(new DatePattern("yy/dd/MM", 1));
+        patterns.add(new DatePattern("yy𠀃dd𠀃MM", 1));
 
         // when/then
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("2015/08/17", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("08-17-15", patterns)));
         assertEquals(expected, dtf.format(action.parseDateFromPatterns("15/17/08", patterns)));
+        assertEquals(expected, dtf.format(action.parseDateFromPatterns("15𠀃17𠀃08", patterns)));
     }
 
     /**

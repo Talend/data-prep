@@ -208,7 +208,7 @@ public class CSVWriter extends AbstractTransformerWriter {
             // Warning: if an exception occurs in the stream it will terminate the stream thus stopping the writing.
             try {
                 objectBuffer.readAll().forEach(this::internalWrite);
-                LOGGER.debug("Finished writing temporary values into TComp.");
+                LOGGER.debug("Finished writing temporary values into the CSV file.");
             } finally {
                 safeCloseObjectBuffer();
             }

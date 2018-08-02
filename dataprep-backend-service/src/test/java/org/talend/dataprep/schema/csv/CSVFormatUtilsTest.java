@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Unit test for CSVFormatUtils.
- * 
+ *
  * @see CSVFormatUtils
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -61,11 +61,11 @@ public class CSVFormatUtilsTest {
         assertEquals("\u0000", entryParameters.get(ESCAPE_CHAR));
         assertEquals("\"", entryParameters.get(TEXT_ENCLOSURE_CHAR));
         assertEquals("|", entryParameters.get(SEPARATOR_PARAMETER));
-        assertEquals("12", entryParameters.get(HEADER_NB_LINES_PARAMETER));
+        assertEquals("0", entryParameters.get(HEADER_NB_LINES_PARAMETER));
         assertEquals(null, entryParameters.get(HEADER_COLUMNS_PARAMETER));
     }
 
-    private Map initMapParam() {
+    private Map<String, String> initMapParam() {
         final Map<String, String> entryParameters = new HashMap<>();
         entryParameters.put(HEADER_NB_LINES_PARAMETER, "12");
         entryParameters.put(HEADER_COLUMNS_PARAMETER,

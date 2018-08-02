@@ -127,12 +127,10 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
             loadSheets(reader, sst, styles, builder.getRowCacheSize());
         } catch (IOException e) {
             throw new OpenException("Failed to open file", e);
-        } catch (OpenXML4JException | XMLStreamException e) {
+        } catch (OpenXML4JException | XMLStreamException | SAXException e) {
             throw new ReadException("Unable to read workbook", e);
         } catch (GeneralSecurityException e) {
             throw new ReadException("Unable to read workbook - Decryption failed", e);
-        } catch (SAXException e) {
-            throw new ReadException("Unable to read workbook", e);
         }
     }
 

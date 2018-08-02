@@ -38,12 +38,13 @@ import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.util.FilesHelper;
+import org.xml.sax.SAXException;
 
 import com.monitorjbl.xlsx.exceptions.OpenException;
 import com.monitorjbl.xlsx.exceptions.ReadException;
@@ -120,7 +121,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
 
             XSSFReader reader = new XSSFReader(pkg);
 
-            SharedStringsTable sst = reader.getSharedStringsTable();
+            ReadOnlySharedStringsTable sst = new ReadOnlySharedStringsTable(pkg);
             StylesTable styles = reader.getStylesTable();
 
             loadSheets(reader, sst, styles, builder.getRowCacheSize());
@@ -130,10 +131,12 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
             throw new ReadException("Unable to read workbook", e);
         } catch (GeneralSecurityException e) {
             throw new ReadException("Unable to read workbook - Decryption failed", e);
+        } catch (SAXException e) {
+            e.printStackTrace();
         }
     }
 
-    void loadSheets(XSSFReader reader, SharedStringsTable sst, StylesTable stylesTable, int rowCacheSize)
+    void loadSheets(XSSFReader reader, ReadOnlySharedStringsTable sst, StylesTable stylesTable, int rowCacheSize)
             throws IOException, InvalidFormatException, XMLStreamException {
         lookupSheetNames(reader.getWorkbookData());
         Iterator<InputStream> iter = reader.getSheetsData();

@@ -97,21 +97,10 @@ public class AnalyzerService {
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {
-        // deal with specific date, even custom date pattern
-        final DateTimePatternRecognizer dateTimePatternFrequencyAnalyzer = new DateTimePatternRecognizer();
-        List<String> patterns = new ArrayList<>(columns.size());
-        for (ColumnMetadata column : columns) {
-            final String pattern = RowMetadataUtils.getMostUsedDatePattern(column);
-            if (StringUtils.isNotBlank(pattern)) {
-                patterns.add(pattern);
-            }
-        }
-        dateTimePatternFrequencyAnalyzer.addCustomDateTimePatterns(patterns);
-
         // warning, the order is important
         List<AbstractPatternRecognizer> patternFrequencyAnalyzers = new ArrayList<>();
         patternFrequencyAnalyzers.add(new EmptyPatternRecognizer());
-        patternFrequencyAnalyzers.add(dateTimePatternFrequencyAnalyzer);
+        patternFrequencyAnalyzers.add(new DateTimePatternRecognizer());
         patternFrequencyAnalyzers.add(new LatinExtendedCharPatternRecognizer());
 
         return new CompositePatternFrequencyAnalyzer(patternFrequencyAnalyzers, TypeUtils.convert(columns));
@@ -215,8 +204,6 @@ public class AnalyzerService {
                 break;
             case QUALITY:
                 final DataTypeQualityAnalyzer dataTypeQualityAnalyzer = new DataTypeQualityAnalyzer(types);
-                columns.forEach(c -> dataTypeQualityAnalyzer
-                        .addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
                 analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
                         new SemanticQualityAnalyzer(dictionarySnapshot, domains, false), true)); // NOSONAR
                 break;
@@ -253,8 +240,7 @@ public class AnalyzerService {
                     }
                 }
                 if (shouldUseTypeAnalysis) {
-                    final List<String> mostUsedDatePatterns = getMostUsedDatePatterns(columns);
-                    analyzers.add(new DataTypeAnalyzer(mostUsedDatePatterns));
+                    analyzers.add(new DataTypeAnalyzer());
                 } else {
                     LOGGER.warn("Disabled {} analysis (conflicts with {}).", setting, Analysis.QUALITY);
                 }

@@ -38,14 +38,13 @@
     hoist-non-react-statics "^1.2.0"
     mock-socket "^7.0.0"
 
-"@talend/react-cmf-webpack-plugin@0.200.1":
-  version "0.200.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf-webpack-plugin/-/react-cmf-webpack-plugin-0.200.1.tgz#626f45c2aa19f4cdf9bed4b2d52edd5afa634e4c"
+"@talend/react-cmf-webpack-plugin@^0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf-webpack-plugin/-/react-cmf-webpack-plugin-0.166.0.tgz#18dfcd060fdbd44c048a04e7ae3b7dddaf514c25"
   dependencies:
-    "@talend/react-cmf" "^0.200.1"
+    "@talend/react-cmf" "^0.166.0"
     chokidar "^2.0.2"
-    deepmerge "^1.5.1"
-    lodash "^4.17.4"
+    deepmerge "1.5.1"
     mkdirp "^0.5.1"
 
 "@talend/react-cmf@0.200.1":
@@ -79,36 +78,14 @@
     redux-storage-engine-localstorage "^1.1.4"
     redux-thunk "^2.2.0"
 
-"@talend/react-cmf@^0.200.1":
-  version "0.200.2"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.200.2.tgz#7179162bc9b167e32bb8f28f96d85a4ffa473095"
+"@talend/react-cmf@^0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.166.0.tgz#493c24d2c176f7ce7fe028f194920e0aa5daa3c1"
   dependencies:
-    ajv "^6.2.1"
-    babel-polyfill "^6.26.0"
-    bson-objectid "^1.1.5"
-    classnames "^2.2.5"
-    deepmerge "^1.5.1"
+    babel-polyfill "6.26.0"
+    deepmerge "1.5.1"
     hoist-non-react-statics "^1.2.0"
-    immutable "^3.8.1"
-    invariant "^2.2.2"
-    jsonpath "^1.0.0"
-    lodash "^4.17.4"
-    mkdirp "^0.5.1"
-    path-to-regexp "^2.0.0"
-    prop-types "^15.5.10"
-    react-immutable-proptypes "^2.1.0"
-    react-redux "^5.0.7"
-    react-router "^3.2.0"
-    react-router-redux "^4.0.8"
-    redux "^3.7.2"
-    redux-batched-actions "^0.2.0"
-    redux-batched-subscribe "^0.1.6"
-    redux-saga "^0.15.4"
-    redux-storage "^4.1.2"
-    redux-storage-decorator-filter "^1.1.8"
-    redux-storage-decorator-immutablejs "^1.0.4"
-    redux-storage-engine-localstorage "^1.1.4"
-    redux-thunk "^2.2.0"
+    react-immutable-proptypes "2.1.0"
 
 "@talend/react-components@0.200.1":
   version "0.200.1"
@@ -1297,7 +1274,7 @@ babel-polyfill@6.23.0:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
 
-babel-polyfill@^6.26.0:
+babel-polyfill@6.26.0, babel-polyfill@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.26.0.tgz#379937abc67d7895970adc621f284cd966cf2153"
   dependencies:
@@ -2871,6 +2848,10 @@ deep-extend@~0.4.0:
 deep-is@~0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
+
+deepmerge@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-1.5.1.tgz#c053bf06fd7276f1994f70c09a0760cb61a56237"
 
 deepmerge@^1.5.1:
   version "1.5.2"

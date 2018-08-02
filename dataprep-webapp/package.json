@@ -105,7 +105,7 @@
     "prop-types": "^15.5.10"
   },
   "devDependencies": {
-    "@talend/react-cmf-webpack-plugin": "0.200.1",
+    "@talend/react-cmf-webpack-plugin": "^0.166.0",
     "angular-mocks": "1.5.9",
     "autoprefixer": "^7.1.4",
     "babel-core": "^6.26.0",

@@ -199,7 +199,7 @@ public class PreparationStep extends DataPrepStep {
     public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
             throws Exception {
         Response response =
-                api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD");
+                api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD", "");
         response.then().statusCode(OK.value());
 
         checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));

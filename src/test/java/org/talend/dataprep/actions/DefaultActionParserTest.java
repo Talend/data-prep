@@ -158,9 +158,13 @@ public class DefaultActionParserTest {
 
     @Test
     public void testActionSample() throws Exception {
+        doTestActionSample("actions_sample1.json");
+    }
+
+    private void doTestActionSample(String actionsFileName) throws Exception {
         // Given
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("actions_sample1.json")) {
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream(actionsFileName)) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -172,12 +176,21 @@ public class DefaultActionParserTest {
     }
 
     @Test
+    public void testActionSampleWithTQLFilter() throws Exception {
+        doTestActionSample("actions_sample1_tql_filter.json");
+    }
+
+    @Test
     public void testPreparationWithVersion() throws Exception {
+        doTestPreparationWithVersion("actions_sample1.json");
+    }
+
+    private void doTestPreparationWithVersion(String actionsFileName) throws Exception {
         // Given
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("actions_sample1.json")) {
-            serverMock.addEndPoint("/api/preparations/" + preparationId + "/versions/" + versionId + "/details", resourceAsStream,
-                    header);
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream(actionsFileName)) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/versions/" + versionId + "/details",
+                    resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId, versionId);
         }
@@ -188,11 +201,17 @@ public class DefaultActionParserTest {
     }
 
     @Test
+    public void testPreparationWithVersionWithTQLFilter() throws Exception {
+        doTestPreparationWithVersion("actions_sample1_tql_filter.json");
+    }
+
+    @Test
     public void testUpperCaseAction() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_uppercase.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_uppercase.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -210,12 +229,15 @@ public class DefaultActionParserTest {
 
     @Test
     public void testUpperCaseActionWithFilterOut() throws Exception {
+        doTestUpperCaseActionWithFilterOut("action_uppercase_filter_out.json");
+    }
+
+    private void doTestUpperCaseActionWithFilterOut(String actionsFileName) throws Exception {
         // Given
         IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "filtered out" });
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "string" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class
-                .getResourceAsStream("action_uppercase_filter_out.json")) {
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream(actionsFileName)) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -234,35 +256,17 @@ public class DefaultActionParserTest {
     }
 
     @Test
-    public void testSplitCaseAction() throws Exception {
-        // Given
-        IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string string", "value" });
-        final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_split.json")) {
-            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
-            serverMock.addEndPoint("/login", "", header);
-            function = parser.parse(preparationId);
-        }
-        assertNotNull(function);
-        assertEquals("string string", record.get(0));
-
-        // When
-        final IndexedRecord result = function.apply(record);
-
-        // Then
-        assertSerializable(function);
-        assertEquals("string string", result.get(0));
-        assertEquals("string", result.get(1));
-        assertEquals("string", result.get(2));
-        assertEquals("", result.get(3));
+    public void testUpperCaseActionWithTQLFilterOut() throws Exception {
+        doTestUpperCaseActionWithFilterOut("action_uppercase_filter_out_tql.json");
     }
 
     @Test
-    public void testSplitCaseActionValueOrder() throws Exception {
+    public void testSplitActionShouldKeepOrder() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string string", "value" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_split.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_split.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -285,11 +289,15 @@ public class DefaultActionParserTest {
 
     @Test
     public void testSplitWithFilter() throws Exception {
+        doTestSplitWithFilter("action_split_filter.json");
+    }
+
+    private void doTestSplitWithFilter(String actionsFileName) throws Exception {
         // Given
         IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "CA", "value to split" });
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "NY", "value NOT to split" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_split_filter.json")) {
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream(actionsFileName)) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -313,11 +321,17 @@ public class DefaultActionParserTest {
     }
 
     @Test
+    public void testSplitWithTQLFilter() throws Exception {
+        doTestSplitWithFilter("action_split_filter_tql.json");
+    }
+
+    @Test
     public void testDeleteAction() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_delete.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_delete.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -341,8 +355,8 @@ public class DefaultActionParserTest {
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "A" });
 
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class
-                .getResourceAsStream("action_delete_invalid.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_delete_invalid.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
@@ -370,8 +384,8 @@ public class DefaultActionParserTest {
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "email@server.com" });
 
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class
-                .getResourceAsStream("action_delete_invalid_email.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_delete_invalid_email.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
@@ -396,7 +410,8 @@ public class DefaultActionParserTest {
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "1", "2" });
 
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_numeric_ops.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_numeric_ops.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -416,16 +431,17 @@ public class DefaultActionParserTest {
     @Test
     public void shouldAllBeSerializable() throws Exception {
         ClassPathActionRegistry registry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
-        final List<? extends Class<? extends ActionDefinition>> nonSerializableActions = registry.getAll().map(action -> { //
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(new NullOutputStream());
-                oos.writeObject(action.newInstance());
-                oos.flush();
-                return null;
-            } catch (Exception e) {
-                return action;
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        final List<? extends Class<? extends ActionDefinition>> nonSerializableActions =
+                registry.getAll().map(action -> { //
+                    try {
+                        ObjectOutputStream oos = new ObjectOutputStream(new NullOutputStream());
+                        oos.writeObject(action.newInstance());
+                        oos.flush();
+                        return null;
+                    } catch (Exception e) {
+                        return action;
+                    }
+                }).filter(Objects::nonNull).collect(Collectors.toList());
 
         assertTrue("Non serializable actions : " + Arrays.toString(nonSerializableActions.toArray()),
                 nonSerializableActions.isEmpty());
@@ -454,8 +470,8 @@ public class DefaultActionParserTest {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string", "string_to_delete" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class
-                .getResourceAsStream("action_delete_column.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_delete_column.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -480,8 +496,10 @@ public class DefaultActionParserTest {
         final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream preparationStream = DefaultActionParserTest.class.getResourceAsStream("single_lookup.json");
-                final InputStream dataSetStream = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json")) {
+        try (final InputStream preparationStream =
+                DefaultActionParserTest.class.getResourceAsStream("single_lookup.json");
+                final InputStream dataSetStream =
+                        DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", preparationStream, header);
             serverMock.addEndPoint("/api/datasets/" + dataSetId1 + "*", dataSetStream, header);
             serverMock.addEndPoint("/login", "", header);
@@ -520,8 +538,10 @@ public class DefaultActionParserTest {
         final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream preparationStream = DefaultActionParserTest.class.getResourceAsStream("upper_with_lookup.json");
-                final InputStream dataSetStream = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json")) {
+        try (final InputStream preparationStream =
+                DefaultActionParserTest.class.getResourceAsStream("upper_with_lookup.json");
+                final InputStream dataSetStream =
+                        DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", preparationStream, header);
             serverMock.addEndPoint("/api/datasets/" + dataSetId1 + "*", dataSetStream, header);
             serverMock.addEndPoint("/login", "", header);
@@ -560,10 +580,12 @@ public class DefaultActionParserTest {
         final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream preparationStream = DefaultActionParserTest.class
-                .getResourceAsStream("two_lookups_with_upper.json");
-                final InputStream dataSetStream1 = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json");
-                final InputStream dataSetStream2 = DefaultActionParserTest.class.getResourceAsStream("lookup_dataset2.json")) {
+        try (final InputStream preparationStream =
+                DefaultActionParserTest.class.getResourceAsStream("two_lookups_with_upper.json");
+                final InputStream dataSetStream1 =
+                        DefaultActionParserTest.class.getResourceAsStream("lookup_dataset1.json");
+                final InputStream dataSetStream2 =
+                        DefaultActionParserTest.class.getResourceAsStream("lookup_dataset2.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", preparationStream, header);
             serverMock.addEndPoint("/api/datasets/" + dataSetId1 + "*", dataSetStream1, header);
             serverMock.addEndPoint("/api/datasets/" + dataSetId2 + "*", dataSetStream2, header);
@@ -605,7 +627,8 @@ public class DefaultActionParserTest {
         IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "string" });
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "header" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_make_line_header.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_make_line_header.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -629,7 +652,8 @@ public class DefaultActionParserTest {
         final String initialEmailAddress = "email@email.com";
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { initialEmailAddress });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(sampleDictionary), header);
@@ -653,7 +677,8 @@ public class DefaultActionParserTest {
         final String initialEmailAddress = "email@email.com";
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { initialEmailAddress });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             serverMock.addEndPoint("/api/transform/dictionary", new ByteArrayInputStream(emptyDictionary), header);
@@ -673,7 +698,8 @@ public class DefaultActionParserTest {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "My String" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_duplicate_column.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_duplicate_column.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -682,7 +708,8 @@ public class DefaultActionParserTest {
 
         // Then
         assertSerializable(function);
-        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that previously
+        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that
+                                                           // previously
                                                            // existed, but ok.
         assertEquals(2, apply.getSchema().getFields().size());
         assertNotNull(apply.getSchema().getField("a1"));
@@ -696,7 +723,8 @@ public class DefaultActionParserTest {
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "cluster2" });
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "unique" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_text_clustering.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_text_clustering.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -720,7 +748,8 @@ public class DefaultActionParserTest {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "email@email.com" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_split_email.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_split_email.json")) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -741,13 +770,16 @@ public class DefaultActionParserTest {
 
     @Test
     public void testKeepInvalidAndEmpty() throws Exception {
+        doTestKeepInvalidAndEmpty("action_invalid_empty_keep.json");
+    }
+
+    private void doTestKeepInvalidAndEmpty(String actionsFileName) throws Exception {
         // Given
         IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "1" });
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "a" });
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class
-                .getResourceAsStream("action_invalid_empty_keep.json")) {
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream(actionsFileName)) {
             serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
             serverMock.addEndPoint("/login", "", header);
             function = parser.parse(preparationId);
@@ -764,6 +796,11 @@ public class DefaultActionParserTest {
         assertNull(result1);
         assertNotNull(result2);
         assertNotNull(result3);
+    }
+
+    @Test
+    public void testKeepInvalidAndEmptyWithTQLFilter() throws Exception {
+        doTestKeepInvalidAndEmpty("action_invalid_empty_keep_tql_filter.json");
     }
 
     private static void assertSerializable(Function<IndexedRecord, IndexedRecord> function) throws IOException {

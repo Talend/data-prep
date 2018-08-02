@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
@@ -44,7 +45,8 @@ public class StandalonePreparationFactoryTest {
 
     private StandalonePreparationFactory factory = new StandalonePreparationFactory();
 
-    private static DictionaryResource dictionaryResource = new DictionaryResource(TdqCategoriesFactory.createFullTdqCategories());
+    private static DictionaryResource dictionaryResource =
+            new DictionaryResource(TdqCategoriesFactory.createFullTdqCategories());
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidJSON() throws Exception {
@@ -63,9 +65,13 @@ public class StandalonePreparationFactoryTest {
 
     @Test
     public void testActionSample() throws Exception {
+        doTestActionSample("actions_sample1.json");
+    }
+
+    private void doTestActionSample(String actionsFileName) throws IOException {
         // Given
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("actions_sample1.json")) {
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream(actionsFileName)) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
 
@@ -75,11 +81,17 @@ public class StandalonePreparationFactoryTest {
     }
 
     @Test
+    public void testActionSampleWithTQLFilter() throws Exception {
+        doTestActionSample("actions_sample1_tql_filter.json");
+    }
+
+    @Test
     public void testUpperCaseAction() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_uppercase.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_uppercase.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -94,33 +106,12 @@ public class StandalonePreparationFactoryTest {
     }
 
     @Test
-    public void testSplitCaseAction() throws Exception {
+    public void testSplitActionShouldKeepOrder() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string string", "value" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_split.json")) {
-            function = factory.create(resourceAsStream, dictionaryResource);
-        }
-        assertNotNull(function);
-        assertEquals("string string", record.get(0));
-
-        // When
-        final IndexedRecord result = function.apply(record);
-
-        // Then
-        assertSerializable(function);
-        assertEquals("string string", result.get(0));
-        assertEquals("string", result.get(1));
-        assertEquals("string", result.get(2));
-        assertEquals("", result.get(3));
-    }
-
-    @Test
-    public void testSplitCaseActionValueOrder() throws Exception {
-        // Given
-        IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string string", "value" });
-        final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_split.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_split.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -141,11 +132,15 @@ public class StandalonePreparationFactoryTest {
 
     @Test
     public void testSplitWithFilter() throws Exception {
+        doTestSplitWithFilter("action_split_filter.json");
+    }
+
+    private void doTestSplitWithFilter(String actionsFileName) throws IOException {
         // Given
         IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "CA", "value to split" });
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "NY", "value NOT to split" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_split_filter.json")) {
+        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream(actionsFileName)) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -167,11 +162,17 @@ public class StandalonePreparationFactoryTest {
     }
 
     @Test
+    public void testSplitWithTQLFilter() throws Exception {
+        doTestSplitWithFilter("action_split_filter_tql.json");
+    }
+
+    @Test
     public void testDeleteAction() throws Exception {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_delete.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_delete.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -193,8 +194,8 @@ public class StandalonePreparationFactoryTest {
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "A" });
 
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class
-                .getResourceAsStream("action_delete_invalid.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_delete_invalid.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -219,8 +220,8 @@ public class StandalonePreparationFactoryTest {
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "email@server.com" });
 
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class
-                .getResourceAsStream("action_delete_invalid_email.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_delete_invalid_email.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -242,7 +243,8 @@ public class StandalonePreparationFactoryTest {
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "1", "2" });
 
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("action_numeric_ops.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_numeric_ops.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -260,16 +262,17 @@ public class StandalonePreparationFactoryTest {
     @Test
     public void shouldAllBeSerializable() throws Exception {
         ClassPathActionRegistry registry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
-        final List<? extends Class<? extends ActionDefinition>> nonSerializableActions = registry.getAll().map(action -> { //
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(new NullOutputStream());
-                oos.writeObject(action.newInstance());
-                oos.flush();
-                return null;
-            } catch (Exception e) {
-                return action;
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        final List<? extends Class<? extends ActionDefinition>> nonSerializableActions =
+                registry.getAll().map(action -> { //
+                    try {
+                        ObjectOutputStream oos = new ObjectOutputStream(new NullOutputStream());
+                        oos.writeObject(action.newInstance());
+                        oos.flush();
+                        return null;
+                    } catch (Exception e) {
+                        return action;
+                    }
+                }).filter(Objects::nonNull).collect(Collectors.toList());
 
         assertTrue("Non serializable actions : " + Arrays.toString(nonSerializableActions.toArray()),
                 nonSerializableActions.isEmpty());
@@ -280,8 +283,8 @@ public class StandalonePreparationFactoryTest {
         // Given
 
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string" });
-        final Function<IndexedRecord, IndexedRecord> function = factory.create(IOUtils.toInputStream("{\"actions\":[]}", "UTF-8"),
-                dictionaryResource);
+        final Function<IndexedRecord, IndexedRecord> function =
+                factory.create(IOUtils.toInputStream("{\"actions\":[]}", "UTF-8"), dictionaryResource);
         assertNotNull(function);
         assertEquals("string", record.get(0));
 
@@ -298,8 +301,8 @@ public class StandalonePreparationFactoryTest {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "string", "string_to_delete" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class
-                .getResourceAsStream("action_delete_column.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("action_delete_column.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -319,12 +322,14 @@ public class StandalonePreparationFactoryTest {
     @Test
     public void testDeleteInvalidCountries() throws Exception {
         // Given
-        final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "1", "01/01/1970", "Taboulistan" });
+        final IndexedRecord record1 =
+                GenericDataRecordHelper.createRecord(new Object[] { "1", "01/01/1970", "Taboulistan" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "1", "5/24/1982", "France" });
-        final IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "1", "11/9/1970", "United States" });
+        final IndexedRecord record3 =
+                GenericDataRecordHelper.createRecord(new Object[] { "1", "11/9/1970", "United States" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream dataSetStream = DefaultActionParserTest.class
-                .getResourceAsStream("delete_invalid_country_preparation.json")) {
+        try (final InputStream dataSetStream =
+                DefaultActionParserTest.class.getResourceAsStream("delete_invalid_country_preparation.json")) {
             StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
 
             // When
@@ -366,8 +371,8 @@ public class StandalonePreparationFactoryTest {
         final IndexedRecord record3 = GenericDataRecordHelper
                 .createRecord(new Object[] { "1", "11/9/1970", "United States", "7.0", "10.0", "M", "True", "134" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream dataSetStream = DefaultActionParserTest.class
-                .getResourceAsStream("split_upper_delete_preparation.json")) {
+        try (final InputStream dataSetStream =
+                DefaultActionParserTest.class.getResourceAsStream("split_upper_delete_preparation.json")) {
             StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
             function = recipeFunctionFactory.create(dataSetStream);
         }
@@ -405,8 +410,8 @@ public class StandalonePreparationFactoryTest {
         final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream dataSetStream = DefaultActionParserTest.class
-                .getResourceAsStream("standalone_preparation_one_lookup_one_upper.json")) {
+        try (final InputStream dataSetStream =
+                DefaultActionParserTest.class.getResourceAsStream("standalone_preparation_one_lookup_one_upper.json")) {
             StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
             function = recipeFunctionFactory.create(dataSetStream);
         }
@@ -443,8 +448,8 @@ public class StandalonePreparationFactoryTest {
         final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream dataSetStream = DefaultActionParserTest.class
-                .getResourceAsStream("standalone_preparation_single_lookup.json")) {
+        try (final InputStream dataSetStream =
+                DefaultActionParserTest.class.getResourceAsStream("standalone_preparation_single_lookup.json")) {
             StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
             function = recipeFunctionFactory.create(dataSetStream);
         }
@@ -481,8 +486,8 @@ public class StandalonePreparationFactoryTest {
         final IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "Rose Bowl", "CA" });
         final IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "Beaver Stadium", "SN" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream dataSetStream = DefaultActionParserTest.class
-                .getResourceAsStream("standalone_preparation_two_lookups_2_upper.json")) {
+        try (final InputStream dataSetStream =
+                DefaultActionParserTest.class.getResourceAsStream("standalone_preparation_two_lookups_2_upper.json")) {
             StandalonePreparationFactory recipeFunctionFactory = new StandalonePreparationFactory();
             function = recipeFunctionFactory.create(dataSetStream);
         }
@@ -521,7 +526,8 @@ public class StandalonePreparationFactoryTest {
         IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "string" });
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "header" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_make_line_header.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_make_line_header.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -543,7 +549,8 @@ public class StandalonePreparationFactoryTest {
         final String initialEmailAddress = "email@email.com";
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { initialEmailAddress });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_mask_email.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -563,14 +570,16 @@ public class StandalonePreparationFactoryTest {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "My String" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_duplicate_column.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_duplicate_column.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
 
         // Then
         assertSerializable(function);
-        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that previously
+        final IndexedRecord apply = function.apply(record);// Preparation tries to create a new column with a name that
+                                                           // previously
                                                            // existed, but ok.
         assertEquals(2, apply.getSchema().getFields().size());
         assertNotNull(apply.getSchema().getField("a1"));
@@ -584,7 +593,8 @@ public class StandalonePreparationFactoryTest {
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "cluster2" });
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "unique" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_text_clustering.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_text_clustering.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -606,7 +616,8 @@ public class StandalonePreparationFactoryTest {
         // Given
         IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { "email@email.com" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream("action_split_email.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_split_email.json")) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -624,14 +635,17 @@ public class StandalonePreparationFactoryTest {
     }
 
     @Test
-    public void testKeepInvalidAndEmpty() throws Exception {
+    public void doTestKeepInvalidAndEmpty() throws Exception {
+        doTestKeepInvalidAndEmpty("action_invalid_empty_keep.json");
+    }
+
+    private void doTestKeepInvalidAndEmpty(String actionsFileName) throws IOException {
         // Given
         IndexedRecord record1 = GenericDataRecordHelper.createRecord(new Object[] { "1" });
         IndexedRecord record2 = GenericDataRecordHelper.createRecord(new Object[] { "a" });
         IndexedRecord record3 = GenericDataRecordHelper.createRecord(new Object[] { "" });
         final Function<IndexedRecord, IndexedRecord> function;
-        try (final InputStream resourceAsStream = DefaultActionParser.class
-                .getResourceAsStream("action_invalid_empty_keep.json")) {
+        try (final InputStream resourceAsStream = DefaultActionParser.class.getResourceAsStream(actionsFileName)) {
             function = factory.create(resourceAsStream, dictionaryResource);
         }
         assertNotNull(function);
@@ -646,6 +660,11 @@ public class StandalonePreparationFactoryTest {
         assertNull(result1);
         assertNotNull(result2);
         assertNotNull(result3);
+    }
+
+    @Test
+    public void testKeepInvalidAndEmptyWithTQLFilter() throws Exception {
+        doTestKeepInvalidAndEmpty("action_invalid_empty_keep_tql_filter.json");
     }
 
     @Test

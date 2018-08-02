@@ -1,0 +1,23 @@
+{
+  "name": "action invalid/empty keep",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "a1",
+        "type": "integer"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "keep_only",
+      "parameters": {
+        "column_id": "0000",
+        "column_name": "a1",
+        "scope": "column",
+        "filter": "((0000 is invalid) or (0000 is empty))"
+      }
+    }
+  ]
+}

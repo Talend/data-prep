@@ -26,7 +26,8 @@ import org.talend.dataprep.qa.dto.Folder;
 @Component
 public class OSIntegrationTestUtil {
 
-    List<String> parametersToBeSuffixed = Arrays.asList("new_domain_id", "new_domain_label");
+    private static final List<String>
+            PARAMETERS_TO_BE_SUFFIXED = Arrays.asList("new_domain_id", "new_domain_label", "lookup_ds_name");
 
     /**
      * Split a folder in a {@link Set} folder and subfolders.
@@ -74,7 +75,7 @@ public class OSIntegrationTestUtil {
         Map<String, Object> actionParameters = params.entrySet().stream() //
                 .filter(entry -> !entry.getKey().startsWith(ActionFilterEnum.INVALID.getJsonName())) //
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                    if (parametersToBeSuffixed.contains(e.getKey())) {
+                    if (PARAMETERS_TO_BE_SUFFIXED.contains(e.getKey())) {
                         return suffixName(e.getValue());
                     } else {
                         return StringUtils.isEmpty(e.getValue()) ? null : e.getValue();

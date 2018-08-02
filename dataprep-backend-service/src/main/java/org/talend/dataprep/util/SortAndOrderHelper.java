@@ -12,9 +12,16 @@
 
 package org.talend.dataprep.util;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
-import org.slf4j.Logger;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+
+import java.beans.PropertyEditor;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -22,16 +29,8 @@ import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 
-import java.beans.PropertyEditor;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.function.Function;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.ILLEGAL_SORT_FOR_LIST;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
 
 /**
  * Utility class used to sort and order DataSets or Preparations.
@@ -84,8 +83,6 @@ public final class SortAndOrderHelper {
             return snakeToCamelCaseConverter.convert(name());
         }
     }
-
-    private static final Logger LOGGER = getLogger(SortAndOrderHelper.class);
 
     private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
             .converterTo(CaseFormat.LOWER_CAMEL);
@@ -201,11 +198,6 @@ public final class SortAndOrderHelper {
      * @return a preparation comparator from the given parameters.
      */
     public static Comparator<PreparationDTO> getPreparationComparator(Sort sortKey, Order orderKey) {
-        return getPreparationComparator(sortKey, orderKey, null);
-    }
-
-    public static Comparator<PreparationDTO> getPreparationComparator(Sort sortKey, Order orderKey,
-            Function<? super PreparationDTO, ? extends DataSetMetadata> dataSetFinder) {
         Comparator<Comparable> comparisonOrder = getOrderComparator(orderKey);
 
         // Select comparator for sort (either by name or date)
@@ -237,14 +229,7 @@ public final class SortAndOrderHelper {
                 keyExtractor = preparation -> preparation.getSteps().size();
                 break;
             case DATASET_NAME:
-                if (dataSetFinder != null) {
-                    keyExtractor = p -> extractDataSetName(dataSetFinder.apply(p));
-                } else {
-                    LOGGER.debug(
-                            "There is no dataset finding function to sort preparations on dataset name. Default to natural name order.");
-                    // default to sort on name
-                    keyExtractor = SortAndOrderHelper::extractPreparationName;
-                }
+                keyExtractor = p -> Optional.ofNullable(p.getDataSetName()).orElse(EMPTY);
                 break;
             default:
                 // this should not be possible

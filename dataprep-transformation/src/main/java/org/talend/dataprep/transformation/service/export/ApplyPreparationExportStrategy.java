@@ -93,8 +93,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final PreparationDTO preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
 
-        try {
-            DataSet dataSet = getDatatset(parameters, dataSetId, preparationId);
+        try (DataSet dataSet = getDatatset(parameters, dataSetId, preparationId)) {
 
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
@@ -124,14 +123,12 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
                 securityProxy.releaseIdentity();
             }
         }
-
     }
 
     /**
      * Return the dataset sample.
      *
      * @param parameters the export parameters
-     * @param
      * @param dataSet the sample
      * @param preparationId the id of the corresponding preparation
      *
@@ -164,6 +161,8 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
             final Configuration configuration = configurationBuilder.build();
 
             factory.get(configuration).buildExecutable(dataSet, configuration).execute();
+
+            tee.flush();
 
         } catch (IOException e1) { // NOSONAR
             LOGGER.debug("evicting cache {}", key.getKey());

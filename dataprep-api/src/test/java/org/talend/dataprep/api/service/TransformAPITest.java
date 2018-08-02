@@ -167,7 +167,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         // given
         final String dataSetId = testClient.createDataset("transformation/cluster_dataset.csv", "testClustering");
         final String expectedClusterParameters = IOUtils.toString(
-                this.getClass().getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
+                this.getClass().getResourceAsStream("transformation/expected_cluster_params_double_metaphone.json"), UTF_8);
 
         // when
         final String actualClusterParameters = given()
@@ -187,7 +187,7 @@ public class TransformAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromFile("transformation/cluster_dataset.csv",
                 "testClustering", home.getId());
         final String expectedClusterParameters = IOUtils.toString(
-                this.getClass().getResourceAsStream("transformation/expected_cluster_params_soundex.json"), UTF_8);
+                this.getClass().getResourceAsStream("transformation/expected_cluster_params_double_metaphone.json"), UTF_8);
 
         // update cache preparation
         testClient.getPreparation(preparationId);

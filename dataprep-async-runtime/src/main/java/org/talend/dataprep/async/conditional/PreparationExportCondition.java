@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
 
 /**
- * Return TRUE if export deal with preparation (there is a preparationId and export parameters) and not a FILTER
+ * Return TRUE if export deal with preparation (there is a preparationId and export parameters)
  */
 @Component
 public class PreparationExportCondition implements ConditionalTest {
@@ -31,8 +31,7 @@ public class PreparationExportCondition implements ConditionalTest {
         Validate.isTrue(args.length == 1);
         Validate.isInstanceOf(ExportParameters.class, args[0]);
 
-        return StringUtils.isNotEmpty(((ExportParameters) args[0]).getPreparationId())
-                && ((ExportParameters) args[0]).getFrom() != ExportParameters.SourceType.FILTER;
+        return StringUtils.isNotEmpty(((ExportParameters) args[0]).getPreparationId());
     }
 
 }

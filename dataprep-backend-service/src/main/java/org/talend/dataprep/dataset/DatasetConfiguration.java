@@ -12,13 +12,13 @@
 
 package org.talend.dataprep.dataset;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @ConfigurationProperties(prefix = "dataset")
@@ -57,12 +57,15 @@ public class DatasetConfiguration {
 
         public enum Provider {LEGACY, CATALOG}
     }
-
     public Service getService() {
         return service;
     }
 
     public String getProvider() {
         return service.getProvider().name().toLowerCase();
+    }
+
+    public boolean isLegacy() {
+        return service.getProvider() == Service.Provider.LEGACY;
     }
 }

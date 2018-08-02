@@ -65,6 +65,8 @@ public class Preparation extends Identifiable implements Serializable {
     /** The user locking the preparation. */
     private BasicUserLock lock;
 
+    private String dataSetName;
+
     /**
      * Default empty constructor.
      */
@@ -243,5 +245,13 @@ public class Preparation extends Identifiable implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, rowMetadata, dataSetId, author, name, creationDate, lastModificationDate, headId);
+    }
+
+    public void setDataSetName(String dataSetName) {
+        this.dataSetName = dataSetName;
+    }
+
+    public String getDataSetName() {
+        return dataSetName;
     }
 }

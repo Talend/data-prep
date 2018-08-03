@@ -247,7 +247,7 @@ describe('Datagrid header controller', () => {
 			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when(true));
 		}));
 
-		it('should update column name', inject((PlaygroundService) => {
+		it('should update column name', inject((PlaygroundService, FilterManagerService) => {
 			//given
 			const ctrl = createController();
 			ctrl.newName = 'new name';
@@ -370,10 +370,10 @@ describe('Datagrid header controller', () => {
 				spyOn(ctrl.filterManagerService, 'addFilter');
 
 				// when
-				ctrl.addFilter('valid_records');
+				ctrl.addFilter('quality', { valid: true });
 
 				//then
-				expect(ctrl.filterManagerService.addFilter).toHaveBeenCalledWith('valid_records', 'id1', 'col1');
+				expect(ctrl.filterManagerService.addFilter).toHaveBeenCalledWith('quality', 'id1', 'col1', { valid: true });
 			})
 		);
 	});

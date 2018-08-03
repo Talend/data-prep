@@ -15,24 +15,29 @@
 
 <div class="filter-value"
      ng-switch="$ctrl.editable">
-    <input type="text"
-           class="form-control"
-           ng-switch-when="true"
-           ng-model="$ctrl.valueToDisplay"
-           title="{{$ctrl.valueToDisplay}}"
-           ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
-           ng-blur="$ctrl.onEdit({value: $ctrl.valueToDisplay})"
-           ng-keydown="$ctrl.onKeydown($event)"
-           ng-trim="false"
-           resizable-input
-    />
+    <span class="filter-value-input"
+          ng-switch-when="true">
+        <input type="text"
+               class="form-control"
+               ng-model="$ctrl.valueToDisplay"
+               title="{{$ctrl.valueToDisplay}}"
+               ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+               ng-blur="$ctrl.onEdit({value: $ctrl.valueToDisplay})"
+               ng-keydown="$ctrl.onKeydown($event)"
+               ng-trim="false"
+               resizable-input
+        />
+    </span>
 
-    <span ng-class="{'empty': $ctrl.valueToDisplay === 'empty records'}"
+    <span class="filter-value-text"
+          ng-class="{'empty': $ctrl.valueToDisplay === 'empty records'}"
           ng-switch-default
           ng-bind-html="$ctrl.valueWithInvisibleChars"
     />
 
-    <a class="filter-value-btn-remove"
-       ng-show="$ctrl.removable"
-       ng-click="$ctrl.onRemove()">&times;</a>
+    <a  class="filter-value-btn-remove"
+        role="button"
+        ng-show="$ctrl.removable"
+        ng-click="$ctrl.onRemove()">&times;
+    </a>
 </div>

@@ -39,7 +39,7 @@ export default function DatagridHeader($timeout) {
 			column: '=',
 		},
 		bindToController: true,
-		controllerAs: 'datagridHeaderCtrl',
+		controllerAs: 'ctrl',
 		controller: 'DatagridHeaderCtrl',
 		link: {
 			post(scope, iElement, iAttrs, ctrl) {

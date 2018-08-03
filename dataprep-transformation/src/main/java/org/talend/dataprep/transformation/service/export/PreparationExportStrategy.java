@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationDTO;
@@ -134,7 +135,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                 contentCache.evict(key);
                 throw e;
             }
-        } catch (TDPException e) {
+        } catch (TalendRuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);

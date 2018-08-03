@@ -10,7 +10,10 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import { INVALID_RECORDS, EMPTY_RECORDS, INVALID_EMPTY_RECORDS } from '../../../services/filter/adapter/filter-adapter-service';
+
+import {
+	QUALITY,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -23,8 +26,6 @@ export default class DatagridIndexHeaderCtrl {
 		'ngInject';
 
 		this.FilterManagerService = FilterManagerService;
-		this.INVALID_RECORDS = INVALID_RECORDS;
-		this.EMPTY_RECORDS = EMPTY_RECORDS;
-		this.INVALID_EMPTY_RECORDS = INVALID_EMPTY_RECORDS;
+		this.QUALITY = QUALITY;
 	}
 }

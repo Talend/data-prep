@@ -30,11 +30,11 @@ const dateFormatter = {
 /**
  * Checks max interval >= the max of data values and  if the min interval < max interval
  */
-function adaptSelection(selection, maxValue) {
+function adaptSelection(selection) {
 	return {
 		min: selection.min,
 		max: selection.max,
-		isMaxReached: selection.max >= maxValue || selection.min >= selection,
+		excludeMax: false,
 	};
 }
 
@@ -65,11 +65,12 @@ function hasComma(value) {
 function getNbDecimalDigit(num) {
 	const match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
 	return Math.max(
-        0,
-        // Number of digits right of decimal point.
-        (match[1] ? match[1].length : 0) -
-        // Adjust for scientific notation.
-        (match[2] ? +match[2] : 0));
+		0,
+		// Number of digits right of decimal point.
+		(match[1] ? match[1].length : 0) -
+			// Adjust for scientific notation.
+			(match[2] ? +match[2] : 0)
+	);
 }
 
 /**
@@ -82,10 +83,10 @@ export default class RangeSliderCtrl {
 		this.dateFormat = DATE_FORMAT;
 	}
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------------UTILS----------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    /**
+	// -----------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------UTILS----------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
+	/**
      * @ngdoc method
      * @name isDateType
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -95,7 +96,7 @@ export default class RangeSliderCtrl {
 		return this.rangeLimits.type === 'date';
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name adaptToInputValue
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -105,12 +106,16 @@ export default class RangeSliderCtrl {
      **/
 	adaptToInputValue(values) {
 		return {
-			min: this.isDateType() ? dateFormatter.format(values.min) : '' + values.min,
-			max: this.isDateType() ? dateFormatter.format(values.max) : '' + values.max,
+			min: this.isDateType()
+				? dateFormatter.format(values.min)
+				: '' + values.min,
+			max: this.isDateType()
+				? dateFormatter.format(values.max)
+				: '' + values.max,
 		};
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name adaptFromInputValue
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -120,12 +125,16 @@ export default class RangeSliderCtrl {
      **/
 	adaptFromInputValue(values) {
 		return {
-			min: this.isDateType() ? +dateFormatter.parse(values.min) : +values.min,
-			max: this.isDateType() ? +dateFormatter.parse(values.max) : +values.max,
+			min: this.isDateType()
+				? +dateFormatter.parse(values.min)
+				: +values.min,
+			max: this.isDateType()
+				? +dateFormatter.parse(values.max)
+				: +values.max,
 		};
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name getLimitsText
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -133,16 +142,16 @@ export default class RangeSliderCtrl {
      * @return {Object} The adapted values
      **/
 	getLimitsText() {
-		const minText = this.isDateType() ?
-            dateFormatter.format(this.rangeLimits.min) :
-            numberFormatter.format(this.rangeLimits.min);
-		const maxText = this.isDateType() ?
-            dateFormatter.format(this.rangeLimits.max) :
-            numberFormatter.format(this.rangeLimits.max);
+		const minText = this.isDateType()
+			? dateFormatter.format(this.rangeLimits.min)
+			: numberFormatter.format(this.rangeLimits.min);
+		const maxText = this.isDateType()
+			? dateFormatter.format(this.rangeLimits.max)
+			: numberFormatter.format(this.rangeLimits.max);
 		return { minText, maxText };
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name adaptToInboundValues
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -157,30 +166,45 @@ export default class RangeSliderCtrl {
 		};
 	}
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------------MODEL----------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    /**
+	// -----------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------MODEL----------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
+	/**
      * @ngdoc method
      * @name initModel
      * @methodOf talend.widget.controller:RangeSliderCtrl
      * @description Initialize the model (last brush and input values) and configuration
      **/
 	initModel() {
-		const minBrush = typeof this.rangeLimits.minBrush !== 'undefined' ? this.rangeLimits.minBrush : this.rangeLimits.min;
-		const maxBrush = typeof this.rangeLimits.maxBrush !== 'undefined' ? this.rangeLimits.maxBrush : this.rangeLimits.max;
-		const minFilter = typeof this.rangeLimits.minFilterVal !== 'undefined' ? this.rangeLimits.minFilterVal : this.rangeLimits.min;
-		const maxFilter = typeof this.rangeLimits.maxFilterVal !== 'undefined' ? this.rangeLimits.maxFilterVal : this.rangeLimits.max;
+		const minBrush =
+			typeof this.rangeLimits.minBrush !== 'undefined'
+				? this.rangeLimits.minBrush
+				: this.rangeLimits.min;
+		const maxBrush =
+			typeof this.rangeLimits.maxBrush !== 'undefined'
+				? this.rangeLimits.maxBrush
+				: this.rangeLimits.max;
+		const minFilter =
+			typeof this.rangeLimits.minFilterVal !== 'undefined'
+				? this.rangeLimits.minFilterVal
+				: this.rangeLimits.min;
+		const maxFilter =
+			typeof this.rangeLimits.maxFilterVal !== 'undefined'
+				? this.rangeLimits.maxFilterVal
+				: this.rangeLimits.max;
 
-		this.nbDecimals = Math.max(getNbDecimalDigit(minBrush), getNbDecimalDigit(maxBrush));
+		this.nbDecimals = Math.max(
+			getNbDecimalDigit(minBrush),
+			getNbDecimalDigit(maxBrush)
+		);
 
 		this.lastValues = {
-            // the brush values
+			// the brush values
 			brush: {
 				min: minBrush,
 				max: maxBrush,
 			},
-            // the input values
+			// the input values
 			input: {
 				min: minFilter,
 				max: maxFilter,
@@ -188,7 +212,7 @@ export default class RangeSliderCtrl {
 		};
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name setLastBrushValues
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -200,7 +224,7 @@ export default class RangeSliderCtrl {
 		this.lastValues.brush.max = values.max;
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name setLastInputValues
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -212,10 +236,10 @@ export default class RangeSliderCtrl {
 		this.lastValues.input.max = values.max;
 	}
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------------BRUSH----------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    /**
+	// -----------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------BRUSH----------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
+	/**
      * @ngdoc method
      * @name updateBrush
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -230,15 +254,13 @@ export default class RangeSliderCtrl {
 			max += Number(exp);
 		}
 
-		this.brushg
-            .transition()
-            .call(this.brush.extent([min, max]));
+		this.brushg.transition().call(this.brush.extent([min, max]));
 	}
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------------INPUT----------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    /**
+	// -----------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------INPUT----------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
+	/**
      * @ngdoc method
      * @name setInputValue
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -249,7 +271,7 @@ export default class RangeSliderCtrl {
 		this.minMaxModel = this.adaptToInputValue(values);
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name resetInputValues
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -260,7 +282,7 @@ export default class RangeSliderCtrl {
 		this.setInputValue(this.lastValues.input);
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name showMsgErr
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -272,7 +294,7 @@ export default class RangeSliderCtrl {
 		this.invalidNumberWithComma = hasComma(minMaxStr);
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name hideMsgErr
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -283,7 +305,7 @@ export default class RangeSliderCtrl {
 		this.invalidNumberWithComma = false;
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name inputsAreValid
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -294,7 +316,7 @@ export default class RangeSliderCtrl {
 		return check(this.minMaxModel.min) && check(this.minMaxModel.max);
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name validateInputs
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -309,7 +331,7 @@ export default class RangeSliderCtrl {
 		}
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name handleKey
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -327,10 +349,10 @@ export default class RangeSliderCtrl {
 		}
 	}
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // -----------------------------------------------PROPAGATION-------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    /**
+	// -----------------------------------------------------------------------------------------------------------------
+	// -----------------------------------------------PROPAGATION-------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
+	/**
      * @ngdoc method
      * @name onChange
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -342,7 +364,7 @@ export default class RangeSliderCtrl {
 		this.onBrushEnd({ interval });
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name onBrushChange
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -355,7 +377,7 @@ export default class RangeSliderCtrl {
 		this.onChange(values);
 	}
 
-    /**
+	/**
      * @ngdoc method
      * @name onInputChange
      * @methodOf talend.widget.controller:RangeSliderCtrl
@@ -366,8 +388,10 @@ export default class RangeSliderCtrl {
 	onInputChange() {
 		if (this.inputsAreValid()) {
 			const adaptedValue = this.adaptFromInputValue(this.minMaxModel);
-			if (adaptedValue.min === this.lastValues.input.min &&
-                adaptedValue.max === this.lastValues.input.max) {
+			if (
+				adaptedValue.min === this.lastValues.input.min &&
+				adaptedValue.max === this.lastValues.input.max
+			) {
 				return;
 			}
 

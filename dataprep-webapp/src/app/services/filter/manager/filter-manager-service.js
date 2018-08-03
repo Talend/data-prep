@@ -11,17 +11,6 @@
 
  ============================================================================*/
 
-import d3 from 'd3';
-import {
-	INVALID_RECORDS,
-	EMPTY_RECORDS,
-	INVALID_EMPTY_RECORDS,
-	VALID_RECORDS,
-	QUALITY,
-} from '../../../services/filter/adapter/filter-adapter-service';
-
-const RANGE_SEPARATOR = ' .. ';
-
 /**
  * @ngdoc service
  * @name data-prep.services.filter.service:FilterService
@@ -33,65 +22,14 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	'ngInject';
 
 	const service = {
-		// utils
-		getRangeLabelFor,
-
-		// life
 		addFilter,
 		addFilterAndDigest,
 		updateFilter,
 		removeAllFilters,
 		removeFilter,
 		toggleFilters,
-		createQualityFilter,
 	};
 	return service;
-
-	//----------------------------------------------------------------------------------------------
-	// ---------------------------------------------------UTILS-------------------------------------
-	//----------------------------------------------------------------------------------------------
-
-	/**
-	 * @ngdoc method
-	 * @name getRangeLabelFor
-	 * @methodOf data-prep.services.filter-manager.service:FilterManagerService
-	 * @description Define an interval label
-	 * @param {Object} interval
-	 * @param {boolean} isDateRange
-	 * @returns {string} interval label
-	 */
-	function getRangeLabelFor(interval, isDateRange) {
-		let label;
-		const formatDate = d3.time.format('%Y-%m-%d');
-		const formatNumber = d3.format(',');
-		let min;
-		let max;
-		if (isDateRange) {
-			min = formatDate(new Date(interval.min));
-			max = formatDate(new Date(interval.max));
-		}
-		else if (angular.isNumber(interval.min)) {
-			min = formatNumber(interval.min);
-			max = formatNumber(interval.max);
-		}
-		else {
-			min = interval.min;
-			max = interval.max;
-		}
-
-		if (min === max) {
-			label = '[' + min + ']';
-		}
-		else {
-			label = '[' + min + RANGE_SEPARATOR + max + (interval.isMaxReached ? ']' : '[');
-		}
-
-		return label;
-	}
-
-	//--------------------------------------------------------------------------------------------------------------
-	// ---------------------------------------------------FILTER LIFE------------------------------------------------
-	//--------------------------------------------------------------------------------------------------------------
 
 	/**
 	 * @ngdoc method
@@ -102,6 +40,7 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function addFilter(type, colId, colName, args, removeFilterFn, keyName) {
 		FilterService.addFilter(type, colId, colName, args, removeFilterFn, keyName);
 		StatisticsService.updateFilteredStatistics();
+		PlaygroundService.updateDatagrid();
 		_saveFilters();
 	}
 
@@ -130,6 +69,7 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function removeAllFilters() {
 		FilterService.removeAllFilters();
 		StatisticsService.updateFilteredStatistics();
+		PlaygroundService.updateDatagrid();
 		StorageService.removeFilter(state.playground.preparation ?
 			state.playground.preparation.id : state.playground.dataset.id);
 	}
@@ -144,6 +84,7 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function removeFilter(filter) {
 		FilterService.removeFilter(filter);
 		StatisticsService.updateFilteredStatistics();
+		PlaygroundService.updateDatagrid();
 		_saveFilters();
 	}
 
@@ -156,6 +97,7 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function toggleFilters() {
 		FilterService.toggleFilters();
 		StatisticsService.updateFilteredStatistics();
+		PlaygroundService.updateDatagrid();
 	}
 
 	/**
@@ -184,26 +126,7 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	function updateFilter(oldFilter, newValue, keyName) {
 		FilterService.updateFilter(oldFilter, newValue, keyName);
 		StatisticsService.updateFilteredStatistics();
+		PlaygroundService.updateDatagrid();
 		_saveFilters();
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name createQualityFilter
-	 * @param {string} type filter type
-	 * @methodOf data-prep.services.filter-manager.service:FilterManagerService
-	 * @description create a quality filter (valid, invalid, empty...)
-	 */
-	function createQualityFilter(type, column) {
-		switch (type) {
-		case VALID_RECORDS:
-		case INVALID_RECORDS:
-		case EMPTY_RECORDS:
-			this.addFilterAndDigest(type, column && column.id, column && column.name);
-			break;
-		case INVALID_EMPTY_RECORDS:
-			this.addFilterAndDigest(QUALITY, column && column.id, column && column.name, { invalid: true, empty: true });
-			break;
-		}
 	}
 }

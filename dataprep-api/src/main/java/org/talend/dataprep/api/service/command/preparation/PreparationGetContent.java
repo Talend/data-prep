@@ -45,7 +45,11 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
      * @param version the preparation version.
      */
     private PreparationGetContent(String id, String version) {
-        this(id, version, HEAD);
+        this(id, version, HEAD, null);
+    }
+
+    private PreparationGetContent(String id, String version, ExportParameters.SourceType from) {
+        this(id, version, from, null);
     }
 
     /**
@@ -53,7 +57,7 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
      * @param version the preparation version.
      * @param from where to read the data from.
      */
-    private PreparationGetContent(String id, String version, SourceType from) {
+    private PreparationGetContent(String id, String version, SourceType from, String filter) {
         super(PREPARATION_GROUP);
 
         execute(() -> {
@@ -63,6 +67,7 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
                 parameters.setStepId(version);
                 parameters.setExportType("JSON");
                 parameters.setFrom(from);
+                parameters.setFilter(filter);
 
                 final String parametersAsString = objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
                 final HttpPost post = new HttpPost(transformationServiceUrl + "/apply");

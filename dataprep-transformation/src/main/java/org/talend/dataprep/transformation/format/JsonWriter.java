@@ -56,6 +56,9 @@ public class JsonWriter implements TransformerWriter {
 
     private static final String RECORDS_FIELD_NAME = "records";
 
+    /** Note: this field is meant to be nested inside the "metadata" field. */
+    private static final String SAMPLE_RECORDS_COUNT_FIELD_NAME = "records";
+
     /** Where this writer should write. */
     private final OutputStream output;
 
@@ -175,6 +178,8 @@ public class JsonWriter implements TransformerWriter {
     private void writeRowMetadataObject(RowMetadata rowMetadata) throws IOException {
         generator.writeFieldName(METADATA_FIELD_NAME);
         generator.writeStartObject();
+        generator.writeFieldName(SAMPLE_RECORDS_COUNT_FIELD_NAME);
+        generator.writeNumber(rowMetadata.getSampleNbRows());
         generator.writeFieldName(METADATA_COLUMNS_FIELD_NAME);
         generator.writeStartArray();
         rowMetadata.getColumns().forEach(col -> {

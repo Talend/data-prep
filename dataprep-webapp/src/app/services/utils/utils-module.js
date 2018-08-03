@@ -25,6 +25,7 @@ import TextFormatService from './text-format/text-format-service';
 import DisableRightClick from './click/disable-right-click-directive';
 import HtmlLang from './html/htmlLang-directive';
 import TitleService from './title/title-service';
+import FilterUtilsService from './filter/filter-utils-service';
 
 
 const MODULE_NAME = 'data-prep.services.utils';
@@ -45,6 +46,7 @@ angular
 	.service('StorageService', StorageService)
 	.service('TextFormatService', TextFormatService)
 	.service('TitleService', TitleService)
+	.service('FilterUtilsService', FilterUtilsService)
 	.directive('disableRightClick', DisableRightClick)
 	.directive('htmlLang', HtmlLang);
 

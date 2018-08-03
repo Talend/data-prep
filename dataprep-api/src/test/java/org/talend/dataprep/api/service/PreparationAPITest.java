@@ -63,6 +63,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -79,6 +80,8 @@ import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.PreparationListItemDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
+import org.talend.dataprep.async.AsyncExecution;
+import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
@@ -754,6 +757,39 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // then
         assertThat(content, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void testPreparationFilteredInitialContent() throws Exception {
+        // given
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGetWithFilter",
+                home.getId());
+
+        final InputStream expected = PreparationAPITest.class
+                .getResourceAsStream("dataset/expected_filtered_dataset_with_columns.json");
+
+        // when
+        final String content = testClient.getPreparationWithFilter(preparationId, "0001 = 'John'").asString();
+
+        // then
+        assertThat(content, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void testPreparationWithMalformedFilterShouldFail() throws Exception {
+        // given
+        final String preparationId =
+                testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGetWithMalformedFilter", home.getId());
+
+        // when
+        Response response = testClient.getFailedPreparationWithFilter(preparationId, "malformed filter");
+
+        // then
+        AsyncExecutionMessage asyncExecutionMessage =
+                mapper.readerFor(AsyncExecutionMessage.class).readValue(response.asString());
+
+        assertEquals(asyncExecutionMessage.getStatus(), AsyncExecution.Status.FAILED);
+        assertEquals(asyncExecutionMessage.getError().getCode(), BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name());
     }
 
     @Test

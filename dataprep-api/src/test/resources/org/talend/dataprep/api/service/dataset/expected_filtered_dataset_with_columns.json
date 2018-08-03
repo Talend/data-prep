@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "id",
+        "type": "integer"
+      },
+      {
+        "id": "0001",
+        "name": "firstname",
+        "type": "string"
+      },
+      {
+        "id": "0002",
+        "name": "lastname",
+        "type": "string"
+      },
+      {
+        "id": "0003",
+        "name": "age",
+        "type": "integer"
+      },
+      {
+        "id": "0004",
+        "name": "date-of-birth",
+        "type": "date"
+      },
+      {
+        "id": "0005",
+        "name": "alive",
+        "type": "boolean"
+      }
+    ]
+  },
+  "records": [
+    {
+      "0000": "1",
+      "0001": "John",
+      "0002": "Lennon",
+      "0003": "40",
+      "0004": "10/09/1940",
+      "0005": "false"
+    }
+  ]
+}

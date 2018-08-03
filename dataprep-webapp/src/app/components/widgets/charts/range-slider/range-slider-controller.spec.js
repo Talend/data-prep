@@ -658,7 +658,7 @@ describe('Range slider controller', () => {
 
                 // then
                 expect(ctrl.onBrushEnd).toHaveBeenCalledWith({
-                    interval: { min: 12, max: 25, isMaxReached: false },
+                    interval: { min: 12, max: 25, excludeMax: false },
                 });
             });
 
@@ -694,7 +694,7 @@ describe('Range slider controller', () => {
 
                 // then
                 expect(ctrl.onBrushEnd).toHaveBeenCalledWith({
-                    interval: { min: 12, max: 40, isMaxReached: true },
+                    interval: { min: 12, max: 40, excludeMax: false },
                 });
             });
         });
@@ -758,7 +758,7 @@ describe('Range slider controller', () => {
 
                 // then
                 expect(ctrl.onBrushEnd).toHaveBeenCalledWith({
-                    interval: { min: 12, max: 40, isMaxReached: true },
+                    interval: { min: 12, max: 40, excludeMax: false },
                 });
             });
         });
@@ -840,7 +840,7 @@ describe('Range slider controller', () => {
 
                 // then
                 expect(ctrl.onBrushEnd).toHaveBeenCalledWith({
-                    interval: { min: 10, max: 115, isMaxReached: true },
+                    interval: { min: 10, max: 115, excludeMax: false },
                 });
             });
 

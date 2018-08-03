@@ -97,21 +97,10 @@ public class AnalyzerService {
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {
-        // deal with specific date, even custom date pattern
-        final DateTimePatternRecognizer dateTimePatternFrequencyAnalyzer = new DateTimePatternRecognizer();
-        List<String> patterns = new ArrayList<>(columns.size());
-        for (ColumnMetadata column : columns) {
-            final String pattern = RowMetadataUtils.getMostUsedDatePattern(column);
-            if (StringUtils.isNotBlank(pattern)) {
-                patterns.add(pattern);
-            }
-        }
-        dateTimePatternFrequencyAnalyzer.addCustomDateTimePatterns(patterns);
-
         // warning, the order is important
         List<AbstractPatternRecognizer> patternFrequencyAnalyzers = new ArrayList<>();
         patternFrequencyAnalyzers.add(new EmptyPatternRecognizer());
-        patternFrequencyAnalyzers.add(dateTimePatternFrequencyAnalyzer);
+        patternFrequencyAnalyzers.add(new DateTimePatternRecognizer());
         patternFrequencyAnalyzers.add(new LatinExtendedCharPatternRecognizer());
 
         return new CompositePatternFrequencyAnalyzer(patternFrequencyAnalyzers, TypeUtils.convert(columns));

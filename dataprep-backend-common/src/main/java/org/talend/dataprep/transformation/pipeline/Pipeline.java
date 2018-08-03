@@ -58,8 +58,6 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    private Node node;
-
     /**
      * Flag used to know if the pipeline is stopped or not.
      */
@@ -72,6 +70,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
      * @see Pipeline#signal(Signal)
      */
     private final transient Object isFinished = new Object();
+
+    private Node node;
 
     /**
      * Default empty constructor.
@@ -111,10 +111,6 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 node.exec().signal(Signal.END_OF_STREAM);
             }
         }
-    }
-
-    public void setNode(Node node) {
-        this.node = node;
     }
 
     @Override
@@ -187,6 +183,10 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
         return node;
     }
 
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
     public static class Builder {
 
         private final List<RunnableAction> actions = new ArrayList<>();
@@ -218,6 +218,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
         private Function<String, RowMetadata> parentStepRowMetadataSupplier = s -> null;
 
         private Long limit = null;
+
+        private RowMetadataFallbackProvider rowMetadataFallbackProvider;
 
         public static Builder builder() {
             return new Builder();
@@ -294,6 +296,11 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             return this;
         }
 
+        public Builder withRowMetadataFallbackProvider(RowMetadataFallbackProvider rowMetadataFallbackProvider) {
+            this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
+            return this;
+        }
+
         public Pipeline build() {
             final NodeBuilder current;
             if (inFilter != null) {
@@ -305,19 +312,24 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             // Apply actions
             final List<RunnableAction> runnableActions;
             if (preparation != null) {
-                LOG.debug("Running using preparation #{} ({} step(s))", preparation.getId(), preparation.getSteps().size());
-                runnableActions = actions.stream() //
+                LOG.debug("Running using preparation #{} ({} step(s))", preparation.getId(),
+                        preparation.getSteps().size());
+                runnableActions = actions
+                        .stream() //
                         .map(a -> {
                             // gather all info for creating runnable actions
                             final Map<String, String> parameters = a.getParameters();
-                            final ScopeCategory scope = ScopeCategory.from(parameters.get(ImplicitParameters.SCOPE.getKey()));
+                            final ScopeCategory scope =
+                                    ScopeCategory.from(parameters.get(ImplicitParameters.SCOPE.getKey()));
                             final ActionDefinition actionDefinition = actionRegistry.get(a.getName());
-                            final CompileDataSetRowAction compile = new CompileDataSetRowAction(parameters, actionDefinition,
-                                    scope);
-                            final ApplyDataSetRowAction apply = new ApplyDataSetRowAction(actionDefinition, parameters, scope);
+                            final CompileDataSetRowAction compile =
+                                    new CompileDataSetRowAction(parameters, actionDefinition, scope);
+                            final ApplyDataSetRowAction apply =
+                                    new ApplyDataSetRowAction(actionDefinition, parameters, scope);
 
                             // Create runnable action
-                            return RunnableAction.Builder.builder() //
+                            return RunnableAction.Builder
+                                    .builder() //
                                     .withCompile(compile) //
                                     .withRow(apply) //
                                     .withName(a.getName()) //
@@ -331,7 +343,9 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             }
 
             // Build nodes for actions
-            final Node actionsNode = ActionNodesBuilder.builder() //
+            final Node actionsNode = ActionNodesBuilder
+                    .builder() //
+                    .rowMetadataFallbackProvider(rowMetadataFallbackProvider) //
                     .initialMetadata(rowMetadata) //
                     .actions(runnableActions) //
                     // statistics requests

@@ -20,7 +20,11 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.*;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -28,7 +32,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -44,7 +48,7 @@ public class StreamingSheetReader implements Iterable<Row> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( StreamingSheetReader.class);
 
-    private final SharedStringsTable sst;
+    private final ReadOnlySharedStringsTable sst;
 
     private final StylesTable stylesTable;
 
@@ -75,7 +79,7 @@ public class StreamingSheetReader implements Iterable<Row> {
     // <dimension ref="A1:B60"/>
     private String dimension = StringUtils.EMPTY;
 
-    public StreamingSheetReader(SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
+    public StreamingSheetReader(ReadOnlySharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
         this.sst = sst;
         this.stylesTable = stylesTable;
         this.parser = parser;

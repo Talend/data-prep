@@ -33,6 +33,8 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.talend.dataprep.qa.dto.DatasetMetadata;
+import org.talend.dataprep.qa.dto.Statistics;
 
 /**
  * Step dealing with dataset.
@@ -202,7 +204,7 @@ public class DatasetStep extends DataPrepStep {
 
     @And("^I wait for the dataset \"(.*)\" metadata to be computed$")
     public void iWaitForTheDatasetMetadataToBeComputed(String datasetName) throws Throwable {
-        waitResponse("Dataset metadata columns.statistics.frequencyTable", metadataTimeout, metadataTimeToWait) //
+        waitResponse("Dataset metadata", metadataTimeout, metadataTimeToWait) //
                 .until(checkDatasetMetadataStatus(datasetName));
     }
 
@@ -214,8 +216,9 @@ public class DatasetStep extends DataPrepStep {
             Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
             response.then().statusCode(OK.value());
 
-            final List<ArrayList> actual = response.body().jsonPath().get("columns.statistics.frequencyTable");
-            return !actual.get(0).isEmpty();
+            final DatasetMetadata actual = response.body().as(DatasetMetadata.class);
+            Statistics columnStatistics = actual.columns.get(0).statistics;
+            return !columnStatistics.frequencyTable.isEmpty() && !columnStatistics.patternFrequencyTable.isEmpty();
         };
     }
 }

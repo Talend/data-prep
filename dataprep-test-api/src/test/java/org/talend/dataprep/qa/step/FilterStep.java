@@ -35,9 +35,7 @@ public class FilterStep extends DataPrepStep {
     }
 
     private void doApplyFilterOnDataSet(String tql, String datasetName) throws Exception {
-        String datasetId = context.getDatasetId(suffixName(datasetName));
-        DatasetContent datasetContent = getDatasetContent(datasetId, tql);
-
+        DatasetContent datasetContent = getDatasetContent(context.getDatasetId(suffixName(datasetName)), tql);
         context.storeObject("dataSetContent", datasetContent);
     }
 
@@ -46,10 +44,21 @@ public class FilterStep extends DataPrepStep {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
 
         DatasetContent datasetContent = (DatasetContent)context.getObject("dataSetContent");
-        checkSampleRecordsCount(datasetContent.metadata.records, expected.get("sample_records_count"));
-        checkRecords(datasetContent.records, expected.get("records"));
+        if (datasetContent == null) {
+            datasetContent = getDatasetContent(context.getDatasetId(suffixName(datasetName)), null);
+        }
 
-        checkQualityPerColumn(datasetContent.metadata.columns, expected.get("quality"));
+        if (expected.get("records") != null) {
+            checkRecords(datasetContent.records, expected.get("records"));
+        }
+
+        if (expected.get("sample_records_count") != null) {
+            checkSampleRecordsCount(datasetContent.metadata.records, expected.get("sample_records_count"));
+        }
+
+        if (expected.get("quality") != null) {
+            checkQualityPerColumn(datasetContent.metadata.columns, expected.get("quality"));
+        }
     }
 
     private void checkSampleRecordsCount(String actualRecordsCount, String expectedRecordsCount) {

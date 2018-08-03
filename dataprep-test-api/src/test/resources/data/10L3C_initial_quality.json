@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "integer",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 10
+        },
+        "id": "0000",
+        "domain": ""
+      },
+      {
+        "name": "firstname",
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 10
+        },
+        "id": "0001",
+        "domain": "FIRST_NAME"
+      },
+      {
+        "name": "date",
+        "type": "date",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 10
+        },
+        "id": "0002",
+        "domain": ""
+      }
+    ],
+    "name": "10L3C"
+  }
+}

@@ -24,6 +24,7 @@ import com.jayway.restassured.response.Response;
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.talend.dataprep.qa.dto.Statistics;
 
 public class FilterStep extends DataPrepStep {
 
@@ -119,10 +120,16 @@ public class FilterStep extends DataPrepStep {
             ContentMetadataColumn column = columns.get(i);
             Assert.assertEquals(expectedColumn.id, column.id);
             Map<String, Integer> expectedQuality = expectedColumn.quality;
+            Statistics expectedStatistics = expectedColumn.statistics;
+
             Map<String, Integer> quality = column.quality;
             Assert.assertEquals(expectedQuality.get("valid"), quality.get("valid"));
             Assert.assertEquals(expectedQuality.get("empty"), quality.get("empty"));
             Assert.assertEquals(expectedQuality.get("invalid"), quality.get("invalid"));
+
+            Statistics statistics = column.statistics;
+            Assert.assertTrue(expectedStatistics.patternFrequencyTable.containsAll(statistics.patternFrequencyTable));
+            Assert.assertTrue(expectedStatistics.frequencyTable.containsAll(statistics.frequencyTable));
         }
     }
 

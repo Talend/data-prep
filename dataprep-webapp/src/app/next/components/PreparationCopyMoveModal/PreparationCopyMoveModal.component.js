@@ -4,7 +4,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Immutable from 'immutable';
 import { cmfConnect, Inject } from '@talend/react-cmf';
 import { SelectObject } from '@talend/react-containers';
-import Form from '@talend/react-containers/lib/Form';
+import { EditableText } from '@talend/react-components';
 
 import './PreparationCopyMoveModal.scss';
 
@@ -60,30 +60,6 @@ export default class PreparationCopyMoveModal extends React.Component {
 			},
 		};
 
-		const form = {
-			formId: FORM_ID,
-			jsonSchema: {
-				type: 'object',
-				properties: {
-					text: {
-						type: 'string',
-					},
-				},
-			},
-			uiSchema: [
-				{
-					key: 'text',
-					title: 'Name',
-				},
-			],
-			actions: [],
-			initialState: Immutable.fromJS({
-				data: {
-					text,
-				},
-			}),
-		};
-
 		return (
 			<Inject
 				component="Dialog"
@@ -92,6 +68,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 				actionbar={bar}
 				show={show}
 			>
+				<EditableText text={text} />
 				<SelectObject
 					source={'folders'}
 					id={'folders'}
@@ -102,7 +79,6 @@ export default class PreparationCopyMoveModal extends React.Component {
 						},
 					}}
 				/>
-				<Form {...form} />
 			</Inject>
 		);
 	}

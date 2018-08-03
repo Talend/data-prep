@@ -8,21 +8,19 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.DatasetMeta;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
@@ -33,7 +31,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.talend.dataprep.qa.dto.DatasetMetadata;
+import org.talend.dataprep.qa.dto.ContentMetadata;
 import org.talend.dataprep.qa.dto.Statistics;
 
 /**
@@ -63,27 +61,27 @@ public class DatasetStep extends DataPrepStep {
     @Given("^A dataset with the following parameters exists :$") //
     public void existDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        List<DatasetMeta> datasetMetas = listDatasetMeta();
+        List<ContentMetadata> datasetMetas = listDatasetMeta();
         assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     @Given("^It doesn't exist any dataset with the following parameters :$") //
     public void notExistDataset(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
-        List<DatasetMeta> datasetMetas = listDatasetMeta();
+        List<ContentMetadata> datasetMetas = listDatasetMeta();
         assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     /**
-     * Count how many {@link DatasetMeta} corresponding to the specified name & row number exists in the given
+     * Count how many {@link ContentMetadata} corresponding to the specified name & row number exists in the given
      * {@link List}.
      *
-     * @param datasetMetas the {@link List} of {@link DatasetMeta} to filter.
+     * @param datasetMetas the {@link List} of {@link ContentMetadata} to filter.
      * @param datasetName the searched dataset name.
      * @param nbRows the searched number of row.
-     * @return the number of corresponding {@link DatasetMeta}.
+     * @return the number of corresponding {@link ContentMetadata}.
      */
-    private long countFilteredDatasetList(List<DatasetMeta> datasetMetas, String datasetName, String nbRows) {
+    private long countFilteredDatasetList(List<ContentMetadata> datasetMetas, String datasetName, String nbRows) {
         return datasetMetas //
                 .stream() //
                 .filter(d -> (suffixName(datasetName).equals(d.name)) //
@@ -94,14 +92,14 @@ public class DatasetStep extends DataPrepStep {
     /**
      * List all accessible datasets.
      *
-     * @return a {@link List} of {@link DatasetMeta}.
+     * @return a {@link List} of {@link ContentMetadata}.
      * @throws IOException in cas of exception.
      */
-    private List<DatasetMeta> listDatasetMeta() throws IOException {
+    private List<ContentMetadata> listDatasetMeta() throws IOException {
         Response response = api.listDatasetDetails();
         response.then().statusCode(OK.value());
         final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
-        return objectMapper.readValue(content, new TypeReference<List<DatasetMeta>>() {
+        return objectMapper.readValue(content, new TypeReference<List<ContentMetadata>>() {
 
         });
     }
@@ -216,7 +214,7 @@ public class DatasetStep extends DataPrepStep {
             Response response = api.getDataSetMetaData(context.getDatasetId(suffixName(datasetName)));
             response.then().statusCode(OK.value());
 
-            final DatasetMetadata actual = response.body().as(DatasetMetadata.class);
+            final ContentMetadata actual = response.body().as(ContentMetadata.class);
             Statistics columnStatistics = actual.columns.get(0).statistics;
             return !columnStatistics.frequencyTable.isEmpty() && !columnStatistics.patternFrequencyTable.isEmpty();
         };

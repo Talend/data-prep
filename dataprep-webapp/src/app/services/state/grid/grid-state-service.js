@@ -12,7 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
-import { chain, find, map, sortBy } from 'lodash';
+import { chain, find, sortBy } from 'lodash';
 
 export const gridState = {
 	dataView: new Slick.Data.DataView({ inlineFilters: false }),
@@ -42,7 +42,6 @@ export function GridStateService() {
 		setSemanticDomains,
 		setPrimitiveTypes,
 		setData,
-		setFilter,
 		setGridSelection,
 		toggleColumnSelection,
 	};
@@ -55,8 +54,8 @@ export function GridStateService() {
 	 * @description Update the number of lines statistics
 	 */
 	function updateLinesCount(data) {
-		gridState.nbLines = gridState.dataView.getLength();
-		gridState.nbTotalLines = data.records.length;
+		gridState.nbLines = data.records.length;
+		gridState.nbTotalLines = data.metadata.records;
 		gridState.displayLinesPercentage = ((gridState.nbLines * 100) / gridState.nbTotalLines).toFixed(0);
 	}
 
@@ -92,51 +91,6 @@ export function GridStateService() {
 				})
 				.mapValues('length')
 				.value();
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name setFilter
-	 * @methodOf data-prep.services.state.service:GridStateService
-	 * @param {array} filters The filters
-	 * @param {object} data The grid data
-	 * @description Update the grid filters
-	 */
-	function setFilter(filters, data) {
-		/**
-		 * @ngdoc method
-		 * @name allFilterFn
-		 * @param {object} item The item to test
-		 * @param {object} args Object containing the filters predicates
-		 * @description Filter function. It iterates over all filters and return if the provided item fit the predicates
-		 * @returns {boolean} True if the item pass all the filters
-		 */
-		const allFilterFn = function allFilterFn(item, args) {
-			// init filters with actual data
-			const initializedFilters = map(args.filters, function (filter) {
-				if (typeof filter === 'function') {
-					return filter(data);
-				}
-			});
-
-			// execute each filter on the value
-			for (let i = 0; i < initializedFilters.length; i++) {
-				const filter = initializedFilters[i];
-				if (filter && !filter(item)) {
-					return false;
-				}
-			}
-
-			return true;
-		};
-
-		gridState.dataView.beginUpdate();
-		gridState.dataView.setFilterArgs({ filters: map(filters, 'filterFn') });
-		gridState.dataView.setFilter(allFilterFn);
-		gridState.dataView.endUpdate();
-
-		updateLinesCount(data);
-		updateFilteredRecords();
 	}
 
 	/**

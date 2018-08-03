@@ -12,44 +12,6 @@
 
 package org.talend.dataprep.api.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.talend.daikon.exception.json.JsonErrorCode;
-import org.talend.dataprep.api.dataset.DataSetGovernance;
-import org.talend.dataprep.api.dataset.DataSetLocation;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.service.info.VersionService;
-import org.talend.dataprep.api.user.UserData;
-import org.talend.dataprep.dataset.service.UserDataSetMetadata;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
-import org.talend.dataprep.parameters.Parameter;
-import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
-import org.talend.dataprep.schema.FormatFamily;
-import org.talend.dataprep.security.Security;
-import org.talend.dataprep.user.store.UserDataRepository;
-
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.path.json.JsonPath.from;
@@ -72,6 +34,44 @@ import static org.talend.dataprep.util.SortAndOrderHelper.Sort.CREATION_DATE;
 import static org.talend.dataprep.util.SortAndOrderHelper.Sort.NAME;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.assertj.core.api.Assertions;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.json.JsonErrorCode;
+import org.talend.dataprep.api.dataset.DataSetGovernance;
+import org.talend.dataprep.api.dataset.DataSetLocation;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.service.info.VersionService;
+import org.talend.dataprep.api.user.UserData;
+import org.talend.dataprep.dataset.service.UserDataSetMetadata;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
+import org.talend.dataprep.parameters.Parameter;
+import org.talend.dataprep.parameters.jsonschema.ComponentProperties;
+import org.talend.dataprep.schema.FormatFamily;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.user.store.UserDataRepository;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 /**
  * Unit test for Data Set API.
  */
@@ -777,6 +777,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
                 .queryParam("metadata", "true")
                 .queryParam("columns", "false")
                 .queryParam("filter", "0001='John'")
+                .when()
                 .get("/api/datasets/{id}", dataSetId);
 
         // then

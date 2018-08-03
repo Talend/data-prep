@@ -21,19 +21,23 @@ export default function ActionsSuggestionsCtrl($translate, state, Transformation
 		{
 			key: 'column',
 			label: $translate.instant('ACTIONS_TAB_COLUMN'),
+			filterable: true,
 		},
 		{
 			key: 'line',
 			label: $translate.instant('ACTIONS_TAB_ROW'),
+			filterable: false,
 		},
 		{
 			key: 'dataset',
 			label: $translate.instant('ACTIONS_TAB_TABLE'),
+			filterable: true,
 		},
 	];
-	vm.selectedKey = vm.scopes[0].key;
+	vm.selectedScope = vm.scopes[0];
 
-	vm.selectScope = function (event, item) {
-		vm.selectedKey = item.key;
+	vm.selectScope = (event, item) => {
+		vm.selectedScope = item;
+		vm.state.playground.filter.applyTransformationOnFilters = false;
 	};
 }

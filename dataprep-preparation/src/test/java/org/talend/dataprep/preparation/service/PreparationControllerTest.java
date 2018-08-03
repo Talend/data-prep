@@ -1433,12 +1433,14 @@ public class PreparationControllerTest extends BasePreparationTest {
 
     @Test
     public void shouldUpdateModificationDateOnDeleteStep() throws Exception {
-        // given
+        // given a preparation with an old last modification date
         final String preparationId = createPreparation("1234", "My preparation");
         applyTransformation(preparationId, "actions/append_upper_case.json");
         final String secondStepId = applyTransformation(preparationId, "actions/append_lower_case.json");
 
         Preparation preparation = repository.get(preparationId, Preparation.class);
+        preparation.setLastModificationDate(1527583994689L);
+        repository.add(preparation);
         final long oldModificationDate = preparation.getLastModificationDate();
 
         // when: delete LOWERCASE
@@ -1731,8 +1733,14 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Map<String, String> parametersWithoutDataset = new HashMap<>();
         parametersWithoutDataset.put("other", "other");
 
-        final List<Action> action1 = singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
+        final List<Action> action1 = singletonList(Action.Builder
+                .builder()
+                .withParameters(parametersWithoutDataset)
+                .build());
+        final List<Action> action2 = singletonList(Action.Builder
+                .builder()
+                .withParameters(parametersOnDataset)
+                .build());
 
         final PreparationActions prepAction1 = new PreparationActions().append(action1);
         final PreparationActions prepAction2 = new PreparationActions().append(action2);
@@ -1760,8 +1768,12 @@ public class PreparationControllerTest extends BasePreparationTest {
         final Map<String, String> parametersWithoutDataset = new HashMap<>();
         parametersWithoutDataset.put("other", "other");
 
-        final List<Action> action1 = singletonList(Action.Builder.builder().withParameters(parametersWithoutDataset).build());
-        final List<Action> action2 = singletonList(Action.Builder.builder().withParameters(parametersOnDataset).build());
+        final List<Action> action1 = singletonList(Action.Builder.builder()
+                .withParameters(parametersWithoutDataset)
+                .build());
+        final List<Action> action2 = singletonList(Action.Builder.builder()
+                .withParameters(parametersOnDataset)
+                .build());
 
         final PreparationActions prepAction1 = new PreparationActions().append(action1);
         final PreparationActions prepAction2 = new PreparationActions().append(action2);

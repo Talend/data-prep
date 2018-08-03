@@ -23,6 +23,7 @@ export const playgroundState = {
 	isReadOnly: false,
 	stepInEditionMode: null,
 	transformationInProgress: false,
+	lastActiveStepId: null,
 };
 
 export function PlaygroundStateService($translate,
@@ -54,6 +55,9 @@ export function PlaygroundStateService($translate,
 		setPreparationName,
 		setNameEditionMode,
 		setData,
+		setLastActiveStepId,
+		getLastActiveStepId,
+		resetLastActiveStepId,
 		updateDatasetRecord,
 		updateDatasetStatistics,
 		setSampleType,
@@ -106,6 +110,7 @@ export function PlaygroundStateService($translate,
 		// filters
 		addGridFilter,
 		updateGridFilter,
+		updateColumnNameInFilters,
 		removeGridFilter,
 		removeAllGridFilters,
 		enableFilters,
@@ -147,13 +152,6 @@ export function PlaygroundStateService($translate,
 	function setData(data) {
 		playgroundState.data = data;
 		GridStateService.setData(data);
-
-		if (filterState.enabled) {
-			GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
-		}
-		else {
-			GridStateService.setFilter([], playgroundState.data);
-		}
 	}
 
 	function setPreparation(preparation) {
@@ -166,6 +164,18 @@ export function PlaygroundStateService($translate,
 
 	function setNameEditionMode(editionMode) {
 		playgroundState.nameEditionMode = editionMode;
+	}
+
+	function setLastActiveStepId(stepId) {
+		playgroundState.lastActiveStepId = stepId;
+	}
+
+	function getLastActiveStepId() {
+		return playgroundState.lastActiveStepId || 'head';
+	}
+
+	function resetLastActiveStepId() {
+		playgroundState.lastActiveStepId = null;
 	}
 
 	function updateDatasetStatistics(metadata) {
@@ -247,34 +257,32 @@ export function PlaygroundStateService($translate,
 	//--------------------------------------------------------------------------------------------------------------
 	function addGridFilter(filter) {
 		FilterStateService.addGridFilter(filter);
-		GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
 		FilterStateService.enableFilters();
+	}
+
+	function updateColumnNameInFilters(columns) {
+		FilterStateService.updateColumnNameInFilters(columns);
 	}
 
 	function updateGridFilter(oldFilter, newFilter) {
 		FilterStateService.updateGridFilter(oldFilter, newFilter);
-		GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
 		FilterStateService.enableFilters();
 	}
 
 	function removeGridFilter(filter) {
 		FilterStateService.removeGridFilter(filter);
-		GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
 	}
 
 	function removeAllGridFilters() {
 		FilterStateService.removeAllGridFilters();
-		GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
 	}
 
 	function enableFilters() {
 		FilterStateService.enableFilters();
-		GridStateService.setFilter(filterState.gridFilters, playgroundState.data);
 	}
 
 	function disableFilters() {
 		FilterStateService.disableFilters();
-		GridStateService.setFilter([], playgroundState.data);
 	}
 
 	function reset() {
@@ -287,6 +295,7 @@ export function PlaygroundStateService($translate,
 		playgroundState.lookupData = null;
 		playgroundState.preparation = null;
 		playgroundState.sampleType = 'HEAD';
+		playgroundState.lastActiveStepId = null;
 		playgroundState.isReadOnly = false;
 		playgroundState.stepInEditionMode = null;
 		playgroundState.isNameValidationVisible = false;

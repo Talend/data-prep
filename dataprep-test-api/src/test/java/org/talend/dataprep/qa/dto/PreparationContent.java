@@ -10,6 +10,6 @@ public class PreparationContent {
 
     public List<Object> records = new ArrayList<>();
 
-    public List<Object> metadatas = new ArrayList<>();
+    public ContentMetadata metadata;
 
 }

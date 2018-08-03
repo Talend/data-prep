@@ -299,12 +299,17 @@ public class OSDataPrepAPIHelper {
      * @param preparationId the preparation id.
      * @param version version of the preparation
      * @param from Where to get the data from (HEAD if no value)
+     * @param tql The TQL filter to apply (pass null if you want the non-filtered preparation content)
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from) throws IOException {
-        Response response = given() //
+    public Response getPreparationContent(String preparationId, String version, String from, String tql) throws IOException {
+        RequestSpecification given = given() //
                 .queryParam(VERSION, version) //
-                .queryParam(FROM, from) //
+                .queryParam(FROM, from);
+        if (tql != null) {
+            given.queryParam("filter", tql);
+        }
+        Response response = given
                 .when() //
                 .get("/api/preparations/{preparationId}/content", preparationId);
 
@@ -317,6 +322,7 @@ public class OSDataPrepAPIHelper {
             response = given() //
                     .queryParam(VERSION, version) //
                     .queryParam(FROM, from) //
+                    .queryParam("filter", tql) //
                     .when() //
                     .get("/api/preparations/{preparationId}/content", preparationId);
         }
@@ -348,13 +354,19 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Get a dataset.
+     * Get a dataset content with filter.
      *
      * @param datasetId the dataset id.
+     * @param tql the TQL filter to apply (pass null in order to get the non-filtered dataset content).
      * @return the response.
      */
-    public Response getDataset(String datasetId) {
-        return given() //
+    public Response getDataset(String datasetId, String tql) throws Exception {
+        RequestSpecification given = given();
+        if (tql != null) {
+            given.queryParam("filter", tql);
+        }
+        given.queryParam("includeTechnicalProperties", "true");
+        return given //
                 .when() //
                 .get("/api/datasets/{datasetId}", datasetId);
     }

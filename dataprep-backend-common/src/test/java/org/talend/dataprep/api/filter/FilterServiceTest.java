@@ -13,7 +13,6 @@
 package org.talend.dataprep.api.filter;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import org.junit.Before;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -22,16 +21,12 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 
 public abstract class FilterServiceTest {
 
-    protected DataSetRow datasetRowFromValues;
-
     protected DataSetRow row;
 
     protected RowMetadata rowMetadata;
 
     @Before
     public void init() {
-        datasetRowFromValues = new DataSetRow(new HashMap<>());
-
         final ColumnMetadata firstColumn = new ColumnMetadata();
         firstColumn.setId("0001");
         final ColumnMetadata secondColumn = new ColumnMetadata();

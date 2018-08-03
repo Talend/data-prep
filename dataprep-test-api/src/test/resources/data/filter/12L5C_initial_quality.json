@@ -1,0 +1,68 @@
+{
+	"metadata":
+	{
+		"columns": [
+			{
+				"name": "id",
+				"type": "integer",
+				"quality":
+				{
+					"empty": 1,
+					"invalid": 2,
+					"valid": 9
+				},
+				"id": "0000",
+				"domain": ""
+			},
+			{
+				"name": "firstname",
+				"type": "string",
+				"quality":
+				{
+					"empty": 2,
+					"invalid": 0,
+					"valid": 10
+				},
+				"id": "0001",
+				"domain": "FIRST_NAME"
+			},
+			{
+				"name": "date",
+				"type": "date",
+				"quality":
+				{
+					"empty": 2,
+					"invalid": 2,
+					"valid": 8
+				},
+				"id": "0002",
+				"domain": ""
+			},
+			{
+				"name": "phone",
+				"type": "string",
+				"quality":
+				{
+					"empty": 0,
+					"invalid": 1,
+					"valid": 11
+				},
+				"id": "0003",
+				"domain": "PHONE"
+			},
+			{
+				"name": "webdomain",
+				"type": "string",
+				"quality":
+				{
+					"empty": 1,
+					"invalid": 0,
+					"valid": 11
+				},
+				"id": "0004",
+				"domain": "WEB_DOMAIN"
+			}
+		],
+		"name": "12L5C"
+	}
+}

@@ -70,6 +70,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.talend.daikon.content.DeletableResource;
 import org.talend.daikon.content.ResourceResolver;
+import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
@@ -587,6 +588,35 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(ids.size(), is(1));
         int statusCode = when().get("/datasets/{id}/content", expectedId).getStatusCode();
         assertEquals("statusCode is:" + statusCode, statusCode, OK.value());
+    }
+
+    @Test
+    public void getWithFilter() throws Exception {
+        final String dataSetId =
+                createCSVDataSet(this.getClass().getResourceAsStream("../avengers.csv"), "dataset with filter");
+        InputStream expected = this.getClass().getResourceAsStream("../avengers_expected_filtered.json");
+
+        String datasetContent = given()
+                .queryParam("metadata", "true")
+                .queryParam("filter", "(0004 = 'New York City')")
+                .get("/datasets/{id}/content", dataSetId)
+                .asString();
+
+        assertThat(datasetContent, sameJSONAsFile(expected));
+    }
+
+    @Test
+    public void getWithMalformedFilterShouldFail() throws Exception {
+        final String dataSetId = createCSVDataSet(this.getClass().getResourceAsStream("../avengers.csv"),
+                "dataset with malformed filter");
+
+        Response response = given()
+                .queryParam("metadata", "true")
+                .queryParam("filter", "((0001 = 'Mike Albergo (Earth-616') or (0001 = 'Bardak (ExdsadsaSarth-616)'")
+                .get("/datasets/{id}/content", dataSetId);
+
+        assertEquals(400, response.statusCode());
+        assertTrue(response.jsonPath().get("code").toString().contains(BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name()));
     }
 
     @Test

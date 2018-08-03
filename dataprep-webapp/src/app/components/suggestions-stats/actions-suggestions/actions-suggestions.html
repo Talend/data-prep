@@ -21,18 +21,18 @@
         items="ctrl.scopes"
         id="'actions-tab-bar'"
         on-select="ctrl.selectScope"
-        selected-key="ctrl.selectedKey"
+        selected-key="ctrl.selectedScope.key"
     ></pure-tab-bar>
     <div class="actions-scope">
         <tab-item
             ng-repeat="scope in ctrl.scopes track by $index"
-            ng-show="scope.key === ctrl.selectedKey"
+            ng-show="scope.key === ctrl.selectedScope.key"
             scope="{{scope.key}}"
             tab-title="{{scope.label}}"
         ></tab-item>
     </div>
 
-    <form ng-if="ctrl.state.playground.filter.gridFilters.length && ctrl.state.playground.filter.enabled"
+    <form ng-if="ctrl.state.playground.filter.gridFilters.length && ctrl.state.playground.filter.enabled && ctrl.selectedScope.filterable"
           class="filters-actions-form">
         <span class="filters-actions-form-span" translate-once="APPLY_CHANGE_TO"></span>
         <div class="radio-inline">

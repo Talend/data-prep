@@ -26,8 +26,6 @@ public class PreparationListItemDTO implements SharedResource {
     /** The preparation name. */
     private String name;
 
-    private String dataSetName;
-
     private List<String> steps;
 
     private Owner owner;

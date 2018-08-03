@@ -150,7 +150,7 @@ public class DateParserTest {
         assertThat(action.guessPattern("July 14 2015", column),
                 anyOf(is(new DatePattern("MMM d yyyy", 1)), is(new DatePattern("MMMM d yyyy", 1))));
         assertEquals(new DatePattern("MMMM d yyyy", 1), action.guessPattern("Juillet 14 2015", column));
-        assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jui 14 2015", column));
+        assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Juil. 14 2015", column));
         assertEquals(new DatePattern("MMM d yyyy", 1), action.guessPattern("Jul 14 2015", column));
     }
 

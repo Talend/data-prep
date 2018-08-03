@@ -1,6 +1,9 @@
 describe('Recipe service', function () {
     'use strict';
-
+	const filterColumns = [
+		{'0000': 'country'},
+		{'0001': 'gender'},
+	];
     let preparationDetails = function () {
         return {
             id: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4',
@@ -30,6 +33,7 @@ describe('Recipe service', function () {
                             },
                         },
                     },
+                    filterColumns,
                 },
                 {
                     action: 'fillemptywithdefault',
@@ -37,12 +41,14 @@ describe('Recipe service', function () {
                         default_value: 'M',
                         column_name: 'gender',
                     },
+                    filterColumns,
                 },
                 {
                     action: 'negate',
                     parameters: {
                         column_name: 'campain',
                     },
+                    filterColumns,
                 },
                 {
                     action: 'cut',
@@ -50,6 +56,7 @@ describe('Recipe service', function () {
                         pattern: '.',
                         column_name: 'first_item',
                     },
+                    filterColumns,
                 },
                 {
                     action: 'textclustering',
@@ -65,6 +72,7 @@ describe('Recipe service', function () {
                         column_name: 'uglystate',
                         column_id: '1',
                     },
+                    filterColumns,
                 },
                 {
                     action: 'fillemptywithdefaultboolean',
@@ -72,12 +80,14 @@ describe('Recipe service', function () {
                         default_value: 'True',
                         column_name: 'campain',
                     },
+                    filterColumns,
                 },
                 {
                     action: 'delete',
                     parameters: {
                         row_id: '125',
                     },
+                    filterColumns,
                 },
             ],
             metadata: [
@@ -470,18 +480,18 @@ describe('Recipe service', function () {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(($q, StateService, ParametersService, TransformationService, FilterAdapterService) => {
+    beforeEach(inject(($q, StateService, ParametersService, TransformationService, TqlFilterAdapterService) => {
         spyOn(ParametersService, 'resetParamValue').and.returnValue();
         spyOn(ParametersService, 'initParamsValues').and.callThrough();
         spyOn(TransformationService, 'initDynamicParameters').and.callFake((transformation) => {
             transformation.cluster = initialCluster();
             return $q.when(transformation);
         });
-        spyOn(FilterAdapterService, 'fromTree').and.returnValue(filtersFromTree);
+        spyOn(TqlFilterAdapterService, 'fromTQL').and.returnValue(filtersFromTree);
         spyOn(StateService, 'setRecipeSteps').and.callFake((initialStep, steps) => {
             stateMock.playground.recipe.current.steps = steps;
         });
-	    spyOn(StateService, 'setRecipeAllowDistributedRun').and.returnValue();
+        spyOn(StateService, 'setRecipeAllowDistributedRun').and.returnValue();
         spyOn(StateService, 'setRecipePreviewSteps').and.returnValue();
         spyOn(StateService, 'restoreRecipeBeforePreview').and.returnValue();
     }));
@@ -518,7 +528,7 @@ describe('Recipe service', function () {
 
             //then
             expect(StateService.setRecipeSteps).toHaveBeenCalled();
-	        expect(StateService.setRecipeAllowDistributedRun).toHaveBeenCalled();
+            expect(StateService.setRecipeAllowDistributedRun).toHaveBeenCalled();
             const args = StateService.setRecipeSteps.calls.argsFor(0);
             const steps = args[1];
 
@@ -651,7 +661,7 @@ describe('Recipe service', function () {
             expect(ParametersService.initParamsValues).toHaveBeenCalledWith(steps[4].transformation, steps[4].actionParameters.parameters);
         }));
 
-        it('should init step filters from backend tree', inject(($rootScope, StateService, FilterAdapterService, RecipeService) => {
+        it('should init step filters from backend tree', inject(($rootScope, StateService, TqlFilterAdapterService, RecipeService) => {
             //given
             stateMock.playground.preparation = { id: '627766216e4b3c99ee5c8621f32ac42f4f87f1b4' };
 
@@ -662,12 +672,12 @@ describe('Recipe service', function () {
             //then
             expect(StateService.setRecipeSteps).toHaveBeenCalled();
             const args = StateService.setRecipeSteps.calls.argsFor(0);
-            const steps = args[1];
-            expect(FilterAdapterService.fromTree).toHaveBeenCalledWith(
-                steps[0].actionParameters.parameters.filter,
-                stateMock.playground.data.metadata.columns
+            const firstStep = args[1][0];
+            expect(TqlFilterAdapterService.fromTQL).toHaveBeenCalledWith(
+                firstStep.actionParameters.parameters.filter,
+                firstStep.actionParameters.filterColumns
             );
-            expect(steps[0].filters).toBe(filtersFromTree);
+            expect(firstStep.filters).toBe(filtersFromTree);
         }));
 
         it('should reuse dynamic params from previous recipe if ids are the same, on refresh', inject(($rootScope, StateService, RecipeService, TransformationService) => {
@@ -707,15 +717,22 @@ describe('Recipe service', function () {
             expect(steps[0].actionParameters).toEqual({
                 action: 'uppercase',
                 parameters: { column_name: 'country', filter: { valid: { field: '0000' } } },
+                filterColumns,
             });
             expect(steps[1].actionParameters).toEqual({
                 action: 'fillemptywithdefault',
                 parameters: { default_value: 'M', column_name: 'gender' },
+	            filterColumns,
             });
-            expect(steps[2].actionParameters).toEqual({ action: 'negate', parameters: { column_name: 'campain' } });
+            expect(steps[2].actionParameters).toEqual({
+                action: 'negate',
+                parameters: { column_name: 'campain' },
+	            filterColumns,
+            });
             expect(steps[3].actionParameters).toEqual({
                 action: 'cut',
                 parameters: { pattern: '.', column_name: 'first_item' },
+	            filterColumns,
             });
             expect(steps[4].actionParameters).toEqual({
                 action: 'textclustering',
@@ -731,10 +748,12 @@ describe('Recipe service', function () {
                     column_id: '1',
                     column_name: 'uglystate',
                 },
+	            filterColumns,
             });
             expect(steps[5].actionParameters).toEqual({
                 action: 'fillemptywithdefaultboolean',
                 parameters: { default_value: 'True', column_name: 'campain' },
+	            filterColumns,
             });
         }));
     });

@@ -47,6 +47,9 @@ export default class FilterValueCtrl {
      * @param event Key event
      */
 	onKeydown(event) {
+		event.stopPropagation();
+		event.stopImmediatePropagation();
+
 		if (event && event.keyCode === 27) {
 			this.valueToDisplay = this.filterValue;
 		}
@@ -55,7 +58,6 @@ export default class FilterValueCtrl {
 			this.onEdit({
 				value: this.valueToDisplay,
 			});
-			event.stopPropagation();
 		}
 	}
 

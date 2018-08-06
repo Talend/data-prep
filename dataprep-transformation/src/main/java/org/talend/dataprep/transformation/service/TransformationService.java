@@ -226,18 +226,16 @@ public class TransformationService extends BaseTransformationService {
             value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
             throws IOException {
 
-        ExportParameters completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-
         // Async behavior
         final ConditionalTest conditionalTest = applicationContext.getBean(GetPrepContentAsyncCondition.class);
-        if (conditionalTest.apply(completeParameters)) {
+        if (conditionalTest.apply(parameters)) {
             // write to cache
-            executeSampleExportStrategy(completeParameters).writeTo(new NullOutputStream());
+            executeSampleExportStrategy(parameters).writeTo(new NullOutputStream());
             return outputStream -> {
             };
         } else {
             // sync behavior
-            return executeSampleExportStrategy(completeParameters);
+            return executeSampleExportStrategy(parameters);
         }
     }
 
@@ -392,14 +390,7 @@ public class TransformationService extends BaseTransformationService {
                         final ExportParameters exportParameters = new ExportParameters();
                         exportParameters.setPreparationId(parameters.getPreparationId());
                         exportParameters.setDatasetId(parameters.getDatasetId());
-                        final String filter = parameters.getFilter();
-                        if (filter != null) {
-                            if (filter.isEmpty()) {
-                                throw new TDPException(CommonErrorCodes.UNABLE_TO_AGGREGATE,
-                                        new IllegalArgumentException("Source should not be empty"));
-                            }
-                            exportParameters.setFilter(mapper.readTree(filter));
-                        }
+                        exportParameters.setFilter(parameters.getFilter());
                         exportParameters.setExportType(JSON);
                         exportParameters.setStepId(parameters.getStepId());
 
@@ -705,16 +696,18 @@ public class TransformationService extends BaseTransformationService {
         }
 
         // look for all actions applicable to the column type
-        return actionRegistry.findAll() //
+        return actionRegistry
+                .findAll() //
                 .filter(am -> am.acceptScope(COLUMN) && am.acceptField(column)) //
                 .map(am -> suggestionEngine.score(am, column)) //
-                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
+                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not
+                                               // applicable)
                 .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
                 .map(am -> am.adapt(column)) // Adapt default values (e.g. column name)
                 .map(ad -> ad.getActionForm(getLocale()));
-        }
+    }
 
     /**
      * Returns all {@link ActionDefinition actions} data prep may apply to a line.
@@ -788,7 +781,7 @@ public class TransformationService extends BaseTransformationService {
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForPreparation(@PathVariable String preparationId) {
         final PreparationDTO preparation = getPreparation(preparationId);
-        final DataSetMetadata metadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+        final DataSetMetadata metadata = datasetClient.getDataSetMetadata( preparation.getDataSetId());
         return getPreparationExportTypesForDataSet(metadata.getId());
     }
 
@@ -904,7 +897,8 @@ public class TransformationService extends BaseTransformationService {
      * @return the preparation from the preparation service.
      */
     private PreparationDTO getPreparation(String preparationId) {
-        final PreparationSummaryGet details = applicationContext.getBean(PreparationSummaryGet.class, preparationId);
+        final PreparationSummaryGet details =
+                    applicationContext.getBean(PreparationSummaryGet.class, preparationId);
         return details.execute();
     }
 

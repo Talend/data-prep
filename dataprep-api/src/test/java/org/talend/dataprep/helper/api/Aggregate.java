@@ -35,7 +35,6 @@ public class Aggregate {
 
     public List<String> groupBy;
 
-    @JsonRawValue
     public String filter;
 
     public void addGroupBy(String groupBy) {

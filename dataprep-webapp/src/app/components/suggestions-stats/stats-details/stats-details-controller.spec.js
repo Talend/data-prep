@@ -76,6 +76,6 @@ describe('Stats-details controller', () => {
 		ctrl.addPatternFilter(obj);
 
 		//then
-		expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('empty_records', '0001', 'firstname', null, null, null);
+		expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('quality', '0001', 'firstname', { empty: true, invalid: false }, null, null);
 	}));
 });

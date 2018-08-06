@@ -17,6 +17,9 @@ import static com.jayway.restassured.http.ContentType.JSON;
 import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
 import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
 import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
+import static org.talend.dataprep.helper.VerboseMode.ALL;
+import static org.talend.dataprep.helper.VerboseMode.NONE;
+import static org.talend.dataprep.helper.VerboseMode.REQUESTS_ONLY;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +86,7 @@ public class OSDataPrepAPIHelper {
 
     private static final String PATH = "path";
 
-    private boolean enableRestAssuredDebug = false;
+    private VerboseMode restAssuredDebug = NONE;
 
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
@@ -111,8 +114,18 @@ public class OSDataPrepAPIHelper {
      */
     public RequestSpecification given() {
         RequestSpecification given = RestAssured.given().baseUri(apiBaseUrl);
-        if (enableRestAssuredDebug) {
+        // just to add a line separator before log the method and the path
+        RestAssured.config().getLogConfig().defaultStream().append(System.lineSeparator());
+        switch (restAssuredDebug) {
+        case ALL:
             given = given.log().all(true);
+            break;
+        case REQUESTS_ONLY:
+            given = given.log().method().log().path();
+            break;
+        case NONE:
+        default:
+            break;
         }
         return given;
     }
@@ -286,12 +299,17 @@ public class OSDataPrepAPIHelper {
      * @param preparationId the preparation id.
      * @param version version of the preparation
      * @param from Where to get the data from (HEAD if no value)
+     * @param tql The TQL filter to apply (pass null if you want the non-filtered preparation content)
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from) throws IOException {
-        Response response = given() //
+    public Response getPreparationContent(String preparationId, String version, String from, String tql) throws IOException {
+        RequestSpecification given = given() //
                 .queryParam(VERSION, version) //
-                .queryParam(FROM, from) //
+                .queryParam(FROM, from);
+        if (tql != null) {
+            given.queryParam("filter", tql);
+        }
+        Response response = given
                 .when() //
                 .get("/api/preparations/{preparationId}/content", preparationId);
 
@@ -304,6 +322,7 @@ public class OSDataPrepAPIHelper {
             response = given() //
                     .queryParam(VERSION, version) //
                     .queryParam(FROM, from) //
+                    .queryParam("filter", tql) //
                     .when() //
                     .get("/api/preparations/{preparationId}/content", preparationId);
         }
@@ -335,13 +354,19 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Get a dataset.
+     * Get a dataset content with filter.
      *
      * @param datasetId the dataset id.
+     * @param tql the TQL filter to apply (pass null in order to get the non-filtered dataset content).
      * @return the response.
      */
-    public Response getDataset(String datasetId) {
-        return given() //
+    public Response getDataset(String datasetId, String tql) throws Exception {
+        RequestSpecification given = given();
+        if (tql != null) {
+            given.queryParam("filter", tql);
+        }
+        given.queryParam("includeTechnicalProperties", "true");
+        return given //
                 .when() //
                 .get("/api/datasets/{datasetId}", datasetId);
     }
@@ -616,12 +641,8 @@ public class OSDataPrepAPIHelper {
         return asyncExecutionMessage;
     }
 
-    public boolean isEnableRestAssuredDebug() {
-        return enableRestAssuredDebug;
-    }
-
-    public OSDataPrepAPIHelper setEnableRestAssuredDebug(boolean enableRestAssuredDebug) {
-        this.enableRestAssuredDebug = enableRestAssuredDebug;
+    public OSDataPrepAPIHelper setRestAssuredDebug(VerboseMode restAssuredDebug) {
+        this.restAssuredDebug = restAssuredDebug;
         return this;
     }
 

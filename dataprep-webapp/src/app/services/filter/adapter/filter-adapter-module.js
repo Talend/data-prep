@@ -13,8 +13,8 @@
 
 import angular from 'angular';
 
-import FilterAdapterService from './filter-adapter-service';
 import TqlFilterAdapterService from './tql-filter-adapter-service';
+import SERVICES_UTILS_MODULE from '../../utils/utils-module';
 
 const MODULE_NAME = 'data-prep.services.filter-adapter';
 
@@ -24,8 +24,7 @@ const MODULE_NAME = 'data-prep.services.filter-adapter';
  * @description This module contains the services to manage filters in the datagrid.
  * It is responsible for the filter update within the SlickGrid grid
  */
-angular.module(MODULE_NAME, [])
-    .service('FilterAdapterService', FilterAdapterService)
+angular.module(MODULE_NAME, [SERVICES_UTILS_MODULE])
 	.service('TqlFilterAdapterService', TqlFilterAdapterService);
 
 export default MODULE_NAME;

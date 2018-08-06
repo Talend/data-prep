@@ -13,15 +13,6 @@
 
 package org.talend.dataprep.api.dataset;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
-import org.talend.dataprep.api.dataset.row.Flag;
-
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -29,6 +20,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.json.ColumnContextDeserializer;
+import org.talend.dataprep.api.dataset.row.Flag;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Models metadata information for a row of a data set.
@@ -51,6 +54,9 @@ public class RowMetadata implements Serializable {
 
     @JsonProperty("nextId")
     private int nextId = 0;
+
+    @JsonIgnore
+    private transient long sampleNbRows;
 
     /**
      * Default empty constructor.
@@ -76,6 +82,20 @@ public class RowMetadata implements Serializable {
         original.columns.forEach(col -> copyColumns.add(ColumnMetadata.Builder.column().copy(col).build()));
         setColumns(new ArrayList<>(copyColumns));
         nextId = original.nextId;
+        sampleNbRows = original.sampleNbRows;
+    }
+
+    public int getNextId() {
+        return nextId;
+    }
+
+    @JsonIgnore
+    public long getSampleNbRows() {
+        return sampleNbRows;
+    }
+
+    public void setSampleNbRows(long sampleNbRows) {
+        this.sampleNbRows = sampleNbRows;
     }
 
     /**
@@ -83,6 +103,15 @@ public class RowMetadata implements Serializable {
      */
     public List<ColumnMetadata> getColumns() {
         return Collections.unmodifiableList(columns);
+    }
+
+    /**
+     * @param columnMetadata the metadata to set.
+     */
+    public void setColumns(List<ColumnMetadata> columnMetadata) {
+        columns.clear();
+        nextId = 0;
+        columnMetadata.forEach(this::addColumn);
     }
 
     /**
@@ -104,15 +133,6 @@ public class RowMetadata implements Serializable {
             }
         }
         return true;
-    }
-
-    /**
-     * @param columnMetadata the metadata to set.
-     */
-    public void setColumns(List<ColumnMetadata> columnMetadata) {
-        columns.clear();
-        nextId = 0;
-        columnMetadata.forEach(this::addColumn);
     }
 
     public ColumnMetadata addColumn(ColumnMetadata columnMetadata) {
@@ -333,4 +353,5 @@ public class RowMetadata implements Serializable {
         columns.remove(movedColumn);
         columns.add(columns.indexOf(columnMetadata) + 1, movedColumn);
     }
+
 }

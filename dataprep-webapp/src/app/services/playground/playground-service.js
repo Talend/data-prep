@@ -60,7 +60,7 @@ export default function PlaygroundService(
 	DatagridService,
 	StorageService,
 	FilterService,
-	FilterAdapterService,
+	TqlFilterAdapterService,
 	PreparationService,
 	PreviewService,
 	RecipeService,
@@ -144,6 +144,8 @@ export default function PlaygroundService(
 	// -------------------------------------------INIT/LOAD----------------------------------------
 	// --------------------------------------------------------------------------------------------
 	function reset(dataset, data, preparation, sampleType = 'HEAD') {
+		const entityId = preparation ? preparation.id : dataset.id;
+
 		// reset
 		StateService.resetPlayground();
 		TransformationCacheService.invalidateCache();
@@ -158,9 +160,9 @@ export default function PlaygroundService(
 		StateService.setCurrentData(data);
 		StateService.setCurrentPreparation(preparation);
 		StateService.setCurrentSampleType(sampleType);
-		FilterService.initFilters(dataset, preparation);
+		FilterService.initFilters(entityId);
 
-		updateGridSelection(dataset, preparation);
+		updateGridSelection(entityId);
 		updatePlayground(data);
 
 		// preparation specific init
@@ -186,14 +188,11 @@ export default function PlaygroundService(
 	 * @ngdoc method
 	 * @name updateGridSelection
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
-	 * @param {object} dataset The dataset to update
-	 * @param {object} preparation The preparation to update
+	 * @param {string} entityId The preparation (or the dataset) id to update
 	 * @description Update grid selection by using localstorage
 	 */
-	function updateGridSelection(dataset, preparation) {
-		const selectedCols = StorageService.getSelectedColumns(
-			preparation ? preparation.id : dataset.id,
-		);
+	function updateGridSelection(entityId) {
+		const selectedCols = StorageService.getSelectedColumns(entityId);
 		if (selectedCols.length) {
 			StateService.setGridSelection(
 				state.playground.grid.columns.filter(
@@ -205,14 +204,32 @@ export default function PlaygroundService(
 
 	/**
 	 * @ngdoc method
+	 * @name getFilters
+	 * @methodOf data-prep.services.playground.service:PlaygroundService
+	 * @param {string} entityId The preparation or the dataset id to load
+	 * @description Get filters as TQL.
+	 * @returns {Object} TQL
+	 */
+	function getFilters(entityId) {
+		FilterService.initFilters(entityId);
+		return state.playground.filter.enabled &&
+			FilterService.stringify(state.playground.filter.gridFilters);
+	}
+
+	/**
+	 * @ngdoc method
 	 * @name loadDataset
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
-	 * @param {string} datasetid The dataset id to load
+	 * @param {string} datasetId The dataset id to load
 	 * @description Initiate a new preparation from dataset.
 	 * @returns {Promise} The process promise
 	 */
-	function loadDataset(datasetid) {
-		return DatasetService.getContent(datasetid, true)
+	function loadDataset(datasetId) {
+		return DatasetService.getContent(
+			datasetId,
+			true,
+			getFilters(datasetId),
+		)
 			.then(data => checkRecords(data))
 			.then(data => reset.call(this, data.metadata, data))
 			.then(() => {
@@ -244,7 +261,13 @@ export default function PlaygroundService(
 	 * @returns {Promise} The process promise
 	 */
 	function loadPreparation(preparation, sampleType = 'HEAD') {
-		return PreparationService.getContent(preparation.id, 'head', sampleType)
+		const preparationId = preparation.id;
+		return PreparationService.getContent(
+			preparationId,
+			'head',
+			sampleType,
+			getFilters(preparationId),
+		)
 			.then(data => reset.call(
 				this,
 				state.playground.dataset ? state.playground.dataset : { id: preparation.dataSetId },
@@ -274,11 +297,16 @@ export default function PlaygroundService(
 	 * @returns {Promise} The process promise
 	 */
 	function loadStep(step) {
+		const tql =
+			state.playground.filter.enabled &&
+			FilterService.stringify(state.playground.filter.gridFilters);
+
 		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
 			step.transformation.stepId,
 			state.playground.sampleType,
+			tql,
 		)
 			.then((response) => {
 				DatagridService.updateData(response);
@@ -447,7 +475,6 @@ export default function PlaygroundService(
 	 * @methodOf data-prep.services.playground.service:PlaygroundService
 	 * @param {string} preparationId The preparation id
 	 * @param {string} headId The head id to set
-	 * @param {string} columnToFocus The column id to focus
 	 * @description Move the preparation head to the specified step
 	 * @returns {promise} The process promise
 	 */
@@ -495,6 +522,7 @@ export default function PlaygroundService(
 	 * in actions history. It there is no preparation yet, it is created first and tagged as draft.
 	 */
 	function appendStep(actions) {
+		StateService.resetLastActiveStepId();
 		startLoader();
 		const actualSteps = state.playground.recipe.current.steps.slice();
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
@@ -613,6 +641,7 @@ export default function PlaygroundService(
 			return;
 		}
 
+		StateService.resetLastActiveStepId();
 		startLoader();
 
 		// If move up or move down buttons, list is not yet updated
@@ -683,6 +712,7 @@ export default function PlaygroundService(
 	function removeStep(step) {
 		startLoader();
 
+		StateService.resetLastActiveStepId();
 		// save the head before transformation for undo
 		const previousHead = StepUtilsService.getLastStep(
 			state.playground.recipe,
@@ -763,11 +793,12 @@ export default function PlaygroundService(
 			switch (scope) {
 			case DATASET:
 				stepParameters.scope = scope;
+
 				if (state.playground.filter.applyTransformationOnFilters) {
-					const stepFilters = FilterAdapterService.toTree(
+					const stepFilters = TqlFilterAdapterService.toTQL(
 						state.playground.filter.gridFilters,
 					);
-					stepParameters = { ...stepParameters, ...stepFilters };
+					stepParameters = { ...stepParameters, filter: stepFilters };
 				}
 				actions = [
 					{ action: action.name, parameters: stepParameters },
@@ -778,10 +809,10 @@ export default function PlaygroundService(
 				stepParameters.row_id = line && line.tdpId;
 
 				if (state.playground.filter.applyTransformationOnFilters) {
-					const stepFilters = FilterAdapterService.toTree(
+					const stepFilters = TqlFilterAdapterService.toTQL(
 						state.playground.filter.gridFilters,
 					);
-					stepParameters = { ...stepParameters, ...stepFilters };
+					stepParameters = { ...stepParameters, filter: stepFilters };
 				}
 				actions = [
 					{ action: action.name, parameters: stepParameters },
@@ -801,10 +832,10 @@ export default function PlaygroundService(
 							state.playground.filter
 								.applyTransformationOnFilters
 						) {
-							const stepFilters = FilterAdapterService.toTree(
+							const stepFilters = TqlFilterAdapterService.toTQL(
 								state.playground.filter.gridFilters,
 							);
-							parameters = { ...parameters, ...stepFilters };
+							parameters = { ...parameters, filter: stepFilters };
 						}
 						return { action: action.name, parameters };
 					},
@@ -881,6 +912,7 @@ export default function PlaygroundService(
 		const stepToLoad = step.inactive
 			? step
 			: StepUtilsService.getPreviousStep(state.playground.recipe, step);
+		StateService.setLastActiveStepId(step.inactive ? 'head' : stepToLoad.transformation.stepId);
 		service.loadStep(stepToLoad);
 	}
 
@@ -928,41 +960,44 @@ export default function PlaygroundService(
 	 * @description Perform an datagrid refresh with the preparation head
 	 */
 	function updatePreparationDatagrid() {
+		const tql =
+			state.playground.filter.enabled &&
+			FilterService.stringify(state.playground.filter.gridFilters);
 		startLoader();
 		return PreparationService.getContent(
 			state.playground.preparation.id,
-			'head',
-			state.playground.sampleType
+			StateService.getLastActiveStepId(),
+			state.playground.sampleType,
+			tql,
 		)
 			.then(updatePlayground)
 			.finally(stopLoader);
 	}
 
-	function updateDatasetDatagrid(tql) {
-		const { dataset } = state.playground;
+	function updateDatasetDatagrid() {
+		const { dataset, filter } = state.playground;
 		if (!dataset) {
 			return;
 		}
+		const tql =
+			filter.enabled &&
+			FilterService.stringify(filter.gridFilters);
+
 		startLoader();
 		return DatasetService.getContent(
 			dataset.id,
 			true,
-			tql
+			tql,
 		)
 			.then(updatePlayground)
 			.finally(stopLoader);
 	}
 
 	function updateDatagrid() {
-		const { filter, preparation } = state.playground;
-		if (preparation && preparation.id) {
+		if (state.playground.preparation && state.playground.preparation.id) {
 			return updatePreparationDatagrid();
 		}
-		const tql =
-			filter.enabled &&
-			filter.isTQL &&
-			FilterService.stringify(filter.gridFilters);
-		return updateDatasetDatagrid(tql);
+		return updateDatasetDatagrid();
 	}
 
 	// TODO : temporary fix because asked to.
@@ -977,6 +1012,39 @@ export default function PlaygroundService(
 		return data;
 	}
 
+	function cleanFilters(data) {
+		const filtersToRemove = state.playground.filter.gridFilters.filter(
+			filter => filter.colId !== '*' && !data.metadata.columns.find(col => col.id === filter.colId),
+		);
+
+		if (filtersToRemove && filtersToRemove.length) {
+			filtersToRemove.forEach(filter => FilterService.removeFilter(filter));
+			StatisticsService.updateFilteredStatistics();
+			StorageService.saveFilter(
+				state.playground.preparation ? state.playground.preparation.id : state.playground.dataset.id,
+				state.playground.filter.gridFilters,
+			);
+
+			return true;
+		}
+	}
+
+	function updateColumnNameInFilters(data) {
+		if (data && data.metadata && data.metadata.columns && data.metadata.columns.length) {
+			FilterService.updateColumnNameInFilters(data.metadata.columns);
+		}
+	}
+
+	function updatePlayground(data) {
+		if (cleanFilters(data)) {
+			updateDatagrid();
+		}
+		else {
+			updateColumnNameInFilters(data);
+			DatagridService.updateData(data);
+			PreviewService.reset(false);
+		}
+	}
 	//------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------STATS REFRESH-------------------------------------------
 	//------------------------------------------------------------------------------------------------------
@@ -1105,10 +1173,5 @@ export default function PlaygroundService(
 		else {
 			$state.go(state.route.previous, state.route.previousOptions);
 		}
-	}
-
-	function updatePlayground(data) {
-		DatagridService.updateData(data);
-		PreviewService.reset(false);
 	}
 }

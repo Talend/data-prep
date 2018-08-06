@@ -24,6 +24,8 @@ describe('Grid state service', () => {
                 { id: '0002', type: 'decimal' },
                 { id: '0003', type: 'date' },
             ],
+            records: 12,
+            sampleNbRows: 12,
         },
         records: [
             { tdpId: 0, firstname: 'Tata' },
@@ -72,49 +74,6 @@ describe('Grid state service', () => {
     beforeEach(inject((gridState) => {
         gridState.dataView = new DataViewMock();
     }));
-
-    describe('filter', () => {
-        it('should set filters to DataView', inject((gridState, GridStateService) => {
-            //given
-            gridState.selectedColumns = [];
-            gridState.dataView.setItems(data.records, 'tdpId');
-            const filterFnCol1 = () => (item) => (item.col1.indexOf('toto') > -1);
-            const filterFnCol2 = () => (item) => (item.col2.indexOf('toto') > -1);
-            const filters = [
-                { filterFn: filterFnCol1 },
-                { filterFn: filterFnCol2 },
-            ];
-
-            //when
-            GridStateService.setFilter(filters, data);
-
-            //then
-            const filterFn = gridState.dataView.filter;
-            expect(filterFn({ col1: 'mon toto', col2: 'toto tata titi' })).toBe(true);
-            expect(filterFn({ col1: 'mon tutu', col2: 'toto tata titi' })).toBe(false);
-            expect(filterFn({ col1: 'mon toto', col2: 'tutu tata titi' })).toBe(false);
-        }));
-
-        it('should grid line stats', inject((gridState, GridStateService) => {
-            //given
-            gridState.selectedColumns = [];
-            gridState.dataView.setItems(data.records.slice(0, 2), 'tdpId');
-            const filterFnCol1 = () => (item) => (item.col1.indexOf('toto') > -1);
-            const filterFnCol2 = () => (item) => (item.col2.indexOf('toto') > -1);
-            const filters = [
-                { filterFn: filterFnCol1 },
-                { filterFn: filterFnCol2 },
-            ];
-
-            //when
-            GridStateService.setFilter(filters, data);
-
-            //then
-            expect(gridState.nbLines).toBe(2);
-            expect(gridState.nbTotalLines).toBe(12);
-            expect(gridState.displayLinesPercentage).toBe('17');
-        }));
-    });
 
     describe('data', () => {
         it('should set data to DataView', inject((gridState, GridStateService) => {
@@ -471,30 +430,6 @@ describe('Grid state service', () => {
 
         beforeEach(inject((gridState) => {
             gridState.dataView.setItems(filteredRecords);
-        }));
-
-        it('should update filtered records on filter change', inject((gridState, GridStateService) => {
-            //given
-            gridState.filteredRecords = null;
-            gridState.selectedColumns = [{ id: '0003' }];
-
-            //when
-            GridStateService.setFilter([], { columns: [], records: filteredRecords });
-
-            //then
-            expect(gridState.filteredRecords).toEqual(filteredRecords);
-        }));
-
-        it('should update filtered records occurrences on filter change', inject((gridState, GridStateService) => {
-            //given
-            gridState.filteredOccurences = null;
-            gridState.selectedColumns = [{ id: '0003' }];
-
-            //when
-            GridStateService.setFilter([], { columns: [], records: filteredRecords });
-
-            //then
-            expect(gridState.filteredOccurences).toEqual({ DEV: 2, CP: 1 });
         }));
 
         it('should update filtered records on data change', inject((gridState, GridStateService) => {

@@ -2,6 +2,7 @@ package org.talend.dataprep.preparation.event;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -94,4 +95,25 @@ public class PreparationEventUtilTest {
         verify(securityProxy, times(1)).asTechnicalUserForDataSet();
         verify(securityProxy, times(3)).releaseIdentity();
     }
+
+    @Test
+    public void shouldUpdateDataSetName() {
+        // given
+        final DataSetMetadata metadata = new DataSetMetadata();
+        metadata.setId("ds-1234");
+        metadata.setName("My updated name");
+
+        final PersistentPreparation preparation = mock(PersistentPreparation.class);
+
+        when(preparationRepository.list(eq(PersistentPreparation.class), eq(TqlBuilder.eq("dataSetId", "ds-1234"))))
+                .thenReturn(Stream.of(preparation), Stream.of(preparation));
+        when(datasetClient.getDataSetMetadata(eq("ds-1234"))).thenReturn(metadata);
+
+        // when
+        preparationEventUtil.performUpdateEvent(metadata.getId());
+
+        // then
+        verify(preparation, times(1)).setDataSetName(eq("My updated name"));
+    }
+
 }

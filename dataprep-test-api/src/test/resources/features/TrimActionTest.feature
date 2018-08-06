@@ -4,6 +4,7 @@ Feature: Perform scenarios with some Trim related action
   # Check date, the column type is modified after the trim action (TDP-4926 & TDP-5057)
   Scenario: Calculate Date Until Now & Change DatePattern after a Trim change Type with column creation
     Given I upload the dataset "/data/best_sad_songs_of_all_time.csv" with name "best_sad_songs_dataset"
+    Then I wait for the dataset "best_sad_songs_dataset" metadata to be computed
     Given I create a preparation with name "best_sad_songs_prep", based on "best_sad_songs_dataset" dataset
     And I add a "trim" step identified by "trim_date" on the preparation "best_sad_songs_prep" with parameters :
       | column_id         | 0007 |

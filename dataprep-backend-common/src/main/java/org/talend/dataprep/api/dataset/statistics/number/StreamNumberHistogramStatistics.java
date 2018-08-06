@@ -93,7 +93,7 @@ public class StreamNumberHistogramStatistics {
      * @param d the value to add to this histogram
      */
     public void add(double d) {
-        if (d == Double.POSITIVE_INFINITY || d == Double.NEGATIVE_INFINITY) {
+        if (Double.isInfinite(d)) {
             return;
         }
 

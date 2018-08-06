@@ -147,11 +147,13 @@ export const RAW_FOLDERS_HIERACHY = {
 
 export const FORMATTED_FOLDERS_HIERACHY = [
 	{
+		actionCreator: 'folder:open',
 		id: 'L3Rlc3QgZm9sZGVyIDI=',
 		text: 'test folder 2',
 		title: 'test folder 2',
 	},
 	{
+		actionCreator: 'folder:open',
 		id: 'L3Rlc3QgZm9sZGVyIDE=',
 		text: 'test folder 1',
 		title: 'test folder 1',

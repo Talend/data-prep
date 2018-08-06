@@ -15,6 +15,8 @@ package org.talend.dataprep.preparation.store;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -22,6 +24,7 @@ import org.springframework.data.annotation.Version;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.preparation.BasicUserLock;
 import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.Step;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -58,7 +61,7 @@ public class PersistentPreparation extends PersistentIdentifiable {
     private long creationDate = System.currentTimeMillis();
 
     /** The last modification date. */
-    private long lastModificationDate;
+    private long lastModificationDate = System.currentTimeMillis();
 
     /** The head id. */
     private String headId;
@@ -68,7 +71,7 @@ public class PersistentPreparation extends PersistentIdentifiable {
     private String appVersion;
 
     /** List of the steps id for this preparation. */
-    private List<String> steps;
+    private List<String> steps = new ArrayList<>(Collections.singletonList(Step.ROOT_STEP.id()));
 
     /** The user locking the preparation. */
     private BasicUserLock lock;
@@ -222,6 +225,7 @@ public class PersistentPreparation extends PersistentIdentifiable {
         merge.id = other.getId() != null ? other.getId() : this.id;
         merge.dataSetId = other.getDataSetId() != null ? other.getDataSetId() : dataSetId;
         merge.dataSetName = other.getDataSetName() != null ? other.getDataSetName() : dataSetName;
+        merge.folderId = other.getFolderId() != null ? other.getFolderId() : folderId;
         merge.author = other.getAuthor() != null ? other.getAuthor() : author;
         merge.name = other.getName() != null ? other.getName() : name;
         merge.lastModificationDate = max(other.getLastModificationDate(), lastModificationDate);

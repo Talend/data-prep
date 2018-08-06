@@ -67,6 +67,8 @@ public class Preparation extends Identifiable implements Serializable {
 
     private String dataSetName;
 
+    private String folderId;
+
     /**
      * Default empty constructor.
      */
@@ -253,5 +255,13 @@ public class Preparation extends Identifiable implements Serializable {
 
     public String getDataSetName() {
         return dataSetName;
+    }
+
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
     }
 }

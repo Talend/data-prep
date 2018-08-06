@@ -18,7 +18,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.dataprep.upgrade.model.UpgradeTask.target.USER;
 import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
@@ -100,6 +105,7 @@ public class UpgradeService {
 
         LOG.info("Global upgrade process starting");
 
+        int alreadyApplied = 0;
         int numberOfTasksApplied = 0;
         for (UpgradeTask task : tasks) {
 
@@ -115,19 +121,20 @@ public class UpgradeService {
 
             if (repository.isAlreadyApplied(targetId, taskId)) {
                 LOG.debug("{} already applied, let's skip it", taskId);
+                alreadyApplied++;
             } else {
                 LOG.debug("apply upgrade {}", taskId);
                 try {
                     task.run();
                 } catch (Exception exception) {
-                    LOG.error("Failed to apply upgrade {}", taskId);
+                    LOG.error("Failed to apply upgrade {}", taskId, exception);
                     break;
                 }
                 repository.applied(targetId, taskId);
                 numberOfTasksApplied++;
             }
         }
-        LOG.info("Global upgrade process finished, {} upgrade(s) performed", numberOfTasksApplied);
+        LOG.info("Global upgrade process finished, {}/{} upgrade(s) performed ({} already applied).", numberOfTasksApplied, tasks.size(), alreadyApplied);
     }
 
     public void upgradeUser(String userId) {
@@ -155,7 +162,7 @@ public class UpgradeService {
             }
 
         }
-        LOG.info("Upgrade process finished for user {}, {} upgrade(s) performed", userId, numberOfTasksApplied);
+        LOG.info("Upgrade process finished for user {}, {}/{} upgrade(s) performed", userId, numberOfTasksApplied, tasks.size());
     }
 
     void setTasks(List<UpgradeTask> tasks) {

@@ -15,7 +15,6 @@
 
 import d3 from 'd3';
 import angular from 'angular';
-import store from 'store';
 import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';

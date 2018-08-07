@@ -266,6 +266,15 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         }
     }
 
+    /**
+     * Update the default dataset service url.
+     * Default value came from the property <pre>dataset.service.url</pre>
+     * @param datasetServiceUrl
+     */
+    public void setDatasetServiceUrl(String datasetServiceUrl) {
+        this.datasetServiceUrl = datasetServiceUrl;
+    }
+
     private Span addTrackingHeaders(HttpRequestBase request) {
         final Package commandPackage = this.getClass().getPackage();
         final StringTokenizer tokenizer = new StringTokenizer(commandPackage.getName(), ".");

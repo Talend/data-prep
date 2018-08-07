@@ -69,6 +69,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 				show={show}
 			>
 				<EditableText text={text} />
+				<hr className={'modal-separator'} />
 				<SelectObject
 					source={'folders'}
 					id={'folders'}

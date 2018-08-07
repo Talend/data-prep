@@ -70,7 +70,7 @@
     "preparation:copy:move:cancel": {
       "id": "preparation:copy:move:cancel",
       "label": "Cancel",
-      "bsStyle": "link",
+      "bsStyle": "default btn-inverse",
       "actionCreator": "preparation:copy:move:cancel"
     },
     "preparation:move:open": {

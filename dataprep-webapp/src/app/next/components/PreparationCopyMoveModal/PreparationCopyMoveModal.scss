@@ -1,3 +1,38 @@
+.modal-body {
+	padding: {
+		top: 10px;
+		left: 32px;
+		right: 32px;
+	}
+}
+
+.tc-editable-text {
+	.tc-editable-text-text-wording-button.btn-link {
+		color: $dove-gray;
+	}
+
+	.tc-editable-text-form {
+		padding-left: 0;
+		width: 100%;
+
+		.form-group {
+			width: 100%;
+
+			.tc-editable-text-form-input {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.modal-separator {
+	border-color: $alto;
+	margin: {
+		top: 10px;
+		bottom: 10px;
+	}
+}
+
 .tc-select-object {
 	max-width: inherit;
 }

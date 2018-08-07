@@ -17,9 +17,7 @@ import static com.jayway.restassured.http.ContentType.JSON;
 import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
 import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
 import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
-import static org.talend.dataprep.helper.VerboseMode.ALL;
 import static org.talend.dataprep.helper.VerboseMode.NONE;
-import static org.talend.dataprep.helper.VerboseMode.REQUESTS_ONLY;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,19 +89,11 @@ public class OSDataPrepAPIHelper {
     @Value("${backend.api.url:http://localhost:8888}")
     private String apiBaseUrl;
 
+    @Value("${execution.context:CLOUD}")
     private ITExecutionContext executionContext;
 
-    /**
-     * Try to guess the execution context from the API url. A bit dirty, should be cleaned up when all endpoints url are
-     * uniformized between CLOUD and ON_PREMISE.
-     */
     @PostConstruct
     public void initExecutionContext() {
-        if (apiBaseUrl.contains("cloud")) {
-            executionContext = ITExecutionContext.CLOUD;
-        } else {
-            executionContext = ITExecutionContext.ON_PREMISE;
-        }
         LOGGER.info("Start Integration Test on '{}'", executionContext == ITExecutionContext.CLOUD ? "Cloud" : "On Premise");
     }
 

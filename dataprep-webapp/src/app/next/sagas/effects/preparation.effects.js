@@ -32,7 +32,6 @@ export function* fetch(payload) {
 	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
 	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}/preparations`);
 	yield put(actions.collections.addOrReplace('preparations', PreparationService.transform(JSON.parse(data))));
-	yield* fetchFolder(payload);
 }
 
 export function* openFolder(id) {

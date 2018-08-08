@@ -237,14 +237,14 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 			const firstHistogramItem = _.first(state.playground.grid.selectedColumns[0].statistics.histogram.items);
 			const lastHistogramItem = _.last(state.playground.grid.selectedColumns[0].statistics.histogram.items);
 			rangeLimits = {
-				min: firstHistogramItem.range.min,
-				max: lastHistogramItem.range.max,
+				min: cleanNumber(firstHistogramItem.range.min),
+				max: cleanNumber(lastHistogramItem.range.max),
 			};
 		}
 		else {
 			rangeLimits = {
-				min: statistics.min,
-				max: statistics.max,
+				min: cleanNumber(statistics.min),
+				max: cleanNumber(statistics.max),
 			};
 		}
 
@@ -464,7 +464,16 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	 * @returns {number} The value in the clean format
 	 */
 	function cleanNumber(value) {
-		return isNaN(value) || value === parseInt(value, 10) ? value : +value.toFixed(2);
+		const parsed = Number(value);
+
+		if (parsed === Infinity) {
+			return Number.MAX_SAFE_INTEGER;
+		}
+		else if (parsed === -Infinity) {
+			return Number.MIN_SAFE_INTEGER;
+		}
+
+		return isNaN(parsed) || parsed === parseInt(parsed, 10) ? parsed : +parsed.toFixed(2);
 	}
 
 	/**
@@ -589,7 +598,6 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	 */
 	function initBoxplotData() {
 		const specStats = state.playground.statistics.details.specific;
-
 		StateService.setStatisticsBoxPlot(
 			{
 				min: specStats.MIN,
@@ -617,7 +625,6 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		const selectedColumn = state.playground.grid.selectedColumns[0];
 		const columnMin = selectedColumn.statistics.min;
 		const columnMax = selectedColumn.statistics.max;
-
 		return function removeFilterFn(filter) {
 			const actualSelectedColumn = state.playground.grid.selectedColumns[0];
 			if (filter.colId === actualSelectedColumn.id) {

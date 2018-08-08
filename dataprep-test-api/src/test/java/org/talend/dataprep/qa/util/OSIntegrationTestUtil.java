@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.helper.api.ActionFilterEnum;
 import org.talend.dataprep.qa.dto.Folder;
 
 /**
@@ -73,7 +72,6 @@ public class OSIntegrationTestUtil {
     @NotNull
     public Map<String, Object> mapParamsToActionParameters(@NotNull Map<String, String> params) {
         Map<String, Object> actionParameters = params.entrySet().stream() //
-                .filter(entry -> !entry.getKey().startsWith(ActionFilterEnum.INVALID.getJsonName())) //
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     if (PARAMETERS_TO_BE_SUFFIXED.contains(e.getKey())) {
                         return suffixName(e.getValue());

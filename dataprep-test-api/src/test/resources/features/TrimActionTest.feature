@@ -11,25 +11,22 @@ Feature: Perform scenarios with some Trim related action
       | create_new_column | true |
     Then I check that a step like "trim_date" exists in the preparation "best_sad_songs_prep"
     Given I add a "change_date_pattern" step identified by "changeDate1" on the preparation "best_sad_songs_prep" with parameters :
-      | column_id           | 0009               |
-      | from_pattern_mode   | unknown_separators |
-      | new_pattern         | custom             |
-      | custom_date_pattern | yyyy/MM/dd  H:mm   |
-      | create_new_column   | true               |
+      | column_id         | 0009               |
+      | from_pattern_mode | unknown_separators |
+      | new_pattern       | yyyy/MM/dd H:mm    |
+      | create_new_column | true               |
     Then I check that a step like "changeDate1" exists in the preparation "best_sad_songs_prep"
     Given I add a "change_date_pattern" step identified by "changeDate2" on the preparation "best_sad_songs_prep" with parameters :
-      | column_id           | 0010               |
-      | from_pattern_mode   | unknown_separators |
-      | new_pattern         | custom             |
-      | custom_date_pattern | dd.MM.yy           |
-      | create_new_column   | true               |
+      | column_id         | 0010               |
+      | from_pattern_mode | unknown_separators |
+      | new_pattern       | dd.MM.yyyy         |
+      | create_new_column | true               |
     Then I check that a step like "changeDate2" exists in the preparation "best_sad_songs_prep"
     Given I add a "change_date_pattern" step identified by "changeDate3" on the preparation "best_sad_songs_prep" with parameters :
-      | column_id           | 0011               |
-      | from_pattern_mode   | unknown_separators |
-      | new_pattern         | custom             |
-      | custom_date_pattern | d-M-yyyy           |
-      | create_new_column   | true               |
+      | column_id         | 0011               |
+      | from_pattern_mode | unknown_separators |
+      | new_pattern       | yyyy-MM-dd         |
+      | create_new_column | true               |
     Then I check that a step like "changeDate3" exists in the preparation "best_sad_songs_prep"
     Given I add a "compute_time_since" step identified by "calculUntil" on the preparation "best_sad_songs_prep" with parameters :
       | column_id         | 0012             |
@@ -39,7 +36,7 @@ Feature: Perform scenarios with some Trim related action
       | specific_date     | 2016-03-01 00:00 |
     Then I check that a step like "calculUntil" exists in the preparation "best_sad_songs_prep"
     Given I update the first step like "changeDate1" on the preparation "best_sad_songs_prep" with the following parameters :
-      | custom_date_pattern | dd.MM.yyyy. |
+      | new_pattern | dd.MM.yyyy |
 
   Scenario: Export best_sad_songs_prep preparation and check the exported file best_sad_songs_result.csv
   # escape and enclosure characters should be given because they can be empty

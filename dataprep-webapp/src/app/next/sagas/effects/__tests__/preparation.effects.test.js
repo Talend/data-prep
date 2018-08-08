@@ -67,7 +67,6 @@ describe('preparation', () => {
 	describe('fetch', () => {
 		beforeEach(() => {
 			PreparationService.transform = jest.fn(() => 'rofl');
-			PreparationService.transformFolder = jest.fn(() => 'folders');
 		});
 
 		it('should update cmf store with default folder id', () => {
@@ -83,19 +82,6 @@ describe('preparation', () => {
 			expect(effectPUT.collectionId).toBe('preparations');
 			expect(effectPUT.data).toEqual('rofl');
 			expect(PreparationService.transform).toHaveBeenCalledWith(
-				API_PAYLOAD
-			);
-			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folder/Lw==')
-			);
-
-			const effect = gen.next(API_RESPONSE).value.PUT.action;
-			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('Breadcrumbs');
-			expect(effect.componentState).toEqual(new Map({ items: 'folders' }));
-			expect(PreparationService.transformFolder).toHaveBeenCalledWith(
 				API_PAYLOAD
 			);
 			expect(gen.next().done).toBeTruthy();
@@ -118,6 +104,39 @@ describe('preparation', () => {
 			expect(PreparationService.transform).toHaveBeenCalledWith(
 				API_PAYLOAD
 			);
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('fetchFolder', () => {
+		beforeEach(() => {
+			PreparationService.transformFolder = jest.fn(() => 'folders');
+		});
+
+		it('should update Breadcrumb cmf store with default folder id', () => {
+			const payload = {};
+			const gen = effects.fetchFolder(payload);
+			expect(gen.next().value.SELECT).toBeDefined();
+			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
+				call(http.get, '/api/folder/Lw==')
+			);
+
+			const effect = gen.next(API_RESPONSE).value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('default');
+			expect(effect.componentName).toEqual('Breadcrumbs');
+			expect(effect.componentState).toEqual(new Map({ items: 'folders' }));
+			expect(PreparationService.transformFolder).toHaveBeenCalledWith(
+				API_PAYLOAD
+			);
+			expect(gen.next().done).toBeTruthy();
+		});
+		it('should update Breadcrumb cmf store with folder id', () => {
+			const folderId = 'FOLDER_ID';
+			const payload = {
+				folderId,
+			};
+			const gen = effects.fetchFolder(payload);
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
 				call(http.get, '/api/folder/FOLDER_ID')

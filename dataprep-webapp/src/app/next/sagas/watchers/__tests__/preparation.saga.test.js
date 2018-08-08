@@ -1,4 +1,4 @@
-import { call, take } from 'redux-saga/effects';
+import { all, call, take } from 'redux-saga/effects';
 import sagas from '../preparation.saga';
 import * as effects from '../../effects/preparation.effects';
 import {
@@ -46,8 +46,12 @@ describe('preparation', () => {
 			};
 
 			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
-			expect(gen.next(action).value).toEqual(call(effects.fetch, action.payload));
-
+			expect(gen.next(action).value).toEqual(
+				all([
+					call(effects.fetch, action.payload),
+					call(effects.fetchFolder, action.payload),
+				])
+			);
 			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
 		});
 	});

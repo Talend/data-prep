@@ -13,31 +13,37 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import com.netflix.hystrix.HystrixCommand;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.command.common.ChainedCommand;
-
-import java.io.InputStream;
-
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 
+import java.io.InputStream;
+
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.service.command.AsyncGenericCommand;
+import org.talend.dataprep.api.service.command.common.ChainedAsyncCommand;
+import org.talend.dataprep.api.service.command.common.ChainedCommand;
+
+import com.netflix.hystrix.HystrixCommand;
+
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class SuggestActionParams extends ChainedCommand<InputStream, InputStream> {
+public class SuggestAsyncActionParams extends ChainedAsyncCommand<InputStream, InputStream> {
 
-    private SuggestActionParams(final HystrixCommand<InputStream> content, final String action,
-            final String columnId) {
+    private SuggestAsyncActionParams(final AsyncGenericCommand<InputStream> content, final String action,
+                                     final String columnId) {
         super(content);
         execute(() -> {
             final String uri = transformationServiceUrl + "/transform/suggest/" + action + "/params?columnId=" + columnId;
             final HttpPost getParametersCall = new HttpPost(uri);
-            final InputStreamEntity entity = new InputStreamEntity(getInput());
+
+            ResponseEntity<InputStream> repsonse =  getInput();
+            final InputStreamEntity entity = new InputStreamEntity(repsonse.getBody());
             getParametersCall.setEntity(entity);
             return getParametersCall;
         });

@@ -22,6 +22,8 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -101,11 +103,15 @@ public class Defaults {
         };
     }
 
+    /** This class' logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
+
     /**
      * @return An empty {@link InputStream stream} whatever request or response contains.
      */
     public static BiFunction<HttpRequestBase, HttpResponse, InputStream> emptyStream() {
         return (request, response) -> {
+            LOGGER.error("********** emptyStream"+response.getStatusLine());
             request.releaseConnection();
             EntityUtils.consumeQuietly(response.getEntity());
             return new ByteArrayInputStream(new byte[0]);

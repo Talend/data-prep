@@ -586,7 +586,7 @@ describe('Recipe controller', () => {
 			expect(PlaygroundService.updateStep).toHaveBeenCalled();
 			const callArgs = PlaygroundService.updateStep.calls.argsFor(0);
 			expect(callArgs[0]).toBe(stepWithMultipleFilters);
-			expect(callArgs[1].filter).toEqual({ contains: { field: '0002', value: ['toto'] } });
+			expect(callArgs[1].filter).toEqual("((0002 contains 'toto'))");
 		}));
 	});
 
@@ -611,15 +611,8 @@ describe('Recipe controller', () => {
 		let stepDeleteLinesWithSingleFilter;
 		let stepWithMultipleFilters;
 
-		beforeEach(inject((FilterAdapterService) => {
-			spyOn(FilterAdapterService, 'toTree').and.returnValue({
-				filter: {
-					contains: {
-						field: '0002',
-						value: ['toto'],
-					},
-				},
-			});
+		beforeEach(inject((TqlFilterAdapterService) => {
+			spyOn(TqlFilterAdapterService, 'toTQL').and.returnValue('0002 contains toto');
 			stepDeleteLinesWithSingleFilter = {
 				transformation: { label: 'Delete lines' },
 				actionParameters: {
@@ -648,7 +641,7 @@ describe('Recipe controller', () => {
 			expect(PlaygroundService.updateStep).toHaveBeenCalled();
 			const callArgs = PlaygroundService.updateStep.calls.argsFor(0);
 			expect(callArgs[0]).toBe(stepWithMultipleFilters);
-			expect(callArgs[1].filter).toEqual({ contains: { field: '0002', value: ['toto'] } });
+			expect(callArgs[1].filter).toEqual('0002 contains toto');
 		}));
 
 		it('should show warning message on delete lines step with last filter removal', inject(($q, PlaygroundService, MessageService) => {

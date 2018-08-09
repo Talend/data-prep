@@ -4,6 +4,7 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.DATASET_ID;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.EXPORT_TYPE;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILENAME;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILTER;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.PREPARATION_ID;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.STEP_ID;
 import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
@@ -18,7 +19,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.helper.api.Filter;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.export.ExportParam;
 import org.talend.dataprep.qa.util.export.ExportUtil;
@@ -88,16 +88,16 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         exportUtil.feedExportParam(ret, FILENAME, filename);
 
         exportUtil.feedExportParam(ret, EXPORT_TYPE, getExportTypeName());
+        exportUtil.feedExportParam(ret, FILTER, params);
 
         for (ExportParam exportParam : getExtraExportParameter()) {
             exportUtil.feedExportParam(ret, exportParam, params);
         }
 
         // manage filter : for example for fetchmore
-        Filter filter = util.mapParamsToFilter(params);
-        if (filter != null) {
-            String jsonFilter = objectMapper.writeValueAsString(filter);
-            ret.put("filter", jsonFilter);
+        String tqlFilter = params.get(FILTER.getName());
+        if (tqlFilter != null) {
+            ret.put("filter", tqlFilter);
             ret.put("from", "FILTER");
         }
 

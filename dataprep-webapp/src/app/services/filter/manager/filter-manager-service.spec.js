@@ -10,13 +10,16 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+
 import {
 	INVALID_RECORDS,
 	EMPTY_RECORDS,
 	INVALID_EMPTY_RECORDS,
 	VALID_RECORDS,
 	QUALITY,
-} from '../adapter/filter-adapter-service';
+} from '../adapter/tql-filter-adapter-service';
+
 
 describe('Filter Manager Service', () => {
 
@@ -44,23 +47,24 @@ describe('Filter Manager Service', () => {
 		spyOn(FilterService, 'removeFilter').and.returnValue();
 		spyOn(FilterService, 'toggleFilters').and.returnValue();
 		spyOn(FilterService, 'updateFilter').and.returnValue();
+		spyOn(FilterService, 'updateColumnNameInFilters').and.returnValue();
 		spyOn(StorageService, 'saveFilter').and.returnValue();
 		spyOn(StorageService, 'removeFilter').and.returnValue();
 		spyOn(PlaygroundService, 'updateDatagrid').and.returnValue();
 	}));
 
 	describe('Interval label', () => {
-	    it('should construct range label', inject((FilterManagerService) => {
+	    it('should construct range label', inject((FilterUtilsService) => {
 	        //given
 	        const intervals = [
-	            { input: { min: 0, max: 10, isMaxReached: false }, output: '[0 .. 10[' },
-	            { input: { min: 10, max: 10, isMaxReached: false }, output: '[10]' },
-	            { input: { min: 0, max: 10, isMaxReached: true }, output: '[0 .. 10]' },
-	            { input: { min: 'Jan 2015', max: 'Mar 2015', isMaxReached: true }, output: '[Jan 2015 .. Mar 2015]' },
+	            { input: { min: 0, max: 10, excludeMax: true }, output: '[0 .. 10[' },
+	            { input: { min: 10, max: 10, excludeMax: true }, output: '[10]' },
+	            { input: { min: 0, max: 10, excludeMax: false }, output: '[0 .. 10]' },
+	            { input: { min: 'Jan 2015', max: 'Mar 2015', excludeMax: false }, output: '[Jan 2015 .. Mar 2015]' },
 	        ];
 
 	        //when
-	        const fn = FilterManagerService.getRangeLabelFor;
+	        const fn = FilterUtilsService.getRangeLabelFor;
 
 	        //then
 	        intervals.forEach(interval => expect(fn(interval.input)).toEqual(interval.output));
@@ -261,67 +265,5 @@ describe('Filter Manager Service', () => {
 				stateMock.playground.filter.gridFilters
 			);
 		}));
-	});
-
-	describe('create quality filter', () => {
-		beforeEach(inject((FilterManagerService) => {
-			spyOn(FilterManagerService, 'addFilterAndDigest').and.returnValue();
-		}));
-
-		it('should create valid_records filter', inject((FilterManagerService) => {
-			//given
-			let column = {
-				id: '0000',
-				name: 'col1',
-			};
-
-			//when
-			FilterManagerService.createQualityFilter(VALID_RECORDS, column);
-
-			//then
-			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(VALID_RECORDS, '0000', 'col1');
-		}));
-		it('should create invalid_records filter', inject((FilterManagerService) => {
-			//given
-			let column = {
-				id: '0000',
-				name: 'col1',
-			};
-
-			//when
-			FilterManagerService.createQualityFilter(INVALID_RECORDS, column);
-
-			//then
-			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(INVALID_RECORDS, '0000', 'col1');
-		}));
-
-		it('should create empty_records filter', inject((FilterManagerService) => {
-			//given
-			let column = {
-				id: '0000',
-				name: 'col1',
-			};
-
-			//when
-			FilterManagerService.createQualityFilter(EMPTY_RECORDS, column);
-
-			//then
-			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(EMPTY_RECORDS, '0000', 'col1');
-		}));
-
-		it('should create invalid_empty_records filter', inject((FilterManagerService) => {
-			//given
-			let column = {
-				id: '0000',
-				name: 'col1',
-			};
-
-			//when
-			FilterManagerService.createQualityFilter(INVALID_EMPTY_RECORDS, column);
-
-			//then
-			expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith(QUALITY, '0000', 'col1', { invalid: true, empty: true });
-		}));
-
 	});
 });

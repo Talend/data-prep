@@ -17,6 +17,7 @@ public class PersistentPreparationTest {
         theOtherOne.setAuthor("Joss Stone");
         theOtherOne.setCreationDate(source.getCreationDate() - 1000);
         theOtherOne.setDataSetId("ds#123456");
+        theOtherOne.setDataSetName("My Dataset Name");
         theOtherOne.setLastModificationDate(theOtherOne.getCreationDate() + 12345682);
         theOtherOne.setName("my preparation name");
         theOtherOne.setHeadId(Step.ROOT_STEP.id());
@@ -26,6 +27,7 @@ public class PersistentPreparationTest {
         assertEquals("Joss Stone", actual.getAuthor());
         assertEquals(source.getCreationDate() - 1000, actual.getCreationDate());
         assertEquals("ds#123456", actual.getDataSetId());
+        assertEquals("My Dataset Name", actual.getDataSetName());
         assertEquals(theOtherOne.getCreationDate() + 12345682, actual.getLastModificationDate());
         assertEquals("my preparation name", actual.getName());
         assertEquals(Step.ROOT_STEP.id(), actual.getHeadId());
@@ -41,6 +43,7 @@ public class PersistentPreparationTest {
         source.setAuthor("Bloc Party");
         source.setCreationDate(theOtherOne.getCreationDate() - 1000);
         source.setDataSetId("ds#65478");
+        source.setDataSetName("My Dataset Name");
         source.setLastModificationDate(source.getCreationDate() + 2658483);
         source.setName("banquet");
         source.setHeadId(Step.ROOT_STEP.id());
@@ -50,6 +53,7 @@ public class PersistentPreparationTest {
         assertEquals("#23874", actual.getId());
         assertEquals("Bloc Party", actual.getAuthor());
         assertEquals("ds#65478", actual.getDataSetId());
+        assertEquals("My Dataset Name", actual.getDataSetName());
     }
 
 }

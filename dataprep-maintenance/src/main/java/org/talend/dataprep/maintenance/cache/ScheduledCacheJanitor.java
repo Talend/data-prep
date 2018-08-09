@@ -12,40 +12,30 @@
 
 package org.talend.dataprep.maintenance.cache;
 
-import javax.annotation.PostConstruct;
+import java.util.function.Supplier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.cache.CacheJanitor;
-import org.talend.tenancy.ForAll;
+import org.talend.dataprep.maintenance.executor.MaintenanceTaskProcess;
+import org.talend.dataprep.maintenance.executor.ScheduleFrequency;
 
 @Component
-public class ScheduledCacheJanitor {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledCacheJanitor.class);
+public class ScheduledCacheJanitor implements MaintenanceTaskProcess {
 
     @Autowired
     private CacheJanitor janitor;
 
-    @Autowired
-    private ForAll forAll;
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Starting scheduled cache clean up.");
+    public void performTask() {
+        janitor.janitor();
     }
 
-    /**
-     * Cleans the cache every minute.
-     */
-    @Scheduled(fixedDelay = 60000, initialDelay = 30 * 60 * 1000)
-    public void scheduledJanitor() {
-        LOGGER.debug("Janitor process started @ {}.", System.currentTimeMillis());
-        forAll.execute(() -> janitor.janitor());
-        LOGGER.debug("Janitor process ended @ {}.", System.currentTimeMillis());
+    public Supplier<Boolean> condition() {
+        return () -> true;
     }
 
+    @Override
+    public ScheduleFrequency getFrequency() {
+        return ScheduleFrequency.NIGHT;
+    }
 }

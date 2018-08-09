@@ -24,8 +24,8 @@ import javax.xml.stream.XMLInputFactory;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class StreamingSheetTest {
         OPCPackage pkg = OPCPackage.open(StreamingSheetTest.class.getResourceAsStream("../dates.xlsx"));
         XSSFReader reader = new XSSFReader(pkg);
 
-        SharedStringsTable sst = reader.getSharedStringsTable();
+        ReadOnlySharedStringsTable sst = new ReadOnlySharedStringsTable(pkg);
         StylesTable styles = reader.getStylesTable();
 
         Iterator<InputStream> iter = reader.getSheetsData();

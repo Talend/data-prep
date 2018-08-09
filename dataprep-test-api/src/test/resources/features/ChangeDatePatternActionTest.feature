@@ -15,6 +15,7 @@ Feature: Perform scenarios with ChangeDate related actions
     # 0. dd/MM/yyyy --> (1.) ISO 8601 --> (2.) French Standard --> (3.) update action 1. to German Standard  with time
     # [On the same column]
     Given I upload the dataset "/data/A-customers_100_with_pb.csv" with name "A-customers_100_with_pb_dataset"
+    Then I wait for the dataset "A-customers_100_with_pb_dataset" metadata to be computed
     Given I create a preparation with name "A-customers_100_with_pb_prep", based on "A-customers_100_with_pb_dataset" dataset
     Given I add a "change_date_pattern" step identified by "changeDateIso" on the preparation "A-customers_100_with_pb_prep" with parameters :
     # ISO 8601 : yyyy-MM-dd
@@ -65,6 +66,7 @@ Feature: Perform scenarios with ChangeDate related actions
   # These scenarios are the same than the previous ones, but this time, the option new column is used
   Scenario: Several ChangeDatePattern with update of a previous step TDP-4926 (with new column)
     Given I upload the dataset "/data/A-customers_100_with_pb.csv" with name "A-customers_100_with_pb_dataset"
+    Then I wait for the dataset "A-customers_100_with_pb_dataset" metadata to be computed
     # 0. dd/MM/yyyy --> (1.) ISO 8601 --> (2.) French Standard --> (3.) update action 1. to German Standard  with time
     Given I create a preparation with name "A-customers_100_with_pb_prep_newCol", based on "A-customers_100_with_pb_dataset" dataset
     Given I add a "change_date_pattern" step identified by "changeDateIso_newCol" on the preparation "A-customers_100_with_pb_prep_newCol" with parameters :

@@ -87,6 +87,9 @@ export function StateService(RouteStateService, routeState,
 		setSavingPreparationFolders: PlaygroundStateService.setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading: PlaygroundStateService.setIsSavingPreparationFoldersLoading,
 		setTransformationInProgress: PlaygroundStateService.setTransformationInProgress,
+		setLastActiveStepId: PlaygroundStateService.setLastActiveStepId,
+		getLastActiveStepId: PlaygroundStateService.getLastActiveStepId,
+		resetLastActiveStepId: PlaygroundStateService.resetLastActiveStepId,
 
 		// playground - dataset parameters
 		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,
@@ -129,6 +132,7 @@ export function StateService(RouteStateService, routeState,
 		removeGridFilter: PlaygroundStateService.removeGridFilter,
 		removeAllGridFilters: PlaygroundStateService.removeAllGridFilters,
 		updateGridFilter: PlaygroundStateService.updateGridFilter,
+		updateColumnNameInFilters: PlaygroundStateService.updateColumnNameInFilters,
 		enableFilters: PlaygroundStateService.enableFilters,
 		disableFilters: PlaygroundStateService.disableFilters,
 

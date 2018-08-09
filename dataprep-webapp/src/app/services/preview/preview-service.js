@@ -187,16 +187,16 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			sourceType: state.playground.sampleType,
 		};
 		return PreparationService.getPreviewDiff(params, previewCanceler)
-            .then(function (response) {
-	DatagridService.focusedColumn = targetColumnId;
-	return response;
-})
-            .then(replaceRecords)
-            .catch((e) => {
-	cancelPreview();
-	return $q.reject(e);
-})
-            .finally(() => previewCanceler = null);
+			.then((response) => {
+				DatagridService.focusedColumn = targetColumnId;
+				return response;
+			})
+			.then(replaceRecords)
+			.catch((e) => {
+				cancelPreview();
+				return $q.reject(e);
+			})
+			.finally(() => previewCanceler = null);
 	}
 
     /**
@@ -230,16 +230,16 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			sourceType: state.playground.sampleType,
 		};
 		return PreparationService.getPreviewUpdate(params, previewCanceler)
-            .then(function (response) {
-	DatagridService.focusedColumn = updateStep.column.id;
-	return response;
-})
-            .then(replaceRecords)
-            .catch((e) => {
-	cancelPreview();
-	return $q.reject(e);
-})
-            .finally(() => previewCanceler = null);
+			.then((response) => {
+				DatagridService.focusedColumn = updateStep.column.id;
+				return response;
+			})
+			.then(replaceRecords)
+			.catch((e) => {
+				cancelPreview();
+				return $q.reject(e);
+			})
+			.finally(() => previewCanceler = null);
 	}
 
     /**
@@ -268,17 +268,19 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			preparationId,
 			sourceType: state.playground.sampleType,
 		};
+
+
 		return PreparationService.getPreviewAdd(params, previewCanceler)
-            .then(function (response) {
-	DatagridService.focusedColumn = actionParams[0].column_id;
-	return response;
-})
-            .then(replaceRecords)
-            .catch((e) => {
-	cancelPreview();
-	return $q.reject(e);
-})
-            .finally(() => previewCanceler = null);
+			.then((response) => {
+				DatagridService.focusedColumn = actionParams[0].column_id;
+				return response;
+			})
+			.then(replaceRecords)
+			.catch((e) => {
+				cancelPreview();
+				return $q.reject(e);
+			})
+			.finally(() => previewCanceler = null);
 	}
 
     /**

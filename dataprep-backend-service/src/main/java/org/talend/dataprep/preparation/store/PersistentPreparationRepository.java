@@ -14,6 +14,7 @@ package org.talend.dataprep.preparation.store;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,6 +56,14 @@ public class PersistentPreparationRepository implements PreparationRepository {
         }
     }
 
+    private <T extends Identifiable> Stream<T> applyConversions(Supplier<Stream<T>> supplier, Class<T> clazz, Class<T> persistentClass) {
+        Stream<T> delegateStream = supplier.get();
+        if (!persistentClass.equals(clazz)) {
+            delegateStream = delegateStream.map(i -> beanConversionService.convert(i, clazz));
+        }
+        return delegateStream;
+    }
+
     @Timed
     @Override
     public <T extends Identifiable> boolean exist(Class<T> clazz, Expression expression) {
@@ -66,7 +75,8 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return Stream.concat(delegate.list(persistentClass).map(i -> beanConversionService.convert(i, clazz)), getRootElement(persistentClass, clazz));
+        Stream<T> delegateStream = applyConversions(() -> delegate.list(persistentClass), clazz, persistentClass);
+        return Stream.concat(delegateStream, getRootElement(persistentClass, clazz));
     }
 
     private <T extends Identifiable> Stream<T> getRootElement(Class<T> clazz, Class<T> targetClass) {
@@ -83,7 +93,8 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression expression) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return Stream.concat(delegate.list(persistentClass, expression).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz, clazz));
+        Stream<T> delegateStream = applyConversions(() -> delegate.list(persistentClass, expression), clazz, persistentClass);
+        return Stream.concat(delegateStream, getRootElement(clazz, clazz));
     }
 
     @Timed

@@ -19,6 +19,7 @@ import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
 import { init } from 'i18next';
+import store from 'store';
 
 import bootstrapReact from './index.cmf';
 
@@ -34,7 +35,6 @@ import SETTINGS_MODULE from './settings/settings-module';
 
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
-
 import translations from '../i18n';
 import d3LocaleFr from '../lib/d3.locale.fr';
 
@@ -174,8 +174,11 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 };
 
 getAppConfiguration().then((appSettings) => {
-	// appSettings.context.provider = 'catalog';
+	appSettings.context.provider = 'catalog';
 	const { provider = 'legacy' } = appSettings.context;
+
+	store.set('settings', appSettings);
+
 	if (
 		provider.includes('catalog') &&
 		!/#\/(playground|export|version)/.test(window.location.href)

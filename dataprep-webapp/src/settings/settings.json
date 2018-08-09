@@ -84,7 +84,6 @@
       "hasCollections": ["settings"]
     },
     "Breadcrumbs#default": {},
-
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {

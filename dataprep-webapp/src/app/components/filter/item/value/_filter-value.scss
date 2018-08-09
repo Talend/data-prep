@@ -26,6 +26,8 @@
 	&-btn-remove {
 		color: $white;
 		margin-right: 5px;
+		background: transparent;
+		border: none;
 
 		&:hover, &:focus {
 			color: darken($white, 10%);

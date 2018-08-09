@@ -221,6 +221,7 @@ public class PersistentPreparation extends PersistentIdentifiable {
         merge.creationDate = min(other.getCreationDate(), creationDate);
         merge.id = other.getId() != null ? other.getId() : this.id;
         merge.dataSetId = other.getDataSetId() != null ? other.getDataSetId() : dataSetId;
+        merge.dataSetName = other.getDataSetName() != null ? other.getDataSetName() : dataSetName;
         merge.author = other.getAuthor() != null ? other.getAuthor() : author;
         merge.name = other.getName() != null ? other.getName() : name;
         merge.lastModificationDate = max(other.getLastModificationDate(), lastModificationDate);

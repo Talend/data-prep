@@ -13,6 +13,18 @@
 
 package org.talend.dataprep.quality;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +59,7 @@ import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStati
 import org.talend.dataquality.statistics.frequency.recognition.AbstractPatternRecognizer;
 import org.talend.dataquality.statistics.frequency.recognition.DateTimePatternRecognizer;
 import org.talend.dataquality.statistics.frequency.recognition.EmptyPatternRecognizer;
-import org.talend.dataquality.statistics.frequency.recognition.LatinExtendedCharPatternRecognizer;
+import org.talend.dataquality.statistics.frequency.recognition.GenericCharPatternRecognizer;
 import org.talend.dataquality.statistics.numeric.quantile.QuantileAnalyzer;
 import org.talend.dataquality.statistics.numeric.quantile.QuantileStatistics;
 import org.talend.dataquality.statistics.numeric.summary.SummaryAnalyzer;
@@ -59,12 +71,6 @@ import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.dataquality.statistics.type.DataTypeAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service in charge of analyzing dataset quality.
@@ -97,22 +103,11 @@ public class AnalyzerService {
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {
-        // deal with specific date, even custom date pattern
-        final DateTimePatternRecognizer dateTimePatternFrequencyAnalyzer = new DateTimePatternRecognizer();
-        List<String> patterns = new ArrayList<>(columns.size());
-        for (ColumnMetadata column : columns) {
-            final String pattern = RowMetadataUtils.getMostUsedDatePattern(column);
-            if (StringUtils.isNotBlank(pattern)) {
-                patterns.add(pattern);
-            }
-        }
-        dateTimePatternFrequencyAnalyzer.addCustomDateTimePatterns(patterns);
-
         // warning, the order is important
         List<AbstractPatternRecognizer> patternFrequencyAnalyzers = new ArrayList<>();
         patternFrequencyAnalyzers.add(new EmptyPatternRecognizer());
-        patternFrequencyAnalyzers.add(dateTimePatternFrequencyAnalyzer);
-        patternFrequencyAnalyzers.add(new LatinExtendedCharPatternRecognizer());
+        patternFrequencyAnalyzers.add(new DateTimePatternRecognizer());
+        patternFrequencyAnalyzers.add(new GenericCharPatternRecognizer());
 
         return new CompositePatternFrequencyAnalyzer(patternFrequencyAnalyzers, TypeUtils.convert(columns));
     }

@@ -16,7 +16,7 @@ const CLUSTER_TYPE = 'CLUSTER';
  * @ngdoc controller
  * @name data-prep.recipe.controller:RecipeCtrl
  * @description Recipe controller.
- * @requires data-prep.services.filters.service:FilterAdapterService
+ * @requires data-prep.services.filters.service:TqlFilterAdapterService
  * @requires data-prep.services.lookup.service:LookupService
  * @requires data-prep.services.utils.service:MessageService
  * @requires data-prep.services.parameters.service:ParametersService
@@ -27,12 +27,12 @@ const CLUSTER_TYPE = 'CLUSTER';
  */
 export default class RecipeCtrl {
 
-	constructor($timeout, FilterAdapterService, LookupService, MessageService, ParametersService,
+	constructor($timeout, TqlFilterAdapterService, LookupService, MessageService, ParametersService,
 		PlaygroundService, PreviewService, StateService, state, RecipeKnotService, RecipeService) {
 		'ngInject';
 
 		this.$timeout = $timeout;
-		this.FilterAdapterService = FilterAdapterService;
+		this.TqlFilterAdapterService = TqlFilterAdapterService;
 		this.LookupService = LookupService;
 		this.MessageService = MessageService;
 		this.ParametersService = ParametersService;
@@ -370,18 +370,18 @@ export default class RecipeCtrl {
 	 * @param {Object} value The new filter value
 	 */
 	updateStepFilter(step, filter, value) {
-		const adaptedFilter = this.FilterAdapterService.createFilter(filter.type, filter.colId, filter.colName, filter.editable, filter.args);
+		const adaptedFilter = this.TqlFilterAdapterService.createFilter(filter.type, filter.colId, filter.colName, filter.editable, filter.args);
 		adaptedFilter.args = { ...filter.args };
 		adaptedFilter.value = value;
 
 		const adaptedFilterList = step.filters.map((nextFilter) => {
 			return nextFilter === filter ? adaptedFilter : nextFilter;
 		});
-		const stepFiltersTree = this.FilterAdapterService.toTree(adaptedFilterList);
+		const stepFiltersTree = this.TqlFilterAdapterService.toTQL(adaptedFilterList);
 
 		const updatedParameters = {
 			...step.actionParameters.parameters,
-			filter: stepFiltersTree.filter,
+			filter: stepFiltersTree,
 		};
 		this.updateStep(step, updatedParameters);
 	}
@@ -400,12 +400,12 @@ export default class RecipeCtrl {
 		}
 		else {
 			const updatedFilters = step.filters.filter(nextFilter => nextFilter !== filter);
-			const stepFiltersTree = this.FilterAdapterService.toTree(updatedFilters);
+			const stepFiltersTree = this.TqlFilterAdapterService.toTQL(updatedFilters);
 
 			// get step parameters and replace filter field (it is removed when there is no filter anymore)
 			const updatedParameters = {
 				...step.actionParameters.parameters,
-				filter: stepFiltersTree.filter,
+				filter: stepFiltersTree,
 			};
 			this.updateStep(step, updatedParameters);
 		}

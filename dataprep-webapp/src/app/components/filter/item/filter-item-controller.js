@@ -10,6 +10,12 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import {
+	CONTAINS,
+	EXACT,
+	INSIDE_RANGE,
+	WILDCARD,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -22,26 +28,14 @@ export default class FilterItemCtrl {
 		'ngInject';
 
 		this.$translate = $translate;
+		this.IN = this.$translate.instant('IN');
+		this.COLON = this.$translate.instant('COLON');
 	}
 
 	$onInit() {
 		this.filter = this.value;
-		if (this.filter) {
-			this.filterValues = this.filter.value;
-			switch (this.filter.type) {
-			case 'contains':
-				this.sign = '≅';
-				break;
-			case 'exact':
-				this.sign = '=';
-				break;
-			case 'inside_range':
-				this.sign = this.$translate.instant('IN');
-				break;
-			default:
-				this.sign = this.$translate.instant('COLON');
-			}
-		}
+		this.WILDCARD = WILDCARD;
+		this.update();
 	}
 
 	$onChanges(changes) {
@@ -50,24 +44,35 @@ export default class FilterItemCtrl {
 			const newModel = model.currentValue;
 			if (newModel) {
 				this.filter = newModel;
-				this.filterValues = this.filter.value;
+				this.update();
 			}
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name getBadgeClassByFilterType
-     * @methodOf data-prep.filter-item:FilterItemCtrl
-     * @description get badge class by filter type
-     */
-	getBadgeClassByFilterType(filter) {
-		if (filter.type === 'quality' && filter.args && filter.args.invalid && filter.args.empty) {
-			return 'invalid_empty_records';
+	/**
+	 * @ngdoc method
+	 * @name update
+	 * @methodOf data-prep.filter-item:FilterItemCtrl
+	 * @description Update model on changes
+	 */
+	update() {
+		if (this.filter) {
+			this.filterValues = this.filter.value;
+			switch (this.filter.type) {
+			case CONTAINS:
+				this.sign = '≅';
+				break;
+			case EXACT:
+				this.sign = '=';
+				break;
+			case INSIDE_RANGE:
+				this.sign = this.IN;
+				break;
+			default:
+				this.sign = this.COLON;
+			}
 		}
-		return filter.type;
 	}
-
     /**
      * @ngdoc method
      * @name submit

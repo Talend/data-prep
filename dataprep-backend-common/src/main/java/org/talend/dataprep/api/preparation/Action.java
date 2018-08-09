@@ -14,8 +14,12 @@
 package org.talend.dataprep.api.preparation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -25,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * Class used to wrap DataSetRowAction into json.
  */
 @JsonRootName("action")
-@JsonPropertyOrder(value = { "action", "parameters" })
+@JsonPropertyOrder(value = { "action", "parameters", "filterColumns" })
 public class Action implements Serializable {
 
     /** Serialization UID. */
@@ -36,6 +40,9 @@ public class Action implements Serializable {
 
     /** Parameters needed for the action. */
     private MixedContentMap parameters = new MixedContentMap();
+
+    /** Filter Parameters needed to display the action. */
+    private List<ColumnMetadata> filterColumns = new ArrayList<>();
 
     /**
      * Default empty constructor.
@@ -73,6 +80,14 @@ public class Action implements Serializable {
         this.parameters = parameters;
     }
 
+    public List<ColumnMetadata> getFilterColumns() {
+        return filterColumns;
+    }
+
+    public void setFilterColumns(List<ColumnMetadata> filterColumns) {
+        this.filterColumns = filterColumns;
+    }
+
     /**
      * @see Object#equals(Object)
      */
@@ -88,7 +103,8 @@ public class Action implements Serializable {
 
     @Override
     public String toString() {
-        return "Action{" + "action='" + action + '\'' + ", parameters=" + parameters + '}';
+        return "Action{" + "action='" + action + '\'' + ", parameters='" + parameters + '\'' + ", filterColumns='"
+                + filterColumns + "'}";
     }
 
     /**
@@ -104,7 +120,7 @@ public class Action implements Serializable {
      */
     public static class Builder {
 
-        private Map<String, String> parameters;
+        private Map<String, String> parameters = new MixedContentMap();
 
         private String name;
 

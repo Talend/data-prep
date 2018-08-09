@@ -63,8 +63,11 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Get preparation records/metadata at the specific step
      * @returns {promise} The GET promise
      */
-	function getContent(preparationId, stepId, sampleType) {
-		const url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
+	function getContent(preparationId, stepId, sampleType, tql) {
+		let url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
+		if (tql) {
+			url += '&filter=' + encodeURIComponent(tql);
+		}
 		return $http.get(url).then(res => res.data);
 	}
 

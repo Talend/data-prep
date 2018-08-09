@@ -21,7 +21,7 @@
         {{$ctrl.filter.colName}}
     </span>
     <span ng-if="$ctrl.filter.value">
-        <span ng-if="$ctrl.filter.colName" class="filter-item-label">
+        <span ng-if="$ctrl.filter.colName && $ctrl.filter.colId !== $ctrl.WILDCARD" class="filter-item-label">
             {{$ctrl.filter.colName}}
             <span class="filter-item-sign">{{$ctrl.sign}}</span>
         </span>

@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.Signal;
 
 public class FilteredNode extends BasicNode {
 
@@ -25,9 +26,17 @@ public class FilteredNode extends BasicNode {
 
     private transient Predicate<DataSetRow> instance;
 
+    private RowMetadata lastMetadata;
+
     public FilteredNode(Function<RowMetadata, Predicate<DataSetRow>> filter) {
         this.filter = filter;
     }
+
+    private boolean hasMatched;
+
+    private DataSetRow lastRow;
+
+    private long totalCount = 0;
 
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
@@ -36,9 +45,30 @@ public class FilteredNode extends BasicNode {
                 instance = filter.apply(metadata);
             }
         }
+        totalCount++;
+        metadata.setSampleNbRows(totalCount);
         if (instance.test(row)) {
+            hasMatched = true;
             super.receive(row, metadata);
+        } else {
+            lastRow = row;
+            lastMetadata = metadata;
         }
+    }
+
+    @Override
+    public void signal(Signal signal) {
+        switch (signal) {
+        case END_OF_STREAM:
+        case STOP:
+        case CANCEL:
+            if (!hasMatched && lastRow != null) {
+                lastRow.setDeleted(true);
+                super.receive(lastRow, lastMetadata);
+            }
+            break;
+        }
+        super.signal(signal);
     }
 
     @Override

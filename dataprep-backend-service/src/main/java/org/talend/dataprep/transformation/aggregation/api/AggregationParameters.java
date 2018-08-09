@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.aggregation.api;
 
@@ -19,10 +19,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.talend.dataprep.validation.OneNotBlank;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * JavaBean used to model aggregation parameters.
@@ -47,9 +43,8 @@ public class AggregationParameters {
     @NotEmpty
     private List<AggregationOperation> operations;
 
-    @JsonProperty("filter")
-    @JsonRawValue
-    private Object filter;
+    /** TQL filter */
+    private String filter;
 
     /** Optional sample size (null for the whole thing). */
     private String sampleSize;
@@ -120,7 +115,7 @@ public class AggregationParameters {
 
     /**
      * Add the given group by.
-     * 
+     *
      * @param groupBy the group by to add.
      */
     public void addGroupBy(String groupBy) {
@@ -128,24 +123,19 @@ public class AggregationParameters {
     }
 
     /**
-     * @return The filter (as raw JSON) for the aggregation.
+     * @return The filter (as TQL) for the aggregation.
      * @see org.talend.dataprep.api.filter.FilterService
      */
-    @JsonRawValue
     public String getFilter() {
-        return filter == null ? null : filter.toString();
+        return filter;
     }
 
     /**
-     * @param filter The filter (as raw JSON) for the aggregation.
+     * @param filter The filter (as TQL) for the aggregation.
      * @see org.talend.dataprep.api.filter.FilterService
      */
-    public void setFilter(JsonNode filter) {
-        if (filter == null || filter.isNull()) {
-            this.filter = null;
-        } else {
-            this.filter = filter;
-        }
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     /**
@@ -156,19 +146,19 @@ public class AggregationParameters {
     }
 
     /**
-     * Add the given operation to the parameters.
-     * 
-     * @param operation the operatio to add.
-     */
-    public void addOperation(AggregationOperation operation) {
-        this.operations.add(operation);
-    }
-
-    /**
      * @param operations the operations to set.
      */
     public void setOperations(List<AggregationOperation> operations) {
         this.operations = operations;
+    }
+
+    /**
+     * Add the given operation to the parameters.
+     *
+     * @param operation the operatio to add.
+     */
+    public void addOperation(AggregationOperation operation) {
+        this.operations.add(operation);
     }
 
     /**
@@ -196,9 +186,8 @@ public class AggregationParameters {
     @Override
     public String toString() {
         return "AggregationParameters{" + "datasetId='" + datasetId + '\'' + ", preparationId='" + preparationId + '\''
-                + ", stepId='" + stepId + '\'' + ", groupBy=" + groupBy + ", operations=" + operations + ", sampleSize="
-                + sampleSize + '}';
+                + ", stepId='" + stepId + '\'' + ", groupBy=" + groupBy + ", operations=" + operations + ", filter="
+                + filter + ", sampleSize=" + sampleSize + '}';
     }
-
 
 }

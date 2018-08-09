@@ -16,6 +16,7 @@ public enum ExportSampleParamCSV implements ExportParam {
     DATASET_ID(OUT, null, "datasetId"), //
     EXPORT_TYPE(IN_OUT, "exportType", "exportType"), //
     FILENAME(IN_OUT, "fileName", "exportParameters.fileName"), //
+    FILTER(IN_OUT, "filter", "filter"), //
     CSV_FIELDS_DELIMITER(IN_OUT, "csv_fields_delimiter", "exportParameters.csv_fields_delimiter"), //
     CSV_ESCAPE_CHARACTER(IN_OUT, "csv_escape_character", "exportParameters.csv_escape_character"), //
     CSV_ENCLOSURE_CHARACTER(IN_OUT, "csv_enclosure_char", "exportParameters.csv_enclosure_character"), //

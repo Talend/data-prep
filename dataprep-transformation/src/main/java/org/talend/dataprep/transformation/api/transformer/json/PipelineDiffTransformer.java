@@ -76,11 +76,8 @@ class PipelineDiffTransformer implements Transformer {
         Validate.notNull(input, "Input cannot be null.");
         final PreviewConfiguration previewConfiguration = (PreviewConfiguration) configuration;
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
-        final TransformerWriter writer = writerRegistrationService.getWriter(
-                configuration.formatId(),
-                configuration.output(),
-                configuration.getArguments()
-        );
+        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(),
+                configuration.output(), configuration.getArguments());
 
         // Build diff pipeline
         final Node diffWriterNode = new DiffWriterNode(writer);
@@ -92,12 +89,16 @@ class PipelineDiffTransformer implements Transformer {
         // Filter source records (extract TDP ids information)
         final List<Long> indexes = previewConfiguration.getIndexes();
         final boolean isIndexLimited = indexes != null && !indexes.isEmpty();
-        final Long minIndex = isIndexLimited ? indexes.stream().mapToLong(Long::longValue).min().getAsLong() : 0L;
-        final Long maxIndex = isIndexLimited ? indexes.stream().mapToLong(Long::longValue).max().getAsLong() : Long.MAX_VALUE;
-        final Predicate<DataSetRow> filter = isWithinWantedIndexes(minIndex, maxIndex);
+        final Predicate<DataSetRow> filter;
+        if (isIndexLimited) {
+            filter = isIndexWanted(indexes);
+        } else {
+            filter = row -> true;
+        }
 
         // Build diff pipeline
-        final Node diffPipeline = NodeBuilder.filteredSource(filter) //
+        final Node diffPipeline = NodeBuilder
+                .filteredSource(filter) //
                 .dispatchTo(referencePipeline, previewPipeline) //
                 .zipTo(diffWriterNode) //
                 .build();
@@ -127,7 +128,8 @@ class PipelineDiffTransformer implements Transformer {
     }
 
     private Pipeline buildPipeline(RowMetadata rowMetadata, String actions) {
-        return Pipeline.Builder.builder() //
+        return Pipeline.Builder
+                .builder() //
                 .withAnalyzerService(analyzerService) //
                 .withActionRegistry(actionRegistry) //
                 .withActions(actionParser.parse(actions)) //
@@ -142,7 +144,7 @@ class PipelineDiffTransformer implements Transformer {
         return PreviewConfiguration.class.isAssignableFrom(configuration.getClass());
     }
 
-    private Predicate<DataSetRow> isWithinWantedIndexes(Long minIndex, Long maxIndex) {
-        return row -> row.getTdpId() >= minIndex && row.getTdpId() <= maxIndex;
+    private Predicate<DataSetRow> isIndexWanted(List<Long> indexes) {
+        return row -> indexes.contains(row.getTdpId());
     }
 }

@@ -12,6 +12,8 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,6 +40,7 @@ import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
+import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 import org.talend.dataprep.util.FilesHelper;
@@ -48,8 +51,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
@@ -69,11 +70,15 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     private long count;
 
+    private RowMetadataFallbackProvider rowMetadataFallbackProvider;
+
     public TypeDetectionNode(Predicate<? super ColumnMetadata> filter, StatisticsAdapter adapter,
-            Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer) {
+            Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer,
+            RowMetadataFallbackProvider rowMetadataFallbackProvider) {
         super(filter);
         this.analyzer = analyzer;
         this.adapter = adapter;
+        this.rowMetadataFallbackProvider = rowMetadataFallbackProvider;
         try {
             reservoir = File.createTempFile("TypeDetection", ".zip");
             JsonFactory factory = new JsonFactory();
@@ -128,7 +133,8 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
             if (resultAnalyzer == null) {
                 resultAnalyzer = analyzer.apply(filteredColumns);
             }
-            final String[] values = row.filter(filteredColumns) //
+            final String[] values = row
+                    .filter(filteredColumns) //
                     .order(rowMetadata.getColumns()) //
                     .toArray(DataSetRow.SKIP_TDP_ID.and(e -> filteredColumnNames.contains(e.getKey())));
             try {
@@ -146,7 +152,7 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
 
     @Override
     public Node copyShallow() {
-        return new TypeDetectionNode(filter, adapter, analyzer);
+        return new TypeDetectionNode(filter, adapter, analyzer, rowMetadataFallbackProvider);
     }
 
     @Override
@@ -169,8 +175,12 @@ public class TypeDetectionNode extends ColumnFilteredNode implements Monitored {
                     adapter.adapt(columns, resultAnalyzer.getResult(), (Predicate<ColumnMetadata>) filter);
                     resultAnalyzer.close();
                 }
+                if (rowMetadata != null && rowMetadataFallbackProvider != null) {
+                    rowMetadataFallbackProvider.setFallback(rowMetadata);
+                }
                 // Continue process
-                try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(new GZIPInputStream(new FileInputStream(reservoir)), UTF_8))) {
+                try (JsonParser parser = mapper.getFactory().createParser(
+                        new InputStreamReader(new GZIPInputStream(new FileInputStream(reservoir)), UTF_8))) {
                     final DataSet dataSet = mapper.reader(DataSet.class).readValue(parser);
                     dataSet.getRecords().forEach(r -> {
                         r.setRowMetadata(rowMetadata);

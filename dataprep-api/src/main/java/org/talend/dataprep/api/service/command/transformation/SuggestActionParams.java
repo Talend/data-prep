@@ -24,7 +24,6 @@ import org.talend.dataprep.api.service.command.common.ChainedCommand;
 import java.io.InputStream;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 
 @Component

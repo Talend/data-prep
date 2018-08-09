@@ -77,15 +77,8 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);
             }
         });
-
-        on(HttpStatus.OK).then(
-                pipeStream()
-        );
-        on(HttpStatus.ACCEPTED).then(
-                emptyStream()
-        );
-        onError(
-                Defaults.passthrough()
-        );
+        on(HttpStatus.OK).then(pipeStream());
+        on(HttpStatus.ACCEPTED).then(emptyStream());
+        onError(Defaults.passthrough());
     }
 }

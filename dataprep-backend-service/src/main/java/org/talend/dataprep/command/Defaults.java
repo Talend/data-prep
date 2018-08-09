@@ -22,8 +22,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -103,15 +101,11 @@ public class Defaults {
         };
     }
 
-    /** This class' logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
-
     /**
      * @return An empty {@link InputStream stream} whatever request or response contains.
      */
     public static BiFunction<HttpRequestBase, HttpResponse, InputStream> emptyStream() {
         return (request, response) -> {
-            LOGGER.error("********** emptyStream"+response.getStatusLine());
             request.releaseConnection();
             EntityUtils.consumeQuietly(response.getEntity());
             return new ByteArrayInputStream(new byte[0]);
@@ -166,7 +160,7 @@ public class Defaults {
      * @return The response converted as <code>T</code>.
      */
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper,
-            TypeReference<T> typeReference) {
+                                                                                   TypeReference<T> typeReference) {
         return convertResponse(mapper, typeReference, e -> {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         });
@@ -182,7 +176,7 @@ public class Defaults {
      * @return The response converted as <code>T</code>.
      */
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper,
-            TypeReference<T> typeReference, Function<Exception, T> errorHandler) {
+                                                                                   TypeReference<T> typeReference, Function<Exception, T> errorHandler) {
         return (request, response) -> {
             try (InputStream content = response.getEntity().getContent()) {
                 return mapper.readerFor(typeReference).readValue(content);

@@ -3,7 +3,6 @@ import api, { actions } from '@talend/react-cmf';
 import http from './http';
 import PreparationService from '../../services/preparation.service';
 
-
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));
 	const updated = preparations.update(
@@ -42,7 +41,14 @@ export function* copy({ id, folderId, destination, title }) {
 	const url = `/api/preparations/${id}/copy?destination=${dest}&newName=${title}`;
 
 	const action = yield call(http.post, url);
-	if (!(action instanceof Error)) {
+	if (action instanceof Error) {
+		yield put(
+			actions.components.mergeState('PreparationCopyMoveModal', 'default', {
+				error: action.message,
+			}),
+		);
+	}
+	else {
 		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
 	}
@@ -77,11 +83,7 @@ export function* openFolder(id) {
 }
 
 export function* rename(payload) {
-	yield call(
-		http.put,
-		`/api/preparations/${payload.id}`,
-		{ name: payload.name },
-	);
+	yield call(http.put, `/api/preparations/${payload.id}`, { name: payload.name });
 	yield call(fetch);
 }
 
@@ -101,38 +103,30 @@ export function* openPreparationCreatorModal() {
 export function* openCopyModal(model) {
 	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 	yield put(
-		actions.components.mergeState('PreparationCopyMoveModal', 'default',
-			{
-				show: true,
-				model: {
-					...model,
-					folderId,
-				},
+		actions.components.mergeState('PreparationCopyMoveModal', 'default', {
+			show: true,
+			model: {
+				...model,
+				folderId,
 			},
-		)
+		}),
 	);
 }
 
 export function* openCopyMoveModal(model, action) {
 	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 	yield put(
-		actions.components.mergeState('PreparationCopyMoveModal', 'default',
-			{
-				show: true,
-				action,
-				model: {
-					...model,
-					folderId,
-				},
+		actions.components.mergeState('PreparationCopyMoveModal', 'default', {
+			show: true,
+			action,
+			model: {
+				...model,
+				folderId,
 			},
-		)
+		}),
 	);
 }
 
 export function* closeCopyMoveModal() {
-	yield put(
-		actions.components.mergeState('PreparationCopyMoveModal', 'default',
-			{ show: false },
-		)
-	);
+	yield put(actions.components.mergeState('PreparationCopyMoveModal', 'default', { show: false }));
 }

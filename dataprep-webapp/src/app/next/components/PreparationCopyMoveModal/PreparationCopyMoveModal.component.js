@@ -8,16 +8,16 @@ import { EditableText } from '@talend/react-components';
 
 import './PreparationCopyMoveModal.scss';
 
-const FORM_ID = 'preparation:copy:move:form';
-const SELECT_OBJECT_ID = 'preparation:copy:move:form';
+const EDITABLE_TEXT_ID = 'preparation:copy:move:editable:text';
+const SELECT_OBJECT_ID = 'preparation:copy:move:select:object';
 
 export default class PreparationCopyMoveModal extends React.Component {
 	static getContent(state) {
 		const select = SelectObject.getState(state, SELECT_OBJECT_ID);
-		const form = Form.getState(state, FORM_ID);
+		// const editable = EditableText.getState(state, EDITABLE_TEXT_ID);
 
 		return {
-			title: form.getIn(['data', 'text'], ''),
+			// title: editable.getIn(['data', 'text'], ''),
 			destination: select.get('selectedId', ''),
 		};
 	}
@@ -43,14 +43,13 @@ export default class PreparationCopyMoveModal extends React.Component {
 		const show = state.get('show', false);
 		const action = state.get('action');
 		const model = state.get('model', new Immutable.Map());
+		const error = state.get('error', null);
 		const text = model.get('name', '');
 		const selectedId = model.get('folderId', '');
 
 		const bar = {
 			actions: {
-				left: [
-					{ actionId: 'preparation:copy:move:cancel' },
-				],
+				left: [{ actionId: 'preparation:copy:move:cancel' }],
 				right: [
 					{
 						actionId: `preparation:${action}`,
@@ -63,12 +62,14 @@ export default class PreparationCopyMoveModal extends React.Component {
 		return (
 			<Inject
 				component="Dialog"
-				header={`${action} preparation - Select target folder`}
+				header={`${action} your preparation`}
+				subtitle={`Click on the folder you want to ${action} your preparation`}
+				error={error}
 				onHide={this.close}
 				actionbar={bar}
 				show={show}
 			>
-				<EditableText text={text} />
+				<EditableText text={text} editMode={error && error.length} />
 				<hr className={'modal-separator'} />
 				<SelectObject
 					source={'folders'}

@@ -174,7 +174,7 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 };
 
 getAppConfiguration().then((appSettings) => {
-	appSettings.context.provider = 'catalog';
+	//appSettings.context.provider = 'catalog';
 	const { provider = 'legacy' } = appSettings.context;
 
 	store.set('settings', appSettings);
@@ -183,7 +183,7 @@ getAppConfiguration().then((appSettings) => {
 		provider.includes('catalog') &&
 		!/#\/(playground|export|version)/.test(window.location.href)
 	) {
-		bootstrapReact(appSettings);
+		bootstrapReact();
 	}
 	else {
 		window.bootstrapAngular(appSettings);

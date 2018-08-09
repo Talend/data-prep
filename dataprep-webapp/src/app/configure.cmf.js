@@ -167,9 +167,6 @@ export default function initialize(appSettings, additionalConfiguration = {}) {
 				registerActionCreator(k, additionalActionCreators[k]),
 			);
 		}
-		store.dispatch(
-			cmfActions.collectionsActions.addOrReplaceCollection('settings', appSettings)
-		);
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */

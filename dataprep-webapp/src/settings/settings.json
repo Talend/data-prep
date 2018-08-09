@@ -80,7 +80,8 @@
   },
   "props": {
     "AppLoader#default": {
-      "saga": "bootstrap"
+      "saga": "bootstrap",
+      "hasCollections": ["settings"]
     },
     "Breadcrumbs#default": {},
 

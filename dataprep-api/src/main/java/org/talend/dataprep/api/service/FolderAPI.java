@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.api.service;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -90,10 +91,12 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get folder by id", produces = APPLICATION_JSON_VALUE, notes = "Get a folder by id")
     @Timed
-    public StreamingResponseBody getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
+    public ResponseEntity<StreamingResponseBody> getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
         try {
             final HystrixCommand<InputStream> foldersList = getCommand(GetFolder.class, id);
-            return CommandHelper.toStreaming(foldersList);
+            return ResponseEntity.ok() //
+                    .contentType(APPLICATION_JSON_UTF8) //
+                    .body(CommandHelper.toStreaming(foldersList));
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_FOLDERS, e);
         }

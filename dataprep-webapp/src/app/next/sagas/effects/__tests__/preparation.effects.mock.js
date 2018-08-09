@@ -44,5 +44,5 @@ export const IMMUTABLE_SETTINGS = Immutable.fromJS(SETTINGS);
 export const API_PAYLOAD = { test: 'lol' };
 
 export const API_RESPONSE = {
-	data: JSON.stringify(API_PAYLOAD),
+	data: API_PAYLOAD,
 };

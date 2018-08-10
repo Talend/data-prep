@@ -188,7 +188,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         int countryId = -1;
         CountryCode result;
 
-        switch (context.getParameters().get(FROM_UNIT_PARAMETER)) {
+        final String fromParameter = context.getParameters().get(FROM_UNIT_PARAMETER);
+        switch (fromParameter) {
         case COUNTRY_NAME:
             if (countryNames == null) {
                 countryNames = new HashMap<>();
@@ -215,11 +216,13 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
             break;
         default:
             // theoretically impossible case
+            throw new IllegalArgumentException("Parameter value '" + fromParameter + "' is not supported.");
         }
 
         if (countryId != -1) {
             result = CountryCode.getByCode(countryId);
-            switch (context.getParameters().get(TO_UNIT_PARAMETER)) {
+            String toParameter = context.getParameters().get(TO_UNIT_PARAMETER);
+            switch (toParameter) {
             case ENGLISH_COUNTRY_NAME:
                 row.set(targetColumnId, result.getName());
                 break;
@@ -238,6 +241,7 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
                 break;
             default:
                 // theoretically impossible case
+                throw new IllegalArgumentException("Parameter value '" + toParameter + "' is not supported.");
             }
         } else {
             row.set(targetColumnId, StringUtils.EMPTY);

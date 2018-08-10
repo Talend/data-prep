@@ -2,7 +2,12 @@ import { call } from 'redux-saga/effects';
 import api from '@talend/react-cmf';
 import { Map } from 'immutable';
 import * as effects from '../../effects/preparation.effects';
-import { IMMUTABLE_STATE, IMMUTABLE_SETTINGS, API_PAYLOAD, API_RESPONSE } from './preparation.effects.mock';
+import {
+	IMMUTABLE_STATE,
+	IMMUTABLE_SETTINGS,
+	API_PAYLOAD,
+	API_RESPONSE
+} from './preparation.effects.mock';
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
 
@@ -125,7 +130,7 @@ describe('preparation', () => {
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
 			expect(effect.componentName).toEqual('Breadcrumbs');
-			expect(effect.componentState).toEqual(new Map({ items: 'folders' }));
+			expect(effect.componentState).toEqual(new Map({ items: 'folders', maxItems: 5 }));
 			expect(PreparationService.transformFolder).toHaveBeenCalledWith(
 				API_PAYLOAD
 			);
@@ -146,7 +151,7 @@ describe('preparation', () => {
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
 			expect(effect.componentName).toEqual('Breadcrumbs');
-			expect(effect.componentState).toEqual(new Map({ items: 'folders' }));
+			expect(effect.componentState).toEqual(new Map({ items: 'folders', maxItems: 5 }));
 			expect(PreparationService.transformFolder).toHaveBeenCalledWith(
 				API_PAYLOAD
 			);

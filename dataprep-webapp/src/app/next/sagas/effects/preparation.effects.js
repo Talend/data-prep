@@ -68,5 +68,6 @@ export function* fetchFolder(payload) {
 	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}`);
 	yield put(actions.components.mergeState('Breadcrumbs', 'default', new Map({
 		items: PreparationService.transformFolder(data),
+		maxItems: 5,
 	})));
 }

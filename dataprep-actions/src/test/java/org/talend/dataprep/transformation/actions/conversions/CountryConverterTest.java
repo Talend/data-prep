@@ -24,10 +24,13 @@ import static org.talend.dataprep.transformation.actions.conversions.CountryConv
 import static org.talend.dataprep.transformation.actions.conversions.CountryConverter.COUNTRY_CODE_ISO3;
 import static org.talend.dataprep.transformation.actions.conversions.CountryConverter.COUNTRY_NAME;
 import static org.talend.dataprep.transformation.actions.conversions.CountryConverter.COUNTRY_NUMBER;
+import static org.talend.dataprep.transformation.actions.conversions.CountryConverter.ENGLISH_COUNTRY_NAME;
+import static org.talend.dataprep.transformation.actions.conversions.CountryConverter.FRENCH_COUNTRY_NAME;
 import static org.talend.dataprep.transformation.actions.conversions.CountryConverter.FROM_UNIT_PARAMETER;
 import static org.talend.dataprep.transformation.actions.conversions.CountryConverter.TO_UNIT_PARAMETER;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,7 +42,9 @@ import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
@@ -47,6 +52,7 @@ import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
+import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
 
 public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConverter> {
 
@@ -127,6 +133,83 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
+    public void test_default_params_ISO3_input() {
+        boolean result;
+        ColumnMetadata column = new ColumnMetadata();
+        List<SemanticDomain> domain = new ArrayList<>();
+        SemanticCategoryEnum inputSem = SemanticCategoryEnum.COUNTRY_CODE_ISO3;
+        domain.add(new SemanticDomain(inputSem.getId(), inputSem.getDisplayName(), 1));
+        column.setSemanticDomains(domain);
+
+        List<Parameter> params = action.adapt(column).getParameters(Locale.getDefault());
+
+        List<Parameter> fromUnit = params
+                .stream() //
+                .filter(param -> param.getName().equals(FROM_UNIT_PARAMETER)) //
+                .collect(Collectors.toList());
+
+        List<Parameter> toUnit = params
+                .stream() //
+                .filter(param -> param.getName().equals(TO_UNIT_PARAMETER)) //
+                .collect(Collectors.toList());
+
+        result = toUnit.get(0).getDefault().equals(ENGLISH_COUNTRY_NAME) //
+                && fromUnit.get(0).getDefault().equals(COUNTRY_CODE_ISO3);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void test_default_params_ISO2_input() {
+        boolean result;
+        ColumnMetadata column = new ColumnMetadata();
+        List<SemanticDomain> domain = new ArrayList<>();
+        SemanticCategoryEnum inputSem = SemanticCategoryEnum.COUNTRY_CODE_ISO2;
+        domain.add(new SemanticDomain(inputSem.getId(), inputSem.getDisplayName(), 1));
+        column.setSemanticDomains(domain);
+
+        List<Parameter> params = action.adapt(column).getParameters(Locale.getDefault());
+
+        List<Parameter> fromUnit = params
+                .stream() //
+                .filter(param -> param.getName().equals(FROM_UNIT_PARAMETER)) //
+                .collect(Collectors.toList());
+
+        List<Parameter> toUnit = params
+                .stream() //
+                .filter(param -> param.getName().equals(TO_UNIT_PARAMETER)) //
+                .collect(Collectors.toList());
+
+        result = toUnit.get(0).getDefault().equals(ENGLISH_COUNTRY_NAME) //
+                && fromUnit.get(0).getDefault().equals(COUNTRY_CODE_ISO2);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void test_default_params_default_input() {
+        boolean result;
+        ColumnMetadata column = new ColumnMetadata();
+
+        List<Parameter> params = action.adapt(column).getParameters(Locale.getDefault());
+
+        List<Parameter> fromUnit = params
+                .stream() //
+                .filter(param -> param.getName().equals(FROM_UNIT_PARAMETER)) //
+                .collect(Collectors.toList());
+
+        List<Parameter> toUnit = params
+                .stream() //
+                .filter(param -> param.getName().equals(TO_UNIT_PARAMETER)) //
+                .collect(Collectors.toList());
+
+        result = toUnit.get(0).getDefault().equals(COUNTRY_CODE_ISO2) //
+                && fromUnit.get(0).getDefault().equals(COUNTRY_NAME);
+
+        assertTrue(result);
+    }
+
+    @Test
     public void test_apply_inplace() {
         // given
         final Map<String, String> values = new LinkedHashMap<>();
@@ -155,20 +238,45 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new LinkedHashMap<>();
-        values.put("0000", "GEO");
+        values.put("0000", "GAB");
         values.put("0001", "Pomme de terre");
         values.put("0002", "01/08/2018");
         final DataSetRow row = new DataSetRow(values);
 
         final Map<String, String> expectedValues = new LinkedHashMap<>();
-        expectedValues.put("0000", "GEO");
+        expectedValues.put("0000", "GAB");
         expectedValues.put("0001", "Pomme de terre");
         expectedValues.put("0002", "01/08/2018");
-        expectedValues.put("0003", "GE");
+        expectedValues.put("0003", "Gabon");
 
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
         parameters.put(FROM_UNIT_PARAMETER, COUNTRY_CODE_ISO3);
-        parameters.put(TO_UNIT_PARAMETER, COUNTRY_CODE_ISO2);
+        parameters.put(TO_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void test_country_number_input() {
+        // given
+        final Map<String, String> values = new LinkedHashMap<>();
+        values.put("0000", "710");
+        values.put("0001", "Pomme de terre");
+        values.put("0002", "01/08/2018");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "South Africa");
+        expectedValues.put("0001", "Pomme de terre");
+        expectedValues.put("0002", "01/08/2018");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NUMBER);
+        parameters.put(TO_UNIT_PARAMETER, ENGLISH_COUNTRY_NAME);
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -246,9 +354,9 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals(row1.get("0000"), "CHN");
-        assertEquals(row2.get("0000"), "COL");
-        assertEquals(row3.get("0000"), "JPN");
+        assertEquals("CHN", row1.get("0000"));
+        assertEquals("COL", row2.get("0000"));
+        assertEquals("JPN", row3.get("0000"));
     }
-    
+
 }

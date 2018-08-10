@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -75,7 +76,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
     private List<String> columnType;
 
-    private static final Dictionary trieRoot = new Dictionary();
+    // Persistent map of country names in case of country name for input
+    private static Map<String, Integer> countryNames;
 
     public CountryConverter() {
         // nothing to do here
@@ -83,21 +85,6 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
     private CountryConverter(List<String> columnType) {
         this.columnType = columnType;
-    }
-
-    // Initialise trie tree only at the first use of the action.
-    static {
-        for (CountryCode countryCode : CountryCode.values()) {
-            if (countryCode.getAssignment().equals(CountryCode.Assignment.OFFICIALLY_ASSIGNED)) {
-                trieRoot.insert(countryCode.getName(), countryCode.getNumeric());
-            }
-        }
-        for (String countryCode : Locale.getISOCountries()) {
-            Locale obj = new Locale("", countryCode);
-            String countryName = obj.getDisplayCountry(Locale.FRENCH);
-            int countryNumber = CountryCode.getByAlpha2Code(countryCode).getNumeric();
-            trieRoot.insert(countryName, countryNumber);
-        }
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
@@ -203,7 +190,13 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
         switch (context.getParameters().get(FROM_UNIT_PARAMETER)) {
         case COUNTRY_NAME:
-            countryId = trieRoot.search(columnValue);
+            if (countryNames == null) {
+                countryNames = new HashMap<>();
+                initializeCountryNameMap(countryNames);
+            }
+            if (countryNames.get(columnValue) != null) {
+                countryId = countryNames.get(columnValue);
+            }
             break;
         case COUNTRY_CODE_ISO2:
             if (CountryCode.getByAlpha2Code(columnValue) != null) {
@@ -220,6 +213,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
                 countryId = BigDecimalParser.toBigDecimal(columnValue).intValue();
             }
             break;
+        default:
+            // theoretically impossible case
         }
 
         if (countryId != -1) {
@@ -229,8 +224,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
                 row.set(targetColumnId, result.getName());
                 break;
             case FRENCH_COUNTRY_NAME:
-                Locale tempLocale = new Locale("", result.getAlpha2());
-                row.set(targetColumnId, tempLocale.getDisplayLanguage(Locale.FRENCH));
+                Locale tempLocale = new Locale(StringUtils.EMPTY, result.getAlpha2());
+                row.set(targetColumnId, tempLocale.getDisplayCountry(Locale.FRENCH));
                 break;
             case COUNTRY_CODE_ISO2:
                 row.set(targetColumnId, result.getAlpha2());
@@ -241,6 +236,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
             case COUNTRY_NUMBER:
                 row.set(targetColumnId, Integer.toString(result.getNumeric()));
                 break;
+            default:
+                // theoretically impossible case
             }
         } else {
             row.set(targetColumnId, StringUtils.EMPTY);
@@ -256,79 +253,28 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         return new CountryConverter(semanticIds);
     }
 
-    // Trie tree
-    static class Dictionary {
-
-        private HashMap<Character, Node> roots = new HashMap<>();
-
-        /**
-         * Search through the dictionary for a word.
-         * 
-         * @param string The word to search for.
-         * @return Whether or not the word exists in the dictionary.
-         */
-        public int search(String string) {
-            if (roots.containsKey(string.charAt(0))) {
-                if (string.length() == 1) {
-                    return roots.get(string.charAt(0)).value;
-                }
-                return searchFor(string.substring(1), roots.get(string.charAt(0)));
-            } else {
-                return -1;
+    /**
+     * This method will initialize the map of country names
+     * with english and french country names and there country numbers.
+     *
+     * @param map the map to initialize
+     */
+    private static void initializeCountryNameMap(Map<String, Integer> map) {
+        // put country names in english
+        for (CountryCode countryCode : CountryCode.values()) {
+            if (countryCode != null && countryCode.getAssignment().equals(CountryCode.Assignment.OFFICIALLY_ASSIGNED)) {
+                map.put(countryCode.getName(), countryCode.getNumeric());
             }
         }
-
-        /**
-         * Insert a word into the dictionary.
-         * 
-         * @param string The word to insert.
-         */
-        public void insert(String string, int value) {
-            if (!roots.containsKey(string.charAt(0))) {
-                roots.put(string.charAt(0), new Node());
-            }
-
-            insertWord(string.substring(1), roots.get(string.charAt(0)), value);
-        }
-
-        // Adds a new word to the trie tree.
-        private void insertWord(String string, Node node, int value) {
-            final Node nextChild;
-            if (node.children.containsKey(string.charAt(0))) {
-                nextChild = node.children.get(string.charAt(0));
-            } else {
-                nextChild = new Node();
-                node.children.put(string.charAt(0), nextChild);
-            }
-
-            if (string.length() == 1) {
-                nextChild.value = value;
-            } else {
-                insertWord(string.substring(1), nextChild, value);
+        // put country names in french
+        for (String countryCode : Locale.getISOCountries()) {
+            if (countryCode != null) {
+                Locale obj = new Locale(StringUtils.EMPTY, countryCode);
+                String countryName = obj.getDisplayCountry(Locale.FRENCH);
+                int countryNumber = CountryCode.getByAlpha2Code(countryCode).getNumeric();
+                map.put(countryName, countryNumber);
             }
         }
-
-        // Recursive method that searches through the Trie Tree to find the value.
-        private int searchFor(String string, Node node) {
-            if (string.length() == 0) {
-                return node.value;
-            }
-
-            if (node.children.containsKey(string.charAt(0))) {
-                return searchFor(string.substring(1), node.children.get(string.charAt(0)));
-            } else {
-                return -1;
-            }
-        }
-    }
-
-    static class Node {
-
-        protected Node parent;
-
-        protected int value = -1;
-
-        protected HashMap<Character, Node> children = new HashMap<>();
     }
 
 }

@@ -27,8 +27,6 @@ import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 
 @Component
-@Scope(SCOPE_PROTOTYPE)
-@ConditionalOnProperty(name = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
 public class DatasetActionsProvider implements AppSettingsProvider<ActionSettings> {
 
     @Override

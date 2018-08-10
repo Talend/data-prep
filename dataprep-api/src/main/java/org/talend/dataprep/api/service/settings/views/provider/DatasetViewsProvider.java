@@ -26,8 +26,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 /**
  * Default views settings provider
  */
-@Component(SCOPE_PROTOTYPE)
-@ConditionalOnProperty(name = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
+@Component
 public class DatasetViewsProvider implements AppSettingsProvider<ViewSettings> {
 
     @Override

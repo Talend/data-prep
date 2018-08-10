@@ -52,10 +52,6 @@ public abstract class BaseTransformationService {
     @Value("${preparation.service.url}")
     protected String preparationServiceUrl;
 
-    /** DataSet service url. */
-    @Value("${dataset.service.url}")
-    protected String datasetServiceUrl;
-
     /** The dataprep ready to use jackson object mapper. */
     @Autowired
     protected ObjectMapper mapper;

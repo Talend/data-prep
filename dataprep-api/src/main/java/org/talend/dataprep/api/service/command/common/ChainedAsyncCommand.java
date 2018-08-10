@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.talend.dataprep.api.service.command.AsyncGenericCommand;
 import org.talend.dataprep.command.GenericCommand;
 
-import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
 /**

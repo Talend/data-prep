@@ -4,8 +4,8 @@ import {
 	RAW_PREPARATIONS,
 	FORMATTED_PREPARATIONS,
 	FORMATTED_FOLDERS,
-	RAW_FOLDERS_HIERACHY,
-	FORMATTED_FOLDERS_HIERACHY
+	RAW_FOLDERS_HIERARCHY,
+	FORMATTED_FOLDERS_HIERARCHY,
 } from './preparation.service.mock';
 
 
@@ -29,8 +29,8 @@ describe('PreparationService', () => {
 	});
 
 	it('should transform folders', () => {
-		expect(PreparationService.transformFolder(RAW_FOLDERS_HIERACHY)).toEqual(
-			FORMATTED_FOLDERS_HIERACHY
+		expect(PreparationService.transformFolder(RAW_FOLDERS_HIERARCHY)).toEqual(
+			FORMATTED_FOLDERS_HIERARCHY
 		);
 	});
 });

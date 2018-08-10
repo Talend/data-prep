@@ -111,7 +111,7 @@ export const FORMATTED_PREPARATIONS = [
 ];
 
 
-export const RAW_FOLDERS_HIERACHY = {
+export const RAW_FOLDERS_HIERARCHY = {
 	folder: {
 		id: 'L3Rlc3QgZm9sZGVyIDE=',
 		name: 'test folder 1',
@@ -145,7 +145,7 @@ export const RAW_FOLDERS_HIERACHY = {
 };
 
 
-export const FORMATTED_FOLDERS_HIERACHY = [
+export const FORMATTED_FOLDERS_HIERARCHY = [
 	{
 		actionCreator: 'folder:open',
 		id: 'L3Rlc3QgZm9sZGVyIDI=',

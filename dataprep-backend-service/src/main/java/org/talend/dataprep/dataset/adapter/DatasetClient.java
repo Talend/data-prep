@@ -55,7 +55,7 @@ public class DatasetClient {
     private static final Statistics EMPTY_STATS = new Statistics();
 
     @Autowired
-    private DataCatalogClient dataCatalogClient;
+    private DataCatalog dataCatalogClient;
 
     @Autowired
     private ObjectMapper mapper;

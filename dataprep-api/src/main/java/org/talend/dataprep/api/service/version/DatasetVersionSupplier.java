@@ -25,7 +25,6 @@ import static java.util.Collections.singletonList;
 
 @Component
 @Order(value = 1)
-@ConditionalOnProperty(name = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
 public class DatasetVersionSupplier extends AbstractVersionSupplier {
 
     @Value("${dataset.service.url}")

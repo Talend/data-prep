@@ -27,8 +27,6 @@ import static java.util.Arrays.asList;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 @Component
-@Scope(SCOPE_PROTOTYPE)
-@ConditionalOnProperty(name = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
 public class DatasetActionsProvider implements AppSettingsProvider<ActionSettings> {
 
     @Override

@@ -17,27 +17,31 @@ import java.util.stream.Stream;
  * Client for catalog HTTP API.
  */
 @Service
-public class DataCatalogClient {
+public class DataCatalogClient implements DataCatalog {
 
     @Autowired
     private ApplicationContext context;
 
     // ------- Pure API -------
 
+    @Override
     public Stream<Dataset> listDataset(Dataset.CertificationState certification, Boolean favorite) {
         return context.getBean(DatasetList.class, certification, favorite).execute();
     }
 
+    @Override
     @Nullable
     public Dataset getMetadata(String id) {
         return context.getBean(DataSetGetMetadata.class, id).execute();
     }
 
+    @Override
     @Nullable
     public Schema getDataSetSchema(String id) {
         return context.getBean(DataSetGetSchema.class, id).execute();
     }
 
+    @Override
     public Stream<GenericRecord> getDataSetContent(String id, Long limit) {
         Schema schema = getDataSetSchema(id);
         return context.getBean(DataSetGetContent.class, id, schema, limit).execute();

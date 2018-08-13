@@ -6,6 +6,8 @@ import {
 	FORMATTED_FOLDERS,
 	RAW_FOLDERS_TREE,
 	FORMATTED_FOLDERS_TREE,
+	RAW_FOLDERS_HIERARCHY,
+	FORMATTED_FOLDERS_HIERARCHY,
 } from './preparation.service.mock';
 
 
@@ -31,6 +33,11 @@ describe('PreparationService', () => {
 	it('should transform folders tree', () => {
 		expect(PreparationService.transformTree(RAW_FOLDERS_TREE)).toEqual(
 			FORMATTED_FOLDERS_TREE,
+		);
+	});
+	it('should transform folders', () => {
+		expect(PreparationService.transformFolder(RAW_FOLDERS_HIERARCHY)).toEqual(
+			FORMATTED_FOLDERS_HIERARCHY
 		);
 	});
 });

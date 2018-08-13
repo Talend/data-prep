@@ -32,7 +32,10 @@ function* duplicate() {
 function* fetch() {
 	while (true) {
 		const { payload } = yield take(FETCH_PREPARATIONS);
-		yield call(effects.fetch, payload);
+		yield all([
+			call(effects.fetch, payload),
+			call(effects.fetchFolder, payload),
+		]);
 	}
 }
 

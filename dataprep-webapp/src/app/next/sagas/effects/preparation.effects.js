@@ -1,5 +1,7 @@
 import { call, put, select } from 'redux-saga/effects';
 import api, { actions } from '@talend/react-cmf';
+import { Map } from 'immutable';
+
 import http from './http';
 import PreparationService from '../../services/preparation.service';
 
@@ -24,16 +26,13 @@ export function* duplicate(prep) {
 	yield call(fetch);
 }
 
-export function* fetch({ folderId = 'Lw==' }) {
+export function* fetch(payload) {
+	const defaultFolderId = 'Lw==';
+	const folderId = payload.folderId || defaultFolderId;
 	yield put(actions.collections.addOrReplace('currentFolderId', folderId));
-	yield put(
-		actions.http.get(`/api/folders/${folderId}/preparations`, {
-			cmf: {
-				collectionId: 'preparations',
-			},
-			transform: PreparationService.transform,
-		}),
-	);
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${folderId}/preparations`);
+	yield put(actions.collections.addOrReplace('preparations', PreparationService.transform(data)));
 }
 
 export function* copy({ id, folderId, destination, title }) {
@@ -129,4 +128,14 @@ export function* openCopyMoveModal(model, action) {
 
 export function* closeCopyMoveModal() {
 	yield put(actions.components.mergeState('PreparationCopyMoveModal', 'default', { show: false }));
+}
+
+export function* fetchFolder(payload) {
+	const defaultFolderId = 'Lw==';
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}`);
+	yield put(actions.components.mergeState('Breadcrumbs', 'default', new Map({
+		items: PreparationService.transformFolder(data),
+		maxItems: 5,
+	})));
 }

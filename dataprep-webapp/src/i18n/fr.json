@@ -126,6 +126,7 @@
   "EMPTY_GRID_1": "Aucune ligne correspondant à votre filtre : vous pouvez cliquer",
   "EMPTY_GRID_2": "pour supprimer tous vos filtres.",
   "HERE": "ici",
+  "NO_ROWS": "Le dataset ne contient pas de données",
 
   "_comment": "Datagrid",
   "ENTER_PREPARATION_NAME": "Saisir un nom pour votre préparation",

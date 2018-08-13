@@ -174,25 +174,25 @@ describe('Playground Service', () => {
 	describe('update preparation', () => {
 		it('should set new name to the preparation name',
 			inject(($rootScope, PlaygroundService, PreparationService, TitleService, StateService) => {
-				// given
-				const name = 'My preparation';
-				const newName = 'My new preparation name';
+					// given
+					const name = 'My preparation';
+					const newName = 'My new preparation name';
 
-				PlaygroundService.preparationName = name;
-				stateMock.playground.dataset = { id: '123d120394ab0c53' };
-				stateMock.playground.preparation = { id: 'e85afAa78556d5425bc2' };
+					PlaygroundService.preparationName = name;
+					stateMock.playground.dataset = { id: '123d120394ab0c53' };
+					stateMock.playground.preparation = { id: 'e85afAa78556d5425bc2' };
 
-				// when
-				PlaygroundService.createOrUpdatePreparation(newName);
-				$rootScope.$digest();
+					// when
+					PlaygroundService.createOrUpdatePreparation(newName);
+					$rootScope.$digest();
 
-				// then
-				expect(PreparationService.create).not.toHaveBeenCalled();
-				expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
-				expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
-				expect(TitleService.setStrict).toHaveBeenCalledWith(preparations[0].name);
-			}
-		));
+					// then
+					expect(PreparationService.create).not.toHaveBeenCalled();
+					expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
+					expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
+					expect(TitleService.setStrict).toHaveBeenCalledWith(preparations[0].name);
+				}
+			));
 
 		describe('history', () => {
 			let undo;
@@ -334,7 +334,10 @@ describe('Playground Service', () => {
 		};
 		const data = {
 			columns: [{ id: '0001' }],
-			records: [{ id: '0', firstname: 'toto' }, { id: '1', firstname: 'tata' }, { id: '2', firstname: 'titi' }],
+			records: [{ id: '0', firstname: 'toto' }, { id: '1', firstname: 'tata' }, {
+				id: '2',
+				firstname: 'titi'
+			}],
 		};
 		let assertDatasetLoadInitialized;
 		let assertDatasetLoadNotInitialized;
@@ -2022,15 +2025,21 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
 				$rootScope.$apply();
@@ -2062,17 +2071,24 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
+
 				$rootScope.$apply();
 
 				expect(StateService.setIsFetchingStats.calls.count()).toBe(1);
@@ -2098,18 +2114,61 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [{ // stats already computed
-									value: 'toto',
-									frequency: 10,
-								}],
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [{
+										value: 'toto',
+										frequency: 10,
+									}],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
+					},
+				};
+				$rootScope.$apply();
+
+				// then
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+			})
+		);
+
+		it('should NOT fetch statistics when they are no rows',
+			inject(($q, $rootScope, PlaygroundService, PreparationService, StateService) => {
+				// given
+				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+				stateMock.playground.preparation = preparations[0];
+
+				// when
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				PlaygroundService.loadPreparation(preparations[0]);
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 0
 					},
 				};
 				$rootScope.$apply();
@@ -2187,16 +2246,21 @@ describe('Playground Service', () => {
 				PlaygroundService.loadDataset(datasets[0]);
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
-
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
 				$rootScope.$apply();
@@ -2228,16 +2292,21 @@ describe('Playground Service', () => {
 				PlaygroundService.loadDataset(datasets[0]);
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
-
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
 				$rootScope.$apply();
@@ -2266,18 +2335,61 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [{ // stats already computed
-									value: 'toto',
-									frequency: 10,
-								}],
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [{
+										value: 'toto',
+										frequency: 10,
+									}],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
+					},
+				};
+				$rootScope.$apply();
+
+				// then
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+			})
+		);
+		it('should NOT fetch statistics when they are no rows',
+			inject(($q, $rootScope, PlaygroundService, StateService) => {
+				// given
+				stateMock.playground.dataset = datasets[0];
+
+				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+
+				// when
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				PlaygroundService.loadDataset(datasets[0]);
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 0
 					},
 				};
 				$rootScope.$apply();

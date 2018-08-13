@@ -1,4 +1,4 @@
-import { call, take, all } from 'redux-saga/effects';
+import { all, call, take } from 'redux-saga/effects';
 import sagas from '../preparation.saga';
 import * as effects from '../../effects/preparation.effects';
 import {
@@ -12,7 +12,8 @@ import {
 	PREPARATION_COPY,
 	PREPARATION_MOVE,
 	CLOSE_COPY_MOVE_MODAL,
-	OPEN_COPY_MOVE_MODAL,
+	OPEN_MOVE_MODAL,
+	OPEN_COPY_MODAL,
 } from '../../../constants/actions';
 
 describe('preparation', () => {
@@ -50,8 +51,12 @@ describe('preparation', () => {
 			};
 
 			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
-			expect(gen.next(action).value).toEqual(call(effects.fetch, action.payload));
-
+			expect(gen.next(action).value).toEqual(
+				all([
+					call(effects.fetch, action.payload),
+					call(effects.fetchFolder, action.payload),
+				])
+			);
 			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
 		});
 	});
@@ -134,16 +139,29 @@ describe('preparation', () => {
 		});
 	});
 
-	describe('openCopyMoveModal', () => {
-		it('should wait for OPEN_COPY_MOVE_MODAL action and call fetchTree and openCopyMoveModal', () => {
-			const gen = sagas['preparation:copy:move:open']();
+	describe('openCopyModal', () => {
+		it('should wait for OPEN_COPY_MODAL action and call fetchTree and openCopyModal', () => {
+			const gen = sagas['preparation:copy:open']();
 			const action = {
 				payload: { id: 'prepId' },
 			};
-			expect(gen.next().value).toEqual(take(OPEN_COPY_MOVE_MODAL));
-			expect(gen.next(action).value).toEqual(all([call(effects.fetchTree), call(effects.openCopyMoveModal, action.payload)]));
+			expect(gen.next().value).toEqual(take(OPEN_COPY_MODAL));
+			expect(gen.next(action).value).toEqual(all([call(effects.fetchTree), call(effects.openCopyMoveModal, action.payload, 'copy')]));
 
-			expect(gen.next().value).toEqual(take(OPEN_COPY_MOVE_MODAL));
+			expect(gen.next().value).toEqual(take(OPEN_COPY_MODAL));
+		});
+	});
+
+	describe('openMoveModal', () => {
+		it('should wait for OPEN_MOVE_MODAL action and call fetchTree and openMoveModal', () => {
+			const gen = sagas['preparation:move:open']();
+			const action = {
+				payload: { id: 'prepId' },
+			};
+			expect(gen.next().value).toEqual(take(OPEN_MOVE_MODAL));
+			expect(gen.next(action).value).toEqual(all([call(effects.fetchTree), call(effects.openCopyMoveModal, action.payload, 'move')]));
+
+			expect(gen.next().value).toEqual(take(OPEN_MOVE_MODAL));
 		});
 	});
 

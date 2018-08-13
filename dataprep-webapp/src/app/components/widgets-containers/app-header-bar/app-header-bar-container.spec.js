@@ -66,7 +66,6 @@ describe('App header bar container', () => {
 
 			// then
 			const searchBar = element.find('.navbar-form');
-			expect(searchBar.attr('role')).toBe('search');
 			expect(searchBar.find('svg > use').eq(0).attr('xlink:href')).toBe('#talend-search');
 		});
 

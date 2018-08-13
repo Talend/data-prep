@@ -15,11 +15,11 @@
 
 import d3 from 'd3';
 import angular from 'angular';
-import store from 'store';
 import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
 import { init } from 'i18next';
+import store from 'store';
 
 import bootstrapReact from './index.cmf';
 
@@ -35,7 +35,6 @@ import SETTINGS_MODULE from './settings/settings-module';
 
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
-
 import translations from '../i18n';
 import d3LocaleFr from '../lib/d3.locale.fr';
 

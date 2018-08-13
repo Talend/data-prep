@@ -34,3 +34,15 @@ export const STATE = [
 ];
 
 export const IMMUTABLE_STATE = Immutable.fromJS(STATE);
+
+export const SETTINGS = {
+	apiFolders: '/api/folder',
+};
+
+export const IMMUTABLE_SETTINGS = Immutable.fromJS(SETTINGS);
+
+export const API_PAYLOAD = { test: 'lol' };
+
+export const API_RESPONSE = {
+	data: API_PAYLOAD,
+};

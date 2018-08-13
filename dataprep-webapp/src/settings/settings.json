@@ -108,8 +108,10 @@
   },
   "props": {
     "AppLoader#default": {
-      "saga": "bootstrap"
+      "saga": "bootstrap",
+      "hasCollections": ["settings"]
     },
+    "Breadcrumbs#default": {},
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {
@@ -215,6 +217,11 @@
       "header": {},
       "sidepanel": {},
       "list": {
+        "components": {
+          "before-component": [
+            { "component": "Breadcrumbs" }
+          ]
+        },
         "collectionId": "preparations",
         "list": {
           "columns": [

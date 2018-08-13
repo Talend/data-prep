@@ -2,7 +2,7 @@ import actions from '../preparation';
 
 jest.mock('@talend/react-cmf/lib/sagaRouter', () => {
 	return () => ({
-		matchPath: (_, payload) => {
+		matchPath: () => {
 			return 'yo';
 		},
 	});

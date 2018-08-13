@@ -126,6 +126,7 @@
   "EMPTY_GRID_1": "No rows matching your filter: You can click",
   "EMPTY_GRID_2": "to remove all your filters.",
   "HERE": "here",
+  "NO_ROWS": "The dataset does not contain any data",
 
   "_comment": "Datagrid",
   "ENTER_PREPARATION_NAME": "Enter a name for your preparation",

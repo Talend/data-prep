@@ -204,21 +204,26 @@ export default class LookupService {
 				.then((lookup) => {
 					const actionsList = lookup.data;
 
-					const datasetsToAdd = _.chain(actionsList)
-						.map((action) => { // map action to dataset
-							return this.state
-								.inventory
-								.datasets
-								.content
-								.find(dataset => dataset.id === this._getDsId(action));
-						})
-						.filter(dataset => dataset)
-						.forEach((dataset) => {
-							dataset.addedToLookup = false;
-							dataset.enableToAddToLookup = true;
-						})
-						.value();
+					// const datasetsToAdd = _.chain(actionsList)
+					// 	.map((action) => { // map action to dataset
+					// 		return this.state
+					// 			.inventory
+					// 			.datasets
+					// 			.content
+					// 			.find(dataset => dataset.id === this._getDsId(action));
+					// 	})
+					// 	.filter(dataset => dataset)
+					// 	.forEach((dataset) => {
+					// 		dataset.addedToLookup = false;
+					// 		dataset.enableToAddToLookup = true;
+					// 	})
+					// 	.value();
 
+					const datasetsToAdd = this.state.inventory.datasets.content.map(dataset => ({
+						...dataset,
+						addedToLookup: false,
+						enableToAddToLookup: true,
+					}));
 					this.StateService.setLookupDatasets(datasetsToAdd);
 					this.StateService.setLookupActions(actionsList);
 

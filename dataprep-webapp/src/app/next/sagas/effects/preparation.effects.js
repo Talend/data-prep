@@ -1,4 +1,4 @@
-import { call, put, select } from 'redux-saga/effects';
+import { all, call, put, select } from 'redux-saga/effects';
 import api, { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
@@ -34,10 +34,11 @@ export function* fetch(payload) {
 	yield put(actions.collections.addOrReplace('preparations', PreparationService.transform(data)));
 }
 
-export function* openFolder(id) {
-	yield api.saga.putActionCreator('preparation:fetch', {
-		folderId: id,
-	});
+export function* refresh(payload) {
+	yield all([
+		call(fetch, payload),
+		call(fetchFolder, payload),
+	]);
 }
 
 export function* rename(payload) {

@@ -4,7 +4,6 @@ import * as effects from '../../effects/preparation.effects';
 import {
 	CANCEL_RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
-	OPEN_FOLDER,
 	OPEN_PREPARATION_CREATOR,
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
@@ -46,27 +45,8 @@ describe('preparation', () => {
 			};
 
 			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
-			expect(gen.next(action).value).toEqual(
-				all([
-					call(effects.fetch, action.payload),
-					call(effects.fetchFolder, action.payload),
-				])
-			);
+			expect(gen.next(action).value).toEqual(call(effects.refresh, action.payload));
 			expect(gen.next().value).toEqual(take(FETCH_PREPARATIONS));
-		});
-	});
-
-	describe('openFolder', () => {
-		it('should wait for OPEN_FOLDER action and call openFolder', () => {
-			const gen = sagas['preparation:folder:open']();
-			const action = {
-				id: 'folderId',
-			};
-
-			expect(gen.next().value).toEqual(take(OPEN_FOLDER));
-			expect(gen.next(action).value).toEqual(call(effects.openFolder, action.id));
-
-			expect(gen.next().value).toEqual(take(OPEN_FOLDER));
 		});
 	});
 

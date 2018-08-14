@@ -276,7 +276,7 @@ public class StandardExportStrategiesIntegrationTest {
         doTestOptimizedExportStrategyShouldBeChosenWhenPrepIsNotInCacheAndHasAtLeastTwoStepsFrom(null);
     }
 
-    protected void doTestOptimizedExportStrategyShouldBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFrom(
+    protected void doTestOptimizedExportStrategyShouldNotBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFrom(
             SourceType from, Class expectedStrategyClass) throws Exception {
         // Given
         ExportParameters parameters = new ExportParameters();
@@ -301,14 +301,14 @@ public class StandardExportStrategiesIntegrationTest {
     @Test
     public void testOptimizedExportStrategyShouldNotBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFromHEAD()
             throws Exception {
-        doTestOptimizedExportStrategyShouldBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFrom(HEAD,
+        doTestOptimizedExportStrategyShouldNotBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFrom(HEAD,
                 PreparationExportStrategy.class);
     }
 
     @Test
     public void testOptimizedExportStrategyShouldNotBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFromNull()
             throws Exception {
-        doTestOptimizedExportStrategyShouldBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFrom(null,
+        doTestOptimizedExportStrategyShouldNotBeChosenWhenVersionIsRootStepAndNoCacheIsAvailableFrom(null,
                 PreparationExportStrategy.class);
     }
 

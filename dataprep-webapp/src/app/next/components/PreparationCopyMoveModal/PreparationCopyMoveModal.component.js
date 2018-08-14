@@ -3,21 +3,21 @@ import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Immutable from 'immutable';
 import { cmfConnect, Inject } from '@talend/react-cmf';
-import { SelectObject } from '@talend/react-containers';
-import { EditableText } from '@talend/react-components';
+import { SelectObject, EditableText } from '@talend/react-containers';
 
 import './PreparationCopyMoveModal.scss';
 
-const EDITABLE_TEXT_ID = 'preparation:copy:move:editable:text';
-const SELECT_OBJECT_ID = 'preparation:copy:move:select:object';
 
 export default class PreparationCopyMoveModal extends React.Component {
+	static EDITABLE_TEXT_ID = 'preparation:copy:move:editable:text';
+	static SELECT_OBJECT_ID = 'preparation:copy:move:select:object';
+
 	static getContent(state) {
-		const select = SelectObject.getState(state, SELECT_OBJECT_ID);
-		// const editable = EditableText.getState(state, EDITABLE_TEXT_ID);
+		const select = SelectObject.getState(state, PreparationCopyMoveModal.SELECT_OBJECT_ID);
+		const title = state.cmf.components.getIn(['PreparationCopyMoveModal', 'default', 'name'], '');
 
 		return {
-			// title: editable.getIn(['data', 'text'], ''),
+			title,
 			destination: select.get('selectedId', ''),
 		};
 	}
@@ -44,7 +44,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 		const action = state.get('action');
 		const model = state.get('model', new Immutable.Map());
 		const error = state.get('error', null);
-		const text = model.get('name', '');
+		const text = state.get('name', '');
 		const selectedId = model.get('folderId', '');
 
 		const bar = {
@@ -54,6 +54,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 					{
 						actionId: `preparation:${action}`,
 						onClick: this.proceed,
+						disabled: error && error.length,
 					},
 				],
 			},
@@ -69,12 +70,20 @@ export default class PreparationCopyMoveModal extends React.Component {
 				actionbar={bar}
 				show={show}
 			>
-				<EditableText text={text} editMode={error && error.length} />
+				<EditableText
+					componentId={PreparationCopyMoveModal.EDITABLE_TEXT_ID}
+					text={text}
+					onSubmit={(_, { value }) => {
+						this.props.setState({ name: value, error: null });
+					}}
+					onChange={() => this.props.setState({ error: null })}
+					onCancel={() => this.props.setState({ error: null })}
+				/>
 				<hr className={'modal-separator'} />
 				<SelectObject
 					source={'folders'}
 					id={'folders'}
-					componentId={SELECT_OBJECT_ID}
+					componentId={PreparationCopyMoveModal.SELECT_OBJECT_ID}
 					tree={{
 						initialState: {
 							selectedId,

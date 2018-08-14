@@ -4,6 +4,7 @@ import { Map } from 'immutable';
 
 import http from './http';
 import PreparationService from '../../services/preparation.service';
+import PreparationCopyMoveModal from '../../components/PreparationCopyMoveModal';
 
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));
@@ -35,17 +36,30 @@ export function* fetch(payload) {
 	yield put(actions.collections.addOrReplace('preparations', PreparationService.transform(data)));
 }
 
+function* setCopyMoveErrorMode(message) {
+	yield put(
+			actions.components.mergeState(
+				'PreparationCopyMoveModal',
+				'default',
+				{ error: message },
+			),
+		);
+	yield put(
+		actions.components.mergeState(
+			'Container(EditableText)',
+			PreparationCopyMoveModal.EDITABLE_TEXT_ID,
+			{ editMode: true }
+		),
+	);
+}
+
 export function* copy({ id, folderId, destination, title }) {
 	const dest = destination || folderId;
 	const url = `/api/preparations/${id}/copy?destination=${dest}&newName=${title}`;
 
 	const action = yield call(http.post, url);
 	if (action instanceof Error) {
-		yield put(
-			actions.components.mergeState('PreparationCopyMoveModal', 'default', {
-				error: action.message,
-			}),
-		);
+		yield setCopyMoveErrorMode(action.message);
 	}
 	else {
 		yield call(fetch, { folderId });
@@ -58,7 +72,11 @@ export function* move({ id, folderId, destination, title }) {
 	const url = `/api/preparations/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`;
 
 	const action = yield call(http.put, url);
-	if (!(action instanceof Error)) {
+
+	if (action instanceof Error) {
+		setCopyMoveErrorMode(action.message);
+	}
+	else {
 		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
 	}
@@ -99,25 +117,14 @@ export function* openPreparationCreatorModal() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
 }
 
-export function* openCopyModal(model) {
-	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
-	yield put(
-		actions.components.mergeState('PreparationCopyMoveModal', 'default', {
-			show: true,
-			model: {
-				...model,
-				folderId,
-			},
-		}),
-	);
-}
-
 export function* openCopyMoveModal(model, action) {
 	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 	yield put(
 		actions.components.mergeState('PreparationCopyMoveModal', 'default', {
-			show: true,
 			action,
+			show: true,
+			error: null,
+			name: model.name,
 			model: {
 				...model,
 				folderId,

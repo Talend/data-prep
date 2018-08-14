@@ -253,20 +253,27 @@ public class PreparationService {
 
         // filter on folder id
         if (searchCriterion.getFolderId() != null) {
-            final Set<String> entries = folderRepository
+            try (Stream<String> preparationIds = folderRepository
                     .entries(searchCriterion.getFolderId(), PREPARATION) //
-                    .map(FolderEntry::getContentId) //
-                    .collect(Collectors.toSet());
-            preparationStream = preparationStream.filter(p -> entries.contains(p.id())).peek(p -> p.setFolderId(searchCriterion.getFolderId()));
+                    .map(FolderEntry::getContentId)) {
+                final Set<String> entries = preparationIds //
+                        .collect(Collectors.toSet());
+                preparationStream = preparationStream.filter(p -> entries.contains(p.id())).peek(
+                        p -> p.setFolderId(searchCriterion.getFolderId()));
+            }
         }
         // filter on folder path
         if (searchCriterion.getFolderPath() != null) {
             final Optional<Folder> folder = folderRepository.getFolder(searchCriterion.getFolderPath());
             final Set<String> folderEntries = new HashSet<>();
-            folder.ifPresent(f -> folderEntries.addAll(folderRepository
-                    .entries(f.getId(), PREPARATION) //
-                    .map(FolderEntry::getContentId) //
-                    .collect(Collectors.toSet())));
+            folder.ifPresent(f -> {
+                try (Stream<String> preparationIds = folderRepository
+                        .entries(f.getId(), PREPARATION) //
+                        .map(FolderEntry::getContentId)) {
+                    folderEntries.addAll(preparationIds //
+                            .collect(Collectors.toSet()));
+                }
+            });
             preparationStream = preparationStream.filter(p -> folderEntries.contains(p.id()));
         }
 

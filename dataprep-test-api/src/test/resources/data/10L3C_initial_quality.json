@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "integer",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 10
+        },
+        "statistics": {
+          "frequencyTable": [
+            {
+              "data": "0",
+              "occurrences": 1
+            },
+            {
+              "data": "1",
+              "occurrences": 1
+            },
+            {
+              "data": "2",
+              "occurrences": 1
+            },
+            {
+              "data": "3",
+              "occurrences": 1
+            },
+            {
+              "data": "4",
+              "occurrences": 1
+            },
+            {
+              "data": "5",
+              "occurrences": 1
+            },
+            {
+              "data": "6",
+              "occurrences": 1
+            },
+            {
+              "data": "7",
+              "occurrences": 1
+            },
+            {
+              "data": "8",
+              "occurrences": 1
+            },
+            {
+              "data": "9",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "9",
+              "occurrences": 10
+            }
+          ]
+        },
+        "id": "0000",
+        "domain": ""
+      },
+      {
+        "name": "firstname",
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 10
+        },
+        "statistics": {
+          "frequencyTable": [
+            {
+              "data": "Diana",
+              "occurrences": 1
+            },
+            {
+              "data": "Elizabeth",
+              "occurrences": 1
+            },
+            {
+              "data": "Carole",
+              "occurrences": 1
+            },
+            {
+              "data": "Fanny",
+              "occurrences": 1
+            },
+            {
+              "data": "Betty",
+              "occurrences": 1
+            },
+            {
+              "data": "Heidi",
+              "occurrences": 1
+            },
+            {
+              "data": "Jenifer",
+              "occurrences": 1
+            },
+            {
+              "data": "Adele",
+              "occurrences": 1
+            },
+            {
+              "data": "Irene",
+              "occurrences": 1
+            },
+            {
+              "data": "Gayle",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaa",
+              "occurrences": 7
+            },
+            {
+              "pattern": "Aaaaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaaa",
+              "occurrences": 1
+            },
+            {
+              "pattern": "Aaaaaa",
+              "occurrences": 1
+            }
+          ]
+        },
+        "id": "0001",
+        "domain": "FIRST_NAME"
+      },
+      {
+        "name": "date",
+        "type": "date",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 10
+        },
+        "statistics": {
+          "frequencyTable": [
+            {
+              "data": "15/01/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/04/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/10/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/09/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/03/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/07/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/05/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/08/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/02/2017",
+              "occurrences": 1
+            },
+            {
+              "data": "15/06/2017",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "dd/MM/yyyy",
+              "occurrences": 10
+            },
+            {
+              "pattern": "d/M/yyyy",
+              "occurrences": 1
+            }
+          ]
+        },
+        "id": "0002",
+        "domain": ""
+      }
+    ],
+    "name": "10L3C"
+  }
+}

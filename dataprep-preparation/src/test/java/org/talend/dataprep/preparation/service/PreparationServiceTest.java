@@ -41,75 +41,99 @@ public class PreparationServiceTest extends BasePreparationTest {
     private PreparationService preparationService;
 
     @Test
-    public void should_list_all_preparations() throws Exception {
-
+    public void testListAllShouldOnlyTakeInAccountPathIfPresentEvenIfNameAndFolderPathAreWrong() throws Exception {
         init();
-
         // then : path should override other props
         assertThat(preparationService
                 .listAll("dont_exist", "wrong_folder_path", "/foo/prep_name_foo", null, null) //
                 .collect(Collectors.toList())
                 .size(), is(1));
+    }
 
-        // then : path should override other props
-        assertThat(preparationService
-                .listAll(null, null, "/foo/prep_name_foo", null, null) //
-                .collect(Collectors.toList())
-                .size(), is(1));
-
-        // then : path should override other props
-        assertThat(preparationService
-                .listAll(null, null, "prep_name_home", null, null) //
-                .collect(Collectors.toList())
-                .size(), is(1));
-
-        // then : path should override other props
-        assertThat(preparationService
-                .listAll(null, null, "/prep_name_home", null, null) //
-                .collect(Collectors.toList())
-                .size(), is(1));
-
-        // then : path should override other props
-        assertThat(preparationService
-                .listAll("dont_exist", "wrong_folder_path", null, null, null) //
-                .collect(Collectors.toList())
-                .size(), is(0));
-
-        // then : should be the normal behaviour without path parameter
-        assertThat(preparationService
-                .listAll("prep_name_home", "/", null, null, null) //
-                .collect(Collectors.toList())
-                .size(), is(1));
-        assertThat(preparationService
-                .listAll("prep_name_foo", "/foo", null, null, null) //
-                .collect(Collectors.toList())
-                .size(), is(1));
-
-        // then : : should list if path doesn't start with "/"
-        assertThat(preparationService
-                .listAll(null, null, "foo/prep_name_foo", null, null)
-                .collect(Collectors.toList())
-                .size(), is(1));
-
-        // then : should list if path starts with "/"
-        assertThat(preparationService
-                .listAll(null, null, "/foo/prep_name_foo", null, null) //
-                .collect(Collectors.toList())
-                .size(), is(1));
-
+    @Test
+    public void testListAllShouldListWhenPathDoesNotContainsAnySlash() throws Exception {
+        init();
         // then : path doesn't contain "/"
         assertThat(preparationService
                 .listAll(null, null, "prep_name_home", null, null) //
                 .collect(Collectors.toList())
                 .size(), is(1));
+    }
 
+    @Test
+    public void testListAllShouldListWhenPathIsOneLevelAndStartsWithASlash() throws Exception {
+        init();
+        // then : path is one level and starts with a "/"
+        assertThat(preparationService
+                .listAll(null, null, "/prep_name_home", null, null) //
+                .collect(Collectors.toList())
+                .size(), is(1));
+    }
+
+    @Test
+    public void testListAllShouldNotListWhenNameAndFolderPathPointsToAnEmptyFolder() throws Exception {
+        init();
+        // then : path where there is no preparation
+        assertThat(preparationService
+                .listAll("dont_exist", "wrong_folder_path", null, null, null) //
+                .collect(Collectors.toList())
+                .size(), is(0));
+    }
+
+    @Test
+    public void testListAllShouldListWhenNameAndFolderPathPointsToAFolderContainingPreparations() throws Exception {
+        init();
+        // then : should be the normal behaviour without path parameter
+        assertThat(preparationService
+                .listAll("prep_name_home", "/", null, null, null) //
+                .collect(Collectors.toList())
+                .size(), is(1));
+    }
+
+    @Test
+    public void testListAllShouldListWhenNameAndFolderPathPointsToASubFolderContainingPreparations() throws Exception {
+        init();
+        // then : should be the normal behaviour without path parameter
+        assertThat(preparationService
+                .listAll("prep_name_foo", "/foo", null, null, null) //
+                .collect(Collectors.toList())
+                .size(), is(1));
+    }
+
+    @Test
+    public void testListAllShouldListWhenPathPointsToASubFolderAndDoesNotStartWithASlash() throws Exception {
+        init();
+        // then : : should list if path doesn't start with "/"
+        assertThat(preparationService
+                .listAll(null, null, "foo/prep_name_foo", null, null)
+                .collect(Collectors.toList())
+                .size(), is(1));
+    }
+
+    @Test
+    public void testListAllShouldListWhenPathPointsToASubFolderAndStartsWithASlash() throws Exception {
+        init();
+        // then : should list if path starts with "/"
+        assertThat(preparationService
+                .listAll(null, null, "/foo/prep_name_foo", null, null) //
+                .collect(Collectors.toList())
+                .size(), is(1));
+    }
+
+    @Test
+    public void testListAllShouldListWhenPreparationNameContainsSpecialCharactersAsInTDP4779() throws Exception {
+        init();
         // then : : should list preparation with special character in preparation (see
         // https://jira.talendforge.org/browse/TDP-4779)
         assertThat(preparationService
                 .listAll(null, null, "foo/Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv", null, null)
                 .collect(Collectors.toList())
                 .size(), is(1));
+    }
 
+    @Test
+    public void testListAllShouldListWhenFolderAndPreparationNameContainsSpecialCharactersAsInTDP4779() throws Exception {
+        init();
         // then : : should list preparation with special character in folder and preparation (see
         // https://jira.talendforge.org/browse/TDP-4779)
         assertThat(preparationService

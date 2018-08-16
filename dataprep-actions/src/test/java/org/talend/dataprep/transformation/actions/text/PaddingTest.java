@@ -95,6 +95,120 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
+    @Test
+    public void test_apply_on_surrogate_pair_left_Padding_is_surrogate_pair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        expectedValues.put("0002", "May 20th 2015");
+        expectedValues.put("0003", "𠀀𠀀𠀀中崎𠀀𠀁𠀂𠀃𠀄");
+
+        parameters.put(CREATE_NEW_COLUMN, "true");
+        parameters.put("padding_char","𠀀");
+        parameters.put("size","10");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_padded").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void test_apply_on_surrogate_pair_left_Padding_is_not_surrogate_pair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        expectedValues.put("0002", "May 20th 2015");
+        expectedValues.put("0003", "我我我中崎𠀀𠀁𠀂𠀃𠀄");
+
+        parameters.put(CREATE_NEW_COLUMN, "true");
+        parameters.put("padding_char","我");
+        parameters.put("size","10");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_padded").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void test_apply_on_surrogate_pair_right_Padding_is_surrogate_pair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        expectedValues.put("0002", "May 20th 2015");
+        expectedValues.put("0003", "中崎𠀀𠀁𠀂𠀃𠀄𠀀𠀀𠀀");
+
+        parameters.put(CREATE_NEW_COLUMN, "true");
+        parameters.put("padding_char","𠀀");
+        parameters.put("size","10");
+        parameters.put("padding_position","right");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_padded").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void test_apply_on_surrogate_pair_right_Padding_is_not_surrogate_pair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        expectedValues.put("0002", "May 20th 2015");
+        expectedValues.put("0003", "中崎𠀀𠀁𠀂𠀃𠀄我我我");
+
+        parameters.put(CREATE_NEW_COLUMN, "true");
+        parameters.put("padding_char","我");
+        parameters.put("size","10");
+        parameters.put("padding_position","right");
+
+        // when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_padded").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
 
     @Test
     public void test_apply_inplace() {

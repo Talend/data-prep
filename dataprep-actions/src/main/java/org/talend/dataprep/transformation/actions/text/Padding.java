@@ -120,11 +120,51 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         final Map<String, String> parameters = context.getParameters();
         final String original = row.get(columnId);
 
-        final int size = Integer.parseInt(parameters.get(SIZE_PARAMETER));
-        final char paddingChar = parameters.get(PADDING_CHAR_PARAMETER).charAt(0);
+        final String paddingStr= parameters.get(PADDING_CHAR_PARAMETER);
         final String paddingPosition = parameters.get(PADDING_POSITION_PARAMETER);
 
-        row.set(ActionsUtils.getTargetColumnId(context), apply(original, size, paddingChar, paddingPosition));
+        final boolean replaceCharIsSurrogatePair=Character.isHighSurrogate(paddingStr.charAt(0));
+        final int size =getRealSize(original, Integer.parseInt(parameters.get(SIZE_PARAMETER)),replaceCharIsSurrogatePair);
+        final String paddingChar = replaceCharIsSurrogatePair ? paddingStr.substring(0, 2) : String.valueOf(paddingStr.charAt(0));
+
+        String finallyStr=apply(original, size, paddingChar, paddingPosition);
+        //Sometimes just padding a part of surrogate pair so that padding another part
+        if(replaceCharIsSurrogatePair&&size>original.length()){
+            if (paddingPosition.equals(LEFT_POSITION)) {
+                char lastChar = finallyStr.charAt(size-original.length()-1);
+                if (Character.isHighSurrogate(lastChar)) {
+                    finallyStr = finallyStr.substring(0,size-original.length())+paddingChar.charAt(1)+finallyStr.substring(size-original.length(),finallyStr.length());
+                }
+            }else {
+                char lastChar = finallyStr.charAt(finallyStr.length() - 1);
+                if (Character.isHighSurrogate(lastChar)) {
+                    finallyStr += paddingChar.charAt(1);
+                }
+            }
+        }
+        row.set(ActionsUtils.getTargetColumnId(context), finallyStr);
+    }
+    //surrogate pair contains two char so that change parameter paddingChar from  char to String
+    protected String apply(String from, int size, String paddingChar, String position) {
+        if (from == null) {
+            return StringUtils.EMPTY;
+        }
+        if (position.equals(LEFT_POSITION)) {
+            return StringUtils.leftPad(from, size, paddingChar);
+        } else {
+            return StringUtils.rightPad(from, size, paddingChar);
+        }
+    }
+    //One surrogate pair contains two char so that compute real size
+    protected int getRealSize(String input, int originalSize,boolean replaceCharIsSurrogatePair) {
+        if (originalSize > input.codePointCount(0, input.length())) {
+            if(replaceCharIsSurrogatePair) {
+                return (originalSize- input.codePointCount(0, input.length()))*2 + input.length();
+            }else{
+                return originalSize - input.codePointCount(0, input.length())+ input.length();
+            }
+        }
+        return originalSize;
     }
 
     protected String apply(String from, int size, char paddingChar, String position) {

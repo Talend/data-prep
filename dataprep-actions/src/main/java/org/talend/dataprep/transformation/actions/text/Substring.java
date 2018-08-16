@@ -163,7 +163,7 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         final int realToIndex = getEndIndex(parameters, value);
 
         try {
-            final String newValue = value.substring(realFromIndex, realToIndex);
+            final String newValue = value.substring(value.offsetByCodePoints(0, realFromIndex),value.offsetByCodePoints(0,realToIndex));
             row.set(substringColumn, newValue);
         } catch (IndexOutOfBoundsException e) {
             // Nothing to do in that case, just set with the empty string:

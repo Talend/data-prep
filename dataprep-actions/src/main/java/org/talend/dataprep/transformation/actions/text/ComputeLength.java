@@ -77,7 +77,7 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
 
         // Set length value
         final String value = row.get(columnId);
-        row.set(lengthColumn, value == null ? "0" : String.valueOf(value.length()));
+        row.set(lengthColumn, value == null ? "0" : String.valueOf(value.codePointCount(0,value.length())));
     }
 
     @Override

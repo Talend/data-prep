@@ -95,6 +95,27 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
         // then
         assertEquals(expectedValues, row.values());
     }
+    @Test
+    public void test_apply_on_surrogate_pair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "𠀀");
+        values.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "𠀀");
+        expectedValues.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        expectedValues.put("0003", "7");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
 
     @Test
     public void should_compute_length_empty() {

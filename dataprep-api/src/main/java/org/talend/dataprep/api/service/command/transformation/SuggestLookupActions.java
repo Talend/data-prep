@@ -82,7 +82,6 @@ public class SuggestLookupActions extends ChainedCommand<List<ActionForm>, DataS
                         new TypeReference<List<DataSetMetadata>>() {});
 
                 return dataSets.stream()
-                        .filter(dataset -> !StringUtils.equals(dataSetId, dataset.getId()))
                         .map(dataset -> {
                             Lookup lookup = (Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME);
                             return lookup.adapt(dataset).getActionForm(getLocale());

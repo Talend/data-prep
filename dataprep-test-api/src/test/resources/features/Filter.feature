@@ -4,6 +4,7 @@ Feature: Filter features
   @CleanAfter
   Scenario: Apply a filter to a dataset
     Given I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then I wait for the dataset "12L5C_dataset" metadata to be computed
     When I apply the filter "((0000 between [0, 3[))" on dataset "12L5C_dataset"
     Then The characteristics of the dataset "12L5C_dataset" match:
       | records              | /data/filter/12L5C_0000_between_0_and_3_records.json |
@@ -26,6 +27,7 @@ Feature: Filter features
   @CleanAfter
   Scenario: Apply a filter to a dataset which matches no row
     Given I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then I wait for the dataset "12L5C_dataset" metadata to be computed
     When I apply the filter "((0002 between [1510786800000, 1512082800000]))" on dataset "12L5C_dataset"
     Then The characteristics of the dataset "12L5C_dataset" match:
       | records              | /data/filter/content_no_records.json    |
@@ -36,6 +38,7 @@ Feature: Filter features
   @CleanAfter
   Scenario Outline: Apply a filter to a preparation
     When I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then I wait for the dataset "12L5C_dataset" metadata to be computed
     And I create a preparation with name "12L5C_preparation", based on "12L5C_dataset" dataset
     And I add a "uppercase" step on the preparation "12L5C_preparation" with parameters :
       | column_name | firstname |
@@ -68,6 +71,7 @@ Feature: Filter features
   @CleanAfter
   Scenario: Apply a filter to a preparation step
     When I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then I wait for the dataset "12L5C_dataset" metadata to be computed
     And I create a preparation with name "12L5C_preparation", based on "12L5C_dataset" dataset
     And I add a "uppercase" step identified by "step_with_filter" on the preparation "12L5C_preparation" with parameters :
       | column_name | firstname                  |
@@ -110,6 +114,7 @@ Feature: Filter features
   @CleanAfter
   Scenario Outline: Apply a filter and keep the filtered rows to change the current sample
     When I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then I wait for the dataset "12L5C_dataset" metadata to be computed
     And I create a preparation with name "12L5C_preparation", based on "12L5C_dataset" dataset
     And I apply the filter "<tql>" on the preparation "12L5C_preparation"
     Then The characteristics of the preparation "12L5C_preparation" match:

@@ -144,7 +144,6 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register action creators in CMF Actions dictionary
 		 */
-		registerActionCreator('preparation:duplicate', actions.preparation.duplicate);
 		registerActionCreator('preparation:edit:submit', actions.preparation.rename);
 		registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
 		registerActionCreator('preparation:open', actions.preparation.open);

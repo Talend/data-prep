@@ -1,4 +1,4 @@
-import i18next, { init } from 'i18next'; // eslint-disable-line import/no-named-as-default-member
+import i18next from 'i18next'; // eslint-disable-line import/no-named-as-default-member
 
 import constants from './next/constants';
 
@@ -19,7 +19,8 @@ export const fallbackLng = I18N.EN_LOCALE;
 export const defaultNS = I18N.TUI_COMPONENTS_NAMESPACE;
 export const fallbackNS = I18N.TUI_COMPONENTS_NAMESPACE;
 
-const i18n = init({
+// eslint-disable-next-line import/no-named-as-default-member
+const i18n = i18next.init({
 	fallbackLng,
 	debug: false,
 	wait: true, // globally set to wait for loaded translations in translate hoc

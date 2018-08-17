@@ -10,7 +10,6 @@ import i18n from './../../i18n';
 import AboutModal from './AboutModal';
 import PreparationCreatorModal from '../../components/preparation-creator/index';
 
-
 const initialNotificationsState = new Map({
 	notifications: new List([]),
 });

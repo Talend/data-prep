@@ -538,7 +538,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String contentAsString = when().get("/api/datasets/{id}/actions", dataSetId).asString();
 
         // then
-        assertThat(contentAsString, sameJSONAs("[]"));
+        final JsonNode jsonNode = mapper.readTree(contentAsString);
+        ArrayNode lookups = (ArrayNode) jsonNode;
+        assertThat(lookups.size(), is(1));
     }
 
     @Test
@@ -548,7 +550,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset_cars.csv", "cars");
         final String thirdDataSetId = testClient.createDataset("dataset/dataset.csv", "third");
 
-        List<String> expectedIds = Arrays.asList(firstDataSetId, thirdDataSetId);
+        List<String> expectedIds = Arrays.asList(dataSetId, firstDataSetId, thirdDataSetId);
 
         // when
         final String actions = when().get("/api/datasets/{id}/actions", dataSetId).asString();
@@ -560,7 +562,7 @@ public class DataSetAPITest extends ApiServiceTestBase {
         Assertions.assertThat(jsonNode.isArray()).isTrue();
         // an array of 2 entries
         ArrayNode lookups = (ArrayNode) jsonNode;
-        assertThat(lookups.size(), is(2));
+        assertThat(lookups.size(), is(3));
 
         // let's check the url of the possible lookups
         for (int i = 0; i < lookups.size(); i++) {

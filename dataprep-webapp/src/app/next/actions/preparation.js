@@ -9,7 +9,6 @@ import {
 	PREPARATION_MOVE,
 	RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
-	PREPARATION_DUPLICATE,
 	CLOSE_COPY_MOVE_MODAL,
 	SET_TITLE_EDITION_MODE,
 	OPEN_PREPARATION_CREATOR,
@@ -46,15 +45,6 @@ function fetch(payload) {
 		type: FETCH_PREPARATIONS,
 		payload: {
 			folderId,
-		},
-	};
-}
-
-function duplicate(event, { model }) {
-	return {
-		type: PREPARATION_DUPLICATE,
-		payload: {
-			id: model.id,
 		},
 	};
 }
@@ -135,7 +125,6 @@ export default {
 	move,
 	fetch,
 	rename,
-	duplicate,
 	cancelRename,
 	openCopyModal,
 	openMoveModal,

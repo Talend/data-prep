@@ -8,7 +8,6 @@ import {
 	OPEN_COPY_MODAL,
 	OPEN_MOVE_MODAL,
 	CLOSE_COPY_MOVE_MODAL,
-	PREPARATION_DUPLICATE,
 	SET_TITLE_EDITION_MODE,
 	OPEN_PREPARATION_CREATOR,
 	CANCEL_RENAME_PREPARATION,
@@ -19,13 +18,6 @@ function* cancelRename() {
 	while (true) {
 		const { payload } = yield take(CANCEL_RENAME_PREPARATION);
 		yield call(effects.cancelRename, payload);
-	}
-}
-
-function* duplicate() {
-	while (true) {
-		const prep = yield take(PREPARATION_DUPLICATE);
-		yield call(effects.duplicate, prep);
 	}
 }
 
@@ -106,7 +98,6 @@ export default {
 	'preparation:copy': copy,
 	'preparation:move': move,
 	'preparation:fetch': fetch,
-	'preparation:duplicate': duplicate,
 	'preparation:rename:submit': rename,
 	'preparation:folder:open': openFolder,
 	'preparation:rename:cancel': cancelRename,

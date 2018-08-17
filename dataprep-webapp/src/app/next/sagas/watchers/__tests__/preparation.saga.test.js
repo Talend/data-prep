@@ -6,7 +6,6 @@ import {
 	FETCH_PREPARATIONS,
 	OPEN_FOLDER,
 	OPEN_PREPARATION_CREATOR,
-	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
 	PREPARATION_COPY,
@@ -28,18 +27,6 @@ describe('preparation', () => {
 			expect(gen.next(action).value).toEqual(call(effects.cancelRename, action.payload));
 
 			expect(gen.next().value).toEqual(take(CANCEL_RENAME_PREPARATION));
-		});
-	});
-
-	describe('duplicate', () => {
-		it('should wait for PREPARATION_DUPLICATE action and call duplicate', () => {
-			const gen = sagas['preparation:duplicate']();
-			const prep = [{ id: 'prepId' }];
-
-			expect(gen.next().value).toEqual(take(PREPARATION_DUPLICATE));
-			expect(gen.next(prep).value).toEqual(call(effects.duplicate, prep));
-
-			expect(gen.next().value).toEqual(take(PREPARATION_DUPLICATE));
 		});
 	});
 

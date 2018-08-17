@@ -15,18 +15,6 @@ export function* cancelRename(payload) {
 	yield put(actions.collections.addOrReplace('preparations', updated));
 }
 
-export function* duplicate(prep) {
-	// FIXME: generate unique names
-	const newName = `test${Math.random()}`;
-
-	yield call(
-		http.post,
-		`/api/preparations/${prep.payload.id}/copy?destination=Lw==&newName=${newName}`,
-		{},
-	);
-	yield call(fetch);
-}
-
 export function* fetch(payload) {
 	const defaultFolderId = 'Lw==';
 	const folderId = payload.folderId || defaultFolderId;
@@ -58,8 +46,8 @@ export function* copy({ id, folderId, destination, title }) {
 	const url = `/api/preparations/${id}/copy?destination=${dest}&newName=${title}`;
 
 	const action = yield call(http.post, url);
-	if (action instanceof Error) {
-		yield setCopyMoveErrorMode(action.message);
+	if (action instanceof Error && action.data) {
+		yield setCopyMoveErrorMode(action.data.message);
 	}
 	else {
 		yield call(fetch, { folderId });
@@ -72,9 +60,8 @@ export function* move({ id, folderId, destination, title }) {
 	const url = `/api/preparations/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`;
 
 	const action = yield call(http.put, url);
-
-	if (action instanceof Error) {
-		setCopyMoveErrorMode(action.message);
+	if (action instanceof Error && action.data) {
+		yield setCopyMoveErrorMode(action.data.message);
 	}
 	else {
 		yield call(fetch, { folderId });

@@ -53,18 +53,6 @@ describe('Preparation action', () => {
 		expect(action).toMatchSnapshot();
 	});
 
-	it('should create a duplicate action', () => {
-		const event = {};
-		const payload = {
-			model: {
-				id: 42,
-			},
-		};
-		const action = actions.duplicate(event, payload);
-
-		expect(action).toMatchSnapshot();
-	});
-
 	it('should create a rename action', () => {
 		const event = {};
 		const payload = {

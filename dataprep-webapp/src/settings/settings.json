@@ -85,12 +85,6 @@
       "label": "Edit name",
       "actionCreator": "preparation:rename"
     },
-    "preparation:duplicate": {
-      "id": "preparation:duplicate",
-      "label": "Duplicate",
-      "icon": "talend-folder",
-      "actionCreator": "preparation:duplicate"
-    },
     "preparation:edit:submit": {
       "id": "preparation:edit:submit",
       "actionCreator": "preparation:edit:submit"
@@ -261,7 +255,6 @@
           ],
           "items": [
             "preparation:rename",
-            "preparation:duplicate",
             "preparation:copy:open",
             "preparation:move:open"
           ],

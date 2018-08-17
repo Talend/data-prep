@@ -56,20 +56,6 @@ describe('preparation', () => {
 		});
 	});
 
-	describe('duplicate', () => {
-		it('should duplicate the preparation and fetch the new preparations list', () => {
-			const gen = effects.duplicate({ payload: { id: 'id0' } });
-			const effect = gen.next().value.CALL;
-			expect(effect.fn).toEqual(http.post);
-			expect(
-				effect.args[0].includes('/api/preparations/id0/copy?destination=Lw==&newName=test'),
-			).toBeTruthy();
-			expect(gen.next().value).toEqual(call(effects.fetch));
-
-			expect(gen.next().done).toBeTruthy();
-		});
-	});
-
 	describe('fetch', () => {
 		beforeEach(() => {
 			PreparationService.transform = jest.fn(() => 'rofl');

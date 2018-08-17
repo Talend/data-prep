@@ -1,23 +1,27 @@
 {
   "settings": {
     "i18n": {
-      "languages": ["en", "fr"],
+      "languages": [
+        "en",
+        "fr",
+        "ja"
+      ],
       "namespace-paths": [
         {
-          "name": "data-prep-cmf",
+          "name": "tdp-app",
           "path": "src/app/next/locales/{{locale}}/{{namespace}}.json"
         },
         {
-          "name": "dataset-cmf",
+          "name": "dataset-app",
           "path": "node_modules/@talend/dataset/lib/app/locales/{{locale}}/{{namespace}}.json"
         }
       ],
-      "extract-namespaces": ["data-prep-cmf", "dataset-cmf"],
-      "extract-from": "src/settings"
+      "extract-namespaces": ["tdp-app"],
+      "extract-from": "src/app/next/settings"
     },
     "sources": [
       "node_modules/@talend/dataset/lib/settings",
-      "src/settings"
+      "src/app/next/settings"
     ],
     "destination": "build/settings.json"
   }

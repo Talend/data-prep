@@ -2,6 +2,7 @@ import api, { store as cmfstore, sagaRouter, actions as cmfActions } from '@tale
 import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
 import dataset from '@talend/dataset';
+import localStorage from 'store';
 import '@talend/dataset/lib/app/index.scss';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
@@ -170,8 +171,9 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */
+		const settings = localStorage.get('settings');
 		store.dispatch(
-			cmfActions.settingsActions.fetchSettings(`/settings.${constants.I18N.DEFAULT_LOCALE}.json`),
+			cmfActions.settingsActions.fetchSettings(`/settings.${settings.context.language}.json`),
 		);
 
 		reduxLocalStorage.saveOnReload({

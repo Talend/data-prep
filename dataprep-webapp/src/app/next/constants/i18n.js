@@ -1,13 +1,11 @@
-const TDP_NAMESPACE = 'tdp-app';
+const TDP_APP_NAMESPACE = 'tdp-app';
 const DATASET_APP_NAMESPACE = 'dataset-app';
-const RATING_APP_NAMESPACE = 'rating-app';
-const SHARING_APP_NAMESPACE = 'sharing-app';
-const TUI_FORMS_NAMESPACE = 'tui-forms';
 const TUI_COMPONENTS_NAMESPACE = 'tui-components';
 const TUI_CONTAINERS_NAMESPACE = 'tui-containers';
+const TUI_FORMS_NAMESPACE = 'tui-forms';
 
-const FR_LOCALE = 'fr';
 const EN_LOCALE = 'en';
+const FR_LOCALE = 'fr';
 const JA_LOCALE = 'ja';
 const LOCALES = [
 	EN_LOCALE,
@@ -22,10 +20,8 @@ export default {
 	FR_LOCALE,
 	JA_LOCALE,
 	LOCALES,
+	TDP_APP_NAMESPACE,
 	DATASET_APP_NAMESPACE,
-	RATING_APP_NAMESPACE,
-	SHARING_APP_NAMESPACE,
-	TDP_NAMESPACE,
 	TUI_COMPONENTS_NAMESPACE,
 	TUI_CONTAINERS_NAMESPACE,
 	TUI_FORMS_NAMESPACE,

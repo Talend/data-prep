@@ -35,8 +35,13 @@ const i18n = i18next.init({
 });
 
 I18N.LOCALES.forEach(locale => [
+	I18N.TDP_APP_NAMESPACE,
 	I18N.DATASET_APP_NAMESPACE,
 	I18N.TUI_COMPONENTS_NAMESPACE,
+	I18N.TUI_CONTAINERS_NAMESPACE,
+	I18N.TUI_FORMS_NAMESPACE,
 ].forEach(namespace => setNameSpace(locale, namespace)));
+
+window.i18n = i18n;
 
 export default i18n;

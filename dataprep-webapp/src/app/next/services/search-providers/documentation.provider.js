@@ -2,7 +2,6 @@ import http from '@talend/react-cmf/lib/sagas/http';
 import SearchProvider from './search.provider';
 import { DOCUMENTATION_SEARCH_URL, DEFAULT_PAYLOAD } from '../../constants/search';
 
-
 export default class DocumentationSearchProvider extends SearchProvider {
 	constructor(categories) {
 		super();
@@ -22,7 +21,7 @@ export default class DocumentationSearchProvider extends SearchProvider {
 
 	transform(data) {
 		return {
-			title: this.category.label,
+			title: this.category.label(),
 			icon: {
 				name: this.category.icon,
 				title: this.category.type,

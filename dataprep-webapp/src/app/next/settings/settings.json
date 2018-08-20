@@ -8,9 +8,9 @@
       "id": "menu:preparations",
       "label": {
         "i18n": {
-          "key": "tdp-app:PREPARATIONS",
+          "key": "tdp-cmf:PREPARATIONS",
           "options": {
-            "defaultValue": "[default] Preparations"
+            "defaultValue": "Preparations"
           }
         }
       },
@@ -24,49 +24,105 @@
     },
     "help:external": {
       "id": "help:external",
-      "label": "Help",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:HELP",
+          "options": {
+            "defaultValue": "Help"
+          }
+        }
+      },
       "href": "https://help.talend.com/search/all?filters=EnrichPlatform%7E%2522Talend+Data+Preparation%2522*EnrichVersion%7E%2522Cloud%2522&utm_medium=dpdesktop&utm_source=&content-lang=en",
       "target": "_blank"
     },
     "help:community": {
       "id": "help:community",
-      "label": "Community",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:COMMUNITY",
+          "options": {
+            "defaultValue": "Community"
+          }
+        }
+      },
       "href": "https://community.talend.com/t5/Data-Quality-and-Preparation/bd-p/prepare_govern",
       "target": "_blank"
     },
     "help:tour": {
       "id": "help:tour",
-      "label": "Guided tour",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:GUIDED_TOUR",
+          "options": {
+            "defaultValue": "Guided tour"
+          }
+        }
+      },
       "actionCreator": "help:tour"
     },
     "help:about:open": {
       "id": "help:about:open",
-      "label": "About Data Preparation",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:ABOUT",
+          "options": {
+            "defaultValue": "About Data Preparation"
+          }
+        }
+      },
       "onClickDispatch": {
         "type": "OPEN_ABOUT"
       }
     },
     "help:feedback:open": {
       "id": "help:feedback:open",
-      "label": "Feedback",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:FEEDBACK",
+          "options": {
+            "defaultValue": "Feedback"
+          }
+        }
+      },
       "actionCreator": "help:feedback:open"
     },
     "preparation:add:open": {
       "id": "preparation:add:open",
       "bsStyle": "info",
       "icon": "talend-plus-circle",
-      "label": "Add preparation",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_ADD",
+          "options": {
+            "defaultValue": "Add preparation"
+          }
+        }
+      },
       "actionCreator": "preparation:add:open"
     },
     "preparation:rename": {
       "id": "preparation:rename",
       "icon": "talend-pencil",
-      "label": "Rename",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_RENAME",
+          "options": {
+            "defaultValue": "Rename"
+          }
+        }
+      },
       "actionCreator": "preparation:rename"
     },
     "preparation:duplicate": {
       "id": "preparation:duplicate",
-      "label": "Duplicate",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_DUPLICATE",
+          "options": {
+            "defaultValue": "Duplicate"
+          }
+        }
+      },
       "icon": "talend-folder",
       "actionCreator": "preparation:duplicate"
     },
@@ -81,21 +137,37 @@
     "folder:add:open": {
       "id": "folder:add:open",
       "icon": "talend-folder",
-      "label": "Add folder",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:FOLDER_ADD",
+          "options": {
+            "defaultValue": "Add folder"
+          }
+        }
+      },
       "actionCreator": "folder:add:open"
     }
   },
   "props": {
     "AppLoader#default": {
       "saga": "bootstrap",
-      "hasCollections": ["settings"]
+      "hasCollections": [
+        "settings"
+      ]
     },
     "Breadcrumbs#default": {},
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {
         "id": "talend-logo",
-        "label": "Go to home page",
+        "label": {
+          "i18n": {
+            "key": "tdp-cmf:GOTO_HOME",
+            "options": {
+              "defaultValue": "Go to home page"
+            }
+          }
+        },
         "isFull": false,
         "payload": {
           "type": "MENU_LINK",
@@ -105,7 +177,7 @@
         }
       },
       "brand": {
-        "label": "Data Preparation",
+        "label": "Data Preparation  (react-cmf)",
         "payload": {
           "type": "MENU_LINK",
           "cmf": {
@@ -118,7 +190,14 @@
         "componentId": "headerbar:search",
         "icon": {
           "name": "talend-search",
-          "title": "Toggle search input",
+          "title": {
+            "i18n": {
+              "key": "tdp-cmf:SEARCH_TOGGLE",
+              "options": {
+                "defaultValue": "Toggle search input"
+              }
+            }
+          },
           "bsStyle": "link",
           "tooltipPlacement": "bottom"
         },
@@ -127,13 +206,23 @@
         "onBlurActionCreator": "headerbar:search:reset",
         "itemsExpression": {
           "id": "cmf.collections.get",
-          "args": ["search", null]
+          "args": [
+            "search",
+            null
+          ]
         }
       },
       "help": {
         "id": "header-help",
         "icon": "talend-question-circle",
-        "label": "Help",
+        "label": {
+          "i18n": {
+            "key": "tdp-cmf:HELP",
+            "options": {
+              "defaultValue": "Help"
+            }
+          }
+        },
         "target": "_blank",
         "href": "https://help.talend.com/search/all?filters=EnrichPlatform~%2522Talend+Data+Preparation%2522*EnrichVersion~%2522Cloud%2522&utm_medium=dpdesktop&utm_source=header"
       },
@@ -141,7 +230,14 @@
         "id": "headerbar:information",
         "bsStyle": "link",
         "icon": "talend-info-circle",
-        "label": "Information",
+        "label": {
+          "i18n": {
+            "key": "tdp-cmf:INFORMATION",
+            "options": {
+              "defaultValue": "Information"
+            }
+          }
+        },
         "hideLabel": true,
         "pullRight": true,
         "noCaret": true,
@@ -198,7 +294,9 @@
       "list": {
         "components": {
           "before-component": [
-            { "component": "Breadcrumbs" }
+            {
+              "component": "Breadcrumbs"
+            }
           ]
         },
         "collectionId": "preparations",
@@ -206,19 +304,47 @@
           "columns": [
             {
               "key": "name",
-              "label": "Name"
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:NAME",
+                  "options": {
+                    "defaultValue": "Name"
+                  }
+                }
+              }
             },
             {
               "key": "author",
-              "label": "Author"
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:AUTHOR",
+                  "options": {
+                    "defaultValue": "Author"
+                  }
+                }
+              }
             },
             {
               "key": "datasetName",
-              "label": "Dataset"
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:DATASET",
+                  "options": {
+                    "defaultValue": "Dataset"
+                  }
+                }
+              }
             },
             {
               "key": "nbSteps",
-              "label": "Steps"
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:STEPS",
+                  "options": {
+                    "defaultValue": "Steps"
+                  }
+                }
+              }
             }
           ],
           "titleProps": {
@@ -229,7 +355,14 @@
         },
         "toolbar": {
           "filter": {
-            "placeholder": "Find a preparation"
+            "placeholder": {
+              "i18n": {
+                "key": "tdp-cmf:PREPARATION_FIND",
+                "options": {
+                  "defaultValue": "Find a preparation"
+                }
+              }
+            }
           }
         },
         "actions": {

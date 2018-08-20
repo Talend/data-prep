@@ -1,4 +1,5 @@
 const TDP_APP_NAMESPACE = 'tdp-app';
+const TDP_CMF_NAMESPACE = 'tdp-cmf';
 const DATASET_APP_NAMESPACE = 'dataset-app';
 const TUI_COMPONENTS_NAMESPACE = 'tui-components';
 const TUI_CONTAINERS_NAMESPACE = 'tui-containers';
@@ -7,6 +8,7 @@ const TUI_FORMS_NAMESPACE = 'tui-forms';
 const EN_LOCALE = 'en';
 const FR_LOCALE = 'fr';
 const JA_LOCALE = 'ja';
+
 const LOCALES = [
 	EN_LOCALE,
 	FR_LOCALE,
@@ -21,6 +23,7 @@ export default {
 	JA_LOCALE,
 	LOCALES,
 	TDP_APP_NAMESPACE,
+	TDP_CMF_NAMESPACE,
 	DATASET_APP_NAMESPACE,
 	TUI_COMPONENTS_NAMESPACE,
 	TUI_CONTAINERS_NAMESPACE,

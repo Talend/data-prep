@@ -1,3 +1,5 @@
+import i18n from '../../i18n';
+
 function transform({ folders = [], preparations = [] }) {
 	const adaptedFolders = folders.map(folder => ({
 		author: folder.ownerId,
@@ -27,8 +29,8 @@ function transformFolder({ folder, hierarchy }) {
 	].map(folder =>
 		({
 			id: folder.id,
-			text: folder.name || 'Home',
-			title: folder.name || 'Home',
+			text: folder.name || i18n.t('tdp-app:FOLDER_HOME', { defaultValue: 'home' }),
+			title: folder.name || i18n.t('tdp-app:FOLDER_HOME', { defaultValue: 'home' }),
 			actionCreator: 'folder:open',
 		}));
 }

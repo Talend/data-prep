@@ -14,6 +14,8 @@ import App from './next/components/App.container';
 import { ALERT } from './next/constants/actions';
 import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
+import locales from './next/locales';
+import { registerLocales } from './i18n';
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;
@@ -180,6 +182,15 @@ export default function initialize(additionalConfiguration = {}) {
 			engine,
 			store,
 		});
+
+		/**
+		 * Register i18next locales per namespace
+		 */
+		registerLocales(locales);
+		const additionalLocales = additionalConfiguration.locales;
+		if (additionalLocales) {
+			registerLocales(additionalLocales);
+		}
 
 		const additionalCallback = additionalConfiguration.callback;
 		if (additionalCallback) {

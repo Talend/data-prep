@@ -1,3 +1,7 @@
 {
-  "PREPARATIONS": "プレパレーション"
+  "DATASETS": "datasets",
+  "DOCUMENTATION": "documentation",
+  "FOLDER_HOME": "home",
+  "FOLDERS": "folders",
+  "PREPARATIONS": "preparations"
 }

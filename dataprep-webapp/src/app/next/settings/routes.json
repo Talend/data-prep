@@ -10,15 +10,43 @@
       "header": {},
       "sidepanel": {},
       "status": 404,
-      "title": "Oops",
-      "message": "We didn't find the requested page"
+      "title": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_404_TITLE",
+          "options": {
+            "defaultValue": "Oops"
+          }
+        }
+      },
+      "message": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_404_MESSAGE",
+          "options": {
+            "defaultValue": "We didn't find the requested page"
+          }
+        }
+      }
     },
     "HttpErrorView#403": {
       "header": {},
       "sidepanel": {},
       "status": 403,
-      "title": "Access denied",
-      "message": "You are not allowed to access this page"
+      "title": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_403_TITLE",
+          "options": {
+            "defaultValue": "Access denied"
+          }
+        }
+      },
+      "message": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_403_MESSAGE",
+          "options": {
+            "defaultValue": "You are not allowed to access this page"
+          }
+        }
+      }
     }
   },
   "routes": {

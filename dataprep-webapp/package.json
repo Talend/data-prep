@@ -23,11 +23,12 @@
     "lint:es": "eslint --config .eslintrc --fix src",
     "lint:sass": "sass-lint -c .sass-lint.yml 'src/app/**/*.scss' -v -q",
     "stats": "webpack --config config/webpack.config.dev.js --profile -j > stats.json",
-    "extract-i18n": "npm run extract-i18n-app && npm run extract-i18n-components && npm run extract-i18n-forms && npm run extract-i18n-containers",
-    "extract-i18n-app": "i18next src/app/next -r --default-values -o src/app/next/locales -n tdp-app -l en,fr,ja --write-old false --fileFilter '*.js' --ignore-variables",
-    "extract-i18n-components": "i18next node_modules/@talend/react-components/lib -r --default-values -o src/app/next/locales -n tui-components -l en --write-old false --fileFilter '*.js' --directoryFilter '!__snapshots__'",
-    "extract-i18n-forms": "i18next node_modules/@talend/react-forms/lib -r --default-values -o src/app/next/locales -n tui-forms -l en --write-old false --fileFilter '*.js' --directoryFilter '!__snapshots__'",
-    "extract-i18n-containers": "i18next node_modules/@talend/react-containers/lib -r --default-values -o src/app/next/locales -n tui-containers -l en --write-old false --fileFilter '*.js' --directoryFilter '!__snapshots__'"
+    "extract-i18n": "npm run extract-i18n-components && npm run extract-i18n-containers && npm run extract-i18n-forms && npm run extract-i18n-tdp-app && npm run extract-i18n-tdp-cmf",
+    "extract-i18n-components": "i18next node_modules/@talend/react-components/lib   -r --default-values -o src/app/next/locales -n tui-components  -l en,fr,ja --write-old false --fileFilter '*.js' --directoryFilter '!__snapshots__,!__tests__'",
+    "extract-i18n-containers": "i18next node_modules/@talend/react-containers/lib   -r --default-values -o src/app/next/locales -n tui-containers  -l en,fr,ja --write-old false --fileFilter '*.js' --directoryFilter '!__snapshots__,!__tests__'",
+    "extract-i18n-forms": "i18next node_modules/@talend/react-forms/lib             -r --default-values -o src/app/next/locales -n tui-forms       -l en,fr,ja --write-old false --fileFilter '*.js' --directoryFilter '!__snapshots__,!__tests__'",
+    "extract-i18n-tdp-app": "i18next src/app/next                                   -r --default-values -o src/app/next/locales -n tdp-app         -l en,fr,ja --write-old false --fileFilter '*.js' --directoryFilter '!__snapshots__,!__tests__' --ignore-variables",
+    "extract-i18n-tdp-cmf": "cmf-settings"
   },
   "jest": {
     "testRegex": "/src/.*\\.test.js$",

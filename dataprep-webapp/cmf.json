@@ -8,16 +8,15 @@
       ],
       "namespace-paths": [
         {
-          "name": "tdp-app",
+          "name": "tdp-cmf",
           "path": "src/app/next/locales/{{locale}}/{{namespace}}.json"
-        },
-        {
-          "name": "dataset-app",
-          "path": "node_modules/@talend/dataset/lib/app/locales/{{locale}}/{{namespace}}.json"
         }
       ],
-      "extract-namespaces": ["tdp-app"],
-      "extract-from": "src/app/next/settings"
+      "extract-namespaces": [
+        "tdp-cmf"
+      ],
+      "extract-from": "src/app/next/settings",
+      "extract-sort": true
     },
     "sources": [
       "node_modules/@talend/dataset/lib/settings",

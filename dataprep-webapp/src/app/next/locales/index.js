@@ -6,6 +6,10 @@ import TDP_APP_EN from './en/tdp-app.json';
 import TDP_APP_FR from './fr/tdp-app.json';
 import TDP_APP_JA from './ja/tdp-app.json';
 
+import TDP_CMF_EN from './en/tdp-cmf.json';
+import TDP_CMF_FR from './fr/tdp-cmf.json';
+import TDP_CMF_JA from './ja/tdp-cmf.json';
+
 import TUI_COMPONENTS_EN from './en/tui-components.json';
 import TUI_COMPONENTS_FR from './fr/tui-components.json';
 import TUI_COMPONENTS_JA from './ja/tui-components.json';
@@ -27,6 +31,11 @@ export default {
 		[I18N.EN_LOCALE]: TDP_APP_EN,
 		[I18N.FR_LOCALE]: TDP_APP_FR,
 		[I18N.JA_LOCALE]: TDP_APP_JA,
+	},
+	[I18N.TDP_CMF_NAMESPACE]: {
+		[I18N.EN_LOCALE]: TDP_CMF_EN,
+		[I18N.FR_LOCALE]: TDP_CMF_FR,
+		[I18N.JA_LOCALE]: TDP_CMF_JA,
 	},
 	[I18N.DATASET_APP_NAMESPACE]: {
 		[I18N.EN_LOCALE]: DATASET_APP_EN,

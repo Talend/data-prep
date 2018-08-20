@@ -16,7 +16,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -117,7 +120,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final PreparationDTO preparationDetails = getPreparation(preparation);
         for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD),
+                    ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
@@ -132,7 +136,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
     }
 
     @Test
-    public void testAcceptOK() throws Exception {
+    public void testAcceptKO_stepIdIsRootStep() throws Exception {
         // Given
         final String datasetId = "1234";
         final String format = "";
@@ -141,15 +145,35 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         applyAction(preparation, "[{}]");
 
         final PreparationDTO preparationDetails = getPreparation(preparation);
-        for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+        final List<String> stepsWithoutRootStep = new ArrayList<>(preparationDetails.getSteps());
+        stepsWithoutRootStep.remove(0);
+        putTransformationAndMetadataInCacheForSteps(stepsWithoutRootStep, preparation, datasetId, format);
+
+        ExportParameters exportParameters = new ExportParameters();
+        exportParameters.setPreparationId(preparation);
+        exportParameters.setDatasetId(datasetId);
+        exportParameters.setExportType(format);
+        exportParameters.setFrom(HEAD);
+        exportParameters.setStepId(Step.ROOT_STEP.id());
+
+        // Then
+        assertFalse("The OptimizedExportStrategy should not be acceptable if version is ROOT_STEP",
+                optimizedExportStrategy.accept(exportParameters));
+    }
+
+    private void putTransformationAndMetadataInCacheForSteps(List<String> steps, String preparationId, String datasetId,
+            String format) throws IOException {
+        for (String step : steps) {
+            try (OutputStream content =
+                    contentCache.put(cacheKeyGenerator.generateMetadataKey(preparationId, step, HEAD),
+                            ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }
 
             final TransformationCacheKey key = cacheKeyGenerator.generateContentKey( //
                     datasetId, //
-                    preparation, //
+                    preparationId, //
                     step, //
                     format, //
                     HEAD, //
@@ -160,6 +184,19 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
                 content.flush();
             }
         }
+    }
+
+    @Test
+    public void testAcceptOK() throws Exception {
+        // Given
+        final String datasetId = "1234";
+        final String format = "";
+        final String preparation = createEmptyPreparationFromDataset(datasetId, "test");
+        applyAction(preparation, "[{}]");
+        applyAction(preparation, "[{}]");
+
+        final PreparationDTO preparationDetails = getPreparation(preparation);
+        putTransformationAndMetadataInCacheForSteps(preparationDetails.getSteps(), preparation, datasetId, format);
 
         ExportParameters exportParameters = new ExportParameters();
         exportParameters.setPreparationId(preparation);
@@ -182,7 +219,8 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         final PreparationDTO preparationDetails = getPreparation(preparation);
         for (String step : preparationDetails.getSteps()) {
-            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD), ContentCache.TimeToLive.DEFAULT)) {
+            try (OutputStream content = contentCache.put(cacheKeyGenerator.generateMetadataKey(preparation, step, HEAD),
+                    ContentCache.TimeToLive.DEFAULT)) {
                 content.write("{}".getBytes());
                 content.flush();
             }

@@ -20,6 +20,20 @@ function transform({ folders = [], preparations = [] }) {
 	return adaptedFolders.concat(adaptedPreparations);
 }
 
+function transformFolder({ folder, hierarchy }) {
+	return [
+		...hierarchy,
+		folder,
+	].map(folder =>
+		({
+			id: folder.id,
+			text: folder.name || 'Home',
+			title: folder.name || 'Home',
+			actionCreator: 'folder:open',
+		}));
+}
+
 export default {
 	transform,
+	transformFolder,
 };

@@ -30,11 +30,12 @@ function open(event, { type, id }) {
 
 function fetch(payload) {
 	let folderId;
+	const match = matchPath(window.location.pathname, { path: '/preparations/:folderId' });
 	if (payload) {
 		folderId = payload.folderId;
 	}
-	else if (matchPath(window.location.pathname, { path: '/preparations/:folderId' })) {
-		folderId = matchPath.params.folderId;
+	else if (match) {
+		folderId = match.params.folderId;
 	}
 	return {
 		type: FETCH_PREPARATIONS,

@@ -8,7 +8,7 @@ import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import { all, call, fork } from 'redux-saga/effects';
 import actions from './next/actions';
-import components from './next/components/index';
+import components from './next/components';
 import App from './next/components/App.container';
 import { ALERT } from './next/constants/actions';
 import { default as constants } from './next/constants';
@@ -167,7 +167,6 @@ export default function initialize(additionalConfiguration = {}) {
 				registerActionCreator(k, additionalActionCreators[k]),
 			);
 		}
-
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */

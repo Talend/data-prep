@@ -109,3 +109,53 @@ export const FORMATTED_PREPARATIONS = [
 		type: 'preparation',
 	},
 ];
+
+
+export const RAW_FOLDERS_HIERARCHY = {
+	folder: {
+		id: 'L3Rlc3QgZm9sZGVyIDE=',
+		name: 'test folder 1',
+		ownerId: 'ncomont',
+		parentId: 'Lw==',
+		creationDate: 1528465267000,
+		lastModificationDate: 1528465267000,
+		nbPreparations: 0,
+		owner: { id: 'ncomont', firstName: 'ncomont', lastName: '', displayName: 'ncomont' },
+		sharedFolder: false,
+		sharedByMe: false,
+		roles: [],
+		path: '/test folder 1',
+	},
+	hierarchy: [
+		{
+			id: 'L3Rlc3QgZm9sZGVyIDI=',
+			name: 'test folder 2',
+			ownerId: 'ncomont',
+			parentId: 'Lw==',
+			creationDate: 1528465283000,
+			lastModificationDate: 1528465283000,
+			nbPreparations: 0,
+			owner: { id: 'ncomont', firstName: 'ncomont', lastName: '', displayName: 'ncomont' },
+			sharedFolder: false,
+			sharedByMe: false,
+			roles: [],
+			path: '/test folder 2',
+		},
+	],
+};
+
+
+export const FORMATTED_FOLDERS_HIERARCHY = [
+	{
+		actionCreator: 'folder:open',
+		id: 'L3Rlc3QgZm9sZGVyIDI=',
+		text: 'test folder 2',
+		title: 'test folder 2',
+	},
+	{
+		actionCreator: 'folder:open',
+		id: 'L3Rlc3QgZm9sZGVyIDE=',
+		text: 'test folder 1',
+		title: 'test folder 1',
+	},
+];

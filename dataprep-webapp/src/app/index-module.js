@@ -15,12 +15,16 @@
 
 import d3 from 'd3';
 import angular from 'angular';
-import store from 'store';
 import ngSanitize from 'angular-sanitize';
 import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
-import { init } from 'i18next';
+import store from 'store';
 
+import { changeLanguage } from 'i18next';
+import i18n, {
+	fallbackLng,
+	defaultNS,
+} from './i18n';
 import bootstrapReact from './index.cmf';
 
 import APP_MODULE from './components/app/app-module';
@@ -35,7 +39,6 @@ import SETTINGS_MODULE from './settings/settings-module';
 
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
-
 import translations from '../i18n';
 import d3LocaleFr from '../lib/d3.locale.fr';
 
@@ -43,19 +46,7 @@ const MODULE_NAME = 'data-prep';
 
 window.MODULE_NAME = MODULE_NAME;
 
-const I18N_DOMAIN_COMPONENTS = 'tui-components';
-const I18N_DOMAIN_FORMS = 'tui-forms';
-
 let preferredLanguage;
-const fallbackLng = 'en';
-export const i18n = init({
-	fallbackLng, // Fallback language
-	ns: [I18N_DOMAIN_COMPONENTS, I18N_DOMAIN_FORMS],
-	defaultNS: I18N_DOMAIN_COMPONENTS,
-	fallbackNS: I18N_DOMAIN_COMPONENTS,
-	debug: false,
-	wait: true, // globally set to wait for loaded translations in translate hoc
-});
 
 const app = angular
 	.module(MODULE_NAME, [
@@ -80,12 +71,21 @@ const app = angular
 	// Translate config
 	.config(($translateProvider) => {
 		'ngInject';
-		Object.keys(translations).forEach(translationKey =>
-			$translateProvider.translations(
-				translationKey,
-				translations[translationKey],
-			)
-		);
+		Object.keys(translations)
+			.forEach((translationKey) => {
+				$translateProvider.translations(
+					translationKey,
+					translations[translationKey],
+				);
+
+				i18n.addResourceBundle(
+					translationKey,
+					defaultNS,
+					translations[translationKey],
+					false,
+					false,
+				);
+			});
 		$translateProvider.useSanitizeValueStrategy(null);
 	})
 	// Router config
@@ -155,22 +155,7 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 
 			$translate.fallbackLanguage(fallbackLng);
 			$translate.preferredLanguage(preferredLanguage);
-
-			$translate.onReady(() => {
-				const translationsWithFallback = Object.assign(
-					{},
-					$translate.getTranslationTable(fallbackLng),
-					$translate.getTranslationTable(preferredLanguage),
-				);
-
-				i18n.addResourceBundle(
-					preferredLanguage,
-					I18N_DOMAIN_COMPONENTS,
-					translationsWithFallback,
-					false,
-					false,
-				);
-			});
+			changeLanguage(preferredLanguage);
 		});
 };
 

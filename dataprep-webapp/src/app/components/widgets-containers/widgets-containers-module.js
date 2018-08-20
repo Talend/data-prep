@@ -27,11 +27,12 @@ import List from '@talend/react-components/lib/List';
 import Loader from '@talend/react-components/lib/Loader';
 import Progress from '@talend/react-components/lib/Progress';
 import TabBar from '@talend/react-components/lib/TabBar';
-import Form from '@talend/react-forms';
+import Form from '@talend/react-forms/lib/Form';
 import getTranslated from '@talend/react-components/lib/TranslateWrapper';
 import Notifications from '@talend/react-components/lib/Notification';
 import SubHeaderBar from '@talend/react-components/lib/SubHeaderBar';
-import { i18n } from './../../index-module';
+
+import i18n from './../../i18n';
 
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';

@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Version action should create a fetch action 1`] = `
-Object {
-  "type": "TDP_FETCH_VERSION",
-}
-`;

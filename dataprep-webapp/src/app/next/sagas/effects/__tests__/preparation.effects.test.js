@@ -43,20 +43,6 @@ describe('preparation', () => {
 		});
 	});
 
-	describe('openAbout', () => {
-		it('should update PreparationCreatorModal state in the cmf store', () => {
-			const gen = effects.openAbout();
-			const effect = gen.next().value.PUT.action;
-
-			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('PreparationCreatorModal');
-			expect(effect.componentState).toEqual({ show: true });
-
-			expect(gen.next().done).toBeTruthy();
-		});
-	});
-
 	describe('duplicate', () => {
 		it('should duplicate the preparation and fetch the new preparations list', () => {
 			const gen = effects.duplicate({ payload: { id: 'id0' } });

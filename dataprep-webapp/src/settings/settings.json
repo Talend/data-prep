@@ -75,7 +75,7 @@
     },
     "preparation:move:open": {
       "id": "preparation:move:open",
-      "icon": "talend-files-o",
+      "icon": "talend-file-move",
       "label": "Move preparation",
       "actionCreator": "preparation:move:open"
     },

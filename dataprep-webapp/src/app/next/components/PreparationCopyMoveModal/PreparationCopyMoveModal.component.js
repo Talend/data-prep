@@ -84,6 +84,7 @@ export default class PreparationCopyMoveModal extends React.Component {
 					source={'folders'}
 					id={'folders'}
 					componentId={PreparationCopyMoveModal.SELECT_OBJECT_ID}
+					filterMode={SelectObject.FILTER_MODE.ALL}
 					tree={{
 						initialState: {
 							selectedId,

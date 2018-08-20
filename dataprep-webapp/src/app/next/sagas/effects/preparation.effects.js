@@ -45,7 +45,7 @@ export function* copy({ id, folderId, destination, title }) {
 	const dest = destination || folderId;
 	const url = `/api/preparations/${id}/copy?destination=${dest}&newName=${title}`;
 
-	const action = yield call(http.post, url);
+	const action = yield call(http.post, url, {}, {}, { silent: true });
 	if (action instanceof Error && action.data) {
 		yield setCopyMoveErrorMode(action.data.message);
 	}
@@ -59,7 +59,7 @@ export function* move({ id, folderId, destination, title }) {
 	const dest = destination || folderId;
 	const url = `/api/preparations/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`;
 
-	const action = yield call(http.put, url);
+	const action = yield call(http.put, url, {}, {}, { silent: true });
 	if (action instanceof Error && action.data) {
 		yield setCopyMoveErrorMode(action.data.message);
 	}

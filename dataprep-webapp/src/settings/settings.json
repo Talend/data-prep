@@ -35,9 +35,11 @@
     "help:about:open": {
       "id": "help:about:open",
       "label": "About Data Preparation",
-      "onClickDispatch": {
-        "type": "OPEN_ABOUT"
-      }
+      "actionCreator": "about:open"
+    },
+    "help:about:toggle": {
+      "id": "help:about:less",
+      "bsStyle": "default btn-inverse"
     },
     "help:feedback:open": {
       "id": "help:feedback:open",

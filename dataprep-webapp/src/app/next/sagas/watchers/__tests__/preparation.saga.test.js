@@ -97,15 +97,4 @@ describe('preparation', () => {
 			expect(gen.next().value).toEqual(take(SET_TITLE_EDITION_MODE));
 		});
 	});
-
-	describe('openAbout', () => {
-		it('should wait for OPEN_PREPARATION_CREATOR action and call openAbout', () => {
-			const gen = sagas['preparation:about:open']();
-
-			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
-			expect(gen.next().value).toEqual(call(effects.openAbout));
-
-			expect(gen.next().value).toEqual(take(OPEN_PREPARATION_CREATOR));
-		});
-	});
 });

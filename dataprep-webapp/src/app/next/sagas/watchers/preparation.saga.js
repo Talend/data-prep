@@ -3,7 +3,6 @@ import {
 	CANCEL_RENAME_PREPARATION,
 	FETCH_PREPARATIONS,
 	OPEN_FOLDER,
-	OPEN_PREPARATION_CREATOR,
 	PREPARATION_DUPLICATE,
 	RENAME_PREPARATION,
 	SET_TITLE_EDITION_MODE,
@@ -56,13 +55,6 @@ function* setTitleEditionMode() {
 	}
 }
 
-function* openAbout() {
-	while (true) {
-		yield take(OPEN_PREPARATION_CREATOR);
-		yield call(effects.openAbout);
-	}
-}
-
 export default {
 	'preparation:rename:cancel': cancelRename,
 	'preparation:duplicate': duplicate,
@@ -70,5 +62,4 @@ export default {
 	'preparation:folder:open': openFolder,
 	'preparation:rename:submit': rename,
 	'preparation:rename': setTitleEditionMode,
-	'preparation:about:open': openAbout,
 };

@@ -6,8 +6,8 @@ import { Notification, ShortcutManager } from '@talend/react-containers';
 import AppLoader from '@talend/react-containers/lib/AppLoader/index';
 
 import { I18nextProvider } from 'react-i18next';
+import { default as components } from './';
 import i18n from './../../i18n';
-import AboutModal from './AboutModal';
 import PreparationCreatorModal from '../../components/preparation-creator/index';
 
 const initialNotificationsState = new Map({
@@ -20,9 +20,9 @@ export default function App(props) {
 			<AppLoader>
 				<div className="tdp">
 					<IconsProvider />
-					<ShortcutManager view="shortcuts" />
+					<ShortcutManager />
 					<Notification initialState={initialNotificationsState} />
-					<AboutModal />
+					<components.AboutModal />
 					<PreparationCreatorModal />
 					{props.children}
 				</div>

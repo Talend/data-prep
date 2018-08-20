@@ -1,6 +1,6 @@
 import { actions, sagaRouter } from '@talend/react-cmf';
 import { browserHistory as history } from 'react-router';
-import { fork, put } from 'redux-saga/effects';
+import { call, fork, put } from 'redux-saga/effects';
 import store from 'store';
 import { refresh } from './preparation.effects';
 /**
@@ -8,9 +8,9 @@ import { refresh } from './preparation.effects';
  * @returns {IterableIterator<*>}
  */
 export function* bootstrap() {
-	yield* fetchSettings();
+	yield call(fetchSettings);
 	// this should be called here because refresh use settings in the store
-	yield* initializeRouter();
+	yield call(initializeRouter);
 }
 
 export function* fetchSettings() {
@@ -18,7 +18,7 @@ export function* fetchSettings() {
 	yield put(actions.collections.addOrReplace('settings', data));
 }
 
-function* initializeRouter() {
+export function* initializeRouter() {
 	const routes = {
 		'/preparations': { saga: refresh, runOnExactMatch: true },
 		'/preparations/:folderId': { saga: refresh, runOnExactMatch: true },

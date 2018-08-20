@@ -1,8 +1,23 @@
 .modal-body {
 	text-align: center;
+	padding: {
+		top: 10px;
+		left: 32px;
+		right: 32px;
+	}
 
 	.about-logo {
 		width: 3.5em;
 		height: 3.5em;
+	}
+
+	.services-versions {
+		margin: 0 auto;
+		margin-top: 30px;
+		text-align: justify;
+
+		td+td, th+th {
+			border-left: 80px solid transparent;
+		}
 	}
 }

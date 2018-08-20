@@ -28,8 +28,6 @@ export default class AboutModal extends React.Component {
 		const state = this.props.state;
 		const show = state.get('show', false);
 		const expanded = state.get('expanded', false);
-		const services = [];
-		const displayVersion = 'TEST';
 		const bar = {
 			actions: {
 				center: [
@@ -42,6 +40,7 @@ export default class AboutModal extends React.Component {
 			},
 		};
 
+
 		return (
 			<Inject
 				component="Dialog"
@@ -53,23 +52,47 @@ export default class AboutModal extends React.Component {
 			>
 				<Icon name="talend-tdp-colored" className={'about-logo'} />
 				<div>
-					<div>Version : {displayVersion}</div>
+					<div>Version : {this.props.displayVersion}</div>
 					<div>{COPYRIGHT}</div>
 				</div>
 				{
 					expanded && (
-						services.map(service => (
-							<div>
-								<dt>{service.serviceName}</dt>
-								<dd>{`${service.versionId} (${service.buildId})`}</dd>
-							</div>
-						))
+						<table className={'services-versions'}>
+							<tr>
+								<th>SERVICE</th>
+								<th>BUILD ID</th>
+								<th>VERSION ID</th>
+							</tr>
+							{
+								this.props.services.map((service) => {
+									return <TableRow {...service.toJS()} />;
+								})
+							}
+						</table>
 					)
 				}
 			</Inject>
 		);
 	}
 }
+
+function TableRow({ serviceName, buildId, versionId }) {
+	return (
+		<tr>
+			<td>{serviceName}</td>
+			<td>{buildId}</td>
+			<td>{versionId}</td>
+		</tr>
+	);
+}
+
+TableRow.propTypes = {
+	serviceName: PropTypes.string,
+	buildId: PropTypes.string,
+	versionId: PropTypes.string,
+};
+
+
 AboutModal.displayName = 'AboutModal';
 AboutModal.propTypes = {
 	state: ImmutablePropTypes.contains({ show: PropTypes.bool }).isRequired,

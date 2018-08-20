@@ -175,8 +175,13 @@
       }
     },
     "AboutModal#default": {
-      "components": {
-        "content": []
+      "servicesExpression": {
+        "id": "cmf.collections.get",
+        "args": ["versions.services", []]
+      },
+      "displayVersionExpression": {
+        "id": "cmf.collections.get",
+        "args": ["versions.displayVersion", ""]
       }
     },
     "HomeListView#datastores": {

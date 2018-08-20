@@ -3,6 +3,7 @@ Feature: Row count of current sample
 
   Scenario: Apply an action which does not trigger statistics analysis
     Given I upload the dataset "/data/12L5C.csv" with name "12L5C_dataset"
+    Then I wait for the dataset "12L5C_dataset" metadata to be computed
     And I create a preparation with name "12L5C_preparation", based on "12L5C_dataset" dataset
     When I add a "delete_column" step on the preparation "12L5C_preparation" with parameters :
       | column_name | firstname |

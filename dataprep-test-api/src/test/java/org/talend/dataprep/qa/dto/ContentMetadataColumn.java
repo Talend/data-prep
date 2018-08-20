@@ -22,6 +22,14 @@ public class ContentMetadataColumn extends NamedItem implements Comparable<Conte
 
     public Map<String, Integer> quality;
 
+    public Statistics statistics;
+
+    public String name;
+
+    public String type;
+
+    public String domain;
+
     @Override
     public int compareTo(ContentMetadataColumn o) {
         if (o == null || o.id == null) {

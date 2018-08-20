@@ -32,6 +32,7 @@ Feature: Perform scenarios with DeleteAllEmptyColumns related action
 
   Scenario: Apply the DeleteAllEmptyColumns action after other actions creating empty columns and test export
     Given I upload the dataset "/data/dataset_with_empty_columns.csv" with name "dataset_with_empty_columns_dataset"
+    Then I wait for the dataset "dataset_with_empty_columns_dataset" metadata to be computed
     And I create a preparation with name "dataset_with_empty_columns_prep_2", based on "dataset_with_empty_columns_dataset" dataset
     When I add a "split" step identified by "splitFirstname" on the preparation "dataset_with_empty_columns_prep_2" with parameters :
       | separator   | e         |

@@ -102,6 +102,10 @@ public class AnalyzerService {
         this.dictionarySnapshotProvider = provider;
     }
 
+    public DictionarySnapshotProvider getDictionarySnapshotProvider() {
+        return dictionarySnapshotProvider;
+    }
+
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {
         // warning, the order is important
         List<AbstractPatternRecognizer> patternFrequencyAnalyzers = new ArrayList<>();

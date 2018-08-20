@@ -166,8 +166,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     }
 
     @Test
-    // See TDQ-14216
-    public void testShouldNotMaskSurrogatePairWhenInvalidAddressLine() {
+    public void testShouldMaskSurrogatePairAsSingleChar() {
         // given
         final DataSetRow row = builder() //
                 .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING).domain(MaskableCategoryEnum.ADDRESS_LINE.name())) //
@@ -181,7 +180,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         String realValueAsDtr = (String) row.values().get("0000");
         LOGGER.info("Row value: {}", realValueAsDtr);
         assertSame(7, realValueAsDtr.codePointCount(0, realValueAsDtr.length()));
-        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", realValueAsDtr);
+        assertEquals("XXXXXXX", realValueAsDtr);
     }
 
     @Test

@@ -34,12 +34,15 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.semantic.datamasking.ValueDataMasker;
+import org.talend.dataquality.semantic.snapshot.DictionarySnapshot;
 
 /**
  * Mask sensitive data according to the semantic category.
@@ -105,15 +108,20 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
             final Type type = get(column.getType());
             LOGGER.trace(">>> type: " + type + " metadata: " + column);
             try {
+                final DictionarySnapshot dictionarySnapshot =
+                        Providers.get(AnalyzerService.class).getDictionarySnapshotProvider().get();
+
                 if (DATE.equals(type)) {
                     final List<PatternFrequency> patternFreqList = column.getStatistics().getPatternFrequencies();
                     final List<String> dateTimePatternList = patternFreqList
                             .stream() //
                             .map(PatternFrequency::getPattern) //
                             .collect(toList());
-                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName(), dateTimePatternList));
+                    actionContext.get(MASKER,
+                            p -> new ValueDataMasker(domain, type.getName(), dateTimePatternList, dictionarySnapshot));
                 } else {
-                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName()));
+                    actionContext.get(MASKER,
+                            p -> new ValueDataMasker(domain, type.getName(), null, dictionarySnapshot));
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);

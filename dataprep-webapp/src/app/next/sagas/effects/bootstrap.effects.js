@@ -7,13 +7,13 @@ import { refresh } from './preparation.effects';
  * Fetch app settings
  * @returns {IterableIterator<*>}
  */
-export function* fetch() {
+export function* bootstrap() {
 	yield* fetchSettings();
 	// this should be called here because refresh use settings in the store
 	yield* initializeRouter();
 }
 
-function* fetchSettings() {
+export function* fetchSettings() {
 	const data = yield store.get('settings');
 	yield put(actions.collections.addOrReplace('settings', data));
 }

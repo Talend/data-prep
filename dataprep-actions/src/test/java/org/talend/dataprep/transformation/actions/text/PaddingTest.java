@@ -96,7 +96,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         assertEquals(expected, actual);
     }
     @Test
-    public void test_apply_on_surrogate_pair_left_Padding_is_surrogate_pair() {
+    public void testApplyOnSurrogatePairLeftPaddingIsSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "Vincent");
@@ -124,7 +124,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         assertEquals(expected, actual);
     }
     @Test
-    public void test_apply_on_surrogate_pair_left_Padding_is_not_surrogate_pair() {
+    public void testApplyOnSurrogatePairLeftPaddingIsNotSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "Vincent");
@@ -152,7 +152,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         assertEquals(expected, actual);
     }
     @Test
-    public void test_apply_on_surrogate_pair_right_Padding_is_surrogate_pair() {
+    public void testApplyOnSurrogatePairRightPaddingIsSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "Vincent");
@@ -181,7 +181,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         assertEquals(expected, actual);
     }
     @Test
-    public void test_apply_on_surrogate_pair_right_Padding_is_not_surrogate_pair() {
+    public void testApplyOnSurrogatePairRightPaddingIsNotSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "Vincent");

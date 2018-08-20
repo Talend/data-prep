@@ -99,7 +99,7 @@ public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest<RemoveN
         assertEquals(expected, actual);
     }
     @Test
-    public void test_apply_on_surrogate_pair() {
+    public void testApplyOnSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "Vincent");
@@ -125,7 +125,7 @@ public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest<RemoveN
         assertEquals(expected, actual);
     }
     @Test
-    public void test_apply_on_chinese() {
+    public void testApplyOnChinese() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "Vincent");

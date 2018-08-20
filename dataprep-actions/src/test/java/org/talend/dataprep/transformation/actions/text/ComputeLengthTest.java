@@ -96,7 +96,7 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
         assertEquals(expectedValues, row.values());
     }
     @Test
-    public void test_apply_on_surrogate_pair() {
+    public void testApplyOnSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "𠀀");

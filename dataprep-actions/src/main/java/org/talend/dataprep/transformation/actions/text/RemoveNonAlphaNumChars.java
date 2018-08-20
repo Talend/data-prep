@@ -98,6 +98,8 @@ public class RemoveNonAlphaNumChars extends AbstractActionMetadata implements Co
         for (char str : inputStr.toCharArray()) {
             if (Character.isLetter(str) || Character.isDigit(str) || Character.isWhitespace(str)) {
                 resultStr.append(str);
+            }else{
+                resultStr.append(replaceStr);
             }
         }
         return resultStr.toString();

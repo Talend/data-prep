@@ -10,7 +10,8 @@ export default class DataprepSearchProvider extends SearchProvider {
 	}
 
 	build(term) {
-		const query = this.categories.map(t => `categories=${t.type}`).join('&');
+		const query = this.categories.map(t => `categories=${t.type}`)
+			.join('&');
 		return [
 			http.get,
 			`${DATAPREP_SEARCH_URL}${term}&${query}`,
@@ -19,23 +20,24 @@ export default class DataprepSearchProvider extends SearchProvider {
 
 	transform(data) {
 		const converted = JSON.parse(data.data);
-		return Object.keys(converted).map((type) => {
-			const category = this.categories.find(cat => cat.type === type);
+		return Object.keys(converted)
+			.map((type) => {
+				const category = this.categories.find(cat => cat.type === type);
 
-			return {
-				title: category.label(),
-				icon: {
-					name: category.icon,
-					title: category.label(),
-				},
-				suggestions: converted[type]
-					.filter(suggestion => suggestion.name.length)
-					.map(({ id, name }) => ({
-						title: name,
-						type,
-						id,
-					})),
-			};
-		});
+				return {
+					title: category.labelFn && category.labelFn() || category.label || category.key || '',
+					icon: {
+						name: category.icon,
+						title: category.labelFn && category.labelFn() || category.label || category.key || '',
+					},
+					suggestions: converted[type]
+						.filter(suggestion => suggestion.name.length)
+						.map(({ id, name }) => ({
+							title: name,
+							type,
+							id,
+						})),
+				};
+			});
 	}
 }

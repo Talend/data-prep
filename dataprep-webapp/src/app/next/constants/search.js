@@ -16,24 +16,24 @@ export const SEARCH_CATEGORIES_BY_PROVIDER = {
 	tdp: [
 		{
 			type: 'dataset',
-			label: () => i18n.t('tdp-app:DATASETS', { defaultValue: 'datasets' }),
+			labelFn: () => i18n.t('tdp-app:DATASETS', { defaultValue: 'datasets' }),
 			icon: 'talend-datastore',
 		},
 		{
 			type: 'preparation',
-			label: () => i18n.t('tdp-app:PREPARATIONS', { defaultValue: 'preparations' }),
+			labelFn: () => i18n.t('tdp-app:PREPARATIONS', { defaultValue: 'preparations' }),
 			icon: 'talend-dataprep',
 		},
 		{
 			type: 'folder',
-			label: () => i18n.t('tdp-app:FOLDERS', { defaultValue: 'folders' }),
+			labelFn: () => i18n.t('tdp-app:FOLDERS', { defaultValue: 'folders' }),
 			icon: 'talend-folder',
 		},
 	],
 	doc: [
 		{
 			type: 'documentation',
-			label: () => i18n.t('tdp-app:DOCUMENTATION', { defaultValue: 'documentation' }),
+			labelFn: () => i18n.t('tdp-app:DOCUMENTATION', { defaultValue: 'documentation' }),
 			icon: 'talend-question-circle',
 		},
 	],

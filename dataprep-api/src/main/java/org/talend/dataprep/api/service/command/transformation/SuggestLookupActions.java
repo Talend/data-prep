@@ -57,10 +57,10 @@ public class SuggestLookupActions extends ChainedCommand<List<ActionForm>, DataS
      *
      * @param dataSetMetadata the command to execute to get the DataSetMetadata.
      */
-    public SuggestLookupActions(HystrixCommand<DataSetMetadata> dataSetMetadata, String dataSetId) {
+    public SuggestLookupActions(HystrixCommand<DataSetMetadata> dataSetMetadata) {
         super(dataSetMetadata);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets"));
-        on(HttpStatus.OK).then(process(dataSetId));
+        on(HttpStatus.OK).then(process());
         // on error, @see getFallBack()
     }
 
@@ -70,10 +70,9 @@ public class SuggestLookupActions extends ChainedCommand<List<ActionForm>, DataS
     }
 
     /**
-     * @param dataSetId the current dataset id.
      * @return the function that aggregates the SuggestColumnActions with the lookups.
      */
-    private BiFunction<HttpRequestBase, HttpResponse, List<ActionForm>> process(String dataSetId) {
+    private BiFunction<HttpRequestBase, HttpResponse, List<ActionForm>> process() {
         return (request, response) -> {
 
             try {

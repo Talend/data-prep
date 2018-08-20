@@ -98,8 +98,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", "testDataset");
 
         // when it's updated
-        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().put("/api/datasets/" + dataSetId + "?name=testDataset").asString();
+        given()
+                .body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8)) //
+                .queryParam("Content-Type", "text/csv") //
+                .when() //
+                .put("/api/datasets/" + dataSetId + "?name=testDataset") //
+                .asString();
 
         // then, the content is updated
         String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
@@ -115,8 +119,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId = testClient.createDataset("dataset/dataset.csv", datasetOriginalName);
 
         // when it's updated
-        given().body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8))
-                .queryParam("Content-Type", "text/csv").when().put("/api/datasets/" + dataSetId).asString();
+        given()
+                .body(IOUtils.toString(PreparationAPITest.class.getResourceAsStream("t-shirt_100.csv"), UTF_8)) //
+                .queryParam("Content-Type", "text/csv") //
+                .when() //
+                .put("/api/datasets/" + dataSetId) //
+                .asString();
 
         // then, the content is updated
         String dataSetContent = when().get("/api/datasets/" + dataSetId + "?metadata=true").asString();
@@ -140,12 +148,18 @@ public class DataSetAPITest extends ApiServiceTestBase {
                 .asString();
         assertThat(defaultDataSetContent.contains("__tdp"), is(false));
 
-        String dataSetContent = given().queryParam("metadata", true).queryParam("includeTechnicalProperties", false)
-                .get("/api/datasets/{dataSetId}", dataSetId).asString();
+        String dataSetContent = given() //
+                .queryParam("metadata", true) //
+                .queryParam("includeTechnicalProperties", false) //
+                .get("/api/datasets/{dataSetId}", dataSetId) //
+                .asString();
         assertThat(dataSetContent.contains("__tdp"), is(false));
 
-        String dataSetContentWithTechnicalContent = given().queryParam("metadata", true)
-                .queryParam("includeTechnicalProperties", true).get("/api/datasets/{dataSetId}", dataSetId).asString();
+        String dataSetContentWithTechnicalContent = given() //
+                .queryParam("metadata", true) //
+                .queryParam("includeTechnicalProperties", true) //
+                .get("/api/datasets/{dataSetId}", dataSetId) //
+                .asString();
         assertThat(dataSetContentWithTechnicalContent.contains("__tdp"), is(true));
     }
 
@@ -258,8 +272,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // then
         assertEquals(2, compatiblePreparations.size());
-        assertEquals(prep2,compatiblePreparations.get(0).getId());
-        assertEquals(prep1,compatiblePreparations.get(1).getId());
+        assertEquals(prep2, compatiblePreparations.get(0).getId());
+        assertEquals(prep1, compatiblePreparations.get(1).getId());
     }
 
     @Test
@@ -271,7 +285,8 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String dataSetId2 = testClient.createDataset("dataset/dataset.csv", "bbbb");
 
         // when (sort by date, order is desc)
-        String list = when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), DESC.camelName())
+        String list = when() //
+                .get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), DESC.camelName()) //
                 .asString();
 
         // then
@@ -283,7 +298,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
         }
 
         // when (sort by date, order is desc)
-        list = when().get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), ASC.camelName()).asString();
+        list = when() //
+                .get("/api/datasets?sort={sort}&order={order}", CREATION_DATE.camelName(), ASC.camelName()) //
+                .asString();
 
         // then
         elements = mapper.readTree(list).elements();
@@ -421,7 +438,10 @@ public class DataSetAPITest extends ApiServiceTestBase {
         // when
         final Response response = given().param("name", "copy") //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect() //
+                .statusCode(200) //
+                .log() //
+                .ifError() //
                 .post("/api/datasets/{id}/copy", originalId);
 
         // then
@@ -438,7 +458,10 @@ public class DataSetAPITest extends ApiServiceTestBase {
         // when
         final Response response = given().param("name", "taken") //
                 .when() //
-                .expect().statusCode(409).log().ifError() //
+                .expect() //
+                .statusCode(409) //
+                .log() //
+                .ifError() //
                 .post("/api/datasets/{id}/copy", originalId);
 
         // then
@@ -579,12 +602,15 @@ public class DataSetAPITest extends ApiServiceTestBase {
         Response response = given() //
                 .body(IOUtils
                         .toByteArray(DataSetAPITest.class.getResourceAsStream("dataset/Talend_Desk-Tableau_de_Bord-011214.xls"))) //
-                .when().post("/api/datasets");
+                .when() //
+                .post("/api/datasets");
 
         assertThat(response.getStatusCode(), is(200));
         String datasetId = response.asString();
         // call preview to ensure no error
-        response = given().when().get("/api/datasets/preview/{id}", datasetId);
+        response = given() //
+                .when() //
+                .get("/api/datasets/preview/{id}", datasetId);
 
         assertThat(response.getStatusCode(), is(200));
     }
@@ -594,8 +620,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
 
         // then
         String json = given() //
-                .expect().statusCode(200).log().ifError() //
-                .when().get("/api/datasets/encodings").asString();
+                .expect() //
+                .statusCode(200) //
+                .log() //
+                .ifError() //
+                .when() //
+                .get("/api/datasets/encodings").asString();
 
         List<String> encodings = mapper.readValue(json, new TypeReference<List<String>>() {
         });
@@ -714,8 +744,13 @@ public class DataSetAPITest extends ApiServiceTestBase {
     @Test
     public void testGetImportJsonSchemaParameters() throws JsonProcessingException {
         String importType = "tcomp-toto";
-        given().accept(ContentType.JSON).port(port).when().get("/api/datasets/imports/{import}/parameters", importType).then()
-                .statusCode(200)
+        given() //
+                .accept(ContentType.JSON) //
+                .port(port) //
+                .when() //
+                .get("/api/datasets/imports/{import}/parameters", importType) //
+                .then() //
+                .statusCode(200) //
                 .content(equalTo(mapper.writeValueAsString(new TCOMPLocationTest().getParametersAsSchema(Locale.US))));
     }
 
@@ -745,8 +780,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final InputStream expected = PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_filter.json");
 
         // when
-        Response response = given().queryParam("metadata", "true").queryParam("columns", "false")
-                .queryParam("filter", "0001='John'").when().get("/api/datasets/{id}", dataSetId);
+        Response response = given() //
+                .queryParam("metadata", "true") //
+                .queryParam("columns", "false") //
+                .queryParam("filter", "0001='John'") //
+                .when() //
+                .get("/api/datasets/{id}", dataSetId);
 
         // then
         response.then().contentType(ContentType.JSON);

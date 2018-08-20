@@ -95,8 +95,8 @@ public class DataSetAPI extends APIService {
     /**
      * Create a dataset from request body content.
      *
-     * @param name           The dataset name.
-     * @param contentType    the request content type used to distinguish dataset creation or import.
+     * @param name The dataset name.
+     * @param contentType the request content type used to distinguish dataset creation or import.
      * @param dataSetContent the dataset content from the http request body.
      * @return The dataset id.
      */
@@ -142,11 +142,9 @@ public class DataSetAPI extends APIService {
     }
 
     @RequestMapping(value = "/api/datasets/{id}/copy", method = POST, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Copy the dataset.", produces = TEXT_PLAIN_VALUE,
-            notes = "Copy the dataset, returns the id of the copied created data set.")
+    @ApiOperation(value = "Copy the dataset.", produces = TEXT_PLAIN_VALUE, notes = "Copy the dataset, returns the id of the copied created data set.")
     @Timed
-    public Callable<String> copy(
-            @ApiParam(value = "Name of the copy") @RequestParam(required = false) String name,
+    public Callable<String> copy(@ApiParam(value = "Name of the copy") @RequestParam(required = false) String name,
             @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id) {
         return () -> {
             if (LOG.isDebugEnabled()) {
@@ -179,8 +177,9 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Update a dataset.", produces = TEXT_PLAIN_VALUE, //
             notes = "Update a data set based on content provided in POST body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
     @Timed
-    public Callable<String> update(@ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
-                         @ApiParam(value = "content") InputStream dataSetContent) {
+    public Callable<String> update(
+            @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
+            @ApiParam(value = "content") InputStream dataSetContent) {
         return () -> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating or updating dataset #{} (pool: {})...", id, getConnectionStats());
@@ -196,9 +195,10 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Update a dataset.", consumes = APPLICATION_JSON_VALUE, //
             notes = "Update a data set based on content provided in POST body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
     @Timed
-    public void updateColumn(@PathVariable(value = "datasetId") @ApiParam(value = "Id of the dataset to update") final String datasetId,
-                             @PathVariable(value = "columnId") @ApiParam(value = "Id of the column to update") final String columnId,
-                             @ApiParam(value = "content") final InputStream body) {
+    public void updateColumn(
+            @PathVariable(value = "datasetId") @ApiParam(value = "Id of the dataset to update") final String datasetId,
+            @PathVariable(value = "columnId") @ApiParam(value = "Id of the column to update") final String columnId,
+            @ApiParam(value = "content") final InputStream body) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating or updating dataset #{} (pool: {})...", datasetId, getConnectionStats());
@@ -251,13 +251,13 @@ public class DataSetAPI extends APIService {
         }
     }
 
-
     @RequestMapping(value = "/api/datasets/preview/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a data set by id.", produces = APPLICATION_JSON_VALUE, notes = "Get a data set based on given id.")
     @Timed
-    public ResponseEntity<StreamingResponseBody> preview(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
-                                                         @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata,
-                                                         @RequestParam(defaultValue = "") @ApiParam(name = "sheetName", value = "Sheet name to preview") String sheetName) {
+    public ResponseEntity<StreamingResponseBody> preview(
+            @ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
+            @RequestParam(defaultValue = "true") @ApiParam(name = "metadata", value = "Include metadata information in the response") boolean metadata,
+            @RequestParam(defaultValue = "") @ApiParam(name = "sheetName", value = "Sheet name to preview") String sheetName) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Requesting dataset #{} (pool: {})...", id, getConnectionStats());
         }
@@ -283,15 +283,16 @@ public class DataSetAPI extends APIService {
             @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
         try {
             CertificationState certification = certified ? CERTIFIED : null;
-                Boolean filterOnFavorite = favorite ? Boolean.TRUE : null;
-                Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, filterOnFavorite);
+            Boolean filterOnFavorite = favorite ? Boolean.TRUE : null;
+            Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, filterOnFavorite);
 
             if (isNotBlank(name)) {
                 datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
             }
 
             if (certified) {
-                datasetStream = datasetStream.filter(dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
+                datasetStream = datasetStream.filter(
+                        dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
             }
 
             if (limit) {
@@ -343,8 +344,8 @@ public class DataSetAPI extends APIService {
      * compatible preparation is found an empty list is returned.
      *
      * @param dataSetId the specified data set id
-     * @param sort      the sort criterion: either name or date.
-     * @param order     the sorting order: either asc or desc
+     * @param sort the sort criterion: either name or date.
+     * @param order the sorting order: either asc or desc
      */
     @RequestMapping(value = "/api/datasets/{id}/compatiblepreparations", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List compatible preparations.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets that are compatible with the specified one.")
@@ -376,8 +377,8 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets/{id}", method = DELETE)
     @ApiOperation(value = "Delete a data set by id", notes = "Delete a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
-    public ResponseEntity<String> delete(@PathVariable(value = "id") @ApiParam(name = "id",
-            value = "Id of the data set to delete") String dataSetId) {
+    public ResponseEntity<String> delete(
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Id of the data set to delete") String dataSetId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Delete dataset #{} (pool: {})...", dataSetId, getConnectionStats());
         }
@@ -403,7 +404,7 @@ public class DataSetAPI extends APIService {
                     protected DataSetMetadata run() {
                         return getMetadata(dataSetId);
                     }
-                }, dataSetId);
+                });
 
         return getLookupActions.execute();
     }
@@ -412,8 +413,7 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Set or Unset the dataset as favorite for the current user.", produces = TEXT_PLAIN_VALUE, //
             notes = "Specify if a dataset is or is not a favorite for the current user.")
     @Timed
-    public Callable<String> favorite(
-            @ApiParam(value = "Id of the favorite data set ") @PathVariable(value = "id") String id,
+    public Callable<String> favorite(@ApiParam(value = "Id of the favorite data set ") @PathVariable(value = "id") String id,
             @RequestParam(defaultValue = "false") @ApiParam(name = "unset", value = "When true, will remove the dataset from favorites, if false (default) this will set the dataset as favorite.") boolean unset) {
         return () -> {
             if (LOG.isDebugEnabled()) {

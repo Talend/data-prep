@@ -8,7 +8,7 @@ describe('bootstrap', () => {
 		it('should call fetch effect', () => {
 			const gen = bootstrap();
 
-			expect(gen.next().value).toEqual(call(effects.fetch));
+			expect(gen.next().value).toEqual(call(effects.bootstrap));
 
 			expect(gen.next().done).toBeTruthy();
 		});

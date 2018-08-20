@@ -10,7 +10,7 @@ describe('bootstrap', () => {
 	describe('fetch', () => {
 		it('should update cmf store', () => {
 			store.set('settings', { actions: [], uris: { preparation: 'api/preparation' } });
-			const gen = effects.fetch();
+			const gen = effects.bootstrap();
 			const expected = store.get('settings');
 			expect(gen.next().value).toEqual(expected);
 			let effect = gen.next(expected).value.PUT.action;

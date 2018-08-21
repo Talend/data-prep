@@ -2,6 +2,7 @@ import api, { store as cmfstore, sagaRouter, actions as cmfActions } from '@tale
 import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
 import dataset from '@talend/dataset';
+import localStorage from 'store';
 import '@talend/dataset/lib/app/index.scss';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
@@ -13,6 +14,8 @@ import App from './next/components/App.container';
 import { ALERT } from './next/constants/actions';
 import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
+import locales from './next/locales';
+import { registerLocales } from './i18n';
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;
@@ -170,14 +173,24 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */
+		const settings = localStorage.get('settings');
 		store.dispatch(
-			cmfActions.settingsActions.fetchSettings(`/settings.${constants.I18N.DEFAULT_LOCALE}.json`),
+			cmfActions.settingsActions.fetchSettings(`/settings.${settings.context.language}.json`),
 		);
 
 		reduxLocalStorage.saveOnReload({
 			engine,
 			store,
 		});
+
+		/**
+		 * Register i18next locales per namespace
+		 */
+		registerLocales(locales);
+		const additionalLocales = additionalConfiguration.locales;
+		if (additionalLocales) {
+			registerLocales(additionalLocales);
+		}
 
 		const additionalCallback = additionalConfiguration.callback;
 		if (additionalCallback) {

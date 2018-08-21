@@ -10,6 +10,8 @@ describe('bootstrap', () => {
 
 			expect(gen.next().value).toEqual(call(effects.bootstrap));
 
+			expect(gen.next().value).toEqual(call(effects.setLanguage));
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});

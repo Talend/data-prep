@@ -145,11 +145,6 @@
   "FILTER_TITLE": "Filter",
   "FILTERS": "Filters",
   "TOGGLE_FILTERS": "Toggle filters",
-  "INVALID_RECORDS_LABEL": "rows with invalid values",
-  "VALID_RECORDS_LABEL": "rows with valid values",
-  "INVALID_EMPTY_RECORDS_LABEL": "rows with invalid or empty values",
-  "EMPTY_RECORDS_LABEL": "rows with empty values",
-
 
   "_comment": "Buttons",
   "CANCEL": "Cancel",

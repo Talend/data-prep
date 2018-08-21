@@ -5,6 +5,7 @@ import { call, fork } from 'redux-saga/effects';
 import * as effects from '../../effects/bootstrap.effects';
 import { refresh } from '../preparation.effects';
 
+import i18next from '../../../../i18n';
 
 describe('bootstrap', () => {
 	describe('bootstrap', () => {
@@ -37,6 +38,18 @@ describe('bootstrap', () => {
 			const effect = gen.next().value;
 			expect(effect).toEqual(fork(sagaRouter, history, route));
 			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('setLanguage', () => {
+		beforeEach(() => {
+			i18next.changeLanguage = jest.fn();
+		});
+
+		it('should change language', () => {
+			store.set('settings', { context: { language: 'fr' } });
+			effects.setLanguage();
+			expect(i18next.changeLanguage).toHaveBeenCalledWith('fr');
 		});
 	});
 });

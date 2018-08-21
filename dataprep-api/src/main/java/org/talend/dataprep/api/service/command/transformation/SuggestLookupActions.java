@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.transformation;
 
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -58,10 +57,10 @@ public class SuggestLookupActions extends ChainedCommand<List<ActionForm>, DataS
      *
      * @param dataSetMetadata the command to execute to get the DataSetMetadata.
      */
-    public SuggestLookupActions(HystrixCommand<DataSetMetadata> dataSetMetadata, String dataSetId) {
+    public SuggestLookupActions(HystrixCommand<DataSetMetadata> dataSetMetadata) {
         super(dataSetMetadata);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets"));
-        on(HttpStatus.OK).then(process(dataSetId));
+        on(HttpStatus.OK).then(process());
         // on error, @see getFallBack()
     }
 
@@ -71,22 +70,20 @@ public class SuggestLookupActions extends ChainedCommand<List<ActionForm>, DataS
     }
 
     /**
-     * @param dataSetId the current dataset id.
      * @return the function that aggregates the SuggestColumnActions with the lookups.
      */
-    private BiFunction<HttpRequestBase, HttpResponse, List<ActionForm>> process(String dataSetId) {
+    private BiFunction<HttpRequestBase, HttpResponse, List<ActionForm>> process() {
         return (request, response) -> {
 
             try {
                 List<DataSetMetadata> dataSets = objectMapper.readValue(response.getEntity().getContent(),
-                        new TypeReference<List<DataSetMetadata>>() {});
+                        new TypeReference<List<DataSetMetadata>>() {
+                        });
 
-                return dataSets.stream()
-                        .filter(dataset -> !StringUtils.equals(dataSetId, dataset.getId()))
-                        .map(dataset -> {
-                            Lookup lookup = (Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME);
-                            return lookup.adapt(dataset).getActionForm(getLocale());
-                        }).collect(Collectors.toList());
+                return dataSets.stream().map(dataset -> {
+                    Lookup lookup = (Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME);
+                    return lookup.adapt(dataset).getActionForm(getLocale());
+                }).collect(Collectors.toList());
             } catch (IOException e) {
                 throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e);
             } finally {

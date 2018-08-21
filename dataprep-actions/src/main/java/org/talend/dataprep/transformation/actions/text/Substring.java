@@ -76,22 +76,15 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        final Parameter fromIndexParameters = parameter(locale).setName(FROM_INDEX_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("0")
-                .build(this);
-        final Parameter fromNBeforeEndParameters = parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("5")
-                .build(this);
-        final Parameter toIndexParameters = parameter(locale).setName(TO_INDEX_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("5")
-                .build(this);
-        final Parameter toNBeforeEndParameters = parameter(locale).setName(TO_N_BEFORE_END_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("1")
-                .build(this);
+        final Parameter fromIndexParameters =
+                parameter(locale).setName(FROM_INDEX_PARAMETER).setType(INTEGER).setDefaultValue("0").build(this);
+        final Parameter fromNBeforeEndParameters =
+                parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER).setType(INTEGER).setDefaultValue("5").build(
+                        this);
+        final Parameter toIndexParameters =
+                parameter(locale).setName(TO_INDEX_PARAMETER).setType(INTEGER).setDefaultValue("5").build(this);
+        final Parameter toNBeforeEndParameters =
+                parameter(locale).setName(TO_N_BEFORE_END_PARAMETER).setType(INTEGER).setDefaultValue("1").build(this);
 
         // "to" parameter with all possible values
         final Parameter toCompleteParameters = selectParameter(locale) //
@@ -115,7 +108,9 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         final Parameter fromParameters = selectParameter(locale) //
                 .name(FROM_MODE_PARAMETER) //
                 .item(FROM_BEGINNING, FROM_BEGINNING, toCompleteParameters) // has all the "To" choices
-                .item(FROM_INDEX_PARAMETER, FROM_INDEX_PARAMETER, fromIndexParameters, toCompleteParameters) // has all the "To" choices
+                .item(FROM_INDEX_PARAMETER, FROM_INDEX_PARAMETER, fromIndexParameters, toCompleteParameters) // has all
+                                                                                                             // the "To"
+                                                                                                             // choices
                 .item(FROM_N_BEFORE_END_PARAMETER, FROM_N_BEFORE_END_PARAMETER, fromNBeforeEndParameters,
                         toParametersWithoutIndexSelection) // cannot
                 // choose
@@ -144,7 +139,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(STRING));
+        return singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(STRING));
     }
 
     @Override
@@ -163,7 +159,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
         final int realToIndex = getEndIndex(parameters, value);
 
         try {
-            final String newValue = value.substring(value.offsetByCodePoints(0, realFromIndex),value.offsetByCodePoints(0,realToIndex));
+            final String newValue = value.substring(value.offsetByCodePoints(0, realFromIndex),
+                    value.offsetByCodePoints(0, realToIndex));
             row.set(substringColumn, newValue);
         } catch (IndexOutOfBoundsException e) {
             // Nothing to do in that case, just set with the empty string:

@@ -84,26 +84,24 @@ public class RemoveNonAlphaNumChars extends AbstractActionMetadata implements Co
         if (from == null) {
             return StringUtils.EMPTY;
         }
-        final int inputLen=from.length();
-        //judge whether surrogate pair exist
-        if(inputLen==from.codePointCount(0,inputLen)) {
-            return from.replaceAll("[[^\\p{IsAlnum}]&&[^\\p{IsWhite_Space}]]", "");
-        }else {
-            return replaceNonAlnumAndSpace(from, "");
+        final int inputSize = from.length();
+        // judge whether surrogate pair exist
+        if (inputSize == from.codePointCount(0, inputSize)) {
+            return from.replaceAll("[[^\\p{IsAlnum}]&&[^\\p{IsWhite_Space}]]", StringUtils.EMPTY);
+        } else {
+            return replaceNonAlphaNumAndSpace(from, StringUtils.EMPTY);
         }
     }
 
-    private  String replaceNonAlnumAndSpace(String inputStr, String replaceStr) {
-        StringBuilder resultStr = new StringBuilder(); //$NON-NLS-1$
+    private String replaceNonAlphaNumAndSpace(String inputStr, String replaceStr) {
+        StringBuilder resultStr = new StringBuilder(); // $NON-NLS-1$
         for (char str : inputStr.toCharArray()) {
-            if (Character.isLetter(str) || Character.isDigit(str) || Character.isWhitespace(str)) {
-                resultStr.append(str);
-            }else{
-                resultStr.append(replaceStr);
-            }
+            resultStr.append((Character.isLetter(str) || Character.isDigit(str) || Character.isWhitespace(str)) ? str
+                    : replaceStr);
         }
         return resultStr.toString();
     }
+
     @Override
     public Set<Behavior> getBehavior() {
         return EnumSet.of(Behavior.VALUES_COLUMN);

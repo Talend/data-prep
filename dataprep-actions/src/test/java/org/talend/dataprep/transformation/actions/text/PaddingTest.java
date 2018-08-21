@@ -70,6 +70,38 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
     }
 
     @Test
+    public void testApplyWithStringParameter() throws Exception {
+        //size less than length and padding is surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"𠀀", Padding.LEFT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        //size more than length and padding is surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",14,"𠀀", Padding.LEFT_POSITION), is("𠀀中崎𠀀𠀁𠀂𠀃𠀄"));
+        //size less than length and padding is not surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"我", Padding.LEFT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        //size more than length and padding is not surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",13,"我", Padding.LEFT_POSITION), is("我中崎𠀀𠀁𠀂𠀃𠀄"));
+        //size less than length and padding is surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"𠀀", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        //size more than length and padding is surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",14,"𠀀", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄𠀀"));
+        //size less than length and padding is not surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"我", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        //size more than length and padding is not surrogate pair
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",13,"我", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄我"));
+    }
+
+    @Test
+    public void testGetRealSize() throws Exception {
+        // size more than length and padding is surrogate pair
+        assertThat(action.getRealSize("中崎𠀀𠀁𠀂𠀃𠀄", 8, true), is(14));
+        // size less than length and padding is surrogate pair
+        assertThat(action.getRealSize("中崎𠀀𠀁𠀂𠀃𠀄", 5, true), is(5));
+        // size more than length and padding is not surrogate pair
+        assertThat(action.getRealSize("中崎𠀀𠀁𠀂𠀃𠀄", 8, false), is(13));
+        // size less than length and padding is not surrogate pair
+        assertThat(action.getRealSize("中崎𠀀𠀁𠀂𠀃𠀄", 5, false), is(5));
+    }
+
+    @Test
     public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
@@ -123,6 +155,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
+
     @Test
     public void testApplyOnSurrogatePairLeftPaddingIsNotSurrogatePair() {
         // given

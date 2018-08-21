@@ -31,7 +31,8 @@ import Form from '@talend/react-forms/lib/Form';
 import getTranslated from '@talend/react-components/lib/TranslateWrapper';
 import Notifications from '@talend/react-components/lib/Notification';
 import SubHeaderBar from '@talend/react-components/lib/SubHeaderBar';
-import { i18n } from './../../index-module';
+
+import i18n from './../../i18n';
 
 import AppHeaderBarContainer from './app-header-bar/app-header-bar-container';
 import BreadcrumbContainer from './breadcrumb/breadcrumb-container';

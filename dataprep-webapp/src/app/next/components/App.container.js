@@ -9,7 +9,6 @@ import AppLoader from '@talend/react-containers/lib/AppLoader';
 import { default as components } from './';
 import i18n from './../../i18n';
 
-
 const initialNotificationsState = new Map({
 	notifications: new List([]),
 });

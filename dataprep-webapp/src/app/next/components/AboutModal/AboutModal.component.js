@@ -1,12 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { Map } from 'immutable';
 import { Dialog, Icon } from '@talend/react-components';
 import { cmfConnect, Inject } from '@talend/react-cmf';
 
 import './AboutModal.scss';
 
 const COPYRIGHT = '© 2018 Talend. All Rights Reserved';
+
+export const DEFAULT_STATE = new Map({
+	show: false,
+	expanded: false,
+});
 
 
 export default class AboutModal extends React.Component {

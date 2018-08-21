@@ -1,8 +1,7 @@
 import { cmfConnect } from '@talend/react-cmf';
-import { Map } from 'immutable';
-import AboutModal from './AboutModal.component';
+import AboutModal, { DEFAULT_STATE } from './AboutModal.component';
 
 export default cmfConnect({
 	componentId: 'default',
-	defaultState: new Map({ show: false }),
+	defaultState: DEFAULT_STATE,
 })(AboutModal);

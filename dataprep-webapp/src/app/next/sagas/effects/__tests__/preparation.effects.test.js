@@ -72,7 +72,7 @@ describe('preparation', () => {
 
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folder/Lw==/preparations'),
+				call(http.get, '/api/folders/Lw==/preparations'),
 			);
 
 			const effectPUT = gen.next(API_RESPONSE).value.PUT.action;
@@ -96,7 +96,7 @@ describe('preparation', () => {
 
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folder/FOLDER_ID/preparations'),
+				call(http.get, '/api/folders/FOLDER_ID/preparations'),
 			);
 
 			const effectPUT = gen.next(API_RESPONSE).value.PUT.action;
@@ -117,7 +117,7 @@ describe('preparation', () => {
 			const payload = {};
 			const gen = effects.fetchFolder(payload);
 			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folder/Lw=='));
+			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folders/Lw=='));
 
 			const effect = gen.next(API_RESPONSE).value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
@@ -134,7 +134,7 @@ describe('preparation', () => {
 			};
 			const gen = effects.fetchFolder(payload);
 			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folder/FOLDER_ID'));
+			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folders/FOLDER_ID'));
 
 			const effect = gen.next(API_RESPONSE).value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
@@ -149,7 +149,10 @@ describe('preparation', () => {
 	describe('rename', () => {
 		it('should rename the preparation and fetch the new preparations list', () => {
 			const gen = effects.rename({ id: 'id0', name: 'newPrep0' });
-			const effect = gen.next().value.CALL;
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
 			expect(effect.fn).toEqual(http.put);
 			expect(effect.args[0]).toEqual('/api/preparations/id0');
 			expect(effect.args[1]).toEqual({ name: 'newPrep0' });
@@ -166,7 +169,10 @@ describe('preparation', () => {
 				destination: 'efgh',
 				title: 'newPrep0',
 			});
-			const effect = gen.next().value.CALL;
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
 			expect(effect.fn).toEqual(http.post);
 			expect(effect.args[0]).toEqual(
 				'/api/preparations/id0/copy?destination=efgh&newName=newPrep0',
@@ -185,7 +191,10 @@ describe('preparation', () => {
 				destination: 'efgh',
 				title: 'newPrep0',
 			});
-			const effect = gen.next().value.CALL;
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
 			expect(effect.fn).toEqual(http.put);
 			expect(effect.args[0]).toEqual(
 				'/api/preparations/id0/move?folder=abcd&destination=efgh&newName=newPrep0',
@@ -199,7 +208,10 @@ describe('preparation', () => {
 	describe('fetchTree', () => {
 		it('should fetch the folder Tree', () => {
 			const gen = effects.fetchTree();
-			const effect = gen.next().value.PUT.action;
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.PUT.action;
 			expect(effect.type).toEqual('GET');
 			expect(effect.url).toEqual('/api/folders/tree');
 			expect(effect.cmf).toEqual({ collectionId: 'folders' });

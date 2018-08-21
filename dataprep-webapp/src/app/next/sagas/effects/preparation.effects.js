@@ -43,9 +43,12 @@ function* setCopyMoveErrorMode(message) {
 
 export function* copy({ id, folderId, destination, title }) {
 	const dest = destination || folderId;
-	const url = `/api/preparations/${id}/copy?destination=${dest}&newName=${title}`;
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const action = yield call(
+		http.post,
+		`${uris.get('apiPreparations')}/${id}/copy?destination=${dest}&newName=${title}`,
+		{}, {}, { silent: true });
 
-	const action = yield call(http.post, url, {}, {}, { silent: true });
 	if (action instanceof Error && action.data) {
 		yield setCopyMoveErrorMode(action.data.message);
 	}
@@ -57,9 +60,13 @@ export function* copy({ id, folderId, destination, title }) {
 
 export function* move({ id, folderId, destination, title }) {
 	const dest = destination || folderId;
-	const url = `/api/preparations/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`;
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const action = yield call(
+		http.put,
+		`${uris.get('apiPreparations')}/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`,
+		{}, {}, { silent: true }
+	);
 
-	const action = yield call(http.put, url, {}, {}, { silent: true });
 	if (action instanceof Error && action.data) {
 		yield setCopyMoveErrorMode(action.data.message);
 	}
@@ -70,8 +77,10 @@ export function* move({ id, folderId, destination, title }) {
 }
 
 export function* fetchTree() {
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+
 	yield put(
-		actions.http.get('/api/folders/tree', {
+		actions.http.get(`${uris.get('apiFolders')}/tree`, {
 			cmf: {
 				collectionId: 'folders',
 			},
@@ -87,7 +96,8 @@ export function* openFolder(id) {
 }
 
 export function* rename(payload) {
-	yield call(http.put, `/api/preparations/${payload.id}`, { name: payload.name });
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	yield call(http.put, `${uris.get('apiPreparations')}/${payload.id}`, { name: payload.name });
 	yield call(fetch);
 }
 

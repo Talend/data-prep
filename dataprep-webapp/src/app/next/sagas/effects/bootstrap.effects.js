@@ -14,7 +14,6 @@ export function* fetch() {
 
 /**
  * Change locale to preferred one
- * @returns {IterableIterator<*>}
  */
 export function setLanguage() {
 	const data = localeStorage.get('settings');

@@ -2,10 +2,13 @@ import { call, put, select } from 'redux-saga/effects';
 import api, { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
+import i18next from '../../../i18n';
+
 import http from './http';
 import { default as creators } from '../../actions';
 import PreparationService from '../../services/preparation.service';
 import PreparationCopyMoveModal from '../../components/PreparationCopyMoveModal';
+import { DISPLAY_NAME as CopyMoveDisplayName } from '../../components/PreparationCopyMoveModal/PreparationCopyMoveModal.component';
 
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));
@@ -28,7 +31,7 @@ export function* fetch(payload) {
 function* setCopyMoveErrorMode(message) {
 	yield put(
 			actions.components.mergeState(
-				'PreparationCopyMoveModal',
+				CopyMoveDisplayName,
 				'default',
 				{ error: message },
 			),
@@ -57,8 +60,8 @@ export function* copy({ id, folderId, destination, title }) {
 		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
 		yield put(creators.notification.success(null, {
-			title: 'Preparation copied',
-			message: 'The preparation has been copied.',
+			title: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_TITLE', { defaultValue: 'Preparation copied' }),
+			message: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_MESSAGE', { defaultValue: 'The preparation has been copied.' }),
 		}));
 	}
 }
@@ -79,8 +82,8 @@ export function* move({ id, folderId, destination, title }) {
 		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
 		yield put(creators.notification.success(null, {
-			title: 'Preparation moved',
-			message: 'The preparation has been moved.',
+			title: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_TITLE', { defaultValue: 'Preparation moved' }),
+			message: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_MESSAGE', { defaultValue: 'The preparation has been moved.' }),
 		}));
 	}
 }
@@ -126,7 +129,7 @@ export function* openPreparationCreatorModal() {
 export function* openCopyMoveModal(model, action) {
 	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 	yield put(
-		actions.components.mergeState('PreparationCopyMoveModal', 'default', {
+		actions.components.mergeState(CopyMoveDisplayName, 'default', {
 			action,
 			show: true,
 			error: null,
@@ -140,7 +143,7 @@ export function* openCopyMoveModal(model, action) {
 }
 
 export function* closeCopyMoveModal() {
-	yield put(actions.components.mergeState('PreparationCopyMoveModal', 'default', { show: false }));
+	yield put(actions.components.mergeState(CopyMoveDisplayName, 'default', { show: false }));
 }
 
 export function* fetchFolder(payload) {

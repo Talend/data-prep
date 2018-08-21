@@ -26,7 +26,7 @@ function transformTree(input) {
 	const t = (item) => {
 		return {
 			id: item.folder.id,
-			name: item.folder.name || 'Home',
+			name: item.folder.name || i18n.t('tdp-app:FOLDER_HOME'),
 			children: item.children.map(t),
 		};
 	};

@@ -1,7 +1,13 @@
 {
+  "COPY_MOVE_MODAL_SUBTITLE": "Click on the folder you want to {{action}} your preparation",
+  "COPY_MOVE_MODAL_TITLE": "{{action}} your preparation",
   "DATASETS": "datasets",
   "DOCUMENTATION": "documentation",
   "FOLDER_HOME": "home",
   "FOLDERS": "folders",
+  "PREPARATION_COPY_NOTIFICATION_MESSAGE": "The preparation has been copied.",
+  "PREPARATION_COPY_NOTIFICATION_TITLE": "Preparation copied",
+  "PREPARATION_MOVE_NOTIFICATION_MESSAGE": "The preparation has been moved.",
+  "PREPARATION_MOVE_NOTIFICATION_TITLE": "Preparation moved",
   "PREPARATIONS": "preparations"
 }

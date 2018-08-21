@@ -3331,9 +3331,6 @@ exports[`App container should render 1`] = `
       >
         <div />
       </div>
-      <div
-        className="alert alert-danger"
-      />
     </div>
   </div>
 </div>

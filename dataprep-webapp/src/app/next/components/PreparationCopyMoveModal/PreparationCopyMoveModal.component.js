@@ -76,7 +76,6 @@ export default class PreparationCopyMoveModal extends React.Component {
 					onSubmit={(_, { value }) => {
 						this.props.setState({ name: value, error: null });
 					}}
-					onChange={() => this.props.setState({ error: null })}
 					onCancel={() => this.props.setState({ error: null })}
 				/>
 				<hr className={'modal-separator'} />

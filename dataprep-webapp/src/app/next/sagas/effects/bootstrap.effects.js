@@ -14,9 +14,8 @@ export function* fetch() {
 
 /**
  * Change locale to preferred one
- * @returns {IterableIterator<*>}
  */
-export function* setLanguage() {
-	const data = yield localeStorage.get('settings');
-	yield i18n.changeLanguage(data.context.language);
+export function setLanguage() {
+	const data = localeStorage.get('settings');
+	i18n.changeLanguage(data.context.language);
 }

@@ -29,8 +29,8 @@ function transformFolder({ folder, hierarchy }) {
 	].map(folder =>
 		({
 			id: folder.id,
-			text: folder.name || i18n.t('tdp-app:FOLDER_HOME', { defaultValue: 'home' }),
-			title: folder.name || i18n.t('tdp-app:FOLDER_HOME', { defaultValue: 'home' }),
+			text: folder.name || i18n.t('tdp-app:FOLDER_HOME'),
+			title: folder.name || i18n.t('tdp-app:FOLDER_HOME'),
 			actionCreator: 'folder:open',
 		}));
 }

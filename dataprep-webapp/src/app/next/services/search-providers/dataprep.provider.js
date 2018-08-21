@@ -25,10 +25,10 @@ export default class DataprepSearchProvider extends SearchProvider {
 				const category = this.categories.find(cat => cat.type === type);
 
 				return {
-					title: category.labelFn && category.labelFn() || category.label || category.key || '',
+					title: (category.labelFn && category.labelFn()) || category.label || '',
 					icon: {
 						name: category.icon,
-						title: category.labelFn && category.labelFn() || category.label || category.key || '',
+						title: (category.labelFn && category.labelFn()) || category.label || '',
 					},
 					suggestions: converted[type]
 						.filter(suggestion => suggestion.name.length)

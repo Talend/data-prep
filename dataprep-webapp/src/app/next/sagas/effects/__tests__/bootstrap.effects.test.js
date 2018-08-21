@@ -1,6 +1,7 @@
 import store from 'store';
 import * as effects from '../../effects/bootstrap.effects';
 
+import i18next from '../../../../i18n';
 
 describe('bootstrap', () => {
 	describe('fetch', () => {
@@ -15,6 +16,18 @@ describe('bootstrap', () => {
 			expect(effect.data).toEqual(expected);
 
 			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('setLanguage', () => {
+		beforeEach(() => {
+			i18next.changeLanguage = jest.fn();
+		});
+
+		it('should change language', () => {
+			store.set('settings', { context: { language: 'fr' } });
+			effects.setLanguage();
+			expect(i18next.changeLanguage).toHaveBeenCalledWith('fr');
 		});
 	});
 });

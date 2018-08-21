@@ -21,7 +21,7 @@ export default class DocumentationSearchProvider extends SearchProvider {
 
 	transform(data) {
 		return {
-			title: this.category.labelFn && this.category.labelFn() || this.category.label || '',
+			title: (this.category.labelFn && this.category.labelFn()) || this.category.label || '',
 			icon: {
 				name: this.category.icon,
 				title: this.category.type,

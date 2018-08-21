@@ -179,6 +179,7 @@ describe('preparation', () => {
 			);
 			expect(gen.next().value).toEqual(call(effects.fetch, { folderId: 'abcd' }));
 			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
+			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
 			expect(gen.next().done).toBeTruthy();
 		});
 	});
@@ -201,6 +202,7 @@ describe('preparation', () => {
 			);
 			expect(gen.next().value).toEqual(call(effects.fetch, { folderId: 'abcd' }));
 			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
+			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
 			expect(gen.next().done).toBeTruthy();
 		});
 	});

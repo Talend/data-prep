@@ -3,6 +3,7 @@ import api, { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
 import http from './http';
+import { default as creators } from '../../actions';
 import PreparationService from '../../services/preparation.service';
 import PreparationCopyMoveModal from '../../components/PreparationCopyMoveModal';
 
@@ -55,6 +56,10 @@ export function* copy({ id, folderId, destination, title }) {
 	else {
 		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
+		yield put(creators.notification.success(null, {
+			title: 'Preparation copied',
+			message: 'The preparation has been copied.',
+		}));
 	}
 }
 
@@ -73,6 +78,10 @@ export function* move({ id, folderId, destination, title }) {
 	else {
 		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
+		yield put(creators.notification.success(null, {
+			title: 'Preparation moved',
+			message: 'The preparation has been moved.',
+		}));
 	}
 }
 

@@ -98,6 +98,10 @@
 		}
 	}
 
+	.modal-window::after, .modal-window::before {
+		display: none;
+	}
+
 	.modal-close {
 		position: absolute;
 		top: ($modal-padding-top /2);

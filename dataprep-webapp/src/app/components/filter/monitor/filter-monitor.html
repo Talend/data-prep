@@ -17,9 +17,8 @@
 	<div id="filter-monitor-left"
 	     class="pull-left ">
 		<label class="filters" translate-once="FILTERS"></label>
-		<div class="checkbox-inline switch">
-			<label class="label-switch"
-			       title="{{::'TOOGLE_ALL_FILTERS' | translate}}"
+		<div class="checkbox switch">
+			<label title="{{::'TOOGLE_ALL_FILTERS' | translate}}"
 			       ng-if="filterMonitorCtrl.filters.length">
 				<input type="checkbox"
 				       ng-model="filterMonitorCtrl.state"

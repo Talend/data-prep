@@ -17,6 +17,9 @@
 	height: 100%;
 	position: relative;
 
+    .tc-tab-bar-actions {
+      display: flex;
+    }
     .stats-container {
         flex-grow: 1;
         flex-shrink: 1;

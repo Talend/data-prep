@@ -10,6 +10,10 @@
         {
           "name": "tdp-cmf",
           "path": "src/app/next/locales/{{locale}}/{{namespace}}.json"
+        },
+        {
+          "name": "dataset-cmf",
+          "path": "node_modules/@talend/dataset/lib/app/locales/{{locale}}/{{namespace}}.json"
         }
       ],
       "extract-namespaces": [

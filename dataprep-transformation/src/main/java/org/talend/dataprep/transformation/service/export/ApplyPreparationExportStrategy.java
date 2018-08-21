@@ -193,8 +193,10 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         LOGGER.info("using {} as content input", asyncSampleKey.getKey());
 
         if (contentCache.has(asyncSampleKey)) {
-            JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentCache.get(asyncSampleKey), UTF_8));
-            return mapper.readerFor(DataSet.class).readValue(parser);
+            try (JsonParser parser =
+                    mapper.getFactory().createParser(new InputStreamReader(contentCache.get(asyncSampleKey), UTF_8))) {
+                return mapper.readerFor(DataSet.class).readValue(parser);
+            }
         }
 
         final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;

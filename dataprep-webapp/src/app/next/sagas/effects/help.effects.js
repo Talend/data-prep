@@ -2,6 +2,7 @@ import { actions } from '@talend/react-cmf';
 import { put, select, call } from 'redux-saga/effects';
 
 import http from './http';
+import AboutModalComponent from '../../components/AboutModal';
 
 
 export function* open() {
@@ -12,5 +13,5 @@ export function* open() {
 		yield put(actions.collections.addOrReplace('versions', data));
 	}
 
-	yield put(actions.components.mergeState('AboutModal', 'default', { show: true }));
+	yield put(actions.components.mergeState(AboutModalComponent.DISPLAY_NAME, 'default', { show: true }));
 }

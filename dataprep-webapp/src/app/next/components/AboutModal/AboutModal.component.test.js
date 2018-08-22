@@ -1,8 +1,7 @@
 import React from 'react';
 import Immutable from 'immutable';
-import { shallow } from 'enzyme';
-import Container from './AboutModal.component';
-import Connected from './AboutModal.connect';
+import { shallow, mount } from 'enzyme';
+import { AboutModal } from './AboutModal.component';
 
 const SERVICES = Immutable.fromJS([
 	{
@@ -34,9 +33,9 @@ const SERVICES = Immutable.fromJS([
 
 describe('Container(AboutModal)', () => {
 	it('should render', () => {
-		const state = new Immutable.Map({ show: true, expanded: true });
+		const state = new Immutable.Map({ show: true, expanded: false });
 		const wrapper = shallow(
-			<Container.WrappedComponent
+			<AboutModal
 				services={SERVICES}
 				state={state}
 				displayVersion="mock version"
@@ -45,41 +44,15 @@ describe('Container(AboutModal)', () => {
 		expect(wrapper.getElement()).toMatchSnapshot();
 	});
 
-	// it('should onClick Less call setState with expanded to false', () => {
-	// 	const state = new Immutable.Map({ show: true, expanded: true });
-	// 	const setState = jest.fn();
-	// 	const wrapper = shallow(
-	// 		<Container.WrappedComponent
-	// 			services={SERVICES}
-	// 			state={state}
-	// 			setState={setState}
-	// 			copyright="Talend. All right reserved"
-	// 			version="Winter is coming"
-	// 		/>
-	// 	);
-	// 	wrapper.find(Action).simulate('click');
-	// 	expect(setState).toHaveBeenCalled();
-	// 	expect(setState.mock.calls[0][0].toJS()).toEqual({
-	// 		expanded: false,
-	// 	});
-	// });
-	//
-	// it('should onClick More call setState with expanded to true', () => {
-	// 	const state = new Immutable.Map({ show: true, expanded: false });
-	// 	const setState = jest.fn();
-	// 	const wrapper = shallow(
-	// 		<Container.WrappedComponent
-	// 			services={SERVICES}
-	// 			state={state}
-	// 			setState={setState}
-	// 			copyright="Talend. All right reserved"
-	// 			version="Winter is coming"
-	// 		/>
-	// 	);
-	// 	wrapper.find(Action).simulate('click');
-	// 	expect(setState).toHaveBeenCalled();
-	// 	expect(setState.mock.calls[0][0].toJS()).toEqual({
-	// 		expanded: true,
-	// 	});
-	// });
+	it('should render in expanded mode', () => {
+		const state = new Immutable.Map({ show: true, expanded: true });
+		const wrapper = shallow(
+			<AboutModal
+				services={SERVICES}
+				state={state}
+				displayVersion="mock version"
+			/>,
+		);
+		expect(wrapper.getElement()).toMatchSnapshot();
+	});
 });

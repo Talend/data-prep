@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container(AboutModal) should render 1`] = `
+<Inject
+  actionbar={
+    Object {
+      "actions": Object {
+        "center": Array [
+          Object {
+            "actionId": "help:about:toggle",
+            "label": "More",
+            "onClick": [Function],
+          },
+        ],
+      },
+    }
+  }
+  component="Dialog"
+  header="About Talend Data Preparation"
+  onHide={[Function]}
+  show={true}
+  type="informative"
+>
+  <Icon
+    className="about-logo"
+    name="talend-tdp-colored"
+  />
+  <div>
+    <div>
+      Version : 
+      mock version
+    </div>
+    <div>
+      © 2018 Talend. All Rights Reserved
+    </div>
+  </div>
+</Inject>
+`;
+
+exports[`Container(AboutModal) should render in expanded mode 1`] = `
+<Inject
+  actionbar={
+    Object {
+      "actions": Object {
+        "center": Array [
+          Object {
+            "actionId": "help:about:toggle",
+            "label": "Less",
+            "onClick": [Function],
+          },
+        ],
+      },
+    }
+  }
+  component="Dialog"
+  header="About Talend Data Preparation"
+  onHide={[Function]}
+  show={true}
+  type="informative"
+>
+  <Icon
+    className="about-logo"
+    name="talend-tdp-colored"
+  />
+  <div>
+    <div>
+      Version : 
+      mock version
+    </div>
+    <div>
+      © 2018 Talend. All Rights Reserved
+    </div>
+  </div>
+  <table
+    className="services-versions"
+  >
+    <tr>
+      <th>
+        SERVICE
+      </th>
+      <th>
+        BUILD ID
+      </th>
+      <th>
+        VERSION ID
+      </th>
+    </tr>
+    Immutable.List [
+      <TableRow
+        build_id="029b0427bf3a9fd83cee0c830af911485db5dc28"
+        service="streams inventory"
+        version_id="0.7.0-SNAPSHOT"
+      />,
+      <TableRow
+        build_id="029b0427bf3a9fd83cee0c830af911485db5dc28"
+        service="streams runner"
+        version_id="0.7.0-SNAPSHOT"
+      />,
+      <TableRow
+        build_id="029b0427bf3a9fd83cee0c830af911485db5dc28"
+        service="preview runner"
+        version_id="0.7.0-SNAPSHOT"
+      />,
+      <TableRow
+        build_id="029b0427bf3a9fd83cee0c830af911485db5dc28"
+        service="dataset"
+        version_id="0.7.0 - SNAPSHOT"
+      />,
+      <TableRow
+        build_id="029b0427bf3a9fd83cee0c830af911485db5dc28"
+        service="websocket relay"
+        version_id="0.7.0-SNAPSHOT"
+      />,
+    ]
+  </table>
+</Inject>
+`;

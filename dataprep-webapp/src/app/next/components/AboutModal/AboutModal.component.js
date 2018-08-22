@@ -4,6 +4,9 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Map } from 'immutable';
 import { Dialog, Icon } from '@talend/react-components';
 import { cmfConnect, Inject } from '@talend/react-cmf';
+import { translate } from 'react-i18next';
+
+import I18N from './../../constants/i18n';
 
 import './AboutModal.scss';
 
@@ -15,7 +18,9 @@ export const DEFAULT_STATE = new Map({
 });
 
 
-export default class AboutModal extends React.Component {
+export class AboutModal extends React.Component {
+	static DISPLAY_NAME = 'Translate(AboutModal)';
+
 	constructor(props) {
 		super(props);
 		this.close = this.close.bind(this);
@@ -104,3 +109,6 @@ AboutModal.propTypes = {
 	setState: PropTypes.func.isRequired,
 	...cmfConnect.propTypes,
 };
+
+
+export default translate(I18N.TDP_APP_NAMESPACE)(AboutModal);

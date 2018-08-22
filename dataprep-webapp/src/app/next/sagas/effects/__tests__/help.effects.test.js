@@ -14,7 +14,7 @@ describe('help', () => {
 
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('AboutModal');
+			expect(effect.componentName).toEqual('Translate(AboutModal)');
 			expect(effect.componentState).toEqual({ show: true });
 
 			expect(gen.next().done).toBeTruthy();
@@ -36,7 +36,7 @@ describe('help', () => {
 			effect = gen.next(VERSIONS).value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('AboutModal');
+			expect(effect.componentName).toEqual('Translate(AboutModal)');
 			expect(effect.componentState).toEqual({ show: true });
 
 			expect(gen.next().done).toBeTruthy();

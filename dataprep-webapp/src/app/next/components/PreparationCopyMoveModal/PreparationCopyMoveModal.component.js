@@ -10,7 +10,6 @@ import I18N from './../../constants/i18n';
 
 import './PreparationCopyMoveModal.scss';
 
-
 class PreparationCopyMoveModal extends React.Component {
 	static DISPLAY_NAME = 'Translate(PreparationCopyMoveModal)';
 	static EDITABLE_TEXT_ID = 'preparation:copy:move:editable:text';
@@ -71,11 +70,9 @@ class PreparationCopyMoveModal extends React.Component {
 			},
 		};
 		const title = t('tdp-app:COPY_MOVE_MODAL_TITLE', {
-			defaultValue: '{{action}} your preparation',
 			action: label,
 		});
 		const subtitle = t('tdp-app:COPY_MOVE_MODAL_SUBTITLE', {
-			defaultValue: 'Click on the folder you want to {{action, lowercase}} your preparation',
 			action: label,
 		});
 

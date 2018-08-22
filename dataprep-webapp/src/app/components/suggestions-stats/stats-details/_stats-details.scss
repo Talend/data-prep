@@ -26,7 +26,10 @@
       }
 
       > li > * {
-        padding: 10px;
+        padding: {
+          left: 10px;
+          right: 10px;
+        }
       }
     }
 

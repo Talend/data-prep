@@ -102,30 +102,65 @@
     },
     "preparation:copy": {
       "id": "preparation:copy",
-      "label": "Copy",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:COPY",
+          "options": {
+            "defaultValue": "Copy"
+          }
+        }
+      },
       "bsStyle": "primary"
     },
     "preparation:move": {
       "id": "preparation:move",
-      "label": "Move",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:MOVE",
+          "options": {
+            "defaultValue": "Move"
+          }
+        }
+      },
       "bsStyle": "primary"
     },
     "preparation:copy:open": {
       "id": "preparation:copy:open",
       "icon": "talend-files-o",
-      "label": "Copy preparation",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_COPY",
+          "options": {
+            "defaultValue": "Copy preparation"
+          }
+        }
+      },
       "actionCreator": "preparation:copy:open"
     },
     "preparation:copy:move:cancel": {
       "id": "preparation:copy:move:cancel",
-      "label": "Cancel",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:CANCEL",
+          "options": {
+            "defaultValue": "Cancel"
+          }
+        }
+      },
       "bsStyle": "default btn-inverse",
       "actionCreator": "preparation:copy:move:cancel"
     },
     "preparation:move:open": {
       "id": "preparation:move:open",
       "icon": "talend-file-move",
-      "label": "Move preparation",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_MOVE",
+          "options": {
+            "defaultValue": "Move preparation"
+          }
+        }
+      },
       "actionCreator": "preparation:move:open"
     },
     "preparation:rename": {
@@ -205,7 +240,7 @@
         }
       },
       "brand": {
-        "label": "Data Preparation  (react-cmf)",
+        "label": "Data Preparation (react-cmf)",
         "payload": {
           "type": "MENU_LINK",
           "cmf": {

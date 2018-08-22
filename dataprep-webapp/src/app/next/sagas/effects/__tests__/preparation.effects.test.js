@@ -11,6 +11,7 @@ import {
 } from './preparation.effects.mock';
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
+import { DISPLAY_NAME as CopyMoveDisplayName } from '../../../components/PreparationCopyMoveModal/PreparationCopyMoveModal.component';
 
 describe('preparation', () => {
 	describe('cancelRename', () => {
@@ -296,7 +297,7 @@ describe('preparation', () => {
 			const effect = gen.next().value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('PreparationCopyMoveModal');
+			expect(effect.componentName).toEqual(CopyMoveDisplayName);
 			expect(effect.componentState).toEqual({ show: false });
 
 			expect(gen.next().done).toBeTruthy();
@@ -310,7 +311,7 @@ describe('preparation', () => {
 			const effect = gen.next('abcd').value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('PreparationCopyMoveModal');
+			expect(effect.componentName).toEqual(CopyMoveDisplayName);
 			expect(effect.componentState).toEqual({
 				show: true,
 				error: null,

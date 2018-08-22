@@ -11,7 +11,14 @@ const i18n = i18next.init({
 	fallbackLng,
 	debug: false,
 	wait: true, // globally set to wait for loaded translations in translate hoc
-	interpolation: { escapeValue: false },
+	interpolation: {
+		escapeValue: false,
+		format: (value, format) => {
+			if (format === 'lowercase') return value.toLowerCase();
+			if (format === 'uppercase') return value.toUpperCase();
+			return value;
+		},
+	},
 	defaultNS,
 	fallbackNS,
 });

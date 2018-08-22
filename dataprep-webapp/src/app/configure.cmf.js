@@ -168,7 +168,6 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('headerbar:search:reset', actions.search.reset);
 		registerActionCreator('dataset:view', actions.dataset.open);
 
-
 		const additionalActionCreators = additionalConfiguration.actionCreators;
 		if (additionalActionCreators) {
 			Object.keys(additionalActionCreators).map(k =>

@@ -20,7 +20,16 @@
     .tc-tab-bar-actions {
       display: flex;
       overflow-x: hidden;
+
+      > li:first-child > * {
+        padding-left: 15px;
+      }
+
+      > li > * {
+        padding: 10px;
+      }
     }
+
     .stats-container {
         flex-grow: 1;
         flex-shrink: 1;

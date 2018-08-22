@@ -98,10 +98,6 @@
 		}
 	}
 
-	.modal-window::after, .modal-window::before {
-		display: none;
-	}
-
 	.modal-close {
 		position: absolute;
 		top: ($modal-padding-top /2);
@@ -236,6 +232,13 @@
 			}
 		}
 
+	}
+
+	.modal-state {
+		&:before,
+		&:after {
+			content: none;
+		}
 	}
 
 	.modal-state:checked + .modal-window {

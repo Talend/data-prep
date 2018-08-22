@@ -40,7 +40,7 @@ describe('Container(AboutModal)', () => {
 	it('should render', () => {
 		const state = new Immutable.Map({ show: true, expanded: false });
 		const wrapper = shallow(
-			<AboutModal services={SERVICES} state={state} displayVersion="mock version" t={k => k} />,
+			<AboutModal services={SERVICES} state={state} displayVersion="mock version" />,
 		);
 		expect(wrapper.getElement()).toMatchSnapshot();
 	});
@@ -48,7 +48,7 @@ describe('Container(AboutModal)', () => {
 	it('should render in expanded mode', () => {
 		const state = new Immutable.Map({ show: true, expanded: true });
 		const wrapper = shallow(
-			<AboutModal services={SERVICES} state={state} displayVersion="mock version" t={k => k} />,
+			<AboutModal services={SERVICES} state={state} displayVersion="mock version" />,
 		);
 		expect(wrapper.getElement()).toMatchSnapshot();
 	});

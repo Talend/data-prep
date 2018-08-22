@@ -59,15 +59,11 @@ export class AboutModal extends React.Component {
 			>
 				<Icon name="talend-tdp-colored" className={'about-logo'} />
 				<div className="about-excerpt">
-					<div>
-						{t('tdp-app:VERSION')}
-						{t('tdp-app:COLON')}
-						{this.props.displayVersion}
-					</div>
+					<div>{t('tdp-app:VERSION_NAME', { version: this.props.displayVersion })}</div>
 					<div>{t('tdp-app:COPYRIGHT', { year: new Date().getFullYear() })}</div>
 				</div>
 				{expanded && (
-					<table className={'services-versions'}>
+					<table className={'about-versions'}>
 						<tr>
 							<th>{t('tdp-app:SERVICE_NAME')}</th>
 							<th>{t('tdp-app:BUILD_ID')}</th>

@@ -1,4 +1,6 @@
 import { all, call } from 'redux-saga/effects';
+import api from '@talend/react-cmf';
+import { HTTPError } from '@talend/react-cmf/lib/sagas/http';
 import { Map } from 'immutable';
 import * as effects from '../../effects/preparation.effects';
 import {
@@ -9,7 +11,7 @@ import {
 } from './preparation.effects.mock';
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
-
+import PreparationCopyMoveModal from '../../../components/PreparationCopyMoveModal';
 
 describe('preparation', () => {
 	describe('cancelRename', () => {
@@ -42,27 +44,15 @@ describe('preparation', () => {
 		});
 	});
 
-	describe('openAbout', () => {
+	describe('openPreparationCreator', () => {
 		it('should update PreparationCreatorModal state in the cmf store', () => {
-			const gen = effects.openAbout();
+			const gen = effects.openPreparationCreatorModal();
 			const effect = gen.next().value.PUT.action;
 
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
 			expect(effect.componentName).toEqual('PreparationCreatorModal');
 			expect(effect.componentState).toEqual({ show: true });
-
-			expect(gen.next().done).toBeTruthy();
-		});
-	});
-
-	describe('duplicate', () => {
-		it('should duplicate the preparation and fetch the new preparations list', () => {
-			const gen = effects.duplicate({ payload: { id: 'id0' } });
-			const effect = gen.next().value.CALL;
-			expect(effect.fn).toEqual(http.post);
-			expect(effect.args[0].includes('/api/preparations/id0/copy?destination=Lw==&newName=test')).toBeTruthy();
-			expect(gen.next().value).toEqual(call(effects.fetch));
 
 			expect(gen.next().done).toBeTruthy();
 		});
@@ -76,18 +66,22 @@ describe('preparation', () => {
 		it('should update cmf store with default folder id', () => {
 			const payload = {};
 			const gen = effects.fetch(payload);
+
+			const effect = gen.next().value.PUT.action;
+			expect(effect.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effect.collectionId).toBe('currentFolderId');
+			expect(effect.data).toBe('Lw==');
+
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folder/Lw==/preparations')
+				call(http.get, '/api/folders/Lw==/preparations'),
 			);
 
 			const effectPUT = gen.next(API_RESPONSE).value.PUT.action;
 			expect(effectPUT.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
 			expect(effectPUT.collectionId).toBe('preparations');
 			expect(effectPUT.data).toEqual('rofl');
-			expect(PreparationService.transform).toHaveBeenCalledWith(
-				API_PAYLOAD
-			);
+			expect(PreparationService.transform).toHaveBeenCalledWith(API_PAYLOAD);
 			expect(gen.next().done).toBeTruthy();
 		});
 		it('should update cmf store with folder id', () => {
@@ -96,18 +90,22 @@ describe('preparation', () => {
 				folderId,
 			};
 			const gen = effects.fetch(payload);
+
+			const effect = gen.next().value.PUT.action;
+			expect(effect.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effect.collectionId).toBe('currentFolderId');
+			expect(effect.data).toBe('FOLDER_ID');
+
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folder/FOLDER_ID/preparations')
+				call(http.get, '/api/folders/FOLDER_ID/preparations'),
 			);
 
 			const effectPUT = gen.next(API_RESPONSE).value.PUT.action;
 			expect(effectPUT.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
 			expect(effectPUT.collectionId).toBe('preparations');
 			expect(effectPUT.data).toEqual('rofl');
-			expect(PreparationService.transform).toHaveBeenCalledWith(
-				API_PAYLOAD
-			);
+			expect(PreparationService.transform).toHaveBeenCalledWith(API_PAYLOAD);
 			expect(gen.next().done).toBeTruthy();
 		});
 	});
@@ -121,18 +119,14 @@ describe('preparation', () => {
 			const payload = {};
 			const gen = effects.fetchFolder(payload);
 			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folder/Lw==')
-			);
+			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folders/Lw=='));
 
 			const effect = gen.next(API_RESPONSE).value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
 			expect(effect.componentName).toEqual('Breadcrumbs');
 			expect(effect.componentState).toEqual(new Map({ items: 'folders', maxItems: 5 }));
-			expect(PreparationService.transformFolder).toHaveBeenCalledWith(
-				API_PAYLOAD
-			);
+			expect(PreparationService.transformFolder).toHaveBeenCalledWith(API_PAYLOAD);
 			expect(gen.next().done).toBeTruthy();
 		});
 		it('should update Breadcrumb cmf store with folder id', () => {
@@ -142,18 +136,14 @@ describe('preparation', () => {
 			};
 			const gen = effects.fetchFolder(payload);
 			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folder/FOLDER_ID')
-			);
+			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folders/FOLDER_ID'));
 
 			const effect = gen.next(API_RESPONSE).value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
 			expect(effect.componentName).toEqual('Breadcrumbs');
 			expect(effect.componentState).toEqual(new Map({ items: 'folders', maxItems: 5 }));
-			expect(PreparationService.transformFolder).toHaveBeenCalledWith(
-				API_PAYLOAD
-			);
+			expect(PreparationService.transformFolder).toHaveBeenCalledWith(API_PAYLOAD);
 			expect(gen.next().done).toBeTruthy();
 		});
 	});
@@ -161,11 +151,196 @@ describe('preparation', () => {
 	describe('rename', () => {
 		it('should rename the preparation and fetch the new preparations list', () => {
 			const gen = effects.rename({ id: 'id0', name: 'newPrep0' });
-			const effect = gen.next().value.CALL;
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
 			expect(effect.fn).toEqual(http.put);
 			expect(effect.args[0]).toEqual('/api/preparations/id0');
 			expect(effect.args[1]).toEqual({ name: 'newPrep0' });
 			expect(gen.next().value).toEqual(call(effects.fetch));
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('copy', () => {
+		it('should copy the preparation', () => {
+			const gen = effects.copy({
+				id: 'id0',
+				folderId: 'abcd',
+				destination: 'efgh',
+				title: 'newPrep0',
+			});
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effect.fn).toEqual(http.post);
+			expect(effect.args[0]).toEqual(
+				'/api/preparations/id0/copy?destination=efgh&newName=newPrep0',
+			);
+			expect(gen.next().value).toEqual(call(effects.fetch, { folderId: 'abcd' }));
+			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
+			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
+			expect(gen.next().done).toBeTruthy();
+		});
+
+		it('should set error mode if necessary', () => {
+			const error = new HTTPError({
+				data: { message: 'err message' },
+				response: { statusText: 'err' },
+			});
+			const gen = effects.copy({
+				id: 'id0',
+				folderId: 'abcd',
+				destination: 'efgh',
+				title: 'newPrep0',
+			});
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			let effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effect.fn).toEqual(http.post);
+			expect(effect.args[0]).toEqual(
+				'/api/preparations/id0/copy?destination=efgh&newName=newPrep0',
+			);
+
+			effect = gen.next(error).value.CALL;
+			expect(effect.fn).toEqual(effects.setCopyMoveErrorMode);
+			expect(effect.args[0]).toEqual('err message');
+
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('move', () => {
+		it('should move the preparation', () => {
+			const gen = effects.move({
+				id: 'id0',
+				folderId: 'abcd',
+				destination: 'efgh',
+				title: 'newPrep0',
+			});
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effect.fn).toEqual(http.put);
+			expect(effect.args[0]).toEqual(
+				'/api/preparations/id0/move?folder=abcd&destination=efgh&newName=newPrep0',
+			);
+			expect(gen.next().value).toEqual(call(effects.fetch, { folderId: 'abcd' }));
+			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
+			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
+			expect(gen.next().done).toBeTruthy();
+		});
+
+		it('should set error mode if necessary', () => {
+			const error = new HTTPError({
+				data: { message: 'err message' },
+				response: { statusText: 'err' },
+			});
+			const gen = effects.move({
+				id: 'id0',
+				folderId: 'abcd',
+				destination: 'efgh',
+				title: 'newPrep0',
+			});
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			let effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effect.fn).toEqual(http.put);
+			expect(effect.args[0]).toEqual(
+				'/api/preparations/id0/move?folder=abcd&destination=efgh&newName=newPrep0',
+			);
+
+			effect = gen.next(error).value.CALL;
+			expect(effect.fn).toEqual(effects.setCopyMoveErrorMode);
+			expect(effect.args[0]).toEqual('err message');
+
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('copy/move error mode', () => {
+		it('should set copy/move error mode', () => {
+			const gen = effects.setCopyMoveErrorMode('nopnop');
+
+			let effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('default');
+			expect(effect.componentName).toEqual('Translate(PreparationCopyMoveModal)');
+			expect(effect.componentState).toEqual({ error: 'nopnop' });
+
+			effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('preparation:copy:move:editable:text');
+			expect(effect.componentName).toEqual('Container(EditableText)');
+			expect(effect.componentState).toEqual({ editMode: true });
+
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('fetchTree', () => {
+		it('should fetch the folder Tree', () => {
+			const gen = effects.fetchTree();
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.PUT.action;
+			expect(effect.type).toEqual('GET');
+			expect(effect.url).toEqual('/api/folders/tree');
+			expect(effect.cmf).toEqual({ collectionId: 'folders' });
+			expect(effect.transform).toEqual(PreparationService.transformTree);
+		});
+	});
+
+	describe('closeCopyMoveModal', () => {
+		it('should close CopyMove Modal', () => {
+			const gen = effects.closeCopyMoveModal();
+			const effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('default');
+			expect(effect.componentName).toEqual(PreparationCopyMoveModal.DISPLAY_NAME);
+			expect(effect.componentState).toEqual({ show: false });
+
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('openCopyMoveModal', () => {
+		it('should open CopyMove Modal', () => {
+			const gen = effects.openCopyMoveModal({ id: '0000' });
+			expect(gen.next().value.SELECT).toBeDefined();
+			const effect = gen.next('abcd').value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('default');
+			expect(effect.componentName).toEqual(PreparationCopyMoveModal.DISPLAY_NAME);
+			expect(effect.componentState).toEqual({
+				show: true,
+				error: null,
+				model: { id: '0000', folderId: 'abcd' },
+			});
+
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('openFolder', () => {
+		it('should dispatch the appropriate action', () => {
+			api.saga.putActionCreator = jest.fn();
+			const gen = effects.openFolder({ id: 'test' });
+
+			gen.next();
+
+			expect(api.saga.putActionCreator).toHaveBeenCalledWith('preparation:fetch', {
+				folderId: {
+					id: 'test',
+				},
+			});
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});

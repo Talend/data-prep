@@ -2,9 +2,12 @@ import { all, call, put, select } from 'redux-saga/effects';
 import api, { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
-import http from './http';
-import PreparationService from '../../services/preparation.service';
+import i18next from '../../../i18n';
 
+import http from './http';
+import { default as creators } from '../../actions';
+import PreparationService from '../../services/preparation.service';
+import PreparationCopyMoveModal from '../../components/PreparationCopyMoveModal';
 
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));
@@ -15,23 +18,103 @@ export function* cancelRename(payload) {
 	yield put(actions.collections.addOrReplace('preparations', updated));
 }
 
-export function* duplicate(prep) {
-	// FIXME: generate unique names
-	const newName = `test${Math.random()}`;
-
-	yield call(
-		http.post,
-		`/api/preparations/${prep.payload.id}/copy?destination=Lw==&newName=${newName}`,
-		{},
-	);
-	yield call(fetch);
-}
-
 export function* fetch(payload) {
 	const defaultFolderId = 'Lw==';
+	const folderId = payload.folderId || defaultFolderId;
+	yield put(actions.collections.addOrReplace('currentFolderId', folderId));
 	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
-	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}/preparations`);
+	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${folderId}/preparations`);
 	yield put(actions.collections.addOrReplace('preparations', PreparationService.transform(data)));
+}
+
+export function* setCopyMoveErrorMode(message) {
+	yield put(
+		actions.components.mergeState(PreparationCopyMoveModal.DISPLAY_NAME, 'default', {
+			error: message,
+		}),
+	);
+	yield put(
+		actions.components.mergeState(
+			'Container(EditableText)',
+			PreparationCopyMoveModal.EDITABLE_TEXT_ID,
+			{ editMode: true },
+		),
+	);
+}
+
+export function* copy({ id, folderId, destination, title }) {
+	const dest = destination || folderId;
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const action = yield call(
+		http.post,
+		`${uris.get('apiPreparations')}/${id}/copy?destination=${dest}&newName=${title}`,
+		{},
+		{},
+		{ silent: true },
+	);
+
+	if (action instanceof Error && action.data) {
+		yield call(setCopyMoveErrorMode, action.data.message);
+	}
+	else {
+		yield call(fetch, { folderId });
+		yield call(closeCopyMoveModal);
+		yield put(
+			creators.notification.success(null, {
+				title: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_TITLE', {
+					defaultValue: 'Preparation copied',
+				}),
+				message: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_MESSAGE', {
+					defaultValue: 'The preparation has been copied.',
+				}),
+			}),
+		);
+	}
+}
+
+export function* move({ id, folderId, destination, title }) {
+	const dest = destination || folderId;
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const action = yield call(
+		http.put,
+		`${uris.get(
+			'apiPreparations',
+		)}/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`,
+		{},
+		{},
+		{ silent: true },
+	);
+
+	if (action instanceof Error && action.data) {
+		yield call(setCopyMoveErrorMode, action.data.message);
+	}
+	else {
+		yield call(fetch, { folderId });
+		yield call(closeCopyMoveModal);
+		yield put(
+			creators.notification.success(null, {
+				title: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_TITLE', {
+					defaultValue: 'Preparation moved',
+				}),
+				message: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_MESSAGE', {
+					defaultValue: 'The preparation has been moved.',
+				}),
+			}),
+		);
+	}
+}
+
+export function* fetchTree() {
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+
+	yield put(
+		actions.http.get(`${uris.get('apiFolders')}/tree`, {
+			cmf: {
+				collectionId: 'folders',
+			},
+			transform: PreparationService.transformTree,
+		}),
+	);
 }
 
 export function* refresh(payload) {
@@ -42,11 +125,8 @@ export function* refresh(payload) {
 }
 
 export function* rename(payload) {
-	yield call(
-		http.put,
-		`/api/preparations/${payload.id}`,
-		{ name: payload.name },
-	);
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	yield call(http.put, `${uris.get('apiPreparations')}/${payload.id}`, { name: payload.name });
 	yield call(fetch);
 }
 
@@ -59,16 +139,49 @@ export function* setTitleEditionMode(payload) {
 	yield put(actions.collections.addOrReplace('preparations', updated));
 }
 
-export function* openAbout() {
+export function* openPreparationCreatorModal() {
 	yield put(actions.components.mergeState('PreparationCreatorModal', 'default', { show: true }));
+}
+
+export function* openCopyMoveModal(model, action) {
+	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
+	yield put(
+		actions.components.mergeState(PreparationCopyMoveModal.DISPLAY_NAME, 'default', {
+			action,
+			show: true,
+			error: null,
+			name: model.name,
+			model: {
+				...model,
+				folderId,
+			},
+		}),
+	);
+}
+
+export function* closeCopyMoveModal() {
+	yield put(
+		actions.components.mergeState(PreparationCopyMoveModal.DISPLAY_NAME, 'default', {
+			show: false,
+		}),
+	);
 }
 
 export function* fetchFolder(payload) {
 	const defaultFolderId = 'Lw==';
 	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
-	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}`);
-	yield put(actions.components.mergeState('Breadcrumbs', 'default', new Map({
-		items: PreparationService.transformFolder(data),
-		maxItems: 5,
-	})));
+	const { data } = yield call(
+		http.get,
+		`${uris.get('apiFolders')}/${payload.folderId || defaultFolderId}`,
+	);
+	yield put(
+		actions.components.mergeState(
+			'Breadcrumbs',
+			'default',
+			new Map({
+				items: PreparationService.transformFolder(data),
+				maxItems: 5,
+			}),
+		),
+	);
 }

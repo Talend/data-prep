@@ -1,0 +1,48 @@
+.modal-body {
+	padding: {
+		top: 10px;
+		left: 32px;
+		right: 32px;
+	}
+}
+
+.tc-editable-text {
+	.tc-editable-text-text-wording-button.btn-link {
+		max-width: 500px;
+		color: $dove-gray;
+	}
+	.tc-editable-text-text-pencil.btn-link {
+		padding-right: 0;
+	}
+
+	.tc-editable-text-form {
+		padding: 0;
+		width: 100%;
+
+		.form-group {
+			width: 100%;
+
+			.tc-editable-text-form-input {
+				width: 100%;
+			}
+		}
+
+		.tc-editable-text-form-buttons {
+			right: 0;
+		}
+	}
+}
+
+.modal-separator {
+	border-color: $alto;
+	margin: {
+		top: 10px;
+		bottom: 20px;
+		left: -32px;
+		right: -32px;
+	}
+}
+
+.tc-select-object {
+	max-width: inherit;
+}

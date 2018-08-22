@@ -100,6 +100,59 @@ public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest<RemoveN
     }
 
     @Test
+    public void testApplyOnSurrogatePair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "𠀁𠀂€中崎1𠀀𠀁𠀂𠀃𠀄0k𠀁𠀂");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "𠀁𠀂€中崎1𠀀𠀁𠀂𠀃𠀄0k𠀁𠀂");
+        expectedValues.put("0003", "中崎10k");
+        expectedValues.put("0002", "May 20th 2015");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_only_alpha").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void testApplyOnChinese() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "Vincent");
+        values.put("0001", "€中文10k");
+        values.put("0002", "May 20th 2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, Object> expectedValues = new LinkedHashMap<>();
+        expectedValues.put("0000", "Vincent");
+        expectedValues.put("0001", "€中文10k");
+        expectedValues.put("0003", "中文10k");
+        expectedValues.put("0002", "May 20th 2015");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_only_alpha").type(Type.STRING).build();
+        ColumnMetadata actual = row.getRowMetadata().getById("0003");
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void test_apply_inplace() {
         // given
         final Map<String, String> values = new HashMap<>();

@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { I18nextProvider } from 'react-i18next';
 import { List, Map } from 'immutable';
 import { IconsProvider } from '@talend/react-components';
 import { Notification, ShortcutManager } from '@talend/react-containers';
 import AppLoader from '@talend/react-containers/lib/AppLoader/index';
 
-import { I18nextProvider } from 'react-i18next';
 import { default as components } from './';
 import i18n from './../../i18n';
-import PreparationCreatorModal from '../../components/preparation-creator/index';
 
 const initialNotificationsState = new Map({
 	notifications: new List([]),
@@ -23,8 +22,9 @@ export default function App(props) {
 					<ShortcutManager />
 					<Notification initialState={initialNotificationsState} />
 					<components.AboutModal />
-					<PreparationCreatorModal />
-					{props.children}
+					<components.PreparationCreatorModal />
+					<components.PreparationCopyMoveModal />
+					{ props.children }
 				</div>
 			</AppLoader>
 		</I18nextProvider>

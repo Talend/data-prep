@@ -1,26 +1,22 @@
 import { all, call, take } from 'redux-saga/effects';
 import {
-	CANCEL_RENAME_PREPARATION,
-	FETCH_PREPARATIONS,
 	OPEN_FOLDER,
-	PREPARATION_DUPLICATE,
+	PREPARATION_COPY,
+	PREPARATION_MOVE,
 	RENAME_PREPARATION,
+	FETCH_PREPARATIONS,
+	OPEN_COPY_MODAL,
+	OPEN_MOVE_MODAL,
+	CLOSE_COPY_MOVE_MODAL,
 	SET_TITLE_EDITION_MODE,
+	CANCEL_RENAME_PREPARATION,
 } from '../../constants/actions';
 import * as effects from '../effects/preparation.effects';
-
 
 function* cancelRename() {
 	while (true) {
 		const { payload } = yield take(CANCEL_RENAME_PREPARATION);
 		yield call(effects.cancelRename, payload);
-	}
-}
-
-function* duplicate() {
-	while (true) {
-		const prep = yield take(PREPARATION_DUPLICATE);
-		yield call(effects.duplicate, prep);
 	}
 }
 
@@ -48,6 +44,20 @@ function* rename() {
 	}
 }
 
+function* copy() {
+	while (true) {
+		const { payload } = yield take(PREPARATION_COPY);
+		yield call(effects.copy, payload);
+	}
+}
+
+function* move() {
+	while (true) {
+		const { payload } = yield take(PREPARATION_MOVE);
+		yield call(effects.move, payload);
+	}
+}
+
 function* setTitleEditionMode() {
 	while (true) {
 		const { payload } = yield take(SET_TITLE_EDITION_MODE);
@@ -55,11 +65,36 @@ function* setTitleEditionMode() {
 	}
 }
 
+function* openCopyModal() {
+	while (true) {
+		const { payload } = yield take(OPEN_COPY_MODAL);
+		yield all([call(effects.fetchTree), call(effects.openCopyMoveModal, payload, 'copy')]);
+	}
+}
+
+function* openMoveModal() {
+	while (true) {
+		const { payload } = yield take(OPEN_MOVE_MODAL);
+		yield all([call(effects.fetchTree), call(effects.openCopyMoveModal, payload, 'move')]);
+	}
+}
+
+function* closeCopyMoveModal() {
+	while (true) {
+		yield take(CLOSE_COPY_MOVE_MODAL);
+		yield call(effects.closeCopyMoveModal);
+	}
+}
+
 export default {
-	'preparation:rename:cancel': cancelRename,
-	'preparation:duplicate': duplicate,
+	'preparation:copy': copy,
+	'preparation:move': move,
 	'preparation:fetch': fetch,
-	'preparation:folder:open': openFolder,
 	'preparation:rename:submit': rename,
+	'preparation:folder:open': openFolder,
+	'preparation:rename:cancel': cancelRename,
 	'preparation:rename': setTitleEditionMode,
+	'preparation:copy:open': openCopyModal,
+	'preparation:move:open': openMoveModal,
+	'preparation:copy:move:cancel': closeCopyMoveModal,
 };

@@ -147,17 +147,21 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register action creators in CMF Actions dictionary
 		 */
-		registerActionCreator('preparation:duplicate', actions.preparation.duplicate);
 		registerActionCreator('preparation:edit:submit', actions.preparation.rename);
 		registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
 		registerActionCreator('preparation:open', actions.preparation.open);
 		registerActionCreator('folder:open', actions.folder.open);
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
+		registerActionCreator('preparation:copy', actions.preparation.copy);
+		registerActionCreator('preparation:move', actions.preparation.move);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
-		registerActionCreator('preparation:add:open', actions.preparation.openCreator);
-		registerActionCreator('help:about:open', actions.help.openAbout);
+		registerActionCreator('preparation:add:open', actions.preparation.openPreparationCreatorModal);
+		registerActionCreator('preparation:copy:open', actions.preparation.openCopyModal);
+		registerActionCreator('preparation:move:open', actions.preparation.openMoveModal);
+		registerActionCreator('preparation:copy:move:cancel', actions.preparation.closeCopyMoveModal);
 		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
 		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
+		registerActionCreator('help:about:open', actions.help.openAbout);
 		registerActionCreator('redirect', actions.redirect);
 		registerActionCreator('headerbar:search:start', actions.search.start);
 		registerActionCreator('headerbar:search:select', actions.search.select);

@@ -103,6 +103,69 @@
       },
       "actionCreator": "preparation:add:open"
     },
+    "preparation:copy": {
+      "id": "preparation:copy",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:COPY",
+          "options": {
+            "defaultValue": "Copy"
+          }
+        }
+      },
+      "bsStyle": "primary"
+    },
+    "preparation:move": {
+      "id": "preparation:move",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:MOVE",
+          "options": {
+            "defaultValue": "Move"
+          }
+        }
+      },
+      "bsStyle": "primary"
+    },
+    "preparation:copy:open": {
+      "id": "preparation:copy:open",
+      "icon": "talend-files-o",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_COPY",
+          "options": {
+            "defaultValue": "Copy preparation"
+          }
+        }
+      },
+      "actionCreator": "preparation:copy:open"
+    },
+    "preparation:copy:move:cancel": {
+      "id": "preparation:copy:move:cancel",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:CANCEL",
+          "options": {
+            "defaultValue": "Cancel"
+          }
+        }
+      },
+      "bsStyle": "default btn-inverse",
+      "actionCreator": "preparation:copy:move:cancel"
+    },
+    "preparation:move:open": {
+      "id": "preparation:move:open",
+      "icon": "talend-file-move",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_MOVE",
+          "options": {
+            "defaultValue": "Move preparation"
+          }
+        }
+      },
+      "actionCreator": "preparation:move:open"
+    },
     "preparation:rename": {
       "id": "preparation:rename",
       "icon": "talend-pencil",
@@ -178,7 +241,7 @@
         }
       },
       "brand": {
-        "label": "Data Preparation  (react-cmf)",
+        "label": "Data Preparation (react-cmf)",
         "payload": {
           "type": "MENU_LINK",
           "cmf": {
@@ -361,8 +424,15 @@
         },
         "actions": {
           "title": "preparation:open",
-          "left": ["preparation:add:open", "folder:add:open"],
-          "items": ["preparation:rename", "preparation:duplicate"],
+          "left": [
+            "preparation:add:open",
+            "folder:add:open"
+          ],
+          "items": [
+            "preparation:rename",
+            "preparation:copy:open",
+            "preparation:move:open"
+          ],
           "editSubmit": "preparation:edit:submit",
           "editCancel": "preparation:edit:cancel"
         }

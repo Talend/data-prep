@@ -7,14 +7,22 @@
 	}
 
 	.about-logo {
-		width: 3.5em;
-		height: 3.5em;
+		width: 5em;
+		height: 5em;
+	}
+
+	.about-excerpt {
+		margin-top: 20px;
 	}
 
 	.services-versions {
 		margin: 0 auto;
 		margin-top: 30px;
 		text-align: justify;
+
+		th {
+			text-transform: uppercase;
+		}
 
 		td+td, th+th {
 			border-left: 80px solid transparent;

@@ -5,18 +5,15 @@ import { Map } from 'immutable';
 import { Dialog, Icon } from '@talend/react-components';
 import { cmfConnect, Inject } from '@talend/react-cmf';
 import { translate } from 'react-i18next';
+import { getDefaultTranslate } from '../../../i18n';
 
 import I18N from './../../constants/i18n';
-
 import './AboutModal.scss';
-
-const COPYRIGHT = '© 2018 Talend. All Rights Reserved';
 
 export const DEFAULT_STATE = new Map({
 	show: false,
 	expanded: false,
 });
-
 
 export class AboutModal extends React.Component {
 	static DISPLAY_NAME = 'Translate(AboutModal)';
@@ -36,7 +33,7 @@ export class AboutModal extends React.Component {
 	}
 
 	render() {
-		const state = this.props.state;
+		const { state, t } = this.props;
 		const show = state.get('show', false);
 		const expanded = state.get('expanded', false);
 		const bar = {
@@ -44,64 +41,54 @@ export class AboutModal extends React.Component {
 				center: [
 					{
 						actionId: 'help:about:toggle',
-						label: expanded ? 'Less' : 'More',
+						label: expanded ? t('tdp-app:LESS') : t('tdp-app:MORE'),
 						onClick: this.toggle,
 					},
 				],
 			},
 		};
 
-
 		return (
 			<Inject
 				component="Dialog"
-				header={'About Talend Data Preparation'}
+				header={t('tdp-app:ABOUT_DIALOG_TITLE')}
 				type={Dialog.TYPES.INFORMATIVE}
 				onHide={this.close}
 				actionbar={bar}
 				show={show}
 			>
 				<Icon name="talend-tdp-colored" className={'about-logo'} />
-				<div>
-					<div>Version : {this.props.displayVersion}</div>
-					<div>{COPYRIGHT}</div>
+				<div className="about-excerpt">
+					<div>
+						{t('tdp-app:VERSION')}
+						{t('tdp-app:COLON')}
+						{this.props.displayVersion}
+					</div>
+					<div>{t('tdp-app:COPYRIGHT', { year: new Date().getFullYear() })}</div>
 				</div>
-				{
-					expanded && (
-						<table className={'services-versions'}>
-							<tr>
-								<th>SERVICE</th>
-								<th>BUILD ID</th>
-								<th>VERSION ID</th>
-							</tr>
-							{
-								this.props.services.map((service) => {
-									return <TableRow {...service.toJS()} />;
-								})
-							}
-						</table>
-					)
-				}
+				{expanded && (
+					<table className={'services-versions'}>
+						<tr>
+							<th>{t('tdp-app:SERVICE_NAME')}</th>
+							<th>{t('tdp-app:BUILD_ID')}</th>
+							<th>{t('tdp-app:VERSION')}</th>
+						</tr>
+						{this.props.services.map((service) => {
+							const srv = service.toJS();
+							return (
+								<tr>
+									<td>{srv.serviceName}</td>
+									<td>{srv.buildId}</td>
+									<td>{srv.versionId}</td>
+								</tr>
+							);
+						})}
+					</table>
+				)}
 			</Inject>
 		);
 	}
 }
-
-function TableRow({ serviceName, buildId, versionId }) {
-	return (
-		<tr>
-			<td>{serviceName}</td>
-			<td>{buildId}</td>
-			<td>{versionId}</td>
-		</tr>
-	);
-}
-
-TableRow.propTypes = {
-	serviceName: PropTypes.string,
-	buildId: PropTypes.string,
-	versionId: PropTypes.string,
-};
 
 AboutModal.displayName = 'AboutModal';
 AboutModal.propTypes = {
@@ -109,6 +96,8 @@ AboutModal.propTypes = {
 	setState: PropTypes.func.isRequired,
 	...cmfConnect.propTypes,
 };
-
+AboutModal.defaultProps = {
+	t: getDefaultTranslate,
+};
 
 export default translate(I18N.TDP_APP_NAMESPACE)(AboutModal);

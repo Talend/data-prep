@@ -37,6 +37,11 @@ export function registerLocales(locales) {
 		});
 }
 
+export function getDefaultTranslate(key) {
+	return key;
+}
+
+
 window.i18n = i18n;
 
 export default i18n;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Immutable from 'immutable';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { AboutModal } from './AboutModal.component';
 
 const SERVICES = Immutable.fromJS([
@@ -39,6 +39,7 @@ describe('Container(AboutModal)', () => {
 				services={SERVICES}
 				state={state}
 				displayVersion="mock version"
+				t={k => k}
 			/>,
 		);
 		expect(wrapper.getElement()).toMatchSnapshot();
@@ -51,6 +52,7 @@ describe('Container(AboutModal)', () => {
 				services={SERVICES}
 				state={state}
 				displayVersion="mock version"
+				t={k => k}
 			/>,
 		);
 		expect(wrapper.getElement()).toMatchSnapshot();

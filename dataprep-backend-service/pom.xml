@@ -145,6 +145,14 @@
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-avro-message</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.talend.daikon</groupId>
+            <artifactId>logging-event-layout</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.talend.daikon</groupId>
+            <artifactId>daikon-audit</artifactId>
+        </dependency>
         <!-- OTHER DEPENDENCIES -->
         <dependency>
             <groupId>io.projectreactor</groupId>

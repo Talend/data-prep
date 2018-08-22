@@ -609,6 +609,12 @@
                 <artifactId>logging-event-layout</artifactId>
                 <version>${org.talend.daikon.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.talend.daikon</groupId>
+                <artifactId>daikon-audit</artifactId>
+                <version>${org.talend.daikon.version}</version>
+            </dependency>
+
             <!-- SWAGGER DEPENDENCIES -->
             <dependency>
                 <groupId>io.springfox</groupId>

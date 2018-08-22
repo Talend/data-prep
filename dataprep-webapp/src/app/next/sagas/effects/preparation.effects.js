@@ -25,7 +25,7 @@ export function* fetch(payload) {
 	yield put(actions.collections.addOrReplace('preparations', PreparationService.transform(data)));
 }
 
-function* setCopyMoveErrorMode(message) {
+export function* setCopyMoveErrorMode(message) {
 	yield put(
 			actions.components.mergeState(
 				'PreparationCopyMoveModal',
@@ -51,7 +51,7 @@ export function* copy({ id, folderId, destination, title }) {
 		{}, {}, { silent: true });
 
 	if (action instanceof Error && action.data) {
-		yield setCopyMoveErrorMode(action.data.message);
+		yield call(setCopyMoveErrorMode, action.data.message);
 	}
 	else {
 		yield call(fetch, { folderId });
@@ -73,7 +73,7 @@ export function* move({ id, folderId, destination, title }) {
 	);
 
 	if (action instanceof Error && action.data) {
-		yield setCopyMoveErrorMode(action.data.message);
+		yield call(setCopyMoveErrorMode, action.data.message);
 	}
 	else {
 		yield call(fetch, { folderId });

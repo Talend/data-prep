@@ -1,5 +1,6 @@
 import { call } from 'redux-saga/effects';
 import api from '@talend/react-cmf';
+import { HTTPError } from '@talend/react-cmf/lib/sagas/http';
 import { Map } from 'immutable';
 import * as effects from '../../effects/preparation.effects';
 import {
@@ -182,6 +183,30 @@ describe('preparation', () => {
 			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
 			expect(gen.next().done).toBeTruthy();
 		});
+
+		it('should set error mode if necessary', () => {
+			const error = new HTTPError({ data: { message: 'err message' }, response: { statusText: 'err' } });
+			const gen = effects.copy({
+				id: 'id0',
+				folderId: 'abcd',
+				destination: 'efgh',
+				title: 'newPrep0',
+			});
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			let effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effect.fn).toEqual(http.post);
+			expect(effect.args[0]).toEqual(
+				'/api/preparations/id0/copy?destination=efgh&newName=newPrep0',
+			);
+
+			effect = gen.next(error).value.CALL;
+			expect(effect.fn).toEqual(effects.setCopyMoveErrorMode);
+			expect(effect.args[0]).toEqual('err message');
+
+			expect(gen.next().done).toBeTruthy();
+		});
 	});
 
 	describe('move', () => {
@@ -203,6 +228,50 @@ describe('preparation', () => {
 			expect(gen.next().value).toEqual(call(effects.fetch, { folderId: 'abcd' }));
 			expect(gen.next().value).toEqual(call(effects.closeCopyMoveModal));
 			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
+			expect(gen.next().done).toBeTruthy();
+		});
+
+		it('should set error mode if necessary', () => {
+			const error = new HTTPError({ data: { message: 'err message' }, response: { statusText: 'err' } });
+			const gen = effects.move({
+				id: 'id0',
+				folderId: 'abcd',
+				destination: 'efgh',
+				title: 'newPrep0',
+			});
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			let effect = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effect.fn).toEqual(http.put);
+			expect(effect.args[0]).toEqual(
+				'/api/preparations/id0/move?folder=abcd&destination=efgh&newName=newPrep0',
+			);
+
+			effect = gen.next(error).value.CALL;
+			expect(effect.fn).toEqual(effects.setCopyMoveErrorMode);
+			expect(effect.args[0]).toEqual('err message');
+
+			expect(gen.next().done).toBeTruthy();
+		});
+	});
+
+	describe('copy/move error mode', () => {
+		it('should set copy/move error mode', () => {
+			const gen = effects.setCopyMoveErrorMode('nopnop');
+
+			let effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('default');
+			expect(effect.componentName).toEqual('PreparationCopyMoveModal');
+			expect(effect.componentState).toEqual({ error: 'nopnop' });
+
+			effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('preparation:copy:move:editable:text');
+			expect(effect.componentName).toEqual('Container(EditableText)');
+			expect(effect.componentState).toEqual({ editMode: true });
+
 			expect(gen.next().done).toBeTruthy();
 		});
 	});

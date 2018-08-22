@@ -1,4 +1,4 @@
-import { call, take } from 'redux-saga/effects';
+import { all, call, take } from 'redux-saga/effects';
 import {
 	PREPARATION_COPY,
 	PREPARATION_MOVE,

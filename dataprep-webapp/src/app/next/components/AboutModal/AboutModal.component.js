@@ -98,10 +98,9 @@ TableRow.propTypes = {
 	versionId: PropTypes.string,
 };
 
-
 AboutModal.displayName = 'AboutModal';
 AboutModal.propTypes = {
 	state: ImmutablePropTypes.contains({ show: PropTypes.bool }).isRequired,
 	setState: PropTypes.func.isRequired,
-	...cmfConnect.INJECTED_PROPS,
+	...cmfConnect.propTypes,
 };

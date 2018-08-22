@@ -155,6 +155,7 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openCreator);
+		registerActionCreator('help:about:open', actions.help.openAbout);
 		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
 		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
 		registerActionCreator('redirect', actions.redirect);
@@ -162,7 +163,6 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('headerbar:search:select', actions.search.select);
 		registerActionCreator('headerbar:search:reset', actions.search.reset);
 		registerActionCreator('dataset:view', actions.dataset.open);
-		registerActionCreator('about:open', actions.help.openAbout);
 
 
 		const additionalActionCreators = additionalConfiguration.actionCreators;

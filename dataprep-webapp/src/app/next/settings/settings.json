@@ -71,9 +71,7 @@
           }
         }
       },
-      "onClickDispatch": {
-        "type": "OPEN_ABOUT"
-      }
+      "actionCreator": "help:about:open"
     },
     "help:about:toggle": {
       "id": "help:about:toggle",

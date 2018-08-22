@@ -11,7 +11,7 @@ import {
 } from './preparation.effects.mock';
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
-import { DISPLAY_NAME as CopyMoveDisplayName } from '../../../components/PreparationCopyMoveModal/PreparationCopyMoveModal.component';
+import PreparationCopyMoveModal from '../../../components/PreparationCopyMoveModal';
 
 describe('preparation', () => {
 	describe('cancelRename', () => {
@@ -186,7 +186,10 @@ describe('preparation', () => {
 		});
 
 		it('should set error mode if necessary', () => {
-			const error = new HTTPError({ data: { message: 'err message' }, response: { statusText: 'err' } });
+			const error = new HTTPError({
+				data: { message: 'err message' },
+				response: { statusText: 'err' },
+			});
 			const gen = effects.copy({
 				id: 'id0',
 				folderId: 'abcd',
@@ -233,7 +236,10 @@ describe('preparation', () => {
 		});
 
 		it('should set error mode if necessary', () => {
-			const error = new HTTPError({ data: { message: 'err message' }, response: { statusText: 'err' } });
+			const error = new HTTPError({
+				data: { message: 'err message' },
+				response: { statusText: 'err' },
+			});
 			const gen = effects.move({
 				id: 'id0',
 				folderId: 'abcd',
@@ -264,7 +270,7 @@ describe('preparation', () => {
 			let effect = gen.next().value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('PreparationCopyMoveModal');
+			expect(effect.componentName).toEqual('Translate(PreparationCopyMoveModal)');
 			expect(effect.componentState).toEqual({ error: 'nopnop' });
 
 			effect = gen.next().value.PUT.action;
@@ -297,7 +303,7 @@ describe('preparation', () => {
 			const effect = gen.next().value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual(CopyMoveDisplayName);
+			expect(effect.componentName).toEqual(PreparationCopyMoveModal.DISPLAY_NAME);
 			expect(effect.componentState).toEqual({ show: false });
 
 			expect(gen.next().done).toBeTruthy();
@@ -311,7 +317,7 @@ describe('preparation', () => {
 			const effect = gen.next('abcd').value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual(CopyMoveDisplayName);
+			expect(effect.componentName).toEqual(PreparationCopyMoveModal.DISPLAY_NAME);
 			expect(effect.componentState).toEqual({
 				show: true,
 				error: null,

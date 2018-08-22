@@ -8,7 +8,6 @@ import http from './http';
 import { default as creators } from '../../actions';
 import PreparationService from '../../services/preparation.service';
 import PreparationCopyMoveModal from '../../components/PreparationCopyMoveModal';
-import { DISPLAY_NAME as CopyMoveDisplayName } from '../../components/PreparationCopyMoveModal/PreparationCopyMoveModal.component';
 
 export function* cancelRename(payload) {
 	const preparations = yield select(state => state.cmf.collections.get('preparations'));
@@ -30,17 +29,15 @@ export function* fetch(payload) {
 
 export function* setCopyMoveErrorMode(message) {
 	yield put(
-			actions.components.mergeState(
-				CopyMoveDisplayName,
-				'default',
-				{ error: message },
-			),
-		);
+		actions.components.mergeState(PreparationCopyMoveModal.DISPLAY_NAME, 'default', {
+			error: message,
+		}),
+	);
 	yield put(
 		actions.components.mergeState(
 			'Container(EditableText)',
 			PreparationCopyMoveModal.EDITABLE_TEXT_ID,
-			{ editMode: true }
+			{ editMode: true },
 		),
 	);
 }
@@ -51,28 +48,9 @@ export function* copy({ id, folderId, destination, title }) {
 	const action = yield call(
 		http.post,
 		`${uris.get('apiPreparations')}/${id}/copy?destination=${dest}&newName=${title}`,
-		{}, {}, { silent: true });
-
-	if (action instanceof Error && action.data) {
-		yield call(setCopyMoveErrorMode, action.data.message);
-	}
-	else {
-		yield call(fetch, { folderId });
-		yield call(closeCopyMoveModal);
-		yield put(creators.notification.success(null, {
-			title: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_TITLE', { defaultValue: 'Preparation copied' }),
-			message: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_MESSAGE', { defaultValue: 'The preparation has been copied.' }),
-		}));
-	}
-}
-
-export function* move({ id, folderId, destination, title }) {
-	const dest = destination || folderId;
-	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
-	const action = yield call(
-		http.put,
-		`${uris.get('apiPreparations')}/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`,
-		{}, {}, { silent: true }
+		{},
+		{},
+		{ silent: true },
 	);
 
 	if (action instanceof Error && action.data) {
@@ -81,10 +59,48 @@ export function* move({ id, folderId, destination, title }) {
 	else {
 		yield call(fetch, { folderId });
 		yield call(closeCopyMoveModal);
-		yield put(creators.notification.success(null, {
-			title: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_TITLE', { defaultValue: 'Preparation moved' }),
-			message: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_MESSAGE', { defaultValue: 'The preparation has been moved.' }),
-		}));
+		yield put(
+			creators.notification.success(null, {
+				title: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_TITLE', {
+					defaultValue: 'Preparation copied',
+				}),
+				message: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_MESSAGE', {
+					defaultValue: 'The preparation has been copied.',
+				}),
+			}),
+		);
+	}
+}
+
+export function* move({ id, folderId, destination, title }) {
+	const dest = destination || folderId;
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const action = yield call(
+		http.put,
+		`${uris.get(
+			'apiPreparations',
+		)}/${id}/move?folder=${folderId}&destination=${dest}&newName=${title}`,
+		{},
+		{},
+		{ silent: true },
+	);
+
+	if (action instanceof Error && action.data) {
+		yield call(setCopyMoveErrorMode, action.data.message);
+	}
+	else {
+		yield call(fetch, { folderId });
+		yield call(closeCopyMoveModal);
+		yield put(
+			creators.notification.success(null, {
+				title: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_TITLE', {
+					defaultValue: 'Preparation moved',
+				}),
+				message: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_MESSAGE', {
+					defaultValue: 'The preparation has been moved.',
+				}),
+			}),
+		);
 	}
 }
 
@@ -129,7 +145,7 @@ export function* openPreparationCreatorModal() {
 export function* openCopyMoveModal(model, action) {
 	const folderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 	yield put(
-		actions.components.mergeState(CopyMoveDisplayName, 'default', {
+		actions.components.mergeState(PreparationCopyMoveModal.DISPLAY_NAME, 'default', {
 			action,
 			show: true,
 			error: null,
@@ -143,15 +159,28 @@ export function* openCopyMoveModal(model, action) {
 }
 
 export function* closeCopyMoveModal() {
-	yield put(actions.components.mergeState(CopyMoveDisplayName, 'default', { show: false }));
+	yield put(
+		actions.components.mergeState(PreparationCopyMoveModal.DISPLAY_NAME, 'default', {
+			show: false,
+		}),
+	);
 }
 
 export function* fetchFolder(payload) {
 	const defaultFolderId = 'Lw==';
 	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
-	const { data } = yield call(http.get, `${uris.get('apiFolders')}/${(payload.folderId || defaultFolderId)}`);
-	yield put(actions.components.mergeState('Breadcrumbs', 'default', new Map({
-		items: PreparationService.transformFolder(data),
-		maxItems: 5,
-	})));
+	const { data } = yield call(
+		http.get,
+		`${uris.get('apiFolders')}/${payload.folderId || defaultFolderId}`,
+	);
+	yield put(
+		actions.components.mergeState(
+			'Breadcrumbs',
+			'default',
+			new Map({
+				items: PreparationService.transformFolder(data),
+				maxItems: 5,
+			}),
+		),
+	);
 }

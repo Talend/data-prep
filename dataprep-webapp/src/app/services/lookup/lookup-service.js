@@ -218,7 +218,6 @@ export default class LookupService {
 							dataset.enableToAddToLookup = true;
 						})
 						.value();
-
 					this.StateService.setLookupDatasets(datasetsToAdd);
 					this.StateService.setLookupActions(actionsList);
 

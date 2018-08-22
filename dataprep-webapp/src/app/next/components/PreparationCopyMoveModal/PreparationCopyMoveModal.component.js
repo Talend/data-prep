@@ -10,15 +10,15 @@ import I18N from './../../constants/i18n';
 
 import './PreparationCopyMoveModal.scss';
 
-export const DISPLAY_NAME = 'Translate(PreparationCopyMoveModal)';
 
 class PreparationCopyMoveModal extends React.Component {
+	static DISPLAY_NAME = 'Translate(PreparationCopyMoveModal)';
 	static EDITABLE_TEXT_ID = 'preparation:copy:move:editable:text';
 	static SELECT_OBJECT_ID = 'preparation:copy:move:select:object';
 
 	static getContent(state) {
 		const select = SelectObject.getState(state, PreparationCopyMoveModal.SELECT_OBJECT_ID);
-		const title = state.cmf.components.getIn([DISPLAY_NAME, 'default', 'name'], '');
+		const title = state.cmf.components.getIn([PreparationCopyMoveModal.DISPLAY_NAME, 'default', 'name'], '');
 
 		return {
 			title,
@@ -43,7 +43,7 @@ class PreparationCopyMoveModal extends React.Component {
 	}
 
 	render() {
-		const state = this.props.state;
+		const { state, t } = this.props;
 		const action = state.get('action');
 
 		if (!action) {
@@ -55,6 +55,8 @@ class PreparationCopyMoveModal extends React.Component {
 		const error = state.get('error', null);
 		const text = state.get('name', '');
 		const selectedId = model.get('folderId', '');
+		const key = action.toUpperCase();
+		const label = t(`tdp-cmf:${key}`);
 
 		const bar = {
 			actions: {
@@ -68,18 +70,15 @@ class PreparationCopyMoveModal extends React.Component {
 				],
 			},
 		};
-
-		const actionLabel = this.props.t(`tdp-cmf:${action.toUpperCase()}`);
-
-		const title = this.props.t('tdp-app:COPY_MOVE_MODAL_TITLE', {
+		const title = t('tdp-app:COPY_MOVE_MODAL_TITLE', {
 			defaultValue: '{{action}} your preparation',
-			action: actionLabel,
+			action: label,
+		});
+		const subtitle = t('tdp-app:COPY_MOVE_MODAL_SUBTITLE', {
+			defaultValue: 'Click on the folder you want to {{action, lowercase}} your preparation',
+			action: label,
 		});
 
-		const subtitle = this.props.t('tdp-app:COPY_MOVE_MODAL_SUBTITLE', {
-			defaultValue: 'Click on the folder you want to {{action, lowercase}} your preparation',
-			action: actionLabel,
-		});
 
 		return (
 			<Inject
@@ -99,10 +98,10 @@ class PreparationCopyMoveModal extends React.Component {
 					}}
 					onCancel={() => this.props.setState({ error: null })}
 				/>
-				<hr className={'modal-separator'} />
+				<hr className="modal-separator" />
 				<SelectObject
-					source={'folders'}
-					id={'folders'}
+					source="folders"
+					id="folders"
 					componentId={PreparationCopyMoveModal.SELECT_OBJECT_ID}
 					filterMode={SelectObject.FILTER_MODE.ALL}
 					tree={{
@@ -121,8 +120,8 @@ PreparationCopyMoveModal.displayName = 'PreparationCopyMoveModal';
 PreparationCopyMoveModal.propTypes = {
 	state: ImmutablePropTypes.contains({ show: PropTypes.bool }).isRequired,
 	setState: PropTypes.func.isRequired,
-	...cmfConnect.INJECTED_PROPS,
 	t: PropTypes.func,
+	...cmfConnect.propTypes,
 };
 
 export default translate(I18N.TDP_APP_NAMESPACE)(PreparationCopyMoveModal);

@@ -110,7 +110,6 @@ export const FORMATTED_PREPARATIONS = [
 	},
 ];
 
-
 export const RAW_FOLDERS_HIERARCHY = {
 	folder: {
 		id: 'L3Rlc3QgZm9sZGVyIDE=',
@@ -160,24 +159,25 @@ export const RAW_FOLDERS_TREE = {
 		path: '/test folder 1',
 	},
 	children: [
-		{ folder: {
-			id: 'L3Rlc3QgZm9sZGVyIDA=',
-			name: 'test folder 3',
-			ownerId: 'ncomont',
-			parentId: 'L3Rlc3QgZm9sZGVyIDE=',
-			creationDate: 1528465283000,
-			lastModificationDate: 1528465283000,
-			nbPreparations: 0,
-			owner: { id: 'ncomont', firstName: 'ncomont', lastName: '', displayName: 'ncomont' },
-			sharedFolder: false,
-			sharedByMe: false,
-			roles: [],
-			path: '/test folder 3' },
+		{
+			folder: {
+				id: 'L3Rlc3QgZm9sZGVyIDA=',
+				name: 'test folder 3',
+				ownerId: 'ncomont',
+				parentId: 'L3Rlc3QgZm9sZGVyIDE=',
+				creationDate: 1528465283000,
+				lastModificationDate: 1528465283000,
+				nbPreparations: 0,
+				owner: { id: 'ncomont', firstName: 'ncomont', lastName: '', displayName: 'ncomont' },
+				sharedFolder: false,
+				sharedByMe: false,
+				roles: [],
+				path: '/test folder 3',
+			},
 			children: [],
 		},
 	],
 };
-
 
 export const FORMATTED_FOLDERS_HIERARCHY = [
 	{
@@ -193,7 +193,6 @@ export const FORMATTED_FOLDERS_HIERARCHY = [
 		title: 'test folder 1',
 	},
 ];
-
 
 export const FORMATTED_FOLDERS_TREE = [
 	{

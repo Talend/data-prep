@@ -148,7 +148,7 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
     }
 
     // One surrogate pair contains two char so that compute real size
-    private int getRealSize(String input, int targetSize, boolean replaceCharIsSurrogatePair) {
+    protected int getRealSize(String input, int targetSize, boolean replaceCharIsSurrogatePair) {
         final int originalSize = input.length();
         final int realSize = input.codePointCount(0, originalSize);
         if (targetSize > realSize) {

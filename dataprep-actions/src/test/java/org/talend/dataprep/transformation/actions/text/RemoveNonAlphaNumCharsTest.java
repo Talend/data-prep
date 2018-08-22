@@ -98,6 +98,7 @@ public class RemoveNonAlphaNumCharsTest extends AbstractMetadataBaseTest<RemoveN
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
+
     @Test
     public void testApplyOnSurrogatePair() {
         // given

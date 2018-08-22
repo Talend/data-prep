@@ -19,6 +19,7 @@
 
     .tc-tab-bar-actions {
       display: flex;
+      overflow-x: hidden;
     }
     .stats-container {
         flex-grow: 1;

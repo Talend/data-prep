@@ -93,29 +93,70 @@ exports[`Container(AboutModal) should render in expanded mode 1`] = `
     </tr>
     Immutable.List [
       <tr>
-        <td />
-        <td />
-        <td />
+        <td>
+          Dataset
+        </td>
+        <td>
+          87d0dcd-12e0d6f
+        </td>
+        <td>
+          2.8.0-SNAPSHOT
+        </td>
       </tr>,
       <tr>
-        <td />
-        <td />
-        <td />
+        <td>
+          API
+        </td>
+        <td>
+          87d0dcd-12e0d6f
+        </td>
+        <td>
+          2.8.0-SNAPSHOT
+        </td>
       </tr>,
       <tr>
-        <td />
-        <td />
-        <td />
+        <td>
+          Preparation
+        </td>
+        <td>
+          87d0dcd-12e0d6f
+        </td>
+        <td>
+          2.8.0-SNAPSHOT
+        </td>
       </tr>,
       <tr>
-        <td />
-        <td />
-        <td />
+        <td>
+          Transformation
+        </td>
+        <td>
+          87d0dcd-12e0d6f
+        </td>
+        <td>
+          2.8.0-SNAPSHOT
+        </td>
       </tr>,
       <tr>
-        <td />
-        <td />
-        <td />
+        <td>
+          Gateway
+        </td>
+        <td>
+          87d0dcd-12e0d6f
+        </td>
+        <td>
+          2.8.0-SNAPSHOT
+        </td>
+      </tr>,
+      <tr>
+        <td>
+          Fullrun
+        </td>
+        <td>
+          87d0dcd-12e0d6f
+        </td>
+        <td>
+          2.8.0-SNAPSHOT
+        </td>
       </tr>,
     ]
   </table>

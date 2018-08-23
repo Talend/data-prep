@@ -35,6 +35,10 @@ export class AboutModal extends React.Component {
 	render() {
 		const { state, t } = this.props;
 		const show = state.get('show', false);
+		if (!show) {
+			return null;
+		}
+
 		const expanded = state.get('expanded', false);
 		const bar = {
 			actions: {
@@ -64,21 +68,25 @@ export class AboutModal extends React.Component {
 				</div>
 				{expanded && (
 					<table className={'about-versions'}>
-						<tr>
-							<th>{t('tdp-app:SERVICE_NAME')}</th>
-							<th>{t('tdp-app:BUILD_ID')}</th>
-							<th>{t('tdp-app:VERSION')}</th>
-						</tr>
-						{this.props.services.map((service) => {
-							const srv = service.toJS();
-							return (
-								<tr>
-									<td>{srv.serviceName}</td>
-									<td>{srv.buildId}</td>
-									<td>{srv.versionId}</td>
-								</tr>
-							);
-						})}
+						<thead>
+							<tr>
+								<th>{t('tdp-app:SERVICE_NAME')}</th>
+								<th>{t('tdp-app:BUILD_ID')}</th>
+								<th>{t('tdp-app:VERSION')}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{this.props.services.map((service) => {
+								const srv = service.toJS();
+								return (
+									<tr>
+										<td>{srv.serviceName}</td>
+										<td>{srv.buildId}</td>
+										<td>{srv.versionId}</td>
+									</tr>
+								);
+							})}
+						</tbody>
 					</table>
 				)}
 			</Inject>

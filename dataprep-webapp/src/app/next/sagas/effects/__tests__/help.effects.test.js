@@ -2,6 +2,7 @@ import { call } from 'redux-saga/effects';
 import { VERSIONS, IMMUTABLE_VERSIONS, IMMUTABLE_SETTINGS } from './help.effects.mock';
 import http from '../http';
 import * as effects from '../../effects/help.effects';
+import AboutModal from '../../../components/AboutModal';
 
 
 describe('help', () => {
@@ -14,7 +15,7 @@ describe('help', () => {
 
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('Translate(AboutModal)');
+			expect(effect.componentName).toEqual(AboutModal.DISPLAY_NAME);
 			expect(effect.componentState).toEqual({ show: true });
 
 			expect(gen.next().done).toBeTruthy();
@@ -36,7 +37,7 @@ describe('help', () => {
 			effect = gen.next(VERSIONS).value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('Translate(AboutModal)');
+			expect(effect.componentName).toEqual(AboutModal.DISPLAY_NAME);
 			expect(effect.componentState).toEqual({ show: true });
 
 			expect(gen.next().done).toBeTruthy();

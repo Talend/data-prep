@@ -204,8 +204,8 @@ public class TransformAPITest extends ApiServiceTestBase {
         assertThat(actualClusterParameters, sameJSONAs(expectedClusterParameters).allowingAnyArrayOrdering());
     }
 
+
     @Test
-    @Ignore // see TDP-3189
     public void testSuggestActionParams_should_return_dynamic_params_with_preparation_step() throws Exception {
         // given
         final String preparationId = testClient.createPreparationFromFile("transformation/cluster_dataset.csv",

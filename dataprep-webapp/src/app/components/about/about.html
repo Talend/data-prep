@@ -13,43 +13,14 @@
   ~ ============================================================================
   -->
 
-<talend-modal
-        id="about-modal"
-        close-button="true"
-        ng-if="$ctrl.state.home.about.isVisible"
-        state="$ctrl.state.home.about.isVisible">
-
-    <div class="modal-header">
-        {{'ABOUT_HEADER' | translate}}
-    </div>
-
-    <div class="modal-body">
-        <icon id="about-dataprep-logo" name="'talend-tdp-colored'"></icon>
-
-        <div class="version-copyrights">
-            <div id="version">{{"VERSION" | translate}}: {{$ctrl.state.home.about.builds.displayVersion}}</div>
-            <div id="copyrights"
-                 translate-once="COPYRIGHTS"
-                 translate-values="{year: $ctrl.getFullYear()}"></div>
-        </div>
-
-        <table ng-if="$ctrl.showBuildDetails">
-            <thead>
-                <tr>
-                    <th>{{'SERVICE_NAME' | translate}}</th>
-                    <th>{{'BUILD_ID' | translate}}</th>
-                    <th>{{'VERSION_ID' | translate}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="buildServiceDetail in $ctrl.state.home.about.builds.services track by $index">
-                    <td>{{buildServiceDetail.serviceName}}</td>
-                    <td>{{buildServiceDetail.buildId}}</td>
-                    <td>{{buildServiceDetail.versionId}}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <button class="btn btn-default" id="toggle-details" translate="{{!$ctrl.showBuildDetails ? 'MORE' : 'LESS'}}" ng-click="$ctrl.toggleDetailsDisplay()"></button>
-    </div>
-</talend-modal>
+<pure-about-dialog
+	show="$ctrl.state.home.about.isVisible"
+	icon="'talend-tdp-colored'"
+	version="$ctrl.state.home.about.builds.displayVersion"
+	services="$ctrl.getServices()"
+	copyrights="$ctrl.getCopyrights()"
+	expanded="$ctrl.expanded"
+	loading="$ctrl.loading"
+	on-toggle="$ctrl.toggle"
+	on-hide="$ctrl.hide"
+></pure-about-dialog>

@@ -11,31 +11,67 @@
 
  ============================================================================*/
 export default class AboutCtrl {
-	constructor(state, AboutService) {
+	constructor(state, $translate, AboutService) {
 		'ngInject';
 		this.state = state;
-		this.showBuildDetails = false;
-		AboutService.loadBuilds();
+		this.$translate = $translate;
+		this.loading = true;
+		this.loading = false;
+		this.expanded = false;
+		this.hide = this.hide.bind(this);
+		this.toggle = this.toggle.bind(this);
+		this.getCopyrights = this.getCopyrights.bind(this);
+		AboutService.loadBuilds().then(() => this.loading = false);
 	}
 
 	/**
 	 * @ngdoc method
-	 * @name toggleDetailsDisplay
+	 * @name toggle
 	 * @methodOf data-prep.about.controller:AboutCtrl
 	 * @description toggles the builds details list
 	 */
-	toggleDetailsDisplay() {
-		this.showBuildDetails = !this.showBuildDetails;
+	toggle() {
+		this.expanded = !this.expanded;
 	}
 
 	/**
 	 * @ngdoc method
-	 * @name getFullYear
+	 * @name hide
 	 * @methodOf data-prep.about.controller:AboutCtrl
-	 * @description get copyrights full year
-	 * @returns {number} full year
+	 * @description hides the about modal
 	 */
-	getFullYear() {
-		return (new Date()).getFullYear();
+	hide() {
+		this.state.home.about.isVisible = false;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name hide
+	 * @methodOf data-prep.about.controller:AboutCtrl
+	 * @description returns and converts the services
+	 */
+	getServices() {
+		if (!this.state.home.about.builds.services) {
+			return [];
+		}
+
+		return this.state.home.about.builds.services.map(service => ({
+			name: service.serviceName,
+			build: service.buildId,
+			version: service.versionId,
+		}));
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getCopyrights
+	 * @methodOf data-prep.about.controller:AboutCtrl
+	 * @description get translated copyrights
+	 * @returns {string} copyrights with current year
+	 */
+	getCopyrights() {
+		return this.$translate.instant('COPYRIGHTS', {
+			year: new Date().getFullYear(),
+		});
 	}
 }

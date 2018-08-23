@@ -94,6 +94,7 @@ import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.InjectorUtil;
+import org.talend.logging.audit.StandardEventAuditLogger;
 
 import com.netflix.hystrix.HystrixCommand;
 
@@ -118,6 +119,9 @@ public class PreparationAPI extends APIService {
     @Autowired
     private InjectorUtil injectorUtil;
 
+    @Autowired
+    private StandardEventAuditLogger auditLogger;
+
     @RequestMapping(value = "/api/preparations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all preparations.",
             notes = "Returns the list of preparations the current user is allowed to see.")
@@ -137,13 +141,8 @@ public class PreparationAPI extends APIService {
                     defaultValue = "desc") Order order) {
 
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
-        if ("summary".equalsIgnoreCase(format)) {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-        } else {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-        }
+        return toStream(PreparationDTO.class, mapper, command)//
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
     }
 
     //@formatter:off

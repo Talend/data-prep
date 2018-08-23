@@ -8,14 +8,14 @@
   "DOCUMENTATION": "Documentation",
   "FOLDER_HOME": "Accueil",
   "FOLDERS": "Dossiers",
-  "LESS": "moins",
-  "MORE": "plus",
+  "LESS": "Moins",
+  "MORE": "Plus",
   "PREPARATION_COPY_NOTIFICATION_MESSAGE": "La préparation a été copiée.",
   "PREPARATION_COPY_NOTIFICATION_TITLE": "Préparation copiée",
   "PREPARATION_MOVE_NOTIFICATION_MESSAGE": "La préparation a été déplacée.",
   "PREPARATION_MOVE_NOTIFICATION_TITLE": "Préparation déplacée",
   "PREPARATIONS": "Préparations",
-  "SERVICE_NAME": "Service",
+  "SERVICE": "Service",
   "VERSION": "Version",
-  "VERSION_NAME": "Version : {{version}}"
+  "ABOUT_VERSION_NAME": "Version : {{version}}"
 }

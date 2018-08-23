@@ -15,7 +15,7 @@
   "PREPARATION_MOVE_NOTIFICATION_MESSAGE": "The preparation has been moved.",
   "PREPARATION_MOVE_NOTIFICATION_TITLE": "Preparation moved",
   "PREPARATIONS": "preparations",
-  "SERVICE_NAME": "サービス",
+  "SERVICE": "サービス",
   "VERSION": "バージョン",
-  "VERSION_NAME": "Version:{{version}}"
+  "ABOUT_VERSION_NAME": "Version:{{version}}"
 }

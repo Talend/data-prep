@@ -29,7 +29,7 @@ exports[`Container(AboutModal) should render 1`] = `
     className="about-excerpt"
   >
     <div>
-      tdp-app:VERSION_NAME
+      tdp-app:ABOUT_VERSION_NAME
     </div>
     <div>
       tdp-app:COPYRIGHT
@@ -67,7 +67,7 @@ exports[`Container(AboutModal) should render in expanded mode 1`] = `
     className="about-excerpt"
   >
     <div>
-      tdp-app:VERSION_NAME
+      tdp-app:ABOUT_VERSION_NAME
     </div>
     <div>
       tdp-app:COPYRIGHT
@@ -79,7 +79,7 @@ exports[`Container(AboutModal) should render in expanded mode 1`] = `
     <thead>
       <tr>
         <th>
-          tdp-app:SERVICE_NAME
+          tdp-app:SERVICE
         </th>
         <th>
           tdp-app:BUILD_ID

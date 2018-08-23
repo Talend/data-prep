@@ -55,7 +55,7 @@ export class AboutModal extends React.Component {
 		return (
 			<Inject
 				component="Dialog"
-				header={t('tdp-app:ABOUT_DIALOG_TITLE')}
+				header={t('tdp-app:ABOUT_MODAL_TITLE')}
 				type={Dialog.TYPES.INFORMATIVE}
 				onHide={this.close}
 				actionbar={bar}

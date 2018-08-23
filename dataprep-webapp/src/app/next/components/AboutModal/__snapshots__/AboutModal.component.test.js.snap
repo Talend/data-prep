@@ -16,7 +16,7 @@ exports[`Container(AboutModal) should render 1`] = `
     }
   }
   component="Dialog"
-  header="tdp-app:ABOUT_DIALOG_TITLE"
+  header="tdp-app:ABOUT_MODAL_TITLE"
   onHide={[Function]}
   show={true}
   type="informative"
@@ -54,7 +54,7 @@ exports[`Container(AboutModal) should render in expanded mode 1`] = `
     }
   }
   component="Dialog"
-  header="tdp-app:ABOUT_DIALOG_TITLE"
+  header="tdp-app:ABOUT_MODAL_TITLE"
   onHide={[Function]}
   show={true}
   type="informative"

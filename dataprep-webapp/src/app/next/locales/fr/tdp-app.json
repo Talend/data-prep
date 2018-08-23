@@ -1,5 +1,5 @@
 {
-  "ABOUT_DIALOG_TITLE": "À propos de Talend Data Preparation",
+  "ABOUT_MODAL_TITLE": "À propos de Talend Data Preparation",
   "ABOUT_VERSION_NAME": "Version : {{version}}",
   "BUILD_ID": "Build",
   "COPY_MOVE_MODAL_SUBTITLE": "Sélectionner le dossier dans lequel {{action, lowercase}} la préparation",

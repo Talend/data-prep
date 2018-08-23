@@ -1,5 +1,6 @@
 {
   "ABOUT_DIALOG_TITLE": "About Talend Data Preparation",
+  "ABOUT_VERSION_NAME": "Version: {{version}}",
   "BUILD_ID": "Build ID",
   "COPY_MOVE_MODAL_SUBTITLE": "Click on the folder you want to {{action, lowercase}} your preparation",
   "COPY_MOVE_MODAL_TITLE": "{{action}} your preparation",
@@ -16,6 +17,5 @@
   "PREPARATION_MOVE_NOTIFICATION_TITLE": "Preparation moved",
   "PREPARATIONS": "Preparations",
   "SERVICE": "Service",
-  "VERSION": "Version",
-  "ABOUT_VERSION_NAME": "Version: {{version}}"
+  "VERSION": "Version"
 }

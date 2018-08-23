@@ -1,5 +1,6 @@
 {
   "ABOUT_DIALOG_TITLE": "Talend Data Preparationバージョン情報",
+  "ABOUT_VERSION_NAME": "Version:{{version}}",
   "BUILD_ID": "ビルドID",
   "COPY_MOVE_MODAL_SUBTITLE": "Click on the folder you want to {{action}} your preparation",
   "COPY_MOVE_MODAL_TITLE": "{{action}} your preparation",
@@ -16,6 +17,5 @@
   "PREPARATION_MOVE_NOTIFICATION_TITLE": "Preparation moved",
   "PREPARATIONS": "preparations",
   "SERVICE": "サービス",
-  "VERSION": "バージョン",
-  "ABOUT_VERSION_NAME": "Version:{{version}}"
+  "VERSION": "バージョン"
 }

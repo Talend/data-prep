@@ -137,6 +137,11 @@
 	.modal-dialog {
 		display: block;
 		max-height: none;
+		
+		&:before,
+		&:after {
+			content: none !important;
+		}
 	}
 
 	.modal-inner {
@@ -232,13 +237,6 @@
 			}
 		}
 
-	}
-
-	.modal-state {
-		&:before,
-		&:after {
-			content: none;
-		}
 	}
 
 	.modal-state:checked + .modal-window {

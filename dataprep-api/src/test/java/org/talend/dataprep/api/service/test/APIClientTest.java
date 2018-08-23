@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -203,6 +204,13 @@ public class APIClientTest {
     public void applyActionFromFile(final String preparationId, final String actionFile) throws IOException {
         final String action = IOUtils.toString(PreparationAPITest.class.getResourceAsStream(actionFile), UTF_8);
         applyAction(preparationId, action);
+    }
+
+    public void applyAction(final String preparationId, final ActionParameters action) throws IOException {
+        PreparationStep step = new PreparationStep();
+        step.setActions(Collections.singletonList(action));
+        given().contentType(JSON).body(mapper.writeValueAsString(step)).when().post("/api/preparations/{id}/actions", preparationId).then()
+                .statusCode(is(200));
     }
 
     /**
@@ -487,6 +495,55 @@ public class APIClientTest {
             throw new RuntimeException("Could not get preparation metadata. Response was: " + transformedResponse.print());
         }
         return metadata;
+    }
+
+    public static class PreparationStep {
+        private List<ActionParameters> actions = new ArrayList<>(1);
+
+        public List<ActionParameters> getActions() {
+            return actions;
+        }
+
+        public void setActions(List<ActionParameters> actions) {
+            this.actions = actions;
+        }
+    }
+
+    public static class ActionParameters {
+
+        private String action;
+
+        private Map<String, String> parameters;
+
+        public static ActionParameters createAction(String name) {
+            ActionParameters actionParameters = new ActionParameters();
+            actionParameters.setAction(name);
+            return actionParameters;
+        }
+
+        public ActionParameters withParameter(String key, String value) {
+            if (parameters == null) {
+                parameters = new HashMap<>();
+            }
+            parameters.put(key, value);
+            return this;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public Map<String, String> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+        }
     }
 
 }

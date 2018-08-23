@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.api.service.test.APIClientTest.ActionParameters.createAction;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -39,6 +40,7 @@ import org.springframework.http.HttpStatus;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.service.test.APIClientTest;
 import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.cache.CacheKeyGenerator;
@@ -204,32 +206,37 @@ public class TransformAPITest extends ApiServiceTestBase {
         assertThat(actualClusterParameters, sameJSONAs(expectedClusterParameters).allowingAnyArrayOrdering());
     }
 
-
     @Test
     public void testSuggestActionParams_should_return_dynamic_params_with_preparation_step() throws Exception {
         // given
         final String preparationId = testClient.createPreparationFromFile("transformation/cluster_dataset.csv",
                 "testClustering", home.getId());
-        testClient.applyActionFromFile(preparationId, "export/upper_case_firstname.json");
-        testClient.applyActionFromFile(preparationId, "export/upper_case_lastname.json");
+
+        testClient.applyAction(preparationId, createAction("uppercase").withParameter("column_id", "0002")
+                .withParameter("column_name", "firstname")
+                .withParameter("scope", "column"));
+
+        testClient.applyAction(preparationId, createAction("uppercase").withParameter("column_id", "0003")
+                .withParameter("column_name", "lastname")
+                .withParameter("scope", "column"));
 
         final List<String> steps =
                 given().get("/api/preparations/{preparation}/details", preparationId).jsonPath().getList("steps");
 
-        IOUtils.toString(this.getClass().getResourceAsStream("transformation/expected_cluster_params_with_steps.json"),
-                UTF_8);
-
         // when
         final String actualClusterParameters = given()
-                .formParam("preparationId", preparationId)
-                .formParam("stepId", steps.get(1))
-                .formParam("columnId", "0001")
+                .param("preparationId", preparationId)
+                .param("stepId", steps.get(1))
+                .param("columnId", "0001")
                 .when()
                 .get("/api/transform/suggest/textclustering/params")
                 .asString();
 
         // then (actions have normalized all cluster values, so no more clusters to be returned).
         assertFalse(actualClusterParameters.isEmpty());
+        String expectedJson = IOUtils.toString(
+                this.getClass().getResourceAsStream("transformation/expected_cluster_params_double_metaphone.json"), UTF_8);
+        assertThat(actualClusterParameters, sameJSONAs(expectedJson).allowingAnyArrayOrdering());
     }
 
     @Test

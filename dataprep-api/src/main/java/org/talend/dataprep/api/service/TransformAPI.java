@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
+import org.talend.dataprep.api.service.command.common.AsyncGet;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
 import org.talend.dataprep.api.service.command.transformation.*;
 import org.talend.dataprep.command.CommandHelper;
@@ -107,7 +108,7 @@ public class TransformAPI extends APIService {
         HystrixCommand<InputStream> inputData;
         final String preparationId = dynamicParamsInput.getPreparationId();
         if (isNotBlank(preparationId)) {
-            inputData = getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId());
+            inputData = new AsyncGet<>(() -> getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId()), context);
         } else {
             inputData = datasetClient.getDataSetGetCommand(dynamicParamsInput.getDatasetId(), false, false);
         }

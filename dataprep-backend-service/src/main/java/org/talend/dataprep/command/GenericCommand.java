@@ -83,6 +83,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Hystrix group used for async related commands */
     public static final HystrixCommandGroupKey ASYNC_GROUP = HystrixCommandGroupKey.Factory.asKey("async");
 
+    /** Hystrix group used for api-gateway related commands */
+    public static final HystrixCommandGroupKey API_GATEWAY_GROUP = HystrixCommandGroupKey.Factory.asKey("api-gateway");
+
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
 
@@ -149,6 +152,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Preparation service URL. */
     @Value("${preparation.service.url:}")
     protected String preparationServiceUrl;
+
+    @Value("${gateway-api.service.url:}")
+    protected String gatewayApiServiceUrl;
 
     @Autowired
     private BeanConversionService conversionService;

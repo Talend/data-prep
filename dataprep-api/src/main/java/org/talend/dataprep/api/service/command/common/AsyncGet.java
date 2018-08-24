@@ -1,7 +1,10 @@
 package org.talend.dataprep.api.service.command.common;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+
 import org.apache.http.Header;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -12,10 +15,8 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
 
 public class AsyncGet<T> extends HystrixCommand<T> {
 
@@ -38,8 +39,7 @@ public class AsyncGet<T> extends HystrixCommand<T> {
             Header location = command.getHeader("Location");
             if (location != null) {
                 final String asyncMethodStatusUrl = location.getValue();
-                AsyncExecution asyncExecution =
-                        waitForAsyncMethodToFinish(command.getCommandGroup(), asyncMethodStatusUrl);
+                AsyncExecution asyncExecution = waitForAsyncMethodToFinish(command.getCommandGroup(), asyncMethodStatusUrl);
                 if (asyncExecution.getStatus() == AsyncExecution.Status.DONE) {
                     result = commandSupplier.get().execute();
                 } else {
@@ -69,8 +69,8 @@ public class AsyncGet<T> extends HystrixCommand<T> {
             executionStatus = GetAsyncStatus.create(context, group, asyncMethodStatusUrl).execute();
 
             AsyncExecution.Status asyncStatus = executionStatus.getStatus();
-            isAsyncMethodRunning = asyncStatus.equals(AsyncExecution.Status.RUNNING) || asyncStatus.equals(
-                    AsyncExecution.Status.NEW);
+            isAsyncMethodRunning = asyncStatus.equals(AsyncExecution.Status.RUNNING)
+                    || asyncStatus.equals(AsyncExecution.Status.NEW);
 
             try {
                 TimeUnit.MILLISECONDS.sleep(50);

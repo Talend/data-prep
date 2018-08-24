@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container(AboutModal) should render 1`] = `
+<Inject
+  actionbar={
+    Object {
+      "actions": Object {
+        "center": Array [
+          Object {
+            "actionId": "help:about:toggle",
+            "label": "tdp-app:MORE",
+            "onClick": [Function],
+          },
+        ],
+      },
+    }
+  }
+  component="Dialog"
+  header="tdp-app:ABOUT_MODAL_TITLE"
+  onHide={[Function]}
+  show={true}
+  type="informative"
+>
+  <Icon
+    className="about-logo"
+    name="talend-tdp-colored"
+  />
+  <div
+    className="about-excerpt"
+  >
+    <div>
+      tdp-app:ABOUT_VERSION_NAME
+    </div>
+    <div>
+      tdp-app:COPYRIGHT
+    </div>
+  </div>
+</Inject>
+`;
+
+exports[`Container(AboutModal) should render in expanded mode 1`] = `
+<Inject
+  actionbar={
+    Object {
+      "actions": Object {
+        "center": Array [
+          Object {
+            "actionId": "help:about:toggle",
+            "label": "tdp-app:LESS",
+            "onClick": [Function],
+          },
+        ],
+      },
+    }
+  }
+  component="Dialog"
+  header="tdp-app:ABOUT_MODAL_TITLE"
+  onHide={[Function]}
+  show={true}
+  type="informative"
+>
+  <Icon
+    className="about-logo"
+    name="talend-tdp-colored"
+  />
+  <div
+    className="about-excerpt"
+  >
+    <div>
+      tdp-app:ABOUT_VERSION_NAME
+    </div>
+    <div>
+      tdp-app:COPYRIGHT
+    </div>
+  </div>
+  <table
+    className="about-versions"
+  >
+    <thead>
+      <tr>
+        <th>
+          tdp-app:SERVICE
+        </th>
+        <th>
+          tdp-app:BUILD_ID
+        </th>
+        <th>
+          tdp-app:VERSION
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      Immutable.List [
+        <tr>
+          <td>
+            API
+          </td>
+          <td>
+            87d0dcd-12e0d6f
+          </td>
+          <td>
+            2.8.0-SNAPSHOT
+          </td>
+        </tr>,
+        <tr>
+          <td>
+            Dataset
+          </td>
+          <td>
+            87d0dcd-12e0d6f
+          </td>
+          <td>
+            2.8.0-SNAPSHOT
+          </td>
+        </tr>,
+        <tr>
+          <td>
+            Preparation
+          </td>
+          <td>
+            87d0dcd-12e0d6f
+          </td>
+          <td>
+            2.8.0-SNAPSHOT
+          </td>
+        </tr>,
+        <tr>
+          <td>
+            Transformation
+          </td>
+          <td>
+            87d0dcd-12e0d6f
+          </td>
+          <td>
+            2.8.0-SNAPSHOT
+          </td>
+        </tr>,
+      ]
+    </tbody>
+  </table>
+</Inject>
+`;

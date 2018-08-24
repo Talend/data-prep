@@ -18,10 +18,12 @@ import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
+import static org.apache.commons.lang.StringUtils.leftPad;
+import static org.apache.commons.lang.StringUtils.rightPad;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -76,21 +78,17 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public boolean acceptField(ColumnMetadata column) {
-        return Type.STRING.equals(Type.get(column.getType())) || Type.NUMERIC.isAssignableFrom(Type.get(column.getType()));
+        return Type.STRING.equals(Type.get(column.getType()))
+                || Type.NUMERIC.isAssignableFrom(Type.get(column.getType()));
     }
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
-        parameters.add(parameter(locale).setName(SIZE_PARAMETER)
-                .setType(INTEGER)
-                .setDefaultValue("5")
-                .build(this));
-        parameters.add(parameter(locale).setName(PADDING_CHAR_PARAMETER)
-                .setType(STRING)
-                .setDefaultValue("0")
-                .build(this));
+        parameters.add(parameter(locale).setName(SIZE_PARAMETER).setType(INTEGER).setDefaultValue("5").build(this));
+        parameters.add(
+                parameter(locale).setName(PADDING_CHAR_PARAMETER).setType(STRING).setDefaultValue("0").build(this));
 
         //@formatter:off
         parameters.add(selectParameter(locale)
@@ -109,8 +107,8 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(context,
-                    singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
+            ActionsUtils.createNewColumn(context, singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
     }
 
@@ -120,22 +118,58 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         final Map<String, String> parameters = context.getParameters();
         final String original = row.get(columnId);
 
-        final int size = Integer.parseInt(parameters.get(SIZE_PARAMETER));
-        final char paddingChar = parameters.get(PADDING_CHAR_PARAMETER).charAt(0);
-        final String paddingPosition = parameters.get(PADDING_POSITION_PARAMETER);
 
-        row.set(ActionsUtils.getTargetColumnId(context), apply(original, size, paddingChar, paddingPosition));
+        final String paddingStr = parameters.get(PADDING_CHAR_PARAMETER);
+        final String paddingPosition = parameters.get(PADDING_POSITION_PARAMETER);
+        //Judge paddingStr is surrogate pair or not
+        final boolean replaceCharIsSurrogatePair = Character.isHighSurrogate(paddingStr.charAt(0));
+        final int size =
+                getRealSize(original, Integer.parseInt(parameters.get(SIZE_PARAMETER)), replaceCharIsSurrogatePair);
+
+        String finallyStr = null;
+        if (replaceCharIsSurrogatePair) {
+            finallyStr = apply(original, size, paddingStr.substring(0, 2), paddingPosition);
+        } else {
+            finallyStr = apply(original, size, paddingStr.charAt(0), paddingPosition);
+        }
+        row.set(ActionsUtils.getTargetColumnId(context), finallyStr);
+    }
+
+    // surrogate pair contains two char so that change parameter paddingChar from char to String
+    protected String apply(String from, int size, String paddingChar, String position) {
+        if (from == null) {
+            return EMPTY;
+        }
+        if (position.equals(LEFT_POSITION)) {
+            return leftPad(from, size, paddingChar);
+        } else {
+            return rightPad(from, size, paddingChar);
+        }
+    }
+
+    // One surrogate pair contains two char so that compute real size
+    protected int getRealSize(String input, int targetSize, boolean replaceCharIsSurrogatePair) {
+        final int originalSize = input.length();
+        final int realSize = input.codePointCount(0, originalSize);
+        if (targetSize > realSize) {
+            if (replaceCharIsSurrogatePair) {
+                return (targetSize - realSize) * 2 + originalSize;
+            } else {
+                return targetSize - realSize + originalSize;
+            }
+        }
+        return targetSize;
     }
 
     protected String apply(String from, int size, char paddingChar, String position) {
         if (from == null) {
-            return StringUtils.EMPTY;
+            return EMPTY;
         }
 
         if (position.equals(LEFT_POSITION)) {
-            return StringUtils.leftPad(from, size, paddingChar);
+            return leftPad(from, size, paddingChar);
         } else {
-            return StringUtils.rightPad(from, size, paddingChar);
+            return rightPad(from, size, paddingChar);
         }
     }
 

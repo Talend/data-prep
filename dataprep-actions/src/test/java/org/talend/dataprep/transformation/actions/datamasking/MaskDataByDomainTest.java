@@ -14,7 +14,12 @@
 package org.talend.dataprep.transformation.actions.datamasking;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValueBuilder.value;
 import static org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest.ValuesBuilder.builder;
 import static org.talend.dataprep.transformation.actions.ActionMetadataTestUtils.getColumn;
@@ -75,8 +80,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         final DataSetRow row = builder() //
                 .with(value("2015-09-15") //
                         .type(Type.DATE) //
-                        .statistics(MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json"))
-                ) //
+                        .statistics(MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json"))) //
                 .build();
 
         // when
@@ -142,6 +146,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         LOGGER.info("Row value: {}", realValueAsFloat);
         assertTrue(realValueAsFloat >= 10 && realValueAsFloat <= 14);
     }
+
     @Test
     public void testShouldNotMaskSurrogatePairAsStringType() {
         // given
@@ -158,8 +163,10 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         LOGGER.info("Row value: {}", realValueAsDtr);
         assertTrue("中崎𠀀𠀁𠀂𠀃𠀄".equalsIgnoreCase(realValueAsDtr));
     }
+
     @Test
-    public void testShouldMaskSurrogatePairAsStringTypeAddressLine() {
+    // See TDQ-14216
+    public void testShouldNotMaskSurrogatePairWhenInvalidAddressLine() {
         // given
         final DataSetRow row = builder() //
                 .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING).domain(MaskableCategoryEnum.ADDRESS_LINE.name())) //
@@ -172,8 +179,8 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         // Function is MaskAddress so that surrogate pair will mask
         String realValueAsDtr = (String) row.values().get("0000");
         LOGGER.info("Row value: {}", realValueAsDtr);
-        assertSame(7,realValueAsDtr.length());
-        assertEquals("XXXXXXX",realValueAsDtr);
+        assertSame(7, realValueAsDtr.codePointCount(0, realValueAsDtr.length()));
+        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", realValueAsDtr);
     }
 
     @Test
@@ -229,7 +236,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     @Test
     public void testShouldUseDefaultMaskingForInvalid() {
         // given
-        String inputValue="bla bla";
+        String inputValue = "bla bla";
         final DataSetRow row = builder() //
                 .with(value(inputValue).type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name())) //
                 .build();

@@ -1,13 +1,21 @@
 {
+  "ABOUT_MODAL_TITLE": "Talend Data Preparationバージョン情報",
+  "ABOUT_VERSION_NAME": "Version:{{version}}",
+  "BUILD_ID": "ビルドID",
   "COPY_MOVE_MODAL_SUBTITLE": "Click on the folder you want to {{action}} your preparation",
   "COPY_MOVE_MODAL_TITLE": "{{action}} your preparation",
+  "COPYRIGHT": "© {{year}} Talend. All Rights Reserved",
   "DATASETS": "datasets",
   "DOCUMENTATION": "documentation",
-  "FOLDER_HOME": "home",
+  "FOLDER_HOME": "ホーム",
   "FOLDERS": "folders",
+  "LESS": "より少ない",
+  "MORE": "より多い",
   "PREPARATION_COPY_NOTIFICATION_MESSAGE": "The preparation has been copied.",
   "PREPARATION_COPY_NOTIFICATION_TITLE": "Preparation copied",
   "PREPARATION_MOVE_NOTIFICATION_MESSAGE": "The preparation has been moved.",
   "PREPARATION_MOVE_NOTIFICATION_TITLE": "Preparation moved",
-  "PREPARATIONS": "preparations"
+  "PREPARATIONS": "preparations",
+  "SERVICE": "サービス",
+  "VERSION": "バージョン"
 }

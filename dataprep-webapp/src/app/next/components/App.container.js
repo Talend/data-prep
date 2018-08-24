@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { I18nextProvider } from 'react-i18next';
 import { List, Map } from 'immutable';
-
 import { IconsProvider } from '@talend/react-components';
 import { Notification, ShortcutManager } from '@talend/react-containers';
-import AppLoader from '@talend/react-containers/lib/AppLoader';
+import AppLoader from '@talend/react-containers/lib/AppLoader/index';
+
 import { default as components } from './';
 import i18n from './../../i18n';
 

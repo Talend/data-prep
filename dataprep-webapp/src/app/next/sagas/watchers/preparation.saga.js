@@ -1,6 +1,5 @@
 import { all, call, take } from 'redux-saga/effects';
 import {
-	OPEN_FOLDER,
 	PREPARATION_COPY,
 	PREPARATION_MOVE,
 	RENAME_PREPARATION,
@@ -9,7 +8,6 @@ import {
 	OPEN_MOVE_MODAL,
 	CLOSE_COPY_MOVE_MODAL,
 	SET_TITLE_EDITION_MODE,
-	OPEN_PREPARATION_CREATOR,
 	CANCEL_RENAME_PREPARATION,
 } from '../../constants/actions';
 import * as effects from '../effects/preparation.effects';
@@ -24,17 +22,7 @@ function* cancelRename() {
 function* fetch() {
 	while (true) {
 		const { payload } = yield take(FETCH_PREPARATIONS);
-		yield all([
-			call(effects.fetch, payload),
-			call(effects.fetchFolder, payload),
-		]);
-	}
-}
-
-function* openFolder() {
-	while (true) {
-		const { id } = yield take(OPEN_FOLDER);
-		yield call(effects.openFolder, id);
+		yield call(effects.refresh, payload);
 	}
 }
 
@@ -66,13 +54,6 @@ function* setTitleEditionMode() {
 	}
 }
 
-function* openPreparationCreatorModal() {
-	while (true) {
-		yield take(OPEN_PREPARATION_CREATOR);
-		yield call(effects.openPreparationCreatorModal);
-	}
-}
-
 function* openCopyModal() {
 	while (true) {
 		const { payload } = yield take(OPEN_COPY_MODAL);
@@ -99,11 +80,9 @@ export default {
 	'preparation:move': move,
 	'preparation:fetch': fetch,
 	'preparation:rename:submit': rename,
-	'preparation:folder:open': openFolder,
 	'preparation:rename:cancel': cancelRename,
 	'preparation:rename': setTitleEditionMode,
 	'preparation:copy:open': openCopyModal,
 	'preparation:move:open': openMoveModal,
 	'preparation:copy:move:cancel': closeCopyMoveModal,
-	'preparation:creator:open': openPreparationCreatorModal,
 };

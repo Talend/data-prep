@@ -16,6 +16,7 @@ import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
 import locales from './next/locales';
 import { registerLocales } from './i18n';
+import settingsService from './next/services/settings.service';
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;
@@ -128,7 +129,6 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register expressions in CMF expressions dictionary
 		 */
-		registerExpressions(api.expressions);
 		const additionalExpressions = additionalConfiguration.expressions;
 		if (additionalExpressions) {
 			registerExpressions(additionalExpressions);
@@ -177,9 +177,8 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */
-		const settings = localStorage.get('settings');
 		store.dispatch(
-			cmfActions.settingsActions.fetchSettings(`/settings.${settings.context.language}.json`),
+			cmfActions.settingsActions.fetchSettings(`/settings.${settingsService.getLanguage()}.json`),
 		);
 
 		reduxLocalStorage.saveOnReload({

@@ -1,11 +1,13 @@
-import { default as p } from './search-providers';
+import providers from './search-providers';
 
 export default class SearchService {
 	constructor(categories) {
 		this.providers = {};
-		Object.keys(categories).forEach((key) => {
-			this.providers[key] = new p[key](categories[key]);
-		});
+		Object
+			.keys(categories)
+			.forEach((categoryKey) => {
+				this.providers[categoryKey] = new providers[categoryKey](categories[categoryKey]);
+			});
 	}
 
 	build(provider, term) {

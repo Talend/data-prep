@@ -1,10 +1,10 @@
-import { default as redirect } from './redirect';
-import { default as preparation } from './preparation';
-import { default as dataset } from './dataset';
-import { default as help } from './help';
-import { default as search } from './search';
-import { default as folder } from './folder';
-import { default as notification } from './notification';
+import redirect from './redirect';
+import preparation from './preparation';
+import dataset from './dataset';
+import help from './help';
+import search from './search';
+import folder from './folder';
+import notification from './notification';
 
 export default {
 	redirect,

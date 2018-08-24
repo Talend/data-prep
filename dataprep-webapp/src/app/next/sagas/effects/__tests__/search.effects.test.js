@@ -2,7 +2,7 @@ import api from '@talend/react-cmf';
 import { put, all, call } from 'redux-saga/effects';
 import * as effects from '../search.effects';
 import { OPEN_WINDOW } from '../../../constants/actions';
-import { default as creators } from '../../../actions';
+import creators from '../../../actions';
 import { IMMUTABLE_STATE, STATE, PROVIDERS } from './search.effects.mock';
 
 

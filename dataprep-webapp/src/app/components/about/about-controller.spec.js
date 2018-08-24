@@ -16,6 +16,12 @@ fdescribe('about controller', () => {
 	let createController;
 
 	beforeEach(angular.mock.module('data-prep.about'));
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', {
+			COPYRIGHTS: 'fake',
+		});
+		$translateProvider.preferredLanguage('en');
+	}));
 
 	beforeEach(inject(($q, $rootScope, $componentController, AboutService) => {
 		scope = $rootScope.$new();
@@ -24,23 +30,20 @@ fdescribe('about controller', () => {
 		spyOn(AboutService, 'loadBuilds').and.returnValue($q.when());
 	}));
 
+
 	it('should toggle build details display', () => {
 		const ctrl = createController();
-
 		ctrl.toggle();
-
 		expect(ctrl.expanded).toBe(true);
 	});
 
 	it('should populate build details on controller instantiation', inject((AboutService) => {
 		createController();
-
 		expect(AboutService.loadBuilds).toHaveBeenCalled();
 	}));
 
 	it('should return copyrights', inject((AboutService) => {
 		const ctrl = createController();
-
-		expect(ctrl.getCopyrights()).toBe(true);
+		expect(ctrl.getCopyrights()).toBe('fake');
 	}));
 });

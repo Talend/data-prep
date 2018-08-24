@@ -18,6 +18,7 @@ import static org.talend.dataprep.api.type.Type.NUMERIC;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,20 +65,20 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
     protected static final String FRENCH_COUNTRY_NAME = "french_country_name";
 
-    protected static final String COUNTRY_CODE_ISO2 = "country_code_iso2";
+    protected static final String COUNTRY_NUMBER = "country_number";
 
     protected static final String COUNTRY_CODE_ISO3 = "country_code_iso3";
 
-    protected static final String COUNTRY_NUMBER = "country_number";
+    protected static final String COUNTRY_CODE_ISO2 = "country_code_iso2";
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = true;
 
     private static final String NEW_COLUMN_SEPARATOR = "_in_";
 
-    private List<String> columnType;
-
     // Persistent map of country names in case of country name for input
     private static Map<String, Integer> countryNames;
+
+    private List<String> columnType;
 
     public CountryConverter() {
         // nothing to do here
@@ -88,8 +89,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        ActionsUtils.AdditionalColumn newColumn = ActionsUtils.additionalColumn().withName(
-                context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER));
+        ActionsUtils.AdditionalColumn newColumn = ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER));
 
         if (context.getParameters().get(TO_UNIT_PARAMETER).equals(COUNTRY_NUMBER)) {
             newColumn.withType(NUMERIC);
@@ -104,13 +105,9 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        SelectParameter.SelectParameterBuilder builder = selectParameter(locale)
-                .item(COUNTRY_NAME, COUNTRY_NAME)
-                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2)
-                .item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
-                .item(COUNTRY_NUMBER, COUNTRY_NUMBER)
-                .canBeBlank(false)
-                .name(FROM_UNIT_PARAMETER);
+        SelectParameter.SelectParameterBuilder builder = selectParameter(locale).item(COUNTRY_NAME, COUNTRY_NAME)
+                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2).item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
+                .item(COUNTRY_NUMBER, COUNTRY_NUMBER).canBeBlank(false).name(FROM_UNIT_PARAMETER);
 
         if (columnType != null) {
             if (columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO2.getId())) {
@@ -127,13 +124,9 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         parameters.add(builder.build(this));
 
         SelectParameter.SelectParameterBuilder secondBuilder = selectParameter(locale)
-                .item(ENGLISH_COUNTRY_NAME, ENGLISH_COUNTRY_NAME)
-                .item(FRENCH_COUNTRY_NAME, FRENCH_COUNTRY_NAME)
-                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2)
-                .item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
-                .item(COUNTRY_NUMBER, COUNTRY_NUMBER)
-                .canBeBlank(false)
-                .name(TO_UNIT_PARAMETER);
+                .item(ENGLISH_COUNTRY_NAME, ENGLISH_COUNTRY_NAME).item(FRENCH_COUNTRY_NAME, FRENCH_COUNTRY_NAME)
+                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2).item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
+                .item(COUNTRY_NUMBER, COUNTRY_NUMBER).canBeBlank(false).name(TO_UNIT_PARAMETER);
         if (columnType != null) {
             if (columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO2.getId())
                     || columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO3.getId())) {
@@ -182,31 +175,39 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
     @Override
     public void applyOnColumn(DataSetRow row, ActionContext context) {
+
         final String columnId = context.getColumnId();
-        final String columnValue = row.get(columnId);
         final String targetColumnId = ActionsUtils.getTargetColumnId(context);
+        final String columnValue = row.get(columnId);
+
         int countryId = -1;
         CountryCode result;
-
+        String countryCode;
         final String fromParameter = context.getParameters().get(FROM_UNIT_PARAMETER);
+
         switch (fromParameter) {
         case COUNTRY_NAME:
+        case ENGLISH_COUNTRY_NAME:
+        case FRENCH_COUNTRY_NAME:
             if (countryNames == null) {
-                countryNames = new HashMap<>();
-                initializeCountryNameMap(countryNames);
+                initializeCountryNameMap();
             }
-            if (countryNames.get(columnValue) != null) {
-                countryId = countryNames.get(columnValue);
+            if (countryNames.containsKey(
+                    Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
+                countryId = countryNames.get(
+                        Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
             }
             break;
         case COUNTRY_CODE_ISO2:
-            if (CountryCode.getByAlpha2Code(columnValue) != null) {
-                countryId = CountryCode.getByAlpha2Code(columnValue).getNumeric();
+            countryCode = columnValue.toUpperCase();
+            if (CountryCode.getByAlpha2Code(countryCode) != null) {
+                countryId = CountryCode.getByAlpha2Code(countryCode).getNumeric();
             }
             break;
         case COUNTRY_CODE_ISO3:
-            if (CountryCode.getByAlpha3Code(columnValue) != null) {
-                countryId = CountryCode.getByAlpha3Code(columnValue).getNumeric();
+            countryCode = columnValue.toUpperCase();
+            if (CountryCode.getByAlpha3Code(countryCode) != null) {
+                countryId = CountryCode.getByAlpha3Code(countryCode).getNumeric();
             }
             break;
         case COUNTRY_NUMBER:
@@ -222,12 +223,14 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         if (countryId != -1) {
             result = CountryCode.getByCode(countryId);
             String toParameter = context.getParameters().get(TO_UNIT_PARAMETER);
+            Locale tempLocale;
             switch (toParameter) {
             case ENGLISH_COUNTRY_NAME:
-                row.set(targetColumnId, result.getName());
+                tempLocale = new Locale(StringUtils.EMPTY, result.getAlpha2());
+                row.set(targetColumnId, tempLocale.getDisplayCountry(Locale.ENGLISH));
                 break;
             case FRENCH_COUNTRY_NAME:
-                Locale tempLocale = new Locale(StringUtils.EMPTY, result.getAlpha2());
+                tempLocale = new Locale(StringUtils.EMPTY, result.getAlpha2());
                 row.set(targetColumnId, tempLocale.getDisplayCountry(Locale.FRENCH));
                 break;
             case COUNTRY_CODE_ISO2:
@@ -259,15 +262,23 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
     /**
      * This method will initialize the map of country names
-     * with english and french country names and there country numbers.
+     * with English and French country names as key and there country numbers as value.
+     * 2 different sources are used to construct this map :
+     * - one for English Country name which has a size of 270 entries CountryCode.values() (lib neovisionaries.i18n)
+     * - one for French Country name which has a size of 250 entries Locale.getISOCountries() (lib java.util)
+     * So some country names will not be transformed.
+     * Moreover DQ use another source to compute invalid/valid entries, so some valid entries for DQ will not be transformed too.
      *
-     * @param map the map to initialize
+     * We transform name in order to use normalize key (without accent) and to be case insensitive.
      */
-    private static void initializeCountryNameMap(Map<String, Integer> map) {
+    private static void initializeCountryNameMap() {
+        countryNames = new HashMap<>();
+
         // put country names in english
         for (CountryCode countryCode : CountryCode.values()) {
             if (countryCode != null && countryCode.getAssignment().equals(CountryCode.Assignment.OFFICIALLY_ASSIGNED)) {
-                map.put(countryCode.getName(), countryCode.getNumeric());
+                countryNames.put(Normalizer.normalize(countryCode.getName().toLowerCase(), Normalizer.Form.NFD)
+                        .replaceAll("[^\\p{ASCII}]", ""), countryCode.getNumeric());
             }
         }
         // put country names in french
@@ -276,7 +287,9 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
                 Locale obj = new Locale(StringUtils.EMPTY, countryCode);
                 String countryName = obj.getDisplayCountry(Locale.FRENCH);
                 int countryNumber = CountryCode.getByAlpha2Code(countryCode).getNumeric();
-                map.put(countryName, countryNumber);
+                countryNames.put(
+                        Normalizer.normalize(countryName.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""),
+                        countryNumber);
             }
         }
     }

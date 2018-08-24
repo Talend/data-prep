@@ -75,6 +75,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
     private static final String NEW_COLUMN_SEPARATOR = "_in_";
 
+    private static final String NOT_ASCII_CHAR_PATTERN = "[^\\p{ASCII}]";
+
     // Persistent map of country names in case of country name for input
     private static Map<String, Integer> countryNames;
 
@@ -193,9 +195,9 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
                 initializeCountryNameMap();
             }
             if (countryNames.containsKey(
-                    Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
+                    Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY))) {
                 countryId = countryNames.get(
-                        Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
+                        Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY));
             }
             break;
         case COUNTRY_CODE_ISO2:

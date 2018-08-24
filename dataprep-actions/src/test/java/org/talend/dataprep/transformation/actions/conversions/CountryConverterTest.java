@@ -382,11 +382,9 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         parameters.put(FROM_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
         parameters.put(TO_UNIT_PARAMETER, ENGLISH_COUNTRY_NAME);
 
-        // // when
+        // when
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10), actionRegistry,
                 factory.create(action, parameters));
-
-        ActionTestWorkbench.test(Arrays.asList(row10), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("Åland Islands", row1.get("0000"));
@@ -402,6 +400,24 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         assertEquals("France", row9.get("0000"));
         assertEquals("Taiwan", row10.get("0000"));
 
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER,ENGLISH_COUNTRY_NAME );
+        parameters.put(TO_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
+
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10), actionRegistry,
+                factory.create(action, parameters));
+
+        // then
+        assertEquals("Îles Åland", row1.get("0000"));
+        assertEquals("Ouzbékistan", row2.get("0000"));
+        assertEquals("Antigua et Barbuda", row3.get("0000"));
+        assertEquals("Iran", row4.get("0000"));
+        assertEquals("", row5.get("0000"));
+        assertEquals("Taiwan", row6.get("0000"));
+        assertEquals("Zimbabwe", row7.get("0000"));
+        assertEquals("Afghanistan", row8.get("0000"));
+        assertEquals("France", row9.get("0000"));
+        assertEquals("Taiwan", row10.get("0000"));
     }
 
     @Test

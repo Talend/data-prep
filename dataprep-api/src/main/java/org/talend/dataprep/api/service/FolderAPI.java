@@ -57,12 +57,17 @@ import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.talend.logging.audit.ContextBuilder;
+import org.talend.logging.audit.StandardEventAuditLogger;
 
 @RestController
 public class FolderAPI extends APIService {
 
     @Autowired
     private DataSetNameInjection dataSetNameInjection;
+
+    @Autowired
+    private StandardEventAuditLogger auditLogger;
 
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
@@ -196,7 +201,7 @@ public class FolderAPI extends APIService {
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
         final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
                 .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-
+        auditLogger.loginSuccess(ContextBuilder.create("user", "testuser").build());
         return new PreparationsByFolder(folders, preparations);
     }
 

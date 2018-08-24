@@ -32,6 +32,7 @@ import static org.talend.dataprep.transformation.actions.conversions.CountryConv
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +49,6 @@ import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -64,8 +64,9 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils
-                .parseParameters(CountryConverter.class.getResourceAsStream("countryConverterAction.json"));
+        parameters = new HashMap<>(2);
+        parameters.put("column_id", "0000");
+        parameters.put("scope", "column");
     }
 
     @Test

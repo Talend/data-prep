@@ -63,12 +63,13 @@ public class ActionMetadataTestUtils {
      * @param input the parameters input stream.
      * @return the parsed parameters.
      * @throws IOException if an error occurs.
+     * @deprecated Please create parameters programmatically instead of parsing external json
      */
     public static Map<String, String> parseParameters(InputStream input) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new MixedContentMapModule());
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        List<Action> parsedAction = ((Actions)mapper.reader(Actions.class).readValue(input)).getActions();
+        List<Action> parsedAction = mapper.readerFor(Actions.class).<Actions>readValue(input).getActions();
         return parsedAction.get(0).getParameters();
     }
 

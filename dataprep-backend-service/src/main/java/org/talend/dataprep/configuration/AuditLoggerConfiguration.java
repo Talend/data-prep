@@ -12,12 +12,9 @@
 
 package org.talend.dataprep.configuration;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.talend.dataprep.info.ClassPathManifestInfoProvider;
-import org.talend.dataprep.info.ManifestInfo;
-import org.talend.dataprep.info.ManifestInfoProvider;
 import org.talend.logging.audit.AuditLoggerFactory;
 import org.talend.logging.audit.StandardEventAuditLogger;
 
@@ -28,6 +25,7 @@ import org.talend.logging.audit.StandardEventAuditLogger;
 public class AuditLoggerConfiguration {
 
     @Bean
+    @ConditionalOnProperty(name = "audit.log.enabled", havingValue = "true")
     public StandardEventAuditLogger auditLogger() {
         return AuditLoggerFactory.getEventAuditLogger(StandardEventAuditLogger.class);
     }

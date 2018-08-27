@@ -15,7 +15,7 @@
 <ul ng-if="$ctrl.filteredDatasets.length">
 	<li class="inventory-item-row"
 	    ng-repeat="dataset in $ctrl.filteredDatasets track by dataset.id">
-		<div class="radio">
+		<div class="checkbox">
 			<label>
 				<input class="add-dataset-input" type="checkbox" ng-model="dataset.addedToLookup"
 				       ng-disabled="!dataset.enableToAddToLookup"/>

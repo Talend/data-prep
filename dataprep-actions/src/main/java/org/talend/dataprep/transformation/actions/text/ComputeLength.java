@@ -13,7 +13,11 @@
 
 package org.talend.dataprep.transformation.actions.text;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -77,7 +81,7 @@ public class ComputeLength extends AbstractActionMetadata implements ColumnActio
 
         // Set length value
         final String value = row.get(columnId);
-        row.set(lengthColumn, value == null ? "0" : String.valueOf(value.length()));
+        row.set(lengthColumn, value == null ? "0" : String.valueOf(value.codePointCount(0, value.length())));
     }
 
     @Override

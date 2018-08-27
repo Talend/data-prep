@@ -20,7 +20,6 @@ import ngTranslate from 'angular-translate';
 import uiRouter from 'angular-ui-router';
 import store from 'store';
 
-import { changeLanguage } from 'i18next';
 import i18n, {
 	fallbackLng,
 	defaultNS,
@@ -155,12 +154,14 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 
 			$translate.fallbackLanguage(fallbackLng);
 			$translate.preferredLanguage(preferredLanguage);
-			changeLanguage(preferredLanguage);
 		});
 };
 
 getAppConfiguration().then((appSettings) => {
 	// appSettings.context.provider = 'catalog';
+	// appSettings.context.country = 'FR';
+	// appSettings.context.language = 'fr';
+	// appSettings.context.locale = 'fr-FR';
 	const { provider = 'legacy' } = appSettings.context;
 
 	store.set('settings', appSettings);

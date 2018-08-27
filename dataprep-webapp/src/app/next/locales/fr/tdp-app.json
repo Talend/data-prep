@@ -1,0 +1,21 @@
+{
+  "ABOUT_MODAL_TITLE": "À propos de Talend Data Preparation",
+  "ABOUT_VERSION_NAME": "Version : {{version}}",
+  "BUILD_ID": "Build",
+  "COPY_MOVE_MODAL_SUBTITLE": "Sélectionner le dossier dans lequel {{action, lowercase}} la préparation",
+  "COPY_MOVE_MODAL_TITLE": "{{action}} la préparation",
+  "COPYRIGHT": "© {{year}} Talend. All Rights Reserved",
+  "DATASETS": "Jeux de données",
+  "DOCUMENTATION": "Documentation",
+  "FOLDER_HOME": "Accueil",
+  "FOLDERS": "Dossiers",
+  "LESS": "Moins",
+  "MORE": "Plus",
+  "PREPARATION_COPY_NOTIFICATION_MESSAGE": "La préparation a été copiée.",
+  "PREPARATION_COPY_NOTIFICATION_TITLE": "Préparation copiée",
+  "PREPARATION_MOVE_NOTIFICATION_MESSAGE": "La préparation a été déplacée.",
+  "PREPARATION_MOVE_NOTIFICATION_TITLE": "Préparation déplacée",
+  "PREPARATIONS": "Préparations",
+  "SERVICE": "Service",
+  "VERSION": "Version"
+}

@@ -15,7 +15,7 @@ export default class AboutCtrl {
 		'ngInject';
 		this.state = state;
 		this.$translate = $translate;
-		this.loading = false;
+		this.loading = true;
 		this.expanded = false;
 		this.hide = this.hide.bind(this);
 		this.toggle = this.toggle.bind(this);

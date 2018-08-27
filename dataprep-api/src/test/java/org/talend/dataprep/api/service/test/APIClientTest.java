@@ -209,7 +209,11 @@ public class APIClientTest {
     public void applyAction(final String preparationId, final ActionParameters action) throws IOException {
         PreparationStep step = new PreparationStep();
         step.setActions(Collections.singletonList(action));
-        given().contentType(JSON).body(mapper.writeValueAsString(step)).when().post("/api/preparations/{id}/actions", preparationId).then()
+        given().contentType(JSON) //
+                .body(mapper.writeValueAsString(step)) //
+                .when() //
+                .post("/api/preparations/{id}/actions", preparationId) //
+                .then() //
                 .statusCode(is(200));
     }
 
@@ -305,9 +309,12 @@ public class APIClientTest {
         Response transformedResponse;
         RequestSpecification initialRequest = given().when();
         if (filter.isEmpty()) {
-            transformedResponse = initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+            transformedResponse = initialRequest //
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
         } else {
-            transformedResponse = initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId, version, stepId, filter);
+            transformedResponse = initialRequest //
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId,
+                            version, stepId, filter);
         }
 
         if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
@@ -323,9 +330,13 @@ public class APIClientTest {
                     .log() //
                     .ifError();
             if (filter.isEmpty()) {
-                transformedResponse = contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+                transformedResponse = contentRequest //
+                        .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version,
+                                stepId);
             } else {
-                transformedResponse = contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId, version, stepId, filter);
+                transformedResponse = contentRequest //
+                        .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId,
+                                version, stepId, filter);
             }
         }
 
@@ -378,9 +389,10 @@ public class APIClientTest {
     }
 
     public Response getFailedPreparationWithFilter(String preparationId, String malformedFilter) throws IOException {
-        Response transformedResponse =
-                given().when().get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
-                        preparationId, "head", "HEAD", malformedFilter);
+        Response transformedResponse = given() //
+                .when() //
+                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId, "head",
+                        "HEAD", malformedFilter);
 
         if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
@@ -389,12 +401,10 @@ public class APIClientTest {
             AsyncExecution.Status asyncStatus = waitForAsyncMethodToFinish(asyncMethodStatusUrl);
             assertEquals(AsyncExecution.Status.FAILED, asyncStatus);
 
-            return given()
-                    .expect() //
-                    .statusCode(200)
-                    .log()
-                    .ifError()
-                    .when()
+            return given().expect() //
+                    .statusCode(200) //
+                    .log().ifError() //
+                    .when() //
                     .get(asyncMethodStatusUrl);
         }
         return transformedResponse;
@@ -498,6 +508,7 @@ public class APIClientTest {
     }
 
     public static class PreparationStep {
+
         private List<ActionParameters> actions = new ArrayList<>(1);
 
         public List<ActionParameters> getActions() {

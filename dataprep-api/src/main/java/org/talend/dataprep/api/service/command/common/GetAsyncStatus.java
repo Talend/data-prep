@@ -56,9 +56,7 @@ public class GetAsyncStatus extends GenericCommand<AsyncExecutionMessage> {
                     ExceptionContext.withBuilder().put("message", "unknown service" + commandGroup).build());
         }
 
-        execute(() -> {
-            return new HttpGet(serviceUrl + asyncMethodStatusUrl);
-        });
+        execute(() -> new HttpGet(serviceUrl + asyncMethodStatusUrl));
         on(HttpStatus.OK).then(Defaults.convertResponse(objectMapper, AsyncExecutionMessage.class));
         onError(e -> new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e));
     }

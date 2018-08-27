@@ -11,8 +11,6 @@ function getLanguage() {
 	return settings.context.language || fallbackLng;
 }
 
-window.settings = settings;
-
 export default {
 	...settings,
 	getLanguage,

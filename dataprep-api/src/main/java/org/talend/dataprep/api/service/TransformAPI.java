@@ -15,6 +15,7 @@ package org.talend.dataprep.api.service;
 import com.netflix.hystrix.HystrixCommand;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +42,9 @@ import static org.talend.dataprep.command.CommandHelper.toStream;
 
 @RestController
 public class TransformAPI extends APIService {
+
+    @Autowired
+    private CommonAPI commonAPI;
 
     /**
      * Get all the possible actions for a given column.
@@ -108,7 +112,7 @@ public class TransformAPI extends APIService {
         HystrixCommand<InputStream> inputData;
         final String preparationId = dynamicParamsInput.getPreparationId();
         if (isNotBlank(preparationId)) {
-            inputData = new AsyncGet<>(() -> getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId()), context);
+            inputData = new AsyncGet<>(() -> getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId()), commonAPI);
         } else {
             inputData = datasetClient.getDataSetGetCommand(dynamicParamsInput.getDatasetId(), false, false);
         }

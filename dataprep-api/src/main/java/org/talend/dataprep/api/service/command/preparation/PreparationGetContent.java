@@ -58,7 +58,7 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
      * @param from where to read the data from.
      */
     private PreparationGetContent(String id, String version, SourceType from, String filter) {
-        super(API_GATEWAY_GROUP);
+        super(TRANSFORM_GROUP);
 
         execute(() -> {
             try {

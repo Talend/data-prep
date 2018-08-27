@@ -54,7 +54,7 @@ public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata>
      * @param version the preparation version.
      */
     private PreparationGetMetadata(String id, String version) {
-        super(PREPARATION_GROUP);
+        super(TRANSFORM_GROUP);
         this.id = id;
         this.version = version;
         execute(() -> new HttpGet(transformationServiceUrl + "/apply/preparation/" + id + "/" + version + "/metadata"));

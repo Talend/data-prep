@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -104,7 +105,10 @@ public class AsyncAspect {
     private void set202HeaderInformation(AsyncExecution future) {
         HttpResponseContext.status(HttpStatus.ACCEPTED);
         String statusCheckURL = generateLocationUrl(future);
-        HttpResponseContext.header("Location", statusCheckURL);
+        HttpResponseContext.header(HttpHeaders.LOCATION, statusCheckURL);
+        // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.37
+        // Duration in seconds before a retry. Value is 1s because it is the current front-side wait time
+        HttpResponseContext.header(HttpHeaders.RETRY_AFTER, "1");
     }
 
     private AsyncExecution scheduleAsynchroneTask(ProceedingJoinPoint pjp, boolean resumeExistingAsyncExecution) {

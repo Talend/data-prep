@@ -54,7 +54,7 @@ public abstract class PreviewAbstract extends GenericCommand<InputStream> {
      */
     // private constructor to ensure the IoC
     protected PreviewAbstract(PreparationDTO preparation, List<Action> actions) {
-        super(GenericCommand.PREPARATION_GROUP);
+        super(TRANSFORM_GROUP);
         this.preparation = preparation;
         this.actions = actions;
     }

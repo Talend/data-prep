@@ -25,4 +25,6 @@ public class ContentMetadata {
     public String records;
 
     public String name;
+
+    public String id;
 }

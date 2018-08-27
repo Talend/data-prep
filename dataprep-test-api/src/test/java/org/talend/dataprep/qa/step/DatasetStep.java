@@ -13,8 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import cucumber.api.Scenario;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.talend.dataprep.qa.config.GlobalStepTest;
 import org.talend.dataprep.qa.dto.ContentMetadata;
 import org.talend.dataprep.qa.dto.Statistics;
 
@@ -84,9 +88,18 @@ public class DatasetStep extends DataPrepStep {
     private long countFilteredDatasetList(List<ContentMetadata> datasetMetas, String datasetName, String nbRows) {
         return datasetMetas //
                 .stream() //
-                .filter(d -> (suffixName(datasetName).equals(d.name)) //
+                .filter(d -> (suffixName((datasetName)).equals(d.name)) //
                         && nbRows.equals(d.records)) //
                 .count();
+    }
+
+    public String getDatasetIdByName(List<ContentMetadata> datasetMetas, String datasetName){
+        ContentMetadata dataset = datasetMetas
+                    .stream()
+                    .filter(d -> (suffixName((datasetName)).equals(d.name)))
+                    .findAny()
+                .orElse(null);
+        return dataset.id;
     }
 
     /**
@@ -219,4 +232,13 @@ public class DatasetStep extends DataPrepStep {
             return !columnStatistics.frequencyTable.isEmpty() && !columnStatistics.patternFrequencyTable.isEmpty();
         };
     }
+
+    @Then("^The list of datasets has \"(.*)\" datasets$") //
+    public void checkDatasetsList(int number) throws Throwable {
+        List<ContentMetadata> datasetMetas = listDatasetMeta();
+        assertEquals(number, datasetMetas.size());
+        context.storeDatasetRef(getDatasetIdByName(datasetMetas, "first_interactions_29k"), "first_interactions_29k");
+        context.storeDatasetRef(getDatasetIdByName(datasetMetas, "pays_visités_par_stef"), "pays_visités_par_stef");
+    }
+
 }

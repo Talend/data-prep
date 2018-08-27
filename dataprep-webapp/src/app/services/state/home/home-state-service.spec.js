@@ -142,6 +142,14 @@ describe('home state', () => {
 			expect(homeState.about.isVisible).toBeTruthy();
 		}));
 
+		it('should set about modal visiblity', inject((homeState, HomeStateService) => {
+			//when
+			HomeStateService.setVisibility(true);
+
+			//then
+			expect(homeState.about.isVisible).toBeTruthy();
+		}));
+
 		it('should populate builds', inject((homeState, HomeStateService) => {
 			//given
 			const allBuildDetails = [

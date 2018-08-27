@@ -11,10 +11,11 @@
 
  ============================================================================*/
 export default class AboutCtrl {
-	constructor(state, $translate, AboutService) {
+	constructor(state, $translate, AboutService, HomeStateService) {
 		'ngInject';
 		this.state = state;
 		this.$translate = $translate;
+		this.HomeStateService = HomeStateService;
 		this.loading = true;
 		this.expanded = false;
 		this.hide = this.hide.bind(this);
@@ -40,7 +41,7 @@ export default class AboutCtrl {
 	 * @description hides the about modal
 	 */
 	hide() {
-		this.state.home.about.isVisible = false;
+		this.HomeStateService.setVisibility(false);
 	}
 
 	/**

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 public class ContextSettings {
+
     /**
      * The context property id
      */
@@ -52,7 +53,6 @@ public class ContextSettings {
     public void setValue(Object value) {
         this.value = value;
     }
-
 
     /**
      * Builder Pattern for immutable purpose

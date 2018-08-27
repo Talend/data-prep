@@ -105,7 +105,6 @@ public class DistributedLockWatcherTest {
         assertEquals(0, watcher.getLocks().size());
     }
 
-
     @Test
     public void shouldReleaseOnClose() throws Exception {
         // given

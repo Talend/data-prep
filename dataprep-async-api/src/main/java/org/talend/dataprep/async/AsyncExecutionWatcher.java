@@ -18,13 +18,16 @@ import org.springframework.context.ApplicationContext;
 public interface AsyncExecutionWatcher {
 
     /**
-     * Called by {@link org.talend.dataprep.async.repository.AsyncExecutionUpdaterRegistry} when its checks the {@link AsyncExecution executions} it is asked to
+     * Called by {@link org.talend.dataprep.async.repository.AsyncExecutionUpdaterRegistry} when its checks the
+     * {@link AsyncExecution executions} it is asked to
      * watch.
      * 
      * @param asyncExecution The registered {@link AsyncExecution execution}
      * @param context {@link ApplicationContext} to be used for command lookup for example.
-     * @return <code>null</code> if execution did not change, a non-null value will be saved by {@link AsyncExecutionWatcher}.
-     * @see org.talend.dataprep.async.repository.AsyncExecutionUpdaterRegistry#register(AsyncExecution, AsyncExecutionWatcher)
+     * @return <code>null</code> if execution did not change, a non-null value will be saved by
+     * {@link AsyncExecutionWatcher}.
+     * @see org.talend.dataprep.async.repository.AsyncExecutionUpdaterRegistry#register(AsyncExecution,
+     * AsyncExecutionWatcher)
      *
      */
     AsyncExecution watch(AsyncExecution asyncExecution, ApplicationContext context);

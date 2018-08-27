@@ -61,7 +61,8 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
     private static final byte[] UTF_8_BOM = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
 
-    private static final byte[][] BOMS = { NO_BOM, UTF_16_LE_BOM, UTF_16_BE_BOM, UTF_32_LE_BOM, UTF_32_BE_BOM, UTF_8_BOM };
+    private static final byte[][] BOMS =
+            { NO_BOM, UTF_16_LE_BOM, UTF_16_BE_BOM, UTF_32_LE_BOM, UTF_32_BE_BOM, UTF_8_BOM };
 
     /** This class' header. */
     private static final Logger LOG = LoggerFactory.getLogger(FormatAnalysis.class);
@@ -109,7 +110,8 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                     } catch (IOException e) {
                         throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT, e);
                     }
-                    if (detectedFormat != null && !(detectedFormat.getFormatFamily() instanceof UnsupportedFormatFamily)) {
+                    if (detectedFormat != null
+                            && !(detectedFormat.getFormatFamily() instanceof UnsupportedFormatFamily)) {
                         break;
                     }
                 }

@@ -55,8 +55,12 @@ public class DatasetConfiguration {
             this.url = url;
         }
 
-        public enum Provider {LEGACY, CATALOG}
+        public enum Provider {
+            LEGACY,
+            CATALOG
+        }
     }
+
     public Service getService() {
         return service;
     }

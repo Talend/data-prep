@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.folder;
 
@@ -24,15 +24,25 @@ import org.talend.dataprep.api.share.Owner;
 public class FolderBuilder {
 
     private String id;
+
     private String path;
+
     private String name;
+
     private String ownerId;
+
     private Owner owner;
+
     private String parentId;
+
     private long creationDate;
+
     private long lastModificationDate;
+
     private long nbPreparations;
+
     private boolean shared = false;
+
     private Set<String> roles = new HashSet<>();
 
     private FolderBuilder() {
@@ -99,7 +109,6 @@ public class FolderBuilder {
         return this;
     }
 
-
     public Folder build() {
         final Folder folder = new Folder();
         folder.setId(id);
@@ -115,6 +124,5 @@ public class FolderBuilder {
         folder.setParentId(parentId);
         return folder;
     }
-
 
 }

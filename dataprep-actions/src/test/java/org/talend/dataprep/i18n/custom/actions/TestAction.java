@@ -26,6 +26,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
  * Fake action class to test action message
  */
 public class TestAction extends AbstractActionMetadata {
+
     @Override
     public String getName() {
         return "TestAction";
@@ -43,7 +44,9 @@ public class TestAction extends AbstractActionMetadata {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return Collections.singletonList(Parameter.parameter(locale).setName("customParameter")
+        return Collections.singletonList(Parameter
+                .parameter(locale)
+                .setName("customParameter")
                 .setType(ParameterType.STRING)
                 .setDefaultValue("")
                 .setCanBeBlank(false)

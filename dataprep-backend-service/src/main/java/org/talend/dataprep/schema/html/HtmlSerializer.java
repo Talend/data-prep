@@ -57,7 +57,8 @@ public class HtmlSerializer implements Serializer {
         }
     }
 
-    private void deserialize(InputStream rawContent, DataSetMetadata dataSetMetadata, OutputStream jsonOutput, long limit) {
+    private void deserialize(InputStream rawContent, DataSetMetadata dataSetMetadata, OutputStream jsonOutput,
+            long limit) {
         try {
 
             List<ColumnMetadata> columns = dataSetMetadata.getRowMetadata().getColumns();
@@ -103,7 +104,8 @@ public class HtmlSerializer implements Serializer {
             // Consumer may very well interrupt consumption of stream (in case of limit(n) use for sampling).
             // This is not an issue as consumer is allowed to partially consumes results, it's up to the
             // consumer to ensure data it consumed is consistent.
-            LOGGER.debug("Unable to continue serialization for {}. Skipping remaining content.", dataSetMetadata.getId(), e);
+            LOGGER.debug("Unable to continue serialization for {}. Skipping remaining content.",
+                    dataSetMetadata.getId(), e);
         } finally {
             try {
                 jsonOutput.close();

@@ -65,7 +65,8 @@ public class XlsRunnable implements Runnable {
      * @param limit
      * @param factory A json factory to use for the serialization.
      */
-    public XlsRunnable(InputStream rawContent, OutputStream jsonOutput, DataSetMetadata metadata, long limit, JsonFactory factory) {
+    public XlsRunnable(InputStream rawContent, OutputStream jsonOutput, DataSetMetadata metadata, long limit,
+            JsonFactory factory) {
         this.rawContent = rawContent;
         this.jsonOutput = jsonOutput;
         this.metadata = metadata;
@@ -85,7 +86,8 @@ public class XlsRunnable implements Runnable {
             JsonGenerator generator = jsonFactory.createGenerator(jsonOutput);
 
             // if no sheet name just get the first one (take it easy mate :-) )
-            Sheet sheet = isEmpty(metadata.getSheetName()) ? workbook.getSheetAt(0) : workbook.getSheet(metadata.getSheetName());
+            Sheet sheet = isEmpty(metadata.getSheetName()) ? workbook.getSheetAt(0)
+                    : workbook.getSheet(metadata.getSheetName());
 
             if (sheet == null) {
                 // auto generated sheet name so take care!! "sheet-" + i
@@ -143,7 +145,8 @@ public class XlsRunnable implements Runnable {
                 }
 
                 int colId = Integer.parseInt(columnMetadata.getId());
-                String cellValue = getCellValueAsString(row.getCell(colId), workbook.getCreationHelper().createFormulaEvaluator());
+                String cellValue =
+                        getCellValueAsString(row.getCell(colId), workbook.getCreationHelper().createFormulaEvaluator());
                 LOG.trace("cellValue for {}/{}: {}", i, colId, cellValue);
                 generator.writeFieldName(columnMetadata.getId());
                 if (cellValue != null) {

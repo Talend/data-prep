@@ -87,6 +87,7 @@ public class DefaultsTest {
         // When
         final BasicHttpResponse response = buildResponse();
         response.setEntity(new StringEntity("") {
+
             @Override
             public InputStream getContent() throws IOException {
                 throw new IOException("Unexpected exception");
@@ -135,6 +136,7 @@ public class DefaultsTest {
         // When
         final BasicHttpResponse response = buildResponse();
         response.setEntity(new StringEntity("") {
+
             @Override
             public InputStream getContent() throws IOException {
                 throw new IOException("Unexpected exception");
@@ -185,6 +187,7 @@ public class DefaultsTest {
         final ObjectMapper mapper = new ObjectMapper();
         final BasicHttpResponse httpResponse = buildResponse();
         httpResponse.setEntity(new StringEntity("") {
+
             @Override
             public InputStream getContent() throws IOException {
                 throw new IOException();
@@ -203,15 +206,16 @@ public class DefaultsTest {
     @Test
     public void shouldParseJsonArray() throws Exception {
         // Given
-        final BiFunction<HttpRequestBase, HttpResponse, Set<String>> extractStatuses = toJson(new ObjectMapper()).andThen(jsonNode -> {
-            final Iterator<JsonNode> elements = jsonNode.elements();
-            Set<String> statuses = new HashSet<>();
-            while (elements.hasNext()) {
-                final JsonNode element = elements.next();
-                statuses.add(element.get("status").asText());
-            }
-            return statuses;
-        });
+        final BiFunction<HttpRequestBase, HttpResponse, Set<String>> extractStatuses =
+                toJson(new ObjectMapper()).andThen(jsonNode -> {
+                    final Iterator<JsonNode> elements = jsonNode.elements();
+                    Set<String> statuses = new HashSet<>();
+                    while (elements.hasNext()) {
+                        final JsonNode element = elements.next();
+                        statuses.add(element.get("status").asText());
+                    }
+                    return statuses;
+                });
         final BasicHttpResponse response = buildResponse();
         response.setEntity(new StringEntity("[{\"status\":\"OK\"}, {\"status\":\"OK\"}, {\"status\":\"CANCEL\"}]"));
         final HttpGet request = buildRequest();

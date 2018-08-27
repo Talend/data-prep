@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.service;
 
@@ -37,12 +37,10 @@ public class BaseTest extends TransformationServiceBaseTest {
 
     @Test
     public void CORSHeaders() throws Exception {
-        given().header("Origin", "fake.host.to.trigger.cors")
-                .when()
-                .post("/transform/JSON").then().header("Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
-        given().header("Origin", "fake.host.to.trigger.cors")
-                .when()
-                .post("/suggest/column").then().header("Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
+        given().header("Origin", "fake.host.to.trigger.cors").when().post("/transform/JSON").then().header(
+                "Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
+        given().header("Origin", "fake.host.to.trigger.cors").when().post("/suggest/column").then().header(
+                "Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
     }
 
     @Test
@@ -60,7 +58,7 @@ public class BaseTest extends TransformationServiceBaseTest {
         }
 
         List<String> expected = Arrays.asList("XLSX", "CSV");
-        Assertions.assertThat(actual).isNotNull().isNotEmpty().containsAll( expected );
+        Assertions.assertThat(actual).isNotNull().isNotEmpty().containsAll(expected);
 
     }
 
@@ -98,8 +96,8 @@ public class BaseTest extends TransformationServiceBaseTest {
             // when
             final Response response = given() //
                     .when() //
-                    .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}?name={name}", preparationId, datasetId,
-                            "CSV", "myPrep");
+                    .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}?name={name}", preparationId,
+                            datasetId, "CSV", "myPrep");
 
             // then
             Assert.assertTrue(response.getContentType().startsWith("text/csv"));

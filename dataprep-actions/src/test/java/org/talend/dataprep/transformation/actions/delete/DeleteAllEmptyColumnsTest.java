@@ -91,7 +91,8 @@ public class DeleteAllEmptyColumnsTest extends AbstractMetadataBaseTest<DeleteAl
                 .type(Type.STRING) //
                 .computedId("0003") //
                 .empty(10) //
-                .statistics(statistics4).build();
+                .statistics(statistics4)
+                .build();
         columns.add(columnMetadata);
         rowMetadata = new RowMetadata();
         rowMetadata.setColumns(columns);

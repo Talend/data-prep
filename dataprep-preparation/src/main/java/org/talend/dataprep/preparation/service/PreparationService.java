@@ -258,8 +258,9 @@ public class PreparationService {
                     .map(FolderEntry::getContentId)) {
                 final Set<String> entries = preparationIds //
                         .collect(Collectors.toSet());
-                preparationStream = preparationStream.filter(p -> entries.contains(p.id())).peek(
-                        p -> p.setFolderId(searchCriterion.getFolderId()));
+                preparationStream = preparationStream
+                        .filter(p -> entries.contains(p.id()))
+                        .peek(p -> p.setFolderId(searchCriterion.getFolderId()));
             }
         }
         // filter on folder path
@@ -527,7 +528,8 @@ public class PreparationService {
         lockPreparation(preparationId);
 
         try {
-            final PersistentPreparation previousPreparation = preparationRepository.get(preparationId, PersistentPreparation.class);
+            final PersistentPreparation previousPreparation =
+                    preparationRepository.get(preparationId, PersistentPreparation.class);
             LOGGER.debug("Updating preparation with id {}: {}", preparation.getId(), previousPreparation);
 
             PersistentPreparation updated = previousPreparation.merge(preparation);
@@ -765,7 +767,7 @@ public class PreparationService {
             // Get steps from "step to modify" to the head
             final List<String> steps = extractSteps(preparation, stepToModifyId); // throws an exception if stepId is
                                                                                   // not in
-            // the preparation
+                                                                                  // the preparation
             LOGGER.debug("Rewriting history for {} steps.", steps.size());
 
             // Extract created columns ids diff info
@@ -779,8 +781,7 @@ public class PreparationService {
                     .collect(toList());
             final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
             final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt()
-                    : MAX_VALUE;
+                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
 
             // Build list of actions from modified one to the head
             final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,

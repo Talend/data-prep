@@ -17,6 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 /**
  * Implementation of tests for local content cache.
  */
-@TestPropertySource(properties = { "content-service.store=local", "content-service.store.local.path=${java.io.tmpdir}/dataprep" })
+@TestPropertySource(
+        properties = { "content-service.store=local", "content-service.store.local.path=${java.io.tmpdir}/dataprep" })
 public class LocalContentCacheTest extends ContentCacheTests {
 }

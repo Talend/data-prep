@@ -47,11 +47,10 @@ public class AsyncController {
         return repository.get(id);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/" + QUEUE_PATH )
+    @RequestMapping(method = RequestMethod.GET, path = "/" + QUEUE_PATH)
     public Stream<AsyncExecution> list() {
         return repository.list();
     }
-
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/" + QUEUE_PATH + "/{id}")
     public AsyncExecution cancel(@PathVariable("id") String id) {

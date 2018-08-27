@@ -50,7 +50,6 @@ public enum PreparationErrorCodes implements ErrorCode {
             "oldPreparationName"),
     INVALID_PREPARATION(BAD_REQUEST, "message");
 
-
     /** The http status to use. */
     private int httpStatus;
 

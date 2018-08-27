@@ -26,10 +26,11 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
  */
 public class JsonAsStringDeserializer extends JsonDeserializer<String> {
 
-    public  static final JsonAsStringDeserializer INSTANCE= new JsonAsStringDeserializer();
+    public static final JsonAsStringDeserializer INSTANCE = new JsonAsStringDeserializer();
 
     @Override
-    public String deserialize(JsonParser jp, DeserializationContext context) throws IOException, JsonProcessingException {
+    public String deserialize(JsonParser jp, DeserializationContext context)
+            throws IOException, JsonProcessingException {
         TreeNode tree = jp.getCodec().readTree(jp);
         return tree.toString();
     }

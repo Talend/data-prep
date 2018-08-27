@@ -151,7 +151,8 @@ public class APIClientTest {
      * @return the preparation id.
      * @throws IOException sh*i happens.
      */
-    public String createPreparationFromFile(final String file, final String name, final String folderId) throws IOException {
+    public String createPreparationFromFile(final String file, final String name, final String folderId)
+            throws IOException {
         final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID());
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
@@ -213,7 +214,12 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public void applyAction(final String preparationId, final String action) throws IOException {
-        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then()
+        given()
+                .contentType(JSON)
+                .body(action)
+                .when()
+                .post("/api/preparations/{id}/actions", preparationId)
+                .then()
                 .statusCode(is(200));
     }
 
@@ -251,9 +257,12 @@ public class APIClientTest {
     public Preparation getPreparationDetails(String preparationId) throws IOException {
         String json = //
                 expect() //
-                        .statusCode(200).log().ifValidationFails() //
+                        .statusCode(200)
+                        .log()
+                        .ifValidationFails() //
                         .when() //
-                        .get("/api/preparations/{id}/details", preparationId).asString();
+                        .get("/api/preparations/{id}/details", preparationId)
+                        .asString();
         return mapper.readerFor(Preparation.class).readValue(json);
     }
 
@@ -292,14 +301,19 @@ public class APIClientTest {
      * @return the content of a preparation
      * @throws IOException
      */
-    public Response getPreparation(String preparationId, String version, String stepId, String filter) throws IOException {
+    public Response getPreparation(String preparationId, String version, String stepId, String filter)
+            throws IOException {
         // when
         Response transformedResponse;
         RequestSpecification initialRequest = given().when();
         if (filter.isEmpty()) {
-            transformedResponse = initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+            transformedResponse =
+                    initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}",
+                            preparationId, version, stepId);
         } else {
-            transformedResponse = initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId, version, stepId, filter);
+            transformedResponse = initialRequest.get(
+                    "/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId,
+                    version, stepId, filter);
         }
 
         if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
@@ -315,9 +329,13 @@ public class APIClientTest {
                     .log() //
                     .ifError();
             if (filter.isEmpty()) {
-                transformedResponse = contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+                transformedResponse =
+                        contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}",
+                                preparationId, version, stepId);
             } else {
-                transformedResponse = contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId, version, stepId, filter);
+                transformedResponse = contentRequest.get(
+                        "/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
+                        preparationId, version, stepId, filter);
             }
         }
 
@@ -351,12 +369,12 @@ public class APIClientTest {
                     .get(asyncMethodStatusUrl) //
                     .asString();
 
-            AsyncExecutionMessage asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class)
-                    .readValue(statusAsyncMethod);
+            AsyncExecutionMessage asyncExecutionMessage =
+                    mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
             asyncStatus = asyncExecutionMessage.getStatus();
-            isAsyncMethodRunning = asyncStatus.equals(AsyncExecution.Status.RUNNING)
-                    || asyncStatus.equals(AsyncExecution.Status.NEW);
+            isAsyncMethodRunning =
+                    asyncStatus.equals(AsyncExecution.Status.RUNNING) || asyncStatus.equals(AsyncExecution.Status.NEW);
 
             try {
                 TimeUnit.MILLISECONDS.sleep(50);
@@ -410,8 +428,8 @@ public class APIClientTest {
         return export("", datasetId, stepId, null, null);
     }
 
-    protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter, String fileName)
-            throws IOException, InterruptedException {
+    protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter,
+            String fileName) throws IOException, InterruptedException {
         // when
         Response export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, null);
 
@@ -484,7 +502,8 @@ public class APIClientTest {
         } else if (OK.equals(responseStatus)) {
             metadata = mapper.readValue(transformedResponse.asInputStream(), DataSetMetadata.class);
         } else {
-            throw new RuntimeException("Could not get preparation metadata. Response was: " + transformedResponse.print());
+            throw new RuntimeException(
+                    "Could not get preparation metadata. Response was: " + transformedResponse.print());
         }
         return metadata;
     }

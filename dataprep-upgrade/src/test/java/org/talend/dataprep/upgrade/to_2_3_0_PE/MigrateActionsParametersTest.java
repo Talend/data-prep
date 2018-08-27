@@ -44,7 +44,8 @@ public class MigrateActionsParametersTest extends Base_2_3_0_PE_Test {
                 .list(PreparationActions.class) //
                 .filter(pa -> pa.getId().equals("cde7e7f945afe3e7e39cb26b00705c7464ba6d3a"))
                 .flatMap(a -> a.getActions().stream()) //
-                .filter(a -> "numeric_ops".equals(a.getName())).findFirst();
+                .filter(a -> "numeric_ops".equals(a.getName()))
+                .findFirst();
 
         assertTrue(numericOpsAction.isPresent());
         assertEquals(TRUE.toString(), numericOpsAction.get().getParameters().get(CREATE_NEW_COLUMN));

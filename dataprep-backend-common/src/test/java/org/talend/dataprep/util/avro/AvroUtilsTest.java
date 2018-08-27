@@ -129,11 +129,11 @@ public class AvroUtilsTest {
         assertEquals(inputRow, dataSetRow);
     }
 
-
     @Test
     public void toDataSetRowConverter_shouldHandleInvalidNames() {
         RowMetadata rowMetadata = new RowMetadata();
-        rowMetadata.setColumns(Collections.singletonList(column().id(2).name("date-of-birth").type(Type.STRING).build()));
+        rowMetadata
+                .setColumns(Collections.singletonList(column().id(2).name("date-of-birth").type(Type.STRING).build()));
 
         RowMetadata rowMetadataConverted = AvroUtils.toRowMetadata(AvroUtils.toSchema(rowMetadata));
 

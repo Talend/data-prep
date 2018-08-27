@@ -68,7 +68,9 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+        parameters.add(Parameter
+                .parameter(locale)
+                .setName(SELECTED_COLUMN_PARAMETER)
                 .setType(ParameterType.COLUMN)
                 .setDefaultValue(StringUtils.EMPTY)
                 .setCanBeBlank(false)
@@ -132,7 +134,8 @@ public class Swap extends AbstractActionMetadata implements ColumnAction, OtherC
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_MULTIPLE_COLUMNS, Behavior.METADATA_CHANGE_TYPE, Behavior.METADATA_CHANGE_ROW);
+        return EnumSet.of(Behavior.VALUES_MULTIPLE_COLUMNS, Behavior.METADATA_CHANGE_TYPE,
+                Behavior.METADATA_CHANGE_ROW);
     }
 
 }

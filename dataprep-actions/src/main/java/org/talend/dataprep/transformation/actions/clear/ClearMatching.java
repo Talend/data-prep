@@ -85,7 +85,8 @@ public class ClearMatching extends AbstractClear implements ColumnAction {
                     .item(FALSE.toString()) //
                     .build(this));
         } else {
-            parameters.add(parameter(locale).setName(VALUE_PARAMETER)
+            parameters.add(parameter(locale)
+                    .setName(VALUE_PARAMETER)
                     .setType(REGEX)
                     .setDefaultValue(EMPTY)
                     .setCanBeBlank(false)

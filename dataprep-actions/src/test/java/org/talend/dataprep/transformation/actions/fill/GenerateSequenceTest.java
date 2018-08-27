@@ -149,6 +149,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         assertEquals(expectedValues2, row2.values());
         assertEquals(expectedValues3, row3.values());
     }
+
     @Test
     public void shouldGenerateEvenSurrogatePair() {
         Map<String, String> parameters = new HashMap<>();
@@ -273,6 +274,7 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         // then
         assertEquals("Lily", row.get("0000"));
     }
+
     @Test
     public void testWithSurrogatePair() {
         Map<String, String> parameters = new HashMap<>();

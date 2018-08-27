@@ -81,13 +81,15 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn()
-                .withName(context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER))
+        return singletonList(ActionsUtils
+                .additionalColumn()
+                .withName(
+                        context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER))
                 .withType(DOUBLE));
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
@@ -123,7 +125,8 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
         if (actionContext.getActionStatus() == OK) {
             ChronoUnit fromUnit = valueOf(actionContext.getParameters().get(FROM_UNIT_PARAMETER));
             ChronoUnit toUnit = valueOf(actionContext.getParameters().get(TO_UNIT_PARAMETER));
-            actionContext.get(CONVERTER_HELPER, p -> new org.talend.dataquality.converters.DurationConverter(fromUnit, toUnit));
+            actionContext.get(CONVERTER_HELPER,
+                    p -> new org.talend.dataquality.converters.DurationConverter(fromUnit, toUnit));
         }
     }
 
@@ -146,7 +149,10 @@ public class DurationConverter extends AbstractActionMetadata implements ColumnA
                     double valueTo = converter.convert(valueFrom.doubleValue());
                     String precisionParameter = context.getParameters().get(TARGET_PRECISION);
                     Integer targetScale = NumberUtils.toInt(precisionParameter, valueFrom.scale());
-                    valueToString = BigDecimalParser.toBigDecimal(String.valueOf(valueTo)).setScale(targetScale, RoundingMode.HALF_UP).toPlainString();
+                    valueToString = BigDecimalParser
+                            .toBigDecimal(String.valueOf(valueTo))
+                            .setScale(targetScale, RoundingMode.HALF_UP)
+                            .toPlainString();
                 }
             } catch (NumberFormatException nfe) {
                 valueToString = colValue;

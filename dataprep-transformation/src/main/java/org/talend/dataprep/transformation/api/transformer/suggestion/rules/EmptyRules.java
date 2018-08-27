@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 
@@ -52,12 +52,12 @@ public class EmptyRules extends BasicRules {
     @Bean
     public static SuggestionEngineRule fillEmptyRule() {
         return forActions(FillIfEmpty.FILL_EMPTY_ACTION_NAME) //
-                        .then(columnMetadata -> {
-                            if (getEmptyCount(columnMetadata) > 0) {
-                                return EMPTY_MGT;
-                            }
-                            return NEGATIVE;
-                        }) //
-                        .build();
+                .then(columnMetadata -> {
+                    if (getEmptyCount(columnMetadata) > 0) {
+                        return EMPTY_MGT;
+                    }
+                    return NEGATIVE;
+                }) //
+                .build();
     }
 }

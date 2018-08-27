@@ -84,7 +84,8 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
         List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        parameters.add(SelectParameter.selectParameter(locale) //
+        parameters.add(SelectParameter
+                .selectParameter(locale) //
                 .name(TIME_UNIT_PARAMETER) //
                 .item(YEARS.name(), YEARS.name().toLowerCase()) //
                 .item(MONTHS.name(), MONTHS.name().toLowerCase()) //
@@ -93,17 +94,23 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
                 .defaultValue(YEARS.name()) //
                 .build(this));
 
-        parameters.add(SelectParameter.selectParameter(locale) //
+        parameters.add(SelectParameter
+                .selectParameter(locale) //
                 .name(MODE_PARAMETER) //
-                .item(CONSTANT_MODE, CONSTANT_MODE, Parameter.parameter(locale).setName(CONSTANT_VALUE)
+                .item(CONSTANT_MODE, CONSTANT_MODE, Parameter
+                        .parameter(locale)
+                        .setName(CONSTANT_VALUE)
                         .setType(ParameterType.INTEGER)
                         .setDefaultValue("1")
                         .build(this)) //
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
-                        .setType(ParameterType.COLUMN)
-                        .setDefaultValue(StringUtils.EMPTY)
-                        .setCanBeBlank(false)
-                        .build(this)) //
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
+                        Parameter
+                                .parameter(locale)
+                                .setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(ParameterType.COLUMN)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .setCanBeBlank(false)
+                                .build(this)) //
                 .defaultValue(CONSTANT_MODE) //
                 .build(this));
 
@@ -118,13 +125,15 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
         }
         if (actionContext.getActionStatus() == OK) {
             try {
-                actionContext.get(PATTERN_CONTEXT_KEY, p -> getMostUsedDatePattern((actionContext.getRowMetadata().getById(actionContext.getColumnId()))));
+                actionContext.get(PATTERN_CONTEXT_KEY, p -> getMostUsedDatePattern(
+                        (actionContext.getRowMetadata().getById(actionContext.getColumnId()))));
 
                 actionContext.get(UNIT_CONTEXT_KEY,
                         p -> valueOf(actionContext.getParameters().get(TIME_UNIT_PARAMETER).toUpperCase()));
 
                 if (actionContext.getParameters().get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
-                    actionContext.get(AMOUNT_CONTEXT_KEY, p -> computeAmount(actionContext.getParameters().get(CONSTANT_VALUE)));
+                    actionContext.get(AMOUNT_CONTEXT_KEY,
+                            p -> computeAmount(actionContext.getParameters().get(CONSTANT_VALUE)));
                 }
 
             } catch (IllegalArgumentException e) {
@@ -151,20 +160,20 @@ public class ModifyDate extends AbstractDate implements ColumnAction {
 
         long amount;
         switch (mode) {
-            case CONSTANT_MODE:
-                amount = context.get(AMOUNT_CONTEXT_KEY);
-                break;
-            case OTHER_COLUMN_MODE:
-                String otherColId = parameters.get(SELECTED_COLUMN_PARAMETER);
-                if (!NumericHelper.isBigDecimal(row.get(otherColId))) {
-                    // In this case, do not change the original value
-                    return;
-                }
-                amount = computeAmount(row.get(otherColId));
-                break;
-            default:
-                throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, //
-                        ExceptionContext.build().put("paramName", OtherColumnParameters.CONSTANT_MODE));
+        case CONSTANT_MODE:
+            amount = context.get(AMOUNT_CONTEXT_KEY);
+            break;
+        case OTHER_COLUMN_MODE:
+            String otherColId = parameters.get(SELECTED_COLUMN_PARAMETER);
+            if (!NumericHelper.isBigDecimal(row.get(otherColId))) {
+                // In this case, do not change the original value
+                return;
+            }
+            amount = computeAmount(row.get(otherColId));
+            break;
+        default:
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, //
+                    ExceptionContext.build().put("paramName", OtherColumnParameters.CONSTANT_MODE));
         }
 
         try {

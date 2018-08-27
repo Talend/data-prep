@@ -34,7 +34,8 @@ public class ActionFactory {
         final ScopeCategory scope = getScope(parametersCopy);
         actionDefinition = actionDefinition.adapt(scope);
 
-        return builder().withName(actionDefinition.getName()) //
+        return builder()
+                .withName(actionDefinition.getName()) //
                 .withParameters(parametersCopy) //
                 .withCompile(new CompileDataSetRowAction(parametersCopy, actionDefinition, scope))
                 .withRow(new ApplyDataSetRowAction(actionDefinition, parameters, scope)) //

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.transformation.actions.column;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,11 +51,12 @@ public class CopyColumnTest extends AbstractMetadataBaseTest<CopyColumnMetadata>
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(CopyColumnTest.class.getResourceAsStream("copyColumnAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(CopyColumnTest.class.getResourceAsStream("copyColumnAction.json"));
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -200,8 +201,10 @@ public class CopyColumnTest extends AbstractMetadataBaseTest<CopyColumnMetadata>
         assertThat(actual.get(1)) //
                 .isEqualToComparingOnlyGivenFields(original, "domain", "domainLabel", "domainFrequency");
 
-        assertThat(actual.get(1).getSemanticDomains()).isNotNull() //
-                .isNotEmpty().contains(semanticDomain);
+        assertThat(actual.get(1).getSemanticDomains())
+                .isNotNull() //
+                .isNotEmpty()
+                .contains(semanticDomain);
     }
 
     @Test
@@ -237,8 +240,10 @@ public class CopyColumnTest extends AbstractMetadataBaseTest<CopyColumnMetadata>
                 .isEqualToComparingOnlyGivenFields(original, "domain", "domainLabel", "domainFrequency", "domainForced",
                         "typeForced");
 
-        assertThat(actual.get(1).getSemanticDomains()).isNotNull() //
-                .isNotEmpty().contains(semanticDomain);
+        assertThat(actual.get(1).getSemanticDomains())
+                .isNotNull() //
+                .isNotEmpty()
+                .contains(semanticDomain);
     }
 
     @Test
@@ -274,8 +279,10 @@ public class CopyColumnTest extends AbstractMetadataBaseTest<CopyColumnMetadata>
                 .isEqualToComparingOnlyGivenFields(original, "domain", "domainLabel", "domainFrequency", "domainForced",
                         "typeForced");
 
-        assertThat(actual.get(1).getSemanticDomains()).isNotNull() //
-                .isNotEmpty().contains(semanticDomain);
+        assertThat(actual.get(1).getSemanticDomains())
+                .isNotNull() //
+                .isNotEmpty()
+                .contains(semanticDomain);
     }
 
     @Test

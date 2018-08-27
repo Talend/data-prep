@@ -71,7 +71,9 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
     @Override
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
-        parameters.add(Parameter.parameter(locale).setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
+        parameters.add(Parameter
+                .parameter(locale)
+                .setName(OtherColumnParameters.SELECTED_COLUMN_PARAMETER)
                 .setType(ParameterType.COLUMN)
                 .setDefaultValue(StringUtils.EMPTY)
                 .setCanBeBlank(false)
@@ -141,8 +143,7 @@ public class ReorderColumn extends AbstractActionMetadata implements DataSetActi
             }
         } catch (Exception e) {
             LOGGER.debug("cannot swap columns: {}", e.getMessage());
-            throw new TalendRuntimeException(UNEXPECTED_EXCEPTION,
-                    build().put("message", e.getMessage()));
+            throw new TalendRuntimeException(UNEXPECTED_EXCEPTION, build().put("message", e.getMessage()));
         }
     }
 

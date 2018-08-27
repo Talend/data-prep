@@ -80,7 +80,8 @@ public class ErrorCodeDto implements ErrorCode {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("product", product)
+        return new ToStringBuilder(this)
+                .append("product", product)
                 .append("group", group)
                 .append("code", code)
                 .append("httpStatus", httpStatus)

@@ -139,22 +139,25 @@ public abstract class DataSetContentStore {
         final List<ColumnMetadata> columns = dataSetMetadata.getRowMetadata().getColumns();
         final Analyzer<Analyzers.Result> analyzer = service.build(columns, AnalyzerService.Analysis.QUALITY);
 
-        dataSetRowStream = dataSetRowStream.filter(r -> !r.isEmpty()).map(r -> {
-            final String[] values = r.order(columns).toArray(DataSetRow.SKIP_TDP_ID);
-            analyzer.analyze(values);
-            return r;
-        }) //
-        .map(new InvalidMarker(columns, analyzer)) // Mark invalid columns as detected by provided analyzer.
-        .map(r -> { //
-            r.setTdpId(tdpId.getAndIncrement());
-            return r;
-        }).onClose(() -> { //
-            try {
-                inputStream.close();
-            } catch (Exception e) {
-                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-            }
-        });
+        dataSetRowStream = dataSetRowStream
+                .filter(r -> !r.isEmpty())
+                .map(r -> {
+                    final String[] values = r.order(columns).toArray(DataSetRow.SKIP_TDP_ID);
+                    analyzer.analyze(values);
+                    return r;
+                }) //
+                .map(new InvalidMarker(columns, analyzer)) // Mark invalid columns as detected by provided analyzer.
+                .map(r -> { //
+                    r.setTdpId(tdpId.getAndIncrement());
+                    return r;
+                })
+                .onClose(() -> { //
+                    try {
+                        inputStream.close();
+                    } catch (Exception e) {
+                        throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                    }
+                });
 
         return dataSetRowStream;
     }

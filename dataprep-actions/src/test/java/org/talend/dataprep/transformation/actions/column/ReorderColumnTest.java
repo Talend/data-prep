@@ -52,13 +52,14 @@ public class ReorderColumnTest extends AbstractMetadataBaseTest<ReorderColumn> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(ReorderColumnTest.class.getResourceAsStream("reorderAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(ReorderColumnTest.class.getResourceAsStream("reorderAction.json"));
     }
 
     @Test

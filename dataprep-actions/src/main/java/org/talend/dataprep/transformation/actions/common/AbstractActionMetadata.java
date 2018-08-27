@@ -175,7 +175,8 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
             case CELL:
             case COLUMN:
                 // Stop action if: there's actually column information in input AND column is not found
-                if (input != null && !input.getColumns().isEmpty() && input.getById(actionContext.getColumnId()) == null) {
+                if (input != null && !input.getColumns().isEmpty()
+                        && input.getById(actionContext.getColumnId()) == null) {
                     actionContext.setActionStatus(ActionContext.ActionStatus.CANCELED);
                     return;
                 }

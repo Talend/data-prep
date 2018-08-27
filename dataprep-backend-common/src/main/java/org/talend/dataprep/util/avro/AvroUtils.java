@@ -88,7 +88,8 @@ public class AvroUtils {
     public static RowMetadata toRowMetadata(Schema schema) {
         RowMetadata rowMetadata = new RowMetadata();
 
-        final List<ColumnMetadata> columns = schema.getFields() //
+        final List<ColumnMetadata> columns = schema
+                .getFields() //
                 .stream() //
                 .map(AvroUtils::toColumnMetadata) //
                 .collect(Collectors.toList());
@@ -106,7 +107,9 @@ public class AvroUtils {
      * Convert a dataprep {@link RowMetadata} to a named {@link Schema Avro Schema} adding dataprep specific properties.
      */
     public static Schema toSchema(RowMetadata rowMetadata, String name) {
-        final List<Schema.Field> fields = rowMetadata.getColumns().stream() //
+        final List<Schema.Field> fields = rowMetadata
+                .getColumns()
+                .stream() //
                 .map(new ColumnToAvroField()) //
                 .collect(Collectors.toList());
 
@@ -167,9 +170,8 @@ public class AvroUtils {
         public Schema.Field apply(ColumnMetadata column) {
             String fieldName = column.getName();
             // normalize to Avro conventions
-            fieldName = StringUtils.isEmpty(fieldName) ?
-                    DATAPREP_FIELD_PREFIX + column.getId() :
-                    toAvroFieldName(fieldName);
+            fieldName = StringUtils.isEmpty(fieldName) ? DATAPREP_FIELD_PREFIX + column.getId()
+                    : toAvroFieldName(fieldName);
 
             // handle duplicates
             final Integer suffix = uniqueSuffixes.get(fieldName);
@@ -253,7 +255,8 @@ public class AvroUtils {
         AvroToDatasetRow(RowMetadata rowMetadata) {
             this.rowMetadata = rowMetadata;
             List<ColumnMetadata> columns = rowMetadata.getColumns();
-            dpToAvroId = columns.stream() //
+            dpToAvroId = columns
+                    .stream() //
                     .map(new ColumnToAvroField()) //
                     .map(f -> new ImmutablePair<>(f.getProp(DP_COLUMN_ID), f.name()))
                     .collect(Collectors.toList());

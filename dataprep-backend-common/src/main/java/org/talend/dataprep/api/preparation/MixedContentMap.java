@@ -147,7 +147,8 @@ public class MixedContentMap implements Map<String, String>, Serializable {
     }
 
     @Override
-    public String computeIfPresent(String key, BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
+    public String computeIfPresent(String key,
+            BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
         return map.computeIfPresent(key, remappingFunction);
     }
 

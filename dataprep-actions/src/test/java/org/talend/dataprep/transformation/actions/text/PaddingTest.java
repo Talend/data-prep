@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
 
@@ -49,7 +49,8 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(PaddingTest.class.getResourceAsStream("paddingAction.json"));
+        parameters =
+                ActionMetadataTestUtils.parseParameters(PaddingTest.class.getResourceAsStream("paddingAction.json"));
     }
 
     @Override
@@ -72,21 +73,21 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
     @Test
     public void testApplyWithStringParameter() throws Exception {
         //size less than length and padding is surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"𠀀", Padding.LEFT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 5, "𠀀", Padding.LEFT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
         //size more than length and padding is surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",14,"𠀀", Padding.LEFT_POSITION), is("𠀀中崎𠀀𠀁𠀂𠀃𠀄"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 14, "𠀀", Padding.LEFT_POSITION), is("𠀀中崎𠀀𠀁𠀂𠀃𠀄"));
         //size less than length and padding is not surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"我", Padding.LEFT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 5, "我", Padding.LEFT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
         //size more than length and padding is not surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",13,"我", Padding.LEFT_POSITION), is("我中崎𠀀𠀁𠀂𠀃𠀄"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 13, "我", Padding.LEFT_POSITION), is("我中崎𠀀𠀁𠀂𠀃𠀄"));
         //size less than length and padding is surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"𠀀", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 5, "𠀀", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
         //size more than length and padding is surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",14,"𠀀", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄𠀀"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 14, "𠀀", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄𠀀"));
         //size less than length and padding is not surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",5,"我", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 5, "我", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄"));
         //size more than length and padding is not surrogate pair
-        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄",13,"我", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄我"));
+        assertThat(action.apply("中崎𠀀𠀁𠀂𠀃𠀄", 13, "我", Padding.RIGHT_POSITION), is("中崎𠀀𠀁𠀂𠀃𠀄我"));
     }
 
     @Test
@@ -127,6 +128,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
+
     @Test
     public void testApplyOnSurrogatePairLeftPaddingIsSurrogatePair() {
         // given
@@ -143,8 +145,8 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         expectedValues.put("0003", "𠀀𠀀𠀀中崎𠀀𠀁𠀂𠀃𠀄");
 
         parameters.put(CREATE_NEW_COLUMN, "true");
-        parameters.put("padding_char","𠀀");
-        parameters.put("size","10");
+        parameters.put("padding_char", "𠀀");
+        parameters.put("size", "10");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -172,8 +174,8 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         expectedValues.put("0003", "我我我中崎𠀀𠀁𠀂𠀃𠀄");
 
         parameters.put(CREATE_NEW_COLUMN, "true");
-        parameters.put("padding_char","我");
-        parameters.put("size","10");
+        parameters.put("padding_char", "我");
+        parameters.put("size", "10");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -184,6 +186,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
+
     @Test
     public void testApplyOnSurrogatePairRightPaddingIsSurrogatePair() {
         // given
@@ -200,9 +203,9 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         expectedValues.put("0003", "中崎𠀀𠀁𠀂𠀃𠀄𠀀𠀀𠀀");
 
         parameters.put(CREATE_NEW_COLUMN, "true");
-        parameters.put("padding_char","𠀀");
-        parameters.put("size","10");
-        parameters.put("padding_position","right");
+        parameters.put("padding_char", "𠀀");
+        parameters.put("size", "10");
+        parameters.put("padding_position", "right");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -213,6 +216,7 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
+
     @Test
     public void testApplyOnSurrogatePairRightPaddingIsNotSurrogatePair() {
         // given
@@ -229,9 +233,9 @@ public class PaddingTest extends AbstractMetadataBaseTest<Padding> {
         expectedValues.put("0003", "中崎𠀀𠀁𠀂𠀃𠀄我我我");
 
         parameters.put(CREATE_NEW_COLUMN, "true");
-        parameters.put("padding_char","我");
-        parameters.put("size","10");
-        parameters.put("padding_position","right");
+        parameters.put("padding_char", "我");
+        parameters.put("size", "10");
+        parameters.put("padding_position", "right");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

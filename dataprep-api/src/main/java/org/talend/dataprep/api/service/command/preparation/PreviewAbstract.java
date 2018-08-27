@@ -95,20 +95,15 @@ public abstract class PreviewAbstract extends GenericCommand<InputStream> {
      * @param sourceType the source type.
      * @throws JsonProcessingException if an error occurs.
      */
-    protected void setContext(Collection<Action> baseActions,
-                              Collection<Action> newActions,
-                              String datasetId,
-                              String preparationId,
-                              List<Integer> tdpIds,
-                              ExportParameters.SourceType sourceType) throws JsonProcessingException {
+    protected void setContext(Collection<Action> baseActions, Collection<Action> newActions, String datasetId,
+            String preparationId, List<Integer> tdpIds, ExportParameters.SourceType sourceType)
+            throws JsonProcessingException {
 
         this.parameters = new PreviewParameters( //
                 serializeActions(baseActions), //
                 serializeActions(newActions), //
                 datasetId, //
-                preparationId,
-                serializeIds(tdpIds),
-                sourceType);
+                preparationId, serializeIds(tdpIds), sourceType);
     }
 
     /**

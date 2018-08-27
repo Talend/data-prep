@@ -66,31 +66,40 @@ public class XlsUtilsTest {
 
         List<String> names = XlsUtils.getActiveSheetsFromWorkbookSpec(xssfReader.getWorkbookData());
 
-        Assertions.assertThat(names).isNotEmpty() //
-                .containsExactly("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY", "WEEK SUMMARY");
+        Assertions
+                .assertThat(names)
+                .isNotEmpty() //
+                .containsExactly("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY",
+                        "WEEK SUMMARY");
 
     }
 
     @Test
     public void get_active_sheets_simple() throws Exception {
 
-        List<String> names = XlsUtils.getActiveSheetsFromWorkbookSpec(getClass().getResourceAsStream("simple_workbook.xml"));
+        List<String> names =
+                XlsUtils.getActiveSheetsFromWorkbookSpec(getClass().getResourceAsStream("simple_workbook.xml"));
 
-        Assertions.assertThat(names).isNotEmpty() //
+        Assertions
+                .assertThat(names)
+                .isNotEmpty() //
                 .containsExactly("Feuille1", "Feuille2", "Feuille3");
 
     }
 
     @Test
     public void get_ColumnsNumber() throws Exception {
-        Assertions.assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("data_xls.xml"))) //
+        Assertions
+                .assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("data_xls.xml"))) //
                 .isEqualTo(33);
 
-        Assertions.assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("simple_data.xml"))) //
+        Assertions
+                .assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("simple_data.xml"))) //
                 .isEqualTo(4);
 
-        Assertions.assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("TDP-1781.xml"))) //
-            .isEqualTo(6);
+        Assertions
+                .assertThat(XlsUtils.getColumnsNumber(getClass().getResourceAsStream("TDP-1781.xml"))) //
+                .isEqualTo(6);
     }
 
     @Test
@@ -102,11 +111,11 @@ public class XlsUtilsTest {
 
     @Test
     public void col_number_from_cell_ref() throws Exception {
-        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef( "A5")).isEqualTo( 0);
-        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef( "D5")).isEqualTo( 3);
-        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef( "A15")).isEqualTo( 0);
-        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef( "AG142")).isEqualTo( 32);
-        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef( "BB11")).isEqualTo( 53);
+        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("A5")).isEqualTo(0);
+        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("D5")).isEqualTo(3);
+        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("A15")).isEqualTo(0);
+        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("AG142")).isEqualTo(32);
+        Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("BB11")).isEqualTo(53);
     }
 
 }

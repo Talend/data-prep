@@ -33,7 +33,8 @@ public class TransformationRowMetadataUtils {
         RowMetadata raw = new RowMetadata();
 
         metadata.getColumns().forEach(c -> {
-            ColumnMetadata rawColumn = ColumnMetadata.Builder.column() //
+            ColumnMetadata rawColumn = ColumnMetadata.Builder
+                    .column() //
                     .copyMatchingEmptyColumnMetadata(c) //
                     .build();
             raw.addColumn(rawColumn);

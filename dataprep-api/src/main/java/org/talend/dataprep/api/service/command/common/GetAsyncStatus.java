@@ -1,12 +1,10 @@
 package org.talend.dataprep.api.service.command.common;
 
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.http.client.methods.HttpGet;
-import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -23,8 +21,6 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class GetAsyncStatus extends GenericCommand<AsyncExecutionMessage> {
-
-    private static final Logger LOGGER = getLogger(GetAsyncStatus.class);
 
     private final String asyncMethodStatusUrl;
 

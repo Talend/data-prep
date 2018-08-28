@@ -76,7 +76,7 @@ public class DPErrorCode {
 
     @Override
     public String toString() {
-        return "DPErrorCode{" + "message='" + message + '\'' + ", messageTitle='" + messageTitle + '\'' + ", cause='" + cause
-                + '\'' + ", code='" + code + '\'' + ", context=" + context + '}';
+        return "DPErrorCode{" + "message='" + message + '\'' + ", messageTitle='" + messageTitle + '\'' + ", cause='"
+                + cause + '\'' + ", code='" + code + '\'' + ", context=" + context + '}';
     }
 }

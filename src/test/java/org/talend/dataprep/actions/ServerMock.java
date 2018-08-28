@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.actions;
 
@@ -40,10 +40,10 @@ public class ServerMock {
         serverUrl = "http:/" + server.getServiceAddress();
     }
 
-
-    public void addEndPoint(String path, String body,  Header... headers) throws Exception {
+    public void addEndPoint(String path, String body, Header... headers) throws Exception {
         addEndPoint(path, body, 200, headers);
     }
+
     public void addEndPoint(String path, InputStream body, int statusCode, Header... headers) throws Exception {
         MockedRequestHandler mockedRequestHandler = new MockedRequestHandler(body, statusCode, headers);
         server.register(path, mockedRequestHandler);
@@ -54,7 +54,7 @@ public class ServerMock {
         addEndPoint(path, body, 200, headers);
     }
 
-    public void addEndPoint(String path, String body,int statusCode,  Header... headers) throws Exception {
+    public void addEndPoint(String path, String body, int statusCode, Header... headers) throws Exception {
         addEndPoint(path, IOUtils.toInputStream(body, "UTF-8"), statusCode, headers);
     }
 
@@ -63,7 +63,7 @@ public class ServerMock {
         set.remove(pattern);
     }
 
-    public void removeAllEndPoints(){
+    public void removeAllEndPoints() {
         set.forEach(server::unregister);
         set.clear();
     }

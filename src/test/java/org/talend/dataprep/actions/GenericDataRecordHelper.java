@@ -68,7 +68,8 @@ public class GenericDataRecordHelper {
      * be ignored when this method is being called directly.
      * @return a schema that corresponds to the values.
      */
-    public static Schema createSchemaFromObject(String name, Set<String> unions, Object values, char... internalNextRecordName) {
+    public static Schema createSchemaFromObject(String name, Set<String> unions, Object values,
+            char... internalNextRecordName) {
 
         // This is normally only set during a recursive call. If it wasn't set, use 'B' as the next record name.
         char[] nextRecordName = internalNextRecordName.length != 0 ? internalNextRecordName : new char[] { 'B' };
@@ -90,11 +91,11 @@ public class GenericDataRecordHelper {
                 if (fieldSpec instanceof Object[]) {
                     String fieldRecordName = String.valueOf(nextRecordName[0]);
                     nextRecordName[0]++;
-                    fields.add(new Schema.Field(fieldRecordName, createSchemaFromObject(fieldRecordName, unions, fieldSpec,
-                            nextRecordName), null, null));
+                    fields.add(new Schema.Field(fieldRecordName,
+                            createSchemaFromObject(fieldRecordName, unions, fieldSpec, nextRecordName), null, null));
                 } else {
-                    fields.add(new Schema.Field(fieldName + fieldIndex, createSchemaFromObject(fieldName + fieldIndex, unions,
-                            fieldSpec), null, null));
+                    fields.add(new Schema.Field(fieldName + fieldIndex,
+                            createSchemaFromObject(fieldName + fieldIndex, unions, fieldSpec), null, null));
                     fieldIndex++;
                 }
             }

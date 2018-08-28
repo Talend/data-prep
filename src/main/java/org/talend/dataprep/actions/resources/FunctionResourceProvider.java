@@ -26,7 +26,8 @@ public interface FunctionResourceProvider {
      * Create a {@link FunctionResource resource} based on provided <code>actions</code>.
      * 
      * @param actions The list of {@link Action actions} to generate {@link FunctionResource resources} from.
-     * @return A {@link FunctionResource} ready to be included in a {@link org.talend.dataprep.actions.SerializableFunction}.
+     * @return A {@link FunctionResource} ready to be included in a
+     * {@link org.talend.dataprep.actions.SerializableFunction}.
      */
     FunctionResource get(List<RunnableAction> actions);
 

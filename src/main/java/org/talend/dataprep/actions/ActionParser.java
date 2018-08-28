@@ -21,9 +21,9 @@ import org.apache.avro.generic.IndexedRecord;
  */
 public interface ActionParser {
 
-
     /**
-     * Returns a function able to create an {@link IndexedRecord record} using preparation specified in <code>preparation</code>.
+     * Returns a function able to create an {@link IndexedRecord record} using preparation specified in
+     * <code>preparation</code>.
      *
      * @param preparationId An id of a Data Prep preparation to be applied to {@link IndexedRecord records}.
      * @return A {@link Function} able to apply all <code>preparation</code> to the {@link IndexedRecord record}.

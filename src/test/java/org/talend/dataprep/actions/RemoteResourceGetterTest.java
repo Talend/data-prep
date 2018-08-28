@@ -83,7 +83,7 @@ public class RemoteResourceGetterTest {
     @Test(expected = RemoteResourceGetter.RemoteConnectionException.class)
     public void testGetErrorCode() throws Exception {
         // Given
-        try(InputStream inputStream = RemoteResourceGetterTest.class.getResourceAsStream("error_code.json")) {
+        try (InputStream inputStream = RemoteResourceGetterTest.class.getResourceAsStream("error_code.json")) {
             serverMock.addEndPoint("/errorCode", inputStream, 404, header);
         }
         String serverUrl = serverMock.getServerUrl();
@@ -99,14 +99,15 @@ public class RemoteResourceGetterTest {
     @Test
     public void testGetDataSet() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/*", RemoteResourceGetterTest.class.getResourceAsStream("lookup_dataset1.json"), header);
+        serverMock.addEndPoint("/api/datasets/*",
+                RemoteResourceGetterTest.class.getResourceAsStream("lookup_dataset1.json"), header);
         serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
 
         // When
-        LightweightExportableDataSet result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
-                goodDataSetId, "0000");
+        LightweightExportableDataSet result =
+                remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish", goodDataSetId, "0000");
 
         // Then
         assertEquals(5, result.size());
@@ -122,14 +123,15 @@ public class RemoteResourceGetterTest {
     @Test
     public void testGetDataSet_withTcompLookup_TDP3098() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/*", this.getClass().getResourceAsStream("lookup_dataset_from_Tcomp.json"), header);
+        serverMock.addEndPoint("/api/datasets/*", this.getClass().getResourceAsStream("lookup_dataset_from_Tcomp.json"),
+                header);
         serverMock.addEndPoint("/login", "", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
 
         // When
-        LightweightExportableDataSet result = remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish",
-                goodDataSetId, "0000");
+        LightweightExportableDataSet result =
+                remoteResourceGetter.retrieveLookupDataSet(serverUrl, "Maximus", "Spanish", goodDataSetId, "0000");
 
         // Then
         assertEquals(1001, result.size());
@@ -144,8 +146,8 @@ public class RemoteResourceGetterTest {
     @Test(expected = RemoteResourceGetter.RemoteConnectionException.class)
     public void testGetDataSetNoRecords() throws Exception {
         // Given
-        serverMock.addEndPoint("/api/datasets/", "{ \"metadata\": { \"columns\": [ { \"id\": \"0000\", \"name\": \"Postal\"}]}}",
-                header);
+        serverMock.addEndPoint("/api/datasets/",
+                "{ \"metadata\": { \"columns\": [ { \"id\": \"0000\", \"name\": \"Postal\"}]}}", header);
         String serverUrl = serverMock.getServerUrl();
         remoteResourceGetter = new RemoteResourceGetter();
 
@@ -196,7 +198,8 @@ public class RemoteResourceGetterTest {
         remoteResourceGetter = new RemoteResourceGetter();
 
         // when
-        final String actual = remoteResourceGetter.retrievePreparation(serverUrl, "Maximus", "Spanish", preparationId, null);
+        final String actual =
+                remoteResourceGetter.retrievePreparation(serverUrl, "Maximus", "Spanish", preparationId, null);
 
         // then
         assertNotNull(actual);
@@ -215,7 +218,8 @@ public class RemoteResourceGetterTest {
         remoteResourceGetter = new RemoteResourceGetter();
 
         // when
-        final String actual = remoteResourceGetter.retrievePreparation(serverUrl, "Maximus", "Spanish", preparationId, versionId);
+        final String actual =
+                remoteResourceGetter.retrievePreparation(serverUrl, "Maximus", "Spanish", preparationId, versionId);
 
         // then
         assertNotNull(actual);

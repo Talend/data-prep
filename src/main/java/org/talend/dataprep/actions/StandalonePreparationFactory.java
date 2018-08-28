@@ -70,7 +70,8 @@ public class StandalonePreparationFactory {
         return create(minimalPreparation, resources);
     }
 
-    public Function<IndexedRecord, IndexedRecord> create(final InputStream preparation, FunctionResourceProvider... providers) {
+    public Function<IndexedRecord, IndexedRecord> create(final InputStream preparation,
+            FunctionResourceProvider... providers) {
         StandalonePreparation minimalPreparation = PreparationParser.parsePreparation(preparation);
         return create(minimalPreparation, providers);
     }
@@ -82,11 +83,12 @@ public class StandalonePreparationFactory {
             return new NoOpFunction();
         }
 
-        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions(),
-                allowNonDistributedActions);
+        List<RunnableAction> actions =
+                PreparationParser.ensureActionRowsExistence(preparation.getActions(), allowNonDistributedActions);
 
         // get the list of resources for function
-        FunctionResource[] resources = Arrays.stream(providers) //
+        FunctionResource[] resources = Arrays
+                .stream(providers) //
                 .map(provider -> provider.get(actions)) //
                 .collect(Collectors.toList()) //
                 .toArray(new FunctionResource[providers.length]);
@@ -94,7 +96,8 @@ public class StandalonePreparationFactory {
         return create(preparation, resources);
     }
 
-    public Function<IndexedRecord, IndexedRecord> create(StandalonePreparation preparation, FunctionResource... resources) {
+    public Function<IndexedRecord, IndexedRecord> create(StandalonePreparation preparation,
+            FunctionResource... resources) {
         if (preparation.getActions() == null) {
             LOGGER.info("No action defined in preparation, returning identity function");
             return new NoOpFunction();
@@ -102,13 +105,15 @@ public class StandalonePreparationFactory {
 
         RowMetadata rowMetadata = preparation.getRowMetadata();
 
-        List<RunnableAction> actions = PreparationParser.ensureActionRowsExistence(preparation.getActions(), allowNonDistributedActions);
+        List<RunnableAction> actions =
+                PreparationParser.ensureActionRowsExistence(preparation.getActions(), allowNonDistributedActions);
 
         LOGGER.trace("The initial row metadata is: " + rowMetadata);
 
         // Build internal transformation pipeline
         final StackedNode stackedNode = new StackedNode();
-        final Pipeline pipeline = Pipeline.Builder.builder() //
+        final Pipeline pipeline = Pipeline.Builder
+                .builder() //
                 .withActionRegistry(PreparationParser.actionRegistry) //
                 .withActions(actions) //
                 .withFilterOut(new FilterOutProvider(preparation)) //

@@ -35,8 +35,8 @@ public class DictionaryResource implements FunctionResource {
         if (tdqCategories != null) {
             LOGGER.info("registering dictionary resources into AnalyzerService...");
             final AnalyzerService analyzerService = Providers.get(AnalyzerService.class);
-            analyzerService
-                    .setDictionarySnapshotProvider(new BroadcastDictionarySnapshotProvider(tdqCategories.asDictionarySnapshot()));
+            analyzerService.setDictionarySnapshotProvider(
+                    new BroadcastDictionarySnapshotProvider(tdqCategories.asDictionarySnapshot()));
         }
     }
 }

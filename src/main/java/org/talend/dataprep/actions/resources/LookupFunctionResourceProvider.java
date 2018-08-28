@@ -42,12 +42,13 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
     }
 
     private LightweightExportableDataSet getLookupDataset(RemoteResourceGetter clientFormLogin, String dataSetId,
-                                                     String joinOnColumn) {
+            String joinOnColumn) {
         LOGGER.debug("Retrieving lookup dataset '{}'", dataSetId);
         return clientFormLogin.retrieveLookupDataSet(apiUrl, login, password, dataSetId, joinOnColumn);
     }
 
-    public LightweightExportableDataSet retrieveLookupDataSetFromAction(RemoteResourceGetter clientFormLogin, Action action) {
+    public LightweightExportableDataSet retrieveLookupDataSetFromAction(RemoteResourceGetter clientFormLogin,
+            Action action) {
         final LightweightExportableDataSet result;
 
         if (StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) {
@@ -68,15 +69,16 @@ public class LookupFunctionResourceProvider implements FunctionResourceProvider 
     public Map<String, LightweightExportableDataSet> retrieveLookupDataSets(List<RunnableAction> actions) {
         final Map<String, LightweightExportableDataSet> result = new HashMap<>();
         final RemoteResourceGetter clientFormLogin = new RemoteResourceGetter();
-        actions.stream() //
+        actions
+                .stream() //
                 .filter(action -> StringUtils.equals(action.getName(), Lookup.LOOKUP_ACTION_NAME)) //
                 .forEach(action -> {
-                    final LightweightExportableDataSet lookup = retrieveLookupDataSetFromAction(clientFormLogin, action);
+                    final LightweightExportableDataSet lookup =
+                            retrieveLookupDataSetFromAction(clientFormLogin, action);
                     result.put(action.getParameters().get(Lookup.Parameters.LOOKUP_DS_ID.getKey()), lookup);
                 });
         return result;
     }
-
 
     @Override
     public FunctionResource get(List<RunnableAction> actions) {

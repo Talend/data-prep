@@ -66,8 +66,12 @@ public class RemoteResourceGetter {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("The provided url is not correct: " + url, e);
         }
-        HttpUriRequest login = RequestBuilder.post().setUri(uri).addParameter("username", userName)
-                .addParameter("password", passWord).build();
+        HttpUriRequest login = RequestBuilder
+                .post()
+                .setUri(uri)
+                .addParameter("username", userName)
+                .addParameter("password", passWord)
+                .build();
 
         try (CloseableHttpResponse response = client.execute(login)) {
             handleError(response);
@@ -95,7 +99,8 @@ public class RemoteResourceGetter {
      * @param joinOnColumn the column used to join the lookup data set
      * @return a map which associates to each value of the joint column its corresponding data set row
      */
-    private LightweightExportableDataSet mapLookupDataSet(String apiUrl, Header jwt, String dataSetId, String joinOnColumn) {
+    private LightweightExportableDataSet mapLookupDataSet(String apiUrl, Header jwt, String dataSetId,
+            String joinOnColumn) {
         String url = apiUrl + "/api/datasets/" + dataSetId + "?fullContent=true&includeTechnicalProperties=true";
         HttpGet request = new HttpGet(url);
         request.addHeader(jwt);
@@ -119,8 +124,8 @@ public class RemoteResourceGetter {
      * @param joinOnColumn the column used to join the lookup data set
      * @return a map which associates to each value of the joint column its corresponding data set row
      */
-    public LightweightExportableDataSet retrieveLookupDataSet(String apiUrl, String login, String password, String dataSetId,
-            String joinOnColumn) {
+    public LightweightExportableDataSet retrieveLookupDataSet(String apiUrl, String login, String password,
+            String dataSetId, String joinOnColumn) {
         Header jwt = login(apiUrl, login, password);
         return mapLookupDataSet(apiUrl, jwt, dataSetId, joinOnColumn);
     }

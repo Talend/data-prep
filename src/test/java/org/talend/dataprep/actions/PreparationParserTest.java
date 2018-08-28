@@ -43,7 +43,8 @@ public class PreparationParserTest {
     @Test
     public void testActionSample() throws Exception {
         final PreparationMessage corePreparation;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class.getResourceAsStream("single_lookup.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("single_lookup.json")) {
             corePreparation = PreparationParser.parsePreparation(resourceAsStream);
         }
 
@@ -59,23 +60,27 @@ public class PreparationParserTest {
     @Test
     public void testActionRows() throws Exception {
         final StandalonePreparation preparation;
-        try (final InputStream resourceAsStream = DefaultActionParserTest.class
-                .getResourceAsStream("standalone_preparation_single_lookup.json")) {
+        try (final InputStream resourceAsStream =
+                DefaultActionParserTest.class.getResourceAsStream("standalone_preparation_single_lookup.json")) {
             preparation = PreparationParser.parsePreparation(resourceAsStream);
         }
 
         assertNotNull(preparation);
         assertNotNull(preparation.getActions());
-        List<RunnableAction> actionsWithRowActions = PreparationParser.ensureActionRowsExistence(preparation.getActions(), false);
+        List<RunnableAction> actionsWithRowActions =
+                PreparationParser.ensureActionRowsExistence(preparation.getActions(), false);
         actionsWithRowActions.size();
 
     }
 
     @Test
     public void testIgnoreNonDistributableActions() throws Exception {
-        registry.findAll() //
+        registry
+                .findAll() //
                 .filter(actionDefinition -> !(actionDefinition instanceof ReplaceOnValue)) // Done in next unit tests
-                .filter(actionDefinition -> actionDefinition.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) //
+                .filter(actionDefinition -> actionDefinition
+                        .getBehavior()
+                        .contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) //
                 .map(actionDefinition -> {
                     final Map<String, String> emptyParameters;
                     if (actionDefinition.acceptScope(ScopeCategory.CELL)) {
@@ -109,11 +114,11 @@ public class PreparationParserTest {
                         emptyParameters = Collections.singletonMap(SCOPE.getKey(), "unknown");
                     }
                     final Action runnableAction = factory.create(actionDefinition, emptyParameters);
-                    return PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction), false);
+                    return PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction),
+                            false);
                 }) //
                 .forEach(runnableActions -> assertTrue(runnableActions.isEmpty()));
     }
-
 
     @Test
     public void testNotIgnoreColumnEdition() throws Exception {
@@ -126,10 +131,10 @@ public class PreparationParserTest {
             }
         };
         final Action runnableAction = factory.create(replaceOnValue, emptyParameters);
-        final List<RunnableAction> runnableActions = PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction), false);
+        final List<RunnableAction> runnableActions =
+                PreparationParser.ensureActionRowsExistence(Collections.singletonList(runnableAction), false);
 
         assertEquals(1, runnableActions.size());
     }
-
 
 }

@@ -31,8 +31,8 @@ public class DefaultActionParser implements ActionParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultActionParser.class);
 
-    private static final ActionRegistry actionRegistry = new ClassPathActionRegistry(
-            "org.talend.dataprep.transformation.actions");
+    private static final ActionRegistry actionRegistry =
+            new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
 
     private final String apiUrl;
 

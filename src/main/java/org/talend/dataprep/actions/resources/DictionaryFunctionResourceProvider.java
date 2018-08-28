@@ -37,7 +37,8 @@ public class DictionaryFunctionResourceProvider implements FunctionResourceProvi
 
     private final String password;
 
-    public DictionaryFunctionResourceProvider(ActionRegistry actionRegistry, String apiUrl, String login, String password) {
+    public DictionaryFunctionResourceProvider(ActionRegistry actionRegistry, String apiUrl, String login,
+            String password) {
         this.actionRegistry = actionRegistry;
         this.apiUrl = apiUrl;
         this.login = login;

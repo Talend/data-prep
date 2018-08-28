@@ -118,7 +118,6 @@ public class Padding extends AbstractActionMetadata implements ColumnAction {
         final Map<String, String> parameters = context.getParameters();
         final String original = row.get(columnId);
 
-
         final String paddingStr = parameters.get(PADDING_CHAR_PARAMETER);
         final String paddingPosition = parameters.get(PADDING_POSITION_PARAMETER);
         //Judge paddingStr is surrogate pair or not

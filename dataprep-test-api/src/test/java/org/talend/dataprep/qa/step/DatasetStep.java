@@ -129,7 +129,8 @@ public class DatasetStep extends DataPrepStep {
             break;
         case "csv":
         default:
-            datasetId = api.uploadTextDataset(fileName, suffixedName) //
+            datasetId = api
+                    .uploadTextDataset(fileName, suffixedName) //
                     .then() //
                     .statusCode(OK.value()) //
                     .extract() //

@@ -46,7 +46,6 @@ public class NoOpQuotaService implements QuotaService, Condition {
         // Do nothing
     }
 
-
     /**
      * @return true if 'dataset.quota.check.enabled' is not set to 'true'
      */

@@ -60,12 +60,13 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         final Step orphanStep = new Step(secondStep.id(), "orphan", version);
 
         when(repository.list(eq(Step.class))).thenReturn(Stream.of(firstStep, secondStep, orphanStep));
-        when(repository.list(eq(PersistentStep.class))).thenReturn(Stream.of(firstStep, secondStep, orphanStep).map(s -> {
-            final PersistentStep persistentStep = new PersistentStep();
-            persistentStep.setId(s.id());
-            persistentStep.setContent(s.getContent());
-            return persistentStep;
-        }));
+        when(repository.list(eq(PersistentStep.class)))
+                .thenReturn(Stream.of(firstStep, secondStep, orphanStep).map(s -> {
+                    final PersistentStep persistentStep = new PersistentStep();
+                    persistentStep.setId(s.id());
+                    persistentStep.setContent(s.getContent());
+                    return persistentStep;
+                }));
 
         final Preparation preparation = new Preparation("#123", "1", secondStep.id(), version);
         preparation.setSteps(Arrays.asList(secondStep, firstStep));
@@ -88,12 +89,13 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         final Step secondStep = new Step(firstStep.id(), "second", version);
         final Step thirdStep = new Step(secondStep.id(), "third", version);
         when(repository.list(eq(Step.class))).thenReturn(Stream.of(firstStep, secondStep, thirdStep));
-        when(repository.list(eq(PersistentStep.class))).thenReturn(Stream.of(firstStep, secondStep, thirdStep).map(s -> {
-            final PersistentStep persistentStep = new PersistentStep();
-            persistentStep.setId(s.id());
-            persistentStep.setContent(s.getContent());
-            return persistentStep;
-        }));
+        when(repository.list(eq(PersistentStep.class)))
+                .thenReturn(Stream.of(firstStep, secondStep, thirdStep).map(s -> {
+                    final PersistentStep persistentStep = new PersistentStep();
+                    persistentStep.setId(s.id());
+                    persistentStep.setContent(s.getContent());
+                    return persistentStep;
+                }));
 
         final Preparation firstPreparation = new Preparation("#458", "1", firstStep.id(), version);
         firstPreparation.setSteps(Collections.singletonList(firstStep));
@@ -171,12 +173,13 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(repository.exist(eq(PersistentStep.class), eq(TqlBuilder.eq("contentId", content.id())))).thenReturn(true);
 
         when(repository.list(Step.class)).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation));
-        when(repository.list(eq(PersistentStep.class))).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation).map(s -> {
-            final PersistentStep persistentStep = new PersistentStep();
-            persistentStep.setId(s.id());
-            persistentStep.setContent(s.getContent());
-            return persistentStep;
-        }));
+        when(repository.list(eq(PersistentStep.class)))
+                .thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation).map(s -> {
+                    final PersistentStep persistentStep = new PersistentStep();
+                    persistentStep.setId(s.id());
+                    persistentStep.setContent(s.getContent());
+                    return persistentStep;
+                }));
 
         Preparation firstPreparation = new Preparation("1", null, stepFirstPreparation.getId(), version);
         firstPreparation.setSteps(Collections.singletonList(stepFirstPreparation));
@@ -211,12 +214,13 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
 
         // add the steps to the repository
         when(repository.list(Step.class)).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation));
-        when(repository.list(eq(PersistentStep.class))).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation).map(s -> {
-            final PersistentStep persistentStep = new PersistentStep();
-            persistentStep.setId(s.id());
-            persistentStep.setContent(s.getContent());
-            return persistentStep;
-        }));
+        when(repository.list(eq(PersistentStep.class)))
+                .thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation).map(s -> {
+                    final PersistentStep persistentStep = new PersistentStep();
+                    persistentStep.setId(s.id());
+                    persistentStep.setContent(s.getContent());
+                    return persistentStep;
+                }));
 
         Preparation firstPreparation = new Preparation("1", null, stepFirstPreparation.getId(), version);
         firstPreparation.setSteps(Collections.singletonList(stepFirstPreparation));
@@ -253,12 +257,13 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
 
         // add the steps to the repository
         when(repository.list(Step.class)).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation));
-        when(repository.list(eq(PersistentStep.class))).thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation).map(s -> {
-            final PersistentStep persistentStep = new PersistentStep();
-            persistentStep.setId(s.id());
-            persistentStep.setContent(s.getContent());
-            return persistentStep;
-        }));
+        when(repository.list(eq(PersistentStep.class)))
+                .thenReturn(Stream.of(stepFirstPreparation, stepSecondPreparation).map(s -> {
+                    final PersistentStep persistentStep = new PersistentStep();
+                    persistentStep.setId(s.id());
+                    persistentStep.setContent(s.getContent());
+                    return persistentStep;
+                }));
 
         Preparation firstPreparation = new Preparation("1", null, stepFirstPreparation.getId(), version);
         firstPreparation.setSteps(Collections.singletonList(stepFirstPreparation));
@@ -266,7 +271,8 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         secondPreparation.setSteps(Collections.singletonList(stepSecondPreparation));
 
         // when
-        when(repository.exist(eq(PersistentStep.class), eq(TqlBuilder.eq("contentId", content.id())))).thenReturn(false);
+        when(repository.exist(eq(PersistentStep.class), eq(TqlBuilder.eq("contentId", content.id()))))
+                .thenReturn(false);
         when(repository.list(Preparation.class)).thenReturn(Stream.empty()); // Remove first and second preparations
         cleaner.execute();
 

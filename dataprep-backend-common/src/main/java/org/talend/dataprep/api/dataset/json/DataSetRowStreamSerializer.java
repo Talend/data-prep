@@ -28,7 +28,8 @@ public class DataSetRowStreamSerializer extends JsonSerializer<Stream<DataSetRow
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSetRowStreamSerializer.class);
 
     @Override
-    public void serialize(Stream<DataSetRow> value, JsonGenerator generator, SerializerProvider provider) throws IOException {
+    public void serialize(Stream<DataSetRow> value, JsonGenerator generator, SerializerProvider provider)
+            throws IOException {
         generator.writeStartArray();
         try {
             value.forEach(row -> {

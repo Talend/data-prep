@@ -330,8 +330,8 @@ public class PreparationUtilsTest extends ServiceBaseTest {
         assertEquals("actions-5678", savedPreparation.getSteps().get(2).getContent());
     }
 
-
-    public static List<Action> getSimpleAction(final String actionName, final String paramKey, final String paramValue) {
+    public static List<Action> getSimpleAction(final String actionName, final String paramKey,
+            final String paramValue) {
         final Action action = new Action();
         action.setName(actionName);
         action.getParameters().put(paramKey, paramValue);

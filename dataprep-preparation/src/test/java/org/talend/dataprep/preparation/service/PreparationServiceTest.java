@@ -104,10 +104,12 @@ public class PreparationServiceTest extends BasePreparationTest {
     public void testListAllShouldListWhenPathPointsToASubFolderAndDoesNotStartWithASlash() throws Exception {
         init();
         // then : : should list if path doesn't start with "/"
-        assertThat(preparationService
-                .listAll(null, null, "foo/prep_name_foo", null, null)
-                .collect(Collectors.toList())
-                .size(), is(1));
+        assertThat(
+                preparationService
+                        .listAll(null, null, "foo/prep_name_foo", null, null)
+                        .collect(Collectors.toList())
+                        .size(),
+                is(1));
     }
 
     @Test
@@ -132,7 +134,8 @@ public class PreparationServiceTest extends BasePreparationTest {
     }
 
     @Test
-    public void testListAllShouldListWhenFolderAndPreparationNameContainsSpecialCharactersAsInTDP4779() throws Exception {
+    public void testListAllShouldListWhenFolderAndPreparationNameContainsSpecialCharactersAsInTDP4779()
+            throws Exception {
         init();
         // then : : should list preparation with special character in folder and preparation (see
         // https://jira.talendforge.org/browse/TDP-4779)

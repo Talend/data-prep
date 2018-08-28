@@ -18,8 +18,7 @@ public class DatasetProxyConfiguration {
     @Bean
     public ServletRegistrationBean servletRegistrationBean() {
         ProxyServlet servlet = new ProxyServlet();
-        ServletRegistrationBean servletRegistrationBean =
-                new ServletRegistrationBean(servlet, "/api/v1/datasets/*");
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "/api/v1/datasets/*");
         servletRegistrationBean.addInitParameter("targetUri", datasetServiceUrl + "/api/v1/datasets");
         servletRegistrationBean.addInitParameter(ProxyServlet.P_LOG, "true");
         return servletRegistrationBean;

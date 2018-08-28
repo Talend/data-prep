@@ -221,7 +221,9 @@ public class ActionContext implements Serializable {
     public void setRowMetadata(RowMetadata rowMetadata) {
         this.rowMetadata = rowMetadata;
         // Remove previous columns
-        final List<String> toRemove = getContext().keySet().stream() //
+        final List<String> toRemove = getContext()
+                .keySet()
+                .stream() //
                 .filter(s -> s.startsWith(COLUMN_CONTEXT_PREFIX)) //
                 .collect(Collectors.toList());
         toRemove.forEach(getContext()::remove);
@@ -397,7 +399,7 @@ public class ActionContext implements Serializable {
      */
     @Override
     public String toString() {
-        return "ActionContext{" + "parent=#" + parent + ", context=" + getContext() + ", parameters=" + parameters + ", actionStatus="
-                + actionStatus + '}';
+        return "ActionContext{" + "parent=#" + parent + ", context=" + getContext() + ", parameters=" + parameters
+                + ", actionStatus=" + actionStatus + '}';
     }
 }

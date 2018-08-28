@@ -66,8 +66,8 @@ public class HtmlDetector implements Detector {
             byte[] buffer = new byte[FormatUtils.META_TAG_BUFFER_SIZE];
             int n = 0;
 
-            for (int m = inputStream.read(buffer); m != -1
-                    && n < buffer.length; m = inputStream.read(buffer, n, buffer.length - n)) {
+            for (int m = inputStream.read(buffer); m != -1 && n < buffer.length; m =
+                    inputStream.read(buffer, n, buffer.length - n)) {
                 n += m;
             }
 

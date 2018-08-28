@@ -41,7 +41,8 @@ public class FileStep extends DataPrepStep {
     private static final Logger LOG = LoggerFactory.getLogger(FileStep.class);
 
     @Then("^I check that \"(.*)\" temporary file equals \"(.*)\" file$")
-    public void thenICheckThatTheFileIsTheExpectedOne(String temporaryFilename, String expectedFilename) throws IOException {
+    public void thenICheckThatTheFileIsTheExpectedOne(String temporaryFilename, String expectedFilename)
+            throws IOException {
         LOG.debug("I check that {} temporary file equals {} file", temporaryFilename, expectedFilename);
 
         Path tempFile = context.getTempFile(temporaryFilename).toPath();
@@ -49,16 +50,16 @@ public class FileStep extends DataPrepStep {
         try (InputStream tempFileStream = Files.newInputStream(tempFile);
                 InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {
 
-            if (FileSystems.getDefault()
-                    .getPathMatcher("glob:*.xlsx")
-                    .matches(tempFile.getFileName())) {
+            if (FileSystems.getDefault().getPathMatcher("glob:*.xlsx").matches(tempFile.getFileName())) {
 
                 if (!ExcelComparator.compareTwoFile(new XSSFWorkbook(tempFileStream),
                         new XSSFWorkbook(expectedFileStream))) {
-                    fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
+                    fail("Temporary file " + temporaryFilename + " isn't the same as the expected file "
+                            + expectedFilename);
                 }
             } else if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
-                    fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
+                fail("Temporary file " + temporaryFilename + " isn't the same as the expected file "
+                        + expectedFilename);
             }
         }
     }

@@ -23,6 +23,4 @@ import org.talend.dataprep.api.action.ActionDefinition;
  */
 public interface InternalActionDefinition extends ActionDefinition {
 
-
-
 }

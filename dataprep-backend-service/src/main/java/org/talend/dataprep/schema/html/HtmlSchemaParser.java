@@ -58,7 +58,8 @@ public class HtmlSchemaParser implements SchemaParser {
             List<ColumnMetadata> columns = new ArrayList<>(headersContentHandler.getHeaderValues().size());
 
             for (String headerValue : headersContentHandler.getHeaderValues()) {
-                columns.add(ColumnMetadata.Builder.column() //
+                columns.add(ColumnMetadata.Builder
+                        .column() //
                         .type(Type.STRING) // ATM not doing any complicated type calculation
                         .name(headerValue) //
                         .id(columns.size()) //
@@ -68,7 +69,8 @@ public class HtmlSchemaParser implements SchemaParser {
             Schema.SheetContent sheetContent = new Schema.SheetContent();
             sheetContent.setColumnMetadatas(columns);
 
-            return Schema.Builder.parserResult() //
+            return Schema.Builder
+                    .parserResult() //
                     .sheetContents(Collections.singletonList(sheetContent)) //
                     .draft(false) //
                     .build();

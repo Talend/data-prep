@@ -23,7 +23,8 @@ class RegistrationImpl<T> implements Registration<T> {
 
     private List<Class<?>> convertedClasses;
 
-    RegistrationImpl(Class<T> modelClass, List<Class<?>> convertedClasses, Map<Class<?>, BiFunction<T, Object, Object>> customs) {
+    RegistrationImpl(Class<T> modelClass, List<Class<?>> convertedClasses,
+            Map<Class<?>, BiFunction<T, Object, Object>> customs) {
         this.modelClass = modelClass;
         this.convertedClasses = convertedClasses;
         this.customs = customs;

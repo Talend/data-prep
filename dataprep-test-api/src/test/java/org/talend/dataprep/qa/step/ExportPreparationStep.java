@@ -50,7 +50,8 @@ public class ExportPreparationStep extends DataPrepStep {
         Response apiResponse = api.getExportFormats(preparationId);
         ExportFormatMessage[] exportFormats = apiResponse.as(ExportFormatMessage[].class);
 
-        List<String> exportFormatsIds = Arrays.stream(exportFormats) //
+        List<String> exportFormatsIds = Arrays
+                .stream(exportFormats) //
                 .map(ExportFormatMessage::getId) //
                 .collect(Collectors.toList());
 

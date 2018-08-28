@@ -115,7 +115,8 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -143,7 +144,8 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_without_consecutive").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -222,6 +224,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         // then
         assertEquals("haand", row.get("0000"));
     }
+
     @Test
     public void shouldRemoveCustomSurrogatePairEndCharacters() {
         // given 4 duplicate 𠀄 in the end of string and user want to remove duplicate 𠀄(for TDQ-15120)
@@ -235,6 +238,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         // then
         assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", row.get("0000"));
     }
+
     @Test
     public void shouldRemoveCustomSurrogatePairStartCharacters() {
         // given 3 duplicate 𠀄 at start of string and user want to remove duplicate 𠀄(for TDQ-15120)
@@ -248,6 +252,7 @@ public class RemoveRepeatedCharsTest extends AbstractMetadataBaseTest<RemoveRepe
         // then
         assertEquals("𠀄中崎𠀀𠀁𠀂𠀃𠀄", row.get("0000"));
     }
+
     @Test
     public void shouldRemoveCustomSurrogatePairMiddleCharacters() {
         // given 3 duplicate 𠀄 at middle of string and user want to remove duplicate 𠀄(for TDQ-15120)

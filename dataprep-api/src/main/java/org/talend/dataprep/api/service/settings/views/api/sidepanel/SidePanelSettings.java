@@ -29,7 +29,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * Side panel settings
  * see
- * https://talend.github.io/react-talend-components/?selectedKind=Side%20Panel&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * https://talend.github.io/react-talend-components/?selectedKind=Side%20Panel&selectedStory=default&full=0&down=1&left=
+ * 1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 public class SidePanelSettings implements ViewSettings {

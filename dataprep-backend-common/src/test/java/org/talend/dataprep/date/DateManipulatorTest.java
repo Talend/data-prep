@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.date;
 
@@ -24,9 +24,9 @@ import org.junit.Test;
 
 public class DateManipulatorTest {
 
-    //------------------------------------------------------------------------------------------------------------------
-    //---------------------------------------------------getSuitablePace------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------getSuitablePace------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     @Test
     public void getSuitablePace_should_return_computed_pace() throws Exception {
         testGetSuitablePaceWith(LocalDateTime.of(2015, 1, 1, 0, 0), LocalDateTime.of(2015, 1, 15, 0, 0), 20, DAY);
@@ -40,7 +40,8 @@ public class DateManipulatorTest {
         testGetSuitablePaceWith(LocalDateTime.of(0, 1, 1, 0, 0), LocalDateTime.of(1000000, 1, 15, 0, 0), 20, null);
     }
 
-    private void testGetSuitablePaceWith(final LocalDateTime min, final LocalDateTime max, final int maxBins, final DateManipulator.Pace expectedPace) throws Exception {
+    private void testGetSuitablePaceWith(final LocalDateTime min, final LocalDateTime max, final int maxBins,
+            final DateManipulator.Pace expectedPace) throws Exception {
         //when
         final DateManipulator.Pace pace = DateManipulator.getSuitablePace(min, max, maxBins);
 
@@ -53,17 +54,21 @@ public class DateManipulatorTest {
     //------------------------------------------------------------------------------------------------------------------
     @Test
     public void getSuitableStartingDate_should_return_computed_starting_range_date() throws Exception {
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), DAY,          LocalDateTime.of(2015, 1, 2, 0, 0));
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), WEEK,         LocalDateTime.of(2014, 12, 29, 0, 0));
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), MONTH,        LocalDateTime.of(2015, 1, 1, 0, 0));
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 3, 2, 0, 0), QUARTER,      LocalDateTime.of(2015, 1, 1, 0, 0));
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 8, 2, 0, 0), HALF_YEAR,    LocalDateTime.of(2015, 7, 1, 0, 0));
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 9, 2, 0, 0), YEAR,         LocalDateTime.of(2015, 1, 1, 0, 0));
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), DECADE,       LocalDateTime.of(2010, 1, 1, 0, 0));
-        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), CENTURY,      LocalDateTime.of(2000, 1, 1, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), DAY, LocalDateTime.of(2015, 1, 2, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), WEEK, LocalDateTime.of(2014, 12, 29, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), MONTH, LocalDateTime.of(2015, 1, 1, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 3, 2, 0, 0), QUARTER,
+                LocalDateTime.of(2015, 1, 1, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 8, 2, 0, 0), HALF_YEAR,
+                LocalDateTime.of(2015, 7, 1, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 9, 2, 0, 0), YEAR, LocalDateTime.of(2015, 1, 1, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), DECADE, LocalDateTime.of(2010, 1, 1, 0, 0));
+        testGetSuitableStartingDateWith(LocalDateTime.of(2015, 1, 2, 0, 0), CENTURY,
+                LocalDateTime.of(2000, 1, 1, 0, 0));
     }
 
-    private void testGetSuitableStartingDateWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
+    private void testGetSuitableStartingDateWith(final LocalDateTime date, final DateManipulator.Pace pace,
+            final LocalDateTime expectedDate) throws Exception {
         //when
         final LocalDateTime computedDate = DateManipulator.getSuitableStartingDate(date, pace);
 
@@ -76,17 +81,18 @@ public class DateManipulatorTest {
     //------------------------------------------------------------------------------------------------------------------
     @Test
     public void testGetNext_should_return_date_with_added_pace() throws Exception {
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), DAY,          LocalDateTime.of(2015, 1, 2, 0, 0));
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), WEEK,         LocalDateTime.of(2015, 1, 8, 0, 0));
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), MONTH,        LocalDateTime.of(2015, 2, 1, 0, 0));
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), QUARTER,      LocalDateTime.of(2015, 4, 1, 0, 0));
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), HALF_YEAR,    LocalDateTime.of(2015, 7, 1, 0, 0));
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), YEAR,         LocalDateTime.of(2016, 1, 1, 0, 0));
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), DECADE,       LocalDateTime.of(2025, 1, 1, 0, 0));
-        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), CENTURY,      LocalDateTime.of(2115, 1, 1, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), DAY, LocalDateTime.of(2015, 1, 2, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), WEEK, LocalDateTime.of(2015, 1, 8, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), MONTH, LocalDateTime.of(2015, 2, 1, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), QUARTER, LocalDateTime.of(2015, 4, 1, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), HALF_YEAR, LocalDateTime.of(2015, 7, 1, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), YEAR, LocalDateTime.of(2016, 1, 1, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), DECADE, LocalDateTime.of(2025, 1, 1, 0, 0));
+        testGetNextWith(LocalDateTime.of(2015, 1, 1, 0, 0), CENTURY, LocalDateTime.of(2115, 1, 1, 0, 0));
     }
 
-    private void testGetNextWith(final LocalDateTime date, final DateManipulator.Pace pace, final LocalDateTime expectedDate) throws Exception {
+    private void testGetNextWith(final LocalDateTime date, final DateManipulator.Pace pace,
+            final LocalDateTime expectedDate) throws Exception {
         //when
         final LocalDateTime computedDate = DateManipulator.getNext(date, pace);
 

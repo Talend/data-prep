@@ -123,11 +123,9 @@ public class EnrichedDataSetMetadata extends UserDataSetMetadata {
             return id;
         }
 
-
         public void setId(String id) {
             this.id = id;
         }
-
 
         public String getName() {
             return name;
@@ -168,8 +166,8 @@ public class EnrichedDataSetMetadata extends UserDataSetMetadata {
                 return false;
             }
             PreparationSummary that = (PreparationSummary) o;
-            return nbSteps == that.nbSteps && lastModificationDate == that.lastModificationDate && Objects.equals(id, that.id)
-                    && Objects.equals(name, that.name);
+            return nbSteps == that.nbSteps && lastModificationDate == that.lastModificationDate
+                    && Objects.equals(id, that.id) && Objects.equals(name, that.name);
         }
 
         @Override

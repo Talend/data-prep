@@ -364,8 +364,12 @@ public class DataSetMetadataBuilder {
 
         this.schemaParserResult = original.getSchemaParserResult();
         if (original.getRowMetadata() != null) {
-            this.columnBuilders = original.getRowMetadata().getColumns().stream()
-                    .map(col -> ColumnMetadata.Builder.column().copy(col)).toArray(ColumnMetadata.Builder[]::new);
+            this.columnBuilders = original
+                    .getRowMetadata()
+                    .getColumns()
+                    .stream()
+                    .map(col -> ColumnMetadata.Builder.column().copy(col))
+                    .toArray(ColumnMetadata.Builder[]::new);
         }
         return this;
     }
@@ -411,7 +415,8 @@ public class DataSetMetadataBuilder {
             columns = Collections.emptyList();
         }
         RowMetadata row = new RowMetadata(columns);
-        DataSetMetadata metadata = new DataSetMetadata(id, name, author, createdDate, lastModificationDate, row, appVersion);
+        DataSetMetadata metadata =
+                new DataSetMetadata(id, name, author, createdDate, lastModificationDate, row, appVersion);
         if (!StringUtils.isEmpty(tag)) {
             metadata.setTag(tag);
         }

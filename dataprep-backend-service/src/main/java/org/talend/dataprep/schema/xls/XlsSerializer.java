@@ -75,7 +75,8 @@ public class XlsSerializer implements Serializer {
             inputStream.reset();
 
             Runnable runnable = newExcelFormat ? //
-                    serializeNew(inputStream, metadata, limit, jsonOutput) : serializeOld(inputStream, metadata, limit, jsonOutput);
+                    serializeNew(inputStream, metadata, limit, jsonOutput)
+                    : serializeOld(inputStream, metadata, limit, jsonOutput);
 
             // Serialize asynchronously for better performance (especially if caller doesn't consume all, see sampling).
             executor.execute(runnable);
@@ -86,12 +87,13 @@ public class XlsSerializer implements Serializer {
         }
     }
 
-    private Runnable serializeNew(InputStream rawContent, DataSetMetadata metadata, long limit, PipedOutputStream jsonOutput) {
+    private Runnable serializeNew(InputStream rawContent, DataSetMetadata metadata, long limit,
+            PipedOutputStream jsonOutput) {
         return new XlsxStreamRunnable(jsonOutput, rawContent, metadata, limit, mapper.getFactory());
     }
 
-    private Runnable serializeOld(InputStream rawContent, DataSetMetadata metadata, long limit, PipedOutputStream jsonOutput)
-            throws IOException {
+    private Runnable serializeOld(InputStream rawContent, DataSetMetadata metadata, long limit,
+            PipedOutputStream jsonOutput) throws IOException {
         return new XlsRunnable(rawContent, jsonOutput, metadata, limit, mapper.getFactory());
     }
 

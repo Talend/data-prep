@@ -57,7 +57,8 @@ class ActionsImport implements ImportBeanDefinitionRegistrar {
     private static class ActionFilter implements TypeFilter {
 
         @Override
-        public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) throws IOException {
+        public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)
+                throws IOException {
             final ClassMetadata classMetadata = metadataReader.getClassMetadata();
             try {
                 final Class<?> clazz = Class.forName(classMetadata.getClassName());

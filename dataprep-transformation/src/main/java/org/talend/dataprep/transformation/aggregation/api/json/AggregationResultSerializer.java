@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.aggregation.api.json;
 
@@ -38,10 +38,10 @@ public class AggregationResultSerializer extends JsonSerializer<AggregationResul
     public void serialize(AggregationResult result, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
         // sort the results first
-        Comparator<Map.Entry<String, WorkingContext>> comparator = (e1, e2) -> Double.compare(e2.getValue().getValue(),
-                e1.getValue().getValue());
-        final List<Map.Entry<String, WorkingContext>> entries = result.entries().stream().sorted(comparator)
-                .collect(Collectors.toList());
+        Comparator<Map.Entry<String, WorkingContext>> comparator =
+                (e1, e2) -> Double.compare(e2.getValue().getValue(), e1.getValue().getValue());
+        final List<Map.Entry<String, WorkingContext>> entries =
+                result.entries().stream().sorted(comparator).collect(Collectors.toList());
 
         // then write it
         gen.writeStartArray();

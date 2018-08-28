@@ -76,7 +76,6 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
-
     @Override
     public String getName() {
         return ACTION_NAME;
@@ -103,10 +102,15 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        boolean doesCreateNewColumn = ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
+        boolean doesCreateNewColumn =
+                ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
 
         if (doesCreateNewColumn) {
-            ActionsUtils.createNewColumn(actionContext, singletonList(ActionsUtils.additionalColumn().withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX).withCopyMetadataFromId(actionContext.getColumnId())));
+            ActionsUtils.createNewColumn(actionContext,
+                    singletonList(ActionsUtils
+                            .additionalColumn()
+                            .withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)
+                            .withCopyMetadataFromId(actionContext.getColumnId())));
         }
 
         if (actionContext.getActionStatus() == OK) {
@@ -138,9 +142,13 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
 
                 actionContext.get(FROM_DATE_PATTERNS, p -> compileFromDatePattern(actionContext));
 
-                final PatternFrequency newPatternFrequency = statistics.getPatternFrequencies().stream()
-                        .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(), newPattern.getPattern()))
-                        .findFirst().orElseGet(() -> {
+                final PatternFrequency newPatternFrequency = statistics
+                        .getPatternFrequencies()
+                        .stream()
+                        .filter(patternFrequency -> StringUtils.equals(patternFrequency.getPattern(),
+                                newPattern.getPattern()))
+                        .findFirst()
+                        .orElseGet(() -> {
                             final PatternFrequency newPatternFreq = new PatternFrequency(newPattern.getPattern(), 0);
                             statistics.getPatternFrequencies().add(newPatternFreq);
                             return newPatternFreq;
@@ -158,16 +166,16 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             return emptyList();
         }
         switch (actionContext.getParameters().get(FROM_MODE)) {
-            case FROM_MODE_BEST_GUESS:
-                final RowMetadata rowMetadata = actionContext.getRowMetadata();
-                final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
-                return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
-            case FROM_MODE_CUSTOM:
-                List<DatePattern> fromPatterns = new ArrayList<>();
-                fromPatterns.add(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
-                return fromPatterns;
-            default:
-                return emptyList();
+        case FROM_MODE_BEST_GUESS:
+            final RowMetadata rowMetadata = actionContext.getRowMetadata();
+            final ColumnMetadata column = rowMetadata.getById(actionContext.getColumnId());
+            return Providers.get().getPatterns(column.getStatistics().getPatternFrequencies());
+        case FROM_MODE_CUSTOM:
+            List<DatePattern> fromPatterns = new ArrayList<>();
+            fromPatterns.add(new DatePattern(actionContext.getParameters().get(FROM_CUSTOM_PATTERN)));
+            return fromPatterns;
+        default:
+            return emptyList();
         }
     }
 

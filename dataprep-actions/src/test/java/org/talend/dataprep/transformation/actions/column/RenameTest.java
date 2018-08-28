@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.column;
 
@@ -52,13 +52,14 @@ public class RenameTest extends AbstractMetadataBaseTest<Rename> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(CopyColumnTest.class.getResourceAsStream("renameAction.json"));
+        parameters =
+                ActionMetadataTestUtils.parseParameters(CopyColumnTest.class.getResourceAsStream("renameAction.json"));
     }
 
     @Test
@@ -85,15 +86,15 @@ public class RenameTest extends AbstractMetadataBaseTest<Rename> {
     public void should_update_metadata() {
         // given
         final ColumnMetadata metadata = //
-        column() //
-                .id(1) //
-                .name("first name") //
-                .type(Type.STRING) //
-                .headerSize(102) //
-                .empty(0) //
-                .invalid(2) //
-                .valid(5) //
-                .build();
+                column() //
+                        .id(1) //
+                        .name("first name") //
+                        .type(Type.STRING) //
+                        .headerSize(102) //
+                        .empty(0) //
+                        .invalid(2) //
+                        .valid(5) //
+                        .build();
         final List<ColumnMetadata> input = new ArrayList<>();
         input.add(metadata);
         final RowMetadata rowMetadata = new RowMetadata(input);

@@ -1,14 +1,14 @@
-//  ============================================================================
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// ============================================================================
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.cache;
 
@@ -34,7 +34,8 @@ public class TransformationMetadataCacheKey implements ContentCacheKey {
 
     private final String userId;
 
-    TransformationMetadataCacheKey(final String preparationId, final String stepId, final ExportParameters.SourceType sourceType, final String userId) {
+    TransformationMetadataCacheKey(final String preparationId, final String stepId,
+            final ExportParameters.SourceType sourceType, final String userId) {
         if (StringUtils.equals("head", stepId)) {
             throw new IllegalArgumentException("'head' is not allowed as step id for cache key");
         }
@@ -51,10 +52,8 @@ public class TransformationMetadataCacheKey implements ContentCacheKey {
 
     @Override
     public Predicate<String> getMatcher() {
-        final String regex = PREFIX + '_'
-                + (preparationId == null ? ".*" : preparationId) + "_"
-                + (stepId == null ? ".*" : stepId) + "_"
-                + (sourceType == null ? ".*" : sourceType) + "_"
+        final String regex = PREFIX + '_' + (preparationId == null ? ".*" : preparationId) + "_"
+                + (stepId == null ? ".*" : stepId) + "_" + (sourceType == null ? ".*" : sourceType) + "_"
                 + (userId == null ? ".*" : userId) + "([.].*)?";
         final Pattern pattern = Pattern.compile(regex);
         return str -> pattern.matcher(str).matches();

@@ -84,7 +84,8 @@ public class TDPException extends TalendRuntimeException {
      * component
      * that does not have access to the exception bundle.
      */
-    public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context) {
+    public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle,
+            ExceptionContext context) {
         super(code, cause, context);
         this.message = message;
         this.messageTitle = messageTitle;

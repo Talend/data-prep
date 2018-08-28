@@ -19,7 +19,8 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 
 /**
- * Represents a class that is able to parse a data set content, possibly guess or update it schema, and returns a list of
+ * Represents a class that is able to parse a data set content, possibly guess or update it schema, and returns a list
+ * of
  * {@link ColumnMetadata metadata} out of it.
  */
 public interface SchemaParser {

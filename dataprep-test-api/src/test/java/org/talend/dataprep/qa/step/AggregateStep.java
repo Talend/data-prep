@@ -46,7 +46,8 @@ public class AggregateStep extends DataPrepStep {
     public static final String DATA_SET_ID = "dataSetId";
 
     @When("^I apply an aggregation \"(.*)\" on the preparation \"(.*)\" with parameters :$")
-    public void applyAnAggregationOnPreparation(String aggregationName, String preparationName, DataTable dataTable) throws Exception {
+    public void applyAnAggregationOnPreparation(String aggregationName, String preparationName, DataTable dataTable)
+            throws Exception {
         Map<String, String> params = new HashMap<>(dataTable.asMap(String.class, String.class));
         params.put(PREPARATION_ID, context.getPreparationId(suffixName(preparationName)));
 
@@ -97,12 +98,14 @@ public class AggregateStep extends DataPrepStep {
     public void testAggregate(String aggregationName, String operator, DataTable dataTable) throws Exception {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
 
-        List<AggregateResult> aggregateResults = (List<AggregateResult>) (context.getObject(suffixName(aggregationName)));
+        List<AggregateResult> aggregateResults =
+                (List<AggregateResult>) (context.getObject(suffixName(aggregationName)));
         assertEquals(toAggregateResult(params, operator), aggregateResults);
     }
 
     @When("^I apply an aggregation \"(.*)\" on the dataSet \"(.*)\" with parameters :$")
-    public void applyAnAggregationOnDataSet(String aggregationName, String dataSetName, DataTable dataTable) throws Exception {
+    public void applyAnAggregationOnDataSet(String aggregationName, String dataSetName, DataTable dataTable)
+            throws Exception {
         Map<String, String> params = new HashMap<>(dataTable.asMap(String.class, String.class));
         params.put(DATA_SET_ID, context.getDatasetId(suffixName(dataSetName)));
 

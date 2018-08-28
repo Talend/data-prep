@@ -45,7 +45,8 @@ public abstract class BaseFormatTest extends TransformationBaseTest {
 
     protected void testFormat(ExportFormat format, String expectedJson) throws IOException {
         StringWriter writer = new StringWriter();
-        final ExportFormatMessage exportFormatMessage = beanConversionService.convert(format, ExportFormatMessage.class);
+        final ExportFormatMessage exportFormatMessage =
+                beanConversionService.convert(format, ExportFormatMessage.class);
         mapper.writer().writeValue(writer, exportFormatMessage);
         assertThat(writer.toString(), sameJSONAsFile(BaseFormatTest.class.getResourceAsStream(expectedJson)));
     }

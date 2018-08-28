@@ -66,7 +66,7 @@ public class DomainChangeTest extends AbstractMetadataBaseTest<DomainChange> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_DISABLED;
     }
 
@@ -101,7 +101,8 @@ public class DomainChangeTest extends AbstractMetadataBaseTest<DomainChange> {
         final DomainChange domainChange = new DomainChange();
         for (final Type type : Type.values()) {
 
-            final ColumnMetadata columnMetadata = ColumnMetadata.Builder.column() //
+            final ColumnMetadata columnMetadata = ColumnMetadata.Builder
+                    .column() //
                     .type(type) //
                     .computedId("0002") //
                     .domain("FR_BEER") //

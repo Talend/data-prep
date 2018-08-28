@@ -142,7 +142,8 @@ public class SquareRootTest extends AbstractMetadataBaseTest<SquareRoot> {
     }
 
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_square_root").type(Type.DOUBLE).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_square_root").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

@@ -45,7 +45,8 @@ public class StepDiff implements Serializable {
             return false;
         }
         StepDiff stepDiff = (StepDiff) o;
-        return createdColumns != null ? createdColumns.equals(stepDiff.createdColumns) : stepDiff.createdColumns == null;
+        return createdColumns != null ? createdColumns.equals(stepDiff.createdColumns)
+                : stepDiff.createdColumns == null;
     }
 
     @Override

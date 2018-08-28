@@ -143,7 +143,8 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
             final ColumnMetadata selectedColumn = rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             operandName = selectedColumn.getName();
         }
-        additionalColumns.add(ActionsUtils.additionalColumn()
+        additionalColumns.add(ActionsUtils
+                .additionalColumn()
                 .withName(context.getColumnName() + " " + operator + " " + operandName)
                 .withType(Type.DOUBLE));
         return additionalColumns;
@@ -217,8 +218,8 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
             // Format result:
             return toReturn.setScale(scale, rm).stripTrailingZeros().toPlainString();
         } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
-            LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to exception {}.", stringOperandOne,
-                    stringOperandTwo, operator, e);
+            LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to exception {}.",
+                    stringOperandOne, stringOperandTwo, operator, e);
             return StringUtils.EMPTY;
         } catch (Exception e) {
             LOGGER.debug("Unable to compute with operands {}, {} and operator {} due to an unknown exception {}.",
@@ -238,8 +239,9 @@ public class NumericOperations extends AbstractActionMetadata implements ColumnA
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(OPERAND_PARAMETER)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", OPERAND_PARAMETER));
-        } else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
-                || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
+        } else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)
+                && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
+                        || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }

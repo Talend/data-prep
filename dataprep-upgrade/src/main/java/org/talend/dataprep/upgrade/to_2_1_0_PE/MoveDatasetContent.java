@@ -44,7 +44,8 @@ public class MoveDatasetContent implements BaseUpgradeTaskTo_2_1_0_PE {
 
     @Value("${content-service.store.local.path}")
     public void setTmp(String basePath) {
-        this.tmp = StringUtils.endsWith(basePath, "/") ? basePath + "store/datasets/tmp" : basePath + "/store/datasets/tmp";
+        this.tmp = StringUtils.endsWith(basePath, "/") ? basePath + "store/datasets/tmp"
+                : basePath + "/store/datasets/tmp";
     }
 
     @Value("${content-service.store.local.path}")

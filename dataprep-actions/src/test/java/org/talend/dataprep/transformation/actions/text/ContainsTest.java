@@ -69,7 +69,7 @@ public class ContainsTest extends AbstractMetadataBaseTest<Contains> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -94,8 +94,8 @@ public class ContainsTest extends AbstractMetadataBaseTest<Contains> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("name_contains_toubidou").type(Type.BOOLEAN)
-                .build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("name_contains_toubidou").type(Type.BOOLEAN).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -116,8 +116,8 @@ public class ContainsTest extends AbstractMetadataBaseTest<Contains> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("name_contains_source").type(Type.BOOLEAN)
-                .build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("name_contains_source").type(Type.BOOLEAN).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

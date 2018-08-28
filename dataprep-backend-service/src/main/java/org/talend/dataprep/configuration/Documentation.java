@@ -46,7 +46,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class Documentation {
 
     /** Value for regex that match all characters. */
-    private static final String MATCH_ALL=".*";
+    private static final String MATCH_ALL = ".*";
 
     @Value("${service.documentation.name}")
     private String serviceDisplayName;
@@ -86,9 +86,9 @@ public class Documentation {
      * @return where to look for controllers to document them.
      */
     private Predicate<String> paths() {
-        return or(Arrays.stream(servicePaths).map(this::matchAll).map(PathSelectors::regex).collect(Collectors.toList()));
+        return or(
+                Arrays.stream(servicePaths).map(this::matchAll).map(PathSelectors::regex).collect(Collectors.toList()));
     }
-
 
     /**
      * Make sure the given input will match all strings with this pattern : ".*input.*".
@@ -101,7 +101,7 @@ public class Documentation {
             path = MATCH_ALL + path;
         }
         if (!path.endsWith(MATCH_ALL)) {
-            path = path+MATCH_ALL;
+            path = path + MATCH_ALL;
         }
         return path;
     }

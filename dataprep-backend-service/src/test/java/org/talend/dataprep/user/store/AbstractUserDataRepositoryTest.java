@@ -46,14 +46,12 @@ public abstract class AbstractUserDataRepositoryTest<U extends UserData> extends
         getUserRepository().clear();
     }
 
-
     @Test
     public void shouldGetWhatWasAdded() throws JsonProcessingException {
 
         U expected = getRandomUserData();
         expected.addFavoriteDataset("dataset#987654");
         expected.addFavoriteDataset("dataset#lkj-sfdgs-63563-sfgsfg'");
-
 
         getUserRepository().save(expected);
 

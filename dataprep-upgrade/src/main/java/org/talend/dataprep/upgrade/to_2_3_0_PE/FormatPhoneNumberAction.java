@@ -26,15 +26,18 @@ public class FormatPhoneNumberAction extends BaseUpgradeTaskTo_2_3_0_PE {
         this.preparationRepository = preparationRepository;
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         ActionFormatPhoneNumber.upgradeActions(preparationRepository);
     }
 
-    @Override public int getOrder() {
+    @Override
+    public int getOrder() {
         return 2;
     }
 
-    @Override public target getTarget() {
+    @Override
+    public target getTarget() {
         return VERSION;
     }
 }

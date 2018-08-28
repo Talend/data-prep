@@ -15,6 +15,7 @@ package org.talend.dataprep.api.service;
 import com.netflix.hystrix.HystrixCommand;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
+import org.talend.dataprep.api.service.command.common.AsyncGet;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
 import org.talend.dataprep.api.service.command.transformation.*;
 import org.talend.dataprep.command.CommandHelper;
@@ -40,6 +42,9 @@ import static org.talend.dataprep.command.CommandHelper.toStream;
 
 @RestController
 public class TransformAPI extends APIService {
+
+    @Autowired
+    private CommonAPI commonAPI;
 
     /**
      * Get all the possible actions for a given column.
@@ -107,7 +112,7 @@ public class TransformAPI extends APIService {
         HystrixCommand<InputStream> inputData;
         final String preparationId = dynamicParamsInput.getPreparationId();
         if (isNotBlank(preparationId)) {
-            inputData = getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId());
+            inputData = new AsyncGet<>(() -> getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId()), commonAPI);
         } else {
             inputData = datasetClient.getDataSetGetCommand(dynamicParamsInput.getDatasetId(), false, false);
         }

@@ -320,8 +320,9 @@ public class APIClientTest {
         Response transformedResponse;
         RequestSpecification initialRequest = given().when();
         if (filter.isEmpty()) {
-            transformedResponse = initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version,
-                            stepId);
+            transformedResponse =
+                    initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}",
+                            preparationId, version, stepId);
         } else {
             transformedResponse = initialRequest.get(
                     "/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId,

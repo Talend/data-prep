@@ -204,4 +204,27 @@ public class PreparationStep extends DataPrepStep {
 
         checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
     }
+
+    public String getId (String name) throws Throwable {
+        String prepPath = util.extractPathFromFullName(name);
+        FolderContent folderContent = folderUtil.listPreparation(prepPath);
+        PreparationDetails prepaDetails = folderContent.preparations
+                .stream() //
+                .filter(p -> p.name.equals(name)) //
+                .findAny()
+                .orElse(null);
+        return prepaDetails.id;
+    }
+
+    @Given("^I had the existing preparation \"(.*)\"") //
+    public void givenExistingPrepa(String name) throws Throwable {
+        String prepPath = util.extractPathFromFullName(name);
+        context.storePreparationRef(getId(name), name, prepPath);
+    }
+
+    @Then("^The folder \"(.*)\" has \"(.*)\" preparations") //
+    public void checkFolderPrepas(String path, int number) throws Throwable {
+        path = util.extractPathFromFullName(path);
+        assertEquals(number, folderUtil.listPreparation(path).preparations.size());
+    }
 }

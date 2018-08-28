@@ -21,6 +21,8 @@ public class PreparationDTO implements SharedResource {
     /** The creation date. */
     private String dataSetId;
 
+    private String dataSetName;
+
     /** The preparation name. */
     private String name;
 
@@ -38,6 +40,21 @@ public class PreparationDTO implements SharedResource {
 
     private String headId;
 
+    private String folderId;
+
+    public String getDataSetName() {
+        return dataSetName;
+    }
+
+    public void setDataSetName(String dataSetName) {
+        this.dataSetName = dataSetName;
+    }
+
+    /**
+     * @return The data set id
+     * @deprecated Use {@link #dataSetName} instead.
+     */
+    @Deprecated
     public String getDataSetId() {
         return dataSetId;
     }
@@ -148,4 +165,11 @@ public class PreparationDTO implements SharedResource {
         this.headId = headId;
     }
 
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
+    }
 }

@@ -72,7 +72,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(repository.list(eq(Preparation.class))).thenReturn(Stream.of(preparation));
 
         // when
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         verify(repository, never()).remove(eq(firstStep));
@@ -102,7 +102,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(repository.list(eq(Preparation.class))).thenReturn(Stream.of(firstPreparation, secondPreparation));
 
         // when
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         verify(repository, never()).remove(eq(firstStep));
@@ -119,7 +119,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(repository.list(eq(PersistentStep.class))).thenReturn(Stream.of(rootStep));
 
         // when
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         verify(repository, never()).remove(eq(Step.ROOT_STEP));
@@ -146,7 +146,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(repository.list(eq(Preparation.class))).thenReturn(Stream.empty());
 
         // when
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         verify(repository, times(1)).remove(refEq(Step.class), any(Expression.class));
@@ -187,7 +187,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(repository.list(Preparation.class)).thenReturn(Stream.of(firstPreparation, secondPreparation));
 
         // when
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         verify(repository, never()).remove(eq(content));
@@ -228,7 +228,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(repository.list(Preparation.class)).thenReturn(Stream.of(secondPreparation)); // Remove first preparation
 
         // when
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         // when the first preparation is removed, the shared action is not deleted
@@ -268,7 +268,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         // when
         when(repository.exist(eq(PersistentStep.class), eq(TqlBuilder.eq("contentId", content.id())))).thenReturn(false);
         when(repository.list(Preparation.class)).thenReturn(Stream.empty()); // Remove first and second preparations
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         verify(repository, times(1)).remove(refEq(Step.class), any(Expression.class));
@@ -281,7 +281,7 @@ public class PreparationCleanerTest extends BaseMaintenanceTest {
         when(marker.mark(any(), any(UUID.class))).thenReturn(StepMarker.Result.INTERRUPTED);
 
         // when
-        cleaner.removeOrphanSteps();
+        cleaner.execute();
 
         // then
         verify(repository, never()).remove(refEq(Step.class), any(Expression.class));

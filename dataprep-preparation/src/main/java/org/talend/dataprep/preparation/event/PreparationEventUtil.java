@@ -24,7 +24,7 @@ import org.talend.dataprep.security.SecurityProxy;
 /**
  * Utility class to remove all {@link StepRowMetadata} associated to a preparation that uses a given dataset.
  *
- * @see #removePreparationStepRowMetadata(String)
+ * @see #updatesFromDataSetMetadata(String)
  */
 @Component
 public class PreparationEventUtil {
@@ -54,9 +54,9 @@ public class PreparationEventUtil {
 
     public void performUpdateEvent(String datasetId) {
         LOGGER.debug("Performing update event for dataset {}", datasetId);
-        this.cleanTransformationCache(datasetId);
-        this.cleanTransformationMetadataCache(datasetId);
-        this.removePreparationStepRowMetadata(datasetId);
+        cleanTransformationCache(datasetId);
+        cleanTransformationMetadataCache(datasetId);
+        updatesFromDataSetMetadata(datasetId);
     }
 
     private void cleanTransformationCache(String datasetId) {
@@ -85,12 +85,18 @@ public class PreparationEventUtil {
     }
 
     /**
-     * Removes all {@link StepRowMetadata} of preparations that use the provided {@link DataSetMetadata} metadata.
+     * Perform all {@link DataSetMetadata} related operations:
+     * <ul>
+     * <li>Removes all {@link StepRowMetadata} of preparations that use the provided {@link DataSetMetadata}
+     * metadata.</li>
+     * <li>Update preparation's data set name.</li>
+     * </ul>
+     * Do all operations in <b>one</b> method to prevent multiple lookup for a given dataset.
      *
-     * @param dataSetId The data set id to be used in preparation search (code searches preparations
-     * that use this <code>dataSetId</code>).
+     * @param dataSetId The data set id to be used in preparation search (code searches preparations that use this
+     * <code>dataSetId</code>).
      */
-    private void removePreparationStepRowMetadata(String dataSetId) {
+    private void updatesFromDataSetMetadata(String dataSetId) {
         DataSetMetadata dataSetMetadata;
         try {
             securityProxy.asTechnicalUserForDataSet();
@@ -109,7 +115,7 @@ public class PreparationEventUtil {
             preparationRepository
                     .list(PersistentPreparation.class, eq("dataSetId", dataSetId)) //
                     .forEach(preparation -> {
-                        // Reset preparation row metadata.
+                        preparation.setDataSetName(dataSetMetadata.getName());
                         preparation.setRowMetadata(rowMetadata);
                         preparationRepository.add(preparation);
 

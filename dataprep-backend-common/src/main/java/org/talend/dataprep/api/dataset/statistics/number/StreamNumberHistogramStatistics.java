@@ -12,13 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.api.dataset.statistics.number;
 
-import org.talend.dataquality.statistics.numeric.histogram.Range;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.talend.dataquality.statistics.numeric.histogram.Range;
 
 /**
  * This class implements implements a new kind of histogram suitable for evolving data sets like streams. This histogram
@@ -93,6 +93,10 @@ public class StreamNumberHistogramStatistics {
      * @param d the value to add to this histogram
      */
     public void add(double d) {
+        if (Double.isInfinite(d)) {
+            return;
+        }
+
         // So far, we have not met n different values
         if ((singulars != null) && (singulars.size() < numberOfBins || singulars.containsKey(d))) {
             singularAdd(d);

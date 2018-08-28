@@ -40,6 +40,8 @@ public class PreparationDTO implements SharedResource {
 
     private String headId;
 
+    private String folderId;
+
     public String getDataSetName() {
         return dataSetName;
     }
@@ -163,4 +165,11 @@ public class PreparationDTO implements SharedResource {
         this.headId = headId;
     }
 
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
+    }
 }

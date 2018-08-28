@@ -34,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.service.command.common.ChainedCommand;
-import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -59,7 +58,7 @@ public class DiffMetadata extends ChainedCommand<InputStream, List<Action>> {
      */
     public DiffMetadata(String dataSetId, String preparationId, List<Action> actionsToAdd,
             PreparationGetActions input) {
-        super(GenericCommand.PREPARATION_GROUP, input);
+        super(TRANSFORM_GROUP, input);
         execute(() -> onExecute(dataSetId, preparationId, actionsToAdd));
         on(HttpStatus.OK).then(pipeStream());
     }

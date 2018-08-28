@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -206,6 +207,18 @@ public class APIClientTest {
         applyAction(preparationId, action);
     }
 
+    public void applyAction(final String preparationId, final ActionParameters action) throws IOException {
+        PreparationStep step = new PreparationStep();
+        step.setActions(Collections.singletonList(action));
+        given()
+                .contentType(JSON) //
+                .body(mapper.writeValueAsString(step)) //
+                .when() //
+                .post("/api/preparations/{id}/actions", preparationId) //
+                .then() //
+                .statusCode(is(200));
+    }
+
     /**
      * Add a step to a preparation.
      *
@@ -308,10 +321,11 @@ public class APIClientTest {
         RequestSpecification initialRequest = given().when();
         if (filter.isEmpty()) {
             transformedResponse =
-                    initialRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}",
+                    initialRequest //
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}",
                             preparationId, version, stepId);
         } else {
-            transformedResponse = initialRequest.get(
+            transformedResponse = initialRequest //.get(
                     "/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}", preparationId,
                     version, stepId, filter);
         }
@@ -330,12 +344,16 @@ public class APIClientTest {
                     .ifError();
             if (filter.isEmpty()) {
                 transformedResponse =
-                        contentRequest.get("/api/preparations/{prepId}/content?version={version}&from={stepId}",
-                                preparationId, version, stepId);
+                        contentRequest //
+                        .get("/api/preparations/{prepId}/content?version={version}&from={stepId}",
+                                preparationId, version,
+                                stepId);
             } else {
-                transformedResponse = contentRequest.get(
+                transformedResponse = contentRequest //
+                        .get(
                         "/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
-                        preparationId, version, stepId, filter);
+                        preparationId,
+                                version, stepId, filter);
             }
         }
 
@@ -388,8 +406,9 @@ public class APIClientTest {
     }
 
     public Response getFailedPreparationWithFilter(String preparationId, String malformedFilter) throws IOException {
-        Response transformedResponse =
-                given().when().get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
+        Response transformedResponse = given() //
+                .when() //
+                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
                         preparationId, "head", "HEAD", malformedFilter);
 
         if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
@@ -401,10 +420,10 @@ public class APIClientTest {
 
             return given()
                     .expect() //
-                    .statusCode(200)
+                    .statusCode(200) //
                     .log()
-                    .ifError()
-                    .when()
+                    .ifError() //
+                    .when() //
                     .get(asyncMethodStatusUrl);
         }
         return transformedResponse;
@@ -506,6 +525,56 @@ public class APIClientTest {
                     "Could not get preparation metadata. Response was: " + transformedResponse.print());
         }
         return metadata;
+    }
+
+    public static class PreparationStep {
+
+        private List<ActionParameters> actions = new ArrayList<>(1);
+
+        public List<ActionParameters> getActions() {
+            return actions;
+        }
+
+        public void setActions(List<ActionParameters> actions) {
+            this.actions = actions;
+        }
+    }
+
+    public static class ActionParameters {
+
+        private String action;
+
+        private Map<String, String> parameters;
+
+        public static ActionParameters createAction(String name) {
+            ActionParameters actionParameters = new ActionParameters();
+            actionParameters.setAction(name);
+            return actionParameters;
+        }
+
+        public ActionParameters withParameter(String key, String value) {
+            if (parameters == null) {
+                parameters = new HashMap<>();
+            }
+            parameters.put(key, value);
+            return this;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public Map<String, String> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+        }
     }
 
 }

@@ -63,6 +63,7 @@ import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -802,7 +803,7 @@ public class DataSetService extends BaseDataSetService {
         if (!dataSetMetadata.isDraft()) {
             // Moved to get data set content operation
             HttpResponseContext.status(HttpStatus.MOVED_PERMANENTLY);
-            HttpResponseContext.header("Location", "/datasets/" + dataSetId + "/content");
+            HttpResponseContext.header(HttpHeaders.LOCATION, "/datasets/" + dataSetId + "/content");
             return DataSet.empty(); // dataset not anymore a draft so preview doesn't make sense.
         }
         if (StringUtils.isNotEmpty(sheetName)) {

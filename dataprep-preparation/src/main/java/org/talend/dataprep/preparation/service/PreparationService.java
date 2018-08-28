@@ -252,7 +252,7 @@ public class PreparationService {
         if (searchCriterion.getFolderId() != null) {
             if (preparationRepository.exist(PersistentPreparation.class, isEmpty("folderId"))) {
                 // filter on folder id (DEPRECATED VERSION - only applies if migration isn't completed yet)
-                try (Stream<Folder> folders = folderRepository.entries(searchCriterion.getFolderId(), PREPARATION)) {
+                try (Stream<FolderEntry> folders = folderRepository.entries(searchCriterion.getFolderId(), PREPARATION)) {
                     final Set<String> entries = folders.map(FolderEntry::getContentId) //
                             .collect(Collectors.toSet());
                     deprecatedFolderIdFilter = p -> entries.contains(p.id());

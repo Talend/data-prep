@@ -12,9 +12,16 @@
 
 package org.talend.dataprep.api.service;
 
-import com.netflix.hystrix.HystrixCommand;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+
+import java.io.InputStream;
+import java.util.stream.Stream;
+
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,20 +30,27 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
+import org.talend.dataprep.api.service.command.AsyncGenericCommand;
+import org.talend.dataprep.api.service.command.preparation.PreparationGetAsyncContent;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
-import org.talend.dataprep.api.service.command.transformation.*;
+import org.talend.dataprep.api.service.command.transformation.ColumnActions;
+import org.talend.dataprep.api.service.command.transformation.DatasetActions;
+import org.talend.dataprep.api.service.command.transformation.DictionaryCommand;
+import org.talend.dataprep.api.service.command.transformation.LineActions;
+import org.talend.dataprep.api.service.command.transformation.SuggestActionParams;
+import org.talend.dataprep.api.service.command.transformation.SuggestAsyncActionParams;
+import org.talend.dataprep.api.service.command.transformation.SuggestColumnActions;
+import org.talend.dataprep.async.AsyncOperation;
+import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
+import org.talend.dataprep.async.conditional.PreparationExportCondition;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.metrics.Timed;
 
-import javax.validation.Valid;
-import java.io.InputStream;
-import java.util.stream.Stream;
+import com.netflix.hystrix.HystrixCommand;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.talend.dataprep.command.CommandHelper.toStream;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class TransformAPI extends APIService {
@@ -103,19 +117,25 @@ public class TransformAPI extends APIService {
     public ResponseEntity<StreamingResponseBody> suggestActionParams(
             @ApiParam(value = "Transformation name.") @PathVariable("action") final String action,
             @ApiParam(value = "Suggested dynamic transformation input (preparation id or dataset id") @Valid final DynamicParamsInput dynamicParamsInput) {
+
         // get preparation/dataset content
-        HystrixCommand<InputStream> inputData;
         final String preparationId = dynamicParamsInput.getPreparationId();
         if (isNotBlank(preparationId)) {
-            inputData = getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId());
-        } else {
-            inputData = datasetClient.getDataSetGetCommand(dynamicParamsInput.getDatasetId(), false, false);
-        }
+            AsyncGenericCommand<InputStream> inputData = getCommand(PreparationGetAsyncContent.class, preparationId,
+                    dynamicParamsInput.getStepId());
+            // get params, passing content in the body
+            final GenericCommand<InputStream> getActionDynamicParams = getCommand(SuggestAsyncActionParams.class, inputData,
+                    action, dynamicParamsInput.getColumnId());
+            return CommandHelper.toStreaming(getActionDynamicParams);
 
-        // get params, passing content in the body
-        final GenericCommand<InputStream> getActionDynamicParams = getCommand(SuggestActionParams.class, inputData, action,
-                dynamicParamsInput.getColumnId());
-        return CommandHelper.toStreaming(getActionDynamicParams);
+        } else {
+            HystrixCommand<InputStream> inputData = datasetClient.getDataSetGetCommand(dynamicParamsInput.getDatasetId(), false,
+                    false);
+            // get params, passing content in the body
+            final GenericCommand<InputStream> getActionDynamicParams = getCommand(SuggestActionParams.class, inputData, action,
+                    dynamicParamsInput.getColumnId());
+            return CommandHelper.toStreaming(getActionDynamicParams);
+        }
     }
 
     /**

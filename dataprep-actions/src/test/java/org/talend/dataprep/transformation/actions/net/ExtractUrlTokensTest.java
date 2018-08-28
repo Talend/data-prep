@@ -74,7 +74,7 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -117,7 +117,8 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
-        values.put("0001", "http://stef:pwd@10.42.10.99:80/home/datasets?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
+        values.put("0001",
+                "http://stef:pwd@10.42.10.99:80/home/datasets?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
         values.put("0002", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
@@ -211,7 +212,8 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
         // given
         final Map<String, String> values = new HashMap<>();
         values.put("0000", "lorem bacon");
-        values.put("0001", "http://stef:pwd@10.42.10.99:80/home/datasets/中崎𠀀𠀁𠀂𠀃𠀄?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
+        values.put("0001",
+                "http://stef:pwd@10.42.10.99:80/home/datasets/中崎𠀀𠀁𠀂𠀃𠀄?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
         values.put("0002", "01/01/2015");
         final DataSetRow row = new DataSetRow(values);
 
@@ -341,7 +343,8 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
 
     @Test
     public void testApplyChineseHostNoPasswordExtraction() {
-        TokenExtractionResult result = testApply("https://user@例子.卷筒纸:8580/home/datasets?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
+        TokenExtractionResult result =
+                testApply("https://user@例子.卷筒纸:8580/home/datasets?datasetid=c522a037-7bd8-42c1-a8ee-a0628c66d8c4#frag");
         assertEquals("user", result.userToken);
         assertEquals("", result.passwordToken);
     }
@@ -395,7 +398,8 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     @Ignore
     public void testApplyEncodedCharactersTokenExtraction() throws Exception {
         // encoded version of: https://卷筒:纸@引き割り.引き割り:8580
-        TokenExtractionResult result = testApply("https://%E5%8D%B7%E7%AD%92:%E7%BA%B8@%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A.%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A:8580");
+        TokenExtractionResult result = testApply(
+                "https://%E5%8D%B7%E7%AD%92:%E7%BA%B8@%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A.%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A:8580");
 
         assertEquals("%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A.%E5%BC%95%E3%81%8D%E5%89%B2%E3%82%8A", result.hostToken);
         assertEquals("%E5%8D%B7%E7%AD%92", result.userToken);
@@ -451,13 +455,21 @@ public class ExtractUrlTokensTest extends AbstractMetadataBaseTest<ExtractUrlTok
     }
 
     private static class TokenExtractionResult {
+
         private String protocolToken;
+
         private String hostToken;
+
         private String portToken;
+
         private String pathToken;
+
         private String queryToken;
+
         private String fragmentToken;
+
         private String userToken;
+
         private String passwordToken;
     }
 

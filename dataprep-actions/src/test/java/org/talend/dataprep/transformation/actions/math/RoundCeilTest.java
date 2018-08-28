@@ -48,7 +48,8 @@ public class RoundCeilTest extends AbstractRoundTest<RoundCeil> {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(RoundCeilTest.class.getResourceAsStream("ceilAction.json"));
+        parameters =
+                ActionMetadataTestUtils.parseParameters(RoundCeilTest.class.getResourceAsStream("ceilAction.json"));
     }
 
     @Test
@@ -196,6 +197,6 @@ public class RoundCeilTest extends AbstractRoundTest<RoundCeil> {
 
     @Override
     protected List<String> getExpectedParametersName() {
-        return Arrays.asList("create_new_column","column_id", "row_id", "scope", "filter", "precision");
+        return Arrays.asList("create_new_column", "column_id", "row_id", "scope", "filter", "precision");
     }
 }

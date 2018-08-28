@@ -328,7 +328,8 @@ public class SplitTest extends AbstractMetadataBaseTest<Split> {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());

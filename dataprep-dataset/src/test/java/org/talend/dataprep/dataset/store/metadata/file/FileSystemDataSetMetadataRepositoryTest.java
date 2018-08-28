@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset.store.metadata.file;
 
@@ -133,7 +133,8 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
         repository.save(metadata);
 
         // when
-        DataSetMetadata update = mapper.readerFor(DataSetMetadata.class)
+        DataSetMetadata update = mapper
+                .readerFor(DataSetMetadata.class)
                 .readValue(this.getClass().getResourceAsStream("dataset_2.json"));
         update = metadataBuilder.metadata().copy(update).id(id).build();
 
@@ -260,8 +261,8 @@ public class FileSystemDataSetMetadataRepositoryTest extends DataSetBaseTest {
      * @throws IOException if an error occurs reading the json source file.
      */
     public DataSetMetadata getMetadata(String id) throws IOException {
-        DataSetMetadata original = mapper.readerFor(DataSetMetadata.class)
-                .readValue(this.getClass().getResourceAsStream("dataset.json"));
+        DataSetMetadata original =
+                mapper.readerFor(DataSetMetadata.class).readValue(this.getClass().getResourceAsStream("dataset.json"));
         return metadataBuilder.metadata().copy(original).id(id).build();
     }
 

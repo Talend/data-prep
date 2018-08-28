@@ -41,7 +41,8 @@ public class HtmlDetectorTest extends AbstractSchemaTestUtils {
 
         datasetMetadata.setEncoding("UTF-16");
 
-        Charset charset = new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
+        Charset charset =
+                new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
         Format actual = htmlDetector.detect(this.getClass().getResourceAsStream(fileName));
 
         assertTrue(actual.getFormatFamily() instanceof HtmlFormatFamily);

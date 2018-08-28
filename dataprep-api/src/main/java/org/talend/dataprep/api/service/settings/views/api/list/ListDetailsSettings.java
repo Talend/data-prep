@@ -30,7 +30,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class ListDetailsSettings {
 
     /**
-     * The columns to display. Each column configuration should have a key (the item property key) and a label (the property
+     * The columns to display. Each column configuration should have a key (the item property key) and a label (the
+     * property
      * display label).
      */
     private List<Map> columns;
@@ -128,10 +129,10 @@ public class ListDetailsSettings {
             final Map keyValue = new HashMap<>(2);
             keyValue.put(KEY, key);
             keyValue.put(LABEL, label);
-            if(hideHeader != null) {
+            if (hideHeader != null) {
                 keyValue.put(HIDE_HEADER, hideHeader);
             }
-            if(type != null) {
+            if (type != null) {
                 keyValue.put(TYPE, type);
             }
             this.columns.add(keyValue);

@@ -35,6 +35,7 @@ public class ReleasableOutputStreamTest {
     public void setUp() throws Exception {
         releasableOutputStream = new ReleasableOutputStream(new NullOutputStream(), () -> wasCalled.set(true));
         failedReleasableOutputStream = new ReleasableOutputStream(new OutputStream() {
+
             @Override
             public void write(int b) throws IOException {
                 throw new IOException("Oops");
@@ -78,7 +79,7 @@ public class ReleasableOutputStreamTest {
     @Test
     public void write1() throws Exception {
         // When
-        releasableOutputStream.write(new byte[] {'a', 'b'});
+        releasableOutputStream.write(new byte[] { 'a', 'b' });
 
         // Then
         assertFalse(wasCalled.get());
@@ -88,7 +89,7 @@ public class ReleasableOutputStreamTest {
     public void failedWrite1() throws Exception {
         // When
         try {
-            failedReleasableOutputStream.write(new byte[] {'a', 'b'});
+            failedReleasableOutputStream.write(new byte[] { 'a', 'b' });
         } catch (IOException e) {
             // Ignored
         }
@@ -100,7 +101,7 @@ public class ReleasableOutputStreamTest {
     @Test
     public void write2() throws Exception {
         // When
-        releasableOutputStream.write(new byte[] {'a', 'b'}, 0, 2);
+        releasableOutputStream.write(new byte[] { 'a', 'b' }, 0, 2);
 
         // Then
         assertFalse(wasCalled.get());
@@ -110,7 +111,7 @@ public class ReleasableOutputStreamTest {
     public void failedWrite2() throws Exception {
         // When
         try {
-            failedReleasableOutputStream.write(new byte[] {'a', 'b'}, 0, 2);
+            failedReleasableOutputStream.write(new byte[] { 'a', 'b' }, 0, 2);
         } catch (IOException e) {
             // Ignored
         }

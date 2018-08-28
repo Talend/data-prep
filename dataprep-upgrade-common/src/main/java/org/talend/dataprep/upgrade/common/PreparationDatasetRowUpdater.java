@@ -66,7 +66,8 @@ public class PreparationDatasetRowUpdater {
         if (dataSetMetadata != null) {
             preparation.setRowMetadata(dataSetMetadata.getRowMetadata());
         } else {
-            LOGGER.debug("The metadata of dataset {} is null and will not be used to set the metadata of preparation {}.",
+            LOGGER.debug(
+                    "The metadata of dataset {} is null and will not be used to set the metadata of preparation {}.",
                     preparation.getDataSetId(), preparation.getId());
         }
         return preparation;

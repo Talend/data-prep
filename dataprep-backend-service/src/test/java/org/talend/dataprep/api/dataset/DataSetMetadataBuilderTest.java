@@ -137,7 +137,8 @@ public class DataSetMetadataBuilderTest extends ServiceBaseTest {
 
     @Test
     public void testMediaType() throws Exception {
-        assertEquals("mediaType", builder.metadata().id("1234").mediaType("mediaType").build().getContent().getMediaType());
+        assertEquals("mediaType",
+                builder.metadata().id("1234").mediaType("mediaType").build().getContent().getMediaType());
     }
 
     @Test
@@ -191,8 +192,11 @@ public class DataSetMetadataBuilderTest extends ServiceBaseTest {
 
     @Test
     public void testSchemaParserResult() throws Exception {
-        final DataSetMetadata metadata = builder.metadata().id("1234")
-                .schemaParserResult(Schema.Builder.parserResult().sheetName("sheetName").build()).build();
+        final DataSetMetadata metadata = builder
+                .metadata()
+                .id("1234")
+                .schemaParserResult(Schema.Builder.parserResult().sheetName("sheetName").build())
+                .build();
         assertEquals("sheetName", metadata.getSchemaParserResult().getSheetName());
     }
 
@@ -259,7 +263,8 @@ public class DataSetMetadataBuilderTest extends ServiceBaseTest {
     }
 
     private void assertContentRelatedMetadata(final DataSetMetadata original, final DataSetMetadata copy) {
-        assertThat(copy.getGovernance().getCertificationStep(), equalTo(original.getGovernance().getCertificationStep()));
+        assertThat(copy.getGovernance().getCertificationStep(),
+                equalTo(original.getGovernance().getCertificationStep()));
         assertThat(copy.getSheetName(), equalTo(original.getSheetName()));
         assertThat(copy.isDraft(), equalTo(original.isDraft()));
         assertThat(copy.getContent().getNbRecords(), equalTo(original.getContent().getNbRecords()));
@@ -276,10 +281,10 @@ public class DataSetMetadataBuilderTest extends ServiceBaseTest {
         assertThat(copy.getLifecycle().isInProgress(), equalTo(original.getLifecycle().isInProgress()));
         assertThat(copy.getLifecycle().isImporting(), equalTo(original.getLifecycle().isImporting()));
         assertThat(copy.getSchemaParserResult(), equalTo(original.getSchemaParserResult()));
-        final List<String> originalColumnsIds = original.getRowMetadata().getColumns().stream().map(ColumnMetadata::getId)
-                .collect(toList());
-        final List<String> actualColumnsIds = copy.getRowMetadata().getColumns().stream().map(ColumnMetadata::getId)
-                .collect(toList());
+        final List<String> originalColumnsIds =
+                original.getRowMetadata().getColumns().stream().map(ColumnMetadata::getId).collect(toList());
+        final List<String> actualColumnsIds =
+                copy.getRowMetadata().getColumns().stream().map(ColumnMetadata::getId).collect(toList());
         assertThat(actualColumnsIds, equalTo(originalColumnsIds));
     }
 }

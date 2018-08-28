@@ -192,7 +192,8 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
         // then
         DataSetRow rowExpected = getRow("5", "3", "Done !", "8");
         assertEquals(rowExpected, row);
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000 + 0001").type(Type.DOUBLE).build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000 + 0001").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -261,7 +262,8 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source + selected").type(Type.DOUBLE).build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("source + selected").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -283,7 +285,8 @@ public class NumericOperationsTest extends AbstractMetadataBaseTest<NumericOpera
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source + 2").type(Type.DOUBLE).build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("source + 2").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

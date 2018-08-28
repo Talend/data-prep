@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {OSFolderUtil.class, OSDataPrepAPIHelper.class})
+@ContextConfiguration(classes = { OSFolderUtil.class, OSDataPrepAPIHelper.class })
 public class OSFolderUtilTest {
 
     private Folder emptyPathF = new Folder().setPath("");

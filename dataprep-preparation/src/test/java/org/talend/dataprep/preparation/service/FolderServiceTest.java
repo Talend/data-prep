@@ -83,7 +83,10 @@ public class FolderServiceTest extends BasePreparationTest {
     public void shouldNotFindFolder() throws Exception {
         // when
         final Response response = given() //
-                .expect().statusCode(404).log().ifError()//
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders?parentId={parentId}", "unknownId");
 
@@ -100,7 +103,10 @@ public class FolderServiceTest extends BasePreparationTest {
         // when
         final Response response = given() //
                 .queryParam("name", "foo") //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/search");
 
@@ -125,7 +131,10 @@ public class FolderServiceTest extends BasePreparationTest {
         // when
         final Response response = given() //
                 .queryParam("name", "foo") //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/search");
 
@@ -148,7 +157,10 @@ public class FolderServiceTest extends BasePreparationTest {
 
         // when
         given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .delete("/folders/" + fooFolder.getId());
 
@@ -174,7 +186,10 @@ public class FolderServiceTest extends BasePreparationTest {
     public void folderNotFoundShouldThrow404() {
         // when
         given() //
-                .expect().statusCode(404).log().ifError()//
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/mlkjmlkjmlkj");
     }
@@ -191,7 +206,11 @@ public class FolderServiceTest extends BasePreparationTest {
 
         // when
         given() //
-                .body("faa").expect().statusCode(200).log().ifError()//
+                .body("faa")
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .put("/folders/" + fooFolder.getId() + "/name");
 
@@ -235,7 +254,10 @@ public class FolderServiceTest extends BasePreparationTest {
 
         // when
         final Response response = given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/tree");
 
@@ -250,7 +272,8 @@ public class FolderServiceTest extends BasePreparationTest {
         assertTree(secondFolderNode, "/second", new String[] { "/second/second child" });
 
         final FolderTreeNode secondChildFolderNode = getChild(secondFolderNode, "second child");
-        assertTree(secondChildFolderNode, "/second/second child", new String[] { "/second/second child/second child child" });
+        assertTree(secondChildFolderNode, "/second/second child",
+                new String[] { "/second/second child/second child child" });
     }
 
     @Test
@@ -284,14 +307,18 @@ public class FolderServiceTest extends BasePreparationTest {
 
         // when
         final Response response = given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/{id}", firstChildTwo.getId());
 
         // then
         final FolderInfo infos = mapper.readValue(response.asString(), new TypeReference<FolderInfo>() {
         });
-        final List<Folder> hierarchy = StreamSupport.stream(infos.getHierarchy().spliterator(), false).collect(toList());
+        final List<Folder> hierarchy =
+                StreamSupport.stream(infos.getHierarchy().spliterator(), false).collect(toList());
         assertThat(infos.getFolder(), equalTo(firstChildTwo));
         assertThat(hierarchy, hasSize(2));
         assertThat(hierarchy.get(0).getId(), equalTo(home.getId()));
@@ -314,11 +341,15 @@ public class FolderServiceTest extends BasePreparationTest {
         assertSearch("tot", nonStrict, new String[] { "/foo/toto", "/foo/bar/tototo" });
     }
 
-    private void assertSearch(final String name, final boolean strict, final String[] expectedResultPaths) throws IOException {
+    private void assertSearch(final String name, final boolean strict, final String[] expectedResultPaths)
+            throws IOException {
         final Response response = given() //
                 .queryParam("name", name) //
                 .queryParam("strict", strict) //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/folders/search");
 
@@ -334,13 +365,20 @@ public class FolderServiceTest extends BasePreparationTest {
     private void assertTree(final FolderTreeNode node, final String nodePath, final String[] expectedChildrenPaths) {
         assertThat(node.getFolder().getPath(), is(nodePath));
         assertThat(node.getChildren(), hasSize(expectedChildrenPaths.length));
-        final List<String> actualChildrenPaths = node.getChildren().stream()
-                .map((folderTreeNode -> folderTreeNode.getFolder().getPath())).collect(toList());
+        final List<String> actualChildrenPaths = node
+                .getChildren()
+                .stream()
+                .map((folderTreeNode -> folderTreeNode.getFolder().getPath()))
+                .collect(toList());
         assertThat(actualChildrenPaths, containsInAnyOrder(expectedChildrenPaths));
     }
 
     private FolderTreeNode getChild(final FolderTreeNode tree, final String childName) {
-        return tree.getChildren().stream().filter((child) -> child.getFolder().getName().equals(childName)).findFirst()
+        return tree
+                .getChildren()
+                .stream()
+                .filter((child) -> child.getFolder().getName().equals(childName))
+                .findFirst()
                 .orElse(null);
     }
 }

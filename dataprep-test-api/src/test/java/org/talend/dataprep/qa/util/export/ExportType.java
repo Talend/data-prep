@@ -28,7 +28,8 @@ public enum ExportType {
      */
     @Nullable
     public static ExportType getExportType(@NotNull String pName) {
-        return Arrays.stream(ExportType.values()) //
+        return Arrays
+                .stream(ExportType.values()) //
                 .filter(e -> e.name.equalsIgnoreCase(pName)) //
                 .findFirst() //
                 .orElse(null);

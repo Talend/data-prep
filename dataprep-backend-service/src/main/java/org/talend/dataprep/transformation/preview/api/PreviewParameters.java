@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.preview.api;
 
@@ -55,7 +55,8 @@ public class PreviewParameters {
      * @param tdpIds List of row ids to perform the preview on.
      * @param sourceType The source type.
      */
-    public PreviewParameters(String baseActions, String newActions, String datasetId, String preparationId, String tdpIds, ExportParameters.SourceType sourceType) {
+    public PreviewParameters(String baseActions, String newActions, String datasetId, String preparationId,
+            String tdpIds, ExportParameters.SourceType sourceType) {
         this();
         this.baseActions = baseActions;
         this.newActions = newActions;
@@ -112,7 +113,7 @@ public class PreviewParameters {
      */
     @Override
     public String toString() {
-        return "PreviewParameters{" + "baseActions='" + baseActions + '\'' + ", newActions='" + newActions + '\'' + ", tdpIds='"
-                + tdpIds + '\'' + ", dataSetId='" + dataSetId + '\'' + '}';
+        return "PreviewParameters{" + "baseActions='" + baseActions + '\'' + ", newActions='" + newActions + '\''
+                + ", tdpIds='" + tdpIds + '\'' + ", dataSetId='" + dataSetId + '\'' + '}';
     }
 }

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -264,7 +264,8 @@ public class XlsWriterTest extends BaseFormatTest {
         Path path = Files.createTempFile("datarep-foo", "xlsx");
         Files.deleteIfExists(path);
         try (final OutputStream outputStream = Files.newOutputStream(path)) {
-            final Configuration configuration = Configuration.builder() //
+            final Configuration configuration = Configuration
+                    .builder() //
                     .format(XlsFormat.XLSX) //
                     .output(outputStream) //
                     .actions("") //
@@ -292,8 +293,8 @@ public class XlsWriterTest extends BaseFormatTest {
     /**
      * utility function
      */
-    public void assertRowValues(Row row, int idRow, String firstname, String lastname, int age, String date, Boolean alive,
-                                String city, String phone) {
+    public void assertRowValues(Row row, int idRow, String firstname, String lastname, int age, String date,
+            Boolean alive, String city, String phone) {
         assertThat(row.getCell(0).getNumericCellValue()).isEqualTo(idRow);
         assertThat(row.getCell(1).getStringCellValue()).isEqualTo(firstname);
         assertThat(row.getCell(2).getStringCellValue()).isEqualTo(lastname);

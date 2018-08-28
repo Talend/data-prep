@@ -80,12 +80,14 @@ public class SwapTest extends BaseDateTest<Swap> {
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get(0).values()) //
+        Assertions
+                .assertThat(rows.get(0).values()) //
                 .contains(MapEntry.entry("0000", "beer"), //
                         MapEntry.entry("0001", "5"), //
                         MapEntry.entry("0002", "yup"));
 
-        Assertions.assertThat(rows.get(1).values()) //
+        Assertions
+                .assertThat(rows.get(1).values()) //
                 .contains(MapEntry.entry("0000", "wine"), //
                         MapEntry.entry("0001", "10"), //
                         MapEntry.entry("0002", "cheese"));
@@ -107,12 +109,14 @@ public class SwapTest extends BaseDateTest<Swap> {
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get(0).values()) //
+        Assertions
+                .assertThat(rows.get(0).values()) //
                 .contains(MapEntry.entry("0000", "beer"), //
                         MapEntry.entry("0001", "5"), //
                         MapEntry.entry("0002", "yup"));
 
-        Assertions.assertThat(rows.get(1).values()) //
+        Assertions
+                .assertThat(rows.get(1).values()) //
                 .contains(MapEntry.entry("0000", ""), //
                         MapEntry.entry("0001", "10"), //
                         MapEntry.entry("0002", "cheese"));
@@ -129,12 +133,14 @@ public class SwapTest extends BaseDateTest<Swap> {
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get(0).values()) //
+        Assertions
+                .assertThat(rows.get(0).values()) //
                 .contains(MapEntry.entry("0000", "beer"), //
                         MapEntry.entry("0001", "5"), //
                         MapEntry.entry("0002", "yup"));
 
-        Assertions.assertThat(rows.get(1).values()) //
+        Assertions
+                .assertThat(rows.get(1).values()) //
                 .contains(MapEntry.entry("0000", " "), //
                         MapEntry.entry("0001", "10"), //
                         MapEntry.entry("0002", "cheese"));
@@ -151,12 +157,14 @@ public class SwapTest extends BaseDateTest<Swap> {
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get(0).values()) //
+        Assertions
+                .assertThat(rows.get(0).values()) //
                 .contains(MapEntry.entry("0000", "5"), //
                         MapEntry.entry("0001", "beer"), //
                         MapEntry.entry("0002", "yup"));
 
-        Assertions.assertThat(rows.get(1).values()) //
+        Assertions
+                .assertThat(rows.get(1).values()) //
                 .contains(MapEntry.entry("0000", "10"), //
                         MapEntry.entry("0001", "wine"), //
                         MapEntry.entry("0002", "cheese"));

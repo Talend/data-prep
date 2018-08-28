@@ -51,7 +51,8 @@ public class CreateDataSet extends GenericCommand<String> {
         on(HttpStatus.OK).then(asString());
     }
 
-    private HttpRequestBase onExecute(String name, String tag, String contentType, long size, InputStream dataSetContent) {
+    private HttpRequestBase onExecute(String name, String tag, String contentType, long size,
+            InputStream dataSetContent) {
         try {
             URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets");
             uriBuilder.addParameter("name", name);

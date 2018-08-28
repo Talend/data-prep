@@ -86,7 +86,8 @@ public class CloneLink implements Link, RuntimeLink {
             return;
         }
 
-        multiClonedMetadata = Arrays.stream(nodes)
+        multiClonedMetadata = Arrays
+                .stream(nodes)
                 .map((node) -> Arrays.stream(multiMetadata).map(RowMetadata::clone).toArray(RowMetadata[]::new))
                 .toArray(RowMetadata[][]::new);
     }

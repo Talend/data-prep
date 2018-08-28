@@ -24,6 +24,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
 public class HelpSettings {
+
     /**
      * The help property id
      */
@@ -52,7 +53,6 @@ public class HelpSettings {
     public void setValue(String value) {
         this.value = value;
     }
-
 
     /**
      * Builder Pattern for immutable purpose

@@ -131,7 +131,8 @@ public class ConcatTest extends AbstractMetadataBaseTest<Concat> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("source_selected").type(Type.STRING).build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("source_selected").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }
@@ -153,7 +154,8 @@ public class ConcatTest extends AbstractMetadataBaseTest<Concat> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("<source>").type(Type.STRING).build();
+        final ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("<source>").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

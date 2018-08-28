@@ -48,7 +48,8 @@ public class ActionParserTest {
 
     protected final ActionFactory factory = new ActionFactory();
 
-    protected final ActionRegistry actionRegistry = new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
+    protected final ActionRegistry actionRegistry =
+            new ClassPathActionRegistry("org.talend.dataprep.transformation.actions");
 
     private final ActionParser actionParser = new ActionParser(factory, actionRegistry, mapper);
 
@@ -64,8 +65,7 @@ public class ActionParserTest {
 
     @Test(expected = TalendRuntimeException.class)
     public void should_not_accept_unknown_actions() throws IOException {
-        String json = IOUtils.toString(ActionParserTest.class.getResourceAsStream("unknown_actions.json"),
-                UTF_8);
+        String json = IOUtils.toString(ActionParserTest.class.getResourceAsStream("unknown_actions.json"), UTF_8);
         actionParser.parse(json);
     }
 

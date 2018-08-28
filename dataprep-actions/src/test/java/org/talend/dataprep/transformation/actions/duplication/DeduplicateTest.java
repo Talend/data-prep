@@ -42,7 +42,7 @@ public class DeduplicateTest extends AbstractMetadataBaseTest<Deduplicate> {
 
     private Map<String, String> parameters;
 
-    public DeduplicateTest(){
+    public DeduplicateTest() {
         super(new Deduplicate());
     }
 
@@ -53,7 +53,7 @@ public class DeduplicateTest extends AbstractMetadataBaseTest<Deduplicate> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 
@@ -239,7 +239,8 @@ public class DeduplicateTest extends AbstractMetadataBaseTest<Deduplicate> {
         initParameters();
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5), actionRegistry,
+                factory.create(action, parameters));
 
         // then
         assertThat(row1.isDeleted(), is(false));

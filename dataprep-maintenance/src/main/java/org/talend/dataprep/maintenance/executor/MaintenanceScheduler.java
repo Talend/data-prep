@@ -48,7 +48,8 @@ public class MaintenanceScheduler {
         runMaintenanceTask(NIGHT);
     }
 
-    @Scheduled(fixedDelayString = "${maintenance.scheduled.fixed-delay}", initialDelayString = "${maintenance.scheduled.initial-delay}")
+    @Scheduled(fixedDelayString = "${maintenance.scheduled.fixed-delay}",
+            initialDelayString = "${maintenance.scheduled.initial-delay}")
     public void launchRepeatlyTask() {
         runMaintenanceTask(REPEAT);
     }
@@ -57,12 +58,14 @@ public class MaintenanceScheduler {
         forAll.execute(() -> true, () -> {
             final String tenantId = security.getTenantId();
             LOGGER.info("Starting scheduled task with frequency {} for tenant {}", frequency, tenantId);
-            maintenanceTasks.stream()
+            maintenanceTasks
+                    .stream()
                     .filter(task -> task.getFrequency() == frequency) //
                     .forEach(task -> {
                         String taskKey = task.getClass() + "_" + tenantId;
                         if (isAlreadyRunning(taskKey)) {
-                            LOGGER.warn("Scheduled task {} for tenant {} is already running", task.getClass(), tenantId);
+                            LOGGER.warn("Scheduled task {} for tenant {} is already running", task.getClass(),
+                                    tenantId);
                         } else {
                             executeTask(tenantId, task, taskKey);
                         }
@@ -74,10 +77,12 @@ public class MaintenanceScheduler {
     private void executeTask(String tenantId, MaintenanceTaskProcess task, String taskKey) {
         Long startedTime = System.currentTimeMillis();
         try {
-            LOGGER.debug("Scheduled task {} process for tenant {} started @ {}.", task.getClass(), tenantId, startedTime);
+            LOGGER.debug("Scheduled task {} process for tenant {} started @ {}.", task.getClass(), tenantId,
+                    startedTime);
             runningTask.put(taskKey, startedTime);
             task.execute();
-            LOGGER.debug("Scheduled task {} process for tenant {} ended @ {}.", task.getClass(), tenantId, System.currentTimeMillis());
+            LOGGER.debug("Scheduled task {} process for tenant {} ended @ {}.", task.getClass(), tenantId,
+                    System.currentTimeMillis());
         } finally {
             runningTask.remove(taskKey);
         }

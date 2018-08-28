@@ -104,7 +104,8 @@ public class CompositeFormatDetectorTest extends AbstractSchemaTestUtils {
 
         datasetMetadata.setEncoding("UTF-16");
 
-        Charset charset = new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
+        Charset charset =
+                new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
         Format actual = formatDetector.detect(this.getClass().getResourceAsStream(fileName));
 
         assertTrue(actual.getFormatFamily() instanceof HtmlFormatFamily);

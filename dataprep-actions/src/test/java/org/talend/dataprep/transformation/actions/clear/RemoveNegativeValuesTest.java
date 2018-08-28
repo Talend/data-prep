@@ -116,7 +116,7 @@ public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNeg
 
         // then
         assertEquals("", row1.get("0001"));
-        assertEquals("", row2.get("0001") );
+        assertEquals("", row2.get("0001"));
         assertEquals("", row3.get("0001"));
     }
 
@@ -132,7 +132,7 @@ public class RemoveNegativeValuesTest extends AbstractMetadataBaseTest<RemoveNeg
 
         // then
         assertEquals("", row1.get("0001"));
-        assertEquals("PORTUGAL", row2.get("0001") );
+        assertEquals("PORTUGAL", row2.get("0001"));
         assertEquals("", row3.get("0001"));
     }
 

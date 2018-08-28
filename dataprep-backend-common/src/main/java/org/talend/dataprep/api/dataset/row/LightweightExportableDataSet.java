@@ -24,9 +24,7 @@ public class LightweightExportableDataSet implements Serializable {
 
     private RowMetadata metadata;
 
-
     private Map<String, Map<String, String>> records;
-
 
     public LightweightExportableDataSet() {
     }

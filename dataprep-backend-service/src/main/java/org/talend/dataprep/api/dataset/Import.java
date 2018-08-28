@@ -47,7 +47,8 @@ public class Import {
      * @param dynamic if the import parameters are dynamic and need to sent from the backend.
      * @param defaultImport if this import is the default one.
      */
-    public Import(String locationType, String contentType, List<Parameter> parameters, boolean dynamic, boolean defaultImport) {
+    public Import(String locationType, String contentType, List<Parameter> parameters, boolean dynamic,
+            boolean defaultImport) {
         this.locationType = locationType;
         this.contentType = contentType;
         this.parameters = parameters;

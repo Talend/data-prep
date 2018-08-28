@@ -45,10 +45,12 @@ public class AddLanguageToActionExtractDatePartTest extends Base_2_4_0_PE_Test {
         Optional<Action> extractDatePart = preparationRepository //
                 .list(PreparationActions.class) //
                 .flatMap(a -> a.getActions().stream()) //
-                .filter(a -> ExtractDateTokens.ACTION_NAME.equals(a.getName())).findAny();
+                .filter(a -> ExtractDateTokens.ACTION_NAME.equals(a.getName()))
+                .findAny();
 
         assertTrue(extractDatePart.isPresent());
-        assertEquals(Locale.getDefault().getLanguage(), extractDatePart.get().getParameters().get(ExtractDateTokens.LANGUAGE));
+        assertEquals(Locale.getDefault().getLanguage(),
+                extractDatePart.get().getParameters().get(ExtractDateTokens.LANGUAGE));
 
     }
 

@@ -74,25 +74,29 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
         parameters.add(selectParameter(locale) //
                 .name(MODE_PARAMETER) //
-                .item(CONSTANT_MODE, CONSTANT_MODE,//
-                        parameter(locale).setName(VALUE_PARAMETER)
+                .item(CONSTANT_MODE, CONSTANT_MODE, //
+                        parameter(locale)
+                                .setName(VALUE_PARAMETER)
                                 .setType(STRING)
                                 .setDefaultValue(EMPTY)
                                 .build(this)) //
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,//
-                        parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
+                        parameter(locale)
+                                .setName(SELECTED_COLUMN_PARAMETER)
                                 .setType(COLUMN)
                                 .setDefaultValue(EMPTY)
                                 .setCanBeBlank(false)
                                 .build(this)) //
-                .defaultValue(CONSTANT_MODE).build(this));
+                .defaultValue(CONSTANT_MODE)
+                .build(this));
 
-        parameters.add(parameter(locale).setName(SENSITIVITY)
+        parameters.add(parameter(locale)
+                .setName(SENSITIVITY)
                 .setType(INTEGER)
                 .setDefaultValue("1")
                 .setCanBeBlank(false)
@@ -104,8 +108,10 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
-            ActionsUtils.createNewColumn(context, singletonList(
-                    ActionsUtils.additionalColumn().withName(context.getColumnName() + APPENDIX).withType(Type.BOOLEAN)));
+            ActionsUtils.createNewColumn(context, singletonList(ActionsUtils
+                    .additionalColumn()
+                    .withName(context.getColumnName() + APPENDIX)
+                    .withType(Type.BOOLEAN)));
         }
     }
 
@@ -123,8 +129,8 @@ public class FuzzyMatching extends AbstractActionMetadata implements ColumnActio
         if (parameters.get(OtherColumnParameters.MODE_PARAMETER).equals(OtherColumnParameters.CONSTANT_MODE)) {
             referenceValue = parameters.get(VALUE_PARAMETER);
         } else {
-            final ColumnMetadata selectedColumn = rowMetadata
-                    .getById(parameters.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
+            final ColumnMetadata selectedColumn =
+                    rowMetadata.getById(parameters.get(OtherColumnParameters.SELECTED_COLUMN_PARAMETER));
             referenceValue = row.get(selectedColumn.getId());
         }
 

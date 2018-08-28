@@ -21,8 +21,11 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 
 public class TestNode extends BasicNode {
+
     private List<DataSetRow> receivedRows = new ArrayList<>();
+
     private List<RowMetadata> receivedMetadata = new ArrayList<>();
+
     private List<Signal> receivedSignals = new ArrayList<>();
 
     @Override

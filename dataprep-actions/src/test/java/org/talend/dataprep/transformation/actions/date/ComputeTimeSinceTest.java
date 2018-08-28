@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
 import org.apache.commons.lang.StringUtils;
@@ -291,7 +291,8 @@ public class ComputeTimeSinceTest extends BaseDateTest<ComputeTimeSince> {
         parameters.put(TIME_UNIT_PARAMETER, HOURS.name());
 
         //when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         //then
         assertEquals(expectedValues, row.values());
@@ -376,7 +377,8 @@ public class ComputeTimeSinceTest extends BaseDateTest<ComputeTimeSince> {
         expected.add(createMetadata("0002", "steps"));
 
         //when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         //then
         assertEquals(expected, row.getRowMetadata().getColumns());
@@ -425,8 +427,10 @@ public class ComputeTimeSinceTest extends BaseDateTest<ComputeTimeSince> {
         final String compare = "07/26/2015 13:00";
         final DataSetRow row = builder() //
                 .with(value("lorem bacon").type(Type.STRING).name("recipe")) //
-                .with(value(date).type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
-                .with(value(compare).type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
+                .with(value(date).type(Type.STRING).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
+                .with(value(compare).type(Type.DATE).name("last update").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
                 .build();
 
         parameters.put(TIME_UNIT_PARAMETER, DAYS.name());

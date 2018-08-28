@@ -42,6 +42,7 @@ import static org.talend.dataprep.util.avro.AvroUtils.readBinaryStream;
 
 /**
  * Command to get the stream of AVRO records of the dataset.
+ * 
  * @see GenericRecord
  */
 @Component
@@ -76,8 +77,7 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
                 if (limit != null) {
                     uriBuilder.addParameter("limit", Long.toString(limit));
                 }
-                uri = uriBuilder
-                        .build();
+                uri = uriBuilder.build();
             } catch (URISyntaxException e) {
                 throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
@@ -93,7 +93,8 @@ public class DataSetGetContent extends GenericCommand<Stream<GenericRecord>> {
             InputStream content = httpResponse.getEntity().getContent();
             return readBinaryStream(content, contentSchema).asStream();
         } catch (IOException e) {
-            throw new TalendRuntimeException(org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            throw new TalendRuntimeException(org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION,
+                    e);
         }
     }
 

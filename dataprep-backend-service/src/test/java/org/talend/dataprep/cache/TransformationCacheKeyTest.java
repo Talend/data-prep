@@ -1,14 +1,14 @@
-//  ============================================================================
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// ============================================================================
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.cache;
 
@@ -67,7 +67,8 @@ public class TransformationCacheKeyTest {
     @Test
     public void getKey_should_generate_serialized_key() throws Exception {
         // given
-        final ContentCacheKey key = new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD, "user1", "");
+        final ContentCacheKey key =
+                new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD, "user1", "");
 
         // when
         final String keyStr = key.getKey();
@@ -80,11 +81,12 @@ public class TransformationCacheKeyTest {
     public void getMatcher_should_return_matcher_for_partial_key() throws Exception {
         // given
         final ContentCacheKey prepKey = new TransformationCacheKey("prep1", null, null, null, null, null, null, "");
-        final ContentCacheKey dataSetKey = new TransformationCacheKey(null, "dataset1", null, null, null, null, null, "");
-        final ContentCacheKey matchingKey = new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD,
-                "user1", "");
-        final ContentCacheKey nonMatchingKey = new TransformationCacheKey("prep2", "dataset2", "XLS", "step2", "param2", FILTER,
-                "user2", "");
+        final ContentCacheKey dataSetKey =
+                new TransformationCacheKey(null, "dataset1", null, null, null, null, null, "");
+        final ContentCacheKey matchingKey =
+                new TransformationCacheKey("prep1", "dataset1", "JSON", "step1", "param1", HEAD, "user1", "");
+        final ContentCacheKey nonMatchingKey =
+                new TransformationCacheKey("prep2", "dataset2", "XLS", "step2", "param2", FILTER, "user2", "");
 
         // when / then
         assertThat(prepKey.getMatcher().test(matchingKey.getKey()), is(true));

@@ -264,7 +264,7 @@ public class AsyncAspectTest {
     }
 
     @Test
-    public void testResultUrlGenerator(){
+    public void testResultUrlGenerator() {
 
         controller.generateResultUrl(1);
 

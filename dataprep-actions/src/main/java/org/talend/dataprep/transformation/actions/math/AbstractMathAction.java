@@ -48,8 +48,11 @@ public abstract class AbstractMathAction extends AbstractActionMetadata implemen
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(context, singletonList(
-                    ActionsUtils.additionalColumn().withName(context.getColumnName() + getSuffix(context)).withType(Type.DOUBLE)));
+            ActionsUtils.createNewColumn(context,
+                    singletonList(ActionsUtils
+                            .additionalColumn()
+                            .withName(context.getColumnName() + getSuffix(context))
+                            .withType(Type.DOUBLE)));
         }
     }
 

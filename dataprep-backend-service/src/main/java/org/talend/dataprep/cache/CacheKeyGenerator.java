@@ -39,7 +39,7 @@ public class CacheKeyGenerator {
      * @param datasetId the id of the dataset
      * @return the cache key of the dataset sample
      */
-    public DataSetSampleCacheKey generateDatasetSampleKey(final  String datasetId){
+    public DataSetSampleCacheKey generateDatasetSampleKey(final String datasetId) {
         return new DataSetSampleCacheKey(datasetId);
     }
 

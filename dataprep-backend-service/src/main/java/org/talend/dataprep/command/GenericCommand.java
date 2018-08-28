@@ -308,6 +308,15 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         return commandResponseHeaders;
     }
 
+    public Header getHeader(String name) {
+        for (Header header : getCommandResponseHeaders()) {
+            if (header.getName().equals(name)) {
+                return header;
+            }
+        }
+        return null;
+    }
+
     /**
      * @return The HTTP status of the executed request.
      */

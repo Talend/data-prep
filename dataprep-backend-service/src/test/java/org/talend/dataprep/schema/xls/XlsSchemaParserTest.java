@@ -80,8 +80,8 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
         String fileName = "state_table.xls";
 
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
-            List<ColumnMetadata> columnMetadatas = parser.parse(getRequest(inputStream, "#852")).getSheetContents().get(0)
-                    .getColumnMetadatas();
+            List<ColumnMetadata> columnMetadatas =
+                    parser.parse(getRequest(inputStream, "#852")).getSheetContents().get(0).getColumnMetadatas();
             assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(17);
         }
 
@@ -93,8 +93,8 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
         String fileName = "email_with_empty_rows.xlsx";
 
         try (InputStream inputStream = this.getClass().getResourceAsStream(fileName)) {
-            List<ColumnMetadata> columnMetadatas = parser.parse(getRequest(inputStream, "#852")).getSheetContents().get(0)
-                    .getColumnMetadatas();
+            List<ColumnMetadata> columnMetadatas =
+                    parser.parse(getRequest(inputStream, "#852")).getSheetContents().get(0).getColumnMetadatas();
             assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(2);
         }
 
@@ -147,19 +147,22 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
 
     @Test
     public void should_not_accept_csv_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("toto").formatFamilyId("formatGuess#csv").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("toto").formatFamilyId("formatGuess#csv").build();
         assertFalse(parser.accept(metadata));
     }
 
     @Test
     public void should_not_accept_xls_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#xls").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#xls").build();
         assertFalse(parser.accept(metadata));
     }
 
     @Test
     public void should_not_accept_html_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#html").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#html").build();
         assertFalse(parser.accept(metadata));
     }
 
@@ -295,8 +298,8 @@ public class XlsSchemaParserTest extends AbstractSchemaTestUtils {
     @Test
     public void TDP_1791_shifted_columns_during_import() throws Exception {
         checkColumnsName("TDP-1791.xlsx", "col_1", "col_2", "qui teste ?", "Environnement", "date debut", "date fin",
-                "Commentaire suite au test", "col_8", "col_9", "col_10", "col_11", "col_12", "col_13", "col_14", "col_15",
-                "col_16", "col_17", "col_18", "col_19", "col_20");
+                "Commentaire suite au test", "col_8", "col_9", "col_10", "col_11", "col_12", "col_13", "col_14",
+                "col_15", "col_16", "col_17", "col_18", "col_19", "col_20");
     }
 
     /**

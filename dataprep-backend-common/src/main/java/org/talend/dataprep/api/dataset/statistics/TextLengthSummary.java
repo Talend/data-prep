@@ -68,8 +68,8 @@ public class TextLengthSummary implements Serializable {
 
     @Override
     public String toString() {
-        return "TextLengthSummary{" + "minimalLength=" + minimalLength + ", maximalLength=" + maximalLength + ", averageLength="
-                + averageLength + '}';
+        return "TextLengthSummary{" + "minimalLength=" + minimalLength + ", maximalLength=" + maximalLength
+                + ", averageLength=" + averageLength + '}';
     }
 
     @Override

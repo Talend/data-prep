@@ -144,15 +144,15 @@ public class ProvidersTest {
         final Object field = new Object();
 
         // When
-        final InterfaceToImplementWithConstWithArgs firstInstanceWithArgs = Providers
-                .get(InterfaceToImplementWithConstWithArgs.class, field);
-        final InterfaceToImplementWithConstWithArgs secondInstanceWithArgs = Providers
-                .get(InterfaceToImplementWithConstWithArgs.class, field);
+        final InterfaceToImplementWithConstWithArgs firstInstanceWithArgs =
+                Providers.get(InterfaceToImplementWithConstWithArgs.class, field);
+        final InterfaceToImplementWithConstWithArgs secondInstanceWithArgs =
+                Providers.get(InterfaceToImplementWithConstWithArgs.class, field);
 
-        final InterfaceToImplementWithConstWithoutArgs firstInstanceWithoutArgs = Providers
-                .get(InterfaceToImplementWithConstWithoutArgs.class);
-        final InterfaceToImplementWithConstWithoutArgs secondInstanceWithoutArgs = Providers
-                .get(InterfaceToImplementWithConstWithoutArgs.class);
+        final InterfaceToImplementWithConstWithoutArgs firstInstanceWithoutArgs =
+                Providers.get(InterfaceToImplementWithConstWithoutArgs.class);
+        final InterfaceToImplementWithConstWithoutArgs secondInstanceWithoutArgs =
+                Providers.get(InterfaceToImplementWithConstWithoutArgs.class);
 
         // Then
         assertTrue(secondInstanceWithArgs != firstInstanceWithArgs);
@@ -167,10 +167,14 @@ public class ProvidersTest {
         final Object field = new Object();
 
         // When
-        final Interface2ToImplementWithConstWithArgs firstInstanceWithArgs = Providers.get(Interface2ToImplementWithConstWithArgs.class, field);
-        final Interface2ToImplementWithConstWithArgs secondInstanceWithArgs = Providers.get(Interface2ToImplementWithConstWithArgs.class, field);
-        final Interface2ToImplementWithConstWithoutArgs firstInstanceWithoutArgs = Providers.get(Interface2ToImplementWithConstWithoutArgs.class);
-        final Interface2ToImplementWithConstWithoutArgs secondInstanceWithoutArgs = Providers.get(Interface2ToImplementWithConstWithoutArgs.class);
+        final Interface2ToImplementWithConstWithArgs firstInstanceWithArgs =
+                Providers.get(Interface2ToImplementWithConstWithArgs.class, field);
+        final Interface2ToImplementWithConstWithArgs secondInstanceWithArgs =
+                Providers.get(Interface2ToImplementWithConstWithArgs.class, field);
+        final Interface2ToImplementWithConstWithoutArgs firstInstanceWithoutArgs =
+                Providers.get(Interface2ToImplementWithConstWithoutArgs.class);
+        final Interface2ToImplementWithConstWithoutArgs secondInstanceWithoutArgs =
+                Providers.get(Interface2ToImplementWithConstWithoutArgs.class);
 
         // Then
         assertTrue(secondInstanceWithArgs == firstInstanceWithArgs);
@@ -242,12 +246,14 @@ public class ProvidersTest {
     }
 
     @PrototypeScope
-    public static class ImplementationWithConstWithoutArgsPrototype implements InterfaceToImplementWithConstWithoutArgs {
+    public static class ImplementationWithConstWithoutArgsPrototype
+            implements InterfaceToImplementWithConstWithoutArgs {
 
     }
 
     @FakeScope
-    public static class ImplementationWithConstWithoutArgsFakeScope implements Interface2ToImplementWithConstWithoutArgs {
+    public static class ImplementationWithConstWithoutArgsFakeScope
+            implements Interface2ToImplementWithConstWithoutArgs {
 
         public ImplementationWithConstWithoutArgsFakeScope() {
         }

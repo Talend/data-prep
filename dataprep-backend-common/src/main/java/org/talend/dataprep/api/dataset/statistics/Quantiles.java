@@ -68,7 +68,8 @@ public class Quantiles implements Serializable {
 
     @Override
     public String toString() {
-        return "Quantiles{" + "median=" + median + ", lowerQuantile=" + lowerQuantile + ", upperQuantile=" + upperQuantile + '}';
+        return "Quantiles{" + "median=" + median + ", lowerQuantile=" + lowerQuantile + ", upperQuantile="
+                + upperQuantile + '}';
     }
 
     @Override

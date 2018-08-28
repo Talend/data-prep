@@ -16,8 +16,10 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 
-/** AbstractMultiScopeAction is usefull for action with multiple scopes
- * the behavior of this class is to got less modifications when you want to add datascope to an existing class */
+/**
+ * AbstractMultiScopeAction is usefull for action with multiple scopes
+ * the behavior of this class is to got less modifications when you want to add datascope to an existing class
+ */
 public abstract class AbstractMultiScopeAction extends AbstractActionMetadata implements ColumnAction, DataSetAction {
 
     protected ScopeCategory scope;

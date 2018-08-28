@@ -21,8 +21,11 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 
 public class TestLink extends BasicLink {
+
     private List<DataSetRow> emittedRows = new ArrayList<>();
+
     private List<RowMetadata> emittedMetadata = new ArrayList<>();
+
     private List<Signal> emittedSignals = new ArrayList<>();
 
     public TestLink(final Node target) {

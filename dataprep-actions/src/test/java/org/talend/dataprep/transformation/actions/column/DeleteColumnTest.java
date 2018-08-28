@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.column;
 
@@ -45,7 +45,8 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest<DeleteColumn> {
     @Before
     public void init() {
         List<ColumnMetadata> columns = new ArrayList<>();
-        ColumnMetadata columnMetadata = ColumnMetadata.Builder.column() //
+        ColumnMetadata columnMetadata = ColumnMetadata.Builder
+                .column() //
                 .type(Type.INTEGER) //
                 .computedId("0001") //
                 .domain("ID") //
@@ -53,7 +54,8 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest<DeleteColumn> {
                 .domainLabel("Identifier") //
                 .build();
         columns.add(columnMetadata);
-        columnMetadata = ColumnMetadata.Builder.column() //
+        columnMetadata = ColumnMetadata.Builder
+                .column() //
                 .type(Type.STRING) //
                 .computedId("0002") //
                 .domain("ANL") //
@@ -69,7 +71,7 @@ public class DeleteColumnTest extends AbstractMetadataBaseTest<DeleteColumn> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 

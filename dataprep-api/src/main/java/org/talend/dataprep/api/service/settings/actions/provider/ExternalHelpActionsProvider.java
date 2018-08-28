@@ -39,12 +39,13 @@ public class ExternalHelpActionsProvider {
                 .icon("talend-question-circle")
                 .type("@@external/OPEN_WINDOW")
                 .payload(PAYLOAD_METHOD_KEY, "open")
-                .payload(PAYLOAD_ARGS_KEY, new String[] { DocumentationLinkGenerator //
-                        .builder() //
-                        .url(documentationLinksManager.getFuzzyUrl() + "header") //
-                        .locale(LocaleContextHolder.getLocale()) //
-                        .addContentLangParameter(true) //
-                        .build() })
+                .payload(PAYLOAD_ARGS_KEY,
+                        new String[] { DocumentationLinkGenerator //
+                                .builder() //
+                                .url(documentationLinksManager.getFuzzyUrl() + "header") //
+                                .locale(LocaleContextHolder.getLocale()) //
+                                .addContentLangParameter(true) //
+                                .build() })
                 .build();
     }
 

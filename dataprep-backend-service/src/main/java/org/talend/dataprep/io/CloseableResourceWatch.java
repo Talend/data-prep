@@ -35,9 +35,9 @@ import org.talend.daikon.content.DeletableResource;
  * This class configures an aspect around methods that <b>return</b> a {@link Closeable closeable} implementation.
  * It currently supports:
  * <ul>
- *     <li>{@link InputStream}</li>
- *     <li>{@link OutputStream}</li>
- *     <li>streams created by {@link DeletableResource}</li>
+ * <li>{@link InputStream}</li>
+ * <li>{@link OutputStream}</li>
+ * <li>streams created by {@link DeletableResource}</li>
  * </ul>
  * To activate this watcher, logging framework must enable "org.talend.dataprep.io" in debug level.
  */
@@ -117,7 +117,8 @@ public class CloseableResourceWatch implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE) || LOGGER.isDebugEnabled();
+        return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE)
+                || LOGGER.isDebugEnabled();
     }
 
     private class ClosableMethodInterceptor implements MethodInterceptor {

@@ -32,6 +32,4 @@ public interface BaseUpgradeTaskTo_1_2_0_PE extends UpgradeTask {
         return getTaskId(VERSION_1_2_0_PE, this.getClass().getSimpleName());
     }
 
-
-
 }

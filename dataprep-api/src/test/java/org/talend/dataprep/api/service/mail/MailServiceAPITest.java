@@ -23,12 +23,14 @@ import com.jayway.restassured.response.Response;
 
 public class MailServiceAPITest extends ApiServiceTestBase {
 
-    @Test public void shouldNotSendEmptyMail() throws Exception {
+    @Test
+    public void shouldNotSendEmptyMail() throws Exception {
 
         MailDetails mailDetails = new MailDetails();
 
         // send with bad recipients
-        Response response = RestAssured.given() //
+        Response response = RestAssured
+                .given() //
                 .body(mapper.writer().writeValueAsBytes(mailDetails))//
                 .contentType(ContentType.JSON) //
                 .when() //
@@ -36,8 +38,5 @@ public class MailServiceAPITest extends ApiServiceTestBase {
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(400);
     }
-
-
-
 
 }

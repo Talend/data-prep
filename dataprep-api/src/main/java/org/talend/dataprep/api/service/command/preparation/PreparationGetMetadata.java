@@ -12,6 +12,17 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.springframework.http.HttpStatus.OK;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collections;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,16 +36,6 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.command.AsyncGenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static org.springframework.http.HttpStatus.OK;
 
 /**
  * Command used to retrieve the preparation content.
@@ -69,7 +70,7 @@ public class PreparationGetMetadata extends AsyncGenericCommand<DataSetMetadata>
 
         final MultiValueMap<String, String> headers = new HttpHeaders();
         for (Header header : response.getAllHeaders()) {
-            if("Location".equalsIgnoreCase(header.getName())) {
+            if (HttpHeaders.LOCATION.equalsIgnoreCase(header.getName())) {
                 headers.put(header.getName(), Collections.singletonList(header.getValue()));
             }
         }

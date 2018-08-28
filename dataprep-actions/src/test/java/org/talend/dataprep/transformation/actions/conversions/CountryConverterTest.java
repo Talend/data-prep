@@ -116,8 +116,8 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("create_new_column", "from_unit", "to_unit", "column_id", "row_id", "scope",
-                "filter");
+        List<String> parameterNames =
+                Arrays.asList("create_new_column", "from_unit", "to_unit", "column_id", "row_id", "scope", "filter");
 
         // when
         final List<Parameter> parameters = action.getParameters(Locale.US);
@@ -125,7 +125,8 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         // then
         assertNotNull(parameters);
         assertEquals(7, parameters.size()); // 4 implicit parameters + 3 specific
-        final List<String> expectedParametersNotFound = parameters.stream() //
+        final List<String> expectedParametersNotFound = parameters
+                .stream() //
                 .map(Parameter::getName) //
                 .filter(n -> !parameterNames.contains(n)) //
                 .collect(Collectors.toList());
@@ -143,11 +144,13 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
 
         List<Parameter> params = action.adapt(column).getParameters(Locale.getDefault());
 
-        List<Parameter> fromUnit = params.stream() //
+        List<Parameter> fromUnit = params
+                .stream() //
                 .filter(param -> param.getName().equals(FROM_UNIT_PARAMETER)) //
                 .collect(Collectors.toList());
 
-        List<Parameter> toUnit = params.stream() //
+        List<Parameter> toUnit = params
+                .stream() //
                 .filter(param -> param.getName().equals(TO_UNIT_PARAMETER)) //
                 .collect(Collectors.toList());
 
@@ -168,11 +171,13 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
 
         List<Parameter> params = action.adapt(column).getParameters(Locale.getDefault());
 
-        List<Parameter> fromUnit = params.stream() //
+        List<Parameter> fromUnit = params
+                .stream() //
                 .filter(param -> param.getName().equals(FROM_UNIT_PARAMETER)) //
                 .collect(Collectors.toList());
 
-        List<Parameter> toUnit = params.stream() //
+        List<Parameter> toUnit = params
+                .stream() //
                 .filter(param -> param.getName().equals(TO_UNIT_PARAMETER)) //
                 .collect(Collectors.toList());
 
@@ -189,11 +194,13 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
 
         List<Parameter> params = action.adapt(column).getParameters(Locale.getDefault());
 
-        List<Parameter> fromUnit = params.stream() //
+        List<Parameter> fromUnit = params
+                .stream() //
                 .filter(param -> param.getName().equals(FROM_UNIT_PARAMETER)) //
                 .collect(Collectors.toList());
 
-        List<Parameter> toUnit = params.stream() //
+        List<Parameter> toUnit = params
+                .stream() //
                 .filter(param -> param.getName().equals(TO_UNIT_PARAMETER)) //
                 .collect(Collectors.toList());
 
@@ -384,8 +391,8 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         parameters.put(TO_UNIT_PARAMETER, ENGLISH_COUNTRY_NAME);
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10), actionRegistry,
-                factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10),
+                actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("Åland Islands", row1.get("0000"));
@@ -405,8 +412,8 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
         parameters.put(TO_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
 
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10), actionRegistry,
-                factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10),
+                actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("Îles Åland", row1.get("0000"));

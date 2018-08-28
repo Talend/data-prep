@@ -61,10 +61,11 @@ public class VersionServiceAPI extends APIService {
         Stream<VersionsSupplier> supplierStream = versionsSuppliers.stream();
         final String datasetProvider = environment.getProperty("dataset.service.provider");
         if (CATALOG.name().equalsIgnoreCase(datasetProvider)) {
-            supplierStream = supplierStream.filter(versionsSupplier -> !(versionsSupplier instanceof DatasetVersionSupplier));
+            supplierStream =
+                    supplierStream.filter(versionsSupplier -> !(versionsSupplier instanceof DatasetVersionSupplier));
         }
 
-        final Version[] versions = supplierStream
+        final Version[] versions = supplierStream //
                 .map(VersionsSupplier::getVersions)
                 .flatMap(List::stream)
                 .filter(Objects::nonNull)

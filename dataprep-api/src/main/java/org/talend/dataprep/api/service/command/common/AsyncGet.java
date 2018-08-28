@@ -12,7 +12,6 @@ import static org.talend.dataprep.command.GenericCommand.TRANSFORM_GROUP;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import com.google.common.base.Stopwatch;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.slf4j.Logger;
@@ -26,6 +25,7 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
+import com.google.common.base.Stopwatch;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
@@ -33,13 +33,13 @@ public class AsyncGet<T> extends HystrixCommand<T> {
 
     private static final Logger LOGGER = getLogger(AsyncGet.class);
 
+    private static final long WAIT_TIME = 10;
+
+    private static final TimeUnit WAIT_TIME_UNIT = TimeUnit.MINUTES;
+
     private final Supplier<GenericCommand<T>> commandSupplier;
 
     private CommonAPI commonAPI;
-
-    private final long WAIT_TIME = 10;
-
-    private final TimeUnit WAIT_TIME_UNIT = TimeUnit.MINUTES;
 
     public AsyncGet(Supplier<GenericCommand<T>> commandSupplier, CommonAPI commonAPI) {
         super(ASYNC_GROUP);
@@ -62,7 +62,8 @@ public class AsyncGet<T> extends HystrixCommand<T> {
                     retryDelaySeconds = 1;
                 }
 
-                AsyncExecution asyncExecution = waitForAsyncMethodToFinish(command.getCommandGroup(), asyncMethodStatusUrl, retryDelaySeconds);
+                AsyncExecution asyncExecution = waitForAsyncMethodToFinish(command.getCommandGroup(), asyncMethodStatusUrl,
+                        retryDelaySeconds);
                 if (asyncExecution.getStatus() == AsyncExecution.Status.DONE) {
                     result = commandSupplier.get().execute();
                 } else {
@@ -84,7 +85,8 @@ public class AsyncGet<T> extends HystrixCommand<T> {
      * @param asyncMethodStatusUrl
      * @return the status of the async execution (is likely DONE or FAILED)
      */
-    private AsyncExecution waitForAsyncMethodToFinish(HystrixCommandGroupKey group, String asyncMethodStatusUrl, int retryDelaySeconds) {
+    private AsyncExecution waitForAsyncMethodToFinish(HystrixCommandGroupKey group, String asyncMethodStatusUrl,
+            int retryDelaySeconds) {
         AsyncExecutionMessage executionStatus;
         Stopwatch waitTimeStopWatch = Stopwatch.createStarted();
         // RegEx for a [/api/<service>]/queue/{id} URL to extract exec ID

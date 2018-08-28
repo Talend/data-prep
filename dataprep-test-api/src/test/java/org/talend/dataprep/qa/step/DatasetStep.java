@@ -92,7 +92,7 @@ public class DatasetStep extends DataPrepStep {
 
     public String getDatasetIdByName(List<ContentMetadata> datasetMetas, String datasetName) {
         ContentMetadata dataset =
-                datasetMetas.stream().filter(d -> (suffixName((datasetName)).equals(d.name))).findAny().orElse(null);
+                datasetMetas.stream().filter(d -> (suffixName(datasetName).equals(d.name))).findAny().orElse(null);
         return dataset.id;
     }
 
@@ -238,13 +238,4 @@ public class DatasetStep extends DataPrepStep {
             return !columnStatistics.frequencyTable.isEmpty() && !columnStatistics.patternFrequencyTable.isEmpty();
         };
     }
-
-    @Then("^The list of datasets has \"(.*)\" datasets$") //
-    public void checkDatasetsList(int number) throws Throwable {
-        List<ContentMetadata> datasetMetas = listDatasetMeta();
-        assertEquals(number, datasetMetas.size());
-        context.storeDatasetRef(getDatasetIdByName(datasetMetas, "first_interactions_29k"), "first_interactions_29k");
-        context.storeDatasetRef(getDatasetIdByName(datasetMetas, "pays_visités_par_stef"), "pays_visités_par_stef");
-    }
-
 }

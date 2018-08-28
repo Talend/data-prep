@@ -8,6 +8,7 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -47,7 +48,8 @@ public class PreparationStep extends DataPrepStep {
         String suffixedPrepName = getSuffixedPrepName(prepFullName);
         String prepPath = util.extractPathFromFullName(prepFullName);
         Folder prepFolder = folderUtil.searchFolder(prepPath);
-        String suffixedDatasetName = suffixName(datasetName);
+        String suffixedDatasetName =
+                (context.getDatasetId(datasetName) == null) ? suffixName(datasetName) : datasetName;
 
         final String datasetId = context.getDatasetId(suffixedDatasetName);
         if (StringUtils.isBlank(datasetId)) {
@@ -76,6 +78,24 @@ public class PreparationStep extends DataPrepStep {
         Assert.assertNotNull(prepDet);
         Assert.assertEquals(prepDet.dataSetId, context.getDatasetId(suffixName(params.get(DATASET_NAME))));
         Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
+    }
+
+    @When("^I load the existing preparation called \"(.*)\"$")
+    public void registerExistingPreparation(String preparationFullname) throws IOException {
+        String preparationName = util.extractNameFromFullName(preparationFullname);
+        String prepPath = util.extractPathFromFullName(preparationFullname);
+        Folder prepFolder = folderUtil.searchFolder(prepPath);
+        FolderContent folderContent = folderUtil.listPreparation(prepPath);
+        if (folderContent != null) {
+            List<PreparationDetails> preparations = folderContent.preparations //
+                    .stream() //
+                    .filter(p -> p.name.equals(preparationName))
+                    .collect(Collectors.toList());
+            assertEquals("More than one preparation with \"" + preparationFullname + "\" name founded.",
+                    preparations.size(), 1);
+            PreparationDetails preparation = preparations.get(0);
+            context.storeExistingPreparationRef(preparation.id, preparation.name, prepFolder.getPath());
+        }
     }
 
     @Then("^I move the preparation \"(.*)\" to \"(.*)\"$")

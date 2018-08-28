@@ -51,19 +51,20 @@ public class GlobalStep extends DataPrepStep {
 
         // cleaning application's preparations
         List<String> listPreparationDeletionPb =
-                context.getPreparationIds().stream().filter(preparationDeletionIsNotOK()).collect(Collectors.toList());
+                context.getPreparationIdsToDelete().stream().filter(preparationDeletionIsNotOK()).collect(
+                        Collectors.toList());
         cleanAfterOSStepIsOK = listPreparationDeletionPb.size() == 0;
 
         // cleaning preparations's related context
-        context.clearPreparation();
+        context.clearPreparationLists();
 
         // cleaning application's datasets
         List<String> listDatasetDeletionPb =
-                context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
+                context.getDatasetIdsToDelete().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterOSStepIsOK &= listDatasetDeletionPb.size() == 0;
 
         // cleaning dataset's related context
-        context.clearDataset();
+        context.clearDatasetLists();
 
         // cleaning application's folders
         List<Folder> listFolderDeletionPb =

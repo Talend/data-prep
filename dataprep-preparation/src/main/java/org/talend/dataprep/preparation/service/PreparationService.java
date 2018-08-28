@@ -252,11 +252,11 @@ public class PreparationService {
         if (searchCriterion.getFolderId() != null) {
             if (preparationRepository.exist(PersistentPreparation.class, isEmpty("folderId"))) {
                 // filter on folder id (DEPRECATED VERSION - only applies if migration isn't completed yet)
-                final Set<String> entries = folderRepository //
-                        .entries(searchCriterion.getFolderId(), PREPARATION) //
-                        .map(FolderEntry::getContentId) //
-                        .collect(Collectors.toSet());
-                deprecatedFolderIdFilter = p -> entries.contains(p.id());
+                try (Stream<Folder> folders = folderRepository.entries(searchCriterion.getFolderId(), PREPARATION)) {
+                    final Set<String> entries = folders.map(FolderEntry::getContentId) //
+                            .collect(Collectors.toSet());
+                    deprecatedFolderIdFilter = p -> entries.contains(p.id());
+                }
             } else {
                 // Once all preparations all have the folder id,
                 Expression folderIdFilter = eq("folderId", searchCriterion.getFolderId());
@@ -281,10 +281,14 @@ public class PreparationService {
         if (searchCriterion.getFolderPath() != null) {
             final Optional<Folder> folder = folderRepository.getFolder(searchCriterion.getFolderPath());
             final Set<String> folderEntries = new HashSet<>();
-            folder.ifPresent(f -> folderEntries.addAll(folderRepository
-                    .entries(f.getId(), PREPARATION) //
-                    .map(FolderEntry::getContentId) //
-                    .collect(Collectors.toSet())));
+            folder.ifPresent(f -> {
+                try (Stream<String> preparationIds = folderRepository
+                        .entries(f.getId(), PREPARATION) //
+                        .map(FolderEntry::getContentId)) {
+                    folderEntries.addAll(preparationIds //
+                            .collect(Collectors.toSet()));
+                }
+            });
             preparationStream = preparationStream.filter(p -> folderEntries.contains(p.id()));
         }
 

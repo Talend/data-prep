@@ -75,6 +75,28 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
     }
 
     @Test
+    public void testApplyInNewColumnWithNull() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "lorem bacon");
+        values.put("0001", null);
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "lorem bacon");
+        expectedValues.put("0001",null);
+        expectedValues.put("0003", "0");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
     public void test_apply_in_newcolumn() {
         // given
         final Map<String, String> values = new HashMap<>();
@@ -87,6 +109,28 @@ public class ComputeLengthTest extends AbstractMetadataBaseTest<ComputeLength> {
         expectedValues.put("0000", "lorem bacon");
         expectedValues.put("0001", "Bacon");
         expectedValues.put("0003", "5");
+        expectedValues.put("0002", "01/01/2015");
+
+        //when
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals(expectedValues, row.values());
+    }
+
+    @Test
+    public void testApplyOnSurrogatePair() {
+        // given
+        final Map<String, String> values = new HashMap<>();
+        values.put("0000", "𠀀");
+        values.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put("0002", "01/01/2015");
+        final DataSetRow row = new DataSetRow(values);
+
+        final Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("0000", "𠀀");
+        expectedValues.put("0001", "中崎𠀀𠀁𠀂𠀃𠀄");
+        expectedValues.put("0003", "7");
         expectedValues.put("0002", "01/01/2015");
 
         //when

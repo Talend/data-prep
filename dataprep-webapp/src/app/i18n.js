@@ -2,33 +2,45 @@ import i18next from 'i18next'; // eslint-disable-line import/no-named-as-default
 
 import constants from './next/constants';
 
-import { default as locales } from './next/locales';
-
-const I18N = constants.I18N;
-
-const NAMESPACES = [
-	I18N.DATASET_APP_NAME_SPACE,
-	I18N.TUI_COMPONENTS_NAME_SPACE,
-];
-
-function setNameSpace(locale, namespace) {
-	// overwrite all existing resources if exists
-	i18next.addResources(
-		locale,
-		namespace,
-		locales[namespace][locale],
-	);
-}
+export const fallbackLng = constants.I18N.EN_LOCALE;
+export const defaultNS = constants.I18N.TDP_APP_NAMESPACE;
+export const fallbackNS = constants.I18N.TDP_APP_NAMESPACE;
 
 // eslint-disable-next-line import/no-named-as-default-member
-i18next.init({
-	fallbackLng: 'en',
+const i18n = i18next.init({
+	fallbackLng,
 	debug: false,
 	wait: true, // globally set to wait for loaded translations in translate hoc
-	lng: I18N.EN_LOCALE,
-	interpolation: { escapeValue: false },
+	interpolation: {
+		escapeValue: false,
+		format: (value, format) => {
+			if (format === 'lowercase') return value.toLowerCase();
+			if (format === 'uppercase') return value.toUpperCase();
+			return value;
+		},
+	},
+	defaultNS,
+	fallbackNS,
 });
 
-I18N.LOCALES.forEach(locale => NAMESPACES.forEach(namespace => setNameSpace(locale, namespace)));
+export function registerLocales(locales) {
+	constants.I18N.LOCALES
+		.forEach((locale) => {
+			Object.keys(locales)
+				.forEach((namespace) => {
+					i18next.addResources(
+						locale,
+						namespace,
+						locales[namespace][locale],
+					);
+				});
+		});
+}
 
-export default i18next;
+export function getDefaultTranslate(key) {
+	return key;
+}
+
+window.i18n = i18n;
+
+export default i18n;

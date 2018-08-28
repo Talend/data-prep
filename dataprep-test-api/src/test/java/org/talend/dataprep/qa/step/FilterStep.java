@@ -1,15 +1,9 @@
 package org.talend.dataprep.qa.step;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +12,17 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.ContentMetadataColumn;
 import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.PreparationContent;
+import org.talend.dataprep.qa.dto.Statistics;
 
-import com.jayway.restassured.response.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
 public class FilterStep extends DataPrepStep {
 
@@ -35,9 +34,7 @@ public class FilterStep extends DataPrepStep {
     }
 
     private void doApplyFilterOnDataSet(String tql, String datasetName) throws Exception {
-        String datasetId = context.getDatasetId(suffixName(datasetName));
-        DatasetContent datasetContent = getDatasetContent(datasetId, tql);
-
+        DatasetContent datasetContent = getDatasetContent(context.getDatasetId(suffixName(datasetName)), tql);
         context.storeObject("dataSetContent", datasetContent);
     }
 
@@ -45,11 +42,22 @@ public class FilterStep extends DataPrepStep {
     public void checkFilterApplyedOnDataSet(String datasetName, DataTable dataTable) throws Exception {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
 
-        DatasetContent datasetContent = (DatasetContent)context.getObject("dataSetContent");
-        checkSampleRecordsCount(datasetContent.metadata.records, expected.get("sample_records_count"));
-        checkRecords(datasetContent.records, expected.get("records"));
+        DatasetContent datasetContent = (DatasetContent) context.getObject("dataSetContent");
+        if (datasetContent == null) {
+            datasetContent = getDatasetContent(context.getDatasetId(suffixName(datasetName)), null);
+        }
 
-        checkQualityPerColumn(datasetContent.metadata.columns, expected.get("quality"));
+        if (expected.get("records") != null) {
+            checkRecords(datasetContent.records, expected.get("records"));
+        }
+
+        if (expected.get("sample_records_count") != null) {
+            checkSampleRecordsCount(datasetContent.metadata.records, expected.get("sample_records_count"));
+        }
+
+        if (expected.get("quality") != null) {
+            checkQualityPerColumn(datasetContent.metadata.columns, expected.get("quality"));
+        }
     }
 
     private void checkSampleRecordsCount(String actualRecordsCount, String expectedRecordsCount) {
@@ -63,7 +71,7 @@ public class FilterStep extends DataPrepStep {
      * Returns the dataset content, once all DQ analysis are done and so all fields are up-to-date.
      *
      * @param datasetId the id of the dataset
-     * @param tql the TQL filter to apply to the dataset
+     * @param tql       the TQL filter to apply to the dataset
      * @return the up-to-date dataset content
      */
     private DatasetContent getDatasetContent(String datasetId, String tql) throws Exception {
@@ -77,7 +85,8 @@ public class FilterStep extends DataPrepStep {
             }
             response = api.getDataset(datasetId, tql);
             response.then().statusCode(200);
-        } while (response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty() && tries < 10);
+        } while (response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty()
+                && tries < 10);
 
         return response.as(DatasetContent.class);
     }
@@ -109,11 +118,23 @@ public class FilterStep extends DataPrepStep {
             ContentMetadataColumn expectedColumn = expectedQualityPerColumn.get(i);
             ContentMetadataColumn column = columns.get(i);
             Assert.assertEquals(expectedColumn.id, column.id);
+            Assert.assertEquals(expectedColumn.name, column.name);
+            Assert.assertEquals(expectedColumn.type, column.type);
+            Assert.assertEquals(expectedColumn.domain, column.domain);
             Map<String, Integer> expectedQuality = expectedColumn.quality;
+            Statistics expectedStatistics = expectedColumn.statistics;
+
             Map<String, Integer> quality = column.quality;
             Assert.assertEquals(expectedQuality.get("valid"), quality.get("valid"));
             Assert.assertEquals(expectedQuality.get("empty"), quality.get("empty"));
             Assert.assertEquals(expectedQuality.get("invalid"), quality.get("invalid"));
+
+            Statistics statistics = column.statistics;
+            if (expectedStatistics != null && statistics != null) {
+                Assert.assertTrue(
+                        expectedStatistics.patternFrequencyTable.containsAll(statistics.patternFrequencyTable));
+                Assert.assertTrue(expectedStatistics.frequencyTable.containsAll(statistics.frequencyTable));
+            }
         }
     }
 
@@ -123,8 +144,7 @@ public class FilterStep extends DataPrepStep {
         Assert.assertEquals(filter, prepStep.parameters.get(FILTER.getKey()));
     }
 
-    @When("^I remove all filters on dataset \"(.*)\"$")
-    public void removeFilter(String datasetName) throws Exception {
+    @When("^I remove all filters on dataset \"(.*)\"$") public void removeFilter(String datasetName) throws Exception {
         doApplyFilterOnDataSet(null, datasetName);
     }
 
@@ -148,13 +168,12 @@ public class FilterStep extends DataPrepStep {
 
     @Then("^The characteristics of the preparation \"(.*)\" match:$")
     public void checkFilterAppliedOnPreparation(String preparationName, DataTable dataTable) throws Exception {
-        PreparationContent preparationContent = (PreparationContent)context.getObject("preparationContent");
+        PreparationContent preparationContent = (PreparationContent) context.getObject("preparationContent");
         if (preparationContent == null) {
             preparationContent = getPreparationContent(preparationName, null);
         }
         checkContent(preparationContent, dataTable);
     }
-
 
     public void checkContent(PreparationContent preparation, DataTable dataTable) throws Exception {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);

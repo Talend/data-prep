@@ -1,0 +1,21 @@
+{
+  "ABOUT_MODAL_TITLE": "About Talend Data Preparation",
+  "ABOUT_VERSION_NAME": "Version: {{version}}",
+  "BUILD_ID": "Build ID",
+  "COPY_MOVE_MODAL_SUBTITLE": "Click on the folder you want to {{action, lowercase}} your preparation",
+  "COPY_MOVE_MODAL_TITLE": "{{action}} your preparation",
+  "COPYRIGHT": "© {{year}} Talend. All Rights Reserved",
+  "DATASETS": "Datasets",
+  "DOCUMENTATION": "Documentation",
+  "FOLDER_HOME": "Home",
+  "FOLDERS": "Folders",
+  "LESS": "Less",
+  "MORE": "More",
+  "PREPARATION_COPY_NOTIFICATION_MESSAGE": "The preparation has been copied.",
+  "PREPARATION_COPY_NOTIFICATION_TITLE": "Preparation copied",
+  "PREPARATION_MOVE_NOTIFICATION_MESSAGE": "The preparation has been moved.",
+  "PREPARATION_MOVE_NOTIFICATION_TITLE": "Preparation moved",
+  "PREPARATIONS": "Preparations",
+  "SERVICE": "Service",
+  "VERSION": "Version"
+}

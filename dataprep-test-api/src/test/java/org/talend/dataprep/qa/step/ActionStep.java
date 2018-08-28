@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
@@ -21,11 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.PreparationContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
 import com.jayway.restassured.response.Response;
@@ -77,7 +79,7 @@ public class ActionStep extends DataPrepStep {
         String prepId = context.getPreparationId(prepSuffixedName, prepPath);
         Action storedAction = context.getAction(stepAlias);
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
-        Assert.assertTrue(actions.contains(storedAction));
+        assertTrue(actions.contains(storedAction));
     }
 
     @Then("^I update the first step like \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
@@ -85,9 +87,9 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(prepName));
         Action storedAction = context.getAction(stepName);
-        Assert.assertTrue(storedAction != null);
+        assertTrue(storedAction != null);
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
-        Assert.assertTrue(actions.size() > 0);
+        assertTrue(actions.size() > 0);
         // update stored action parameters
         storedAction.parameters.putAll(util.mapParamsToActionParameters(params));
         storedAction.id = actions.get(0).id;
@@ -101,7 +103,7 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(prepName));
         Action foundAction = getFirstActionWithName(prepId, actionName);
-        Assert.assertTrue(foundAction != null);
+        assertTrue(foundAction != null);
         // Update action
         Action action = new Action();
         action.action = actionName;
@@ -184,9 +186,22 @@ public class ActionStep extends DataPrepStep {
     public void removeFirstActionFoundWithName(String actionName, String prepName) throws IOException {
         String prepId = context.getPreparationId(suffixName(prepName));
         Action foundAction = getFirstActionWithName(prepId, actionName);
-        Assert.assertTrue(foundAction != null);
+        assertTrue(foundAction != null);
         // Remove action
         Response response = api.deleteAction(prepId, foundAction.id);
         response.then().statusCode(200);
+    }
+
+    @When("^I disable the last \"(.*)\" steps of the preparation \"(.*)\"$")
+    public void iDisableTheLastStepsOfThePreparation(int nbStepsToDisable, String prepName) throws Throwable {
+        // Get steps in order to retrieve the id of the nth last one
+        String prepId = context.getPreparationId(suffixName(prepName));
+        List<String> steps = getPreparationDetails(prepId).steps;
+        assertTrue("Not enough steps in the preparation to disable", steps.size() > nbStepsToDisable);
+        String version = steps.get(steps.size() - nbStepsToDisable - 1);
+        Response response = api.getPreparationContent(prepId, version, "HEAD", null);
+        response.then().statusCode(OK.value());
+        PreparationContent preparationContent = response.as(PreparationContent.class);
+        context.storeObject("preparationContent", preparationContent);
     }
 }

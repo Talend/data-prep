@@ -66,4 +66,8 @@ public class BasicRules {
      */
     protected static final Predicate<ColumnMetadata> IS_PHONE = columnMetadata -> columnMetadata.getDomain().toLowerCase().contains("phone");
 
+    /**
+     * A helper to filter columns where semantic domain=country.
+     */
+    protected static final Predicate<ColumnMetadata> IS_COUNTRY = columnMetadata -> columnMetadata.getDomain().toLowerCase().contains("country");
 }

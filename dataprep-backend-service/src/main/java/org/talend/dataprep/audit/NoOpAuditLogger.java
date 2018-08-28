@@ -15,84 +15,13 @@ package org.talend.dataprep.audit;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.talend.logging.audit.StandardEventAuditLogger;
 
 @Component
 @ConditionalOnProperty(name = "audit.log.enabled", havingValue = "false", matchIfMissing = true)
-public class NoOpAuditLogger implements StandardEventAuditLogger {
+public class NoOpAuditLogger implements DataprepEventAuditLogger {
 
     @Override
-    public void loginSuccess(Object... args) {
-
-    }
-
-    @Override
-    public void loginFail(Object... args) {
-
-    }
-
-    @Override
-    public void userLockout(Object... args) {
-
-    }
-
-    @Override
-    public void userCreated(Object... args) {
-
-    }
-
-    @Override
-    public void userModified(Object... args) {
-
-    }
-
-    @Override
-    public void userDeleted(Object... args) {
-
-    }
-
-    @Override
-    public void passwordChanged(Object... args) {
-
-    }
-
-    @Override
-    public void passwordReset(Object... args) {
-
-    }
-
-    @Override
-    public void roleCreated(Object... args) {
-
-    }
-
-    @Override
-    public void roleDeleted(Object... args) {
-
-    }
-
-    @Override
-    public void roleAssigned(Object... args) {
-
-    }
-
-    @Override
-    public void roleRevoked(Object... args) {
-
-    }
-
-    @Override
-    public void invalidInput(Object... args) {
-
-    }
-
-    @Override
-    public void invalidSession(Object... args) {
-
-    }
-
-    @Override
-    public void systemException(Throwable throwable, Object... args) {
+    public void preparationsListed(Object... args) {
 
     }
 }

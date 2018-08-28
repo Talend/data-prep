@@ -43,6 +43,7 @@ import org.talend.dataprep.api.service.command.folder.GetFolder;
 import org.talend.dataprep.api.service.command.folder.RemoveFolder;
 import org.talend.dataprep.api.service.command.folder.RenameFolder;
 import org.talend.dataprep.api.service.command.folder.SearchFolders;
+import org.talend.dataprep.audit.DataprepEventAuditLogger;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationListByFolder;
@@ -57,8 +58,6 @@ import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.talend.logging.audit.ContextBuilder;
-import org.talend.logging.audit.StandardEventAuditLogger;
 
 @RestController
 public class FolderAPI extends APIService {
@@ -67,7 +66,7 @@ public class FolderAPI extends APIService {
     private DataSetNameInjection dataSetNameInjection;
 
     @Autowired
-    private StandardEventAuditLogger auditLogger;
+    private DataprepEventAuditLogger auditLogger;
 
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
@@ -201,7 +200,7 @@ public class FolderAPI extends APIService {
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
         final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
                 .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-        auditLogger.loginSuccess(ContextBuilder.create("user", "testuser").build());
+        auditLogger.preparationsListed();
         return new PreparationsByFolder(folders, preparations);
     }
 

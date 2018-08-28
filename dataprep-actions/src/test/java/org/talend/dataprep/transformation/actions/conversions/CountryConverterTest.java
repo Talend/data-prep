@@ -331,7 +331,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         assertEquals("Iran", row5.get("0000"));
         assertEquals("Îles Åland", row6.get("0000"));
         assertTrue(row7.get("0000").isEmpty());
-        assertEquals("Taiwan", row8.get("0000"));
+        assertEquals("Taïwan", row8.get("0000"));
     }
 
     @Test
@@ -368,7 +368,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     @Test
     public void testShouldConvertFromFrenchToEnglishCountryName() {
         // given
-        final DataSetRow row1 = getRow("Îles ÅLand", "Pomme de terre");
+        final DataSetRow row1 = getRow("Îles Åland", "Pomme de terre");
         final DataSetRow row2 = getRow("OuzBékistan", "Pomme de pain");
         final DataSetRow row3 = getRow("Antigua et Barbuda", "Pomme d'ammour");
         final DataSetRow row4 = getRow("Iran", "Pomme de reinnette");
@@ -380,7 +380,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         final DataSetRow row10 = getRow("Taïwan", "Pomme du Calvados");
 
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
-        parameters.put(FROM_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
         parameters.put(TO_UNIT_PARAMETER, ENGLISH_COUNTRY_NAME);
 
         // when
@@ -402,7 +402,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         assertEquals("Taiwan", row10.get("0000"));
 
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
-        parameters.put(FROM_UNIT_PARAMETER,ENGLISH_COUNTRY_NAME );
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
         parameters.put(TO_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
 
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10), actionRegistry,
@@ -411,14 +411,14 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         // then
         assertEquals("Îles Åland", row1.get("0000"));
         assertEquals("Ouzbékistan", row2.get("0000"));
-        assertEquals("Antigua et Barbuda", row3.get("0000"));
+        assertEquals("Antigua-Et-Barbuda", row3.get("0000"));
         assertEquals("Iran", row4.get("0000"));
         assertEquals("", row5.get("0000"));
-        assertEquals("Taiwan", row6.get("0000"));
+        assertEquals("Taïwan", row6.get("0000"));
         assertEquals("Zimbabwe", row7.get("0000"));
         assertEquals("Afghanistan", row8.get("0000"));
         assertEquals("France", row9.get("0000"));
-        assertEquals("Taiwan", row10.get("0000"));
+        assertEquals("Taïwan", row10.get("0000"));
     }
 
     @Test

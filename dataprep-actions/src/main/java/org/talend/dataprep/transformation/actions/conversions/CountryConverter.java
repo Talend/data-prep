@@ -21,14 +21,12 @@ import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -42,10 +40,7 @@ import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-import org.talend.dataprep.util.NumericHelper;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
-
-import com.neovisionaries.i18n.CountryCode;
 
 @Action(CountryConverter.ACTION_NAME)
 public class CountryConverter extends AbstractActionMetadata implements ColumnAction {
@@ -78,7 +73,7 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
     private static final String NOT_ASCII_CHAR_PATTERN = "[^\\p{ASCII}]";
 
     // Persistent map of country names in case of country name for input
-    private static Map<String, Integer> countryNames;
+    private static List<CountryInfo> countries;
 
     private List<String> columnType;
 
@@ -91,8 +86,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        ActionsUtils.AdditionalColumn newColumn = ActionsUtils.additionalColumn()
-                .withName(context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER));
+        ActionsUtils.AdditionalColumn newColumn = ActionsUtils.additionalColumn().withName(
+                context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER));
 
         if (context.getParameters().get(TO_UNIT_PARAMETER).equals(COUNTRY_NUMBER)) {
             newColumn.withType(NUMERIC);
@@ -107,9 +102,13 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        SelectParameter.SelectParameterBuilder builder = selectParameter(locale).item(COUNTRY_NAME, COUNTRY_NAME)
-                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2).item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
-                .item(COUNTRY_NUMBER, COUNTRY_NUMBER).canBeBlank(false).name(FROM_UNIT_PARAMETER);
+        SelectParameter.SelectParameterBuilder builder = selectParameter(locale)
+                .item(COUNTRY_NAME, COUNTRY_NAME)
+                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2)
+                .item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
+                .item(COUNTRY_NUMBER, COUNTRY_NUMBER)
+                .canBeBlank(false)
+                .name(FROM_UNIT_PARAMETER);
 
         if (columnType != null) {
             if (columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO2.getId())) {
@@ -126,9 +125,13 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         parameters.add(builder.build(this));
 
         SelectParameter.SelectParameterBuilder secondBuilder = selectParameter(locale)
-                .item(ENGLISH_COUNTRY_NAME, ENGLISH_COUNTRY_NAME).item(FRENCH_COUNTRY_NAME, FRENCH_COUNTRY_NAME)
-                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2).item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
-                .item(COUNTRY_NUMBER, COUNTRY_NUMBER).canBeBlank(false).name(TO_UNIT_PARAMETER);
+                .item(ENGLISH_COUNTRY_NAME, ENGLISH_COUNTRY_NAME)
+                .item(FRENCH_COUNTRY_NAME, FRENCH_COUNTRY_NAME)
+                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2)
+                .item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
+                .item(COUNTRY_NUMBER, COUNTRY_NUMBER)
+                .canBeBlank(false)
+                .name(TO_UNIT_PARAMETER);
         if (columnType != null) {
             if (columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO2.getId())
                     || columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO3.getId())) {
@@ -182,39 +185,56 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         final String targetColumnId = ActionsUtils.getTargetColumnId(context);
         final String columnValue = row.get(columnId);
 
-        int countryId = -1;
-        CountryCode result;
+        int countryIndex = -1;
         String countryCode;
         final String fromParameter = context.getParameters().get(FROM_UNIT_PARAMETER);
 
+        if (countries == null) {
+            initializeCountries();
+        }
+
         switch (fromParameter) {
         case COUNTRY_NAME:
-        case ENGLISH_COUNTRY_NAME:
-        case FRENCH_COUNTRY_NAME:
-            if (countryNames == null) {
-                initializeCountryNameMap();
-            }
-            if (countryNames.containsKey(
-                    Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY))) {
-                countryId = countryNames.get(
-                        Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY));
+            for (CountryInfo countryInfo : countries) {
+                if (Normalizer
+                        .normalize(countryInfo.getFrenchName().toLowerCase(), Normalizer.Form.NFD)
+                        .replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY)
+                        .equals(Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll(
+                                NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY))
+                        || Normalizer
+                                .normalize(countryInfo.getEnglishName().toLowerCase(), Normalizer.Form.NFD)
+                                .replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY)
+                                .equals(Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll(
+                                        NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY))) {
+                    countryIndex = countries.indexOf(countryInfo);
+                    break;
+                }
             }
             break;
         case COUNTRY_CODE_ISO2:
             countryCode = columnValue.toUpperCase();
-            if (CountryCode.getByAlpha2Code(countryCode) != null) {
-                countryId = CountryCode.getByAlpha2Code(countryCode).getNumeric();
+            for (CountryInfo countryInfo : countries) {
+                if (countryInfo.getIso2().equals(countryCode)) {
+                    countryIndex = countries.indexOf(countryInfo);
+                    break;
+                }
             }
             break;
         case COUNTRY_CODE_ISO3:
             countryCode = columnValue.toUpperCase();
-            if (CountryCode.getByAlpha3Code(countryCode) != null) {
-                countryId = CountryCode.getByAlpha3Code(countryCode).getNumeric();
+            for (CountryInfo countryInfo : countries) {
+                if (countryInfo.getIso3().equals(countryCode)) {
+                    countryIndex = countries.indexOf(countryInfo);
+                    break;
+                }
             }
             break;
         case COUNTRY_NUMBER:
-            if (NumericHelper.isBigDecimal(columnValue)) {
-                countryId = BigDecimalParser.toBigDecimal(columnValue).intValue();
+            for (CountryInfo countryInfo : countries) {
+                if (countryInfo.getNumber().equals(columnValue)) {
+                    countryIndex = countries.indexOf(countryInfo);
+                    break;
+                }
             }
             break;
         default:
@@ -222,27 +242,23 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
             throw new IllegalArgumentException("Parameter value '" + fromParameter + "' is not supported.");
         }
 
-        if (countryId != -1) {
-            result = CountryCode.getByCode(countryId);
+        if (countryIndex != -1) {
             String toParameter = context.getParameters().get(TO_UNIT_PARAMETER);
-            Locale tempLocale;
             switch (toParameter) {
             case ENGLISH_COUNTRY_NAME:
-                tempLocale = new Locale(StringUtils.EMPTY, result.getAlpha2());
-                row.set(targetColumnId, tempLocale.getDisplayCountry(Locale.ENGLISH));
+                row.set(targetColumnId, countries.get(countryIndex).getEnglishName());
                 break;
             case FRENCH_COUNTRY_NAME:
-                tempLocale = new Locale(StringUtils.EMPTY, result.getAlpha2());
-                row.set(targetColumnId, tempLocale.getDisplayCountry(Locale.FRENCH));
+                row.set(targetColumnId, countries.get(countryIndex).getFrenchName());
                 break;
             case COUNTRY_CODE_ISO2:
-                row.set(targetColumnId, result.getAlpha2());
+                row.set(targetColumnId, countries.get(countryIndex).getIso2());
                 break;
             case COUNTRY_CODE_ISO3:
-                row.set(targetColumnId, result.getAlpha3());
+                row.set(targetColumnId, countries.get(countryIndex).getIso3());
                 break;
             case COUNTRY_NUMBER:
-                row.set(targetColumnId, Integer.toString(result.getNumeric()));
+                row.set(targetColumnId, countries.get(countryIndex).getNumber());
                 break;
             default:
                 // theoretically impossible case
@@ -263,36 +279,61 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
     }
 
     /**
-     * This method will initialize the map of country names
-     * with English and French country names as key and there country numbers as value.
-     * 2 different sources are used to construct this map :
-     * - one for English Country name which has a size of 270 entries CountryCode.values() (lib neovisionaries.i18n)
-     * - one for French Country name which has a size of 250 entries Locale.getISOCountries() (lib java.util)
-     * So some country names will not be transformed.
-     * Moreover DQ use another source to compute invalid/valid entries, so some valid entries for DQ will not be transformed too.
+     * This method will initialize the array of countries information.
+     * We use the same source as DQ, so what is valid in default semantic type will be transform.
      *
      * We transform name in order to use normalize key (without accent) and to be case insensitive.
      */
-    private static void initializeCountryNameMap() {
-        countryNames = new HashMap<>();
+    private void initializeCountries() {
+        countries = new ArrayList<>();
 
-        // put country names in english
-        for (CountryCode countryCode : CountryCode.values()) {
-            if (countryCode != null && countryCode.getAssignment().equals(CountryCode.Assignment.OFFICIALLY_ASSIGNED)) {
-                countryNames.put(Normalizer.normalize(countryCode.getName().toLowerCase(), Normalizer.Form.NFD)
-                        .replaceAll("[^\\p{ASCII}]", ""), countryCode.getNumeric());
-            }
+        Scanner scanner = new Scanner(CountryConverter.class.getResourceAsStream("country-codes.csv"));
+
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            String[] lineArray = line.split(",");
+            countries.add(new CountryInfo(lineArray[0], lineArray[1], lineArray[2], lineArray[3], lineArray[4]));
         }
-        // put country names in french
-        for (String countryCode : Locale.getISOCountries()) {
-            if (countryCode != null) {
-                Locale obj = new Locale(StringUtils.EMPTY, countryCode);
-                String countryName = obj.getDisplayCountry(Locale.FRENCH);
-                int countryNumber = CountryCode.getByAlpha2Code(countryCode).getNumeric();
-                countryNames.put(
-                        Normalizer.normalize(countryName.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""),
-                        countryNumber);
-            }
+    }
+
+    private class CountryInfo {
+
+        private String englishName;
+
+        private String frenchName;
+
+        private String iso2;
+
+        private String iso3;
+
+        private String number;
+
+        private CountryInfo(String englishName, String frenchName, String iso2, String iso3, String number) {
+            this.englishName = englishName;
+            this.frenchName = frenchName;
+            this.iso2 = iso2;
+            this.iso3 = iso3;
+            this.number = number;
+        }
+
+        private String getIso2() {
+            return this.iso2;
+        }
+
+        private String getIso3() {
+            return this.iso3;
+        }
+
+        private String getEnglishName() {
+            return this.englishName;
+        }
+
+        private String getNumber() {
+            return this.number;
+        }
+
+        private String getFrenchName() {
+            return this.frenchName;
         }
     }
 

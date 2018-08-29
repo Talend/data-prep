@@ -184,6 +184,7 @@ public abstract class AbstractActionMetadata implements InternalActionDefinition
                 break;
             case LINE:
             case DATASET:
+            case MULTI_COLUMNS:
             default:
                 break;
             }

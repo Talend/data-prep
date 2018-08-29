@@ -81,13 +81,9 @@ import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.async.AsyncExecutionId;
 import org.talend.dataprep.async.AsyncOperation;
 import org.talend.dataprep.async.AsyncParameter;
-import org.talend.dataprep.async.conditional.ConditionalTest;
-import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
 import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
-import org.talend.dataprep.async.generator.ExportParametersExecutionIdGenerator;
 import org.talend.dataprep.async.generator.PrepMetadataExecutionIdGenerator;
 import org.talend.dataprep.async.result.PrepMetadataGetContentUrlGenerator;
-import org.talend.dataprep.async.result.PreparationGetContentUrlGenerator;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
@@ -218,25 +214,9 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Run the transformation given the provided export parameters",
             notes = "This operation transforms the dataset or preparation using parameters in export parameters.")
     @VolumeMetered
-    @AsyncOperation(conditionalClass = GetPrepContentAsyncCondition.class, //
-            resultUrlGenerator = PreparationGetContentUrlGenerator.class, //
-            executionIdGeneratorClass = ExportParametersExecutionIdGenerator.class //
-    )
     public StreamingResponseBody execute(@ApiParam(
-            value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
-            throws IOException {
-
-        // Async behavior
-        final ConditionalTest conditionalTest = applicationContext.getBean(GetPrepContentAsyncCondition.class);
-        if (conditionalTest.apply(parameters)) {
-            // write to cache
-            executeSampleExportStrategy(parameters).writeTo(new NullOutputStream());
-            return outputStream -> {
-            };
-        } else {
-            // sync behavior
-            return executeSampleExportStrategy(parameters);
-        }
+            value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters) {
+        return executeSampleExportStrategy(parameters);
     }
 
     @RequestMapping(value = "/apply/preparation/{preparationId}/{stepId}/metadata", method = GET)

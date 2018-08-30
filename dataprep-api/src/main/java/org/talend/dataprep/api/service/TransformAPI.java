@@ -28,6 +28,7 @@ import org.talend.dataprep.api.service.command.transformation.*;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.transformation.actions.common.MultiColumnsAction;
 
 import javax.validation.Valid;
 import java.io.InputStream;
@@ -91,6 +92,16 @@ public class TransformAPI extends APIService {
     @Timed
     public Stream<ActionForm> datasetActions() {
         return toStream(ActionForm.class, mapper, getCommand(DatasetActions.class));
+    }
+
+    /**
+     * Get all the possible actions available on the selected columns.
+     */
+    @RequestMapping(value = "/api/transform/actions/multi_columns", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get all actions the selected columns.", notes = "Returns all actions for the selected columns..")
+    @Timed
+    public Stream<ActionForm> multiColumnsActions() {
+        return toStream(ActionForm.class, mapper, getCommand(MultiColumnsActions.class));
     }
 
     /**

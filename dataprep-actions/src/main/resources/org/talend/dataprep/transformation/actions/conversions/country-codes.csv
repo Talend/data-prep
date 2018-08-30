@@ -118,8 +118,8 @@ Hungary,Hongrie,HU,HUN,348,HNG,hu,HU,H,36,HUN,HU,113,HUN,HUF,HUNGARY,2,Forint,34
 Iceland,Islande,IS,ISL,352,ISL,ic,IL,IS,354,ISL,IC,114,ISL,ISK,ICELAND,0,Iceland Krona,352,Yes
 India,Inde,IN,IND,356,IND,ii,IN,IND,91,IND,IN,115,IND,INR,INDIA,2,Indian Rupee,356,Yes
 Indonesia,Indonésie,ID,IDN,360,INS,io,ID,RI,62,IDN,ID,116,INA,IDR,INDONESIA,2,Rupiah,360,Yes
-Iran,Iran,IR,IRN,364,IRN,ir,IR,IR,98,IRN,IR,117,IRI,IRR,"IRAN, ISLAMIC REPUBLIC OF",2,Iranian Rial,364,Yes
 Islamic Republic of Iran,République Islamique d'Iran,IR,IRN,364,IRN,ir,IR,IR,98,IRN,IR,117,IRI,IRR,"IRAN, ISLAMIC REPUBLIC OF",2,Iranian Rial,364,Yes
+Iran,Iran,IR,IRN,364,IRN,ir,IR,IR,98,IRN,IR,117,IRI,IRR,"IRAN, ISLAMIC REPUBLIC OF",2,Iranian Rial,364,Yes
 Iraq,Iraq,IQ,IRQ,368,IRQ,iq,IQ,IRQ,964,IRQ,IZ,118,IRQ,IQD,IRAQ,3,Iraqi Dinar,368,Yes
 Ireland,Irlande,IE,IRL,372,IRL,ie,IE,IRL,353,IRL,EI,119,IRL,EUR,IRELAND,2,Euro,978,Yes
 Isle of Man,Île de Man,IM,IMN,833, ,uik, ,GBM,44,GBM,IM,120, ,GBP,ISLE OF MAN,2,Pound Sterling,826,Crown dependency of GB
@@ -194,8 +194,8 @@ Norway,Norvège,NO,NOR,578,NOR,no,NO,N,47,NOR,NO,186,NOR,NOK,NORWAY,2,Norwegian 
 Oman,Oman,OM,OMN,512,OMA,mk,OM, ,968,OMA,MU,187,OMA,OMR,OMAN,3,Rial Omani,512,Yes
 Pakistan,Pakistan,PK,PAK,586,PAK,pk,PK,PK,92,PAK,PK,188,PAK,PKR,PAKISTAN,2,Pakistan Rupee,586,Yes
 Palau,Palaos,PW,PLW,585,PLW,pw, , ,680,PLW,PS,189,PLW,USD,PALAU,2,US Dollar,840,Yes
-Palestine,Palestine,PS,PSE,275, ,"gz,wj", , ,970,PLE,"GZ,WE","91,267",PLE,,"PALESTINE, STATE OF",,No universal currency,,In contention
 State of Palestine,État de Palestine,PS,PSE,275, ,"gz,wj", , ,970,PLE,"GZ,WE","91,267",PLE,,"PALESTINE, STATE OF",,No universal currency,,In contention
+Palestine,Palestine,PS,PSE,275, ,"gz,wj", , ,970,PLE,"GZ,WE","91,267",PLE,,"PALESTINE, STATE OF",,No universal currency,,In contention
 Panama,Panama,PA,PAN,591,PNR,pn,PM,PA,507,PAN,PM,191,PAN,USD,PANAMA,2,US Dollar,840,Yes
 Papua New Guinea,Papouasie-Nouvelle-Guinée,PG,PNG,598,PNG,pp,NG,PNG,675,PNG,PP,192,PNG,PGK,PAPUA NEW GUINEA,2,Kina,598,Yes
 Paraguay,Paraguay,PY,PRY,600,PRG,py,PY,PY,595,PAR,PA,194,PAR,PYG,PARAGUAY,0,Guarani,600,Yes
@@ -207,8 +207,8 @@ Portugal,Portugal,PT,PRT,620,POR,po,PO,P,351,POR,PO,199,POR,EUR,PORTUGAL,2,Euro,
 Puerto Rico,Porto Rico,PR,PRI,630,PTR,pr,PU,USA,1,PUR,RQ,200,PUR,USD,PUERTO RICO,2,US Dollar,840,Commonwealth of US
 Qatar,Qatar,QA,QAT,634,QAT,qa,QT,Q,974,QAT,QA,201,QAT,QAR,QATAR,2,Qatari Rial,634,Yes
 Romania,Roumanie,RO,ROU,642,ROU,rm,RO,RO,40,ROU,RO,203,ROU,RON,ROMANIA,2,New Romanian Leu,946,Yes
-Russia,Russie,RU,RUS,643,RUS,ru,RS,RUS,7,RUS,RS,204,RUS,RUB,RUSSIAN FEDERATION,2,Russian Ruble,643,Yes
 Russian Federation,Fédération de Russie,RU,RUS,643,RUS,ru,RS,RUS,7,RUS,RS,204,RUS,RUB,RUSSIAN FEDERATION,2,Russian Ruble,643,Yes
+Russia,Russie,RU,RUS,643,RUS,ru,RS,RUS,7,RUS,RS,204,RUS,RUB,RUSSIAN FEDERATION,2,Russian Ruble,643,Yes
 Rwanda,Rwanda,RW,RWA,646,RRW,rw,RW,RWA,250,RWA,RW,205,RWA,RWF,RWANDA,0,Rwanda Franc,646,Yes
 Réunion,Réunion,RE,REU,638,REU,re,RE,F,262,REU,RE,206,REU,EUR,RÉUNION,2,Euro,978,Part of FR
 Saint Barthélemy,Saint-Barthélemy,BL,BLM,652, ,sc, , ,590, ,TB,, ,EUR,SAINT BARTHÉLEMY,2,Euro,978,Part of FR
@@ -273,8 +273,8 @@ Uzbekistan,Ouzbékistan,UZ,UZB,860,UZB,uz,UZ,UZ,998,UZB,UZ,261,UZB,UZS,UZBEKISTA
 Vanuatu,Vanuatu,VU,VUT,548,VUT,nn,NV, ,678,VAN,NH,262,VAN,VUV,VANUATU,0,Vatu,548,Yes
 Venezuela,Venezuela,VE,VEN,862,VEN,ve,VN,YV,58,VEN,VE,263,VEN,VEF,"VENEZUELA, BOLIVARIAN REPUBLIC OF",2,Bolivar,937,Yes
 Bolivarian Republic of Venezuela,République Bolivarienne du Venezuela,VE,VEN,862,VEN,ve,VN,YV,58,VEN,VE,263,VEN,VEF,"VENEZUELA, BOLIVARIAN REPUBLIC OF",2,Bolivar,937,Yes
-Vietnam,Viêt Nam,VN,VNM,704,VTN,vm,VS,VN,84,VIE,VM,264,VIE,VND,VIET NAM,0,Dong,704,Yes
 Socialist Republic of Vietnam,République socialiste du Viêt Nam,VN,VNM,704,VTN,vm,VS,VN,84,VIE,VM,264,VIE,VND,VIET NAM,0,Dong,704,Yes
+Vietnam,Viêt Nam,VN,VNM,704,VTN,vm,VS,VN,84,VIE,VM,264,VIE,VND,VIET NAM,0,Dong,704,Yes
 Virgin Islands,Îles Vierges Britanniques,VG,VGB,92,VRG,vb,VI,BVI,1-284,VGB,VI,39,IVB,USD,VIRGIN ISLANDS (BRITISH),2,US Dollar,840,Territory of GB
 British Virgin Islands,Îles Vierges Britanniques,VG,VGB,92,VRG,vb,VI,BVI,1-284,VGB,VI,39,IVB,USD,VIRGIN ISLANDS (BRITISH),2,US Dollar,840,Territory of GB
 U.S. Virgin Islands,Îles Vierges des États-Unis,VI,VIR,850,VIR,vi,VI,USA,1-340,VIR,VQ,258,ISV,USD,VIRGIN ISLANDS (U.S.),2,US Dollar,840,Territory of US

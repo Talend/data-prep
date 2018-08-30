@@ -332,11 +332,11 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
 
         // then
         assertEquals("Afghanistan", row1.get("0000"));
-        assertEquals("Îles Åland", row2.get("0000"));
+        assertEquals("Åland", row2.get("0000"));
         assertEquals("Afghanistan", row3.get("0000"));
         assertEquals("Afghanistan", row4.get("0000"));
         assertEquals("Iran", row5.get("0000"));
-        assertEquals("Îles Åland", row6.get("0000"));
+        assertEquals("Åland", row6.get("0000"));
         assertTrue(row7.get("0000").isEmpty());
         assertEquals("Taïwan", row8.get("0000"));
     }
@@ -416,9 +416,9 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
                 actionRegistry, factory.create(action, parameters));
 
         // then
-        assertEquals("Îles Åland", row1.get("0000"));
+        assertEquals("Åland", row1.get("0000"));
         assertEquals("Ouzbékistan", row2.get("0000"));
-        assertEquals("Antigua-Et-Barbuda", row3.get("0000"));
+        assertEquals("Antigua Et Barbuda", row3.get("0000"));
         assertEquals("Iran", row4.get("0000"));
         assertEquals("", row5.get("0000"));
         assertEquals("Taïwan", row6.get("0000"));
@@ -495,4 +495,32 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         assertEquals("COL", row11.get("0000"));
     }
 
+    @Test
+    public void testShouldConvertValidAndNotOthers() {
+        // given
+        final DataSetRow row1 = getRow("Chine", "Pomme de terre");
+        final DataSetRow row2 = getRow("Colombia", "Pomme de pain");
+        final DataSetRow row3 = getRow("Japon", "Pomme d'api");
+
+        // test not country case
+        final DataSetRow row4 = getRow("Hawaii", "Pomme de douche");
+        final DataSetRow row5 = getRow("Michigan", "Pomme de discorde");
+        final DataSetRow row6 = getRow("Wisconsin", "Pomme d'Adam");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
+        parameters.put(TO_UNIT_PARAMETER, COUNTRY_CODE_ISO3);
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6), actionRegistry,
+                factory.create(action, parameters));
+
+        // then
+        assertEquals("CHN", row1.get("0000"));
+        assertEquals("COL", row2.get("0000"));
+        assertEquals("JPN", row3.get("0000"));
+        assertEquals("", row4.get("0000"));
+        assertEquals("", row5.get("0000"));
+        assertEquals("", row6.get("0000"));
+    }
 }

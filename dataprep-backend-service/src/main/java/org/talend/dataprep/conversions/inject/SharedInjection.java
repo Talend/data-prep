@@ -1,8 +1,6 @@
 package org.talend.dataprep.conversions.inject;
 
-import org.talend.dataprep.api.dataset.DatasetDTO;
 import org.talend.dataprep.api.preparation.PreparationDTO;
-import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 
 import java.util.function.BiFunction;
@@ -12,9 +10,5 @@ import java.util.function.BiFunction;
  *
  * @see org.talend.dataprep.conversions.BeanConversionService#convert(Object, Class, BiFunction[])
  */
-public interface OwnerInjection {
-
-    BiFunction<PersistentPreparation, PreparationDTO, PreparationDTO> injectIntoPreparation();
-
-    BiFunction<Dataset, DatasetDTO, DatasetDTO> injectIntoDataset();
+public interface SharedInjection extends BiFunction<PersistentPreparation, PreparationDTO, PreparationDTO> {
 }

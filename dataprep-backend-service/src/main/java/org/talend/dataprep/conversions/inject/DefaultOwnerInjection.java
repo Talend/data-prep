@@ -1,13 +1,16 @@
 package org.talend.dataprep.conversions.inject;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.api.dataset.DatasetDTO;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.share.Owner;
+import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.security.Security;
+
+import javax.annotation.PostConstruct;
+import java.util.function.BiFunction;
 
 /**
  * A default implementation of {@link OwnerInjection} dedicated to environments with no security enabled.
@@ -25,10 +28,22 @@ public class DefaultOwnerInjection implements OwnerInjection {
     }
 
     @Override
-    public PreparationDTO apply(PersistentPreparation source, PreparationDTO dto) {
-        if (dto.getOwner() == null) {
-            dto.setOwner(defaultOwner);
-        }
-        return dto;
+    public BiFunction<PersistentPreparation, PreparationDTO, PreparationDTO> injectIntoPreparation() {
+        return (persistentPreparation, prepDTO) -> {
+            if (prepDTO.getOwner() == null) {
+                prepDTO.setOwner(defaultOwner);
+            }
+            return prepDTO;
+        };
+    }
+
+    @Override
+    public BiFunction<Dataset, DatasetDTO, DatasetDTO> injectIntoDataset() {
+        return (dataset, datasetDTO) -> {
+            if (datasetDTO.getOwner() == null) {
+                datasetDTO.setOwner(defaultOwner);
+            }
+            return datasetDTO;
+        };
     }
 }

@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.jayway.restassured.path.json.JsonPath;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
@@ -290,8 +291,8 @@ public class DataSetServiceTest extends DataSetBaseTest {
         metadata.getContent().addParameter(CSVFormatFamily.SEPARATOR_PARAMETER, ";");
         dataSetMetadataRepository.save(metadata);
 
-        String expected = "[{\"id\":\"" + id1
-                + "\",\"name\":\"name1\",\"records\":0,\"author\":\"anonymous\",\"nbLinesHeader\":0,\"nbLinesFooter\":0,\"created\":0}]";
+        String expected =
+                "[{\"id\":\"" + id1 + "\",\"name\":\"name1\",\"records\":0,\"ownerId\":\"anonymous\",\"created\":0}]";
 
         InputStream content = when().get("/datasets").asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);
@@ -329,6 +330,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         userDataRepository.save(userData);
 
         favoritesResp = from(when().get("/datasets").asString()).get("favorite"); //$NON-NLS-1$
+
         assertEquals(2, favoritesResp.size());
         assertTrue(favoritesResp.get(0));
         assertTrue(favoritesResp.get(1));

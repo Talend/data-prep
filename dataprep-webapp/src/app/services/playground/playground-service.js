@@ -39,6 +39,7 @@ import {
 } from '../../index-route';
 // actions scopes
 const LINE = 'line';
+const MULTI_COLUMNS = 'multi_columns';
 const DATASET = 'dataset';
 // events
 export const EVENT_LOADING_START = 'talend.loading.start';
@@ -500,7 +501,7 @@ export default function PlaygroundService(
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
 		return getCurrentPreparation()
-			// append step
+		// append step
 			.then(preparation => PreparationService.appendStep(preparation.id, actions))
 			// update recipe and datagrid
 			.then(() => {
@@ -645,9 +646,9 @@ export default function PlaygroundService(
 				currentStepId,
 				nextParentStepId,
 			)
-				// update recipe and datagrid (due to backend implementation:
-				// getContent should be called first so that updated stepRowMetadata
-				// is available for getContent)
+			// update recipe and datagrid (due to backend implementation:
+			// getContent should be called first so that updated stepRowMetadata
+			// is available for getContent)
 				.then(updatePreparationDatagrid)
 				.then(this.updatePreparationDetails)
 				// add entry in history for undo/redo
@@ -761,7 +762,7 @@ export default function PlaygroundService(
 			const line = state.playground.grid.selectedLine;
 			let stepParameters = { ...params };
 			switch (scope) {
-			case DATASET:
+			case DATASET: {
 				stepParameters.scope = scope;
 				if (state.playground.filter.applyTransformationOnFilters) {
 					const stepFilters = FilterAdapterService.toTree(
@@ -773,7 +774,8 @@ export default function PlaygroundService(
 					{ action: action.name, parameters: stepParameters },
 				];
 				break;
-			case LINE:
+			}
+			case LINE: {
 				stepParameters.scope = scope;
 				stepParameters.row_id = line && line.tdpId;
 
@@ -787,6 +789,24 @@ export default function PlaygroundService(
 					{ action: action.name, parameters: stepParameters },
 				];
 				break;
+			}
+			case MULTI_COLUMNS: {
+				let parameters = { ...params };
+				parameters.scope = scope;
+				parameters.column_id = state.playground.grid.selectedColumns.map(col => col.id);
+
+				if (
+					state.playground.filter
+						.applyTransformationOnFilters
+				) {
+					const stepFilters = FilterAdapterService.toTree(
+						state.playground.filter.gridFilters,
+					);
+					parameters = { ...parameters, ...stepFilters };
+				}
+				actions = [{ action: action.name, parameters }];
+				break;
+			}
 			default:
 				actions = map(
 					state.playground.grid.selectedColumns,

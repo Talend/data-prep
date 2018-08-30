@@ -14,6 +14,7 @@
 const LINE = 'line';
 const COLUMN = 'column';
 const DATASET = 'dataset';
+const MULTI_COLUMNS = 'multi_columns';
 
 /**
  * @ngdoc service
@@ -53,6 +54,7 @@ export default class TransformationRestService {
 	getTransformations(scope, entity) {
 		switch (scope) {
 		case LINE:
+		case MULTI_COLUMNS:
 		case DATASET:
 			return this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`)
                 .then(response => response.data);

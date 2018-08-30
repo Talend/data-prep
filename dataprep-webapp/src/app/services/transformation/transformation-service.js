@@ -14,6 +14,7 @@
 import { chain } from 'lodash';
 
 const COLUMN = 'column';
+const MULTI_COLUMNS = 'multi_columns';
 
 /**
  * @ngdoc service
@@ -56,10 +57,13 @@ export default class TransformationService {
 		if (fromCache) {
 			return this.$q.when(fromCache);
 		}
-
-		return this.TransformationRestService.getTransformations(scope, entity)
-			.then((response) => {
-				const allTransformations = this.TransformationUtilsService.adaptTransformations(response);
+		const fetchTransformations = this.TransformationRestService.getTransformations(scope, entity);
+		const fetchMultiColmunsTransformations = (scope === COLUMN && this.state.playground.grid.selectedColumns.length > 1) ?
+			this.TransformationRestService.getTransformations(MULTI_COLUMNS, entity) :
+			this.$q.when([]);
+		return this.$q.all([fetchMultiColmunsTransformations, fetchTransformations])
+			.then(([reponseFetchMultiColmunsTransformations, reponseFetchTransformations]) => {
+				const allTransformations = this.TransformationUtilsService.adaptTransformations(reponseFetchTransformations.concat(reponseFetchMultiColmunsTransformations));
 				const allCategories = this.TransformationUtilsService.sortAndGroupByCategory(allTransformations);
 				return {
 					allTransformations,

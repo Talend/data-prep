@@ -26,7 +26,7 @@ import { map } from 'lodash';
  *
  */
 export default class DatagridExternalService {
-	constructor($timeout, state, StateService, StatisticsService,
+	constructor($timeout, state, StateService, StatisticsService, TransformationCacheService,
                 TransformationService, PreviewService, LookupService, StorageService) {
 		'ngInject';
 
@@ -46,6 +46,8 @@ export default class DatagridExternalService {
 		this.PreviewService = PreviewService;
 		this.LookupService = LookupService;
 		this.StorageService = StorageService;
+		this.TransformationCacheService = TransformationCacheService;
+
 	}
 
     /**
@@ -90,16 +92,15 @@ export default class DatagridExternalService {
 
         // update column scope transformations and charts if we have a selected column that has changed
 		if (columnsHaveChanged && this.lastSelectedColumnsNumber) {
-			const firstSelected = this.state.playground.grid.selectedColumns[0];
-			this.TransformationService.initTransformations('column', firstSelected);
-
 			if (this.lastSelectedColumnsNumber === 1 && column) {
 				this.StatisticsService.updateStatistics();
 			}
 			else {
+				this.TransformationCacheService.invalidateCache();
 				this.StatisticsService.reset();
 			}
-
+			const firstSelected = this.state.playground.grid.selectedColumns[0];
+			this.TransformationService.initTransformations('column', firstSelected);
 			const selectedCols = map(this.state.playground.grid.selectedColumns, 'id');
 			this.StorageService.setSelectedColumns(
                 this.state.playground.preparation ? this.state.playground.preparation.id : this.state.playground.dataset.id,

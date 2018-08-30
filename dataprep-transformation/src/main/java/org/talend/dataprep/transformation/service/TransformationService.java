@@ -754,7 +754,7 @@ public class TransformationService extends BaseTransformationService {
      *
      * @return A list of {@link ActionDefinition} that can be applied to selected columns.
      */
-    @RequestMapping(value = "/action/multiColumns", method = GET)
+    @RequestMapping(value = "/action/multi_columns", method = GET)
     @ApiOperation(value = "Return all actions on selected columns.",
             notes = "This operation returns an array of actions.")
     @ResponseBody

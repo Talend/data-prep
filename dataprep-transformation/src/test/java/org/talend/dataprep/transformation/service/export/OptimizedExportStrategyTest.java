@@ -158,7 +158,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         // Then
         assertFalse("The OptimizedExportStrategy should not be acceptable if version is ROOT_STEP",
-                optimizedExportStrategy.accept(exportParameters));
+                optimizedExportStrategy.test(exportParameters));
     }
 
     private void putTransformationAndMetadataInCacheForSteps(List<String> steps, String preparationId, String datasetId,

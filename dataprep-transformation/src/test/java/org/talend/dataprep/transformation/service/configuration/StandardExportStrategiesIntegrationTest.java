@@ -286,7 +286,7 @@ public class StandardExportStrategiesIntegrationTest {
         when(contentCache.has(transformationMetadataCacheKeyPreviousVersion)).thenReturn(false);
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertTrue("An ExportStrategy should be chosen but none was found", electedStrategy.isPresent());

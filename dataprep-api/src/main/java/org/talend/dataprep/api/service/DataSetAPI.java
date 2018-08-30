@@ -351,8 +351,6 @@ public class DataSetAPI extends APIService {
 
             details.setPreparations(preps);
 
-            System.out.println("details = " + details);
-
             return details;
 
         } finally {

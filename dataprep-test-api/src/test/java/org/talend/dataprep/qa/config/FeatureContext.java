@@ -13,27 +13,20 @@
 
 package org.talend.dataprep.qa.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
+import java.io.*;
+import java.util.*;
 
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
+import javax.annotation.*;
+import javax.validation.constraints.*;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.talend.dataprep.format.export.ExportFormatMessage;
-import org.talend.dataprep.helper.api.Action;
-import org.talend.dataprep.qa.dto.Folder;
-import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
-import org.talend.dataprep.qa.util.PreparationUID;
-import org.talend.dataprep.qa.util.folder.FolderUtil;
+import org.apache.commons.lang.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.talend.dataprep.format.export.*;
+import org.talend.dataprep.helper.api.*;
+import org.talend.dataprep.qa.dto.*;
+import org.talend.dataprep.qa.util.*;
+import org.talend.dataprep.qa.util.folder.*;
 
 /**
  * Used to share data within steps.
@@ -106,12 +99,26 @@ public class FeatureContext {
      */
     public static String suffixFolderName(String folderPath) {
         // The Home folder does not be suffixed
-        if (StringUtils.equals(folderPath, "/")) {
+        if (folderPath.isEmpty() || StringUtils.equals(folderPath, "/")) {
             return folderPath;
         }
-        // 2 cases, following the path starts from the root or not
-        return folderPath.startsWith("/") ? "/" + folderPath.substring(1).replace("/", getSuffix() + "/") + getSuffix()
-                : folderPath.replace("/", getSuffix() + "/") + getSuffix();
+        String cleanedFolderPath = folderPath;
+        StringBuilder suffixedfolderPath = new StringBuilder();
+        if (folderPath.startsWith("/")) {
+            cleanedFolderPath = cleanedFolderPath.substring(1);
+            suffixedfolderPath.append("/");
+        }
+        if (folderPath.endsWith("/")) {
+            cleanedFolderPath = cleanedFolderPath.substring(0, cleanedFolderPath.length() - 1);
+            suffixedfolderPath.append(cleanedFolderPath.replace("/", getSuffix() + "/"));
+            suffixedfolderPath.append(getSuffix());
+            suffixedfolderPath.append("/");
+        } else {
+            suffixedfolderPath.append(cleanedFolderPath.replace("/", getSuffix() + "/"));
+            suffixedfolderPath.append(getSuffix());
+        }
+
+        return suffixedfolderPath.toString();
     }
 
     public static String getSuffix() {
@@ -232,14 +239,8 @@ public class FeatureContext {
      * @return a {@link List} of all created dataset id.
      */
     @NotNull
-    public List<String> getDatasetIds() {
-        return new ArrayList<>(datasetIdByName.values());
-    }
-
-
-    @NotNull
-    public List<String> getDatasetNames(){
-        return new ArrayList<>(datasetIdByName.keySet());
+    public List<String> getDatasetIdsToDelete() {
+        return new ArrayList<>(datasetIdByNameToDelete.values());
     }
 
     /**

@@ -1,17 +1,12 @@
 package org.talend.dataprep.qa.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.talend.dataprep.qa.config.FeatureContext.getSuffix;
-import static org.talend.dataprep.qa.config.FeatureContext.isUseSuffix;
-import static org.talend.dataprep.qa.config.FeatureContext.setUseSuffix;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.qa.config.UnitTestsUtil.injectFieldInClass;
+import static org.junit.Assert.*;
+import static org.talend.dataprep.qa.config.FeatureContext.*;
+import static org.talend.dataprep.qa.config.UnitTestsUtil.*;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.runners.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FeatureContextTest {
@@ -50,8 +45,31 @@ public class FeatureContextTest {
     }
 
     @Test
-    public void testSuffixFolderNameNominal() {
+    public void testSuffixFolderName() {
+        assertEquals("", suffixFolderName(""));
+        assertEquals("/", suffixFolderName("/"));
+        assertEquals("/folderA_123456789", suffixFolderName("/folderA"));
+        assertEquals("/folderA_123456789/", suffixFolderName("/folderA/"));
+        assertEquals("/folderA_123456789/folderB_123456789", suffixFolderName("/folderA/folderB"));
+        assertEquals("/folderA_123456789/folderB_123456789/", suffixFolderName("/folderA/folderB/"));
+    }
 
+    @Test
+    public void testSuffixFolderNameDeactivated() {
+        setUseSuffix(false);
+        assertEquals("", suffixFolderName(""));
+        assertEquals("/", suffixFolderName("/"));
+        assertEquals("/folderA", suffixFolderName("/folderA"));
+        assertEquals("/folderA/", suffixFolderName("/folderA/"));
+        assertEquals("/folderA/folderB", suffixFolderName("/folderA/folderB"));
+        assertEquals("/folderA/folderB/", suffixFolderName("/folderA/folderB/"));
+        setUseSuffix(true);
+        assertEquals("", suffixFolderName(""));
+        assertEquals("/", suffixFolderName("/"));
+        assertEquals("/folderA_123456789", suffixFolderName("/folderA"));
+        assertEquals("/folderA_123456789/", suffixFolderName("/folderA/"));
+        assertEquals("/folderA_123456789/folderB_123456789", suffixFolderName("/folderA/folderB"));
+        assertEquals("/folderA_123456789/folderB_123456789/", suffixFolderName("/folderA/folderB/"));
     }
 
 }

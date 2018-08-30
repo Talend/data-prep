@@ -1,33 +1,25 @@
 package org.talend.dataprep.qa.step;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.junit.Assert.*;
+import static org.springframework.http.HttpStatus.*;
+import static org.talend.dataprep.qa.config.FeatureContext.*;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.util.*;
+import java.util.stream.*;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
-import org.apache.commons.lang.StringUtils;
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.Folder;
-import org.talend.dataprep.qa.dto.FolderContent;
-import org.talend.dataprep.qa.dto.PreparationDetails;
+import org.apache.commons.lang.*;
+import org.junit.*;
+import org.slf4j.*;
+import org.talend.dataprep.qa.config.*;
+import org.talend.dataprep.qa.dto.*;
 
-import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.*;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import cucumber.api.*;
+import cucumber.api.java.en.*;
 
 /**
  * Step dealing with preparation
@@ -225,7 +217,7 @@ public class PreparationStep extends DataPrepStep {
         checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
     }
 
-    public String getId (String name) throws Throwable {
+    public String getId(String name) throws Throwable {
         String prepPath = util.extractPathFromFullName(name);
         FolderContent folderContent = folderUtil.listPreparation(prepPath);
         PreparationDetails prepaDetails = folderContent.preparations

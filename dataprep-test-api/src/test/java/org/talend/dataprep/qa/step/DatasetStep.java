@@ -239,12 +239,6 @@ public class DatasetStep extends DataPrepStep {
         };
     }
 
-    @Given("^I had the existing dataset \"(.*)\"") //
-    public void givenExistingDataset(String name) throws Throwable {
-        List<ContentMetadata> datasetMetas = listDatasetMeta();
-        context.storeDatasetRef(getDatasetIdByName(datasetMetas, name), name);
-    }
-
     @Then("^The list of datasets has \"(.*)\" datasets$") //
     public void checkDatasetsList(int number) throws Throwable {
         List<ContentMetadata> datasetMetas = listDatasetMeta();

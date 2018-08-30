@@ -82,14 +82,6 @@ public class ActionStep extends DataPrepStep {
         assertTrue(actions.contains(storedAction));
     }
 
-    @Then("^I check that all 16 steps exists in the preparation \"(.*)\"$")
-    public void existStepMigration(String prepFullName)throws IOException {
-        String prepPath = util.extractPathFromFullName(prepFullName);
-        String prepId = context.getPreparationId(prepFullName, prepPath);
-        PreparationDetails prepDet = getPreparationDetails(prepId);
-        System.out.println("*****debug****"+prepDet.actions.get(1).toString() );
-    }
-
     @Then("^I update the first step like \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
     public void updateStep(String stepName, String prepName, DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);

@@ -78,6 +78,18 @@ public class PreparationStep extends DataPrepStep {
         Assert.assertNotNull(prepDet);
         Assert.assertEquals(prepDet.dataSetId, context.getDatasetId(suffixName(params.get(DATASET_NAME))));
         Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
+
+    }
+
+    public void existStepMigration(String prepFullName)throws IOException {
+        String prepPath = util.extractPathFromFullName(prepFullName);
+        String prepId = context.getPreparationId(prepFullName, prepPath);
+        PreparationDetails prepDet = getPreparationDetails(prepId);
+        long debug = prepDet.actions
+                .stream() //
+                .filter(action -> action.action.equals("blabla"))
+                .count();
+        System.out.println("*****debug****"+debug );
     }
 
     @When("^I load the existing preparation called \"(.*)\"$")

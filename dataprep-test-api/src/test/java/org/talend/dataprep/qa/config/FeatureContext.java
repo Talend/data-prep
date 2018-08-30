@@ -49,7 +49,7 @@ public class FeatureContext {
     /**
      * Suffix used to differentiate persisted TDP items during parallel IT runs.
      */
-    private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
+    public static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
     /** Classify dataset id by their suffixed name (Map< Name, Id >) */
     protected Map<String, String> datasetIdByName = new HashMap<>();

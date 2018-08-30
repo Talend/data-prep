@@ -245,7 +245,7 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            String[] lineArray = line.split(",");
+            String[] lineArray = line.split("\\|");
             info.add(new CountryInfo(lineArray[0], lineArray[1], lineArray[2], lineArray[3], lineArray[4]));
         }
 

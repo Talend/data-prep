@@ -23,7 +23,6 @@ import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.upgrade.model.UpgradeTask;
 
-
 /**
  * Fix the list of steps in PersistentPreparation.
  */
@@ -43,7 +42,8 @@ public class StepListPreparationsMigration implements BaseUpgradeTaskTo_2_1_0_PE
     public void run() {
         LOGGER.info("Migration of step ids in preparation...");
 
-        preparationRepository.list(PersistentPreparation.class) //
+        preparationRepository
+                .list(PersistentPreparation.class) //
                 .forEach(p -> {
                     LOGGER.info("Migration of preparation #{}", p.getId());
                     final List<String> stepsIds = preparationUtils.listStepsIds(p.getHeadId(), preparationRepository);

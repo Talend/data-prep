@@ -13,13 +13,11 @@ public class AsyncExecutionTest {
 
     @Test
     public void shouldOrderRunningFirst() {
-        List<AsyncExecution> unOrderedAsyncs = Lists.newArrayList(
-                buildAsyncExecution(AsyncExecution.Status.NEW, 100L),
+        List<AsyncExecution> unOrderedAsyncs = Lists.newArrayList(buildAsyncExecution(AsyncExecution.Status.NEW, 100L),
                 buildAsyncExecution(AsyncExecution.Status.DONE, 100L),
                 buildAsyncExecution(AsyncExecution.Status.RUNNING, 100L),
                 buildAsyncExecution(AsyncExecution.Status.CANCELLED, 100L),
-                buildAsyncExecution(AsyncExecution.Status.FAILED, 100L)
-        );
+                buildAsyncExecution(AsyncExecution.Status.FAILED, 100L));
 
         unOrderedAsyncs.sort(naturalOrder());
 
@@ -29,10 +27,9 @@ public class AsyncExecutionTest {
     @Test
     public void shouldOrderMostRecentEndFirst() {
         long mostRecentEndDate = 35374L;
-        List<AsyncExecution> unOrderedAsyncs = Lists.newArrayList(
-                buildAsyncExecution(AsyncExecution.Status.DONE, 25374L),
-                buildAsyncExecution(AsyncExecution.Status.DONE, mostRecentEndDate)
-        );
+        List<AsyncExecution> unOrderedAsyncs =
+                Lists.newArrayList(buildAsyncExecution(AsyncExecution.Status.DONE, 25374L),
+                        buildAsyncExecution(AsyncExecution.Status.DONE, mostRecentEndDate));
 
         unOrderedAsyncs.sort(naturalOrder());
 

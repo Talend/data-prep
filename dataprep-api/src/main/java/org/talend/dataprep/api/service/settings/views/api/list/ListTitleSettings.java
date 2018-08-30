@@ -58,7 +58,6 @@ public class ListTitleSettings {
      */
     private String onEditSubmit;
 
-
     public String getDisplayModeKey() {
         return displayModeKey;
     }

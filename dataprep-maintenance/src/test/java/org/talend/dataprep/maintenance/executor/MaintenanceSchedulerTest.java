@@ -118,7 +118,6 @@ public class MaintenanceSchedulerTest extends BaseMaintenanceTest {
         verify(listTask.get(4), times(1)).performTask();
         verify(listTask.get(5), times(0)).performTask();
 
-
         listTask
                 .stream() //
                 .filter(task -> !(task instanceof MockScheduledRepeatTask))

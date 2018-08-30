@@ -75,10 +75,15 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
-        parameters.add(
-                parameter(locale).setName(CELL_VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this));
-        parameters.add(parameter(locale).setName(REPLACE_VALUE_PARAMETER).setType(ParameterType.STRING).setDefaultValue(EMPTY).build(this));
-        parameters.add(parameter(locale).setName(REPLACE_ENTIRE_CELL_PARAMETER)
+        parameters
+                .add(parameter(locale).setName(CELL_VALUE_PARAMETER).setType(REGEX).setDefaultValue(EMPTY).build(this));
+        parameters.add(parameter(locale)
+                .setName(REPLACE_VALUE_PARAMETER)
+                .setType(ParameterType.STRING)
+                .setDefaultValue(EMPTY)
+                .build(this));
+        parameters.add(parameter(locale)
+                .setName(REPLACE_ENTIRE_CELL_PARAMETER)
                 .setType(BOOLEAN)
                 .setDefaultValue(false)
                 .build(this));
@@ -86,7 +91,8 @@ public class ReplaceOnValue extends AbstractActionMetadata implements ColumnActi
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + "_replace").withType(STRING));
+        return singletonList(
+                ActionsUtils.additionalColumn().withName(context.getColumnName() + "_replace").withType(STRING));
     }
 
     @Override

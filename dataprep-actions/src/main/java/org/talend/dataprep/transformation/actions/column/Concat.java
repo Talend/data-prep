@@ -97,17 +97,18 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        parameters.add(parameter(locale).setName(PREFIX_PARAMETER)
-                .setType(STRING)
-                .setDefaultValue(EMPTY)
-                .build(this));
+        parameters.add(parameter(locale).setName(PREFIX_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(this));
 
-        parameters.add(selectParameter(locale).name(MODE_PARAMETER)
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
-                                .setType(COLUMN)
-                                .setDefaultValue(EMPTY)
-                                .setCanBeBlank(false)
-                                .build(this), parameter(locale).setName(SEPARATOR_PARAMETER)
+        parameters.add(selectParameter(locale)
+                .name(MODE_PARAMETER)
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, parameter(locale)
+                        .setName(SELECTED_COLUMN_PARAMETER)
+                        .setType(COLUMN)
+                        .setDefaultValue(EMPTY)
+                        .setCanBeBlank(false)
+                        .build(this),
+                        parameter(locale)
+                                .setName(SEPARATOR_PARAMETER)
                                 .setType(STRING)
                                 .setDefaultValue(EMPTY)
                                 .build(this), //
@@ -121,10 +122,7 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
                 .defaultValue(OTHER_COLUMN_MODE) //
                 .build(this));
 
-        parameters.add(parameter(locale).setName(SUFFIX_PARAMETER)
-                .setType(STRING)
-                .setDefaultValue(EMPTY)
-                .build(this));
+        parameters.add(parameter(locale).setName(SUFFIX_PARAMETER).setType(STRING).setDefaultValue(EMPTY).build(this));
         return parameters;
     }
 
@@ -169,10 +167,11 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
 
             // both not empty is default
             boolean addSeparator = StringUtils.equals(separatorCondition, ALWAYS) //
-                    || ((StringUtils.equals(separatorCondition, BOTH_NOT_EMPTY) || StringUtils.isBlank(separatorCondition)) //
+                    || ((StringUtils.equals(separatorCondition, BOTH_NOT_EMPTY)
+                            || StringUtils.isBlank(separatorCondition)) //
                             && StringUtils.isNotBlank(sourceValue) //
                             && StringUtils.isNotBlank(selectedColumnValue) //
-            );
+                    );
 
             if (addSeparator) {
                 newValue.append(getParameter(parameters, SEPARATOR_PARAMETER, StringUtils.EMPTY));
@@ -190,7 +189,8 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
         String result;
-        ColumnMetadata selectedColumn = context.getRowMetadata().getById(context.getParameters().get(SELECTED_COLUMN_PARAMETER));
+        ColumnMetadata selectedColumn =
+                context.getRowMetadata().getById(context.getParameters().get(SELECTED_COLUMN_PARAMETER));
         String sourceColumnName = context.getColumnName();
         final Map<String, String> parameters = context.getParameters();
         final String prefix = getParameter(parameters, PREFIX_PARAMETER, StringUtils.EMPTY);
@@ -212,8 +212,9 @@ public class Concat extends AbstractActionMetadata implements ColumnAction, Othe
      * @param rowMetadata the row metadata where to look for the column.
      */
     private void checkSelectedColumnParameter(Map<String, String> parameters, RowMetadata rowMetadata) {
-        if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
-                || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
+        if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)
+                && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
+                        || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }

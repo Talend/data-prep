@@ -42,7 +42,8 @@ public class MixedContentMapTest {
     @Test
     public void testRead() throws Exception {
         final ObjectReader reader = mapper.reader(MixedContentMap.class);
-        final MixedContentMap map = reader.readValue(MixedContentMapTest.class.getResourceAsStream("mixedMapContent.json"));
+        final MixedContentMap map =
+                reader.readValue(MixedContentMapTest.class.getResourceAsStream("mixedMapContent.json"));
         assertThat(map, notNullValue());
         assertThat(map.get("string"), is("string value"));
         assertThat(map.get("numeric"), is("10"));

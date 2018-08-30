@@ -67,7 +67,8 @@ public class ActionParser {
             final List<Action> allActions = parsedActions.getActions();
             // Create closures from parsed actions
             final List<RunnableAction> builtActions = new ArrayList<>(allActions.size() + 1);
-            allActions.stream() //
+            allActions
+                    .stream() //
                     .filter(parsedAction -> parsedAction != null && parsedAction.getName() != null) //
                     .forEach(parsedAction -> {
                         String actionNameLowerCase = parsedAction.getName().toLowerCase();

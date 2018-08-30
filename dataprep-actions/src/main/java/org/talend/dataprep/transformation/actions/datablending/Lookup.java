@@ -104,27 +104,37 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
         final List<Parameter> parameters = new ArrayList<>();
         parameters.add(ImplicitParameters.COLUMN_ID.getParameter(locale));
         parameters.add(ImplicitParameters.FILTER.getParameter(locale));
-        parameters.add(Parameter.parameter(locale).setName(LOOKUP_DS_NAME.getKey())
+        parameters.add(Parameter
+                .parameter(locale)
+                .setName(LOOKUP_DS_NAME.getKey())
                 .setType(STRING)
                 .setDefaultValue(adaptedNameValue)
                 .setCanBeBlank(false)
                 .build(this));
-        parameters.add(Parameter.parameter(locale).setName(LOOKUP_DS_ID.getKey())
+        parameters.add(Parameter
+                .parameter(locale)
+                .setName(LOOKUP_DS_ID.getKey())
                 .setType(STRING)
                 .setDefaultValue(adaptedDatasetIdValue)
                 .setCanBeBlank(false)
                 .build(this));
-        parameters.add(Parameter.parameter(locale).setName(LOOKUP_JOIN_ON.getKey())
+        parameters.add(Parameter
+                .parameter(locale)
+                .setName(LOOKUP_JOIN_ON.getKey())
                 .setType(STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
                 .build(this));
-        parameters.add(Parameter.parameter(locale).setName(LOOKUP_JOIN_ON_NAME.getKey())
+        parameters.add(Parameter
+                .parameter(locale)
+                .setName(LOOKUP_JOIN_ON_NAME.getKey())
                 .setType(STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
                 .build(this));
-        parameters.add(Parameter.parameter(locale).setName(LOOKUP_SELECTED_COLS.getKey())
+        parameters.add(Parameter
+                .parameter(locale)
+                .setName(LOOKUP_SELECTED_COLS.getKey())
                 .setType(LIST)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
@@ -175,9 +185,9 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
                 return context.column(toAddColumnId, r -> {
                     final ColumnMetadata colMetadata = //
                             column() //
-                            .copy(metadata) //
-                            .computedId(null) // id should be set by the insertAfter method
-                            .build();
+                                    .copy(metadata) //
+                                    .computedId(null) // id should be set by the insertAfter method
+                                    .build();
                     rowMetadata.insertAfter(columnId, colMetadata);
                     return colMetadata;
                 });
@@ -205,7 +215,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
         // get the matching lookup row
         DataSetRow matchingRow = rowMatcher.getMatchingRow(joinOn, joinValue);
 
-        LOGGER.trace("For "+ joinValue+" I have found this matching row: "+matchingRow.values().values());
+        LOGGER.trace("For " + joinValue + " I have found this matching row: " + matchingRow.values().values());
 
         // get the columns to add
         List<LookupSelectedColumnParameter> colsToAdd = getColsToAdd(parameters);
@@ -227,7 +237,7 @@ public class Lookup extends AbstractActionMetadata implements DataSetAction {
         List<LookupSelectedColumnParameter> result;
         try {
             final String cols = parameters.get(LOOKUP_SELECTED_COLS.getKey());
-            result =  new ObjectMapper().readValue(cols, new TypeReference<List<LookupSelectedColumnParameter>>() {
+            result = new ObjectMapper().readValue(cols, new TypeReference<List<LookupSelectedColumnParameter>>() {
             });
         } catch (IOException e) {
             LOGGER.debug("Unable to parse parameter.", e);

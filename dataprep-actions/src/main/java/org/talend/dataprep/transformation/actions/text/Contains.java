@@ -71,23 +71,26 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
     }
 
     @Override
-        public List<Parameter> getParameters(Locale locale) {
+    public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
         parameters.add(selectParameter(locale) //
                 .name(MODE_PARAMETER) //
-                .item(CONSTANT_MODE, CONSTANT_MODE,//
-                        parameter(locale).setName(CONSTANT_VALUE)
+                .item(CONSTANT_MODE, CONSTANT_MODE, //
+                        parameter(locale)
+                                .setName(CONSTANT_VALUE)
                                 .setType(STRING)
                                 .setDefaultValue(EMPTY)
                                 .build(this)) //
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,//
-                        parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, //
+                        parameter(locale)
+                                .setName(SELECTED_COLUMN_PARAMETER)
                                 .setType(COLUMN)
                                 .setDefaultValue(EMPTY)
                                 .setCanBeBlank(false)
                                 .build(this)) //
-                .defaultValue(CONSTANT_MODE).build(this));
+                .defaultValue(CONSTANT_MODE)
+                .build(this));
 
         return parameters;
     }
@@ -105,7 +108,8 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
         } else {
             prefix = parameters.get(CONSTANT_VALUE);
         }
-        additionalColumns.add(ActionsUtils.additionalColumn().withName(sourceColumnName + APPENDIX + prefix).withType(Type.BOOLEAN));
+        additionalColumns.add(
+                ActionsUtils.additionalColumn().withName(sourceColumnName + APPENDIX + prefix).withType(Type.BOOLEAN));
 
         return additionalColumns;
     }
@@ -151,18 +155,18 @@ public class Contains extends AbstractActionMetadata implements ColumnAction, Ot
      */
     private void checkSelectedColumnParameter(Map<String, String> parameters, RowMetadata rowMetadata) {
         if (!parameters.containsKey(MODE_PARAMETER)) {
-            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                    MODE_PARAMETER));
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
+                    ExceptionContext.build().put("paramName", MODE_PARAMETER));
         }
         if (parameters.get(MODE_PARAMETER).equals(OTHER_COLUMN_MODE)
-                && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER) || rowMetadata.getById(parameters
-                        .get(SELECTED_COLUMN_PARAMETER)) == null)) {
-            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                    SELECTED_COLUMN_PARAMETER));
+                && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
+                        || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
+                    ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && (!parameters.containsKey(CONSTANT_VALUE))) {
-            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER, ExceptionContext.build().put("paramName",
-                    CONSTANT_VALUE));
+            throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
+                    ExceptionContext.build().put("paramName", CONSTANT_VALUE));
         }
     }
 

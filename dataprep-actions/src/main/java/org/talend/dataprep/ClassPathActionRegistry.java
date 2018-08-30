@@ -26,14 +26,15 @@ public class ClassPathActionRegistry implements ActionRegistry {
             for (String actionPackage : actionPackages) {
                 LOGGER.debug("Scanning classpath @ '{}'", actionPackage);
                 Reflections reflections = new Reflections(actionPackage);
-                final Set<Class<? extends ActionDefinition>> allActions = reflections.getSubTypesOf(ActionDefinition.class);
+                final Set<Class<? extends ActionDefinition>> allActions =
+                        reflections.getSubTypesOf(ActionDefinition.class);
                 LOGGER.debug("Found {} possible action class(es) in '{}'", allActions.size(), actionPackage);
                 for (Class<? extends ActionDefinition> action : allActions) {
                     try {
                         if (!Modifier.isAbstract(action.getModifiers())) {
                             final Constructor<?>[] constructors = action.getConstructors();
                             for (Constructor<?> constructor : constructors) {
-                                if(constructor.getParameters().length == 0) {
+                                if (constructor.getParameters().length == 0) {
                                     final ActionDefinition actionMetadata = action.newInstance();
                                     nameToActionClass.put(actionMetadata.getName(), action);
                                     break;

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.util;
 
@@ -32,7 +32,8 @@ public class ShannonEntropy {
      */
     public static double computeWithFrequencies(Collection<Double> frequencies) {
         if (frequencies.contains(0D)) {
-            throw new IllegalArgumentException("Values with null frequency are not permitted when computing Shannon entropy");
+            throw new IllegalArgumentException(
+                    "Values with null frequency are not permitted when computing Shannon entropy");
         }
 
         if (frequencies.isEmpty()) {
@@ -61,8 +62,8 @@ public class ShannonEntropy {
             map.put(t, map.get(t) + 1);
         }
 
-        Collection<Double> frequencies = map.values().stream().mapToDouble(s -> (double) s / values.size()).boxed()
-                .collect(Collectors.toList());
+        Collection<Double> frequencies =
+                map.values().stream().mapToDouble(s -> (double) s / values.size()).boxed().collect(Collectors.toList());
         return computeWithFrequencies(frequencies);
     }
 
@@ -72,13 +73,13 @@ public class ShannonEntropy {
      * @param cardinality represents the number of possible values considered
      * @return the maximun entropy
      */
-    public static double maxEntropy(int cardinality){
-        if (cardinality < 0){
+    public static double maxEntropy(int cardinality) {
+        if (cardinality < 0) {
             throw new IllegalArgumentException("The cardinality must be positive");
         }
         double equiprobility = (double) 1 / cardinality;
         Collection<Double> frequencies = new ArrayList<>();
-        for (int i = 0; i < cardinality; i++){
+        for (int i = 0; i < cardinality; i++) {
             frequencies.add(equiprobility);
         }
 

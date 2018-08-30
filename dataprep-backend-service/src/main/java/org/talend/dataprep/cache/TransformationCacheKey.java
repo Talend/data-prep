@@ -1,14 +1,14 @@
-//  ============================================================================
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// ============================================================================
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.cache;
 
@@ -62,14 +62,9 @@ public class TransformationCacheKey implements ContentCacheKey {
      * @param sourceType The source type.
      * @param userId The user id.
      */
-    TransformationCacheKey(
-            final String preparationId,
-            final String datasetId,
-            final String format,
-            final String stepId,
-            final String parameters,
-            final ExportParameters.SourceType sourceType,
-            final String userId, final String filter) {
+    TransformationCacheKey(final String preparationId, final String datasetId, final String format, final String stepId,
+            final String parameters, final ExportParameters.SourceType sourceType, final String userId,
+            final String filter) {
 
         if (StringUtils.equals("head", stepId)) {
             throw new IllegalArgumentException("'head' is not allowed as step id for cache key");
@@ -90,15 +85,9 @@ public class TransformationCacheKey implements ContentCacheKey {
      */
     @Override
     public String toString() {
-        return "TransformationCacheKey{"
-                + "datasetId='" + datasetId  + '\''
-                + ", preparationId='" + preparationId + '\''
-                + ", format='" + format + '\''
-                + ", stepId='" + stepId + '\''
-                + ", parameters='" + parameters + '\''
-                + ", sourceType='" + sourceType + '\''
-                + ", userId='" + userId + '\''
-                + ", filter='" + filter + '\''
+        return "TransformationCacheKey{" + "datasetId='" + datasetId + '\'' + ", preparationId='" + preparationId + '\''
+                + ", format='" + format + '\'' + ", stepId='" + stepId + '\'' + ", parameters='" + parameters + '\''
+                + ", sourceType='" + sourceType + '\'' + ", userId='" + userId + '\'' + ", filter='" + filter + '\''
                 + '}';
     }
 

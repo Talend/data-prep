@@ -23,11 +23,11 @@ import org.talend.dataprep.util.OrderedBeans;
 public class StandardExportStrategies {
 
     @Bean
-    OrderedBeans<SampleExportStrategy> exportStrategies(ApplyPreparationExportStrategy applyPreparationExportStrategy,//
-                                                        DataSetExportStrategy dataSetExportStrategy, //
-                                                        OptimizedExportStrategy optimizedExportStrategy, //
-                                                        PreparationExportStrategy preparationExportStrategy, //
-                                                        CachedExportStrategy cachedExportStrategy) {
+    OrderedBeans<SampleExportStrategy> exportStrategies(ApplyPreparationExportStrategy applyPreparationExportStrategy, //
+            DataSetExportStrategy dataSetExportStrategy, //
+            OptimizedExportStrategy optimizedExportStrategy, //
+            PreparationExportStrategy preparationExportStrategy, //
+            CachedExportStrategy cachedExportStrategy) {
         // Order is important: it gives priority for one strategy over others.
         return new OrderedBeans<>( //
                 asList(cachedExportStrategy, //

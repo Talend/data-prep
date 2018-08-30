@@ -57,10 +57,12 @@ public class StepRowMetadataMigration implements BaseUpgradeTaskTo_2_1_0_PE {
                 // the rootstep has no metadata => avoid conversion
                 if (rowMetadata != null) {
                     // Dirty patch to convert all histogram (2.0) to new one (2.1)
-                    rowMetadata = rowMetadata.replace("_class", "type")
+                    rowMetadata = rowMetadata
+                            .replace("_class", "type")
                             .replace("org.talend.dataprep.api.dataset.statistics.number.NumberHistogram", "number")
                             .replace("org.talend.dataprep.api.dataset.statistics.date.DateHistogram", "date");
-                    final DataSetMetadata dataSetMetadata = objectMapper.readerFor(DataSetMetadata.class).readValue(rowMetadata);
+                    final DataSetMetadata dataSetMetadata =
+                            objectMapper.readerFor(DataSetMetadata.class).readValue(rowMetadata);
                     final StepRowMetadata stepRowMetadata = new StepRowMetadata(dataSetMetadata.getRowMetadata());
 
                     persistentStep.setRowMetadata(stepRowMetadata.getId());

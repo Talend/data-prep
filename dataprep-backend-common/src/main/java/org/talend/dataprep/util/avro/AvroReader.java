@@ -31,7 +31,6 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.StreamSupport.stream;
 import static org.slf4j.LoggerFactory.getLogger;
 
-
 /**
  * Reader in the style of java.io stream readers. Read an avro stream of data using apache reference library.
  */
@@ -125,7 +124,8 @@ public class AvroReader implements Closeable, Iterator<GenericRecord> {
      * @return the next record or null if there's none.
      * @throws IOException that can also happen.
      */
-    private static GenericRecord readNext(GenericDatumReader<GenericRecord> reader, Decoder decoder) throws IOException {
+    private static GenericRecord readNext(GenericDatumReader<GenericRecord> reader, Decoder decoder)
+            throws IOException {
         try {
             return reader.read(null, decoder);
         } catch (EOFException eof) {

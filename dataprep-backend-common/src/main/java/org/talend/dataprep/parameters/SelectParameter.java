@@ -213,7 +213,7 @@ public class SelectParameter extends Parameter {
          * @return the builder to carry on building the selector.
          */
         public SelectParameterBuilder item(String value, String labelKey) {
-            this.items.add(new Item(value, choice(null, locale, labelKey),  null));
+            this.items.add(new Item(value, choice(null, locale, labelKey), null));
             return this;
         }
 
@@ -283,7 +283,8 @@ public class SelectParameter extends Parameter {
             if (description == null) {
                 description = parameterDescription(action, locale, name);
             }
-            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, radio, label, description);
+            return new SelectParameter(name, defaultValue, implicit, canBeBlank, items, multiple, radio, label,
+                    description);
         }
     }
 

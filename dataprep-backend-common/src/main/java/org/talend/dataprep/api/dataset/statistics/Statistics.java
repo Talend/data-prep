@@ -92,7 +92,8 @@ public class Statistics implements Cloneable, Serializable {
         this.patternFrequencies = new LinkedList<>(original.patternFrequencies);
         this.quantiles = original.quantiles == null ? new Quantiles() : new Quantiles(original.quantiles);
         this.histogram = original.histogram;
-        this.textLengthSummary = original.textLengthSummary == null ? new TextLengthSummary() : new TextLengthSummary(original.textLengthSummary);
+        this.textLengthSummary = original.textLengthSummary == null ? new TextLengthSummary()
+                : new TextLengthSummary(original.textLengthSummary);
     }
 
     public long getCount() {
@@ -217,11 +218,11 @@ public class Statistics implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return "Statistics{" + "count=" + count + ", valid=" + valid + ", invalid=" + invalid + ", empty=" + empty + ", max="
-                + max + ", min=" + min + ", mean=" + mean + ", variance=" + variance + ", duplicateCount=" + duplicateCount
-                + ", distinctCount=" + distinctCount + ", dataFrequencies=" + dataFrequencies + ", patternFrequencies="
-                + patternFrequencies + ", quantiles=" + quantiles + ", histogram=" + histogram + ", textLengthSummary="
-                + textLengthSummary + '}';
+        return "Statistics{" + "count=" + count + ", valid=" + valid + ", invalid=" + invalid + ", empty=" + empty
+                + ", max=" + max + ", min=" + min + ", mean=" + mean + ", variance=" + variance + ", duplicateCount="
+                + duplicateCount + ", distinctCount=" + distinctCount + ", dataFrequencies=" + dataFrequencies
+                + ", patternFrequencies=" + patternFrequencies + ", quantiles=" + quantiles + ", histogram=" + histogram
+                + ", textLengthSummary=" + textLengthSummary + '}';
     }
 
     @Override

@@ -59,7 +59,8 @@ public class UrisProvider implements AppSettingsProvider<UriSettings> {
      * @return the server API context (from the application parameters)
      */
     private UriSettings getGatewayContextPath() {
-        return UriSettings.builder() //
+        return UriSettings
+                .builder() //
                 .id("context") //
                 .uri(gatewayContextPath) //
                 .build();

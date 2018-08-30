@@ -109,8 +109,8 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
     private static final String UNKNOWN_SEPARATORS = "unknown_separators";
 
-    private static final DecimalFormat CH_DECIMAL_PATTERN = new DecimalFormat("#,##0.##",
-            DecimalFormatSymbols.getInstance(new Locale("FR", "CH")));
+    private static final DecimalFormat CH_DECIMAL_PATTERN =
+            new DecimalFormat("#,##0.##", DecimalFormatSymbols.getInstance(new Locale("FR", "CH")));
 
     private static final boolean CREATE_NEW_COLUMN_DEFAULT = false;
 
@@ -170,31 +170,39 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
     private Parameter buildDecimalSeparatorParameter(String prefix, Locale locale) {
         final String name = prefix + DECIMAL + SEPARATOR;
-        return SelectParameter.selectParameter(locale) //
+        return SelectParameter
+                .selectParameter(locale) //
                 .name(name) //
                 .item(".") //
                 .item(",") //
-                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(name + "_" + CUSTOM)
-                        .setType(STRING)
-                        .setDefaultValue(".")
-                        .build(this)) //
+                .item(CUSTOM, CUSTOM,
+                        Parameter
+                                .parameter(locale)
+                                .setName(name + "_" + CUSTOM)
+                                .setType(STRING)
+                                .setDefaultValue(".")
+                                .build(this)) //
                 .defaultValue(".") //
                 .build(this);
     }
 
     private Parameter buildGroupingSeparatorParameter(String prefix, Locale locale) {
         final String name = prefix + GROUPING + SEPARATOR;
-        return SelectParameter.selectParameter(locale) //
+        return SelectParameter
+                .selectParameter(locale) //
                 .name(name) //
                 .item(",", "comma") //
                 .item(" ", "space") //
                 .item(".", "dot") //
                 .item("'", "quote") //
                 .item("", "none") //
-                .item(CUSTOM, CUSTOM, Parameter.parameter(locale).setName(name + "_" + CUSTOM)
-                        .setType(STRING)
-                        .setDefaultValue(",")
-                        .build(this)) //
+                .item(CUSTOM, CUSTOM,
+                        Parameter
+                                .parameter(locale)
+                                .setName(name + "_" + CUSTOM)
+                                .setType(STRING)
+                                .setDefaultValue(",")
+                                .build(this)) //
                 .canBeBlank(true) //
                 .defaultValue(",") //
                 .build(this);
@@ -216,18 +224,18 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
      */
     private NumberFormat getFormat(Map<String, String> parameters) {
         switch (parameters.get(TARGET_PATTERN)) {
-            case CUSTOM:
-                return getCustomFormat(parameters);
-            case US_PATTERN:
-                return US_DECIMAL_PATTERN;
-            case EU_PATTERN:
-                return EU_DECIMAL_PATTERN;
-            case CH_PATTERN:
-                return CH_DECIMAL_PATTERN;
-            case SCIENTIFIC:
-                return US_SCIENTIFIC_DECIMAL_PATTERN;
-            default:
-                throw new IllegalArgumentException("Pattern is empty");
+        case CUSTOM:
+            return getCustomFormat(parameters);
+        case US_PATTERN:
+            return US_DECIMAL_PATTERN;
+        case EU_PATTERN:
+            return EU_DECIMAL_PATTERN;
+        case CH_PATTERN:
+            return CH_DECIMAL_PATTERN;
+        case SCIENTIFIC:
+            return US_SCIENTIFIC_DECIMAL_PATTERN;
+        default:
+            throw new IllegalArgumentException("Pattern is empty");
         }
     }
 
@@ -292,7 +300,8 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
         final String originalValue = row.get(columnId);
         final String mode = context.getParameters().get(FROM_SEPARATORS);
-        if (StringUtils.isBlank(originalValue) || (!NumericHelper.isBigDecimal(originalValue) && !CUSTOM.equals(mode))) {
+        if (StringUtils.isBlank(originalValue)
+                || (!NumericHelper.isBigDecimal(originalValue) && !CUSTOM.equals(mode))) {
             LOGGER.debug("Unable to parse {} value as Number, it is blank or not numeric", originalValue);
             row.set(ActionsUtils.getTargetColumnId(context), originalValue);
             return;
@@ -300,28 +309,28 @@ public class ChangeNumberFormat extends AbstractActionMetadata implements Column
 
         final BigDecimal bd;
         switch (mode) {
-            case EU_SEPARATORS:
-                bd = BigDecimalParser.toBigDecimal(originalValue, ',', '.');
+        case EU_SEPARATORS:
+            bd = BigDecimalParser.toBigDecimal(originalValue, ',', '.');
+            break;
+        case CH_SEPARATORS:
+            bd = BigDecimalParser.toBigDecimal(originalValue, '.', '\'');
+            break;
+        case CUSTOM:
+            try {
+                bd = parseCustomNumber(context, originalValue);
                 break;
-            case CH_SEPARATORS:
-                bd = BigDecimalParser.toBigDecimal(originalValue, '.', '\'');
-                break;
-            case CUSTOM:
-                try {
-                    bd = parseCustomNumber(context, originalValue);
-                    break;
-                } catch (Exception e) {
-                    // User specified custom separators that doesn't validate value
-                    LOGGER.debug("Unable to use custom separators to parse value '{}'", originalValue);
-                    return;
-                }
-            case US_SEPARATORS:
-                bd = BigDecimalParser.toBigDecimal(originalValue, '.', ',');
-                break;
-            case UNKNOWN_SEPARATORS:
-            default:
-                bd = BigDecimalParser.toBigDecimal(originalValue);
-                break;
+            } catch (Exception e) {
+                // User specified custom separators that doesn't validate value
+                LOGGER.debug("Unable to use custom separators to parse value '{}'", originalValue);
+                return;
+            }
+        case US_SEPARATORS:
+            bd = BigDecimalParser.toBigDecimal(originalValue, '.', ',');
+            break;
+        case UNKNOWN_SEPARATORS:
+        default:
+            bd = BigDecimalParser.toBigDecimal(originalValue);
+            break;
         }
 
         String newValue = BigDecimalFormatter.format(bd, decimalTargetFormat);

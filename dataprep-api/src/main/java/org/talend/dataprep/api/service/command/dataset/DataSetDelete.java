@@ -53,11 +53,8 @@ public class DataSetDelete extends GenericCommand<ResponseEntity<String>> {
         execute(() -> onExecute(dataSetId));
         on(NOT_FOUND).then((req, resp) -> getResponseEntity(NOT_FOUND, resp));
         on(OK).then((req, resp) -> getResponseEntity(OK, resp));
-        onError(e -> new TDPException(
-                APIErrorCodes.UNABLE_TO_DELETE_DATASET,
-                e,
-                ExceptionContext.build().put("dataSetId", dataSetId)
-        ));
+        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_DELETE_DATASET, e,
+                ExceptionContext.build().put("dataSetId", dataSetId)));
     }
 
     private HttpRequestBase onExecute(final String dataSetId) {

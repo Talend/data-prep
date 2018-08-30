@@ -12,7 +12,7 @@ public class Injections {
 
     @Bean
     @Scope(SCOPE_SINGLETON)
-    public DataSetNameInjection dataSetNameInjection()  {
+    public DataSetNameInjection dataSetNameInjection() {
         return new DataSetNameInjection();
     }
 

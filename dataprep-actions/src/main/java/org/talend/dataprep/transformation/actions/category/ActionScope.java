@@ -15,7 +15,8 @@ package org.talend.dataprep.transformation.actions.category;
 /**
  * Action scope is a concept that allow us to describe on which scope(s) each action can be applied.
  *
- * As example, and first implementation, scopes {@link #INVALID} and {@link #EMPTY} allow frontend to "plug" some actions
+ * As example, and first implementation, scopes {@link #INVALID} and {@link #EMPTY} allow frontend to "plug" some
+ * actions
  * on DQ bar dynamically.
  */
 public enum ActionScope {

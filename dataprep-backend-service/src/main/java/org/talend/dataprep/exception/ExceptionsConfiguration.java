@@ -43,12 +43,15 @@ public class ExceptionsConfiguration {
     public class ExceptionsConversions extends BeanConversionServiceWrapper {
 
         @Override
-        public BeanConversionService doWith(BeanConversionService conversionService, String beanName, ApplicationContext applicationContext) {
+        public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
+                ApplicationContext applicationContext) {
 
             conversionService.register(fromBean(TalendRuntimeException.class)
-                    .toBeans(TdpExceptionDto.class).using(TdpExceptionDto.class, (internal, dto) -> {
+                    .toBeans(TdpExceptionDto.class)
+                    .using(TdpExceptionDto.class, (internal, dto) -> {
                         ErrorCode errorCode = internal.getCode();
-                        String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
+                        String serializedCode =
+                                errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
                         TdpExceptionDto cause = internal.getCause() instanceof TDPException
                                 ? conversionService.convert(internal.getCause(), TdpExceptionDto.class) : null;
                         Map<String, Object> context = new HashMap<>();
@@ -62,11 +65,12 @@ public class ExceptionsConfiguration {
                         dto.setCause(cause);
                         dto.setContext(context);
                         return dto;
-                    }).build());
-
+                    })
+                    .build());
 
             conversionService.register(fromBean(TdpExceptionDto.class)
-                    .toBeans(TalendRuntimeException.class).using(TalendRuntimeException.class, (dto, internal) -> {
+                    .toBeans(TalendRuntimeException.class)
+                    .using(TalendRuntimeException.class, (dto, internal) -> {
                         String completeErrorCode = dto.getCode();
                         String productCode = substringBefore(completeErrorCode, "_");
                         String groupCode = substringBefore(substringAfter(completeErrorCode, "_"), "_"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -77,14 +81,16 @@ public class ExceptionsConfiguration {
                             errorCode = substringAfter(completeErrorCode, productCode + '_' + groupCode + '_');
                         }
 
-                        ErrorCodeDto errorCodeDto = new ErrorCodeDto().setCode(errorCode)
+                        ErrorCodeDto errorCodeDto = new ErrorCodeDto()
+                                .setCode(errorCode)
                                 .setGroup(groupCode)
                                 .setProduct(productCode)
                                 .setHttpStatus(null); // default that may be changed after
 
                         return new TDPException(errorCodeDto, null, dto.getMessage(), dto.getMessageTitle(),
                                 ExceptionContext.build().from(dto.getContext()).put("cause", dto.getCause()));
-                    }).build());
+                    })
+                    .build());
 
             return conversionService;
         }

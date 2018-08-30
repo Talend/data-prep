@@ -232,8 +232,14 @@ public class FeatureContext {
      * @return a {@link List} of all created dataset id.
      */
     @NotNull
-    public List<String> getDatasetIdsToDelete() {
-        return new ArrayList<>(datasetIdByNameToDelete.values());
+    public List<String> getDatasetIds() {
+        return new ArrayList<>(datasetIdByName.values());
+    }
+
+
+    @NotNull
+    public List<String> getDatasetNames(){
+        return new ArrayList<>(datasetIdByName.keySet());
     }
 
     /**

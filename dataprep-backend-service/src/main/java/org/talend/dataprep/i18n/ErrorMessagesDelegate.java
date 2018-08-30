@@ -15,7 +15,8 @@ class ErrorMessagesDelegate {
      */
     private static final String TITLE_SUFFIX = ".TITLE";
 
-    private ErrorMessagesDelegate() {}
+    private ErrorMessagesDelegate() {
+    }
 
     public static String getErrorKey(ErrorCode errorCode) {
         return getMessagePrefix(errorCode) + MESSAGE_SUFFIX;

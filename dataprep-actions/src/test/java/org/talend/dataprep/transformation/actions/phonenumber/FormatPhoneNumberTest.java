@@ -94,7 +94,8 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
         final SelectParameter useWithParam = (SelectParameter) parameters.get(5);
         assertEquals("Value", useWithParam.getItems().get(1).getLabel());
 
-        final SelectParameter regionsListParam = (SelectParameter) useWithParam.getItems().get(1).getParameters().get(0);
+        final SelectParameter regionsListParam =
+                (SelectParameter) useWithParam.getItems().get(1).getParameters().get(0);
         assertEquals("American standard", regionsListParam.getItems().get(0).getLabel());
     }
 
@@ -119,7 +120,8 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0000_formatted").type(Type.STRING).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(1).name("0000_formatted").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0001");
         assertEquals(expected, actual);
     }
@@ -144,7 +146,8 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
 
         // then
         assertEquals(expectedValues, row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(1).name("0000_formatted").type(Type.STRING).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(1).name("0000_formatted").type(Type.STRING).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0001");
         assertEquals(expected, actual);
     }
@@ -231,7 +234,8 @@ public class FormatPhoneNumberTest extends AbstractMetadataBaseTest<FormatPhoneN
 
     @Test
     public void should_format_region_is_manual() {
-        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE, FormatPhoneNumber.OTHER_REGION_TO_BE_SPECIFIED);
+        parameters.put(FormatPhoneNumber.REGIONS_PARAMETER_CONSTANT_MODE,
+                FormatPhoneNumber.OTHER_REGION_TO_BE_SPECIFIED);
         parameters.put(FormatPhoneNumber.MANUAL_REGION_PARAMETER_STRING, "CN");
         parameters.put(FormatPhoneNumber.FORMAT_TYPE_PARAMETER, FormatPhoneNumber.TYPE_INTERNATIONAL);
         parameters.put(OtherColumnParameters.MODE_PARAMETER, OtherColumnParameters.CONSTANT_MODE);

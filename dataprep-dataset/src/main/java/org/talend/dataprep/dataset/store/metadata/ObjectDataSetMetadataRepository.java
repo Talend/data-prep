@@ -35,7 +35,8 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
 
     @Override
     public boolean exist(String filter) {
-        final Predicate<DataSetMetadata> accept = Tql.parse(filter).accept(new BeanPredicateVisitor<>(DataSetMetadata.class));
+        final Predicate<DataSetMetadata> accept =
+                Tql.parse(filter).accept(new BeanPredicateVisitor<>(DataSetMetadata.class));
         return source().anyMatch(accept);
     }
 
@@ -46,10 +47,12 @@ public abstract class ObjectDataSetMetadataRepository extends DataSetMetadataRep
 
     @Override
     public Stream<DataSetMetadata> list(String filter, Sort sortField, Order sortDirection) {
-        final Predicate<DataSetMetadata> accept = Tql.parse(filter).accept(new BeanPredicateVisitor<>(DataSetMetadata.class));
+        final Predicate<DataSetMetadata> accept =
+                Tql.parse(filter).accept(new BeanPredicateVisitor<>(DataSetMetadata.class));
         final Stream<DataSetMetadata> stream = source().filter(accept);
         if (sortField != null) {
-            final Comparator<DataSetMetadata> dataSetMetadataComparator = getDataSetMetadataComparator(sortField, sortDirection);
+            final Comparator<DataSetMetadata> dataSetMetadataComparator =
+                    getDataSetMetadataComparator(sortField, sortDirection);
             return stream.sorted(dataSetMetadataComparator);
         } else {
             return stream;

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
 
@@ -57,7 +57,8 @@ public abstract class AbstractDate extends AbstractActionMetadata {
     protected List<Parameter> getParametersForDatePattern(Locale locale) {
         HashMap<String, String> datePatterns = loadDatePatterns();
 
-        SelectParameter.SelectParameterBuilder selectParamBuilder = SelectParameter.selectParameter(locale).name(NEW_PATTERN);
+        SelectParameter.SelectParameterBuilder selectParamBuilder =
+                SelectParameter.selectParameter(locale).name(NEW_PATTERN);
 
         String defaultItem = null;
         for (Map.Entry<String, String> datePatternEntry : datePatterns.entrySet()) {
@@ -66,7 +67,7 @@ public abstract class AbstractDate extends AbstractActionMetadata {
 
             selectParamBuilder.constant(value, choice(this, locale, key));
 
-            if ("ISO".equals(key)){
+            if ("ISO".equals(key)) {
                 defaultItem = value;
             }
             if (defaultItem == null) {
@@ -107,7 +108,8 @@ public abstract class AbstractDate extends AbstractActionMetadata {
         HashMap<String, String> datePatterns;
         try {
             Properties properties = new Properties();
-            properties.load(new InputStreamReader(getClass().getResourceAsStream("date_patterns.properties"), StandardCharsets.UTF_8));
+            properties.load(new InputStreamReader(getClass().getResourceAsStream("date_patterns.properties"),
+                    StandardCharsets.UTF_8));
             datePatterns = new HashMap(properties);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -119,7 +121,9 @@ public abstract class AbstractDate extends AbstractActionMetadata {
      * The parameter object for the custom new pattern.
      */
     private Parameter buildCustomPatternParam(Locale locale) {
-        return Parameter.parameter(locale).setName(CUSTOM_PATTERN)
+        return Parameter
+                .parameter(locale)
+                .setName(CUSTOM_PATTERN)
                 .setType(ParameterType.STRING)
                 .setDefaultValue(EMPTY)
                 .setCanBeBlank(false)
@@ -133,7 +137,8 @@ public abstract class AbstractDate extends AbstractActionMetadata {
      * @return a DatePattern object representing the pattern
      */
     DatePattern getDateFormat(Map<String, String> parameters) {
-        String pattern = "custom".equals(parameters.get(NEW_PATTERN)) ? parameters.get(CUSTOM_PATTERN) : parameters.get(NEW_PATTERN);
+        String pattern = "custom".equals(parameters.get(NEW_PATTERN)) ? parameters.get(CUSTOM_PATTERN)
+                : parameters.get(NEW_PATTERN);
         try {
             if (StringUtils.isEmpty(pattern)) {
                 throw new IllegalArgumentException();

@@ -27,6 +27,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.TestNode;
 
 public class CloneLinkTest {
+
     @Test
     public void should_emit_single_input_row_to_all_targets() {
         // given
@@ -78,7 +79,6 @@ public class CloneLinkTest {
         assertThat(target1.getReceivedMetadata().get(1).getColumns(), hasSize(1));
         assertThat(target1.getReceivedMetadata().get(1).getColumns().get(0).getId(), is("0001"));
     }
-
 
     @Test
     public void should_emit_multi_input_row_to_all_targets() {

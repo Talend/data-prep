@@ -120,13 +120,14 @@ public class PreparationEventUtil {
                         preparationRepository.add(preparation);
 
                         // Reset step row metadata in preparation's steps.
-                        final String[] idToRemove = preparationUtils
-                                .listSteps(preparation.getHeadId(), preparationRepository) //
-                                .stream() //
-                                .filter(s -> !Step.ROOT_STEP.equals(s)) //
-                                .filter(s -> s.getRowMetadata() != null) //
-                                .map(Step::getRowMetadata) //
-                                .toArray(String[]::new);
+                        final String[] idToRemove =
+                                preparationUtils
+                                        .listSteps(preparation.getHeadId(), preparationRepository) //
+                                        .stream() //
+                                        .filter(s -> !Step.ROOT_STEP.equals(s)) //
+                                        .filter(s -> s.getRowMetadata() != null) //
+                                        .map(Step::getRowMetadata) //
+                                        .toArray(String[]::new);
                         preparationRepository.remove(StepRowMetadata.class, in("id", idToRemove));
                     });
         } finally {

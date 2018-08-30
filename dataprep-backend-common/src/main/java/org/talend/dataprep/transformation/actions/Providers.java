@@ -27,7 +27,8 @@ import org.talend.dataprep.transformation.actions.date.DateParser;
  * This class provides a Spring-like mechanism when non-Spring code wants to lookup for:
  * <ul>
  * <li>An object managed by IoC container: this class can substitute Spring lookup and singleton management</li>
- * <li>An interface implementation available in classpath: if no Spring is available, this class will lookup for the first
+ * <li>An interface implementation available in classpath: if no Spring is available, this class will lookup for the
+ * first
  * implementation in same package as the interface.</li>
  * </ul>
  */
@@ -135,7 +136,8 @@ public class Providers {
 
         @Override
         public <T> T get(Class<T> clazz, Object... args) {
-            final List<Class> argsClasses = Stream.of(args) //
+            final List<Class> argsClasses = Stream
+                    .of(args) //
                     .map(Object::getClass) //
                     .collect(Collectors.toList());
 
@@ -148,15 +150,16 @@ public class Providers {
                         Constructor constructor = null;
                         for (Class<? extends T> subType : subTypesOf) {
                             try {
-                                constructor = subType.getConstructor(argsClasses.toArray(new Class[argsClasses.size()]));
+                                constructor =
+                                        subType.getConstructor(argsClasses.toArray(new Class[argsClasses.size()]));
                                 constructor.setAccessible(true);
                             } catch (NoSuchMethodException e) {
                                 LOGGER.debug("Skip class '{}' (no constructor with arguments '{}')", clazz, args);
                             }
                         }
                         if (constructor == null) {
-                            throw new IllegalArgumentException("No implementation of '" + clazz.getName() + "' with constructor '"
-                                    + Arrays.toString(args) + "' found.");
+                            throw new IllegalArgumentException("No implementation of '" + clazz.getName()
+                                    + "' with constructor '" + Arrays.toString(args) + "' found.");
                         } else {
                             if (argsClasses.isEmpty()) {
                                 return clazz.cast(constructor.newInstance());
@@ -165,8 +168,8 @@ public class Providers {
                             }
                         }
                     } catch (Exception e) {
-                        throw new UnsupportedOperationException("Unable to instantiate a sub type of interface'" + clazz.getName()
-                                + "' with args: '" + Arrays.toString(args) + "'.", e);
+                        throw new UnsupportedOperationException("Unable to instantiate a sub type of interface'"
+                                + clazz.getName() + "' with args: '" + Arrays.toString(args) + "'.", e);
                     }
                 }
             } else {
@@ -175,7 +178,9 @@ public class Providers {
                     if (argsClasses.isEmpty()) {
                         return clazz.newInstance();
                     } else {
-                        return clazz.getConstructor(argsClasses.toArray(new Class[argsClasses.size()])).newInstance(args);
+                        return clazz
+                                .getConstructor(argsClasses.toArray(new Class[argsClasses.size()]))
+                                .newInstance(args);
                     }
                 } catch (Exception e) {
                     throw new UnsupportedOperationException("Unable to instantiate '" + clazz.getName() + "'.", e);

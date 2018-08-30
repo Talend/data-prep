@@ -73,14 +73,15 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
 
         // add relevant data
         String dataSetId = "wantedId";
-        Collection<Preparation> expected = Arrays.asList(getPreparation(dataSetId, "10"), getPreparation(dataSetId, "11"),
-                getPreparation(dataSetId, "12"));
+        Collection<Preparation> expected = Arrays.asList(getPreparation(dataSetId, "10"),
+                getPreparation(dataSetId, "11"), getPreparation(dataSetId, "12"));
         for (Preparation preparation : expected) {
             repository.add(preparation);
         }
 
         // run the test
-        Collection<Preparation> actual = getRepository().list(Preparation.class, eq("dataSetId", dataSetId)).collect(Collectors.toList());
+        Collection<Preparation> actual =
+                getRepository().list(Preparation.class, eq("dataSetId", dataSetId)).collect(Collectors.toList());
 
         // check the result
         Assert.assertEquals(3, actual.size());
@@ -118,12 +119,12 @@ public class InMemoryPreparationRepositoryTest extends PreparationRepositoryTest
      */
     private Preparation getPreparation(String datasetId, String rootName) {
 
-        Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, getStep(rootName).id(), "1.0");
+        Preparation preparation =
+                new Preparation(UUID.randomUUID().toString(), datasetId, getStep(rootName).id(), "1.0");
         preparation.setName(rootName + "_name");
         preparation.setAuthor(rootName + "_name");
         return preparation;
     }
-
 
     @Override
     protected PreparationRepository getRepository() {

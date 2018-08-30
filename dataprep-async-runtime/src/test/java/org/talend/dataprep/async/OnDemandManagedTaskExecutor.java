@@ -49,9 +49,11 @@ public class OnDemandManagedTaskExecutor implements ManagedTaskExecutor {
     public AsyncExecution resume(ManagedTaskCallable task, String executionId, AsyncExecutionResult result) {
         final AsyncExecution execution = repository.get(executionId);
         if (execution == null) {
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION, ExceptionContext.withBuilder().put("id", executionId).build());
+            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION,
+                    ExceptionContext.withBuilder().put("id", executionId).build());
         } else if (execution.getStatus() != AsyncExecution.Status.NEW) {
-            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION, ExceptionContext.withBuilder().put("id", executionId).build());
+            throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION,
+                    ExceptionContext.withBuilder().put("id", executionId).build());
         }
 
         execution.setResult(result);
@@ -65,12 +67,13 @@ public class OnDemandManagedTaskExecutor implements ManagedTaskExecutor {
      * @see ManagedTaskExecutor#queue(ManagedTaskCallable, String, String, AsyncExecutionResult)
      */
     @Override
-    public AsyncExecution queue(ManagedTaskCallable task, String executionId, String groupId, AsyncExecutionResult result) {
+    public AsyncExecution queue(ManagedTaskCallable task, String executionId, String groupId,
+            AsyncExecutionResult result) {
 
         final Optional<String> optional = Optional.ofNullable(groupId);
         final AsyncExecution asyncExecution = optional.isPresent() ? new AsyncExecution(groupId) : new AsyncExecution();
 
-        if(StringUtils.isNotEmpty(executionId)){
+        if (StringUtils.isNotEmpty(executionId)) {
             asyncExecution.setId(executionId);
         }
 
@@ -100,7 +103,7 @@ public class OnDemandManagedTaskExecutor implements ManagedTaskExecutor {
         final Callable task = tasks.get(execution.getId());
         try {
             Object result = task.call();
-            if( result instanceof AsyncExecutionResult) {
+            if (result instanceof AsyncExecutionResult) {
                 // if the async method result an asyncExecutionResult then we override basic Url Result
                 execution.setResult((AsyncExecutionResult) result);
             }

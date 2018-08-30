@@ -19,9 +19,10 @@ import org.talend.dataprep.transformation.pipeline.TestLink;
 
 public class FilteredNodeTest {
 
-
     private List<RowMetadata> metadata;
+
     private List<DataSetRow> rows;
+
     private TestLink link;
 
     @Before

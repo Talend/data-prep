@@ -42,8 +42,8 @@ public class AddSchemaInPreparations implements BaseUpgradeTaskTo_2_1_0_PE {
     @PostConstruct
     private void postInitialize() {
         try {
-            fileSystemPreparationRepository = (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository,
-                    "delegate", true);
+            fileSystemPreparationRepository =
+                    (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository, "delegate", true);
         } catch (IllegalAccessException e) {
             LOGGER.error("Impossible to get access to the delegate preparation repository object");
         }

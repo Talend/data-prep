@@ -90,8 +90,7 @@ public class FolderInfo implements Serializable {
             return false;
         }
         final FolderInfo folderInfo = (FolderInfo) o;
-        return Objects.equals(folder, folderInfo.folder)
-                && Objects.equals(hierarchy, folderInfo.hierarchy);
+        return Objects.equals(folder, folderInfo.folder) && Objects.equals(hierarchy, folderInfo.hierarchy);
     }
 
     /**

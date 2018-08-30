@@ -103,7 +103,6 @@ public class UpgradeServiceTest {
         service.sortAndCheckTasks();
     }
 
-
     @Test
     public void shouldApplyTasksToUser() throws Exception {
         // given
@@ -139,7 +138,6 @@ public class UpgradeServiceTest {
             assertFalse(mockTask.applied);
         }
     }
-
 
     @Test
     public void shouldNotApplyUserTasks() throws Exception {

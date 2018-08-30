@@ -27,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class PreparationActions extends Identifiable implements Serializable {
 
-    public static final PreparationActions ROOT_ACTIONS = new PreparationActions("cdcd5c9a3a475f2298b5ee3f4258f8207ba10879");
+    public static final PreparationActions ROOT_ACTIONS =
+            new PreparationActions("cdcd5c9a3a475f2298b5ee3f4258f8207ba10879");
 
     /** Serialization UID. */
     private static final long serialVersionUID = 1L;

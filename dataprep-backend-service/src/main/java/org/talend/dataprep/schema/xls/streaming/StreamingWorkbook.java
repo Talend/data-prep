@@ -220,8 +220,8 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
      * Not supported
      */
     @Override
-    public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout,
-            short typeOffset, byte underline) {
+    public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic,
+            boolean strikeout, short typeOffset, byte underline) {
         throw new UnsupportedOperationException();
     }
 
@@ -480,7 +480,7 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
 
     @Override
     public Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout,
-                         short typeOffset, byte underline) {
+            short typeOffset, byte underline) {
         throw new UnsupportedOperationException();
     }
 

@@ -29,8 +29,8 @@ public class DataSetRowStreamDeserializer extends JsonDeserializer<Stream<DataSe
 
     @Override
     public Stream<DataSetRow> deserialize(JsonParser jp, DeserializationContext context) {
-        final List<ColumnMetadata> columns = (List<ColumnMetadata>) context
-                .getAttribute(ColumnContextDeserializer.class.getName());
+        final List<ColumnMetadata> columns =
+                (List<ColumnMetadata>) context.getAttribute(ColumnContextDeserializer.class.getName());
         final RowMetadata rowMetadata;
         if (columns == null) {
             rowMetadata = new RowMetadata();

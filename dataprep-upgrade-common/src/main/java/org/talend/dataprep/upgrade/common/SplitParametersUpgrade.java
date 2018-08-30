@@ -31,8 +31,9 @@ public class SplitParametersUpgrade {
     }
 
     public static void upgradeActions(PreparationRepository preparationRepository) {
-        ParameterMigration.upgradeParameters(preparationRepository, eq("actions.action", //
-                Split.SPLIT_ACTION_NAME), //
+        ParameterMigration.upgradeParameters(preparationRepository,
+                eq("actions.action", //
+                        Split.SPLIT_ACTION_NAME), //
                 SplitParametersUpgrade::updateAction);
     }
 

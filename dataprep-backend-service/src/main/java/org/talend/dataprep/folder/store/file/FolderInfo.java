@@ -16,10 +16,12 @@ class FolderInfo {
      * This class' logger.
      */
     private static final Logger LOG = getLogger(FolderInfo.class);
+
     /**
      * Folder last modification date.
      */
     private final long lastModificationDate;
+
     /**
      * Folder creation date.
      */
@@ -62,9 +64,6 @@ class FolderInfo {
 
     @Override
     public String toString() {
-        return "FolderInfo{" +
-                "lastModificationDate=" + lastModificationDate +
-                ", creationDate=" + creationDate +
-                '}';
+        return "FolderInfo{" + "lastModificationDate=" + lastModificationDate + ", creationDate=" + creationDate + '}';
     }
 }

@@ -80,8 +80,8 @@ public class Version {
 
     @Override
     public String toString() {
-        return "{" + "versionId='" + versionId + '\'' + ", buildId='" + buildId + '\'' + ", serviceName='" + serviceName + '\''
-                + '}';
+        return "{" + "versionId='" + versionId + '\'' + ", buildId='" + buildId + '\'' + ", serviceName='" + serviceName
+                + '\'' + '}';
     }
 
     @Override

@@ -247,7 +247,7 @@ public class ExtractDateTokens extends AbstractDate implements ColumnAction {
         String[] label = DateFormatSymbols.getInstance(locale).getWeekdays();
         if (numDayOfWeek >= 0 && numDayOfWeek < 7) {
             return label[numDayOfWeek + 1];
-        } else if (numDayOfWeek == 7){
+        } else if (numDayOfWeek == 7) {
             return label[1];
         } else {
             return StringUtils.EMPTY;

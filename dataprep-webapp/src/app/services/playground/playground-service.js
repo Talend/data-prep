@@ -756,7 +756,7 @@ export default function PlaygroundService(
 	 * It take the transformation to build the closure.
 	 * The closure then takes the parameters and append the new step in the current preparation
 	 */
-	function createAppendStepClosure(action, scope) {
+	function createAppendStepClosure(action, ongletname === scope ) {
 		return (params = params || {}) => {
 			let actions = [];
 			const line = state.playground.grid.selectedLine;
@@ -790,23 +790,7 @@ export default function PlaygroundService(
 				];
 				break;
 			}
-			case MULTI_COLUMNS: {
-				let parameters = { ...params };
-				parameters.scope = scope;
-				parameters.column_id = state.playground.grid.selectedColumns.map(col => col.id);
 
-				if (
-					state.playground.filter
-						.applyTransformationOnFilters
-				) {
-					const stepFilters = FilterAdapterService.toTree(
-						state.playground.filter.gridFilters,
-					);
-					parameters = { ...parameters, ...stepFilters };
-				}
-				actions = [{ action: action.name, parameters }];
-				break;
-			}
 			default:
 				actions = map(
 					state.playground.grid.selectedColumns,

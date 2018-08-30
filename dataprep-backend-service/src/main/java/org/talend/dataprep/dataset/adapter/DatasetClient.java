@@ -15,6 +15,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DatasetDTO;
+import org.talend.dataprep.api.dataset.DatasetDetailsDTO;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.InvalidMarker;
@@ -315,6 +316,12 @@ public class DatasetClient {
             // source method do not throw checked exception
             throw (RuntimeException) e.getCause();
         }
+    }
+
+    public DatasetDetailsDTO getDataSetDetails(String id) {
+        Dataset dataset = dataCatalogClient.getMetadata(id);
+        return conversionService.convert(dataset, DatasetDetailsDTO.class, ownerInjection.injectIntoDatasetDetails());
+
     }
 
     private class AnalysisResult {

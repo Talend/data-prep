@@ -3,6 +3,7 @@ package org.talend.dataprep.conversions.inject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DatasetDTO;
+import org.talend.dataprep.api.dataset.DatasetDetailsDTO;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.dataset.adapter.Dataset;
@@ -44,6 +45,16 @@ public class DefaultOwnerInjection implements OwnerInjection {
                 datasetDTO.setOwner(defaultOwner);
             }
             return datasetDTO;
+        };
+    }
+
+    @Override
+    public BiFunction<Dataset, DatasetDetailsDTO, DatasetDetailsDTO> injectIntoDatasetDetails() {
+        return (dataset, datasetDetailsDTO) -> {
+            if (datasetDetailsDTO.getOwner() == null) {
+                datasetDetailsDTO.setOwner(defaultOwner);
+            }
+            return datasetDetailsDTO;
         };
     }
 }

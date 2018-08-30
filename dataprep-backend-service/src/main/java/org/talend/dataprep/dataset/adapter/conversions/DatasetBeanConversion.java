@@ -75,10 +75,10 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                 .using(DataSetMetadata.class, convertDatasetToDatasetMetadata()) //
                 .build());
 
-        //        conversionService.register(fromBean(DatasetDTO.class) //
-        //                .toBeans(DatasetDetailsDTO.class) //
-        //                .using(DatasetDetailsDTO.class, convertDatasetDTOToDatasetDetailsDTO()) //
-        //                .build());
+        conversionService.register(fromBean(Dataset.class) //
+                .toBeans(DatasetDetailsDTO.class) //
+                .using(DatasetDetailsDTO.class, convertDatasetToDatasetDetailsDTO()) //
+                .build());
 
         return conversionService;
     }
@@ -207,17 +207,17 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
         };
     }
 
-    private BiFunction<DatasetDTO, DatasetDetailsDTO, DatasetDetailsDTO> convertDatasetDTOToDatasetDetailsDTO() {
-        return (datasetDTO, datasetDetailsDTO) -> {
-            datasetDetailsDTO.setName(datasetDTO.getName());
-            datasetDetailsDTO.setCreationDate(datasetDTO.getCreationDate());
-            datasetDetailsDTO.setLastModificationDate(datasetDTO.getLastModificationDate());
-            datasetDetailsDTO.setAuthor(datasetDTO.getAuthor());
-            datasetDetailsDTO.setType(datasetDTO.getType());
-            datasetDetailsDTO.setFavorite(datasetDTO.isFavorite());
+    private BiFunction<Dataset, DatasetDetailsDTO, DatasetDetailsDTO> convertDatasetToDatasetDetailsDTO() {
+        return (dataset, datasetDetailsDTO) -> {
 
-            datasetDetailsDTO.setDraft(datasetDTO.isDraft());
-            datasetDetailsDTO.setRecords(datasetDTO.getRecords());
+            // call super class conversion
+            datasetDetailsDTO = (DatasetDetailsDTO) convertDatasetToDatasetDTO().apply(dataset, datasetDetailsDTO);
+
+            // and add conversion specific to DatasetDetailsDTO
+            Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = dataset.getDataSetMetadataLegacy();
+            if (dataSetMetadataLegacy != null) {
+                datasetDetailsDTO.setEncoding(dataSetMetadataLegacy.getEncoding());
+            }
 
             return datasetDetailsDTO;
 

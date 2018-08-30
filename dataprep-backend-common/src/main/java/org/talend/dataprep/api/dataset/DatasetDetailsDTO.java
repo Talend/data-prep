@@ -1,19 +1,13 @@
 package org.talend.dataprep.api.dataset;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DatasetDetailsDTO extends DatasetDTO {
 
     private List<Preparation> preparations = new ArrayList<>();
 
     private String encoding;
-
-    private DataSetLocation location;
-
-    private Map<String, String> parameters = new HashMap<>();
 
     public List<Preparation> getPreparations() {
         return preparations;
@@ -31,26 +25,10 @@ public class DatasetDetailsDTO extends DatasetDTO {
         this.encoding = encoding;
     }
 
-    public DataSetLocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(DataSetLocation location) {
-        this.location = location;
-    }
-
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
-    }
-
     /**
      * Linked Preparation to dataset
      */
-    private class Preparation {
+    public static class Preparation {
 
         /**
          * The creation date.
@@ -63,5 +41,54 @@ public class DatasetDetailsDTO extends DatasetDTO {
 
         private long lastModificationDate;
 
+        public Preparation(String id, String name, long nbSteps, long lastModificationDate) {
+            this.id = id;
+            this.name = name;
+            this.nbSteps = nbSteps;
+            this.lastModificationDate = lastModificationDate;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public long getNbSteps() {
+            return nbSteps;
+        }
+
+        public void setNbSteps(long nbSteps) {
+            this.nbSteps = nbSteps;
+        }
+
+        public long getLastModificationDate() {
+            return lastModificationDate;
+        }
+
+        public void setLastModificationDate(long lastModificationDate) {
+            this.lastModificationDate = lastModificationDate;
+        }
+
+        @Override
+        public String toString() {
+            return "Preparation{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", nbSteps=" + nbSteps
+                    + ", lastModificationDate=" + lastModificationDate + '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "DatasetDetailsDTO{" + "preparations=" + preparations + ", encoding='" + encoding + '\'' + '}';
     }
 }

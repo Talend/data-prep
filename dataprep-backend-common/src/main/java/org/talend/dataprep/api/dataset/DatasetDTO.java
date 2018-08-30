@@ -29,7 +29,7 @@ public class DatasetDTO implements SharedResource {
     /**
      * Owner of the dataset
      */
-    private Owner owner;
+    private Owner owner = new Owner();
 
     /**
      * Author ID of the dataset

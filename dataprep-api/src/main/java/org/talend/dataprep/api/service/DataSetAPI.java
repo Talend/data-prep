@@ -30,8 +30,10 @@ import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DatasetDTO;
+import org.talend.dataprep.api.dataset.DatasetDetailsDTO;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.dataset.CopyDataSet;
 import org.talend.dataprep.api.service.command.dataset.CreateDataSet;
@@ -44,6 +46,7 @@ import org.talend.dataprep.api.service.command.dataset.SetFavorite;
 import org.talend.dataprep.api.service.command.dataset.UpdateColumn;
 import org.talend.dataprep.api.service.command.dataset.UpdateDataSet;
 import org.talend.dataprep.api.service.command.preparation.PreparationList;
+import org.talend.dataprep.api.service.command.preparation.PreparationSearchByDataSetId;
 import org.talend.dataprep.api.service.command.transformation.SuggestLookupActions;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
@@ -61,6 +64,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -75,6 +79,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.command.CommandHelper.toPublisher;
+import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.command.CommandHelper.toStreaming;
 import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
 
@@ -102,7 +107,7 @@ public class DataSetAPI extends APIService {
     public Callable<String> create(
             @ApiParam(
                     value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
-                            defaultValue = "", required = false) String name,
+                    defaultValue = "", required = false) String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(
                     defaultValue = "", required = false) String tag,
             @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
@@ -128,7 +133,7 @@ public class DataSetAPI extends APIService {
     public Callable<String> createOrUpdateById(
             @ApiParam(
                     value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
-                            defaultValue = "", required = false) String name,
+                    defaultValue = "", required = false) String name,
             @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
             @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
             @ApiParam(value = "content") InputStream dataSetContent) {
@@ -148,7 +153,7 @@ public class DataSetAPI extends APIService {
             notes = "Copy the dataset, returns the id of the copied created data set.")
     @Timed
     public Callable<String> copy(@ApiParam(value = "Name of the copy") @RequestParam(required = false) String name,
-            @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id) {
+                                 @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id) {
         return () -> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Copying {} (pool: {})...", id, getConnectionStats());
@@ -220,12 +225,12 @@ public class DataSetAPI extends APIService {
             notes = "Get a data set based on given id.")
     @Timed
     public DataSet get(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
-            @ApiParam(value = "Whether output should be the full data set (true) or not (false).") @RequestParam(
-                    value = "fullContent", defaultValue = "false") boolean fullContent,
-            @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter",
-                    defaultValue = "") String filter,
-            @ApiParam(value = "Whether to include internal technical properties (true) or not (false).") @RequestParam(
-                    value = "includeTechnicalProperties", defaultValue = "false") boolean includeTechnicalProperties) {
+                       @ApiParam(value = "Whether output should be the full data set (true) or not (false).") @RequestParam(
+                               value = "fullContent", defaultValue = "false") boolean fullContent,
+                       @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter",
+                               defaultValue = "") String filter,
+                       @ApiParam(value = "Whether to include internal technical properties (true) or not (false).") @RequestParam(
+                               value = "includeTechnicalProperties", defaultValue = "false") boolean includeTechnicalProperties) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Requesting dataset #{} (pool: {})...", id, getConnectionStats());
         }
@@ -249,7 +254,7 @@ public class DataSetAPI extends APIService {
             notes = "Get a data set metadata based on given id.")
     @Timed
     public DataSetMetadata
-            getMetadata(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id) {
+    getMetadata(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Requesting dataset metadata #{} (pool: {})...", id, getConnectionStats());
         }
@@ -322,6 +327,76 @@ public class DataSetAPI extends APIService {
         } finally {
             LOG.info("listing datasets done [favorite: {}, certified: {}, name: {}, limit: {}]", favorite, certified,
                     name, limit);
+        }
+    }
+
+    /**
+     * Return the dataset details.
+     *
+     * @param id the wanted dataset details.
+     * @return the dataset datails or no content if not found.
+     */
+    @RequestMapping(value = "/api/datasets/{id}/details", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get a data set detail by id.", produces = APPLICATION_JSON_VALUE,
+            notes = "Get a data set metadata based on given id.")
+    @Timed
+    public DatasetDetailsDTO getDetails(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Requesting dataset details #{} (pool: {})...", id, getConnectionStats());
+        }
+        try {
+            DatasetDetailsDTO details = datasetClient.getDataSetDetails(id);
+
+            List<DatasetDetailsDTO.Preparation> preps = getPreparation(details.getId());
+
+            details.setPreparations(preps);
+
+            System.out.println("details = " + details);
+
+            return details;
+
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Request dataset details #{} (pool: {}) done.", id, getConnectionStats());
+            }
+        }
+    }
+
+    /**
+     * Return the list of preparation using a dataset
+     *
+     * @param id the wanted dataset.
+     * @return the list of preparation using the dataset
+     */
+    @RequestMapping(value = "/api/datasets/{id}/preparations", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get the list of preparation using a dataset by the dataset id.", produces = APPLICATION_JSON_VALUE,
+            notes = "Get the list of preparation using a dataset by the dataset id.")
+    @Timed
+    public List<DatasetDetailsDTO.Preparation> getPreparation(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Requesting preparations using dataset #{} (pool: {})...", id, getConnectionStats());
+        }
+        try {
+            DatasetDetailsDTO details = datasetClient.getDataSetDetails(id);
+
+            // Add the related preparations list to the given dataset metadata.
+            final PreparationSearchByDataSetId getPreparations =
+                    getCommand(PreparationSearchByDataSetId.class, details.getId());
+
+
+            List<DatasetDetailsDTO.Preparation> preps = new ArrayList<>();
+
+            toStream(PreparationDTO.class, mapper, getPreparations) //
+                    .filter(p -> p.getSteps() != null)
+                    .forEach(p -> preps.add(new DatasetDetailsDTO.Preparation(p.getId(), p.getName(), (long) p.getSteps().size(),
+                            p.getLastModificationDate())));
+
+            return preps;
+
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Request preparations using dataset #{} (pool: {}) done.", id, getConnectionStats());
+            }
         }
     }
 

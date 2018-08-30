@@ -130,14 +130,14 @@ public class PipelineTransformer implements Transformer {
                 try {
                     LOGGER.debug("Before execution: {}", pipeline);
                     pipeline.execute(input);
+
+                    if (preparation != null && false) {
+                        final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
+                        pipeline.accept(visitor);
+                    }
                 } finally {
                     LOGGER.debug("After execution: {}", pipeline);
                     span.ifPresent(s -> tracer.ifPresent(t -> t.close(s)));
-                }
-
-                if (preparation != null) {
-                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
-                    pipeline.accept(visitor);
                 }
             }
 

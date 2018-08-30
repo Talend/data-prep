@@ -336,6 +336,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             }
 
             // Build nodes for actions
+            LOG.debug("Start build action node");
             final Node actionsNode = ActionNodesBuilder
                     .builder() //
                     .initialMetadata(rowMetadata) //
@@ -349,6 +350,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                     .analyzerService(analyzerService) //
                     .statisticsAdapter(adapter) //
                     .build();
+            LOG.debug("Done build action node");
 
             if (preparation != null) {
                 LOG.debug("Adding step nodes...");

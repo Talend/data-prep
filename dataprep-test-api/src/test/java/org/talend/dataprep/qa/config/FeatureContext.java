@@ -201,7 +201,9 @@ public class FeatureContext {
             @NotNull String newName, @NotNull String newPath) {
         // Note : it's inferred that the moved preparation is a created one and not a loaded one (see
         // #storeExistingPreparationRef())
+        preparationIdByFullName.remove(new PreparationUID().setName(oldName).setPath(oldPath));
         preparationIdByFullNameToDelete.remove(new PreparationUID().setName(oldName).setPath(oldPath));
+        preparationIdByFullName.put(new PreparationUID().setName(newName).setPath(newPath), id);
         preparationIdByFullNameToDelete.put(new PreparationUID().setName(newName).setPath(newPath), id);
     }
 

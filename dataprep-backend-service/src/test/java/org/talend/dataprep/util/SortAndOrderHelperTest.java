@@ -155,7 +155,8 @@ public class SortAndOrderHelperTest {
     }
 
     private int getPreparationComparisonByAuthor(String firstAuthor, String secondAuthor, Order order) {
-        return getPreparationComparison(null, null, firstAuthor, secondAuthor, 0, 0, 0, 0, 0, 0, null, null, AUTHOR, order);
+        return getPreparationComparison(null, null, firstAuthor, secondAuthor, 0, 0, 0, 0, 0, 0, null, null, AUTHOR,
+                order);
     }
 
     private int getPreparationComparisonByCreation(long firstCreation, long secondCreation, Order order) {
@@ -164,16 +165,18 @@ public class SortAndOrderHelperTest {
     }
 
     private int getPreparationComparisonByModification(int firstModification, int secondModification, Order order) {
-        return getPreparationComparison(null, null, null, null, 0, 0, firstModification, secondModification, 0, 0, null, null,
-                LAST_MODIFICATION_DATE, order);
+        return getPreparationComparison(null, null, null, null, 0, 0, firstModification, secondModification, 0, 0, null,
+                null, LAST_MODIFICATION_DATE, order);
     }
 
     private int getPreparationComparisonBySize(int firstSize, int secondSize, Order order) {
-        return getPreparationComparison(null, null, null, null, 0, 0, 0, 0, firstSize, secondSize, null, null, NB_STEPS, order);
+        return getPreparationComparison(null, null, null, null, 0, 0, 0, 0, firstSize, secondSize, null, null, NB_STEPS,
+                order);
     }
 
     private int getPreparationComparisonByDatasetName(String firstDsName, String secondDsName, Order order) {
-        return getPreparationComparison(null, null, null, null, 0, 0, 0, 0, 0, 0, firstDsName, secondDsName, DATASET_NAME, order);
+        return getPreparationComparison(null, null, null, null, 0, 0, 0, 0, 0, 0, firstDsName, secondDsName,
+                DATASET_NAME, order);
     }
 
     private int getPreparationComparison(String firstName, String secondName, //
@@ -183,20 +186,20 @@ public class SortAndOrderHelperTest {
             long firstSize, long secondSize, //
             String firstDsName, String secondDsName, //
             Sort sort, Order order) {
-        PreparationDTO firstUserPrep = createUserPreparation(firstName, firstAuthor, firstCreation, firstModification, firstSize,
-                firstDsName);
+        PreparationDTO firstUserPrep =
+                createUserPreparation(firstName, firstAuthor, firstCreation, firstModification, firstSize, firstDsName);
 
-        PreparationDTO secondUserPrep = createUserPreparation(secondName, secondAuthor, secondCreation, secondModification,
+        PreparationDTO secondUserPrep = createUserPreparation(secondName, secondAuthor, secondCreation,
+                secondModification, secondSize, secondDsName);
+
+        PreparationDTO firstPrep =
+                createUserPreparation(firstName, firstAuthor, firstCreation, firstModification, firstSize, firstDsName);
+
+        PreparationDTO secondPrep = createUserPreparation(secondName, secondAuthor, secondCreation, secondModification,
                 secondSize, secondDsName);
 
-        PreparationDTO firstPrep = createUserPreparation(firstName, firstAuthor, firstCreation, firstModification, firstSize, firstDsName);
-
-        PreparationDTO secondPrep = createUserPreparation(secondName, secondAuthor, secondCreation, secondModification, secondSize,
-                secondDsName);
-
         // when
-        Comparator<PreparationDTO> preparationComparator = SortAndOrderHelper.getPreparationComparator(sort, order
-        );
+        Comparator<PreparationDTO> preparationComparator = SortAndOrderHelper.getPreparationComparator(sort, order);
 
         // then
         assertNotNull(preparationComparator);
@@ -207,7 +210,8 @@ public class SortAndOrderHelperTest {
     }
 
     private int getDatasetComparisonByName(String firstName, String secondName, Order order) {
-        return getDatasetComparison(firstName, secondName, null, null, "LastName", "LastName", 0, 0, 0, 0, 0, 0, NAME, order);
+        return getDatasetComparison(firstName, secondName, null, null, "LastName", "LastName", 0, 0, 0, 0, 0, 0, NAME,
+                order);
     }
 
     private int getDatasetComparisonByAuthor(String firstAuthor, String secondAuthor, Order order) {
@@ -215,18 +219,18 @@ public class SortAndOrderHelperTest {
     }
 
     private int getDatasetComparisonByCreation(long firstCreation, long secondCreation, Order order) {
-        return getDatasetComparison(null, null, null, null, "LastName", "LastName", firstCreation, secondCreation, 0, 0, 0, 0,
-                CREATION_DATE, order);
+        return getDatasetComparison(null, null, null, null, "LastName", "LastName", firstCreation, secondCreation, 0, 0,
+                0, 0, CREATION_DATE, order);
     }
 
     private int getDatasetComparisonByModification(int firstModification, int secondModification, Order order) {
-        return getDatasetComparison(null, null, null, null, "LastName", "LastName", 0, 0, firstModification, secondModification,
-                0, 0, LAST_MODIFICATION_DATE, order);
+        return getDatasetComparison(null, null, null, null, "LastName", "LastName", 0, 0, firstModification,
+                secondModification, 0, 0, LAST_MODIFICATION_DATE, order);
     }
 
     private int getDatasetComparisonBySize(int firstSize, int secondSize, Order order) {
-        return getDatasetComparison(null, null, null, null, "LastName", "LastName", 0, 0, 0, 0, firstSize, secondSize, NB_RECORDS,
-                order);
+        return getDatasetComparison(null, null, null, null, "LastName", "LastName", 0, 0, 0, 0, firstSize, secondSize,
+                NB_RECORDS, order);
     }
 
     private int getDatasetComparison(String firstName, String secondName, //
@@ -239,25 +243,27 @@ public class SortAndOrderHelperTest {
         DataSetMetadata firstUserDatasetMetadata = createUserDatasetMetadata("firstDsId", firstName, "1", firstCreation,
                 firstModification, null, null, firstOwnerFirstName, firstOwnerLastName);
         firstUserDatasetMetadata.getContent().setNbRecords(firstSize);
-        DataSetMetadata secondUserDatasetMetadata = createUserDatasetMetadata("secondDsId", secondName, "2", secondCreation,
-                secondModification, null, null, secondOwnerFirstName, secondOwnerLastName);
+        DataSetMetadata secondUserDatasetMetadata = createUserDatasetMetadata("secondDsId", secondName, "2",
+                secondCreation, secondModification, null, null, secondOwnerFirstName, secondOwnerLastName);
         secondUserDatasetMetadata.getContent().setNbRecords(secondSize);
 
         // Used to make sure that when using DatasetMetadata instead of UserDatasetMetada the behaviour of the comparison remains
         // the same
-        DataSetMetadata firstDatasetMetadata = createDatasetMetadata("firstDsId", firstName, firstCreation, firstModification,
-                null, null, firstOwnerFirstName, firstOwnerLastName);
+        DataSetMetadata firstDatasetMetadata = createDatasetMetadata("firstDsId", firstName, firstCreation,
+                firstModification, null, null, firstOwnerFirstName, firstOwnerLastName);
         firstDatasetMetadata.getContent().setNbRecords(firstSize);
         DataSetMetadata secondDatasetMetadata = createDatasetMetadata("secondDsId", secondName, secondCreation,
                 secondModification, null, null, secondOwnerFirstName, secondOwnerLastName);
         secondDatasetMetadata.getContent().setNbRecords(secondSize);
 
         // when
-        Comparator<DataSetMetadata> preparationComparator = SortAndOrderHelper.getDataSetMetadataComparator(sort, order);
+        Comparator<DataSetMetadata> preparationComparator =
+                SortAndOrderHelper.getDataSetMetadataComparator(sort, order);
 
         // then
         assertNotNull(preparationComparator);
-        final int userDatasetMetadataOrder = preparationComparator.compare(firstUserDatasetMetadata, secondUserDatasetMetadata);
+        final int userDatasetMetadataOrder =
+                preparationComparator.compare(firstUserDatasetMetadata, secondUserDatasetMetadata);
         final int datasetMetadataOrder = preparationComparator.compare(firstDatasetMetadata, secondDatasetMetadata);
         // Make sure that when using DatasetMetadata instead of UserDatasetMetada the behaviour of the comparison remains the same
         if (sort != AUTHOR) { // because only user dataset metadata have author
@@ -267,7 +273,8 @@ public class SortAndOrderHelperTest {
     }
 
     private DataSetMetadata createUserDatasetMetadata(String id, String name, String author, long creationDate,
-            long lastModificationDate, RowMetadata rowMetadata, String appVersion, String ownerName, String ownerLastName) {
+            long lastModificationDate, RowMetadata rowMetadata, String appVersion, String ownerName,
+            String ownerLastName) {
         UserDataSetMetadata metadata = new UserDataSetMetadata();
         metadata.setId(id);
         metadata.setName(name);
@@ -293,8 +300,8 @@ public class SortAndOrderHelperTest {
         return metadata;
     }
 
-    private PreparationDTO createUserPreparation(String name, String author, long creation, long modification, long size,
-                                                 String dataSetName) {
+    private PreparationDTO createUserPreparation(String name, String author, long creation, long modification,
+            long size, String dataSetName) {
         PreparationDTO firstPrep = new PreparationDTO();
         firstPrep.setDataSetName(dataSetName);
         firstPrep.setName(name);

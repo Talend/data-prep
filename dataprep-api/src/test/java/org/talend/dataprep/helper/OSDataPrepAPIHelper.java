@@ -94,7 +94,8 @@ public class OSDataPrepAPIHelper {
 
     @PostConstruct
     public void initExecutionContext() {
-        LOGGER.info("Start Integration Test on '{}'", executionContext == ITExecutionContext.CLOUD ? "Cloud" : "On Premise");
+        LOGGER.info("Start Integration Test on '{}'",
+                executionContext == ITExecutionContext.CLOUD ? "Cloud" : "On Premise");
     }
 
     /**
@@ -221,7 +222,8 @@ public class OSDataPrepAPIHelper {
     public Response uploadTextDataset(String filename, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8")) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .queryParam(NAME, datasetName) //
                 .when() //
                 .post("/api/datasets");
@@ -254,7 +256,8 @@ public class OSDataPrepAPIHelper {
     public Response updateDataset(String filename, String datasetName, String datasetId) throws IOException {
         return given() //
                 .header(new Header(HttpHeaders.CONTENT_TYPE, HTTP.PLAIN_TEXT_TYPE)) //
-                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename), Charset.defaultCharset())) //
+                .body(IOUtils.toString(OSDataPrepAPIHelper.class.getResourceAsStream(filename),
+                        Charset.defaultCharset())) //
                 .when() //
                 .queryParam(NAME, datasetName) //
                 .put("/api/datasets/{datasetId}", datasetId);
@@ -292,7 +295,8 @@ public class OSDataPrepAPIHelper {
      * @param tql The TQL filter to apply (pass null if you want the non-filtered preparation content)
      * @return the response.
      */
-    public Response getPreparationContent(String preparationId, String version, String from, String tql) throws IOException {
+    public Response getPreparationContent(String preparationId, String version, String from, String tql)
+            throws IOException {
         RequestSpecification given = given() //
                 .queryParam(VERSION, version) //
                 .queryParam(FROM, from);
@@ -425,7 +429,8 @@ public class OSDataPrepAPIHelper {
      * @throws IOException in case of IO exception.
      */
     public File storeInputStreamAsTempFile(String tempFilename, InputStream input) throws IOException {
-        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename), "." + FilenameUtils.getExtension(tempFilename));
+        Path path = Files.createTempFile(FilenameUtils.getBaseName(tempFilename),
+                "." + FilenameUtils.getExtension(tempFilename));
         Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
         tempFile.deleteOnExit();
@@ -486,7 +491,8 @@ public class OSDataPrepAPIHelper {
                 .urlEncodingEnabled(false) //
                 .queryParam(FOLDER, folderSrc) //
                 .queryParam(DESTINATION, folderDest) //
-                .queryParam(NEW_NAME, prepName).when() //
+                .queryParam(NEW_NAME, prepName)
+                .when() //
                 .put("/api/preparations/{prepId}/move", prepId);
     }
 
@@ -606,9 +612,14 @@ public class OSDataPrepAPIHelper {
 
         while (isAsyncMethodRunning && nbLoop < 1000) {
 
-            String statusAsyncMethod = given().when() //
-                    .expect().statusCode(200).log().ifError() //
-                    .get(asyncMethodStatusUrl).asString();
+            String statusAsyncMethod = given()
+                    .when() //
+                    .expect()
+                    .statusCode(200)
+                    .log()
+                    .ifError() //
+                    .get(asyncMethodStatusUrl)
+                    .asString();
 
             asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 

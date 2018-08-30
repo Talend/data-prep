@@ -30,12 +30,13 @@ import static org.talend.dataprep.api.service.settings.actions.api.ActionSetting
 /**
  * Actions settings are the configuration for a simple button.
  * see
- * https://talend.github.io/react-talend-components/?selectedKind=Action&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * https://talend.github.io/react-talend-components/?selectedKind=Action&selectedStory=default&full=0&down=1&left=1&
+ * panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "displayMode")
-@JsonSubTypes({@JsonSubTypes.Type(value = ActionDropdownSettings.class, name = TYPE_DROPDOWN),
-        @JsonSubTypes.Type(value = ActionSplitDropdownSettings.class, name = TYPE_SPLIT_DROPDOWN)})
+@JsonSubTypes({ @JsonSubTypes.Type(value = ActionDropdownSettings.class, name = TYPE_DROPDOWN),
+        @JsonSubTypes.Type(value = ActionSplitDropdownSettings.class, name = TYPE_SPLIT_DROPDOWN) })
 public class ActionSettings {
 
     public static final String TYPE_DROPDOWN = "dropdown";

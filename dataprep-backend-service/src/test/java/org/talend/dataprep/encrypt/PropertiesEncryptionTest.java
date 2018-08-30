@@ -36,10 +36,10 @@ public class PropertiesEncryptionTest {
         String propertyValue = "5ecr3t";
         String propertyEncodedValue = "JP6lC6hVeu3wRZA1Tzigyg==";
 
-
         String mongoPropName = "mongodb.uri";
         String mongoPropValue = "mongodb://userName:5ecr3t@dataprep-server.org:27017/dataprep?toto=tata";
-        String mongoPropValueEncrypted = "mongodb://userName:JP6lC6hVeu3wRZA1Tzigyg==@dataprep-server.org:27017/dataprep?toto=tata";
+        String mongoPropValueEncrypted =
+                "mongodb://userName:JP6lC6hVeu3wRZA1Tzigyg==@dataprep-server.org:27017/dataprep?toto=tata";
 
         Path tempFile = Files.createTempFile("dataprep-PropertiesEncryptionTest.", ".properties");
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempFile, Charsets.UTF_8)) {

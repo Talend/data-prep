@@ -30,8 +30,8 @@ import org.talend.dataprep.user.store.UserDataRepository;
  *
  * @see FileSystemUserDataRepository
  */
-@TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "user.data.store:file",
-        "user.data.store.file.location:target/test/store/userdata" })
+@TestPropertySource(inheritLocations = false, inheritProperties = false,
+        properties = { "user.data.store:file", "user.data.store.file.location:target/test/store/userdata" })
 public class FileSystemUserDataRepositoryTest extends AbstractUserDataRepositoryTest<UserData> {
 
     /** The user data repository to test. */

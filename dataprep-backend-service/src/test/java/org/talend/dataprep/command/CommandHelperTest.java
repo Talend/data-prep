@@ -73,8 +73,8 @@ public class CommandHelperTest {
     public void testCommandToPublisher() throws Exception {
         // Given
         HystrixCommand<InputStream> command = new InputStreamTestCommand();
-        final Publisher<CommandHelperTestData> publisher = CommandHelper.toPublisher(CommandHelperTestData.class, mapper,
-                command);
+        final Publisher<CommandHelperTestData> publisher =
+                CommandHelper.toPublisher(CommandHelperTestData.class, mapper, command);
         final List<CommandHelperTestData> receivedData = new ArrayList<>();
 
         // When
@@ -91,8 +91,8 @@ public class CommandHelperTest {
     public void testMalformedToPublisher() throws Exception {
         // Given
         HystrixCommand<InputStream> command = new MalformedInputStreamTestCommand();
-        final Publisher<CommandHelperTestData> publisher = CommandHelper.toPublisher(CommandHelperTestData.class, mapper,
-                command);
+        final Publisher<CommandHelperTestData> publisher =
+                CommandHelper.toPublisher(CommandHelperTestData.class, mapper, command);
         final List<CommandHelperTestData> receivedData = new ArrayList<>();
 
         // When

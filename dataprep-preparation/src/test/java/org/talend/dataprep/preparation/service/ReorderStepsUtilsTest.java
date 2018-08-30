@@ -54,7 +54,8 @@ public class ReorderStepsUtilsTest {
 
         assertEquals("0003", firstStep.getDiff().getCreatedColumns().iterator().next());
         assertEquals("0004", secondStep.getDiff().getCreatedColumns().iterator().next());
-        assertEquals("0004", thirdStep.getActions().iterator().next().getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
+        assertEquals("0004",
+                thirdStep.getActions().iterator().next().getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
     }
 
     private static AppendStep createAppendStep(String usedColumnId, List<String> createdColumns) {

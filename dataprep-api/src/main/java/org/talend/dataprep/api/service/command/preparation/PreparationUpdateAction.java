@@ -52,7 +52,8 @@ public class PreparationUpdateAction extends ChainedCommand<Void, InputStream> {
      * @param diffInput the metadata difference for this update (as command).
      */
     // private constructor to ensure the IoC use
-    private PreparationUpdateAction(final String preparationId, final String stepId, final AppendStep updatedStep, DiffMetadata diffInput) {
+    private PreparationUpdateAction(final String preparationId, final String stepId, final AppendStep updatedStep,
+            DiffMetadata diffInput) {
         super(PREPARATION_GROUP, diffInput);
         execute(() -> onExecute(preparationId, stepId, updatedStep));
         on(HttpStatus.OK).then(asNull());

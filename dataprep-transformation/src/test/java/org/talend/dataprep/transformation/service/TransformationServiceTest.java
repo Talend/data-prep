@@ -85,11 +85,13 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // when
         String transformedContent = given() //
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON") //
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId,
+                        "JSON") //
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"), UTF_8);
+        String expectedContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -121,8 +123,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // when
         final Response response = given() //
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, "unknown_dataset_id",
-                        "JSON");
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId,
+                        "unknown_dataset_id", "JSON");
 
         // then
         assertEquals(400, response.getStatusCode());
@@ -137,7 +139,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // when
         final Response response = given() //
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", "no_preparation_id", dataSetId, "JSON");
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", "no_preparation_id", dataSetId,
+                        "JSON");
 
         // then
         assertEquals(404, response.getStatusCode());
@@ -154,13 +157,18 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // when
         String transformedContent = given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON") //
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId,
+                        "JSON") //
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("uppercase_expected.json"), UTF_8);
+        String expectedContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("uppercase_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -173,13 +181,18 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // when
         String transformedContent = given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON") //
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId,
+                        "JSON") //
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("lowercase_filtered_expected.json"), UTF_8);
+        String expectedContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("lowercase_filtered_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, transformedContent, false);
     }
 
@@ -205,7 +218,10 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // when
         given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/apply/preparation/{prepId}/dataset/{datasetId}/{format}", prepId, dsId, "JSON") //
                 .asString();
@@ -215,7 +231,10 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // just to pass through the cache
         final Response response = given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/apply/preparation/{prepId}/dataset/{datasetId}/{format}", prepId, dsId, "JSON");
         Assert.assertThat(response.getStatusCode(), is(200));
@@ -225,10 +244,21 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
     public void testEvictPreparationCache() throws Exception {
         // given
         final String preparationId = "prepId";
-        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder().preparationId(preparationId).stepId("step1")
-                .sourceType(FILTER).build();
-        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder().datasetId("datasetId").preparationId(preparationId)
-                .stepId("step1").format(JSON).parameters(emptyMap()).sourceType(FILTER).build();
+        final ContentCacheKey metadataKey = cacheKeyGenerator
+                .metadataBuilder()
+                .preparationId(preparationId)
+                .stepId("step1")
+                .sourceType(FILTER)
+                .build();
+        final ContentCacheKey contentKey = cacheKeyGenerator
+                .contentBuilder()
+                .datasetId("datasetId")
+                .preparationId(preparationId)
+                .stepId("step1")
+                .format(JSON)
+                .parameters(emptyMap())
+                .sourceType(FILTER)
+                .build();
         try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
             entry.write("metadata".getBytes());
             entry.flush();
@@ -243,7 +273,10 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // when
         given() //
-                .expect().statusCode(200).log().ifError()//
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .delete("/preparation/{preparationId}/cache", preparationId) //
                 .asString();
@@ -260,13 +293,18 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
 
         // when
         String exportContent = given() //
-                .queryParam("name", "ds_export").expect().statusCode(200).log().ifError()//
+                .queryParam("name", "ds_export")
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError()//
                 .when() //
                 .get("/export/dataset/{id}/{format}", dataSetId, "JSON") //
                 .asString();
 
         // then
-        String expectedContent = IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"), UTF_8);
+        String expectedContent =
+                IOUtils.toString(this.getClass().getResourceAsStream("no_action_expected.json"), UTF_8);
         JSONAssert.assertEquals(expectedContent, exportContent, false);
     }
 
@@ -282,7 +320,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         // when
         final Response response = given() //
                 .when() //
-                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId, "JSON");
+                .get("/apply/preparation/{preparationId}/dataset/{datasetId}/{format}", preparationId, dataSetId,
+                        "JSON");
 
         // then
         // (failed actions are ignored so the response should be 200)
@@ -298,7 +337,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                 "" // no filter
         );
 
-        Assert.assertFalse("content cache '" + key.getKey() + "' was not evicted from the cache", contentCache.has(key));
+        Assert.assertFalse("content cache '" + key.getKey() + "' was not evicted from the cache",
+                contentCache.has(key));
     }
 
     @Test
@@ -323,7 +363,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         final String preparationId = createEmptyPreparationFromDataset(dataSetId, "get col types prep");
 
         // when
-        final Response response = when().get("/preparations/{preparationId}/columns/{columnId}/types", preparationId, "0000");
+        final Response response =
+                when().get("/preparations/{preparationId}/columns/{columnId}/types", preparationId, "0000");
 
         // then
         /*
@@ -358,7 +399,8 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
         applyActionFromFile(preparationId, "replace_value.json");
 
         // when
-        final Response response = when().get("/preparations/{preparationId}/columns/{columnId}/types", preparationId, "0005");
+        final Response response =
+                when().get("/preparations/{preparationId}/columns/{columnId}/types", preparationId, "0005");
 
         // then
         assertEquals(200, response.getStatusCode());

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.user.store.file;
 
@@ -82,7 +82,8 @@ public class FileSystemUserDataRepository implements UserDataRepository<UserData
         try (GZIPInputStream input = new GZIPInputStream(new FileInputStream(inputFile))) {
             return mapper.readerFor(UserData.class).readValue(input);
         } catch (IOException e) {
-            throw new TDPException(CommonErrorCodes.UNABLE_TO_READ_USER_DATA, e, ExceptionContext.build().put("id", userId));
+            throw new TDPException(CommonErrorCodes.UNABLE_TO_READ_USER_DATA, e,
+                    ExceptionContext.build().put("id", userId));
         }
     }
 

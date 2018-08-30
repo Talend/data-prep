@@ -37,10 +37,12 @@ public class Converters {
     public Converter<String, JsonNode> jsonNodeConverter() {
         // Don't convert to lambda -> cause issue for Spring to infer source and target types.
         return new Converter<String, JsonNode>() {
+
             @Override
             public JsonNode convert(String source) {
                 if (source.isEmpty()) {
-                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, new IllegalArgumentException("Source should not be empty"));
+                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+                            new IllegalArgumentException("Source should not be empty"));
                 }
                 ObjectMapper mapper = new ObjectMapper();
                 try {
@@ -56,6 +58,7 @@ public class Converters {
     public Converter<String, ErrorCode> errorCodeConverter() {
         // Don't convert to lambda -> cause issue for Spring to infer source and target types.
         return new Converter<String, ErrorCode>() {
+
             @Override
             public ErrorCode convert(String source) {
                 ObjectMapper mapper = new ObjectMapper();

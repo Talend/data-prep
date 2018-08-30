@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer;
 
@@ -44,15 +44,18 @@ public class TransformerFactory {
      * @param configuration A {@link Configuration configuration} for a transformation.
      */
     public Transformer get(@Nonnull Configuration configuration) {
-        List<Transformer> electedTransformers = context.getBeansOfType(Transformer.class).values().stream() //
+        List<Transformer> electedTransformers = context
+                .getBeansOfType(Transformer.class)
+                .values()
+                .stream() //
                 .filter(transformer -> transformer.accept(configuration)) //
                 .collect(Collectors.toList());
         if (electedTransformers.isEmpty()) {
             throw new IllegalStateException("No transformers eligible for configuration.");
         }
         if (electedTransformers.size() > 1) {
-            throw new IllegalStateException("Too many transformers eligible for configuration (got " + electedTransformers.size()
-                    + ": " + Arrays.toString(electedTransformers.toArray()) + ")");
+            throw new IllegalStateException("Too many transformers eligible for configuration (got "
+                    + electedTransformers.size() + ": " + Arrays.toString(electedTransformers.toArray()) + ")");
         }
         return electedTransformers.get(0);
     }

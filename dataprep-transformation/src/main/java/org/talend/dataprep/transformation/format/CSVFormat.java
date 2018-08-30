@@ -75,7 +75,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private Parameter getFileName(Locale locale) {
-        return Parameter.parameter(locale) //
+        return Parameter
+                .parameter(locale) //
                 .setName("fileName") //
                 .setType(ParameterType.STRING) //
                 .setDefaultValue(StringUtils.EMPTY) //
@@ -85,7 +86,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private Parameter getEnclosureChar(Locale locale) {
-        return Parameter.parameter(locale) //
+        return Parameter
+                .parameter(locale) //
                 .setName(ParametersCSV.ENCLOSURE_CHAR) //
                 .setType(ParameterType.STRING) //
                 .setDefaultValue(defaultTextEnclosure) //
@@ -93,7 +95,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private Parameter getEscapeChar(Locale locale) {
-        return Parameter.parameter(locale) //
+        return Parameter
+                .parameter(locale) //
                 .setName(ParametersCSV.ESCAPE_CHAR) //
                 .setType(ParameterType.STRING) //
                 .setDefaultValue(defaultEscapeChar) //
@@ -101,7 +104,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private SelectParameter getEnclosureOptions(Locale locale) {
-        return SelectParameter.selectParameter(locale) //
+        return SelectParameter
+                .selectParameter(locale) //
                 .name(ParametersCSV.ENCLOSURE_MODE) //
                 .item(ParametersCSV.ENCLOSURE_ALL_FIELDS, ParametersCSV.ENCLOSURE_TEXT_ALL_FIELDS_LABEL) //
                 .item(ParametersCSV.ENCLOSURE_TEXT_ONLY, ParametersCSV.ENCLOSURE_TEXT_ONLY_LABEL) //
@@ -111,7 +115,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private SelectParameter getCsvDelimiters(Locale locale) {
-        return SelectParameter.selectParameter(locale) //
+        return SelectParameter
+                .selectParameter(locale) //
                 .name(ParametersCSV.FIELDS_DELIMITER) //
                 .item(";", "semiColon") //
                 .item("\u0009", "tabulation") //
@@ -124,7 +129,8 @@ public class CSVFormat extends ExportFormat {
     }
 
     private Parameter buildCharsetParameter(Locale locale) {
-        SelectParameter.SelectParameterBuilder builder = SelectParameter.selectParameter(locale).name(ParametersCSV.ENCODING);
+        SelectParameter.SelectParameterBuilder builder =
+                SelectParameter.selectParameter(locale).name(ParametersCSV.ENCODING);
         for (Charset charsetEntry : EncodingSupport.getSupportedCharsets()) {
             builder.constant(charsetEntry.name(), charsetEntry.displayName(locale));
         }

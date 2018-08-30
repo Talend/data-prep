@@ -79,11 +79,12 @@ public class PropertiesEncryption {
                 Parameters params = new Parameters();
                 FileBasedConfigurationBuilder<PropertiesConfiguration> builder = //
                         new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class) //
-                                .configure(params.fileBased() //
+                                .configure(params
+                                        .fileBased() //
                                         .setFile(inputFilePath.toFile())); //
                 PropertiesConfiguration config = builder.getConfiguration();
-                mustBeModified.stream().filter(config::containsKey)
-                        .forEach(key -> config.setProperty(key, function.apply(config.getString(key))));
+                mustBeModified.stream().filter(config::containsKey).forEach(
+                        key -> config.setProperty(key, function.apply(config.getString(key))));
 
                 builder.save();
             } catch (ConfigurationException e) {

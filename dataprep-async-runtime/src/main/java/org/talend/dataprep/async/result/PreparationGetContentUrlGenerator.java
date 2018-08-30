@@ -43,7 +43,7 @@ public class PreparationGetContentUrlGenerator implements ResultUrlGenerator {
             builder.setParameter("from", param.getFrom().name());
         }
 
-        if(StringUtils.isNotEmpty(param.getFilter())) {
+        if (StringUtils.isNotEmpty(param.getFilter())) {
             builder.setParameter("filter", param.getFilter());
         }
 

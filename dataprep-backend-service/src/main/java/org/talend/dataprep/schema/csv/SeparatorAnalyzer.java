@@ -107,7 +107,11 @@ public class SeparatorAnalyzer implements Consumer<Separator> {
         if (zeroCount > 0) {
             countOccurrences.put(0L, (long) zeroCount);
         }
-        return countOccurrences.values().stream().mapToDouble(s -> (double) s / numberOfLines).boxed()
+        return countOccurrences
+                .values()
+                .stream()
+                .mapToDouble(s -> (double) s / numberOfLines)
+                .boxed()
                 .collect(Collectors.toList());
     }
 
@@ -130,7 +134,8 @@ public class SeparatorAnalyzer implements Consumer<Separator> {
     @Override
     public void accept(Separator separator) {
         separator.setScore(computeEntropy(separator));
-        CSVFastHeaderAndTypeAnalyzer csvFastHeaderAndTypeAnalyzer = new CSVFastHeaderAndTypeAnalyzer(sampleLines, separator);
+        CSVFastHeaderAndTypeAnalyzer csvFastHeaderAndTypeAnalyzer =
+                new CSVFastHeaderAndTypeAnalyzer(sampleLines, separator);
         csvFastHeaderAndTypeAnalyzer.analyze();
         separator.setFirstLineAHeader(csvFastHeaderAndTypeAnalyzer.isFirstLineAHeader());
         separator.setHeaderInfoReliable(csvFastHeaderAndTypeAnalyzer.isHeaderInfoReliable());

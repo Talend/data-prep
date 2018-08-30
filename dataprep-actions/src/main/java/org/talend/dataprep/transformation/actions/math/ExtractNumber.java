@@ -206,8 +206,8 @@ public class ExtractNumber extends AbstractActionMetadata implements ColumnActio
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
-            ActionsUtils.createNewColumn(context, singletonList(
-                    ActionsUtils.additionalColumn().withName(context.getColumnName() + "_number")));
+            ActionsUtils.createNewColumn(context,
+                    singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + "_number")));
         }
     }
 

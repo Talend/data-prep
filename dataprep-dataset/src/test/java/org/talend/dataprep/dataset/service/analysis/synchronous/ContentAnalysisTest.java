@@ -65,9 +65,11 @@ public class ContentAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testAnalysisWithHeaderParameter() {
-        final DataSetMetadata metadata = metadataBuilder.metadata() //
+        final DataSetMetadata metadata = metadataBuilder
+                .metadata() //
                 .id(UUID.randomUUID().toString()) //
-                .parameter(CSVFormatFamily.HEADER_NB_LINES_PARAMETER, "56").build();
+                .parameter(CSVFormatFamily.HEADER_NB_LINES_PARAMETER, "56")
+                .build();
         createCsvDataSet(metadata, "5_lines.csv");
 
         contentAnalysis.analyze(metadata.getId());
@@ -86,7 +88,8 @@ public class ContentAnalysisTest extends DataSetBaseTest {
         createCsvDataSet(metadata, "100_lines.csv");
 
         final Long newLimit = 16L;
-        final Long originalLimit = (Long) ReflectionTestUtils.getField(contentAnalysis, ContentAnalysis.class, "sizeLimit");
+        final Long originalLimit =
+                (Long) ReflectionTestUtils.getField(contentAnalysis, ContentAnalysis.class, "sizeLimit");
         ReflectionTestUtils.setField(contentAnalysis, "sizeLimit", newLimit);
 
         contentAnalysis.analyze(metadata.getId());
@@ -125,8 +128,9 @@ public class ContentAnalysisTest extends DataSetBaseTest {
 
     private DataSetMetadata createMetadata(String id, List<String> header) {
         final DataSetMetadata metadata = metadataBuilder.metadata().id(id).build();
-        List<ColumnMetadata> columns = header.stream().map(s -> ColumnMetadata.Builder.column().name(s).type(Type.STRING).build())
-                .collect(Collectors.toList());
+        List<ColumnMetadata> columns =
+                header.stream().map(s -> ColumnMetadata.Builder.column().name(s).type(Type.STRING).build()).collect(
+                        Collectors.toList());
         metadata.setRowMetadata(new RowMetadata(columns));
         return metadata;
     }

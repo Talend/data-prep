@@ -78,9 +78,11 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
     public List<Parameter> getParameters(Locale locale) {
         final Parameter fromIndexParameters =
                 parameter(locale).setName(FROM_INDEX_PARAMETER).setType(INTEGER).setDefaultValue("0").build(this);
-        final Parameter fromNBeforeEndParameters =
-                parameter(locale).setName(FROM_N_BEFORE_END_PARAMETER).setType(INTEGER).setDefaultValue("5").build(
-                        this);
+        final Parameter fromNBeforeEndParameters = parameter(locale)
+                .setName(FROM_N_BEFORE_END_PARAMETER)
+                .setType(INTEGER)
+                .setDefaultValue("5")
+                .build(this);
         final Parameter toIndexParameters =
                 parameter(locale).setName(TO_INDEX_PARAMETER).setType(INTEGER).setDefaultValue("5").build(this);
         final Parameter toNBeforeEndParameters =
@@ -109,8 +111,8 @@ public class Substring extends AbstractActionMetadata implements ColumnAction {
                 .name(FROM_MODE_PARAMETER) //
                 .item(FROM_BEGINNING, FROM_BEGINNING, toCompleteParameters) // has all the "To" choices
                 .item(FROM_INDEX_PARAMETER, FROM_INDEX_PARAMETER, fromIndexParameters, toCompleteParameters) // has all
-                                                                                                             // the "To"
-                                                                                                             // choices
+                // the "To"
+                // choices
                 .item(FROM_N_BEFORE_END_PARAMETER, FROM_N_BEFORE_END_PARAMETER, fromNBeforeEndParameters,
                         toParametersWithoutIndexSelection) // cannot
                 // choose

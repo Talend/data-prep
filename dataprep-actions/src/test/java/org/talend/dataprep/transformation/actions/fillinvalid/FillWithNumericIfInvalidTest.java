@@ -52,7 +52,7 @@ public class FillWithNumericIfInvalidTest extends AbstractMetadataBaseTest<FillI
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 

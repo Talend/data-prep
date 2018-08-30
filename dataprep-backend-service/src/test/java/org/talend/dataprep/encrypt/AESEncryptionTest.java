@@ -24,7 +24,8 @@ public class AESEncryptionTest {
 
     public static final String DECRYPTED_URI = "mongodb://toto:truc@dataprep.org/dataprep-db?ssl=toto&truc=machin";
 
-    public static final String ENCRYPTED_URI = "mongodb://toto:qxjQWF%2FZsuzzeLzKIop2pQ==@dataprep.org/dataprep-db?ssl=toto&truc=machin";
+    public static final String ENCRYPTED_URI =
+            "mongodb://toto:qxjQWF%2FZsuzzeLzKIop2pQ==@dataprep.org/dataprep-db?ssl=toto&truc=machin";
 
     @Test
     public void should_get_the_same_string_after_encrypt_then_decrypt() throws Exception {

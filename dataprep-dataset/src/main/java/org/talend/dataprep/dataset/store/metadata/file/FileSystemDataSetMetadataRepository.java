@@ -87,7 +87,8 @@ public class FileSystemDataSetMetadataRepository extends ObjectDataSetMetadataRe
             mapper.writer().writeValue(output, metadata);
         } catch (IOException e) {
             LOG.error("Error saving {}", metadata, e);
-            throw new TDPException(DataSetErrorCodes.UNABLE_TO_STORE_DATASET_METADATA, e,  ExceptionContext.build().put("id", metadata.getId()));
+            throw new TDPException(DataSetErrorCodes.UNABLE_TO_STORE_DATASET_METADATA, e,
+                    ExceptionContext.build().put("id", metadata.getId()));
         } finally {
             lock.writeLock().unlock();
         }

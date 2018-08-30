@@ -13,14 +13,15 @@
 
 package org.talend.dataprep.qa.config;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.talend.dataprep.qa.config.FeatureContext.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.talend.dataprep.qa.dto.Folder;
+import java.util.*;
+import java.util.stream.*;
 
-import cucumber.api.java.After;
+import org.slf4j.*;
+import org.talend.dataprep.qa.dto.*;
+
+import cucumber.api.java.*;
 
 /**
  * Storage for Before and After actions.
@@ -33,11 +34,33 @@ public class GlobalStep extends DataPrepStep {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalStep.class);
 
     /**
+     * Suffix deactivation for a scenario.
+     * First @Before to be executed in OS context.
+     * Second @Before to be executed in EE context.
+     */
+    @Before(value = "@SuffixOff", order = 200)
+    public void deactivateSuffix() {
+        setUseSuffix(false);
+    }
+
+    /**
+     * Suffix reactivation after an explicit deactivation in a scenario.
+     * Second @After to be executed in OS context
+     * Third @After to be executed in EE context
+     */
+    @After(value = "@SuffixOff", order = 200)
+    public void reactivateSuffix() {
+        setUseSuffix(true);
+    }
+
+    /**
      * Clean the created objects in the test environment.
      * This method must be called on the last scenario of each feature in order to keep the tests reentrant.
      * It also can be called on demand to clean the context for the next scenario.
+     * First @After to be executed in OS context
+     * Second @After to be executed in EE context
      */
-    @After("@CleanAfter")
+    @After(value = "@CleanAfter", order = 300)
     public void cleanAfter() {
         LOGGER.debug("Cleaning IT context.");
 

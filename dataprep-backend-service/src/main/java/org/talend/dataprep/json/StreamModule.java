@@ -47,8 +47,10 @@ public class StreamModule extends SimpleModule {
     @PostConstruct
     private void registerSerializers() {
         addSerializer(Stream.class, new JsonSerializer<Stream>() {
+
             @Override
-            public void serialize(Stream stream, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            public void serialize(Stream stream, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+                    throws IOException {
                 // Write values
                 ObjectWriter objectWriter = null; // Cache object writer (to prevent additional search for ObjectWriter).
                 Object previous = null;

@@ -66,7 +66,8 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, CREATE_NEW_COLUMN_DEFAULT);
+        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale,
+                CREATE_NEW_COLUMN_DEFAULT);
     }
 
     @Override
@@ -93,7 +94,7 @@ public class Absolute extends AbstractActionMetadata implements ColumnAction {
             return;
         }
         String absValueStr = null;
-        if(NumericHelper.isBigDecimal(value)) {
+        if (NumericHelper.isBigDecimal(value)) {
             absValueStr = BigDecimalParser.toBigDecimal(value).abs().toPlainString();
         }
         if (absValueStr != null) {

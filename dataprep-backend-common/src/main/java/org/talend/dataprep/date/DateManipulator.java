@@ -26,7 +26,8 @@ import java.util.Arrays;
 
 public class DateManipulator implements Serializable {
 
-    private DateManipulator() {}
+    private DateManipulator() {
+    }
 
     /**
      * Supported pace for date ranges
@@ -73,10 +74,14 @@ public class DateManipulator implements Serializable {
      * @param maxNumberOfParts The maximum number of parts
      * @return The suitable pace to use in the range
      */
-    public static DateManipulator.Pace getSuitablePace(final LocalDateTime min, final LocalDateTime max, final int maxNumberOfParts) {
+    public static DateManipulator.Pace getSuitablePace(final LocalDateTime min, final LocalDateTime max,
+            final int maxNumberOfParts) {
         final long allRangeTimetamp = Duration.between(min, max).toMillis();
-        return Arrays.stream(Pace.values()).filter(pace -> (allRangeTimetamp / pace.getTime()) < (maxNumberOfParts - 1))
-                .findFirst().orElse(null);
+        return Arrays
+                .stream(Pace.values())
+                .filter(pace -> (allRangeTimetamp / pace.getTime()) < (maxNumberOfParts - 1))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -129,24 +134,24 @@ public class DateManipulator implements Serializable {
      */
     public static LocalDateTime getNext(final LocalDateTime localDate, final Pace pace) {
         switch (pace) {
-            case CENTURY:
-                return localDate.plus(100, ChronoUnit.YEARS);
-            case DECADE:
-                return localDate.plus(10, ChronoUnit.YEARS);
-            case YEAR:
-                return localDate.plus(1, ChronoUnit.YEARS);
-            case HALF_YEAR:
-                return localDate.plus(6, ChronoUnit.MONTHS);
-            case QUARTER:
-                return localDate.plus(3, ChronoUnit.MONTHS);
-            case MONTH:
-                return localDate.plus(1, ChronoUnit.MONTHS);
-            case WEEK:
-                return localDate.plus(1, ChronoUnit.WEEKS);
-            case DAY:
-                return localDate.plus(1, ChronoUnit.DAYS);
-            default:
-                return localDate;
+        case CENTURY:
+            return localDate.plus(100, ChronoUnit.YEARS);
+        case DECADE:
+            return localDate.plus(10, ChronoUnit.YEARS);
+        case YEAR:
+            return localDate.plus(1, ChronoUnit.YEARS);
+        case HALF_YEAR:
+            return localDate.plus(6, ChronoUnit.MONTHS);
+        case QUARTER:
+            return localDate.plus(3, ChronoUnit.MONTHS);
+        case MONTH:
+            return localDate.plus(1, ChronoUnit.MONTHS);
+        case WEEK:
+            return localDate.plus(1, ChronoUnit.WEEKS);
+        case DAY:
+            return localDate.plus(1, ChronoUnit.DAYS);
+        default:
+            return localDate;
         }
     }
 
@@ -183,7 +188,8 @@ public class DateManipulator implements Serializable {
      * @return The first day of the date year
      */
     private static LocalDateTime getFirstDayOfYear(final LocalDateTime localDate) {
-        return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfYear()));
+        return localDate
+                .with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfYear()));
     }
 
     /**
@@ -195,8 +201,8 @@ public class DateManipulator implements Serializable {
     private static LocalDateTime getFirstDayOfHalfYear(final LocalDateTime localDate) {
         return localDate.with(temporal -> {
             final Month semesterMonth = localDate.getMonth().getValue() < JULY.getValue() ? JANUARY : JULY;
-            return LocalDate.from(temporal).withMonth(semesterMonth.getValue()).atStartOfDay()
-                    .with(TemporalAdjusters.firstDayOfMonth());
+            return LocalDate.from(temporal).withMonth(semesterMonth.getValue()).atStartOfDay().with(
+                    TemporalAdjusters.firstDayOfMonth());
         });
     }
 
@@ -213,14 +219,14 @@ public class DateManipulator implements Serializable {
             case 1:
                 return LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfYear());
             case 2:
-                return LocalDate.from(temporal).atStartOfDay().withMonth(APRIL.getValue())
-                        .with(TemporalAdjusters.firstDayOfMonth());
+                return LocalDate.from(temporal).atStartOfDay().withMonth(APRIL.getValue()).with(
+                        TemporalAdjusters.firstDayOfMonth());
             case 3:
-                return LocalDate.from(temporal).atStartOfDay().withMonth(JULY.getValue())
-                        .with(TemporalAdjusters.firstDayOfMonth());
+                return LocalDate.from(temporal).atStartOfDay().withMonth(JULY.getValue()).with(
+                        TemporalAdjusters.firstDayOfMonth());
             default:
-                return LocalDate.from(temporal).atStartOfDay().withMonth(OCTOBER.getValue())
-                        .with(TemporalAdjusters.firstDayOfMonth());
+                return LocalDate.from(temporal).atStartOfDay().withMonth(OCTOBER.getValue()).with(
+                        TemporalAdjusters.firstDayOfMonth());
             }
         });
     }
@@ -232,7 +238,8 @@ public class DateManipulator implements Serializable {
      * @return The first day of the date month
      */
     private static LocalDateTime getFirstDayOfMonth(final LocalDateTime localDate) {
-        return localDate.with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfMonth()));
+        return localDate
+                .with(temporal -> LocalDate.from(temporal).atStartOfDay().with(TemporalAdjusters.firstDayOfMonth()));
     }
 
     /**

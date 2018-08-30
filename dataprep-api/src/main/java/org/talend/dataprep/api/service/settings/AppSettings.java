@@ -39,6 +39,7 @@ public class AppSettings {
 
     /** The analytics settings dictionary. */
     private final Map<String, String> analytics = new HashMap<>();
+
     /**
      * The context settings dictionary
      */

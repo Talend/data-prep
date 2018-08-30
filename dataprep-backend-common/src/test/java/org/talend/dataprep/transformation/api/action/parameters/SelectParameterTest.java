@@ -69,7 +69,8 @@ public class SelectParameterTest extends ParameterBaseTest {
     @Test
     public void shouldCreateConstantItem() {
         // when
-        final SelectParameter params = SelectParameter.selectParameter(Locale.US).constant("key", "a constant key").build(this);
+        final SelectParameter params =
+                SelectParameter.selectParameter(Locale.US).constant("key", "a constant key").build(this);
 
         // then
         assertThat(params.getItems().get(0).getValue(), is("key"));

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.fill;
 
@@ -118,7 +118,8 @@ public class FillWithDateIfEmptyTest extends AbstractMetadataBaseTest<FillIfEmpt
         // given
         final DataSetRow row = builder() //
                 .with(value("David Bowie").type(Type.STRING)) //
-                .with(value("").type(Type.DATE).statistics(ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"))) //
+                .with(value("").type(Type.DATE).statistics(
+                        ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"))) //
                 .with(value("100").type(Type.STRING)) //
                 .build();
         Map<String, String> parameters = ActionMetadataTestUtils
@@ -137,7 +138,8 @@ public class FillWithDateIfEmptyTest extends AbstractMetadataBaseTest<FillIfEmpt
         // given
         final DataSetRow row = builder() //
                 .with(value("David Bowie").type(Type.STRING)) //
-                .with(value("").type(Type.DATE).statistics(ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"))) //
+                .with(value("").type(Type.DATE).statistics(
+                        ChangeDatePatternTest.class.getResourceAsStream("statistics_yyyy-MM-dd.json"))) //
                 .with(value("15/10/1999").type(Type.DATE)) //
                 .build();
         Map<String, String> parameters = ActionMetadataTestUtils.parseParameters( //

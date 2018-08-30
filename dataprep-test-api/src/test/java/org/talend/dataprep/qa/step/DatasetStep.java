@@ -3,37 +3,28 @@ package org.talend.dataprep.qa.step;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.springframework.http.HttpStatus.*;
+import static org.talend.dataprep.qa.config.FeatureContext.*;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.ContentMetadata;
-import org.talend.dataprep.qa.dto.Statistics;
+import org.apache.commons.io.*;
+import org.slf4j.*;
+import org.springframework.beans.factory.annotation.*;
+import org.talend.dataprep.qa.config.*;
+import org.talend.dataprep.qa.dto.*;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.response.ResponseBody;
+import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.databind.*;
+import com.jayway.restassured.path.json.*;
+import com.jayway.restassured.response.*;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import cucumber.api.*;
+import cucumber.api.java.en.*;
 
 /**
  * Step dealing with dataset.
@@ -237,11 +228,5 @@ public class DatasetStep extends DataPrepStep {
             Statistics columnStatistics = actual.columns.get(0).statistics;
             return !columnStatistics.frequencyTable.isEmpty() && !columnStatistics.patternFrequencyTable.isEmpty();
         };
-    }
-
-    @Then("^The list of datasets has \"(.*)\" datasets$") //
-    public void checkDatasetsList(int number) throws Throwable {
-        List<ContentMetadata> datasetMetas = listDatasetMeta();
-        assertEquals(number, datasetMetas.size());
     }
 }

@@ -75,7 +75,8 @@ public class DatasetClient {
     @Autowired
     private FilterService filterService;
 
-    private final Cache<String, AnalysisResult> computedMetadataCache = CacheBuilder.newBuilder() //
+    private final Cache<String, AnalysisResult> computedMetadataCache = CacheBuilder
+            .newBuilder() //
             .maximumSize(50) //
             .softValues() //
             .build();
@@ -110,8 +111,8 @@ public class DatasetClient {
      * @return DataSetMetadata without rowMetadata
      */
     public Stream<DataSetMetadata> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
-        return dataCatalogClient.listDataset(certification, favorite)
-                .map(dataset -> conversionService.convert(dataset, DataSetMetadata.class));
+        return dataCatalogClient.listDataset(certification, favorite).map(
+                dataset -> conversionService.convert(dataset, DataSetMetadata.class));
     }
 
     public DataSetMetadata getDataSetMetadata(String id) {
@@ -194,7 +195,10 @@ public class DatasetClient {
 
         // DataSet specifics
         if (!fullContent) {
-            dataSetMetadata.getContent().getLimit().ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
+            dataSetMetadata
+                    .getContent()
+                    .getLimit()
+                    .ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
         }
         return dataset;
     }
@@ -268,8 +272,11 @@ public class DatasetClient {
         metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 
-        if (rowMetadata != null
-                && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
+        if (rowMetadata != null && rowMetadata
+                .getColumns()
+                .stream()
+                .map(ColumnMetadata::getStatistics)
+                .anyMatch(this::isComputedStatistics)) {
             AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
             metadata.getContent().setNbRecords(analysisResult.rowcount);
@@ -293,8 +300,8 @@ public class DatasetClient {
             return computedMetadataCache.get(id, () -> {
                 AtomicLong count = new AtomicLong(0);
                 RowMetadata rowMetadata = getDataSetRowMetadata(id);
-                try (Stream<DataSetRow> records = dataCatalogClient.getDataSetContent(id, sampleSize)
-                        .map(toDatasetRow(rowMetadata))) {
+                try (Stream<DataSetRow> records =
+                        dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
                     analyzerService.analyzeFull(records, rowMetadata.getColumns());
                 }
                 return new AnalysisResult(rowMetadata, count.get());

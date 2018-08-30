@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class StringsHelperTest {
+
     @Test
     public void match_should_succeed_in_strict_mode() throws Exception {
         //given

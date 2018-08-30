@@ -19,4 +19,5 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Configuration
 @PropertySource("classpath:/org/talend/dataprep/configuration/default.properties")
-public class DefaultConfiguration {}
+public class DefaultConfiguration {
+}

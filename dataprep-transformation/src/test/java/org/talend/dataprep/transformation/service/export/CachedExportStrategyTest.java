@@ -55,9 +55,11 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         preparation.setHeadId("0");
         preparationRepository.add(preparation);
 
-        final TransformationCacheKey cacheKey = cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", HEAD, "");
+        final TransformationCacheKey cacheKey =
+                cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", HEAD, "");
         putKeyInCache(cacheKey);
-        final TransformationCacheKey filteredSampleCacheKey = cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", FILTER, "");
+        final TransformationCacheKey filteredSampleCacheKey =
+                cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", FILTER, "");
         putKeyInCache(filteredSampleCacheKey);
     }
 

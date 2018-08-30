@@ -77,16 +77,16 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                     if (datastore == null) {
                         try {
                             if (datasetProperties.has("content")) {
-                                DataSetContent content =
-                                        objectMapper.treeToValue(datasetProperties.get("content"), DataSetContent.class);
+                                DataSetContent content = objectMapper.treeToValue(datasetProperties.get("content"),
+                                        DataSetContent.class);
                                 dataSetMetadata.setContent(content);
                             } else {
                                 LOGGER.warn("no dataset content for the dataset [{}]", dataSetMetadata.getId());
                             }
 
                             if (datasetProperties.has("location")) {
-                                DataSetLocation location =
-                                        objectMapper.treeToValue(datasetProperties.get("location"), DataSetLocation.class);
+                                DataSetLocation location = objectMapper.treeToValue(datasetProperties.get("location"),
+                                        DataSetLocation.class);
                                 dataSetMetadata.setLocation(location);
                             } else {
                                 LOGGER.warn("no dataset location for the dataset [{}]", dataSetMetadata.getId());

@@ -102,8 +102,11 @@ public class Trim extends AbstractMultiScopeAction {
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        return singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)
-                .withType(STRING).withCopyMetadataFromId(context.getColumnId()));
+        return singletonList(ActionsUtils
+                .additionalColumn()
+                .withName(context.getColumnName() + NEW_COLUMN_SUFFIX)
+                .withType(STRING)
+                .withCopyMetadataFromId(context.getColumnId()));
     }
 
     @Override

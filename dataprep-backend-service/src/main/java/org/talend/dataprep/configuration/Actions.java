@@ -42,10 +42,12 @@ public class Actions {
     private ApplicationContext context;
 
     @Autowired
-    public Actions(ObjectMapper objectMapper, ApplicationContext context, @Value("${help.exact.url:#{null}}") String docBaseUrl) {
+    public Actions(ObjectMapper objectMapper, ApplicationContext context,
+            @Value("${help.exact.url:#{null}}") String docBaseUrl) {
         this.objectMapper = objectMapper;
         this.context = context;
-        if (isNotBlank(docBaseUrl)) ActionsBundle.setGlobalDocumentationUrlBase(docBaseUrl);
+        if (isNotBlank(docBaseUrl))
+            ActionsBundle.setGlobalDocumentationUrlBase(docBaseUrl);
         Providers.setProvider(new SpringProvider());
     }
 

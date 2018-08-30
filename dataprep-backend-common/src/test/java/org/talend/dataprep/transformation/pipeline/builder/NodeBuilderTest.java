@@ -31,6 +31,7 @@ import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.ZipLink;
 
 public class NodeBuilderTest {
+
     @Test
     public void default_first_node_should_be_SourceNode() {
         // when
@@ -70,10 +71,7 @@ public class NodeBuilderTest {
         final Node nextNode = new BasicNode();
 
         // when
-        final Node node = NodeBuilder
-                .source()
-                .to(nextNode)
-                .build();
+        final Node node = NodeBuilder.source().to(nextNode).build();
 
         // then
         assertThat(node.getLink(), instanceOf(BasicLink.class));
@@ -86,10 +84,7 @@ public class NodeBuilderTest {
         final Node nextNode = new BasicNode();
 
         // when
-        final Node node = NodeBuilder
-                .source()
-                .to((n) -> new TestLink(n[0]), nextNode)
-                .build();
+        final Node node = NodeBuilder.source().to((n) -> new TestLink(n[0]), nextNode).build();
 
         // then
         assertThat(node.getLink(), instanceOf(TestLink.class));
@@ -103,17 +98,10 @@ public class NodeBuilderTest {
         final Node secondNode = new BasicNode();
         final Node nodeToAppend = new BasicNode();
 
-        final Node pipeline = NodeBuilder
-                .from(firstNode)
-                .to(secondNode)
-                .build();
+        final Node pipeline = NodeBuilder.from(firstNode).to(secondNode).build();
 
         // when
-        final Node node = NodeBuilder
-                .source()
-                .to(pipeline)
-                .to(nodeToAppend)
-                .build();
+        final Node node = NodeBuilder.source().to(pipeline).to(nodeToAppend).build();
 
         // then
         assertThat(node.getLink().getTarget(), is(firstNode));
@@ -130,16 +118,12 @@ public class NodeBuilderTest {
         final Node zipTarget = new BasicNode();
 
         // when
-        final Node node = NodeBuilder
-                .from(firstNode)
-                .dispatchTo(branch1, branch2)
-                .zipTo(zipTarget)
-                .build();
+        final Node node = NodeBuilder.from(firstNode).dispatchTo(branch1, branch2).zipTo(zipTarget).build();
 
         // then
         assertThat(node, is(firstNode));
         assertThat(node.getLink(), instanceOf(CloneLink.class));
-        assertThat(((CloneLink)node.getLink()).getNodes(), arrayContaining(branch1, branch2));
+        assertThat(((CloneLink) node.getLink()).getNodes(), arrayContaining(branch1, branch2));
         assertThat(branch1.getLink(), instanceOf(ZipLink.Zipper.class));
         assertThat(branch2.getLink(), instanceOf(ZipLink.Zipper.class));
         assertThat(branch1.getLink().getTarget(), is(zipTarget));

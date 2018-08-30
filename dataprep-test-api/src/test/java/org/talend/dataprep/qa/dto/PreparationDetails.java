@@ -52,8 +52,7 @@ public class PreparationDetails extends NamedItem {
     public String getHead() {
         if (steps == null || steps.isEmpty()) {
             return "head";
-        }
-        else {
+        } else {
             return steps.get(steps.size() - 1);
         }
     }

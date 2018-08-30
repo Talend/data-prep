@@ -49,7 +49,8 @@ public class CompatibleDataSetList extends GenericCommand<InputStream> {
     private HttpRequestBase onExecute(String dataSetId, Sort sort, Order order) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + dataSetId + "/compatibledatasets");
+            URIBuilder uriBuilder =
+                    new URIBuilder(datasetServiceUrl + "/datasets/" + dataSetId + "/compatibledatasets");
             uriBuilder.addParameter("dataSetId", dataSetId);
             uriBuilder.addParameter("sort", sort.camelName());
             uriBuilder.addParameter("order", order.camelName());

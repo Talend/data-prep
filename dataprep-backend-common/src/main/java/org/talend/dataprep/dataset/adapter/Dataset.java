@@ -1,16 +1,16 @@
 /*
- *  ============================================================================
+ * ============================================================================
  *
- *  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
  *
- *  This source code is available under agreement available at
- *  https://github.com/Talend/data-prep/blob/master/LICENSE
+ * This source code is available under agreement available at
+ * https://github.com/Talend/data-prep/blob/master/LICENSE
  *
- *  You should have received a copy of the agreement
- *  along with this program; if not, write to Talend SA
- *  9 rue Pages 92150 Suresnes, France
+ * You should have received a copy of the agreement
+ * along with this program; if not, write to Talend SA
+ * 9 rue Pages 92150 Suresnes, France
  *
- *  ============================================================================
+ * ============================================================================
  */
 
 package org.talend.dataprep.dataset.adapter;
@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * Contains ONLY metadata about the dataset. Not its schema, not a sample, no analysis..
  * See <a href="https://github.com/Talend/dataset/blob/master/common/src/main/scala/org/talend/dataflow/common/model/Dataset.scala#L63">scala implementation in dataset</a>.
  */
-@JsonIgnoreProperties({"__acl"})
+@JsonIgnoreProperties({ "__acl" })
 public class Dataset {
 
     private String id;
@@ -83,9 +83,13 @@ public class Dataset {
     public static class DataSetMetadataLegacy {
 
         private String encoding;
+
         private Schema schemaParserResult;
+
         private boolean draft;
+
         private String sheetName;
+
         private String tag;
 
         private long nbRecords;

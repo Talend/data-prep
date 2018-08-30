@@ -55,7 +55,8 @@ public class CSVWriterCustom extends CSVWriter {
                         sb.append(this.quotechar);
                     }
                     // escaping values
-                    sb.append(this.stringContainsSpecialCharacters(nextElement) ? this.processLine(nextElement) : nextElement);
+                    sb.append(this.stringContainsSpecialCharacters(nextElement) ? this.processLine(nextElement)
+                            : nextElement);
                     // ending enclosure
                     if (this.quotechar != 0 && elementIsEnclosed) {
                         sb.append(this.quotechar);

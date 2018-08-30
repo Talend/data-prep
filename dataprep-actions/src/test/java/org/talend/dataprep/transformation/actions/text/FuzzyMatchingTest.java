@@ -67,7 +67,7 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -91,7 +91,8 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "true"));
@@ -112,7 +113,8 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "true"));
@@ -133,7 +135,8 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(2) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "false"));
@@ -155,7 +158,8 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "pale zle"), //
@@ -178,7 +182,8 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "zale zne"), //
@@ -201,7 +206,8 @@ public class FuzzyMatchingTest extends AbstractMetadataBaseTest<FuzzyMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "pale ale"), //
                         MapEntry.entry("0001", "zale zSQ"), //

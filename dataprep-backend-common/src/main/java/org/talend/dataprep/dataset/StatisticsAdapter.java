@@ -106,8 +106,7 @@ public class StatisticsAdapter {
      * @param results The analysis results
      * @param filter A {@link Predicate predicate} to filter columns to adapt.
      */
-    private void genericAdapt(List<ColumnMetadata> columns, List<Analyzers.Result> results,
-            Predicate<String> filter) {
+    private void genericAdapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Predicate<String> filter) {
         final Iterator<Analyzers.Result> resultIterator = results.iterator();
         columns.stream().filter(c -> filter.test(c.getId())).forEach(c -> {
             if (resultIterator.hasNext()) {

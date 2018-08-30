@@ -226,8 +226,7 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest<ReplaceCellVa
         final Map<String, String> parameters = getParameters(1L, "True", "NotABoolean");
 
         // when
-        ActionTestWorkbench.test(Collections.singleton(row), actionRegistry,
-                factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singleton(row), actionRegistry, factory.create(action, parameters));
 
         // then
         assertThat(row.get("0000"), is("NotABoolean"));

@@ -354,4 +354,7 @@ public class RowMetadata implements Serializable {
         columns.add(columns.indexOf(columnMetadata) + 1, movedColumn);
     }
 
+    public void cleanDiffStatus() {
+        columns.forEach(c -> c.setDiffFlagValue(StringUtils.EMPTY));
+    }
 }

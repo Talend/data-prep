@@ -58,6 +58,13 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         super(new Lookup());
     }
 
+    public static Map<String, String> getValuesMap(String... values) {
+        DecimalFormat format = new DecimalFormat("0000");
+        Map<String, String> map = new HashMap<>();
+        IntStream.range(0, values.length).forEach(i -> map.put(format.format(i), values[i]));
+        return map;
+    }
+
     @Test
     public void testAccept() throws Exception {
         assertFalse(action.acceptField(new ColumnMetadata()));
@@ -221,14 +228,12 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         ActionTestWorkbench.test(Arrays.asList(rows), actionRegistry, factory.create(action, parameters));
 
         // then (check values)
-        DataSetRow[] expectedRows =
-                new DataSetRow[] {
-                        ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta"),
-                        ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Florida",
-                                "Tallahassee"),
-                        ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Illinois", "Springfield"),
-                        ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Texas", "Austin"),
-                        ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "California", "Sacramento") };
+        DataSetRow[] expectedRows = new DataSetRow[] {
+                ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta"),
+                ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Florida", "Tallahassee"),
+                ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Illinois", "Springfield"),
+                ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Texas", "Austin"),
+                ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "California", "Sacramento") };
         for (int i = 0; i < rows.length; i++) {
             Assert.assertEquals(expectedRows[i], rows[i]);
         }
@@ -283,8 +288,20 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
 
         ColumnMetadata[] columnArrays =
                 { ColumnMetadata.Builder.column().name("Postal").domain("US_STATE").type(Type.STRING).build(),
-                        ColumnMetadata.Builder.column().name("State").domain("US_STATE").type(Type.STRING).build(),
-                        ColumnMetadata.Builder.column().name("Capital").domain("CITY").type(Type.STRING).build() };
+                        ColumnMetadata.Builder
+                                .column()
+                                .name("State")
+                                .domain("US_STATE")
+                                .typeForce(true)
+                                .type(Type.STRING)
+                                .build(),
+                        ColumnMetadata.Builder
+                                .column()
+                                .name("Capital")
+                                .domain("CITY")
+                                .typeForce(true)
+                                .type(Type.STRING)
+                                .build() };
         List<ColumnMetadata> columns = Arrays.stream(columnArrays).collect(Collectors.toList());
         usStates.setMetadata(new RowMetadata(columns));
 
@@ -295,7 +312,7 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         rows[3] = getValuesMap("TX", "Texas", "Austin");
         rows[4] = getValuesMap("CA", "California", "Sacramento");
 
-        Arrays.stream(rows).forEach(r -> usStates.addRecord((String) r.get("0000"), r));
+        Arrays.stream(rows).forEach(r -> usStates.addRecord(r.get("0000"), r));
 
         LookupDatasetsManager.put("us_states", usStates);
     }
@@ -313,13 +330,6 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         usStates.addRecord("TX", values);
 
         LookupDatasetsManager.put("nba", usStates);
-    }
-
-    public static Map<String, String> getValuesMap(String... values) {
-        DecimalFormat format = new DecimalFormat("0000");
-        Map<String, String> map = new HashMap<>();
-        IntStream.range(0, values.length).forEach(i -> map.put(format.format(i), values[i]));
-        return map;
     }
 
 }

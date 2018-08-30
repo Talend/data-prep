@@ -106,10 +106,13 @@ public class PersistentPreparationRepository implements PreparationRepository {
     public void add(Identifiable object) {
         final Class<? extends Identifiable> clazz = selectPersistentClass(object.getClass());
         if (!object.getClass().equals(clazz)) {
-            final List<? extends Identifiable> objects = PreparationUtils.scatter(object).stream() //
+            final List<? extends Identifiable> objects = PreparationUtils
+                    .scatter(object)
+                    .stream() //
                     .filter(o -> !(Step.ROOT_STEP.equals(o) || PreparationActions.ROOT_ACTIONS.equals(o))) //
                     .map(identifiable -> {
-                        final Class<? extends Identifiable> targetClass = selectPersistentClass(identifiable.getClass());
+                        final Class<? extends Identifiable> targetClass =
+                                selectPersistentClass(identifiable.getClass());
                         return beanConversionService.convert(identifiable, targetClass);
                     }) //
                     .collect(Collectors.toList());

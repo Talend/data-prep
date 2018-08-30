@@ -21,8 +21,8 @@ public class ActionsProfile {
     private final Map<Action, ActionDefinition> metadataByAction;
 
     public ActionsProfile(final boolean needFullAnalysis, final boolean needOnlyInvalidAnalysis,
-                          final Predicate<String> filterForFullAnalysis, final Predicate<String> filterForInvalidAnalysis,
-                          final Predicate<String> filterForPatternAnalysis, Map<Action, ActionDefinition> metadataByAction) {
+            final Predicate<String> filterForFullAnalysis, final Predicate<String> filterForInvalidAnalysis,
+            final Predicate<String> filterForPatternAnalysis, Map<Action, ActionDefinition> metadataByAction) {
         this.needFullAnalysis = needFullAnalysis;
         this.needOnlyInvalidAnalysis = needOnlyInvalidAnalysis;
         this.filterForFullAnalysis = filterForFullAnalysis;

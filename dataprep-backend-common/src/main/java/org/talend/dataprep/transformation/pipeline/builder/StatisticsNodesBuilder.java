@@ -252,15 +252,13 @@ public class StatisticsNodesBuilder {
     }
 
     private Node getTypeDetectionNode(final Predicate<String> columnFilter) {
-        return allowSchemaAnalysis ? new ReactiveTypeDetectionNode(new RowMetadata(columns), columnFilter, statisticsAdapter,
-                        analyzerService::schemaAnalysis) : new BasicNode();
+        return allowSchemaAnalysis ? new ReactiveTypeDetectionNode(new RowMetadata(columns), columnFilter,
+                statisticsAdapter, analyzerService::schemaAnalysis) : new BasicNode();
     }
 
     private Node getPatternDetectionNode(final Predicate<String> columnFilter) {
-        return allowSchemaAnalysis
-                ? new ReactiveTypeDetectionNode(new RowMetadata(columns), columnFilter, statisticsAdapter,
-                        c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS))
-                : new BasicNode();
+        return allowSchemaAnalysis ? new ReactiveTypeDetectionNode(new RowMetadata(columns), columnFilter,
+                statisticsAdapter, c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS)) : new BasicNode();
     }
 
     private Node getInvalidDetectionNode(final Predicate<String> columnFilter) {

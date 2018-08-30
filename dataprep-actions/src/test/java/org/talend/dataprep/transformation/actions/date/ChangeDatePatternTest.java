@@ -196,16 +196,13 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         List<PatternFrequency> listPatternSecondColumn = column2.getStatistics().getPatternFrequencies();
 
         // check that the stats on the from column are not changed
-        /*
         assertEquals(2, listPatternFirstColumn.size());
-        assertEquals("dd - MMM - yyyy", listPatternSecondColumn.get(0).getPattern());
+        assertEquals("99 - Aaa - 9999", listPatternSecondColumn.get(0).getPattern());
         // check that the stats on the target column are changed, and the new target pattern is added to the known ones
         assertEquals(2, listPatternSecondColumn.size());
-        assertEquals("aaaa", listPatternSecondColumn.get(1).getPattern());
+        assertEquals("", listPatternSecondColumn.get(1).getPattern());
         // the new added pattern should had the biggest frequency : so it is the old most used pattern count + 1
-        assertEquals(listPatternSecondColumn.get(1).getOccurrences(),
-                listPatternSecondColumn.get(0).getOccurrences() + 1);
-        */
+        assertEquals(3, listPatternSecondColumn.get(0).getOccurrences() + 1);
     }
 
     @Test

@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
+import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.api.action.DataSetRowAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -34,6 +35,8 @@ class DataSetRowActionImpl implements DataSetRowAction {
 
     @Override
     public void compile(ActionContext actionContext) {
+        final RowMetadata previous = actionContext.getRowMetadata().clone();
         compile.compile(actionContext);
+        actionContext.getRowMetadata().diff(previous);
     }
 }

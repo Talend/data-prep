@@ -54,6 +54,17 @@ public class StepNode extends BasicNode implements ApplyToColumn {
         this.lastNode = lastNode;
     }
 
+    /**
+     * @return The {@link RowMetadata} (including statistics) used as <b>input</b> for all {@link Node} wrapped by this
+     * step node. Returns <code>null</code> if no metadata was available for input (e.g. for the first step).
+     */
+    public RowMetadata getParentStepRowMetadata() {
+        return parentStepRowMetadata;
+    }
+
+    /**
+     * @return The {@link Node}
+     */
     public Node getEntryNode() {
         return entryNode;
     }

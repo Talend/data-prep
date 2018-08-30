@@ -89,7 +89,8 @@ public class GenerateSequenceTest extends AbstractMetadataBaseTest<GenerateSeque
         // then
         final DataSetRow expectedRow = getRow("toto", "0012.50", "tata", "0");
         assertEquals(expectedRow.values(), row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_sequence").type(Type.INTEGER).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_sequence").type(Type.INTEGER).build();
         expected.getStatistics().setValid(1);
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);

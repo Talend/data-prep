@@ -34,7 +34,7 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
 
     private final StatisticsAdapter adapter;
 
-    private final Analyzer<Analyzers.Result> resultAnalyzer;
+    private Analyzer<Analyzers.Result> resultAnalyzer;
 
     private long totalTime;
 
@@ -51,10 +51,7 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
         this.adapter = adapter;
         this.workingMetadata = initialRowMetadata;
 
-        final List<ColumnMetadata> filteredColumns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
-        resultAnalyzer = analyzer.apply(filteredColumns);
-
-        this.processor = ReplayProcessor.create(10000, false);
+        this.processor = ReplayProcessor.create(30000, false);
         this.sink = processor.connectSink();
         processor.subscribe(row -> {
             LOGGER.trace("Analyze row: {}", row);
@@ -65,6 +62,13 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
                 totalTime += System.currentTimeMillis() - start;
             }
         });
+    }
+
+    private void initAnalyzer() {
+        if (resultAnalyzer == null) {
+            final List<ColumnMetadata> filteredColumns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
+            resultAnalyzer = analyzer.apply(filteredColumns);
+        }
     }
 
     private void analyze(DataSetRow row) {
@@ -83,6 +87,7 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         this.workingMetadata = metadata;
+        initAnalyzer();
         sink.emit(row.clone());
     }
 
@@ -96,9 +101,12 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
             default:
                 final long start = System.currentTimeMillis();
                 try {
+                    initAnalyzer();
+
                     // Adapt row metadata to infer type (adapter takes care of type-forced columns)
                     resultAnalyzer.end();
-                    final List<ColumnMetadata> columns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
+                    final List<ColumnMetadata> columns =
+                            getFilteredColumns(workingMetadata).collect(Collectors.toList());
                     adapter.adapt(columns, resultAnalyzer.getResult(), filter);
                 } finally {
                     totalTime += System.currentTimeMillis() - start;

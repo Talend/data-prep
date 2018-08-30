@@ -352,13 +352,9 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                     .build();
             LOG.debug("Done build action node");
 
+            // Transform pipeline and wrap actions in step nodes
             if (preparation != null) {
-                LOG.debug("Adding step nodes...");
-                actionsNode.logStatus(LOG, "Before add step nodes\n{}");
-                final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
-                        parentStepRowMetadataSupplier);
-                current.to(node);
-                node.logStatus(LOG, "After add step nodes\n{}");
+                addStepNodes(current, actionsNode);
             } else {
                 current.to(actionsNode);
             }
@@ -380,14 +376,30 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
 
             final Node sourceNode = current.build();
             pipeline.setNode(sourceNode);
-            pipeline.logStatus(LOG, "Before optimizations: {}");
-            final Optimizer optimizer = new Optimizer();
-            sourceNode.accept(optimizer);
-            pipeline.setNode(optimizer.getOptimized());
-            pipeline.logStatus(LOG, "After optimizations: {}");
+
+            // Run optimizations
+            optimize(pipeline);
 
             // Finally build pipeline
             return pipeline;
+        }
+
+        private void addStepNodes(NodeBuilder current, Node actionsNode) {
+            // Add step node
+            LOG.debug("Adding step nodes...");
+            actionsNode.logStatus(LOG, "Before add step nodes\n{}");
+            final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
+                    parentStepRowMetadataSupplier);
+            current.to(node);
+            node.logStatus(LOG, "After add step nodes\n{}");
+        }
+
+        private static void optimize(Pipeline pipeline) {
+            pipeline.logStatus(LOG, "Before optimizations: {}");
+            final Optimizer optimizer = new Optimizer();
+            pipeline.getNode().accept(optimizer);
+            pipeline.setNode(optimizer.getOptimized());
+            pipeline.logStatus(LOG, "After optimizations: {}");
         }
     }
 }

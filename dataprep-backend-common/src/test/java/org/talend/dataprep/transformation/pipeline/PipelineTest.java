@@ -15,6 +15,7 @@ package org.talend.dataprep.transformation.pipeline;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -143,13 +144,16 @@ public class PipelineTest {
 
         // when
         assertEquals(0, compileCount.get());
+        final int hashCodeBeforeUpdate = rowMetadata.hashCode();
         node.exec().receive(row, rowMetadata);
         rowMetadata.addColumn(new ColumnMetadata()); // Change row metadata in middle of the transformation (to trigger
                                                      // new compile).
+        final int hashCodeAfterUpdate = rowMetadata.hashCode();
         node.exec().receive(row, rowMetadata);
 
         // then
-        assertEquals(1, compileCount.get());
+        assertNotEquals(hashCodeAfterUpdate, hashCodeBeforeUpdate);
+        assertEquals(2, compileCount.get());
     }
 
     @Test

@@ -61,7 +61,8 @@ public class DataSetNameInjection
                 dataSetName = tenantCache.getIfPresent(dto.getDataSetId());
 
                 // On-the-fly update
-                final PersistentPreparation preparation = preparationRepository.get(dto.getId(), PersistentPreparation.class);
+                final PersistentPreparation preparation =
+                        preparationRepository.get(dto.getId(), PersistentPreparation.class);
                 preparation.setDataSetName(dataSetName);
                 preparationRepository.add(preparation);
             } catch (Exception e) {

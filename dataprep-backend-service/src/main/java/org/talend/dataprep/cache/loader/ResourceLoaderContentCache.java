@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,11 +85,10 @@ public class ResourceLoaderContentCache implements ContentCache {
                 }));
                 return reduce.filter(r -> {
                     final String suffix = StringUtils.substringAfterLast(r.getFilename(), ".");
-                    try {
+                    if (NumberUtils.isNumber(suffix)) {
                         final long time = parseLong(suffix);
                         return time > System.currentTimeMillis();
-                    } catch (NumberFormatException e) {
-                        // Ignored
+                    } else {
                         return true;
                     }
                 }).orElse(null);

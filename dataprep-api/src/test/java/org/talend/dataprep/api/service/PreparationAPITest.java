@@ -1064,7 +1064,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertTrue(patternFrequencies
                 .stream() //
                 .map(PatternFrequency::getPattern) //
-                .anyMatch("9999-99-99"::equals));
+                .anyMatch("yyyy-MM-dd"::equals));
 
         // create a preview of calculate time since action
         PreviewAddParameters previewAddParameters = new PreviewAddParameters();

@@ -886,8 +886,8 @@ public class PreparationService {
         final String stepId = getStepId(version, preparation);
         final PersistentStep step = getStep(stepId);
         if (step == null) {
-            LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId,
-                    preparation.getId(), version);
+            LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId, preparation.getId(),
+                    version);
         }
         return getActions(step);
     }

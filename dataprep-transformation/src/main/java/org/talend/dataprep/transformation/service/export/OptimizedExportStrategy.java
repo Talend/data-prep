@@ -105,7 +105,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         LOGGER.debug("Before get cache content");
         try (JsonParser parser = mapper
                 .getFactory()
-                .createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8)) {
+                .createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8))) {
             // Create dataset
             LOGGER.debug("Start read dataset.");
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);

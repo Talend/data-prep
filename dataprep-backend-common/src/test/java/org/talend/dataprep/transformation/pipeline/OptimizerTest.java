@@ -79,7 +79,8 @@ public class OptimizerTest {
         final Predicate<String> filter = columnMetadata -> true;
         final StatisticsAdapter adapter = mock(StatisticsAdapter.class);
         final Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer = c -> NullAnalyzer.INSTANCE;
-        final ReactiveTypeDetectionNode typeDetectionNode = new ReactiveTypeDetectionNode(rowMetadata, filter, adapter, analyzer);
+        final ReactiveTypeDetectionNode typeDetectionNode =
+                new ReactiveTypeDetectionNode(rowMetadata, filter, adapter, analyzer);
         final Node node = source().to(typeDetectionNode).build();
 
         // when
@@ -106,7 +107,8 @@ public class OptimizerTest {
         final Predicate<String> filter = "0001"::equals;
         final StatisticsAdapter adapter = mock(StatisticsAdapter.class);
         final Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer = c -> NullAnalyzer.INSTANCE;
-        final ReactiveTypeDetectionNode typeDetectionNode = new ReactiveTypeDetectionNode(rowMetadata, filter, adapter, analyzer);
+        final ReactiveTypeDetectionNode typeDetectionNode =
+                new ReactiveTypeDetectionNode(rowMetadata, filter, adapter, analyzer);
         final ActionContext actionContext = new ActionContext(new TransformationContext());
         actionContext.setParameters(Collections.singletonMap(ImplicitParameters.COLUMN_ID.getKey(), "0001"));
         final RunnableAction runnableAction = mock(RunnableAction.class);
@@ -146,7 +148,8 @@ public class OptimizerTest {
         final Predicate<String> filter = "0001"::equals;
         final StatisticsAdapter adapter = mock(StatisticsAdapter.class);
         final Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer = c -> NullAnalyzer.INSTANCE;
-        final ReactiveTypeDetectionNode typeDetectionNode = new ReactiveTypeDetectionNode(rowMetadata, filter, adapter, analyzer);
+        final ReactiveTypeDetectionNode typeDetectionNode =
+                new ReactiveTypeDetectionNode(rowMetadata, filter, adapter, analyzer);
         final ActionContext actionContext = new ActionContext(new TransformationContext());
         final RunnableAction runnableAction = mock(RunnableAction.class);
         final Node node = source() //
@@ -164,13 +167,13 @@ public class OptimizerTest {
         final NodeClassVisitor nodeClassVisitor = new NodeClassVisitor();
         optimized.accept(nodeClassVisitor);
         final List<Class> traversedClasses = nodeClassVisitor.getTraversedClasses();
-        assertEquals(4, traversedClasses.size());
+        assertEquals(8, traversedClasses.size());
         assertTrue(traversedClasses.contains(Pipeline.class));
         assertTrue(traversedClasses.contains(SourceNode.class));
         assertTrue(traversedClasses.contains(BasicLink.class));
         assertTrue(traversedClasses.contains(ActionNode.class));
+        assertTrue(traversedClasses.contains(ReactiveTypeDetectionNode.class));
     }
-
 
     private static class ApplyToColumnTestNode extends BasicNode implements ApplyToColumn {
 

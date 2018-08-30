@@ -1,5 +1,7 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
+import static org.talend.dataprep.transformation.pipeline.node.ReservoirNode.convertToReservoir;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,17 +124,18 @@ public class ActionNodesBuilder {
             // some actions need fresh statistics
             // in those cases, we gather the rows in a reservoir node that triggers statistics computation
             // before dispatching each row to the next node
-            final Node neededReservoir =
-                    statisticsNodesBuilder.buildIntermediateStatistics(nextAction);
+            final Node neededReservoir = statisticsNodesBuilder.buildIntermediateStatistics(nextAction);
             if (neededReservoir != null) {
-                builder.to(neededReservoir);
+                builder.to(convertToReservoir(neededReservoir));
             }
 
             final DataSetRowAction rowAction = nextAction.getRowAction();
 
             final ActionContext actionContext = context.create(rowAction, lastRowMetadata.clone());
             actionContext.setParameters(nextAction.getParameters());
-            nextAction.getRowAction().compile(actionContext);
+            if (neededReservoir == null) {
+                nextAction.getRowAction().compile(actionContext);
+            }
             lastRowMetadata = actionContext.getRowMetadata();
 
             builder.to(new CompileNode(nextAction, actionContext));

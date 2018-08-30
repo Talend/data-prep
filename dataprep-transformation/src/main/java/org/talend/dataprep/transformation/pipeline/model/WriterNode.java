@@ -74,7 +74,7 @@ public class WriterNode extends BasicNode implements Monitored {
     }
 
     public WriterNode(TransformerWriter writer, ConfiguredCacheWriter metadataCacheWriter,
-                      TransformationMetadataCacheKey metadataKey) {
+            TransformationMetadataCacheKey metadataKey) {
         this.writer = writer;
         this.metadataCacheWriter = metadataCacheWriter;
         this.metadataKey = metadataKey;

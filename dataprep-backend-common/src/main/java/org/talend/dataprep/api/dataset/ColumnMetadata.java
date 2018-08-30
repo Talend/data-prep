@@ -13,22 +13,22 @@
 
 package org.talend.dataprep.api.dataset;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import static java.util.Collections.emptyList;
+
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.row.FlagNames;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.type.Type;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static java.util.Collections.emptyList;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents information about a column in a data set. It includes:
@@ -234,10 +234,9 @@ public class ColumnMetadata implements Serializable {
     @Override
     public boolean equals(Object obj) {
         return Optional
-                .ofNullable(obj) //Colum
+                .ofNullable(obj) //
                 .filter(that -> that instanceof ColumnMetadata) //
                 .map(that -> (ColumnMetadata) that) //
-                .filter(that -> Objects.equals(this.getDiffFlagValue(), that.getDiffFlagValue())) //
                 .filter(that -> Objects.equals(this.getId(), that.getId())) //
                 .filter(that -> Objects.equals(this.getName(), that.getName())) //
                 .filter(that -> Objects.equals(this.getType(), that.getType())) //

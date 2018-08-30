@@ -118,8 +118,10 @@ public class StatisticsNodesBuilderTest {
         // given
         final RunnableAction action1 = configureAction("modify-column", VALUES_COLUMN);
         final RunnableAction action2 = configureAction("need-invalid", NEED_STATISTICS_INVALID);
-        when(action1.getParameters()).thenReturn(Collections.singletonMap(ImplicitParameters.COLUMN_ID.getKey(), "0001"));
-        when(action2.getParameters()).thenReturn(Collections.singletonMap(ImplicitParameters.COLUMN_ID.getKey(), "0001"));
+        when(action1.getParameters())
+                .thenReturn(Collections.singletonMap(ImplicitParameters.COLUMN_ID.getKey(), "0001"));
+        when(action2.getParameters())
+                .thenReturn(Collections.singletonMap(ImplicitParameters.COLUMN_ID.getKey(), "0001"));
         builder.actions(asList(action1, action2));
 
         // when
@@ -130,9 +132,7 @@ public class StatisticsNodesBuilderTest {
         node.accept(nodeClassVisitor);
         final List<Class> traversedClasses = nodeClassVisitor.getTraversedClasses();
         final List<Class> expected = asList(ReactiveTypeDetectionNode.class, //
-                BasicLink.class,
-                InvalidDetectionNode.class
-        );
+                BasicLink.class, InvalidDetectionNode.class);
         assertEquals(expected, traversedClasses);
 
         // then
@@ -140,6 +140,7 @@ public class StatisticsNodesBuilderTest {
         node.exec().receive(new DataSetRow(metadata), metadata);
         node.exec().signal(Signal.END_OF_STREAM);
         node.accept(new Visitor() {
+
             @Override
             public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
                 super.visitInvalidDetection(invalidDetectionNode);

@@ -140,7 +140,8 @@ public class ChangeNumberFormatTest extends AbstractMetadataBaseTest<ChangeNumbe
         // then
         final DataSetRow expectedRow = getRow("toto", "0012.50", "tata", "12.5");
         assertEquals(expectedRow.values(), row.values());
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0001_formatted").type(Type.DOUBLE).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0001_formatted").type(Type.DOUBLE).build();
         expected.getStatistics().setValid(1);
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);

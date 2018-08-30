@@ -13,13 +13,12 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
-import org.talend.dataprep.transformation.actions.common.ActionsUtils;
+import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -99,10 +98,17 @@ public class ActionNode extends BasicNode implements Monitored, ApplyToColumn {
     @Override
     public List<String> getColumnNames() {
         final List<String> columnNames = new ArrayList<>();
-        columnNames.add(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
-        if (actionContext.contains(ActionsUtils.TARGET_COLUMN_CONTEXT_KEY)) {
-            final Map<String, String> targetColumns = actionContext.get(ActionsUtils.TARGET_COLUMN_CONTEXT_KEY, r -> Collections.emptyMap());
-            columnNames.addAll(targetColumns.values());
+        final String columnId = actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
+        if (columnId != null) {
+            columnNames.add(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
+        }
+        for (ColumnMetadata column : actionContext.getRowMetadata().getColumns()) {
+            final String diffFlagValue = column.getDiffFlagValue();
+            if (Flag.DELETE.getValue().equals(diffFlagValue)) {
+                columnNames.add(column.getId());
+            } else if (Flag.NEW.getValue().equals(diffFlagValue)) {
+                columnNames.add(column.getId());
+            }
         }
         return columnNames;
     }

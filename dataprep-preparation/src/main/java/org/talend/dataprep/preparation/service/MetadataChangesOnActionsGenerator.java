@@ -47,7 +47,7 @@ public class MetadataChangesOnActionsGenerator {
      * @return the StepDiff starting from the reference
      */
     StepDiff computeCreatedColumns(List<RunnableAction> newActions, RowMetadata reference) {
-
+        reference.cleanDiffStatus();
         RowMetadata updatedMetadata = compileActionsOnMetadata(newActions, reference);
 
         updatedMetadata.diff(reference);

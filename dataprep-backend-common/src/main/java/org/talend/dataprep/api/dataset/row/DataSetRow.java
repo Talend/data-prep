@@ -394,7 +394,8 @@ public class DataSetRow implements Cloneable, Serializable {
             stream = stream.filter(filter);
         }
         // Get as string array the selected columns
-        return stream.map(Map.Entry::getValue) //
+        return stream
+                .map(Map.Entry::getValue) //
                 .map(String::valueOf) //
                 .toArray(String[]::new);
     }

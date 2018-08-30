@@ -13,12 +13,14 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.ApplyToColumn;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
 import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
@@ -53,8 +55,14 @@ public class PipelineConsoleDump extends Visitor {
     @Override
     public void visitAction(ActionNode actionNode) {
         buildMonitorInformation(actionNode);
-        builder.append("ACTION").append(" [").append(actionNode.getAction().getName()).append("] ").append("(status: ")
-                .append(actionNode.getActionContext().getActionStatus()).append(")");
+        builder
+                .append("ACTION")
+                .append(" [")
+                .append(actionNode.getAction().getName())
+                .append("] ")
+                .append("(status: ")
+                .append(actionNode.getActionContext().getActionStatus())
+                .append(")");
         buildApplyToColumn(actionNode);
         builder.append('\n');
         super.visitAction(actionNode);
@@ -63,8 +71,14 @@ public class PipelineConsoleDump extends Visitor {
     @Override
     public void visitCompile(CompileNode compileNode) {
         buildMonitorInformation(compileNode);
-        builder.append("COMPILE").append(" [").append(compileNode.getAction().getName()).append("] ").append("(status: ")
-                .append(compileNode.getActionContext().getActionStatus()).append(")");
+        builder
+                .append("COMPILE")
+                .append(" [")
+                .append(compileNode.getAction().getName())
+                .append("] ")
+                .append("(status: ")
+                .append(compileNode.getActionContext().getActionStatus())
+                .append(")");
         buildApplyToColumn(compileNode);
         builder.append('\n');
         super.visitCompile(compileNode);
@@ -95,12 +109,16 @@ public class PipelineConsoleDump extends Visitor {
         if (node instanceof Monitored) {
             buildMonitorInformation((Monitored) node);
         }
-        builder.append(node.getClass().getName());
+        builder.append(formatClassName(node));
         if (node instanceof ApplyToColumn) {
             buildApplyToColumn((ApplyToColumn) node);
         }
         builder.append('\n');
         super.visitNode(node);
+    }
+
+    private String formatClassName(Node node) {
+        return StringUtils.substringAfterLast(node.getClass().getName(), ".");
     }
 
     @Override
@@ -111,7 +129,12 @@ public class PipelineConsoleDump extends Visitor {
 
     @Override
     public void visitStepNode(StepNode stepNode) {
-        builder.append("STEP NODE (").append(stepNode.getStep()).append(")\n");
+        builder.append("STEP NODE (").append(stepNode.getStep()).append(")");
+        if (stepNode.getParentStepRowMetadata() != null) {
+            builder.append(" (*)\n");
+        } else {
+            builder.append("\n");
+        }
         builder.append("{\n");
         stepNode.getEntryNode().accept(this);
         builder.append("}\n");
@@ -134,5 +157,19 @@ public class PipelineConsoleDump extends Visitor {
         buildApplyToColumn(invalidDetectionNode);
         builder.append('\n');
         super.visitInvalidDetection(invalidDetectionNode);
+    }
+
+    @Override
+    public void visitReservoir(ReservoirNode reservoirNode) {
+        final Node wrapped = reservoirNode.getWrapped();
+
+        buildMonitorInformation(reservoirNode);
+        builder.append("Reservoir (of ").append(formatClassName(wrapped)).append(") ");
+        buildApplyToColumn(reservoirNode);
+        builder.append("{\n");
+        wrapped.accept(this);
+        builder.append("}\n");
+        builder.append('\n');
+        super.visitReservoir(reservoirNode);
     }
 }

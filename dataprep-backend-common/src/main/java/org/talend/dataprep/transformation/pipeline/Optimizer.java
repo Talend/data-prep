@@ -1,6 +1,8 @@
 package org.talend.dataprep.transformation.pipeline;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -15,6 +17,8 @@ import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.ReactiveTypeDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
+import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
 import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
@@ -47,6 +51,8 @@ public class Optimizer extends Visitor {
 
     private Function<Node[], Link> lastLink;
 
+    private int nonSourceNodeKept = 0;
+
     public Pipeline getOptimized() {
         return new Pipeline(builder.build());
     }
@@ -56,14 +62,23 @@ public class Optimizer extends Visitor {
     }
 
     private void keep(Node node) {
+        if (!(node instanceof SourceNode)) {
+            nonSourceNodeKept++;
+        }
         LOGGER.debug("Keep node '{}'.", node);
         builder.to(lastLink, node.copyShallow());
     }
 
+    private static final List<Class> allowedNodesForUnknownColumns = Arrays.asList(StepNode.class, ActionNode.class, CompileNode.class);
+
     private void handleApplyToColumn(Node node) {
         final ApplyToColumn applyToColumn = (ApplyToColumn) node;
         if (applyToColumn.getColumnNames().isEmpty()) {
-            discard(node, "Applies to 0 columns.");
+            if (nonSourceNodeKept == 0 && !allowedNodesForUnknownColumns.contains(node.getClass())) {
+                discard(node, "Applies to 0 columns (and only source node(s) met so far, and not an allowed empty column node).");
+            } else {
+                keep(node);
+            }
         } else {
             if (node.getClass().equals(ActionNode.class) || node.getClass().equals(StepNode.class)) {
                 currentlyModifiedColumns.addAll(applyToColumn.getColumnNames());
@@ -136,5 +151,15 @@ public class Optimizer extends Visitor {
     public void visitCloneLink(CloneLink cloneLink) {
         lastLink = CloneLink::new;
         super.visitCloneLink(cloneLink);
+    }
+
+    @Override
+    public void visitReservoir(ReservoirNode reservoirNode) {
+        if (reservoirNode.getWrapped() instanceof BasicNode) {
+            discard(reservoirNode, "No need for reservoir over a no-op node.");
+        } else {
+            keep(reservoirNode);
+        }
+        super.visitReservoir(reservoirNode);
     }
 }

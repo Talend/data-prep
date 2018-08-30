@@ -110,7 +110,7 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
         final List<ColumnMetadata> columns = actionContext.getRowMetadata().getColumns();
 
         // find the empty columns
-        Set<String> columnsToDelete = new HashSet();
+        Set<String> columnsToDelete = new HashSet<>();
         for (ColumnMetadata column : columns) {
             if (isColumnToDelete(column, actionContext.getParameters().get(ACTION_PARAMETER))) {
                 columnsToDelete.add(column.getId());
@@ -122,7 +122,7 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
             return;
         }
 
-        // delete the empty columns on rowmetadata
+        // delete the empty columns on row metadata
         columnsToDelete.forEach(columnId -> {
             LOGGER.debug("DeleteColumn for columnId {}", columnId);
             actionContext.getRowMetadata().deleteColumnById(columnId);

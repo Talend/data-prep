@@ -45,9 +45,8 @@ class ActionsStaticProfiler {
         for (final Action action : actions) {
             final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
             if (actionDefinition != null) {
-                final ActionDefinition actionMetadata = actionDefinition.adapt(
-                        ScopeCategory.from(action.getParameters().get(ImplicitParameters.SCOPE.getKey()))
-                );
+                final ActionDefinition actionMetadata = actionDefinition
+                        .adapt(ScopeCategory.from(action.getParameters().get(ImplicitParameters.SCOPE.getKey())));
                 actionToMetadata.put(action, actionMetadata);
             } else {
                 LOGGER.warn("No action definition for '{}'.", action.getName());
@@ -125,10 +124,11 @@ class ActionsStaticProfiler {
         // when only metadata is modified, we need to re-evaluate the invalids entries
         boolean needOnlyInvalidAnalysis = !needFullAnalysis && !metadataModifiedColumns.isEmpty();
         // only the columns with modified values or new columns need the schema + stats analysis
-        SerializablePredicate<String> filterForFullAnalysis = new FilterForFullAnalysis(originalColumns,
-                valueModifiedColumns);
+        SerializablePredicate<String> filterForFullAnalysis =
+                new FilterForFullAnalysis(originalColumns, valueModifiedColumns);
         // only the columns with metadata change or value changes need to re-evaluate invalids
-        Predicate<String> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns, invalidNeededColumns);
+        Predicate<String> filterForInvalidAnalysis =
+                new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns, invalidNeededColumns);
 
         return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis,
                 filterForInvalidAnalysis, filterForInvalidAnalysis, metadataByAction);
@@ -172,7 +172,7 @@ class ActionsStaticProfiler {
         private Set<String> invalidNeededColumns;
 
         private FilterForInvalidAnalysis(SerializablePredicate<String> filterForFullAnalysis,
-                                         Set<String> metadataModifiedColumns, Set<String> invalidNeededColumns) {
+                Set<String> metadataModifiedColumns, Set<String> invalidNeededColumns) {
             this.filterForFullAnalysis = filterForFullAnalysis;
             this.metadataModifiedColumns = metadataModifiedColumns;
             this.invalidNeededColumns = invalidNeededColumns;

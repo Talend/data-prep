@@ -12,11 +12,15 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.api.dataset.row.Flag;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.actions.common.RunnableAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
@@ -25,6 +29,8 @@ import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Visitor;
 
 public class CompileNode extends BasicNode implements ApplyToColumn, Monitored {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompileNode.class);
 
     private final RunnableAction action;
 
@@ -48,9 +54,10 @@ public class CompileNode extends BasicNode implements ApplyToColumn, Monitored {
     public void receive(DataSetRow row, RowMetadata metadata) {
         final long start = System.currentTimeMillis();
         try {
-            if (hashCode != metadata.hashCode()) { // Metadata changed, force re-compile
+            if (hashCode != metadata.hashCode() || actionContext.getActionStatus() == ActionContext.ActionStatus.NOT_EXECUTED) { // Metadata changed, force re-compile
                 actionContext.setRowMetadata(metadata.clone());
                 action.getRowAction().compile(actionContext);
+                hashCode = actionContext.getRowMetadata().hashCode();
             }
             row.setRowMetadata(actionContext.getRowMetadata());
         } finally {
@@ -80,7 +87,20 @@ public class CompileNode extends BasicNode implements ApplyToColumn, Monitored {
 
     @Override
     public List<String> getColumnNames() {
-        return Collections.singletonList(actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey()));
+        final List<String> columnNames = new ArrayList<>();
+        final String columnId = actionContext.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
+        if (columnId != null) {
+            columnNames.add(columnId);
+        }
+        for (ColumnMetadata column : actionContext.getRowMetadata().getColumns()) {
+            final String diffFlagValue = column.getDiffFlagValue();
+            if (Flag.DELETE.getValue().equals(diffFlagValue)) {
+                columnNames.add(column.getId());
+            } else if (Flag.NEW.getValue().equals(diffFlagValue)) {
+                columnNames.add(column.getId());
+            }
+        }
+        return columnNames;
     }
 
     @Override

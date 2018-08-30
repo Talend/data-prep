@@ -160,7 +160,8 @@ public class ModifyDateTest extends BaseDateTest<ModifyDate> {
         // then
         final DataSetRow expectedRow1 = getRow("toto", "04/25/1999", "tata", "04/25/2000");
         assertEquals(expectedRow1.values(), row1.values());
-        ColumnMetadata expected1 = ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.DATE).build();
+        ColumnMetadata expected1 =
+                ColumnMetadata.Builder.column().id(3).name("recipe_modified").type(Type.DATE).build();
         expected1.getStatistics().setValid(1);
         ColumnMetadata actual1 = row1.getRowMetadata().getById("0003");
         assertEquals(expected1, actual1);

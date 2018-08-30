@@ -44,7 +44,7 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
 
     private final StatisticsAdapter adapter;
 
-    private final Analyzer<Analyzers.Result> configuredAnalyzer;
+    private Analyzer<Analyzers.Result> configuredAnalyzer;
 
     private long totalTime;
 
@@ -53,16 +53,13 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
     private RowMetadata workingMetadata;
 
     public StatisticsNode(RowMetadata initialRowMetadata, //
-                          Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer, //
-                          Predicate<String> filter, //
-                          StatisticsAdapter adapter) {
+            Function<List<ColumnMetadata>, Analyzer<Analyzers.Result>> analyzer, //
+            Predicate<String> filter, //
+            StatisticsAdapter adapter) {
         super(filter, initialRowMetadata);
         this.analyzer = analyzer;
         this.adapter = adapter;
         this.workingMetadata = initialRowMetadata.clone();
-
-        final List<ColumnMetadata> filteredColumns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
-        this.configuredAnalyzer = analyzer.apply(filteredColumns);
     }
 
     /**
@@ -74,8 +71,8 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
      * @param adapter the adapter used to retrieve statistical information
      */
     public StatisticsNode(RowMetadata initialRowMetadata, //
-                          AnalyzerService analyzerService, //
-                          Predicate<String> filter, StatisticsAdapter adapter) {
+            AnalyzerService analyzerService, //
+            Predicate<String> filter, StatisticsAdapter adapter) {
         this(initialRowMetadata, getDefaultAnalyzer(analyzerService), filter, adapter);
     }
 
@@ -102,6 +99,8 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         this.workingMetadata = metadata;
+        initAnalyzer();
+
         final long start = System.currentTimeMillis();
         try {
             if (!row.isDeleted()) {
@@ -121,8 +120,18 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
         super.receive(row, metadata);
     }
 
+    private void initAnalyzer() {
+        if (configuredAnalyzer == null) {
+            final List<ColumnMetadata> filteredColumns =
+                    getFilteredColumns(workingMetadata).collect(Collectors.toList());
+            configuredAnalyzer = analyzer.apply(filteredColumns);
+        }
+    }
+
     @Override
     public void signal(Signal signal) {
+        initAnalyzer();
+
         switch (signal) {
         case END_OF_STREAM:
         case STOP:

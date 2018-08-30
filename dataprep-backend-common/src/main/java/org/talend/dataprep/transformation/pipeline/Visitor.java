@@ -19,6 +19,7 @@ import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
 import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
@@ -65,6 +66,10 @@ public abstract class Visitor {
 
     public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
         doNodeVisit(invalidDetectionNode);
+    }
+
+    public void visitReservoir(ReservoirNode reservoirNode) {
+        doNodeVisit(reservoirNode);
     }
 
     public void visitCloneLink(CloneLink cloneLink) {

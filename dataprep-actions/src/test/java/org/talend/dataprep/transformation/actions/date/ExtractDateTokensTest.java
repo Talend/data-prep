@@ -190,7 +190,6 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         expectedValues.put("0004", "0");
         expectedValues.put("0003", "0");
         expectedValues.put("0002", "tata");
-        expectedValues.put("__tdpInvalid", "0006,0005");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));

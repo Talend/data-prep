@@ -72,7 +72,8 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), true)) {
             final List<ActionsUtils.AdditionalColumn> additionalColumns = new ArrayList<>();
             for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.URL_TOKEN_EXTRACTORS) {
-                additionalColumns.add(ActionsUtils.additionalColumn()
+                additionalColumns.add(ActionsUtils
+                        .additionalColumn()
                         .withKey(urlTokenExtractor.getTokenName())
                         .withName(context.getColumnName() + urlTokenExtractor.getTokenName())
                         .withType(urlTokenExtractor.getType()));
@@ -88,7 +89,7 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         URI uri = null;
         try {
             uri = new URI(originalValue);
-        } catch (URISyntaxException  | NullPointerException e) {
+        } catch (URISyntaxException | NullPointerException e) {
             // Nothing to do, silently skip this row, leave uri null, will be treated just below
             LOGGER.debug("Unable to parse value {}.", originalValue, e);
         }
@@ -96,7 +97,7 @@ public class ExtractUrlTokens extends AbstractActionMetadata implements ColumnAc
         // invalid ones.
         final Map<String, String> newColumns = ActionsUtils.getTargetColumnIds(context);
         for (UrlTokenExtractor urlTokenExtractor : UrlTokenExtractors.URL_TOKEN_EXTRACTORS) {
-             String cellValue;
+            String cellValue;
             if (uri != null) {
                 String token = urlTokenExtractor.extractToken(uri);
                 if (token == null) {

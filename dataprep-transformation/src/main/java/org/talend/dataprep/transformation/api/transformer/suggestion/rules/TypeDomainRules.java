@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.api.transformer.suggestion.rules;
 
@@ -42,10 +42,11 @@ public class TypeDomainRules extends BasicRules {
      */
     @Bean
     public static SuggestionEngineRule dateRule() {
-        return forActions(ExtractDateTokens.ACTION_NAME, ChangeDatePattern.ACTION_NAME, ComputeTimeSince.TIME_SINCE_ACTION_NAME) //
-                .when(IS_DATE) //
-                .then(columnMetadata -> MEDIUM) //
-                .build();
+        return forActions(ExtractDateTokens.ACTION_NAME, ChangeDatePattern.ACTION_NAME,
+                ComputeTimeSince.TIME_SINCE_ACTION_NAME) //
+                        .when(IS_DATE) //
+                        .then(columnMetadata -> MEDIUM) //
+                        .build();
     }
 
     /**
@@ -93,7 +94,8 @@ public class TypeDomainRules extends BasicRules {
         domainsToMask.add(SemanticCategoryEnum.US_PHONE.getId());
 
         return forActions(ExtractPhoneInformation.ACTION_NAME) //
-                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain()) || IS_PHONE.test(columnMetadata)) //
+                .when(columnMetadata -> domainsToMask.contains(columnMetadata.getDomain())
+                        || IS_PHONE.test(columnMetadata)) //
                 .then(columnMetadata -> HIGH) //
                 .build();
     }

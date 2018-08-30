@@ -344,7 +344,8 @@ public class PipelineTest {
 
     @Test
     public void testVisitorAndToString() throws Exception {
-        final Node node = NodeBuilder.source() //
+        final Node node = NodeBuilder
+                .source() //
                 .to(new BasicNode()) //
                 .dispatchTo(new BasicNode()) //
                 .to(new ActionNode(new RunnableAction(), new ActionContext(new TransformationContext()))) //
@@ -357,8 +358,8 @@ public class PipelineTest {
         pipeline.accept(visitor);
 
         // then
-        final Class[] expectedClasses = { Pipeline.class, SourceNode.class, BasicLink.class, BasicNode.class, CloneLink.class,
-                ActionNode.class };
+        final Class[] expectedClasses = { Pipeline.class, SourceNode.class, BasicLink.class, BasicNode.class,
+                CloneLink.class, ActionNode.class };
         assertThat(visitor.traversedClasses, CoreMatchers.hasItems(expectedClasses));
         assertNotNull(pipeline.toString());
     }
@@ -371,6 +372,7 @@ public class PipelineTest {
         final AtomicInteger wasDestroyed = new AtomicInteger(0);
 
         Destroyable destroyable = new Destroyable() {
+
             @Override
             public void destroy() {
                 wasDestroyed.incrementAndGet();
@@ -378,7 +380,8 @@ public class PipelineTest {
         };
         actionContext.get("test1", p -> destroyable);
         actionContext.get("test2", p -> destroyable);
-        final Node node = NodeBuilder.source() //
+        final Node node = NodeBuilder
+                .source() //
                 .to(new BasicNode()) //
                 .to(new CleanUpNode(transformationContext)) //
                 .to(output) //

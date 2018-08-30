@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.transformation.actions.delete;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -52,11 +52,12 @@ public class DeleteOnValueTest extends AbstractMetadataBaseTest<DeleteOnValue> {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(DeleteOnValueTest.class.getResourceAsStream("deleteOnValueAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(DeleteOnValueTest.class.getResourceAsStream("deleteOnValueAction.json"));
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 
@@ -182,7 +183,6 @@ public class DeleteOnValueTest extends AbstractMetadataBaseTest<DeleteOnValue> {
         assertEquals("David Bowie", row.get("0000"));
         assertEquals("AAA Berlin BBB", row.get("0001"));
     }
-
 
     @Test
     public void test_TDP_958() throws IOException {

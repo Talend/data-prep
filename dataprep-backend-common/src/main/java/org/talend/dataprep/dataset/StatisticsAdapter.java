@@ -106,7 +106,8 @@ public class StatisticsAdapter {
      * @param results The analysis results
      * @param filter A {@link Predicate predicate} to filter columns to adapt.
      */
-    private void genericAdapt(List<ColumnMetadata> columns, List<Analyzers.Result> results, Predicate<String> filter) {
+    private void genericAdapt(List<ColumnMetadata> columns, List<Analyzers.Result> results,
+            Predicate<String> filter) {
         final Iterator<Analyzers.Result> resultIterator = results.iterator();
         columns.stream().filter(c -> filter.test(c.getId())).forEach(c -> {
             if (resultIterator.hasNext()) {
@@ -175,7 +176,8 @@ public class StatisticsAdapter {
             final SemanticType semanticType = result.get(SemanticType.class);
             final List<CategoryFrequency> suggestedTypes = semanticType.getSuggestedCategories();
             // TDP-471: Don't pick semantic type if lower than a threshold.
-            final Optional<CategoryFrequency> bestMatch = suggestedTypes.stream() //
+            final Optional<CategoryFrequency> bestMatch = suggestedTypes
+                    .stream() //
                     .filter(e -> !e.getCategoryName().isEmpty()) //
                     .findFirst();
             if (bestMatch.isPresent()) {
@@ -193,7 +195,8 @@ public class StatisticsAdapter {
                 resetDomain(column);
             }
             // Keep all suggested semantic categories in the column metadata
-            List<SemanticDomain> semanticDomains = suggestedTypes.stream() //
+            List<SemanticDomain> semanticDomains = suggestedTypes
+                    .stream() //
                     .map(this::toSemanticDomain) //
                     .filter(semanticDomain -> semanticDomain != null && semanticDomain.getScore() >= 1) //
                     .limit(10) //
@@ -303,7 +306,8 @@ public class StatisticsAdapter {
             statistics.setVariance(summaryStatistics.getVariance());
             // if the column is of type Date
             if (DATE.isAssignableFrom(column.getType()) && result.exist(StreamDateHistogramStatistics.class)) {
-                final DateHistogram histogram = (DateHistogram) result.get(StreamDateHistogramStatistics.class).getHistogram();
+                final DateHistogram histogram =
+                        (DateHistogram) result.get(StreamDateHistogramStatistics.class).getHistogram();
                 statistics.setMax(histogram.getMaxUTCEpochMilliseconds());
                 statistics.setMin(histogram.getMinUTCEpochMilliseconds());
             } else {
@@ -316,8 +320,8 @@ public class StatisticsAdapter {
     private void injectNumberHistogram(final ColumnMetadata column, final Analyzers.Result result) {
         if (NUMERIC.isAssignableFrom(column.getType()) && result.exist(StreamNumberHistogramStatistics.class)) {
             final Statistics statistics = column.getStatistics();
-            final Map<org.talend.dataquality.statistics.numeric.histogram.Range, Long> histogramStatistics = result
-                    .get(StreamNumberHistogramStatistics.class).getHistogram();
+            final Map<org.talend.dataquality.statistics.numeric.histogram.Range, Long> histogramStatistics =
+                    result.get(StreamNumberHistogramStatistics.class).getHistogram();
             final NumberFormat format = DecimalFormat.getInstance(Locale.US);
 
             // Set histogram ranges

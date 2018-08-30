@@ -70,7 +70,7 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest<ClearInvalid> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_DISABLED;
     }
 
@@ -161,7 +161,6 @@ public class ClearInvalidTest extends AbstractMetadataBaseTest<ClearInvalid> {
         // then
         assertEquals(expectedValues, row.values());
     }
-
 
     @Test
     public void should_accept_column() {

@@ -53,7 +53,7 @@ public class AsyncExecutionResult {
     }
 
     public String getDownloadUrl() {
-        if(properties.containsKey("downloadUrl")){
+        if (properties.containsKey("downloadUrl")) {
             return properties.get("downloadUrl");
         }
         return downloadUrl;

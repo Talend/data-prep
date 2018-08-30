@@ -24,15 +24,16 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.TestLink;
 
 public class FilterNodeTest {
+
     @Test
     public void receive_should_filter_with_simple_predicate() throws Exception {
         // given
-        final RowMetadata metadata0 =  new RowMetadata();
-        final DataSetRow row0 =  new DataSetRow(new HashMap<>());
+        final RowMetadata metadata0 = new RowMetadata();
+        final DataSetRow row0 = new DataSetRow(new HashMap<>());
         row0.setTdpId(0L); // does not pass the predicate
 
-        final RowMetadata metadata1 =  new RowMetadata();
-        final DataSetRow row1 =  new DataSetRow(new HashMap<>());
+        final RowMetadata metadata1 = new RowMetadata();
+        final DataSetRow row1 = new DataSetRow(new HashMap<>());
         row1.setTdpId(1L); // pass the predicate
 
         final TestLink link = new TestLink(new BasicNode());
@@ -54,27 +55,27 @@ public class FilterNodeTest {
     @Test
     public void receive_multi_should_filter_with_multi_predicate() throws Exception {
         // given
-        final RowMetadata metadata0 =  new RowMetadata();
-        final DataSetRow row0 =  new DataSetRow(new HashMap<>());
+        final RowMetadata metadata0 = new RowMetadata();
+        final DataSetRow row0 = new DataSetRow(new HashMap<>());
         row0.setTdpId(0L); // does not pass the predicate
 
-        final RowMetadata metadata1 =  new RowMetadata();
-        final DataSetRow row1 =  new DataSetRow(new HashMap<>());
+        final RowMetadata metadata1 = new RowMetadata();
+        final DataSetRow row1 = new DataSetRow(new HashMap<>());
         row1.setTdpId(1L); // pass the predicate
 
-        final RowMetadata metadata2 =  new RowMetadata();
-        final DataSetRow row2 =  new DataSetRow(new HashMap<>());
+        final RowMetadata metadata2 = new RowMetadata();
+        final DataSetRow row2 = new DataSetRow(new HashMap<>());
         row2.setTdpId(2L); // does not pass the predicate
 
-        final RowMetadata metadata3 =  new RowMetadata();
-        final DataSetRow row3 =  new DataSetRow(new HashMap<>());
+        final RowMetadata metadata3 = new RowMetadata();
+        final DataSetRow row3 = new DataSetRow(new HashMap<>());
         row3.setTdpId(3L); // pass the predicate
 
         final RowMetadata[] metadataGroup0 = new RowMetadata[] { metadata0, metadata1 };
-        final DataSetRow[] rowGroup0 = new DataSetRow[]{ row0, row1 }; // pass the predicate
+        final DataSetRow[] rowGroup0 = new DataSetRow[] { row0, row1 }; // pass the predicate
 
         final RowMetadata[] metadataGroup1 = new RowMetadata[] { metadata2, metadata3 };
-        final DataSetRow[] rowGroup1 = new DataSetRow[]{ row2, row3 }; // des not pass the predicate
+        final DataSetRow[] rowGroup1 = new DataSetRow[] { row2, row3 }; // des not pass the predicate
 
         final TestLink link = new TestLink(new BasicNode());
         final FilterNode node = new FilterNode((row, metadata) -> true, (row, metadata) -> row.getTdpId() == 1);

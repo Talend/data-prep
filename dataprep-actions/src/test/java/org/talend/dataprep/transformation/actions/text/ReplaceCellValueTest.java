@@ -81,14 +81,14 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest<ReplaceCellVa
         assertThat(actionParams, hasSize(7));
 
         final List<String> paramNames = actionParams.stream().map(Parameter::getName).collect(toList());
-        assertThat(paramNames, IsIterableContainingInAnyOrder.containsInAnyOrder( //
-                ActionsUtils.CREATE_NEW_COLUMN,
-                COLUMN_ID.getKey(), //
-                SCOPE.getKey(), //
-                ROW_ID.getKey(), //
-                ORIGINAL_VALUE_PARAMETER, //
-                FILTER.getKey(), //
-                NEW_VALUE_PARAMETER) //
+        assertThat(paramNames,
+                IsIterableContainingInAnyOrder.containsInAnyOrder( //
+                        ActionsUtils.CREATE_NEW_COLUMN, COLUMN_ID.getKey(), //
+                        SCOPE.getKey(), //
+                        ROW_ID.getKey(), //
+                        ORIGINAL_VALUE_PARAMETER, //
+                        FILTER.getKey(), //
+                        NEW_VALUE_PARAMETER) //
         );
     }
 
@@ -226,7 +226,8 @@ public class ReplaceCellValueTest extends AbstractMetadataBaseTest<ReplaceCellVa
         final Map<String, String> parameters = getParameters(1L, "True", "NotABoolean");
 
         // when
-        ActionTestWorkbench.test(Collections.singleton(row), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Collections.singleton(row), actionRegistry,
+                factory.create(action, parameters));
 
         // then
         assertThat(row.get("0000"), is("NotABoolean"));

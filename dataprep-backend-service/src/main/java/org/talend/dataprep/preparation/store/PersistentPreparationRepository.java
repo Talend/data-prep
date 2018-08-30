@@ -40,12 +40,14 @@ public class PersistentPreparationRepository implements PreparationRepository {
 
     private final PreparationRepository delegate;
 
-    public PersistentPreparationRepository(PreparationRepository delegate, BeanConversionService beanConversionService) {
+    public PersistentPreparationRepository(PreparationRepository delegate,
+            BeanConversionService beanConversionService) {
         this.delegate = delegate;
         this.beanConversionService = beanConversionService;
     }
 
-    private static Class<? extends Identifiable> selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
+    private static Class<? extends Identifiable>
+            selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
         if (Preparation.class.isAssignableFrom(identifiableClass)) {
             return PersistentPreparation.class;
         } else if (Step.class.isAssignableFrom(identifiableClass)) {
@@ -56,7 +58,8 @@ public class PersistentPreparationRepository implements PreparationRepository {
         }
     }
 
-    private <T extends Identifiable> Stream<T> applyConversions(Supplier<Stream<T>> supplier, Class<T> clazz, Class<T> persistentClass) {
+    private <T extends Identifiable> Stream<T> applyConversions(Supplier<Stream<T>> supplier, Class<T> clazz,
+            Class<T> persistentClass) {
         Stream<T> delegateStream = supplier.get();
         if (!persistentClass.equals(clazz)) {
             delegateStream = delegateStream.map(i -> beanConversionService.convert(i, clazz));
@@ -93,7 +96,8 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression expression) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        Stream<T> delegateStream = applyConversions(() -> delegate.list(persistentClass, expression), clazz, persistentClass);
+        Stream<T> delegateStream =
+                applyConversions(() -> delegate.list(persistentClass, expression), clazz, persistentClass);
         return Stream.concat(delegateStream, getRootElement(clazz, clazz));
     }
 
@@ -136,7 +140,7 @@ public class PersistentPreparationRepository implements PreparationRepository {
             persistentStep.setId(Step.ROOT_STEP.id());
             persistentStep.setContent(PreparationActions.ROOT_ACTIONS.id());
             return (T) persistentStep;
-        }  else if (clazz.equals(PreparationActions.class) && PreparationActions.ROOT_ACTIONS.getId().equals(id)) {
+        } else if (clazz.equals(PreparationActions.class) && PreparationActions.ROOT_ACTIONS.getId().equals(id)) {
             return (T) PreparationActions.ROOT_ACTIONS;
         } else {
             beanToConvert = delegate.get(id, targetClass);

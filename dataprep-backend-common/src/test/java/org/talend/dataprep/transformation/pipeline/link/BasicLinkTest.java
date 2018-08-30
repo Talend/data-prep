@@ -25,6 +25,7 @@ import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.TestNode;
 
 public class BasicLinkTest {
+
     @Test
     public void should_emit_single_input_row() {
         // given

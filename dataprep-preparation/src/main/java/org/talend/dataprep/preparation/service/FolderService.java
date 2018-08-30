@@ -137,8 +137,8 @@ public class FolderService {
     @ApiOperation(value = "Search Folders with parameter as part of the name")
     @Timed
     public Stream<Folder> search(@RequestParam(required = false, defaultValue = "") final String name,
-                                   @RequestParam(required = false, defaultValue = "false") final Boolean strict,
-                                   @RequestParam(required = false) final String path) {
+            @RequestParam(required = false, defaultValue = "false") final Boolean strict,
+            @RequestParam(required = false) final String path) {
         Stream<Folder> folders;
         if (path == null) {
             folders = folderRepository.searchFolders(name, strict);
@@ -212,8 +212,8 @@ public class FolderService {
 
     private FolderTreeNode getTree(final Folder root) {
         try (final Stream<Folder> children = folderRepository.children(root.getId())) {
-            final List<FolderTreeNode> childrenSubtrees = StreamSupport.stream(children.spliterator(), false).map(this::getTree)
-                    .collect(toList());
+            final List<FolderTreeNode> childrenSubtrees =
+                    StreamSupport.stream(children.spliterator(), false).map(this::getTree).collect(toList());
             return new FolderTreeNode(root, childrenSubtrees);
         }
     }

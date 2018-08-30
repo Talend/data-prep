@@ -42,8 +42,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  *
  * @see FileSystemPreparationRepositoryTest
  */
-@TestPropertySource(inheritLocations = false, inheritProperties = false, properties = { "preparation.store=file",
-        "preparation.store.file.location=target/test/store/preparation" })
+@TestPropertySource(inheritLocations = false, inheritProperties = false,
+        properties = { "preparation.store=file", "preparation.store.file.location=target/test/store/preparation" })
 public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTest {
 
     @Autowired
@@ -125,20 +125,24 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         final List<Integer> ids = Arrays.asList(1, 12, 3);
 
         // store preparations
-        final List<Preparation> preparations = ids.stream() //
+        final List<Preparation> preparations = ids
+                .stream() //
                 .map(i -> getPreparation(String.valueOf(i))) //
                 .collect(Collectors.toList());
 
         preparations.forEach(prep -> repository.add(prep));
 
         // and some steps to add some noise
-        ids.stream().map(i -> new Step(Step.ROOT_STEP.id(), "step" + i, versionService.version().getVersionId())) //
+        ids
+                .stream()
+                .map(i -> new Step(Step.ROOT_STEP.id(), "step" + i, versionService.version().getVersionId())) //
                 .forEach(step -> repository.add(step));
 
         // get some preparation by dataset id
         final Preparation expected1 = preparations.get(0);
         final Preparation expected2 = preparations.get(1);
-        final Collection<Preparation> actual = repository.list(Preparation.class, contains("name", "1")).collect(Collectors.toList());
+        final Collection<Preparation> actual =
+                repository.list(Preparation.class, contains("name", "1")).collect(Collectors.toList());
 
         assertEquals(2, actual.size());
         assertTrue(actual.contains(expected1));
@@ -151,24 +155,27 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
         final List<Integer> ids = Arrays.asList(1, 12, 3);
 
         // store preparations
-        final List<Preparation> preparations = ids.stream() //
+        final List<Preparation> preparations = ids
+                .stream() //
                 .map(i -> getPreparation(String.valueOf(i))) //
                 .collect(Collectors.toList());
 
         preparations.forEach(prep -> repository.add(prep));
 
         // and some steps to add some noise
-        ids.stream().map(i -> new Step(Step.ROOT_STEP.id(), "step" + i, versionService.version().getVersionId())) //
+        ids
+                .stream()
+                .map(i -> new Step(Step.ROOT_STEP.id(), "step" + i, versionService.version().getVersionId())) //
                 .forEach(step -> repository.add(step));
 
         // get some preparation by dataset id
         final Preparation expected = preparations.get(0);
-        final Collection<Preparation> actual = repository.list(Preparation.class, eq("name", "prep-1")).collect(Collectors.toList());
+        final Collection<Preparation> actual =
+                repository.list(Preparation.class, eq("name", "prep-1")).collect(Collectors.toList());
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(expected));
     }
-
 
     /**
      * @param datasetId the preparation id.
@@ -176,7 +183,8 @@ public class FileSystemPreparationRepositoryTest extends PreparationRepositoryTe
      */
     @Override
     protected Preparation getPreparation(String datasetId) {
-        Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, Step.ROOT_STEP.id(), versionService.version().getVersionId());
+        Preparation preparation = new Preparation(UUID.randomUUID().toString(), datasetId, Step.ROOT_STEP.id(),
+                versionService.version().getVersionId());
         preparation.setName("prep-" + datasetId);
         return preparation;
     }

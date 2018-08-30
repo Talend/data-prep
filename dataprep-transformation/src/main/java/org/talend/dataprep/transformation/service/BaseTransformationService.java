@@ -99,8 +99,8 @@ public abstract class BaseTransformationService {
         }
     }
 
-    protected <T extends ExportStrategy> Optional<T>
-            chooseExportStrategy(OrderedBeans<T> exportStrategies, final ExportParameters parameters) {
+    protected <T extends ExportStrategy> Optional<T> chooseExportStrategy(OrderedBeans<T> exportStrategies,
+            final ExportParameters parameters) {
         return exportStrategies //
                 .filter(exportStrategy -> exportStrategy.accept(parameters)) //
                 .findFirst();

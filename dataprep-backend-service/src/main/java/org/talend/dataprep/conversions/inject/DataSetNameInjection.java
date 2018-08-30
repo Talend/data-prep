@@ -17,7 +17,8 @@ import org.talend.dataprep.security.SecurityProxy;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-public class DataSetNameInjection implements BiFunction<PreparationDTO, PreparationListItemDTO, PreparationListItemDTO> {
+public class DataSetNameInjection
+        implements BiFunction<PreparationDTO, PreparationListItemDTO, PreparationListItemDTO> {
 
     private final Cache<String, Cache<String, String>> cache;
 
@@ -51,7 +52,8 @@ public class DataSetNameInjection implements BiFunction<PreparationDTO, Preparat
                 if (tenantCache.getIfPresent(dto.getDataSetId()) == null) {
                     securityProxy.asTechnicalUserForDataSet();
                     try {
-                        tenantCache.put(dto.getDataSetId(), datasetClient.getDataSetMetadata(dto.getDataSetId()).getName());
+                        tenantCache.put(dto.getDataSetId(),
+                                datasetClient.getDataSetMetadata(dto.getDataSetId()).getName());
                     } finally {
                         securityProxy.releaseIdentity();
                     }

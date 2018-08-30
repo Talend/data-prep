@@ -98,23 +98,25 @@ public class PipelineTransformer implements Transformer {
                 .map(id -> stepMetadataRepository.get(id)) //
                 .orElse(null);
 
-        final Pipeline pipeline = Pipeline.Builder
-                .builder() //
-                .withAnalyzerService(analyzerService) //
-                .withActionRegistry(actionRegistry) //
-                .withPreparation(preparation) //
-                .withActions(actionParser.parse(configuration.getActions())) //
-                .withInitialMetadata(rowMetadata, configuration.volume() == SMALL) //
-                .withMonitor(configuration.getMonitor()) //
-                .withFilter(configuration.getFilter()) //
-                .withLimit(configuration.getLimit()) //
-                .withFilterOut(configuration.getOutFilter()) //
-                .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey)) //
-                .withStatisticsAdapter(adapter) //
-                .withStepMetadataSupplier(stepRowMetadataSupplier) //
-                .withGlobalStatistics(configuration.isGlobalStatistics()) //
-                .allowMetadataChange(configuration.isAllowMetadataChange()) //
-                .build();
+        final Pipeline pipeline =
+                Pipeline.Builder
+                        .builder() //
+                        .withAnalyzerService(analyzerService) //
+                        .withActionRegistry(actionRegistry) //
+                        .withPreparation(preparation) //
+                        .withActions(actionParser.parse(configuration.getActions())) //
+                        .withInitialMetadata(rowMetadata, configuration.volume() == SMALL) //
+                        .withMonitor(configuration.getMonitor()) //
+                        .withFilter(configuration.getFilter()) //
+                        .withLimit(configuration.getLimit()) //
+                        .withFilterOut(configuration.getOutFilter()) //
+                        .withOutput(
+                                () -> new WriterNode(writer, metadataWriter, metadataKey)) //
+                        .withStatisticsAdapter(adapter) //
+                        .withStepMetadataSupplier(stepRowMetadataSupplier) //
+                        .withGlobalStatistics(configuration.isGlobalStatistics()) //
+                        .allowMetadataChange(configuration.isAllowMetadataChange()) //
+                        .build();
 
         // wrap this transformer into an executable transformer
         return new ExecutableTransformer() {

@@ -85,9 +85,10 @@ public class SearchAPI extends APIService {
                     .forEach(searchDelegate -> {
                         final String category = searchDelegate.getSearchCategory();
                         try {
-                            generator.writeObjectField(category, searchDelegate //
-                                    .search(name, strict) //
-                                    .map(result -> beanConversionService.convert(result, SearchResult.class)));
+                            generator.writeObjectField(category,
+                                    searchDelegate //
+                                            .search(name, strict) //
+                                            .map(result -> beanConversionService.convert(result, SearchResult.class)));
                         } catch (IOException e) {
                             LOG.error("Unable to search '{}'.", category, e);
                         }

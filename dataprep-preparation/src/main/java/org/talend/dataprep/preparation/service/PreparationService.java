@@ -29,6 +29,7 @@ import static org.talend.dataprep.preparation.service.PreparationSearchCriterion
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 import static org.talend.tql.api.TqlBuilder.and;
 import static org.talend.tql.api.TqlBuilder.eq;
+import static org.talend.tql.api.TqlBuilder.isEmpty;
 import static org.talend.tql.api.TqlBuilder.match;
 
 import java.text.DecimalFormat;
@@ -171,11 +172,14 @@ public class PreparationService {
     public String create(final Preparation preparation, String folderId) {
         LOGGER.debug("Create new preparation for data set {} in {}", preparation.getDataSetId(), folderId);
 
-        Preparation toCreate = new Preparation(UUID.randomUUID().toString(), versionService.version().getVersionId());
+        PersistentPreparation toCreate = new PersistentPreparation();
+        toCreate.setId(UUID.randomUUID().toString());
+        toCreate.setAppVersion(versionService.version().getVersionId());
         toCreate.setHeadId(Step.ROOT_STEP.id());
         toCreate.setAuthor(security.getUserId());
         toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
+        toCreate.setFolderId(folderId);
         toCreate.setRowMetadata(preparation.getRowMetadata());
         try {
             toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
@@ -236,32 +240,45 @@ public class PreparationService {
         LOGGER.debug("Get list of preparations (with details).");
         Stream<PersistentPreparation> preparationStream;
 
-        if (searchCriterion.getName() == null && searchCriterion.getDataSetId() == null) {
-            preparationStream = preparationRepository.list(PersistentPreparation.class);
-        } else {
-            Expression filter = null;
-            if (searchCriterion.getName() != null) {
-                filter = getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
-            }
-            if (searchCriterion.getDataSetId() != null) {
-                Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
-                filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
-            }
-
-            preparationStream = preparationRepository.list(PersistentPreparation.class, filter);
+        Expression filter = null;
+        Predicate<PersistentPreparation> deprecatedFolderIdFilter = null;
+        if (searchCriterion.getName() != null) {
+            filter = getNameFilter(searchCriterion.getName(), searchCriterion.isNameExactMatch());
         }
-
-        // filter on folder id
+        if (searchCriterion.getDataSetId() != null) {
+            Expression dataSetFilter = eq("dataSetId", searchCriterion.getDataSetId());
+            filter = filter == null ? dataSetFilter : and(filter, dataSetFilter);
+        }
         if (searchCriterion.getFolderId() != null) {
-            try (Stream<String> preparationIds = folderRepository
-                    .entries(searchCriterion.getFolderId(), PREPARATION) //
-                    .map(FolderEntry::getContentId)) {
-                final Set<String> entries = preparationIds //
-                        .collect(Collectors.toSet());
-                preparationStream = preparationStream.filter(p -> entries.contains(p.id())).peek(
-                        p -> p.setFolderId(searchCriterion.getFolderId()));
+            if (preparationRepository.exist(PersistentPreparation.class, isEmpty("folderId"))) {
+                // filter on folder id (DEPRECATED VERSION - only applies if migration isn't completed yet)
+                try (Stream<FolderEntry> folders =
+                        folderRepository.entries(searchCriterion.getFolderId(), PREPARATION)) {
+                    final Set<String> entries = folders
+                            .map(FolderEntry::getContentId) //
+                            .collect(Collectors.toSet());
+                    deprecatedFolderIdFilter = p -> entries.contains(p.id());
+                }
+            } else {
+                // Once all preparations all have the folder id,
+                Expression folderIdFilter = eq("folderId", searchCriterion.getFolderId());
+                filter = filter == null ? folderIdFilter : and(filter, folderIdFilter);
             }
         }
+
+        // Handles filtering (prefer database filters)
+        if (filter != null) {
+            preparationStream = preparationRepository.list(PersistentPreparation.class, filter);
+        } else {
+            preparationStream = preparationRepository.list(PersistentPreparation.class);
+        }
+        if (deprecatedFolderIdFilter != null) {
+            // filter on folder id (DEPRECATED VERSION - only applies if migration isn't completed yet)
+            preparationStream = preparationStream //
+                    .filter(deprecatedFolderIdFilter) //
+                    .peek(p -> p.setFolderId(searchCriterion.getFolderId()));
+        }
+
         // filter on folder path
         if (searchCriterion.getFolderPath() != null) {
             final Optional<Folder> folder = folderRepository.getFolder(searchCriterion.getFolderPath());
@@ -376,6 +393,8 @@ public class PreparationService {
         // copy the Preparation : constructor set HeadId and
         Preparation copy = new Preparation(original);
         copy.setId(UUID.randomUUID().toString());
+        copy.setDataSetName(original.getDataSetName());
+        copy.setFolderId(destination);
         copy.setName(newName);
         final long now = System.currentTimeMillis();
         copy.setCreationDate(now);
@@ -478,8 +497,9 @@ public class PreparationService {
             // rename the dataset only if we received a new name
             if (!targetName.equals(original.getName())) {
                 original.setName(newName);
-                preparationRepository.add(original);
             }
+            original.setFolderId(destination);
+            preparationRepository.add(original);
 
             // move the preparation
             FolderEntry folderEntry = new FolderEntry(PREPARATION, preparationId);
@@ -527,7 +547,8 @@ public class PreparationService {
         lockPreparation(preparationId);
 
         try {
-            final PersistentPreparation previousPreparation = preparationRepository.get(preparationId, PersistentPreparation.class);
+            final PersistentPreparation previousPreparation =
+                    preparationRepository.get(preparationId, PersistentPreparation.class);
             LOGGER.debug("Updating preparation with id {}: {}", preparation.getId(), previousPreparation);
 
             PersistentPreparation updated = previousPreparation.merge(preparation);
@@ -764,7 +785,7 @@ public class PreparationService {
             // Get steps from "step to modify" to the head
             final List<String> steps = extractSteps(preparation, stepToModifyId); // throws an exception if stepId is
                                                                                   // not in
-            // the preparation
+                                                                                  // the preparation
             LOGGER.debug("Rewriting history for {} steps.", steps.size());
 
             // Extract created columns ids diff info
@@ -778,8 +799,7 @@ public class PreparationService {
                     .collect(toList());
             final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
             final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt()
-                    : MAX_VALUE;
+                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
 
             // Build list of actions from modified one to the head
             final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,

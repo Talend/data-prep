@@ -49,7 +49,8 @@ public class Negate extends AbstractActionMetadata implements ColumnAction {
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, CREATE_NEW_COLUMN_DEFAULT_VALUE);
+        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale,
+                CREATE_NEW_COLUMN_DEFAULT_VALUE);
     }
 
     @Override
@@ -71,9 +72,11 @@ public class Negate extends AbstractActionMetadata implements ColumnAction {
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT_VALUE)) {
-            ActionsUtils.createNewColumn(context, singletonList(ActionsUtils.additionalColumn()
-                    .withName(context.getColumnName() + NEW_COLUMN_SUFFIX)
-                    .withType(BOOLEAN)));
+            ActionsUtils.createNewColumn(context,
+                    singletonList(ActionsUtils
+                            .additionalColumn()
+                            .withName(context.getColumnName() + NEW_COLUMN_SUFFIX)
+                            .withType(BOOLEAN)));
         }
     }
 

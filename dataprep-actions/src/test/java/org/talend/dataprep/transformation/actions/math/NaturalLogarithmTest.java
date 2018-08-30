@@ -48,7 +48,8 @@ public class NaturalLogarithmTest extends AbstractMetadataBaseTest<NaturalLogari
 
     @Before
     public void setUp() throws Exception {
-        final InputStream parametersSource = NaturalLogarithmTest.class.getResourceAsStream("naturalLogarithmAction.json");
+        final InputStream parametersSource =
+                NaturalLogarithmTest.class.getResourceAsStream("naturalLogarithmAction.json");
         parameters = ActionMetadataTestUtils.parseParameters(parametersSource);
     }
 
@@ -133,9 +134,9 @@ public class NaturalLogarithmTest extends AbstractMetadataBaseTest<NaturalLogari
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.METADATA_CREATE_COLUMNS));
     }
 
-
     private void assertColumnWithResultCreated(DataSetRow row) {
-        ColumnMetadata expected = ColumnMetadata.Builder.column().id(3).name("0000_natural_logarithm").type(Type.DOUBLE).build();
+        ColumnMetadata expected =
+                ColumnMetadata.Builder.column().id(3).name("0000_natural_logarithm").type(Type.DOUBLE).build();
         ColumnMetadata actual = row.getRowMetadata().getById("0003");
         assertEquals(expected, actual);
     }

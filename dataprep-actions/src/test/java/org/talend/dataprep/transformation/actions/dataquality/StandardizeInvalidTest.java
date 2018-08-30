@@ -154,12 +154,13 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         assertEquals(values, row.values());
 
     }
+
     @Test
     public void shouldNotStandardizeValueWithSurrogatePair() {
         // given
         final Map<String, String> values = new HashMap<>();
         values.put(columnId0, fixedName);
-        values.put(columnId1,"中崎𠀀𠀁𠀂𠀃𠀄");
+        values.put(columnId1, "中崎𠀀𠀁𠀂𠀃𠀄");
         values.put("__tdpInvalid", "0001");
 
         // set semantic domain

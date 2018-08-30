@@ -34,26 +34,28 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 /**
- * Non-spring accessor to actions resources bundle. This implementation use a simple caching mechanism based on action, locale and key searched.
+ * Non-spring accessor to actions resources bundle. This implementation use a simple caching mechanism based on action,
+ * locale and key searched.
  * Each key is searched using a fallback mechanism that search in this order:
  * <ol>
- *     <li>in the current supplied action package</li>
- *     <li>in the current supplied action package hierarchy (org.talend.dataprep.transformation.actions.MyAction, org.talend.dataprep.transformation.actions)</li>
- *     <li>in this bundle package</li>
- *     <li>in this bundle hierarchy</li>
- *     <li>in the default {@code actions_messages} bundle</li>
+ * <li>in the current supplied action package</li>
+ * <li>in the current supplied action package hierarchy (org.talend.dataprep.transformation.actions.MyAction,
+ * org.talend.dataprep.transformation.actions)</li>
+ * <li>in this bundle package</li>
+ * <li>in this bundle hierarchy</li>
+ * <li>in the default {@code actions_messages} bundle</li>
  * </ol>
  * For instance, {@code org.talend.dataprep.transformation.actions.MyAction} will be searched in:
  * <ol>
- *     <li>org.talend.dataprep.transformation.actions.MyAction</li>
- *     <li>org.talend.dataprep.transformation.actions</li>
- *     <li>org.talend.dataprep.transformation</li>
- *     <li>org.talend.dataprep</li>
- *     <li>org.talend</li>
- *     <li>org</li>
- *     <li>org.talend.dataprep.i18n.ActionsBundle</li>
- *     <li>org.talend.dataprep.i18n</li>
- *     <li>org.talend.dataprep.i18n.actions_messages</li>
+ * <li>org.talend.dataprep.transformation.actions.MyAction</li>
+ * <li>org.talend.dataprep.transformation.actions</li>
+ * <li>org.talend.dataprep.transformation</li>
+ * <li>org.talend.dataprep</li>
+ * <li>org.talend</li>
+ * <li>org</li>
+ * <li>org.talend.dataprep.i18n.ActionsBundle</li>
+ * <li>org.talend.dataprep.i18n</li>
+ * <li>org.talend.dataprep.i18n.actions_messages</li>
  * </ol>
  *
  *
@@ -92,11 +94,8 @@ public class ActionsBundle implements MessagesBundle {
     /**
      * Simple cache.
      */
-    private Cache<CacheKey, String> cache = CacheBuilder
-            .newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .maximumSize(1000)
-            .build();
+    private Cache<CacheKey, String> cache =
+            CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).maximumSize(1000).build();
 
     /**
      * Set global Documentation portal URL.
@@ -148,7 +147,8 @@ public class ActionsBundle implements MessagesBundle {
         final String docUrl = INSTANCE.getOptionalMessage(action, locale, actionDocUrlKey);
 
         if (docUrl == null) {
-            final String docParameters = INSTANCE.getOptionalMessage(action, locale, ACTION_PREFIX + actionName + URL_PARAMETERS_SUFFIX);
+            final String docParameters =
+                    INSTANCE.getOptionalMessage(action, locale, ACTION_PREFIX + actionName + URL_PARAMETERS_SUFFIX);
             if (INSTANCE.documentationUrlBase != null && docParameters != null) {
                 return INSTANCE.documentationUrlBase + docParameters;
             }
@@ -225,7 +225,7 @@ public class ActionsBundle implements MessagesBundle {
      */
     private String getOptionalMessage(Object action, Locale locale, String code, Object... args) {
         String messageFormat = getBundleValue(action, locale, code);
-        return  messageFormat == null ? null : formatMessage(messageFormat, args);
+        return messageFormat == null ? null : formatMessage(messageFormat, args);
     }
 
     private String getBundleValue(Object action, Locale locale, String code) {
@@ -250,7 +250,8 @@ public class ActionsBundle implements MessagesBundle {
     private String getMandatoryMessage(Object action, Locale locale, String code, Object... args) {
         final String message = getOptionalMessage(action, locale, code, args);
         if (message == null) {
-            throw new TalendRuntimeException(BaseErrorCodes.MISSING_I18N, ExceptionContext.withBuilder() .put("code", code).put("action", action).build());
+            throw new TalendRuntimeException(BaseErrorCodes.MISSING_I18N,
+                    ExceptionContext.withBuilder().put("code", code).put("action", action).build());
         }
         return message;
     }
@@ -260,7 +261,8 @@ public class ActionsBundle implements MessagesBundle {
      * in a bundle in a fallback language before being present in another bundle in the correct language the first will be
      * returned.
      */
-    private ResourceBundle findBundleContainingKey(Object action, Locale locale, String key, Collection<String> bundleFallbacks) {
+    private ResourceBundle findBundleContainingKey(Object action, Locale locale, String key,
+            Collection<String> bundleFallbacks) {
         ResourceBundle bundle = null;
         Iterator<String> iterator = bundleFallbacks.iterator();
         while (iterator.hasNext() && bundle == null) {
@@ -268,8 +270,7 @@ public class ActionsBundle implements MessagesBundle {
             try {
                 ResourceBundle searchedBundle = ResourceBundle.getBundle(packageName + '.' + ACTIONS_MESSAGES, //
                         locale, //
-                        ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES)
-                );
+                        ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
                 if (searchedBundle.containsKey(key)) {
                     bundle = searchedBundle;
                 }
@@ -336,11 +337,13 @@ public class ActionsBundle implements MessagesBundle {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             CacheKey cacheKey = (CacheKey) o;
-            return Objects.equals(action, cacheKey.action) && Objects.equals(locale, cacheKey.locale) && Objects.equals(code,
-                    cacheKey.code);
+            return Objects.equals(action, cacheKey.action) && Objects.equals(locale, cacheKey.locale)
+                    && Objects.equals(code, cacheKey.code);
         }
 
         @Override

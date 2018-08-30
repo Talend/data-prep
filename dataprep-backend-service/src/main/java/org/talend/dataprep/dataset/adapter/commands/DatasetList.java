@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset.adapter.commands;
 
@@ -35,6 +35,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 /**
  * List the datasets of the user.
+ * 
  * @see Dataset
  */
 @Component("DataSetList#2")
@@ -42,6 +43,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 public class DatasetList extends GenericCommand<Stream<Dataset>> {
 
     private final Dataset.CertificationState certification;
+
     private final Boolean favorite;
 
     private DatasetList(Dataset.CertificationState certification, Boolean favorite) {
@@ -67,7 +69,7 @@ public class DatasetList extends GenericCommand<Stream<Dataset>> {
             onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_LIST_DATASETS, e));
             on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then((requestBase, response) -> Stream.empty());
         } catch (Exception e) {
-            throw new TDPException( CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 

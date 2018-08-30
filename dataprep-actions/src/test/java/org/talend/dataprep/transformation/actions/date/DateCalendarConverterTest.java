@@ -88,8 +88,8 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
     @Test
     public void shouldGetParameters() throws Exception {
         // given
-        List<String> parameterNames = Arrays.asList("create_new_column", TO_CALENDAR_TYPE_PARAMETER, FROM_CALENDAR_TYPE_PARAMETER,
-                COLUMN_ID.getKey(), ROW_ID.getKey(), "scope", "filter");
+        List<String> parameterNames = Arrays.asList("create_new_column", TO_CALENDAR_TYPE_PARAMETER,
+                FROM_CALENDAR_TYPE_PARAMETER, COLUMN_ID.getKey(), ROW_ID.getKey(), "scope", "filter");
 
         // when
         final List<Parameter> parameters = action.getParameters(Locale.US);
@@ -97,8 +97,11 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         // then
         assertNotNull(parameters);
         assertEquals(6, parameters.size());
-        final List<String> expectedParametersNotFound = parameters.stream().map(Parameter::getName)
-                .filter(n -> !parameterNames.contains(n)).collect(Collectors.toList());
+        final List<String> expectedParametersNotFound = parameters
+                .stream()
+                .map(Parameter::getName)
+                .filter(n -> !parameterNames.contains(n))
+                .collect(Collectors.toList());
         assertTrue(expectedParametersNotFound.toString() + " not found", expectedParametersNotFound.isEmpty());
     }
 
@@ -191,9 +194,10 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
     @Test
     public void testConversion_only_output_custom() throws IOException {
         // given
-        final DataSetRow row = builder().with(value("toto").type(Type.STRING).name("recipe"))
-                .with(value("10/29/1996").type(Type.DATE).name("last update")
-                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json")))
+        final DataSetRow row = builder()
+                .with(value("toto").type(Type.STRING).name("recipe"))
+                .with(value("10/29/1996").type(Type.DATE).name("last update").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json")))
                 .with(value("tata").type(Type.STRING).name("who")) //
                 .build();
 
@@ -390,15 +394,15 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         assertEquals("0008/02/30 平成", row.get("0001"));// invalid date
     }
 
-    private void testConversion(String from, DateCalendarConverter.CalendarUnit fromUnit, String fromPattern, String expected,
-                                DateCalendarConverter.CalendarUnit toUnit) {
+    private void testConversion(String from, DateCalendarConverter.CalendarUnit fromUnit, String fromPattern,
+            String expected, DateCalendarConverter.CalendarUnit toUnit) {
         // given
         Map<String, String> rowContent = new HashMap<>();
         rowContent.put("0000", "David");
         rowContent.put("0001", from);
         final DataSetRow row1 = new DataSetRow(rowContent);
-        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies()
-                .add(new PatternFrequency(fromPattern, 1));
+        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
+                new PatternFrequency(fromPattern, 1));
 
         // row 2
         rowContent = new HashMap<>();
@@ -419,7 +423,7 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         parameters.put(TO_CALENDAR_TYPE_PARAMETER, toUnit.name());
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2,row3), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals(expected, row1.get("0001"));
@@ -475,8 +479,8 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         rowContent.put("0000", "David");
         rowContent.put("0001", "1970-01-01");
         final DataSetRow row1 = new DataSetRow(rowContent);
-        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies()
-                .add(new PatternFrequency("yyyy-MM-dd", 1));
+        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
+                new PatternFrequency("yyyy-MM-dd", 1));
 
         // row 2
         rowContent = new HashMap<>();
@@ -505,8 +509,8 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
         rowContent.put("0000", "David");
         rowContent.put("0001", "1970-01-01");
         final DataSetRow row1 = new DataSetRow(rowContent);
-        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies()
-                .add(new PatternFrequency("yyyy-MM-dd", 1));
+        row1.getRowMetadata().getColumns().get(1).getStatistics().getPatternFrequencies().add(
+                new PatternFrequency("yyyy-MM-dd", 1));
 
         // row 2
         rowContent = new HashMap<>();
@@ -577,9 +581,10 @@ public class DateCalendarConverterTest extends BaseDateTest<DateCalendarConverte
     public void testCompileShouldComputeToAndFromInternalContextParameters() {
         // Given
         final DateCalendarConverter calendarConverter = new DateCalendarConverter();
-        final DataSetRow row = builder().with(value("toto").type(Type.STRING).name("recipe"))
-                .with(value("10/29/1996").type(Type.DATE).name("last update")
-                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json")))
+        final DataSetRow row = builder()
+                .with(value("toto").type(Type.STRING).name("recipe"))
+                .with(value("10/29/1996").type(Type.DATE).name("last update").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json")))
                 .with(value("tata").type(Type.STRING).name("who")) //
                 .build();
         final ActionContext context = new ActionContext(new TransformationContext(), row.getRowMetadata());

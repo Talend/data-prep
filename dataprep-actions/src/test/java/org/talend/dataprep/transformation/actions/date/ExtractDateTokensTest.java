@@ -1,6 +1,6 @@
 // ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -87,8 +87,9 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING)) //
-                .with(value("04/25/1999").type(Type.DATE).statistics(
-                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("04/25/1999")
+                        .type(Type.DATE)
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING)) //
                 .build();
 
@@ -113,8 +114,9 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING)) //
-                .with(value("Apr-25-1999").type(Type.DATE).statistics(
-                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("Apr-25-1999")
+                        .type(Type.DATE)
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING)) //
                 .build();
 
@@ -139,8 +141,9 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING)) //
-                .with(value("Dec-17-2017").type(Type.DATE).statistics(
-                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("Dec-17-2017")
+                        .type(Type.DATE)
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING)) //
                 .build();
 
@@ -168,8 +171,9 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING)) //
-                .with(value("Dec-17-2017").type(Type.DATE).statistics(
-                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("Dec-17-2017")
+                        .type(Type.DATE)
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING)) //
                 .build();
 
@@ -200,8 +204,9 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING)) //
-                .with(value("04/25/1999 15:45").type(Type.DATE).statistics(
-                        getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
+                .with(value("04/25/1999 15:45")
+                        .type(Type.DATE)
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy_HH_mm.json"))) //
                 .with(value("tata").type(Type.STRING)) //
                 .build();
 
@@ -229,8 +234,9 @@ public class ExtractDateTokensTest extends BaseDateTest<ExtractDateTokens> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING)) //
-                .with(value("04-25-09").type(Type.DATE).statistics(
-                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("04-25-09")
+                        .type(Type.DATE)
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING)) //
                 .build();
 

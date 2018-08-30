@@ -65,7 +65,8 @@ public class FolderAPI extends APIService {
     private DataSetNameInjection dataSetNameInjection;
 
     @RequestMapping(value = "/api/folders", method = GET)
-    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
+            produces = APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<StreamingResponseBody> listFolders(@RequestParam(required = false) String parentId) {
         try {
@@ -91,10 +92,12 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get folder by id", produces = APPLICATION_JSON_VALUE, notes = "Get a folder by id")
     @Timed
-    public ResponseEntity<StreamingResponseBody> getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
+    public ResponseEntity<StreamingResponseBody>
+            getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
         try {
             final HystrixCommand<InputStream> foldersList = getCommand(GetFolder.class, id);
-            return ResponseEntity.ok() //
+            return ResponseEntity
+                    .ok() //
                     .contentType(APPLICATION_JSON_UTF8) //
                     .body(CommandHelper.toStreaming(foldersList));
         } catch (Exception e) {
@@ -105,7 +108,8 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders", method = PUT)
     @ApiOperation(value = "Add a folder.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId, @RequestParam final String path) {
+    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId,
+            @RequestParam final String path) {
         try {
             final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, parentId, path);
             return CommandHelper.toStreaming(createChildFolder);
@@ -156,8 +160,7 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "Search Folders with parameter as part of the name", produces = APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<StreamingResponseBody> search(@RequestParam(required = false) final String name,
-                                                        @RequestParam(required = false) final Boolean strict,
-                                                        @RequestParam(required = false) final String path) {
+            @RequestParam(required = false) final Boolean strict, @RequestParam(required = false) final String path) {
         try {
             final GenericCommand<InputStream> searchFolders = getCommand(SearchFolders.class, name, strict, path);
             return CommandHelper.toStreaming(searchFolders);
@@ -191,9 +194,8 @@ public class FolderAPI extends APIService {
         final Stream<Folder> folders = toStream(Folder.class, mapper, commandListFolders);
 
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
-        final Stream<PreparationListItemDTO> preparations =
-                toStream(PreparationDTO.class, mapper, listPreparations) //
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
 
         return new PreparationsByFolder(folders, preparations);
     }

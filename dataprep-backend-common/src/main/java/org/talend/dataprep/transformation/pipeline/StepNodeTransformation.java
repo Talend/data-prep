@@ -127,7 +127,6 @@ class StepNodeTransformation extends Visitor {
         State process(Node node);
     }
 
-
     /**
      * Choose between 'default' mode (no action to take) and 'step' mode (create StepNode).
      */
@@ -182,6 +181,7 @@ class StepNodeTransformation extends Visitor {
         private final Node previous;
 
         private final String step;
+
         private String parentStep;
 
         private StepState(Node previous, String step, String parentStep) {
@@ -197,7 +197,8 @@ class StepNodeTransformation extends Visitor {
                 final NodeCopy copy = new NodeCopy();
                 node.accept(copy);
 
-                final StepNode stepNode = new StepNode(step, stepRowMetadataSupplier.apply(parentStep), copy.getCopy(), copy.getLastNode());
+                final StepNode stepNode = new StepNode(step, stepRowMetadataSupplier.apply(parentStep), copy.getCopy(),
+                        copy.getLastNode());
                 // and plug the previous link to the new StepNode
                 ofNullable(previous).ifPresent(n -> n.setLink(new BasicLink(stepNode)));
                 builder.to(stepNode);

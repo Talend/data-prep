@@ -48,10 +48,8 @@ public class ActionTestWorkbench {
         test(input, null, actionRegistry, actions);
     }
 
-    public static void test(Collection<DataSetRow> input,
-                            AnalyzerService analyzerService,
-                            ActionRegistry actionRegistry,
-                            RunnableAction... actions) {
+    public static void test(Collection<DataSetRow> input, AnalyzerService analyzerService,
+            ActionRegistry actionRegistry, RunnableAction... actions) {
         final List<RunnableAction> allActions = new ArrayList<>();
         Collections.addAll(allActions, actions);
 
@@ -62,7 +60,8 @@ public class ActionTestWorkbench {
         dataSet.setMetadata(dataSetMetadata);
         dataSet.setRecords(input.stream());
         final TestOutputNode outputNode = new TestOutputNode(input);
-        Pipeline pipeline = Pipeline.Builder.builder() //
+        Pipeline pipeline = Pipeline.Builder
+                .builder() //
                 .withActionRegistry(actionRegistry)
                 .withInitialMetadata(rowMetadata, true) //
                 .withActions(allActions) //

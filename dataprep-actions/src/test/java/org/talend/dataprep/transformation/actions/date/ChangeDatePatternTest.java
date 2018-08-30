@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.date;
 
@@ -63,7 +63,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(this.getClass().getResourceAsStream("changeDatePatternAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(this.getClass().getResourceAsStream("changeDatePatternAction.json"));
     }
 
     @Test
@@ -97,7 +98,6 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.DATE.getDisplayName(Locale.US)));
     }
 
-
     @Test
     public void should_accept_column() {
         assertTrue(action.acceptField(getColumn(Type.DATE)));
@@ -126,7 +126,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         missingParameters.put("column_id", "");
 
         //when
-        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry, factory.create(action, missingParameters));
+        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry,
+                factory.create(action, missingParameters));
     }
 
     @Test(expected = TalendRuntimeException.class)
@@ -137,7 +138,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         missingParameters.put(ChangeDatePattern.NEW_PATTERN, "toto");
 
         //when
-        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry, factory.create(action, missingParameters));
+        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry,
+                factory.create(action, missingParameters));
     }
 
     @Test(expected = TalendRuntimeException.class)
@@ -147,7 +149,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         insufficientParams.put("column_id", "0000");
 
         //when
-        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry, factory.create(action, insufficientParams));
+        ActionTestWorkbench.test(new DataSetRow(Collections.emptyMap()), actionRegistry,
+                factory.create(action, insufficientParams));
     }
 
     @Test
@@ -155,17 +158,20 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row1 = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("04/25/1999").type(Type.DATE).name("last update").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING).name("recipe")) //
                 .build();
         final DataSetRow row2 = builder() //
                 .with(value("tata").type(Type.STRING).name("recipe")) //
-                .with(value("01/22/2018").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("01/22/2018").type(Type.DATE).name("last update").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
                 .build();
         final DataSetRow row3 = builder() //
                 .with(value("tata").type(Type.STRING).name("recipe")) //
-                .with(value("22/01/2018").type(Type.DATE).name("last update").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("22/01/2018").type(Type.DATE).name("last update").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
                 .build();
         parameters.put(CREATE_NEW_COLUMN, "true");
@@ -207,7 +213,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("").type(Type.STRING).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.DATE).name("last update")) //
                 .build();
         parameters.put(CREATE_NEW_COLUMN, "true");
@@ -225,7 +232,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("04/25/1999").type(Type.STRING).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.DATE).name("last update")) //
                 .build();
 
@@ -291,7 +299,10 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("tips")) //
-                .with(value("04/25/1999").type(Type.DATE).name("date").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("04/25/1999")
+                        .type(Type.DATE)
+                        .name("date")
+                        .statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING).name("test")) //
                 .build();
 
@@ -299,7 +310,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final List<PatternFrequency> patternFrequencies = row.getRowMetadata() //
+        final List<PatternFrequency> patternFrequencies = row
+                .getRowMetadata() //
                 .getById("0001") //
                 .getStatistics() //
                 .getPatternFrequencies();
@@ -312,7 +324,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("04/25/1999").type(Type.DATE).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.STRING).name("last update")) //
                 .build();
         parameters.put(CREATE_NEW_COLUMN, "true");
@@ -321,7 +334,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        final List<PatternFrequency> patternFrequencies = row.getRowMetadata() //
+        final List<PatternFrequency> patternFrequencies = row
+                .getRowMetadata() //
                 .getById("0003") //
                 .getStatistics() //
                 .getPatternFrequencies();
@@ -333,7 +347,8 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // given
         final DataSetRow row = builder() //
                 .with(value("toto").type(Type.STRING).name("recipe")) //
-                .with(value("04-25-09").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("04-25-09").type(Type.STRING).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .with(value("tata").type(Type.DATE).name("last update")) //
                 .build();
 
@@ -375,7 +390,6 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         final DataSetRow expectedRow = getRow("toto", "Apr-25-09", "tata");
         assertEquals(expectedRow.values(), row.values());
     }
-
 
     /**
      * @see <a href="https://jira.talendforge.org/browse/TDP-1657">Jira TDP-1657</a>
@@ -422,19 +436,22 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         // row 1
         final DataSetRow row1 = builder() //
                 .with(value("David").type(Type.STRING).name("recipe")) //
-                .with(value("6/12/2015 0:01").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("6/12/2015 0:01").type(Type.STRING).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .build();
 
         // row 2
         final DataSetRow row2 = builder() //
                 .with(value("David").type(Type.STRING).name("recipe")) //
-                .with(value("12/14/2015 1:18 AM").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("12/14/2015 1:18 AM").type(Type.STRING).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .build();
 
         // row 3
         final DataSetRow row3 = builder() //
                 .with(value("James").type(Type.STRING).name("recipe")) //
-                .with(value("9-oct-2016").type(Type.STRING).name("recipe").statistics(getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
+                .with(value("9-oct-2016").type(Type.STRING).name("recipe").statistics(
+                        getDateTestJsonAsStream("statistics_MM_dd_yyyy.json"))) //
                 .build();
 
         final Map<String, String> parameters = new HashMap<>();
@@ -505,6 +522,5 @@ public class ChangeDatePatternTest extends BaseDateTest<ChangeDatePattern> {
         final DataSetRow expectedRow = getRow("toto", "", "tata");
         assertEquals(expectedRow.values(), row.values());
     }
-
 
 }

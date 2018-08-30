@@ -58,7 +58,8 @@ public class Defaults {
             if (e instanceof RuntimeException) {
                 return (RuntimeException) e;
             } else {
-                return new TDPException(CommonErrorCodes.UNEXPECTED_SERVICE_EXCEPTION, e, build().put("message", e.getMessage()));
+                return new TDPException(CommonErrorCodes.UNEXPECTED_SERVICE_EXCEPTION, e,
+                        build().put("message", e.getMessage()));
             }
         };
     }
@@ -134,7 +135,8 @@ public class Defaults {
      * @param <T> The result type
      * @return The response converted as <code>T</code>.
      */
-    public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper, Class<T> clazz) {
+    public static <T> BiFunction<HttpRequestBase, HttpResponse, T> convertResponse(ObjectMapper mapper,
+            Class<T> clazz) {
         return (request, response) -> {
             try (final InputStream content = response.getEntity().getContent()) {
                 final String contentAsString = IOUtils.toString(content, UTF_8);
@@ -210,7 +212,8 @@ public class Defaults {
         };
     }
 
-    public static <T, S> BiFunction<HttpRequestBase, HttpResponse, S> iterate(Class<T> clazz, ObjectMapper mapper, Function<Iterator<T>, S> convert) {
+    public static <T, S> BiFunction<HttpRequestBase, HttpResponse, S> iterate(Class<T> clazz, ObjectMapper mapper,
+            Function<Iterator<T>, S> convert) {
         return (request, response) -> {
             try (InputStream content = response.getEntity().getContent()) {
                 try (MappingIterator<T> objects = mapper.readerFor(clazz).readValues(content)) {

@@ -66,41 +66,59 @@ public class HtmlSchemaParserTest extends AbstractSchemaTestUtils {
             List<ColumnMetadata> columnMetadatas = result.getSheetContents().get(0).getColumnMetadatas();
             Assertions.assertThat(columnMetadatas).isNotNull().isNotEmpty().hasSize(7);
 
-            Assertions.assertThat(columnMetadatas.get(0)) //
+            Assertions
+                    .assertThat(columnMetadatas.get(0)) //
                     .isEqualToComparingOnlyGivenFields(
-                            ColumnMetadata.Builder.column() //
-                                    .type(Type.STRING).id(0).name("UID").build(), //
+                            ColumnMetadata.Builder
+                                    .column() //
+                                    .type(Type.STRING)
+                                    .id(0)
+                                    .name("UID")
+                                    .build(), //
                             "id", "name", "type");
 
-            Assertions.assertThat(columnMetadatas.get(1)) //
+            Assertions
+                    .assertThat(columnMetadatas.get(1)) //
                     .isEqualToComparingOnlyGivenFields(
-                            ColumnMetadata.Builder.column() //
-                                    .type(Type.STRING).id(1).name("Team Member: Name").build(), //
+                            ColumnMetadata.Builder
+                                    .column() //
+                                    .type(Type.STRING)
+                                    .id(1)
+                                    .name("Team Member: Name")
+                                    .build(), //
                             "id", "name", "type");
 
-            Assertions.assertThat(columnMetadatas.get(2)) //
+            Assertions
+                    .assertThat(columnMetadatas.get(2)) //
                     .isEqualToComparingOnlyGivenFields(
-                            ColumnMetadata.Builder.column() //
-                                    .type(Type.STRING).id(2).name("Country").build(), //
+                            ColumnMetadata.Builder
+                                    .column() //
+                                    .type(Type.STRING)
+                                    .id(2)
+                                    .name("Country")
+                                    .build(), //
                             "id", "name", "type");
         }
     }
 
     @Test
     public void should_not_accept_csv_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("toto").formatFamilyId("formatGuess#csv").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("toto").formatFamilyId("formatGuess#csv").build();
         assertFalse(parser.accept(metadata));
     }
 
     @Test
     public void should_not_accept_xls_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#xls").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#xls").build();
         assertFalse(parser.accept(metadata));
     }
 
     @Test
     public void should_not_accept_html_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#html").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#html").build();
         assertFalse(parser.accept(metadata));
     }
 

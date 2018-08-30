@@ -52,7 +52,8 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
 
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
-    private static final String DEFAULT_DATE_VALUE = DEFAULT_FORMATTER.format(LocalDateTime.of(1970, Month.JANUARY, 1, 10, 0));
+    private static final String DEFAULT_DATE_VALUE =
+            DEFAULT_FORMATTER.format(LocalDateTime.of(1970, Month.JANUARY, 1, 10, 0));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFillWith.class);
 
@@ -122,13 +123,15 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
         case DOUBLE:
         case FLOAT:
         case STRING:
-            constantParameter = parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
+            constantParameter = parameter(locale)
+                    .setName(DEFAULT_VALUE_PARAMETER)
                     .setType(STRING)
                     .setDefaultValue(EMPTY)
                     .build(this);
             break;
         case INTEGER:
-            constantParameter = parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
+            constantParameter = parameter(locale)
+                    .setName(DEFAULT_VALUE_PARAMETER)
                     .setType(INTEGER)
                     .setDefaultValue("0")
                     .build(this);
@@ -142,7 +145,8 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
                     .build(this);
             break;
         case DATE:
-            constantParameter = parameter(locale).setName(DEFAULT_VALUE_PARAMETER)
+            constantParameter = parameter(locale)
+                    .setName(DEFAULT_VALUE_PARAMETER)
                     .setType(DATE)
                     .setDefaultValue(DEFAULT_DATE_VALUE)
                     .setCanBeBlank(false)
@@ -182,8 +186,9 @@ public abstract class AbstractFillWith extends AbstractActionMetadata implements
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && !parameters.containsKey(DEFAULT_VALUE_PARAMETER)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", DEFAULT_VALUE_PARAMETER));
-        } else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE) && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
-                || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
+        } else if (!parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)
+                && (!parameters.containsKey(SELECTED_COLUMN_PARAMETER)
+                        || rowMetadata.getById(parameters.get(SELECTED_COLUMN_PARAMETER)) == null)) {
             throw new TalendRuntimeException(ActionErrorCodes.BAD_ACTION_PARAMETER,
                     ExceptionContext.build().put("paramName", SELECTED_COLUMN_PARAMETER));
         }

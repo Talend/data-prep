@@ -81,6 +81,6 @@ public class PreparationStepMarkerTest {
 
         // Then
         assertEquals(StepMarker.Result.INTERRUPTED, result);
-        verify(repository, never()).add(Matchers.<Collection<Step>>any());
+        verify(repository, never()).add(Matchers.<Collection<Step>> any());
     }
 }

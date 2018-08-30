@@ -93,9 +93,8 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest<ExtractNumber> {
         assertThat(action.getCategory(Locale.US), is(ActionCategory.SPLIT.getDisplayName(Locale.US)));
     }
 
-
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -190,12 +189,13 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest<ExtractNumber> {
         // when
         ActionTestWorkbench.test(Collections.singletonList(row), //
                 analyzerService, // Test requires some analysis in asserts
-                actionRegistry,
-                factory.create(action, parameters));
+                actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
+        Assertions
+                .assertThat(row.getRowMetadata().getColumns()) //
+                .isNotEmpty()
+                .hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //
@@ -260,8 +260,10 @@ public class ExtractNumberTest extends AbstractMetadataBaseTest<ExtractNumber> {
                 factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.getRowMetadata().getColumns()) //
-                .isNotEmpty().hasSize(2) //
+        Assertions
+                .assertThat(row.getRowMetadata().getColumns()) //
+                .isNotEmpty()
+                .hasSize(2) //
                 .contains(ColumnMetadata.Builder //
                         .column() //
                         .name("0000" + "_number") //

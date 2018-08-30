@@ -47,17 +47,24 @@ public abstract class AbstractMathOneParameterAction extends AbstractMathAction 
     public List<Parameter> getParameters(Locale locale) {
         List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(SelectParameter.selectParameter(locale) //
+        parameters.add(SelectParameter
+                .selectParameter(locale) //
                 .name(MODE_PARAMETER) //
-                .item(CONSTANT_MODE, CONSTANT_MODE, Parameter.parameter(locale).setName(CONSTANT_VALUE)
-                        .setType(ParameterType.STRING)
-                        .setDefaultValue(StringUtils.EMPTY)
-                        .build(this)) //
-                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE, Parameter.parameter(locale).setName(SELECTED_COLUMN_PARAMETER)
-                        .setType(ParameterType.COLUMN)
-                        .setDefaultValue(StringUtils.EMPTY)
-                        .setCanBeBlank(false)
-                        .build(this)) //
+                .item(CONSTANT_MODE, CONSTANT_MODE,
+                        Parameter
+                                .parameter(locale)
+                                .setName(CONSTANT_VALUE)
+                                .setType(ParameterType.STRING)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .build(this)) //
+                .item(OTHER_COLUMN_MODE, OTHER_COLUMN_MODE,
+                        Parameter
+                                .parameter(locale)
+                                .setName(SELECTED_COLUMN_PARAMETER)
+                                .setType(ParameterType.COLUMN)
+                                .setDefaultValue(StringUtils.EMPTY)
+                                .setCanBeBlank(false)
+                                .build(this)) //
                 .defaultValue(CONSTANT_MODE) //
                 .build(this));
 

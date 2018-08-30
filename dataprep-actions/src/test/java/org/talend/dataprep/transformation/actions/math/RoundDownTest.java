@@ -56,7 +56,8 @@ public class RoundDownTest extends AbstractRoundTest<RoundDownReal> {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(RoundDownTest.class.getResourceAsStream("roundDownAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(RoundDownTest.class.getResourceAsStream("roundDownAction.json"));
     }
 
     @Test

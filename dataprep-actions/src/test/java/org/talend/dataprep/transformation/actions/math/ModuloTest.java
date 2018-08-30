@@ -94,10 +94,14 @@ public class ModuloTest extends AbstractMetadataBaseTest<Modulo> {
         assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("-10"), new BigDecimal("10")));
         assertEquals(new BigDecimal("0"), action.modulo(new BigDecimal("-10"), new BigDecimal("-10")));
 
-        assertEquals(new BigDecimal("0.888888898090093"), action.modulo(new BigDecimal("-1.234567891011121"), new BigDecimal("2.12345678910121415")));
-        assertEquals(new BigDecimal("0.123456789101112"), action.modulo(new BigDecimal("0.123456789101112"), new BigDecimal("2.12345678910121415")));
-        assertEquals(new BigDecimal("-1.234567891011121"), action.modulo(new BigDecimal("-1.234567891011121"), new BigDecimal("-7.91012141512345678")));
-        assertEquals(new BigDecimal("-5.070615265797878"), action.modulo(new BigDecimal("2.839506149325579"), new BigDecimal("-7.91012141512345678")));
+        assertEquals(new BigDecimal("0.888888898090093"),
+                action.modulo(new BigDecimal("-1.234567891011121"), new BigDecimal("2.12345678910121415")));
+        assertEquals(new BigDecimal("0.123456789101112"),
+                action.modulo(new BigDecimal("0.123456789101112"), new BigDecimal("2.12345678910121415")));
+        assertEquals(new BigDecimal("-1.234567891011121"),
+                action.modulo(new BigDecimal("-1.234567891011121"), new BigDecimal("-7.91012141512345678")));
+        assertEquals(new BigDecimal("-5.070615265797878"),
+                action.modulo(new BigDecimal("2.839506149325579"), new BigDecimal("-7.91012141512345678")));
     }
 
     @Override

@@ -95,8 +95,10 @@ class ActionsStaticProfiler {
                     valueModifiedColumns.add(action.getParameters().get(COLUMN_ID.getKey()));
                     // ... then add all column parameter (COLUMN_ID is string, not column)
                     final List<Parameter> parameters = actionMetadata.getParameters(Locale.US);
-                    valueModifiedColumns.addAll(parameters.stream() //
-                            .filter(parameter -> ParameterType.valueOf(parameter.getType().toUpperCase()) == ParameterType.COLUMN) //
+                    valueModifiedColumns.addAll(parameters
+                            .stream() //
+                            .filter(parameter -> ParameterType
+                                    .valueOf(parameter.getType().toUpperCase()) == ParameterType.COLUMN) //
                             .map(parameter -> action.getParameters().get(parameter.getName())) //
                             .collect(Collectors.toList()));
                     break;
@@ -128,8 +130,8 @@ class ActionsStaticProfiler {
         // only the columns with metadata change or value changes need to re-evaluate invalids
         Predicate<String> filterForInvalidAnalysis = new FilterForInvalidAnalysis(filterForFullAnalysis, metadataModifiedColumns, invalidNeededColumns);
 
-        return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis, filterForInvalidAnalysis,
-                filterForInvalidAnalysis, metadataByAction);
+        return new ActionsProfile(needFullAnalysis, needOnlyInvalidAnalysis, filterForFullAnalysis,
+                filterForInvalidAnalysis, filterForInvalidAnalysis, metadataByAction);
     }
 
     private static boolean isCreateColumnParameterOn(Action action) {

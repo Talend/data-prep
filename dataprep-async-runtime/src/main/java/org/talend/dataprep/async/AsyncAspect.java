@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,11 +77,13 @@ public class AsyncAspect {
         String executionId = getExecutionId(pjp);
         AsyncExecution asyncExecution = repository.get(executionId);
 
-        if(asyncExecution == null || asyncExecution.getStatus() != AsyncExecution.Status.RUNNING) {
+        if (asyncExecution == null || asyncExecution.getStatus() != AsyncExecution.Status.RUNNING) {
             // the method is not running actually
-            if(executeAsynchronously(pjp) || (asyncExecution != null && asyncExecution.getStatus() == AsyncExecution.Status.NEW)){
+            if (executeAsynchronously(pjp)
+                    || (asyncExecution != null && asyncExecution.getStatus() == AsyncExecution.Status.NEW)) {
                 // we need to launch it asynchronously or asyncMethod is on NEW status (we can  resume it)
-                AsyncExecution future = scheduleAsynchroneTask(pjp, asyncExecution != null && asyncExecution.getStatus() == AsyncExecution.Status.NEW);
+                AsyncExecution future = scheduleAsynchroneTask(pjp,
+                        asyncExecution != null && asyncExecution.getStatus() == AsyncExecution.Status.NEW);
                 LOGGER.debug("Scheduling done, Redirecting to execution queue...");
 
                 // return at once with an HTTP 202 + location to get the progress
@@ -104,7 +107,10 @@ public class AsyncAspect {
     private void set202HeaderInformation(AsyncExecution future) {
         HttpResponseContext.status(HttpStatus.ACCEPTED);
         String statusCheckURL = generateLocationUrl(future);
-        HttpResponseContext.header("Location", statusCheckURL);
+        HttpResponseContext.header(HttpHeaders.LOCATION, statusCheckURL);
+        // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.37
+        // Duration in seconds before a retry. Value is 1s because it is the current front-side wait time
+        HttpResponseContext.header(HttpHeaders.RETRY_AFTER, "1");
     }
 
     private AsyncExecution scheduleAsynchroneTask(ProceedingJoinPoint pjp, boolean resumeExistingAsyncExecution) {
@@ -136,7 +142,6 @@ public class AsyncAspect {
         }
         return statusCheckURL;
     }
-
 
     /**
      * Wrap the pjp result into a callable to be able to store the latter in a task executor.
@@ -175,8 +180,8 @@ public class AsyncAspect {
         Method m = ms.getMethod();
         final AsyncOperation asyncOperationAnnotation = m.getAnnotation(AsyncOperation.class);
 
-        final Class<? extends ExecutionIdGenerator> executionIdGeneratorClass = asyncOperationAnnotation
-                .executionIdGeneratorClass();
+        final Class<? extends ExecutionIdGenerator> executionIdGeneratorClass =
+                asyncOperationAnnotation.executionIdGeneratorClass();
         try {
             return executionIdGeneratorClass.newInstance().getExecutionId(pjp);
         } catch (Exception e) {
@@ -204,7 +209,8 @@ public class AsyncAspect {
                 final GroupIdGenerator generatorBean = applicationContext.getBean(generatorClass);
                 return generatorBean.getGroupId(pjp);
             } catch (Exception e) {
-                LOGGER.warn("could not get the async group id form {} because {}, let's try with the group id generator class",
+                LOGGER.warn(
+                        "could not get the async group id form {} because {}, let's try with the group id generator class",
                         pjp.toLongString(), e);
             }
         }
@@ -215,13 +221,13 @@ public class AsyncAspect {
             final GroupIdGenerator idGenerator = generatorClass.newInstance();
             return idGenerator.getGroupId(pjp);
         } catch (Exception e) {
-            LOGGER.warn("could not get the async group id form {} because {}, let's try with the group id generator class",
+            LOGGER.warn(
+                    "could not get the async group id form {} because {}, let's try with the group id generator class",
                     pjp.toLongString(), e);
         }
 
         return null;
     }
-
 
     /**
      * Return if we need to execute the method asynchronously by calling the conditionalClass definined on the annotation.
@@ -257,6 +263,5 @@ public class AsyncAspect {
         Object[] args = AnnotationUtils.extractAsyncParameter(pjp);
         return resultUrlGenerator.generateResultUrl(args);
     }
-
 
 }

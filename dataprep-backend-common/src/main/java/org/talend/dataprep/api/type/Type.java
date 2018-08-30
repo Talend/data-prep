@@ -163,10 +163,7 @@ public enum Type implements Serializable {
             throw new IllegalArgumentException("Name cannot be null.");
         }
 
-        return ANY.list().stream()
-                .filter(type -> type.getName().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(STRING);
+        return ANY.list().stream().filter(type -> type.getName().equalsIgnoreCase(name)).findFirst().orElse(STRING);
     }
 
     /**

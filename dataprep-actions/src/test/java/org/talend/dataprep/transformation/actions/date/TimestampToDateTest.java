@@ -72,7 +72,7 @@ public class TimestampToDateTest extends BaseDateTest<TimestampToDate> {
     }
 
     @Override
-    protected CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.VISIBLE_ENABLED;
     }
 
@@ -196,7 +196,8 @@ public class TimestampToDateTest extends BaseDateTest<TimestampToDate> {
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -241,7 +242,8 @@ public class TimestampToDateTest extends BaseDateTest<TimestampToDate> {
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         // then
         assertEquals(expected, rowMetadata.getColumns());

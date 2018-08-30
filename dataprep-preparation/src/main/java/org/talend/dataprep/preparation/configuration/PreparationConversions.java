@@ -170,12 +170,14 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                     .filter(column -> column.getId().equals(parameters.get(ImplicitParameters.COLUMN_ID.getKey())))
                     .findFirst()
                     .orElse(null) == null) {
-                filterColumns.addAll(rowMetadata
-                        .getColumns()
-                        .stream()
-                        .filter(column -> column.getId().equals(
-                                parameters.get(ImplicitParameters.COLUMN_ID.getKey())))
-                        .collect(Collectors.toList()));
+                filterColumns
+                        .addAll(rowMetadata
+                                .getColumns()
+                                .stream()
+                                .filter(column -> column
+                                        .getId()
+                                        .equals(parameters.get(ImplicitParameters.COLUMN_ID.getKey())))
+                                .collect(Collectors.toList()));
             }
             action.setFilterColumns(filterColumns);
         }
@@ -257,8 +259,9 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                                 // rename for example)
                                 if (filterColumns
                                         .stream()
-                                        .filter(column -> parameters.get(ImplicitParameters.COLUMN_ID.getKey()).equals(
-                                                column.getId()))
+                                        .filter(column -> parameters
+                                                .get(ImplicitParameters.COLUMN_ID.getKey())
+                                                .equals(column.getId()))
                                         .findFirst()
                                         .orElse(null) == null) {
                                     filterColumns.addAll(stepRowMetadata
@@ -282,8 +285,9 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                     boolean allowDistributedRun = true;
                     for (Action action : actions) {
                         final ActionDefinition actionDefinition = actionRegistry.get(action.getName());
-                        if (actionDefinition.getBehavior(action).contains(
-                                ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
+                        if (actionDefinition
+                                .getBehavior(action)
+                                .contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED)) {
                             allowDistributedRun = false;
                             break;
                         }
@@ -299,15 +303,16 @@ public class PreparationConversions extends BeanConversionServiceWrapper {
                                 "No action metadata available, unable to serialize action metadata for preparation {}.",
                                 source.id());
                     } else {
-                        List<ActionForm> actionDefinitions = actions
-                                .stream() //
-                                .map(a -> actionRegistry
-                                        .get(a.getName()) //
-                                        .adapt(ScopeCategory
-                                                .from(a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
-                                .map(a -> a.getActionForm(getLocale())) //
-                                .map(PreparationConversions::disallowColumnCreationChange) //
-                                .collect(Collectors.toList());
+                        List<ActionForm> actionDefinitions =
+                                actions
+                                        .stream() //
+                                        .map(a -> actionRegistry
+                                                .get(a.getName()) //
+                                                .adapt(ScopeCategory.from(
+                                                        a.getParameters().get(ImplicitParameters.SCOPE.getKey())))) //
+                                        .map(a -> a.getActionForm(getLocale())) //
+                                        .map(PreparationConversions::disallowColumnCreationChange) //
+                                        .collect(Collectors.toList());
                         target.setMetadata(actionDefinitions);
                     }
                 }

@@ -52,8 +52,9 @@ public class ClusterParameters implements DynamicParameters {
         // see SoundexMatcher on DQ side
         clusterAnalyzer.end();
         // Build results
-        final Clusters.Builder builder = Clusters.builder().title(DataprepBundle.message("parameter.textclustering.title.1"))
-                .title(DataprepBundle.message("parameter.textclustering.title.2"));
+        final Clusters.Builder builder =
+                Clusters.builder().title(DataprepBundle.message("parameter.textclustering.title.1")).title(
+                        DataprepBundle.message("parameter.textclustering.title.2"));
         final StringClusters result = clusterAnalyzer.getResult().get(0);
         for (StringClusters.StringCluster cluster : result) {
             // String clustering may cluster null / empty values, however not interesting for data prep.
@@ -62,8 +63,12 @@ public class ClusterParameters implements DynamicParameters {
                 for (String value : cluster.originalValues) {
                     currentCluster.parameter(new ConstantParameter(value, ParameterType.BOOLEAN));
                 }
-                currentCluster.replace(Parameter.parameter(LocaleContextHolder.getLocale()).setName("replaceValue")
-                        .setType(ParameterType.STRING).setDefaultValue(cluster.survivedValue).build(null));
+                currentCluster.replace(Parameter
+                        .parameter(LocaleContextHolder.getLocale())
+                        .setName("replaceValue")
+                        .setType(ParameterType.STRING)
+                        .setDefaultValue(cluster.survivedValue)
+                        .build(null));
                 builder.cluster(currentCluster);
             }
         }

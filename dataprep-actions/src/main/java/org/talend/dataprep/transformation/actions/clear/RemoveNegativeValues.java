@@ -27,7 +27,6 @@ import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
 import org.talend.dataquality.statistics.type.TypeInferenceUtils;
 
-
 @Action(RemoveNegativeValues.ACTION_NAME)
 public class RemoveNegativeValues extends AbstractClear implements ColumnAction {
 

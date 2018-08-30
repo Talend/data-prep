@@ -95,7 +95,9 @@ public class DataSetRow implements Cloneable, Serializable {
         for (Map.Entry<String, String> entry : values.entrySet()) {
             set(entry.getKey(), entry.getValue());
         }
-        List<ColumnMetadata> columns = values.keySet().stream() //
+        List<ColumnMetadata> columns = values
+                .keySet()
+                .stream() //
                 .map(columnName -> ColumnMetadata.Builder.column().name(columnName).type(Type.STRING).build()) //
                 .collect(Collectors.toList());
         rowMetadata = new RowMetadata(columns);
@@ -296,7 +298,8 @@ public class DataSetRow implements Cloneable, Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         DataSetRow that = (DataSetRow) o;
-        return Objects.equals(deleted, that.deleted) && Objects.equals(values, that.values) && Objects.equals(rowId, that.rowId);
+        return Objects.equals(deleted, that.deleted) && Objects.equals(values, that.values)
+                && Objects.equals(rowId, that.rowId);
     }
 
     /**
@@ -332,7 +335,8 @@ public class DataSetRow implements Cloneable, Serializable {
         if (columns.isEmpty()) {
             return this;
         }
-        if (columns.size() < values.size() && (!values.containsKey(TDP_INVALID) || columns.size() + 1 < values().size())) {
+        if (columns.size() < values.size()
+                && (!values.containsKey(TDP_INVALID) || columns.size() + 1 < values().size())) {
             throw new IllegalArgumentException("Expected " + values.size() + " columns but got " + columns.size());
         }
 
@@ -424,8 +428,11 @@ public class DataSetRow implements Cloneable, Serializable {
     }
 
     public DataSetRow filter(List<ColumnMetadata> filteredColumns) {
-        final Set<String> columnsToKeep = filteredColumns.stream().map(ColumnMetadata::getId).collect(Collectors.toSet());
-        final Set<String> columnsToDelete = values.entrySet().stream() //
+        final Set<String> columnsToKeep =
+                filteredColumns.stream().map(ColumnMetadata::getId).collect(Collectors.toSet());
+        final Set<String> columnsToDelete = values
+                .entrySet()
+                .stream() //
                 .filter(e -> !columnsToKeep.contains(e.getKey())) //
                 .map(Map.Entry::getKey) //
                 .collect(Collectors.toSet());

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
 
@@ -79,7 +79,8 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
     public void test_apply_in_newcolumn() {
         // given
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
-        DataSetRow expectedRow = getRow("Wait for it...", "The value that gets cut !", "Done !", "value that gets cut !");
+        DataSetRow expectedRow =
+                getRow("Wait for it...", "The value that gets cut !", "Done !", "value that gets cut !");
 
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "true");
 
@@ -112,8 +113,8 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", " value that gets cut !", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
-                SplitTest.class.getResourceAsStream("cutAction.json"));
+        Map<String, String> regexpParameters =
+                ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", generateJson("The", "starts_with"));
 
         // when
@@ -123,15 +124,14 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
         assertEquals(expected, row);
     }
 
-
     @Test
     public void should_apply_on_column_ends_with() throws IOException {
         // given
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", "The value that gets ", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
-                SplitTest.class.getResourceAsStream("cutAction.json"));
+        Map<String, String> regexpParameters =
+                ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", generateJson("cut !", "ends_with"));
 
         // when
@@ -150,8 +150,8 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
         DataSetRow row = getRow("Wait for it...", "The value that (gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", "The value that gets cut !", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
-                SplitTest.class.getResourceAsStream("cutAction.json"));
+        Map<String, String> regexpParameters =
+                ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", generateJson("(", "contains"));
 
         // when
@@ -167,8 +167,8 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", " cut !", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
-                SplitTest.class.getResourceAsStream("cutAction.json"));
+        Map<String, String> regexpParameters =
+                ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", generateJson(".*gets", "regex"));
 
         // when
@@ -184,8 +184,8 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", "The value that gets cut !", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
-                SplitTest.class.getResourceAsStream("cutAction.json"));
+        Map<String, String> regexpParameters =
+                ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", generateJson("*", "regex"));
 
         // when
@@ -195,15 +195,14 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
         assertEquals(expected, row);
     }
 
-
     @Test
     public void test_TDP_958() throws IOException {
         // given
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", "The value that gets cut !", "Done !");
 
-        Map<String, String> regexpParameters = ActionMetadataTestUtils.parseParameters(
-                SplitTest.class.getResourceAsStream("cutAction.json"));
+        Map<String, String> regexpParameters =
+                ActionMetadataTestUtils.parseParameters(SplitTest.class.getResourceAsStream("cutAction.json"));
         regexpParameters.put("pattern", generateJson("", "regex"));
 
         // when
@@ -214,7 +213,7 @@ public class CutTest extends AbstractMetadataBaseTest<Cut> {
     }
 
     @Test
-    public void should_not_apply_on_column(){
+    public void should_not_apply_on_column() {
         // given
         DataSetRow row = getRow("Wait for it...", "The value that gets cut !", "Done !");
         DataSetRow expected = getRow("Wait for it...", "The value that gets cut !", "Done !");

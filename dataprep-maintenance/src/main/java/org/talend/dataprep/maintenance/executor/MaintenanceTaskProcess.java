@@ -15,7 +15,7 @@ public interface MaintenanceTaskProcess {
      * Execute maintenance task only if condition is TRUE
      */
     default void execute() {
-        if( this.condition().get()){
+        if (this.condition().get()) {
             this.performTask();
         }
     }

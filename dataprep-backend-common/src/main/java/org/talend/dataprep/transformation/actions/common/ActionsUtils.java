@@ -45,7 +45,9 @@ public class ActionsUtils {
     // For TDP-3798, add a checkbox for most actions to allow the user to choose if action is applied in place or if it
     // creates a new column:
     public static Parameter getColumnCreationParameter(Locale locale, boolean createNewColumnDefault) {
-        return Parameter.parameter(locale).setName(CREATE_NEW_COLUMN)
+        return Parameter
+                .parameter(locale)
+                .setName(CREATE_NEW_COLUMN)
                 .setType(BOOLEAN)
                 .setDefaultValue(createNewColumnDefault)
                 .setCanBeBlank(false)
@@ -58,7 +60,8 @@ public class ActionsUtils {
      *
      * @return the supplied parameter list with the column creation parameter
      */
-    public static List<Parameter> appendColumnCreationParameter(List<Parameter> parameters, Locale locale, boolean createNewColumnDefault) {
+    public static List<Parameter> appendColumnCreationParameter(List<Parameter> parameters, Locale locale,
+            boolean createNewColumnDefault) {
         parameters.add(getColumnCreationParameter(locale, createNewColumnDefault));
         return parameters;
     }
@@ -73,10 +76,12 @@ public class ActionsUtils {
         RowMetadata rowMetadata = context.getRowMetadata();
 
         context.evict(TARGET_COLUMN_CONTEXT_KEY);
-        context.get(TARGET_COLUMN_CONTEXT_KEY, r -> createNewColumnsImpl(context, additionalColumns, columnId, rowMetadata));
+        context.get(TARGET_COLUMN_CONTEXT_KEY,
+                r -> createNewColumnsImpl(context, additionalColumns, columnId, rowMetadata));
     }
 
-    private static Map<String, String> createNewColumnsImpl(ActionContext context, List<AdditionalColumn> additionalColumns, String columnId, RowMetadata rowMetadata) {
+    private static Map<String, String> createNewColumnsImpl(ActionContext context,
+            List<AdditionalColumn> additionalColumns, String columnId, RowMetadata rowMetadata) {
         final Map<String, String> cols = new HashMap<>();
         String nextId = columnId; // id of the column to put the new one after, initially the current column
         for (AdditionalColumn additionalColumn : additionalColumns) {

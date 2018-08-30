@@ -15,8 +15,8 @@ public class ConverterBasedPropertyEditor<T> extends PropertyEditorSupport {
 
     private static final Logger LOGGER = getLogger(ConverterBasedPropertyEditor.class);
 
-    private static final Converter<String, String> camelToSnakeCaseConverter = CaseFormat.LOWER_CAMEL
-            .converterTo(CaseFormat.UPPER_UNDERSCORE);
+    private static final Converter<String, String> camelToSnakeCaseConverter =
+            CaseFormat.LOWER_CAMEL.converterTo(CaseFormat.UPPER_UNDERSCORE);
 
     private final Function<String, T> converter;
 

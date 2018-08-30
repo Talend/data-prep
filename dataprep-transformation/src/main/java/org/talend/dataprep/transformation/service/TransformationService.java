@@ -347,7 +347,8 @@ public class TransformationService extends BaseTransformationService {
 
         // apply the aggregation
         try (InputStream contentToAggregate = getContentToAggregate(parameters);
-                JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
+                JsonParser parser =
+                        mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             return aggregationService.aggregate(parameters, dataSet);
         } catch (IOException e) {
@@ -681,7 +682,7 @@ public class TransformationService extends BaseTransformationService {
                 .filter(am -> am.acceptScope(COLUMN) && am.acceptField(column)) //
                 .map(am -> suggestionEngine.score(am, column)) //
                 .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not
-                                               // applicable)
+                // applicable)
                 .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
@@ -761,7 +762,7 @@ public class TransformationService extends BaseTransformationService {
     @Timed
     public Stream<ExportFormatMessage> getPreparationExportTypesForPreparation(@PathVariable String preparationId) {
         final PreparationDTO preparation = getPreparation(preparationId);
-        final DataSetMetadata metadata = datasetClient.getDataSetMetadata( preparation.getDataSetId());
+        final DataSetMetadata metadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
         return getPreparationExportTypesForDataSet(metadata.getId());
     }
 
@@ -877,8 +878,7 @@ public class TransformationService extends BaseTransformationService {
      * @return the preparation from the preparation service.
      */
     private PreparationDTO getPreparation(String preparationId) {
-        final PreparationSummaryGet details =
-                    applicationContext.getBean(PreparationSummaryGet.class, preparationId);
+        final PreparationSummaryGet details = applicationContext.getBean(PreparationSummaryGet.class, preparationId);
         return details.execute();
     }
 

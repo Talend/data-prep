@@ -88,8 +88,8 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
     }
 
     protected List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        ActionsUtils.AdditionalColumn newColumn = ActionsUtils.additionalColumn().withName(
-                context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER));
+        ActionsUtils.AdditionalColumn newColumn = ActionsUtils.additionalColumn()
+                .withName(context.getColumnName() + NEW_COLUMN_SEPARATOR + context.getParameters().get(TO_UNIT_PARAMETER));
 
         if (context.getParameters().get(TO_UNIT_PARAMETER).equals(COUNTRY_NUMBER)) {
             newColumn.withType(NUMERIC);
@@ -104,13 +104,9 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, CREATE_NEW_COLUMN_DEFAULT));
 
-        SelectParameter.SelectParameterBuilder builder = selectParameter(locale)
-                .item(COUNTRY_NAME, COUNTRY_NAME)
-                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2)
-                .item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
-                .item(COUNTRY_NUMBER, COUNTRY_NUMBER)
-                .canBeBlank(false)
-                .name(FROM_UNIT_PARAMETER);
+        SelectParameter.SelectParameterBuilder builder = selectParameter(locale).item(COUNTRY_NAME, COUNTRY_NAME)
+                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2).item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
+                .item(COUNTRY_NUMBER, COUNTRY_NUMBER).canBeBlank(false).name(FROM_UNIT_PARAMETER);
 
         if (columnType != null) {
             if (columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO2.getId())) {
@@ -127,13 +123,9 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         parameters.add(builder.build(this));
 
         SelectParameter.SelectParameterBuilder secondBuilder = selectParameter(locale)
-                .item(ENGLISH_COUNTRY_NAME, ENGLISH_COUNTRY_NAME)
-                .item(FRENCH_COUNTRY_NAME, FRENCH_COUNTRY_NAME)
-                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2)
-                .item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
-                .item(COUNTRY_NUMBER, COUNTRY_NUMBER)
-                .canBeBlank(false)
-                .name(TO_UNIT_PARAMETER);
+                .item(ENGLISH_COUNTRY_NAME, ENGLISH_COUNTRY_NAME).item(FRENCH_COUNTRY_NAME, FRENCH_COUNTRY_NAME)
+                .item(COUNTRY_CODE_ISO2, COUNTRY_CODE_ISO2).item(COUNTRY_CODE_ISO3, COUNTRY_CODE_ISO3)
+                .item(COUNTRY_NUMBER, COUNTRY_NUMBER).canBeBlank(false).name(TO_UNIT_PARAMETER);
         if (columnType != null) {
             if (columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO2.getId())
                     || columnType.contains(SemanticCategoryEnum.COUNTRY_CODE_ISO3.getId())) {
@@ -191,9 +183,7 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
         final String fromParameter = context.getParameters().get(FROM_UNIT_PARAMETER);
 
-        CountryInfo currentCountry = countryConversionMap.get(fromParameter).get(
-                Normalizer.normalize(columnValue.toLowerCase(), Normalizer.Form.NFD).replaceAll(NOT_ASCII_CHAR_PATTERN,
-                        StringUtils.EMPTY));
+        CountryInfo currentCountry = countryConversionMap.get(fromParameter).get(normalize(columnValue));
 
         if (currentCountry != null) {
             String toParameter = context.getParameters().get(TO_UNIT_PARAMETER);
@@ -231,13 +221,18 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         return new CountryConverter(semanticIds);
     }
 
+    public static String normalize(String input) {
+        return Normalizer.normalize(input.toLowerCase(), Normalizer.Form.NFD).replaceAll(NOT_ASCII_CHAR_PATTERN,
+                StringUtils.EMPTY);
+    }
+
     /**
      * This method will initialize the array of countries information.
      * We use the same source as DQ, so what is valid in default semantic type will be transform.
      *
      * We transform name in order to use normalize key (without accent) and to be case insensitive.
      */
-    private void initializeCountryConversionMap() {
+    static void initializeCountryConversionMap() {
         List<CountryInfo> info = new ArrayList<>();
 
         countryConversionMap = new HashMap<>();
@@ -255,23 +250,15 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
         }
 
         for (CountryInfo countryInfo : info) {
-            countryConversionMap
-                    .get(COUNTRY_NAME)
-                    .put(Normalizer
-                            .normalize(countryInfo.getEnglishName().toLowerCase(), Normalizer.Form.NFD)
-                            .replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY), countryInfo);
-            countryConversionMap
-                    .get(COUNTRY_NAME)
-                    .put(Normalizer
-                            .normalize(countryInfo.getFrenchName().toLowerCase(), Normalizer.Form.NFD)
-                            .replaceAll(NOT_ASCII_CHAR_PATTERN, StringUtils.EMPTY), countryInfo);
+            countryConversionMap.get(COUNTRY_NAME).put(normalize(countryInfo.getEnglishName()), countryInfo);
+            countryConversionMap.get(COUNTRY_NAME).put(normalize(countryInfo.getFrenchName()), countryInfo);
             countryConversionMap.get(COUNTRY_CODE_ISO2).put(countryInfo.getIso2().toLowerCase(), countryInfo);
             countryConversionMap.get(COUNTRY_CODE_ISO3).put(countryInfo.getIso3().toLowerCase(), countryInfo);
             countryConversionMap.get(COUNTRY_NUMBER).put(countryInfo.getNumber(), countryInfo);
         }
     }
 
-    class CountryInfo {
+    static class CountryInfo {
 
         private String englishName;
 
@@ -283,7 +270,7 @@ public class CountryConverter extends AbstractActionMetadata implements ColumnAc
 
         private String number;
 
-        public CountryInfo(String englishName, String frenchName, String iso2, String iso3, String number) {
+        protected CountryInfo(String englishName, String frenchName, String iso2, String iso3, String number) {
             this.englishName = englishName;
             this.frenchName = frenchName;
             this.iso2 = iso2;

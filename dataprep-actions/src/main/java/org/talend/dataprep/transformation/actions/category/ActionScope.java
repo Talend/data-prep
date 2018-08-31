@@ -40,7 +40,12 @@ public enum ActionScope {
     /**
      * Actions are showed only when filters are applied
      */
-    COLUMN_FILTERED;
+    COLUMN_FILTERED,
+
+    /**
+     * Actions are showed only when more than one column is selected
+     */
+    MULTI_COLUMN;
 
     /**
      * @return A "user friendly" name for the action scope.

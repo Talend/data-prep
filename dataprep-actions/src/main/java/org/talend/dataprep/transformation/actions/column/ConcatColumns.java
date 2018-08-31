@@ -14,9 +14,12 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import org.talend.dataprep.api.action.Action;
+import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
+import org.talend.dataprep.transformation.actions.category.ActionScope;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.MultiColumnsAction;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.talend.dataprep.api.type.Type.STRING;
 
@@ -40,6 +44,15 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
 
     private static final String NEW_COLUMN_NAME = "concatenate_columns";
 
+    private ScopeCategory scope;
+
+    public ConcatColumns() {
+        this(ScopeCategory.MULTI_COLUMNS);
+    }
+
+    public ConcatColumns(ScopeCategory scope) {
+        this.scope = scope;
+    }
 
     @Override
     public String getName() {
@@ -49,6 +62,14 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
     @Override
     public String getCategory(Locale locale) {
         return ActionCategory.COLUMNS.getDisplayName(locale);
+    }
+
+    @Override
+    public List<String> getActionScope() {
+        if (ScopeCategory.MULTI_COLUMNS.equals(this.scope)) {
+            return singletonList(ActionScope.MULTI_COLUMN.getDisplayName());
+        }
+        return emptyList();
     }
 
     @Override
@@ -94,6 +115,11 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
     private String getMetadataFromFirstColumn(String columnId) {
         String[] columnsId = extractColumnsId(columnId);
         return columnsId[0];
+    }
+
+    @Override
+    public ActionDefinition adapt(ScopeCategory scope) {
+        return new ConcatColumns(scope);
     }
 
 }

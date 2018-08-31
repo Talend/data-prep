@@ -100,6 +100,7 @@ import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -242,11 +243,17 @@ public class DataSetService extends BaseDataSetService {
         String userId = security.getUserId();
         final UserData userData = userDataRepository.get(userId);
 
-        Stream<DataSetMetadata> datasetList =
-                findDataset(sort, order, name, nameStrict, certified, favorite, limit, userData.getFavoritesDatasets());
+        Set<String> favorites = new HashSet<>();
+        if (userData != null) {
+            favorites = userData.getFavoritesDatasets();
+        }
 
+        Stream<DataSetMetadata> datasetList =
+                findDataset(sort, order, name, nameStrict, certified, favorite, limit, favorites);
+
+        Set<String> finalFavorites = favorites;
         return datasetList.map(p -> beanConversionService.convert(p, DatasetDTO.class,
-                datasetInjection.injectFavorite(userData.getFavoritesDatasets())));
+                datasetInjection.injectFavorite(finalFavorites)));
     }
 
     @RequestMapping(value = "/datasets/details", method = RequestMethod.GET)
@@ -270,8 +277,13 @@ public class DataSetService extends BaseDataSetService {
         String userId = security.getUserId();
         final UserData userData = userDataRepository.get(userId);
 
+        Set<String> favorites = new HashSet<>();
+        if (userData != null) {
+            favorites = userData.getFavoritesDatasets();
+        }
+
         Stream<DataSetMetadata> datasetList =
-                findDataset(sort, order, name, nameStrict, certified, favorite, limit, userData.getFavoritesDatasets());
+                findDataset(sort, order, name, nameStrict, certified, favorite, limit, favorites);
 
         return datasetList.map(m -> conversionService.convert(m, UserDataSetMetadata.class));
 

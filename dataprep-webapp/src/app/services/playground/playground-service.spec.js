@@ -1561,6 +1561,31 @@ describe('Playground Service', () => {
 				expect(PlaygroundService.appendStep).toHaveBeenCalledWith(actions);
 			}));
 
+			it('should create an append closure with multi_columns scope action', inject((PlaygroundService) => {
+				// given
+				const transformation = { name: 'tolowercase', actionScope: ['multi_columns'] };
+				const scope = 'multi_columns';
+				const params = {};
+				stateMock.playground.grid.selectedColumns = [{ id: '0001', name: 'firstname' }, {
+					id: '0002',
+					name: 'lastname'
+				}];
+				stateMock.playground.filter.applyTransformationOnFilters = false;
+
+				// when
+				const closure = PlaygroundService.createAppendStepClosure(transformation, scope);
+				closure(params);
+
+				// then
+				const expectedParams = {
+					scope: 'multi_columns',
+					column_id: ['0001', '0002'],
+					column_name: ['firstname', 'lastname'],
+				};
+				const actions = [{ action: 'tolowercase', parameters: expectedParams }];
+				expect(PlaygroundService.appendStep).toHaveBeenCalledWith(actions);
+			}));
+
 			it('should create an append closure with multi columns', inject((PlaygroundService) => {
 				// given
 				const transformation = { name: 'tolowercase' };

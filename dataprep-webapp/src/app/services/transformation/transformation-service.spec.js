@@ -425,6 +425,32 @@ describe('Transformation Service', () => {
             })
         );
 
+	    it('should fetch the transformations for the multi_columns scope',
+		    inject(($rootScope, TransformationService,
+		            TransformationCacheService, TransformationRestService) => {
+			    // given
+			    let result = null;
+			    const scope = 'column';
+			    const entity = { id: '0001' };
+			    spyOn(TransformationCacheService, 'getTransformations')
+				    .and
+				    .returnValue();
+			    stateMock.playground.grid.selectedColumns = ['0001', '0002'];
+
+			    // when
+			    TransformationService.getTransformations(scope, entity)
+				    .then((transformations) => {
+					    result = transformations;
+				    });
+			    $rootScope.$digest();
+
+			    // then
+			    expect(TransformationRestService.getTransformations.calls.count())
+				    .toBe(2);
+			    expect(result.allTransformations.length).toEqual(8);
+		    })
+	    );
+
         it('should put the transformations in cache',
             inject(($rootScope, TransformationService, TransformationCacheService) => {
                 // given

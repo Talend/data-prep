@@ -39,7 +39,7 @@ describe('Transformation Rest Service', () => {
                 parameters: [{ name: 'column_name', type: 'string', default: '' }],
             },
         ];
-        
+
         it('should get transformations on column scope', inject((RestURLs, TransformationRestService) => {
             // given
             const column = {
@@ -62,7 +62,7 @@ describe('Transformation Rest Service', () => {
             // then
             expect(response).toEqual(result);
         }));
-        
+
         it('should get transformations on line scope', inject((RestURLs, TransformationRestService) => {
             // given
             let response = null;
@@ -79,7 +79,24 @@ describe('Transformation Rest Service', () => {
             // then
             expect(response).toEqual(result);
         }));
-        
+
+	    it('should get transformations on multi_columns scope', inject((RestURLs, TransformationRestService) => {
+		    // given
+		    let response = null;
+		    $httpBackend
+			    .expectGET(RestURLs.transformUrl + '/actions/multi_columns')
+			    .respond(200, result);
+
+		    // when
+		    TransformationRestService.getTransformations('multi_columns')
+			    .then((resp) => { response = resp; });
+
+		    $httpBackend.flush();
+
+		    // then
+		    expect(response).toEqual(result);
+	    }));
+
         it('should get transformations on dataset scope', inject((RestURLs, TransformationRestService) => {
             // given
             let response = null;
@@ -97,7 +114,7 @@ describe('Transformation Rest Service', () => {
             expect(response).toEqual(result);
         }));
     });
-    
+
     describe('suggestions', () => {
         const result = [
             {

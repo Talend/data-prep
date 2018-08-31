@@ -49,8 +49,8 @@ Cayman Islands|Caïmans|KY|CYM|136|CYM|cj|GC| |1-345|CAY|CJ|48|CAY|KYD|CAYMAN I
 Central African Republic|Centrafricaine|CF|CAF|140|CAF|cx|CE|RCA|236|CTA|CT|49|CAF|XAF|CENTRAL AFRICAN REPUBLIC|0|CFA Franc BEAC|950|Yes
 Chad|Tchad|TD|TCD|148|TCD|cd|CD|TCH|235|CHA|CD|50|CHA|XAF|CHAD|0|CFA Franc BEAC|950|Yes
 Chile|Chili|CL|CHL|152|CHL|cl|CH|RCH|56|CHI|CI|51|CHI|CLP|CHILE|0|Chilean Peso|152|Yes
-China|Chine|CN|CHN|156|CHN|cc|CI| |86|CHN|CH|53|CHN|CNY|CHINA|2|Yuan Renminbi|156|Yes
 People's Republic of China|République populaire de Chine|CN|CHN|156|CHN|cc|CI| |86|CHN|CH|53|CHN|CNY|CHINA|2|Yuan Renminbi|156|Yes
+China|Chine|CN|CHN|156|CHN|cc|CI| |86|CHN|CH|53|CHN|CNY|CHINA|2|Yuan Renminbi|156|Yes
 Christmas Island|Île Christmas|CX|CXR|162|CHR|xa|KI|AUS|61|CXR|KT|54| |AUD|CHRISTMAS ISLAND|2|Australian Dollar|36|Territory of AU
 Christmas Island|Christmas|CX|CXR|162|CHR|xa|KI|AUS|61|CXR|KT|54| |AUD|CHRISTMAS ISLAND|2|Australian Dollar|36|Territory of AU
 Cocos (Keeling) Islands|Îles Cocos (Keeling)|CC|CCK|166|ICO|xb|KK|AUS|61|CCK|CK|56| |AUD|COCOS (KEELING) ISLANDS|2|Australian Dollar|36|Territory of AU
@@ -58,8 +58,8 @@ Cocos (Keeling) Islands|Cocos (Keeling)|CC|CCK|166|ICO|xb|KK|AUS|61|CCK|CK|56| 
 Colombia|Colombie|CO|COL|170|CLM|ck|CO|CO|57|COL|CO|57|COL|COP|COLOMBIA|2|Colombian Peso|170|Yes
 Comoros|Comores|KM|COM|174|COM|cq|IC| |269|COM|CN|58|COM|KMF|COMOROS|0|Comoro Franc|174|Yes
 Congo|Congo|CG|COG|178|COG|cf|CG|RCB|242|CGO|CF|59|CGO|XAF|CONGO|0|CFA Franc BEAC|950|Yes
-Congo|Congo|CD|COD|180|COD|cg|ZR|ZRE|243|COD|CG|68|COD||||||Yes
 the Democratic Republic of the Congo|la République Démocratique du Congo|CD|COD|180|COD|cg|ZR|ZRE|243|COD|CG|68|COD||||||Yes
+Congo|Congo|CD|COD|180|COD|cg|ZR|ZRE|243|COD|CG|68|COD||||||Yes
 Cook Islands|Îles Cook|CK|COK|184|CKH|cw|KU|NZ|682|COK|CW|60|COK|NZD|COOK ISLANDS|2|New Zealand Dollar|554|Associated with NZ
 Cook Islands|Cook|CK|COK|184|CKH|cw|KU|NZ|682|COK|CW|60|COK|NZD|COOK ISLANDS|2|New Zealand Dollar|554|Associated with NZ
 Costa Rica|Costa Rica|CR|CRI|188|CTR|cr|CS|CR|506|CRC|CS|61|CRC|CRC|COSTA RICA|2|Costa Rican Colon|188|Yes
@@ -132,11 +132,11 @@ Jordan|Jordanie|JO|JOR|400|JOR|jo|JD|HKJ|962|JOR|JO|130|JOR|JOD|JORDAN|3|Jordani
 Kazakhstan|Kazakhstan|KZ|KAZ|398|KAZ|kz|KZ|KZ|7|KAZ|KZ|132|KAZ|KZT|KAZAKHSTAN|2|Tenge|398|Yes
 Kenya|Kenya|KE|KEN|404|KEN|ke|KN|EAK|254|KEN|KE|133|KEN|KES|KENYA|2|Kenyan Shilling|404|Yes
 Kiribati|Kiribati|KI|KIR|296|KIR|gb|KB| |686|KIR|KR|135|KIR|AUD|KIRIBATI|2|Australian Dollar|36|Yes
-North Korea|Corée du Nord|KP|PRK|408|KRE|kn|KR| |850|PRK|KN|67|PRK|KPW|"KOREA| DEMOCRATIC PEOPLE’S REPUBLIC OF"|2|North Korean Won|408|Yes
 Democratic People's Republic of Korea|République Populaire Démocratique de Corée|KP|PRK|408|KRE|kn|KR| |850|PRK|KN|67|PRK|KPW|"KOREA| DEMOCRATIC PEOPLE’S REPUBLIC OF"|2|North Korean Won|408|Yes
+North Korea|Corée du Nord|KP|PRK|408|KRE|kn|KR| |850|PRK|KN|67|PRK|KPW|"KOREA| DEMOCRATIC PEOPLE’S REPUBLIC OF"|2|North Korean Won|408|Yes
+Republic of Korea|République de Corée|KR|KOR|410|KOR|ko|KO|ROK|82|KOR|KS|202|KOR|KRW|"KOREA| REPUBLIC OF"|0|Won|410|Yes
 South Korea|Corée du Sud|KR|KOR|410|KOR|ko|KO|ROK|82|KOR|KS|202|KOR|KRW|"KOREA| REPUBLIC OF"|0|Won|410|Yes
 Korea|Corée|KR|KOR|410|KOR|ko|KO|ROK|82|KOR|KS|202|KOR|KRW|"KOREA| REPUBLIC OF"|0|Won|410|Yes
-Republic of Korea|République de Corée|KR|KOR|410|KOR|ko|KO|ROK|82|KOR|KS|202|KOR|KRW|"KOREA| REPUBLIC OF"|0|Won|410|Yes
 Kuwait|Koweït|KW|KWT|414|KWT|ku|KW|KWT|965|KUW|KU|137|KUW|KWD|KUWAIT|3|Kuwaiti Dinar|414|Yes
 Kyrgyzstan|Kirghizistan|KG|KGZ|417|KGZ|kg|KG|KS|996|KGZ|KG|138|KGZ|KGS|KYRGYZSTAN|2|Som|417|Yes
 Lao People's Democratic Republic|République Démocratique Populaire Lao|LA|LAO|418|LAO|ls|LA|LAO|856|LAO|LA|139|LAO|LAK|LAO PEOPLE’S DEMOCRATIC REPUBLIC|2|Kip|418|Yes
@@ -150,8 +150,8 @@ Liechtenstein|Liechtenstein|LI|LIE|438|LIE|lh| |FL|423|LIE|LS|146|LIE|CHF|LIECH
 Lithuania|Lituanie|LT|LTU|440|LTU|li|LT|LT|370|LTU|LH|147|LTU|EUR|LITHUANIA|2|Euro|978|Yes
 Luxembourg|Luxembourg|LU|LUX|442|LUX|lu|BX|L|352|LUX|LU|148|LUX|EUR|LUXEMBOURG|2|Euro|978|Yes
 Macao|Macao|MO|MAC|446|MAC| |MU| |853|MAC|MC|149|MAC|MOP|MACAO|2|Pataca|446|Part of CN
-Macedonia|Macédoine|MK|MKD|807|MKD|xn|MJ|MK|389|MKD|MK|241|MKD|MKD|"MACEDONIA| THE FORMER YUGOSLAV REPUBLIC OF"|2|Denar|807|Yes
 the Former Yugoslav Republic of Macedonia|l'Ex-république Yougoslave de Macédoine|MK|MKD|807|MKD|xn|MJ|MK|389|MKD|MK|241|MKD|MKD|"MACEDONIA| THE FORMER YUGOSLAV REPUBLIC OF"|2|Denar|807|Yes
+Macedonia|Macédoine|MK|MKD|807|MKD|xn|MJ|MK|389|MKD|MK|241|MKD|MKD|"MACEDONIA| THE FORMER YUGOSLAV REPUBLIC OF"|2|Denar|807|Yes
 Madagascar|Madagascar|MG|MDG|450|MDG|mg|MG|RM|261|MAD|MA|150|MAD|MGA|MADAGASCAR|2|Malagasy Ariary|969|Yes
 Malawi|Malawi|MW|MWI|454|MWI|mw|MW|MW|265|MWI|MI|152|MAW|MWK|MALAWI|2|Kwacha|454|Yes
 Malaysia|Malaisie|MY|MYS|458|MLA|my|MS|MAL|60|MAS|MY|153|MAS|MYR|MALAYSIA|2|Malaysian Ringgit|458|Yes
@@ -167,8 +167,8 @@ Mayotte|Mayotte|YT|MYT|175|MYT|ot| | |262|MYT|MF|161|MAY|EUR|MAYOTTE|2|Euro|97
 Mexico|Mexique|MX|MEX|484|MEX|mx|MX|MEX|52|MEX|MX|162|MEX|MXN|MEXICO|2|Mexican Peso|484|Yes
 Micronesia|Micronésie|FM|FSM|583|FSM|fm| | |691|FSM|FM|163|FSM|USD|"MICRONESIA| FEDERATED STATES OF"|2|US Dollar|840|Yes
 Federated States of Micronesia|États Fédérés de Micronésie|FM|FSM|583|FSM|fm| | |691|FSM|FM|163|FSM|USD|"MICRONESIA| FEDERATED STATES OF"|2|US Dollar|840|Yes
-Moldova|Moldova|MD|MDA|498|MDA|mv|RM|MD|373|MDA|MD|165|MDA|MDL|"MOLDOVA| REPUBLIC OF"|2|Moldovan Leu|498|Yes
 Republic of Moldova|République de Moldova|MD|MDA|498|MDA|mv|RM|MD|373|MDA|MD|165|MDA|MDL|"MOLDOVA| REPUBLIC OF"|2|Moldovan Leu|498|Yes
+Moldova|Moldova|MD|MDA|498|MDA|mv|RM|MD|373|MDA|MD|165|MDA|MDL|"MOLDOVA| REPUBLIC OF"|2|Moldovan Leu|498|Yes
 Monaco|Monaco|MC|MCO|492|MCO|mc| |MC|377|MON|MN|166|MON|EUR|MONACO|2|Euro|978|Yes
 Mongolia|Mongolie|MN|MNG|496|MNG|mp|MO|MGL|976|MNG|MG|167|MGL|MNT|MONGOLIA|2|Tugrik|496|Yes
 Montenegro|Monténégro|ME|MNE|499|MNE|mo| |MNE|382|MNE|MJ|2647|MGO|EUR|MONTENEGRO|2|Euro|978|Yes
@@ -272,12 +272,12 @@ United States Minor Outlying Islands|Îles Mineures Éloignées des États-Unis|
 Uruguay|Uruguay|UY|URY|858|URG|uy|UY|ROU|598|URU|UY|260|URU|UYU|URUGUAY|2|Peso Uruguayo|858|Yes
 Uzbekistan|Ouzbékistan|UZ|UZB|860|UZB|uz|UZ|UZ|998|UZB|UZ|261|UZB|UZS|UZBEKISTAN|2|Uzbekistan Sum|860|Yes
 Vanuatu|Vanuatu|VU|VUT|548|VUT|nn|NV| |678|VAN|NH|262|VAN|VUV|VANUATU|0|Vatu|548|Yes
-Venezuela|Venezuela|VE|VEN|862|VEN|ve|VN|YV|58|VEN|VE|263|VEN|VEF|"VENEZUELA| BOLIVARIAN REPUBLIC OF"|2|Bolivar|937|Yes
 Bolivarian Republic of Venezuela|République Bolivarienne du Venezuela|VE|VEN|862|VEN|ve|VN|YV|58|VEN|VE|263|VEN|VEF|"VENEZUELA| BOLIVARIAN REPUBLIC OF"|2|Bolivar|937|Yes
+Venezuela|Venezuela|VE|VEN|862|VEN|ve|VN|YV|58|VEN|VE|263|VEN|VEF|"VENEZUELA| BOLIVARIAN REPUBLIC OF"|2|Bolivar|937|Yes
 Socialist Republic of Vietnam|République socialiste du Viêt Nam|VN|VNM|704|VTN|vm|VS|VN|84|VIE|VM|264|VIE|VND|VIET NAM|0|Dong|704|Yes
 Vietnam|Viêt Nam|VN|VNM|704|VTN|vm|VS|VN|84|VIE|VM|264|VIE|VND|VIET NAM|0|Dong|704|Yes
-Virgin Islands|Îles Vierges Britanniques|VG|VGB|92|VRG|vb|VI|BVI|1-284|VGB|VI|39|IVB|USD|VIRGIN ISLANDS (BRITISH)|2|US Dollar|840|Territory of GB
 British Virgin Islands|Îles Vierges Britanniques|VG|VGB|92|VRG|vb|VI|BVI|1-284|VGB|VI|39|IVB|USD|VIRGIN ISLANDS (BRITISH)|2|US Dollar|840|Territory of GB
+Virgin Islands|Îles Vierges Britanniques|VG|VGB|92|VRG|vb|VI|BVI|1-284|VGB|VI|39|IVB|USD|VIRGIN ISLANDS (BRITISH)|2|US Dollar|840|Territory of GB
 U.S. Virgin Islands|Îles Vierges des États-Unis|VI|VIR|850|VIR|vi|VI|USA|1-340|VIR|VQ|258|ISV|USD|VIRGIN ISLANDS (U.S.)|2|US Dollar|840|Territory of US
 Wallis and Futuna|Wallis et Futuna|WF|WLF|876|WAL|wf|FW|F|681|WLF|WF|266|WAF|XPF|WALLIS AND FUTUNA|0|CFP Franc|953|Territory of FR
 Western Sahara|Sahara Occidental|EH|ESH|732|AOE|ss| | |212|SAH|WI|268| |MAD|WESTERN SAHARA|2|Moroccan Dirham|504|In contention

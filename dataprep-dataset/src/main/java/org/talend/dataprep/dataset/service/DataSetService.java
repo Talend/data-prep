@@ -100,7 +100,6 @@ import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -239,56 +238,42 @@ public class DataSetService extends BaseDataSetService {
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Only return a limited number of data sets") @RequestParam(
                     defaultValue = "false") boolean limit) {
-        // Build filter for data sets
+
         String userId = security.getUserId();
         final UserData userData = userDataRepository.get(userId);
-        final List<String> predicates = new ArrayList<>();
-        predicates.add("lifecycle.importing = false");
-        if (favorite) {
-            if (userData != null && !userData.getFavoritesDatasets().isEmpty()) {
-                predicates.add("id in [" + userData.getFavoritesDatasets().stream().map(ds -> '\'' + ds + '\'').collect(
-                        Collectors.joining(",")) + "]");
-            } else {
-                // Wants favorites but user has no favorite
-                return Stream.empty();
-            }
-        }
-        if (certified) {
-            predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
-        }
 
-        if (StringUtils.isNotEmpty(name)) {
-            final String regex = "(?i)" + Pattern.quote(name);
-            final String filter;
-            if (nameStrict) {
-                filter = "name ~ '^" + regex + "$'";
-            } else {
-                filter = "name ~ '.*" + regex + ".*'";
-            }
-            predicates.add(filter);
-        }
+        Stream<DataSetMetadata> datasetList =
+                findDataset(sort, order, name, nameStrict, certified, favorite, limit, userData.getFavoritesDatasets());
 
-        final String tqlFilter = String.join(" and ", predicates);
-        LOG.debug("TQL Filter in use: {}", tqlFilter);
+        return datasetList.map(p -> beanConversionService.convert(p, DatasetDTO.class,
+                datasetInjection.injectFavorite(userData.getFavoritesDatasets())));
+    }
 
-        // Get all data sets according to filter
-        //        try (Stream<DatasetDTO> stream = ) {
-        Stream<DataSetMetadata> datasetList = dataSetMetadataRepository.list(tqlFilter, sort, order);
+    @RequestMapping(value = "/datasets/details", method = RequestMethod.GET)
+    @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked",
+            notes = "Returns the list of data sets (and filters) the current user is allowed to see. Creation date is a Epoch time value (in UTC time zone).")
+    @Timed
+    public Stream<UserDataSetMetadata> listWithFullDetails(
+            @ApiParam(value = "Sort key (by name, creation or modification date)") @RequestParam(
+                    defaultValue = "creationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc or modif)") @RequestParam(
+                    defaultValue = "desc") Order order,
+            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(
+                    required = false) String name,
+            @ApiParam(value = "Filter on name containing the specified name strictness") @RequestParam(
+                    defaultValue = "false") boolean nameStrict,
+            @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
+            @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
+            @ApiParam(value = "Only return a limited number of data sets") @RequestParam(
+                    defaultValue = "false") boolean limit) {
 
-        if (sort == Sort.AUTHOR || sort == Sort.NAME) { // As theses are not well handled by mongo repository
-            datasetList = datasetList.sorted(getDataSetMetadataComparator(sort, order));
-        }
+        String userId = security.getUserId();
+        final UserData userData = userDataRepository.get(userId);
 
-        return datasetList
-                .limit(limit ? datasetListLimit : Long.MAX_VALUE) //
-                .map(p -> {
-                    Set<String> favoritesDataset = new HashSet<>();
-                    if (userData != null) {
-                        favoritesDataset = userData.getFavoritesDatasets();
-                    }
-                    return beanConversionService.convert(p, DatasetDTO.class,
-                            datasetInjection.injectFavorite(favoritesDataset));
-                });
+        Stream<DataSetMetadata> datasetList =
+                findDataset(sort, order, name, nameStrict, certified, favorite, limit, userData.getFavoritesDatasets());
+
+        return datasetList.map(m -> conversionService.convert(m, UserDataSetMetadata.class));
 
     }
 
@@ -1298,5 +1283,61 @@ public class DataSetService extends BaseDataSetService {
     private long getMaxDataSetSizeAllowed() {
         final long availableSpace = quotaService.getAvailableSpace();
         return maximumInputStreamSize > availableSpace ? availableSpace : maximumInputStreamSize;
+    }
+
+    /**
+     * Return the list of DataSetMetadata corresponding to the search
+     *
+     * @param sort         sort filter
+     * @param order        order filter
+     * @param name         name filter
+     * @param nameStrict   is it a strict search
+     * @param certified    certified filter
+     * @param favorite     favorite filter
+     * @param limit        limit number of result
+     * @param favoritesIds list of favorties ids of the user
+     * @return the list of DataSetMetadata corresponding to the search
+     */
+    private Stream<DataSetMetadata> findDataset(Sort sort, Order order, String name, boolean nameStrict,
+            boolean certified, boolean favorite, boolean limit, Set<String> favoritesIds) {
+        // Build filter for data sets
+        final List<String> predicates = new ArrayList<>();
+        predicates.add("lifecycle.importing = false");
+        if (favorite) {
+            if (favoritesIds != null && !favoritesIds.isEmpty()) {
+                predicates.add("id in ["
+                        + favoritesIds.stream().map(ds -> '\'' + ds + '\'').collect(Collectors.joining(",")) + "]");
+            } else {
+                // Wants favorites but user has no favorite
+                return Stream.empty();
+            }
+        }
+        if (certified) {
+            predicates.add("governance.certificationStep = '" + Certification.CERTIFIED + "'");
+        }
+
+        if (StringUtils.isNotEmpty(name)) {
+            final String regex = "(?i)" + Pattern.quote(name);
+            final String filter;
+            if (nameStrict) {
+                filter = "name ~ '^" + regex + "$'";
+            } else {
+                filter = "name ~ '.*" + regex + ".*'";
+            }
+            predicates.add(filter);
+        }
+
+        final String tqlFilter = String.join(" and ", predicates);
+        LOG.debug("TQL Filter in use: {}", tqlFilter);
+
+        // Get all data sets according to filter
+        //        try (Stream<DatasetDTO> stream = ) {
+        Stream<DataSetMetadata> datasetList = dataSetMetadataRepository.list(tqlFilter, sort, order);
+
+        if (sort == Sort.AUTHOR || sort == Sort.NAME) { // As theses are not well handled by mongo repository
+            datasetList = datasetList.sorted(getDataSetMetadataComparator(sort, order));
+        }
+
+        return datasetList.limit(limit ? datasetListLimit : Long.MAX_VALUE);
     }
 }

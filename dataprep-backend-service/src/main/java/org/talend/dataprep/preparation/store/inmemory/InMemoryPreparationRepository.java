@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.preparation.store.inmemory;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -45,7 +44,9 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
 
     @Override
     public <T extends Identifiable> Stream<T> source(Class<T> clazz) {
-        return new HashMap<>(store).entrySet().stream() //
+        return new HashMap<>(store)
+                .entrySet()
+                .stream() //
                 .filter(entry -> clazz.isAssignableFrom(entry.getValue().getClass())) //
                 .map(entry -> (T) entry.getValue());
     }

@@ -167,7 +167,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("with_another_escape_char.json"), UTF_8);
+        final String expected =
+                IOUtils.toString(this.getClass().getResourceAsStream("with_another_escape_char.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -188,7 +189,8 @@ public class CSVSerializerTest {
 
         // then
         final String expected = IOUtils.toString(
-                this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_double_quote_escape.json"), UTF_8);
+                this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_double_quote_escape.json"),
+                UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -208,8 +210,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils
-                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_backslash_escape.json"), UTF_8);
+        final String expected = IOUtils.toString(
+                this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_backslash_escape.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -228,8 +230,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils
-                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_default_escape.json"), UTF_8);
+        final String expected = IOUtils.toString(
+                this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_default_escape.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -249,8 +251,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils
-                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_default_escape.json"), UTF_8);
+        final String expected = IOUtils.toString(
+                this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_default_escape.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -270,8 +272,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.json"),
-                UTF_8);
+        final String expected =
+                IOUtils.toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -291,8 +293,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils
-                .toString(this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_empty_enclosure.json"), UTF_8);
+        final String expected = IOUtils.toString(
+                this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import_empty_enclosure.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -302,7 +304,7 @@ public class CSVSerializerTest {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("test_4579_doublequote_import.csv");
-        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code","Description");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code", "Description");
         datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
         datasetMetadata.getContent().addParameter(ESCAPE_CHAR, "");
         datasetMetadata.getContent().addParameter(TEXT_ENCLOSURE_CHAR, "");
@@ -312,8 +314,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils
-                .toString(this.getClass().getResourceAsStream("test_4579_doublequote_import.json"), UTF_8);
+        final String expected =
+                IOUtils.toString(this.getClass().getResourceAsStream("test_4579_doublequote_import.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
@@ -323,7 +325,7 @@ public class CSVSerializerTest {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("test_4579_doublequote_import.csv");
-        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code","Description");
+        DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code", "Description");
         datasetMetadata.getContent().addParameter(SEPARATOR_PARAMETER, ",");
 
         // when
@@ -331,8 +333,8 @@ public class CSVSerializerTest {
         String actual = IOUtils.toString(input, UTF_8);
 
         // then
-        final String expected = IOUtils
-                .toString(this.getClass().getResourceAsStream("test_4579_doublequote_import_pb.json"), UTF_8);
+        final String expected =
+                IOUtils.toString(this.getClass().getResourceAsStream("test_4579_doublequote_import_pb.json"), UTF_8);
         JSONAssert.assertEquals(expected, actual, false);
     }
 

@@ -147,7 +147,8 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         context.get(LOCALE, p -> new Locale(context.getParameters().get(LANGUAGE)));
     }
 
-    private void addColumn(List<ActionsUtils.AdditionalColumn> additionalColumns, ColumnMetadata column, ActionContext context, String info, String infoSuffix) {
+    private void addColumn(List<ActionsUtils.AdditionalColumn> additionalColumns, ColumnMetadata column,
+            ActionContext context, String info, String infoSuffix) {
         if (Boolean.valueOf(context.getParameters().get(info)))
             additionalColumns
                     .add(ActionsUtils.additionalColumn().withKey(info).withName(column.getName() + infoSuffix));
@@ -157,19 +158,19 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         String region = null;
         if (domainEnum != null) {
             switch (domainEnum) {
-                case FR_PHONE:
-                    region = FR_REGION_CODE;
-                    break;
-                case DE_PHONE:
-                    region = DE_REGION_CODE;
-                    break;
-                case US_PHONE:
-                    region = US_REGION_CODE;
-                    break;
-                case UK_PHONE:
-                    region = UK_REGION_CODE;
-                    break;
-                default:
+            case FR_PHONE:
+                region = FR_REGION_CODE;
+                break;
+            case DE_PHONE:
+                region = DE_REGION_CODE;
+                break;
+            case US_PHONE:
+                region = US_REGION_CODE;
+                break;
+            case UK_PHONE:
+                region = UK_REGION_CODE;
+                break;
+            default:
             }
         }
         return region;
@@ -188,7 +189,8 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
 
         // Set the values in newly created columns
         if (StringUtils.isNotEmpty(originalValue)) {
-            Phonenumber.PhoneNumber phoneNumber = PhoneNumberHandlerBase.parseToPhoneNumber(originalValue, regionCodeFromDomain);
+            Phonenumber.PhoneNumber phoneNumber =
+                    PhoneNumberHandlerBase.parseToPhoneNumber(originalValue, regionCodeFromDomain);
             if (phoneNumber != null) {
                 setPhoneInformations(row, context, phoneNumber, localeFromDomain);
             } else {
@@ -215,19 +217,25 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
         setEmpty(row, context, TIME_ZONE);
     }
 
-    private void setPhoneInformations(DataSetRow row, ActionContext context, Phonenumber.PhoneNumber phoneNumber, Locale localeFromDomain) {
-        setSpecificPhoneInformation(row, context,TYPE, () -> PhoneNumberHandlerBase.getPhoneNumberType(phoneNumber).getName());
-        setSpecificPhoneInformation(row, context,COUNTRY, () -> String.valueOf(PhoneNumberHandlerBase.getCountryCodeForPhoneNumber(phoneNumber)));
-        setSpecificPhoneInformation(row, context,REGION, () -> PhoneNumberHandlerBase.extractRegionCode(phoneNumber));
-        setSpecificPhoneInformation(row, context,GEOCODER, () -> PhoneNumberHandlerBase.getGeocoderDescriptionForNumber(phoneNumber, localeFromDomain));
-        setSpecificPhoneInformation(row, context,CARRIER, () -> PhoneNumberHandlerBase.getCarrierNameForNumber(phoneNumber, localeFromDomain));
-        setSpecificPhoneInformation(row, context,TIME_ZONE, () -> PhoneNumberHandlerBase
+    private void setPhoneInformations(DataSetRow row, ActionContext context, Phonenumber.PhoneNumber phoneNumber,
+            Locale localeFromDomain) {
+        setSpecificPhoneInformation(row, context, TYPE,
+                () -> PhoneNumberHandlerBase.getPhoneNumberType(phoneNumber).getName());
+        setSpecificPhoneInformation(row, context, COUNTRY,
+                () -> String.valueOf(PhoneNumberHandlerBase.getCountryCodeForPhoneNumber(phoneNumber)));
+        setSpecificPhoneInformation(row, context, REGION, () -> PhoneNumberHandlerBase.extractRegionCode(phoneNumber));
+        setSpecificPhoneInformation(row, context, GEOCODER,
+                () -> PhoneNumberHandlerBase.getGeocoderDescriptionForNumber(phoneNumber, localeFromDomain));
+        setSpecificPhoneInformation(row, context, CARRIER,
+                () -> PhoneNumberHandlerBase.getCarrierNameForNumber(phoneNumber, localeFromDomain));
+        setSpecificPhoneInformation(row, context, TIME_ZONE, () -> PhoneNumberHandlerBase
                 .getTimeZonesForNumber(phoneNumber, false)
                 .stream()
                 .collect(Collectors.joining(",")));
     }
 
-    private void setSpecificPhoneInformation(DataSetRow row, ActionContext context, String information, Supplier<String> supplier) {
+    private void setSpecificPhoneInformation(DataSetRow row, ActionContext context, String information,
+            Supplier<String> supplier) {
         if (Boolean.valueOf(context.getParameters().get(information))) {
             final String carrierColumn = ActionsUtils.getTargetColumnIds(context).get(information);
             final String carrier = supplier.get();
@@ -244,8 +252,8 @@ public class ExtractPhoneInformation extends AbstractActionMetadata implements C
     @Nonnull
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
-        parameters.addAll(
-                Stream.of(TYPE, COUNTRY, REGION, GEOCODER, CARRIER, TIME_ZONE)//
+        parameters.addAll(Stream
+                .of(TYPE, COUNTRY, REGION, GEOCODER, CARRIER, TIME_ZONE)//
                 .map(name -> parameter(locale).setName(name).setType(BOOLEAN).setDefaultValue(true).build(this))//
                 .collect(Collectors.toList()));
 

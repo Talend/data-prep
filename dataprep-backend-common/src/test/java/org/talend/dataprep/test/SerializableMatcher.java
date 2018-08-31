@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * <code>
  *     assertThat(RowMetadata.class, SerializableMatcher.isSerializable());
  * </code>
+ * 
  * @see #isSerializable()
  * @see #isNotSerializable()
  */
@@ -51,6 +52,7 @@ public class SerializableMatcher extends BaseMatcher<Class> {
     public static Matcher<Class<?>> isSerializable() {
         SerializableMatcher matcher = new SerializableMatcher();
         return new BaseMatcher<Class<?>>() {
+
             @Override
             public boolean matches(Object item) {
                 return matcher.matches(item);
@@ -75,6 +77,7 @@ public class SerializableMatcher extends BaseMatcher<Class> {
     public static Matcher<Class<?>> isNotSerializable() {
         SerializableMatcher matcher = new SerializableMatcher();
         return new BaseMatcher<Class<?>>() {
+
             @Override
             public boolean matches(Object item) {
                 return !matcher.matches(item);
@@ -126,7 +129,8 @@ public class SerializableMatcher extends BaseMatcher<Class> {
                 for (Type type : types) {
                     try {
                         if (!isSerializable(Class.forName(type.getTypeName()))) {
-                            LOGGER.error("Generic type for field '{}' (of '{}') is not serializable.", field, type.getTypeName());
+                            LOGGER.error("Generic type for field '{}' (of '{}') is not serializable.", field,
+                                    type.getTypeName());
                             return false;
                         }
                     } catch (ClassNotFoundException e) {

@@ -80,7 +80,9 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
     @Override
     protected Parameter getDefaultConstantValue(Locale locale) {
         // olamy the javascript will tranform to now if empty
-        return Parameter.parameter(locale).setName(CONSTANT_VALUE)
+        return Parameter
+                .parameter(locale)
+                .setName(CONSTANT_VALUE)
                 .setType(ParameterType.DATE)
                 .setDefaultValue(StringUtils.EMPTY)
                 .build(this);
@@ -114,11 +116,12 @@ public class CompareDates extends AbstractCompareAction implements ColumnAction,
 
         try {
             final DateParser dateParser = Providers.get(DateParser.class);
-            final LocalDateTime temporalAccessor1 = dateParser.parse(comparisonRequest.value1, comparisonRequest.colMetadata1);
+            final LocalDateTime temporalAccessor1 =
+                    dateParser.parse(comparisonRequest.value1, comparisonRequest.colMetadata1);
 
             // we compare with the format of the first column when the comparison is with a CONSTANT
-            final LocalDateTime temporalAccessor2 = dateParser.parse(comparisonRequest.value2,
-                    comparisonRequest.mode.equals(CONSTANT_MODE) ? //
+            final LocalDateTime temporalAccessor2 =
+                    dateParser.parse(comparisonRequest.value2, comparisonRequest.mode.equals(CONSTANT_MODE) ? //
                             comparisonRequest.colMetadata2 : comparisonRequest.colMetadata1);
 
             return temporalAccessor1.compareTo(temporalAccessor2);

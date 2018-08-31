@@ -60,7 +60,9 @@ public class FillEmptyFromAbove extends AbstractActionMetadata implements Column
     }
 
     @Override
-    public Set<Behavior> getBehavior() {  return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.FORBID_DISTRIBUTED); }
+    public Set<Behavior> getBehavior() {
+        return EnumSet.of(Behavior.VALUES_COLUMN, Behavior.FORBID_DISTRIBUTED);
+    }
 
     @Override
     public void compile(ActionContext actionContext) {

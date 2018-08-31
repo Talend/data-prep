@@ -33,8 +33,7 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RENAME
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class RenameFolder
-        extends GenericCommand<Void> {
+public class RenameFolder extends GenericCommand<Void> {
 
     public RenameFolder(final String id, final String newName) {
         super(GenericCommand.DATASET_GROUP);

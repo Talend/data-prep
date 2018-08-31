@@ -77,8 +77,7 @@ public class ExportParametersUtil {
             stepId = Step.ROOT_STEP.id();
         }
         final PreparationSummaryGet preparationSummaryGet =
-                applicationContext.getBean(PreparationSummaryGet.class, preparationId,
-                stepId);
+                applicationContext.getBean(PreparationSummaryGet.class, preparationId, stepId);
         return preparationSummaryGet.execute();
     }
 

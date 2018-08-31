@@ -1,16 +1,16 @@
 /*
- *  ============================================================================
+ * ============================================================================
  *
- *  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
  *
- *  This source code is available under agreement available at
- *  https://github.com/Talend/data-prep/blob/master/LICENSE
+ * This source code is available under agreement available at
+ * https://github.com/Talend/data-prep/blob/master/LICENSE
  *
- *  You should have received a copy of the agreement
- *  along with this program; if not, write to Talend SA
- *  9 rue Pages 92150 Suresnes, France
+ * You should have received a copy of the agreement
+ * along with this program; if not, write to Talend SA
+ * 9 rue Pages 92150 Suresnes, France
  *
- *  ============================================================================
+ * ============================================================================
  */
 
 package org.talend.dataprep.dataset.service;
@@ -79,7 +79,8 @@ public class UserDataSetMetadataConversionTest {
     public void shouldConvertDataSetMetadataWithoutRowMetadata() {
         // given DataSetMetadata without rowMetadata
         RowMetadata rowMetadata = new RowMetadata(Collections.emptyList());
-        DataSetMetadata dataSetMetadata = new DataSetMetadata(DATASET_ID, "name", AUTHOR_ID, 0L, 0L, rowMetadata, "1.0");
+        DataSetMetadata dataSetMetadata =
+                new DataSetMetadata(DATASET_ID, "name", AUTHOR_ID, 0L, 0L, rowMetadata, "1.0");
         // when
         UserDataSetMetadata userDataSetMetadata =
                 beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class);

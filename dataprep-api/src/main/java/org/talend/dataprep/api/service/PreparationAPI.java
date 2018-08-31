@@ -123,20 +123,26 @@ public class PreparationAPI extends APIService {
             notes = "Returns the list of preparations the current user is allowed to see.")
     @Timed
     public Stream<PreparationListItemDTO> listPreparations(
-            @ApiParam(name = "name", value = "Filter preparations by name.") @RequestParam(required = false) String name,
+            @ApiParam(name = "name",
+                    value = "Filter preparations by name.") @RequestParam(required = false) String name,
             @RequestParam(name = "format", required = false) String format,
-            @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(required = false, name = "folder_path") String folderPath,
-            @ApiParam(name = "path", value = "Filter preparations by full path. Should always return one preparation") @RequestParam(required = false, name = "path") String path,
-            @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(defaultValue = "lastModificationDate") Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order) {
+            @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(
+                    required = false, name = "folder_path") String folderPath,
+            @ApiParam(name = "path",
+                    value = "Filter preparations by full path. Should always return one preparation") @RequestParam(
+                            required = false, name = "path") String path,
+            @ApiParam(value = "Sort key, defaults to 'modification'.") @RequestParam(
+                    defaultValue = "lastModificationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
+                    defaultValue = "desc") Order order) {
 
-
-        GenericCommand<InputStream> command = getCommand(PreparationList.class,  name, folderPath, path, sort, order);
-        if ("summary".equalsIgnoreCase(format)) {return toStream(PreparationDTO.class, mapper,command)//
-    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-} else {
-    return toStream(PreparationDTO.class, mapper, command)//
-            .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
+        if ("summary".equalsIgnoreCase(format)) {
+            return toStream(PreparationDTO.class, mapper, command)//
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        } else {
+            return toStream(PreparationDTO.class, mapper, command)//
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
         }
     }
 
@@ -287,18 +293,21 @@ public class PreparationAPI extends APIService {
         }
     }
 
-    @RequestMapping(value = "/api/preparations/{id}/summary", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/preparations/{id}/summary", method = RequestMethod.GET,
+            produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
     @Timed
     public PreparationDTO getPreparationSummary(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
-            @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId", value = "optional step id", defaultValue = "head") String stepId) {
+            @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId",
+                    value = "optional step id", defaultValue = "head") String stepId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation summary (pool: {} )...", getConnectionStats());
         }
 
         try {
-            final PreparationSummaryGet enrichPreparation = getCommand(PreparationSummaryGet.class, preparationId, stepId);
+            final PreparationSummaryGet enrichPreparation =
+                    getCommand(PreparationSummaryGet.class, preparationId, stepId);
             return enrichPreparation.execute();
         } catch (Exception e) {
             LOG.error("Unable to get preparation {}", preparationId, e);

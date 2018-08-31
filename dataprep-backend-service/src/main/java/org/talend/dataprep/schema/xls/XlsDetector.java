@@ -39,7 +39,8 @@ public class XlsDetector extends POIFSContainerDetector implements Detector {
     /**
      * The XLS MIME type returned by TIKA for XLS format
      */
-    private static final String OLD_XLS_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    private static final String OLD_XLS_MEDIA_TYPE =
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     private ZipContainerDetector zipContainerDetector = new ZipContainerDetector();
 

@@ -81,7 +81,8 @@ public class DeleteOnValue extends AbstractDelete {
         if (actionContext.getActionStatus() == OK) {
             final Map<String, String> parameters = actionContext.getParameters();
             final ReplaceOnValueHelper regexParametersHelper = new ReplaceOnValueHelper();
-            actionContext.get("replaceOnValue", p -> regexParametersHelper.build(parameters.get(VALUE_PARAMETER), true));
+            actionContext.get("replaceOnValue",
+                    p -> regexParametersHelper.build(parameters.get(VALUE_PARAMETER), true));
         }
     }
 

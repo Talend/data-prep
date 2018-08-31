@@ -46,6 +46,7 @@ public class MetadataChangesOnActionsGeneratorTest {
 
     @Mock
     private RunnableAction firstAction;
+
     @Mock
     private DataSetRowAction firstRowAction;
 
@@ -54,6 +55,7 @@ public class MetadataChangesOnActionsGeneratorTest {
 
     @Mock
     private RunnableAction secondAction;
+
     @Mock
     private DataSetRowAction secondRowAction;
 
@@ -110,7 +112,8 @@ public class MetadataChangesOnActionsGeneratorTest {
                 .compile(any(ActionContext.class) //
         );
 
-        StepDiff stepDiff = onActionsGenerator.computeCreatedColumns(newArrayList(firstAction, secondAction), workingMetadata);
+        StepDiff stepDiff =
+                onActionsGenerator.computeCreatedColumns(newArrayList(firstAction, secondAction), workingMetadata);
 
         // then
         assertEquals(newArrayList("0003", "0004"), stepDiff.getCreatedColumns());
@@ -149,6 +152,7 @@ public class MetadataChangesOnActionsGeneratorTest {
     static class CompileAnswer implements org.mockito.stubbing.Answer<Void> {
 
         private final List<String> columnsToAdd;
+
         private final List<String> columnsToRemove;
 
         private final DisposableBean stuffForActionContext;
@@ -159,7 +163,8 @@ public class MetadataChangesOnActionsGeneratorTest {
             return new CompileAnswer(columnsToAdd, columnsToRemove, stuffForActionContext);
         }
 
-        private CompileAnswer(List<String> columnsToAdd, List<String> columnsToRemove, DisposableBean stuffForActionContext) {
+        private CompileAnswer(List<String> columnsToAdd, List<String> columnsToRemove,
+                DisposableBean stuffForActionContext) {
             this.columnsToAdd = columnsToAdd;
             this.columnsToRemove = columnsToRemove;
             this.stuffForActionContext = stuffForActionContext;
@@ -176,7 +181,8 @@ public class MetadataChangesOnActionsGeneratorTest {
                 rowMetadata.addColumn(columnMetadata);
             }
             for (String columnToRemove : columnsToRemove) {
-                Optional<ColumnMetadata> matchingColumn = rowMetadata.getColumns() //
+                Optional<ColumnMetadata> matchingColumn = rowMetadata
+                        .getColumns() //
                         .stream() //
                         .filter(c -> columnToRemove.equals(c.getName())) //
                         .findAny();

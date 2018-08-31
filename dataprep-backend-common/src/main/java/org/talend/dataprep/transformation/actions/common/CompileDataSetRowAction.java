@@ -39,8 +39,7 @@ public class CompileDataSetRowAction implements DataSetRowAction {
 
     private final ScopeCategory scope;
 
-    public CompileDataSetRowAction(Map<String, String> parametersCopy, ActionDefinition metadata,
-                            ScopeCategory scope) {
+    public CompileDataSetRowAction(Map<String, String> parametersCopy, ActionDefinition metadata, ScopeCategory scope) {
         this.parametersCopy = parametersCopy;
         this.metadata = metadata;
         this.scope = scope;

@@ -53,6 +53,7 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
     public static final String ACTION_NAME = "mask_data_by_domain"; //$NON-NLS-1$
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MaskDataByDomain.class);
+
     /**
      * Key for storing in ActionContext:
      */
@@ -106,7 +107,8 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
             try {
                 if (DATE.equals(type)) {
                     final List<PatternFrequency> patternFreqList = column.getStatistics().getPatternFrequencies();
-                    final List<String> dateTimePatternList = patternFreqList.stream() //
+                    final List<String> dateTimePatternList = patternFreqList
+                            .stream() //
                             .map(PatternFrequency::getPattern) //
                             .collect(toList());
                     actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName(), dateTimePatternList));

@@ -145,8 +145,10 @@ public class Split extends AbstractActionMetadata implements ColumnAction {
         int limit = Integer.parseInt(context.getParameters().get(LIMIT));
 
         for (int i = 0; i < limit; i++) {
-            additionalColumns.add(ActionsUtils.additionalColumn().withKey("" + i).withName(
-                    column.getName() + SPLIT_APPENDIX + (i + 1)));
+            additionalColumns.add(ActionsUtils
+                    .additionalColumn()
+                    .withKey("" + i)
+                    .withName(column.getName() + SPLIT_APPENDIX + (i + 1)));
         }
 
         return additionalColumns;

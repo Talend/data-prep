@@ -48,7 +48,8 @@ public class RoundFloorTest extends AbstractRoundTest<RoundFloor> {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(RoundFloorTest.class.getResourceAsStream("floorAction.json"));
+        parameters =
+                ActionMetadataTestUtils.parseParameters(RoundFloorTest.class.getResourceAsStream("floorAction.json"));
     }
 
     @Test
@@ -217,8 +218,7 @@ public class RoundFloorTest extends AbstractRoundTest<RoundFloor> {
 
     @Override
     protected List<String> getExpectedParametersName() {
-        return Arrays.asList("create_new_column","column_id", "row_id", "scope", "filter", "precision");
+        return Arrays.asList("create_new_column", "column_id", "row_id", "scope", "filter", "precision");
     }
-
 
 }

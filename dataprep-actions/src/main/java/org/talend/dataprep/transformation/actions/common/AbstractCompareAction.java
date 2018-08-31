@@ -104,7 +104,9 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
      */
     protected Parameter getDefaultConstantValue(Locale locale) {
         // olamy no idea why this 2 but was here before so just keep backward compat :-)
-        return Parameter.parameter(locale).setName(CONSTANT_VALUE)
+        return Parameter
+                .parameter(locale)
+                .setName(CONSTANT_VALUE)
                 .setType(ParameterType.STRING)
                 .setDefaultValue("2")
                 .build(this);
@@ -125,7 +127,8 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
             compareToLabel = selectedColumn.getName();
         }
 
-        additionalColumns.add(ActionsUtils.additionalColumn()
+        additionalColumns.add(ActionsUtils
+                .additionalColumn()
                 .withName(context.getColumnName() + "_" + compareMode + "_" + compareToLabel + "?")
                 .withType(Type.BOOLEAN));
 
@@ -164,7 +167,8 @@ public abstract class AbstractCompareAction extends AbstractActionMetadata
         if (parameters.get(MODE_PARAMETER).equals(CONSTANT_MODE)) {
             return parameters.get(CONSTANT_VALUE);
         } else {
-            final ColumnMetadata selectedColumn = context.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER));
+            final ColumnMetadata selectedColumn =
+                    context.getRowMetadata().getById(parameters.get(SELECTED_COLUMN_PARAMETER));
             return row.get(selectedColumn.getId());
         }
     }

@@ -115,11 +115,19 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(parameter(locale).setName(NEW_COLUMN_NAME).setType(ParameterType.STRING)
-                .setDefaultValue(DEFAULT_NAME_FOR_NEW_COLUMN).setCanBeBlank(false).build(this));
+        parameters.add(parameter(locale)
+                .setName(NEW_COLUMN_NAME)
+                .setType(ParameterType.STRING)
+                .setDefaultValue(DEFAULT_NAME_FOR_NEW_COLUMN)
+                .setCanBeBlank(false)
+                .build(this));
 
-        Parameter constantParameter = Parameter.parameter(locale).setName(DEFAULT_VALUE_PARAMETER).setType(STRING)
-                .setDefaultValue(EMPTY).build(this);
+        Parameter constantParameter = Parameter
+                .parameter(locale)
+                .setName(DEFAULT_VALUE_PARAMETER)
+                .setType(STRING)
+                .setDefaultValue(EMPTY)
+                .build(this);
 
         //@formatter:off
         parameters.add(selectParameter(locale)
@@ -195,8 +203,8 @@ public class CreateNewColumn extends AbstractGenerateSequenceAction {
     }
 
     public List<ActionsUtils.AdditionalColumn> getAdditionalColumns(ActionContext context) {
-        String columnName = context.getParameters().get(NEW_COLUMN_NAME) != null ? context.getParameters().get(NEW_COLUMN_NAME)
-                : DEFAULT_NAME_FOR_NEW_COLUMN;
+        String columnName = context.getParameters().get(NEW_COLUMN_NAME) != null
+                ? context.getParameters().get(NEW_COLUMN_NAME) : DEFAULT_NAME_FOR_NEW_COLUMN;
         ActionsUtils.AdditionalColumn additionalColumn = ActionsUtils.additionalColumn().withName(columnName);
         if (SEQUENCE_MODE.equals(context.getParameters().get(MODE_PARAMETER))) {
             additionalColumn.withType(Type.INTEGER);

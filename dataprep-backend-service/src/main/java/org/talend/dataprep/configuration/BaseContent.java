@@ -42,7 +42,8 @@ public class BaseContent {
             @Override
             public JsonNode convert(String source) {
                 if (source.isEmpty()) {
-                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, new IllegalArgumentException("Source should not be empty"));
+                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+                            new IllegalArgumentException("Source should not be empty"));
                 }
                 ObjectMapper mapper = new ObjectMapper();
                 try {

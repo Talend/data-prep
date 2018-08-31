@@ -144,7 +144,8 @@ public class FilterStep extends DataPrepStep {
         Assert.assertEquals(filter, prepStep.parameters.get(FILTER.getKey()));
     }
 
-    @When("^I remove all filters on dataset \"(.*)\"$") public void removeFilter(String datasetName) throws Exception {
+    @When("^I remove all filters on dataset \"(.*)\"$")
+    public void removeFilter(String datasetName) throws Exception {
         doApplyFilterOnDataSet(null, datasetName);
     }
 

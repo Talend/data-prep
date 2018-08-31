@@ -74,7 +74,7 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 
@@ -94,7 +94,8 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         final List<Parameter> parameters = action.getParameters(Locale.US);
 
         // then
-        Assertions.assertThat(parameters) //
+        Assertions
+                .assertThat(parameters) //
                 .isNotEmpty() //
                 .hasSize(expectedParametersName.size());
         parameters.forEach(p -> assertTrue(expectedParametersName.contains(p.getName())));
@@ -220,12 +221,14 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         ActionTestWorkbench.test(Arrays.asList(rows), actionRegistry, factory.create(action, parameters));
 
         // then (check values)
-        DataSetRow[] expectedRows = new DataSetRow[] {
-                ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta"),
-                ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Florida", "Tallahassee"),
-                ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Illinois", "Springfield"),
-                ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Texas", "Austin"),
-                ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "California", "Sacramento") };
+        DataSetRow[] expectedRows =
+                new DataSetRow[] {
+                        ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta"),
+                        ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Florida",
+                                "Tallahassee"),
+                        ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Illinois", "Springfield"),
+                        ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Texas", "Austin"),
+                        ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "California", "Sacramento") };
         for (int i = 0; i < rows.length; i++) {
             Assert.assertEquals(expectedRows[i], rows[i]);
         }
@@ -255,7 +258,8 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
      * @return the wanted parameter value or null.
      */
     private String getParamValue(List<Parameter> parameters, String name) {
-        return parameters.stream() //
+        return parameters
+                .stream() //
                 .filter(p -> StringUtils.equals(p.getName(), name)) //
                 .map(Parameter::getDefault) //
                 .findFirst() //
@@ -266,8 +270,8 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
      * @return US States specific looup parameters.
      */
     private Map<String, String> getUsStatesLookupParameters(String lookup) throws IOException {
-        Map<String, String> parameters = ActionMetadataTestUtils
-                .parseParameters(this.getClass().getResourceAsStream("lookupAction.json"));
+        Map<String, String> parameters =
+                ActionMetadataTestUtils.parseParameters(this.getClass().getResourceAsStream("lookupAction.json"));
         parameters.put(LOOKUP_DS_ID.getKey(), lookup);
         parameters.put(LOOKUP_JOIN_ON.getKey(), "0000");
         parameters.put(COLUMN_ID.getKey(), "0001");
@@ -277,10 +281,10 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
     private void cacheUsStates() {
         LightweightExportableDataSet usStates = new LightweightExportableDataSet();
 
-        ColumnMetadata[] columnArrays = {
-                ColumnMetadata.Builder.column().name("Postal").domain("US_STATE").type(Type.STRING).build(),
-                ColumnMetadata.Builder.column().name("State").domain("US_STATE").type(Type.STRING).build(),
-                ColumnMetadata.Builder.column().name("Capital").domain("CITY").type(Type.STRING).build() };
+        ColumnMetadata[] columnArrays =
+                { ColumnMetadata.Builder.column().name("Postal").domain("US_STATE").type(Type.STRING).build(),
+                        ColumnMetadata.Builder.column().name("State").domain("US_STATE").type(Type.STRING).build(),
+                        ColumnMetadata.Builder.column().name("Capital").domain("CITY").type(Type.STRING).build() };
         List<ColumnMetadata> columns = Arrays.stream(columnArrays).collect(Collectors.toList());
         usStates.setMetadata(new RowMetadata(columns));
 
@@ -298,8 +302,8 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
 
     private void cacheNBA() {
         LightweightExportableDataSet usStates = new LightweightExportableDataSet();
-        Map<String, String> values = getValuesMap("Southwest", "Dallas Mavericks", "Dallas", "TX", "American Airlines Center", "",
-                "32.790556°N 96.810278°W");
+        Map<String, String> values = getValuesMap("Southwest", "Dallas Mavericks", "Dallas", "TX",
+                "American Airlines Center", "", "32.790556°N 96.810278°W");
         DataSetRow row = new DataSetRow(values);
         row.getRowMetadata().getColumns().get(1).setName("Team");
         row.getRowMetadata().getColumns().get(4).setName("Stadium");

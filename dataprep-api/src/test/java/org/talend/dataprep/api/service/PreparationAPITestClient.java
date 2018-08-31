@@ -30,19 +30,14 @@ public class PreparationAPITestClient {
     }
 
     public static void appendStepsToPrep(String prepId, AppendStep stepsToAppend) {
-        given().contentType(ContentType.JSON)
-                .body(stepsToAppend)
-                .expect()
-                .statusCode(200)
-                .post("/api/preparations/{id}/actions", prepId);
+        given().contentType(ContentType.JSON).body(stepsToAppend).expect().statusCode(200).post(
+                "/api/preparations/{id}/actions", prepId);
     }
 
     public static void changePreparationStepsOrder(String testPrepId, String rootStep, String secondStep) {
-        given().contentType(ContentType.JSON)
-                .expect()
-                .statusCode(200)
-                .post("/api/preparations/{preparationId}/steps/{stepId}/order?parentStepId={parentStepId}", testPrepId,
-                        secondStep, rootStep);
+        given().contentType(ContentType.JSON).expect().statusCode(200).post(
+                "/api/preparations/{preparationId}/steps/{stepId}/order?parentStepId={parentStepId}", testPrepId,
+                secondStep, rootStep);
     }
 
 }

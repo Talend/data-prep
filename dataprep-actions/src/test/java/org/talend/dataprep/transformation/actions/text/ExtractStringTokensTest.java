@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 package org.talend.dataprep.transformation.actions.text;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -55,7 +55,8 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(ExtractStringTokensTest.class.getResourceAsStream("extractStringTokensAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(ExtractStringTokensTest.class.getResourceAsStream("extractStringTokensAction.json"));
     }
 
     @Test
@@ -86,7 +87,7 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_ENABLED;
     }
 
@@ -221,7 +222,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
         assertEquals(expectedValues, row.values());
     }
 
-
     @Test
     public void should_extract_tokens_multiple_groups_single_column() {
         // given
@@ -246,7 +246,8 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
     @Test
     public void should_extract_tokens_more_match_than_limit() {
         // given
-        final DataSetRow row = getRow("lorem bacon", "Great #bigdata and #dataquality presentations at #TalendConnect", "01/01/2015");
+        final DataSetRow row =
+                getRow("lorem bacon", "Great #bigdata and #dataquality presentations at #TalendConnect", "01/01/2015");
 
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "lorem bacon");
@@ -279,7 +280,6 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
         // then
         assertEquals(values, row.values());
     }
-
 
     @Test
     public void test_TDP_786_null_pattern() {
@@ -331,7 +331,8 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
         expectedValues.put("0002", "01/01/2015");
 
         // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         // then
         assertEquals(expectedValues, row.values());
@@ -417,7 +418,8 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
         expected.add(createMetadata("0002", "last update"));
 
         // when
-        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(rowMetadata, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         assertEquals(expected, rowMetadata.getColumns());
     }
@@ -463,8 +465,16 @@ public class ExtractStringTokensTest extends AbstractMetadataBaseTest<ExtractStr
      * @return a new column metadata
      */
     protected ColumnMetadata createMetadata(String id, String name) {
-        return ColumnMetadata.Builder.column().computedId(id).name(name).type(Type.STRING).headerSize(12).empty(0).invalid(2)
-                .valid(5).build();
+        return ColumnMetadata.Builder
+                .column()
+                .computedId(id)
+                .name(name)
+                .type(Type.STRING)
+                .headerSize(12)
+                .empty(0)
+                .invalid(2)
+                .valid(5)
+                .build();
     }
 
 }

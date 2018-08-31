@@ -59,8 +59,7 @@ public final class SortAndOrderHelper {
         /** Creator of the entity. */
         AUTHOR,
         /** @deprecated use {@link #CREATION_DATE} or {@link #LAST_MODIFICATION_DATE}. */
-        @Deprecated
-        DATE,
+        @Deprecated DATE,
         /** Creation date. */
         CREATION_DATE,
         /** Last modification date. {@link Preparation#lastModificationDate} */
@@ -84,8 +83,8 @@ public final class SortAndOrderHelper {
         }
     }
 
-    private static final Converter<String, String> snakeToCamelCaseConverter = CaseFormat.UPPER_UNDERSCORE
-            .converterTo(CaseFormat.LOWER_CAMEL);
+    private static final Converter<String, String> snakeToCamelCaseConverter =
+            CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 
     private SortAndOrderHelper() {
     }
@@ -155,7 +154,8 @@ public final class SortAndOrderHelper {
                 keyExtractor = SortAndOrderHelper::extractDataSetName;
                 break;
             case AUTHOR:
-                keyExtractor = dataSetMetadata -> Optional.ofNullable(dataSetMetadata)
+                keyExtractor = dataSetMetadata -> Optional
+                        .ofNullable(dataSetMetadata)
                         .filter(ds -> ds instanceof UserDataSetMetadata)
                         .filter(ds -> ((UserDataSetMetadata) ds).getOwner() != null)
                         .filter(ds -> ((UserDataSetMetadata) ds).getOwner().getDisplayName() != null)
@@ -170,7 +170,8 @@ public final class SortAndOrderHelper {
                 keyExtractor = DataSetMetadata::getLastModificationDate;
                 break;
             case NB_RECORDS:
-                keyExtractor = metadata -> Optional.ofNullable(metadata)
+                keyExtractor = metadata -> Optional
+                        .ofNullable(metadata)
                         .filter(m -> m.getContent() != null)
                         .map(m -> m.getContent().getNbRecords())
                         .orElse(Long.MIN_VALUE);
@@ -184,7 +185,8 @@ public final class SortAndOrderHelper {
     }
 
     private static String extractDataSetName(DataSetMetadata dataSetMetadata) {
-        return Optional.ofNullable(dataSetMetadata)
+        return Optional
+                .ofNullable(dataSetMetadata)
                 .filter(p -> p.getName() != null)
                 .map(p -> p.getName().toUpperCase())
                 .orElse(EMPTY);
@@ -212,7 +214,8 @@ public final class SortAndOrderHelper {
                 keyExtractor = SortAndOrderHelper::extractPreparationName;
                 break;
             case AUTHOR:
-                keyExtractor = preparationDTO -> Optional.ofNullable(preparationDTO)
+                keyExtractor = preparationDTO -> Optional
+                        .ofNullable(preparationDTO)
                         .filter(p -> p.getOwner() != null)
                         .filter(p -> p.getOwner().getDisplayName() != null)
                         .map(p -> p.getOwner().getDisplayName().toUpperCase())
@@ -240,7 +243,8 @@ public final class SortAndOrderHelper {
     }
 
     private static String extractPreparationName(PreparationDTO preparation) {
-        return Optional.ofNullable(preparation)
+        return Optional
+                .ofNullable(preparation)
                 .filter(p -> p.getName() != null)
                 .map(p -> p.getName().toUpperCase())
                 .orElse(EMPTY);
@@ -286,7 +290,8 @@ public final class SortAndOrderHelper {
     }
 
     private static String extractFolderName(Folder folder) {
-        return Optional.ofNullable(folder)
+        return Optional
+                .ofNullable(folder)
                 .filter(f -> f.getName() != null)
                 .map(f -> f.getName().toUpperCase())
                 .orElse(EMPTY);

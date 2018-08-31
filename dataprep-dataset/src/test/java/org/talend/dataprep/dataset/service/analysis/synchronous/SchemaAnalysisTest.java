@@ -54,7 +54,8 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testAnalysis() {
-        final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../avengers.csv"));
+        final DataSetMetadata actual =
+                initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../avengers.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "nickname", "secret firstname", "secret lastname", "date of birth", "city" };
         Type[] expectedTypes = { Type.STRING, Type.STRING, Type.STRING, Type.DATE, Type.STRING };
@@ -73,7 +74,8 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      */
     @Test
     public void testTDP_224() {
-        final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../whatever.xls"));
+        final DataSetMetadata actual =
+                initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../whatever.xls"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "whaterver" }; // Not a typo: this is what QA provided as column name.
         Type[] expectedTypes = { Type.STRING };
@@ -92,8 +94,8 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      */
     @Test
     public void testTDP_279() {
-        final DataSetMetadata actual = initializeDataSetMetadata(
-                DataSetServiceTest.class.getResourceAsStream("../post_code.xls"));
+        final DataSetMetadata actual =
+                initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../post_code.xls"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "zip" };
         Type[] expectedTypes = { Type.INTEGER };
@@ -139,7 +141,8 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
 
     @Test
     public void testGenderAnalysis() {
-        final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../gender.csv"));
+        final DataSetMetadata actual =
+                initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../gender.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         // Gender must be a String with Gender domain
         String[] expectedNames = { "name", "bounty", "gender" };
@@ -161,8 +164,8 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      */
     @Test
     public void testTDP_226() {
-        final DataSetMetadata actual = initializeDataSetMetadata(
-                DataSetServiceTest.class.getResourceAsStream("../empty_lines.csv"));
+        final DataSetMetadata actual =
+                initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../empty_lines.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "id", "firstname", "lastname", "age", "date-of-birth", "alive" };
         Type[] expectedTypes = { Type.INTEGER, Type.STRING, Type.STRING, Type.INTEGER, Type.DATE, Type.BOOLEAN };
@@ -202,7 +205,8 @@ public class SchemaAnalysisTest extends DataSetBaseTest {
      */
     @Test
     public void testTDP_1674() {
-        final DataSetMetadata actual = initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../ipv6.csv"));
+        final DataSetMetadata actual =
+                initializeDataSetMetadata(DataSetServiceTest.class.getResourceAsStream("../ipv6.csv"));
         assertThat(actual.getLifecycle().schemaAnalyzed(), is(true));
         String[] expectedNames = { "number", "description", "address" };
         Type[] expectedTypes = { Type.INTEGER, Type.STRING, Type.STRING };

@@ -30,8 +30,7 @@ import static org.talend.dataprep.command.Defaults.pipeStream;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class GetFolder
-    extends GenericCommand<InputStream> {
+public class GetFolder extends GenericCommand<InputStream> {
 
     public GetFolder(final String id) {
         super(GenericCommand.PREPARATION_GROUP);
@@ -41,10 +40,9 @@ public class GetFolder
 
     private HttpRequestBase onExecute(final String id) {
         try {
-            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + id );
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + id);
             return new HttpGet(uriBuilder.build());
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }

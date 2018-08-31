@@ -76,7 +76,8 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         // TODO this call should be in OSDataPrepAPIHelper
         List<String> steps = api //
                 .getPreparationDetails(preparationId) //
-                .then().statusCode(200) //
+                .then()
+                .statusCode(200) //
                 .extract() //
                 .body() //
                 .jsonPath() //

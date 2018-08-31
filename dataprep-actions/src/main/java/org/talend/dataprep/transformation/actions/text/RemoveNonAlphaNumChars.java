@@ -61,15 +61,16 @@ public class RemoveNonAlphaNumChars extends AbstractActionMetadata implements Co
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale, CREATE_NEW_COLUMN_DEFAULT);
+        return ActionsUtils.appendColumnCreationParameter(super.getParameters(locale), locale,
+                CREATE_NEW_COLUMN_DEFAULT);
     }
 
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
         if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(context,
-                    singletonList(ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
+            ActionsUtils.createNewColumn(context, singletonList(
+                    ActionsUtils.additionalColumn().withName(context.getColumnName() + NEW_COLUMN_SUFFIX)));
         }
     }
 

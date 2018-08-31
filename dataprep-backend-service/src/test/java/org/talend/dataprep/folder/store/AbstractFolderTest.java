@@ -293,7 +293,6 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
 
     }
 
-
     /**
      *
      * This test create two folders and a folder entry then copy it to the other folder
@@ -480,11 +479,16 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
 
         // then
         assertNull(getFolderRepository().locateEntry(pathToId("not to be found"), PREPARATION));
-        assertEquals(root.getId(), getFolderRepository().locateEntry(bordeaux.getContentId(), bordeaux.getContentType()).getId());
-        assertEquals(root.getId(), getFolderRepository().locateEntry(littleCreatures.getContentId(), littleCreatures.getContentType()).getId());
+        assertEquals(root.getId(),
+                getFolderRepository().locateEntry(bordeaux.getContentId(), bordeaux.getContentType()).getId());
+        assertEquals(root.getId(), getFolderRepository()
+                .locateEntry(littleCreatures.getContentId(), littleCreatures.getContentType())
+                .getId());
 
-        assertEquals(foo.getId(), getFolderRepository().locateEntry(cars.getContentId(), cars.getContentType()).getId());
-        assertEquals(foo.getId(), getFolderRepository().locateEntry(boats.getContentId(), boats.getContentType()).getId());
+        assertEquals(foo.getId(),
+                getFolderRepository().locateEntry(cars.getContentId(), cars.getContentType()).getId());
+        assertEquals(foo.getId(),
+                getFolderRepository().locateEntry(boats.getContentId(), boats.getContentType()).getId());
     }
 
     @Test
@@ -497,7 +501,6 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
         assertFalse(getFolderRepository().exists(pathToId("/totototo")));
         assertFalse(getFolderRepository().exists(pathToId("/titititi/totototo")));
     }
-
 
     @Test
     public void shouldAddMultipleInOneCallFolders() throws Exception {
@@ -518,7 +521,6 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
 
         assertEquals(marketing.getId(), folder2016.getParentId());
     }
-
 
     @Test
     public void parentIdShouldBeNullForHome() throws Exception {

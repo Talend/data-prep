@@ -83,8 +83,8 @@ public class TypeUtilsTest {
     @Test
     public void testSemanticDomainType() throws Exception {
         final SemanticType semanticType = new SemanticType();
-        semanticType.increment(new CategoryFrequency(SemanticCategoryEnum.AIRPORT.getId(), SemanticCategoryEnum.AIRPORT.getId()),
-                1);
+        semanticType.increment(
+                new CategoryFrequency(SemanticCategoryEnum.AIRPORT.getId(), SemanticCategoryEnum.AIRPORT.getId()), 1);
         assertThat(TypeUtils.getDomainLabel(SemanticCategoryEnum.AIRPORT.getId()),
                 is(SemanticCategoryEnum.AIRPORT.getDisplayName()));
     }

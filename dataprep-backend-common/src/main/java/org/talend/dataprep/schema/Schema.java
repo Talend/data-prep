@@ -131,8 +131,8 @@ public class Schema implements Serializable {
 
     @Override
     public String toString() {
-        return "SchemaParserResult{" + "draft=" + draft + ", sheetContents=" + sheetContents + ", sheetName='" + sheetName + '\''
-                + '}';
+        return "SchemaParserResult{" + "draft=" + draft + ", sheetContents=" + sheetContents + ", sheetName='"
+                + sheetName + '\'' + '}';
     }
 
     public static class Builder {

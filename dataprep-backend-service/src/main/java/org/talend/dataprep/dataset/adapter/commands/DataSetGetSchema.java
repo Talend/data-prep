@@ -36,6 +36,7 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 
 /**
  * Get the dataSet schema.
+ * 
  * @see Schema
  */
 @Component
@@ -72,7 +73,7 @@ public class DataSetGetSchema extends GenericCommand<Schema> {
         });
 
         on(HttpStatus.OK).then((req, res) -> {
-            try (InputStream inputStream = res.getEntity().getContent()){
+            try (InputStream inputStream = res.getEntity().getContent()) {
                 return new Schema.Parser().parse(inputStream);
             } catch (IOException e) {
                 throw new TDPException(UNEXPECTED_EXCEPTION, e);

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.preparation;
 
@@ -27,10 +27,11 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class CachePreparationEviction extends GenericCommand<String> {
+
     private CachePreparationEviction(final String preparationId) {
         super(TRANSFORM_GROUP);
         execute(() -> new HttpDelete(transformationServiceUrl + "/preparation/" + preparationId + "/cache")); //$NON-NLS-1$
-        onError(e ->  new TDPException(UNABLE_TO_DELETE_PREPARATION_CACHE, e));
+        onError(e -> new TDPException(UNABLE_TO_DELETE_PREPARATION_CACHE, e));
         on(HttpStatus.OK).then(asNull());
     }
 }

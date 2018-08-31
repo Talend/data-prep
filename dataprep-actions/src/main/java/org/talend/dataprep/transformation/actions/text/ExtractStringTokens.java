@@ -106,8 +106,8 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
     public List<Parameter> getParameters(Locale locale) {
         final List<Parameter> parameters = super.getParameters(locale);
 
-        parameters.add(
-                parameter(locale).setName(PARAMETER_REGEX).setType(STRING).setDefaultValue("(\\w+)").build(this));
+        parameters
+                .add(parameter(locale).setName(PARAMETER_REGEX).setType(STRING).setDefaultValue("(\\w+)").build(this));
 
         //@formatter:off
         parameters.add(selectParameter(locale)
@@ -159,12 +159,11 @@ public class ExtractStringTokens extends AbstractActionMetadata implements Colum
 
         final Map<String, String> parameters = context.getParameters();
         int limit = parameters.get(MODE_PARAMETER).equals(MULTIPLE_COLUMNS_MODE)
-                ? Integer.parseInt(parameters.get(LIMIT))
-                : 1;
+                ? Integer.parseInt(parameters.get(LIMIT)) : 1;
 
         for (int i = 0; i < limit; i++) {
-            additionalColumns.add(
-                    ActionsUtils.additionalColumn().withKey(Integer.toString(i)).withName(context.getColumnName() + APPENDIX + (i + 1)));
+            additionalColumns.add(ActionsUtils.additionalColumn().withKey(Integer.toString(i)).withName(
+                    context.getColumnName() + APPENDIX + (i + 1)));
         }
 
         return additionalColumns;

@@ -48,15 +48,19 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
     private static final String ESCAPE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ESCAPE_CHAR;
 
     /** Enclosure character argument name. */
-    private static final String ENCLOSURE_CHARACTER_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_CHAR;
+    private static final String ENCLOSURE_CHARACTER_PARAM_NAME =
+            ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_CHAR;
 
     /** Enclosure character argument name. */
-    private static final String ENCLOSURE_MODE_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE;
+    private static final String ENCLOSURE_MODE_PARAM_NAME =
+            ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE;
 
-    private static final String NON_ASCII_TEST_CHARS = "ñóǹ äŝçíì 汉语/漢語  华语/華語 Huáyǔ; 中文 Zhōngwén 漢字仮名交じり文 Lech Wałęsa æøå";
+    private static final String NON_ASCII_TEST_CHARS =
+            "ñóǹ äŝçíì 汉语/漢語  华语/華語 Huáyǔ; 中文 Zhōngwén 漢字仮名交じり文 Lech Wałęsa æøå";
 
     /** Enclosure character argument name. */
-    private static final String DELIMITER_CHAR_PARAM_NAME = ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
+    private static final String DELIMITER_CHAR_PARAM_NAME =
+            ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER;
 
     @Before
     public void init() {
@@ -255,7 +259,8 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
 
         final ColumnMetadata column1 = ColumnMetadata.Builder.column().id(1).name("id").type(Type.INTEGER).build();
         final ColumnMetadata column2 = ColumnMetadata.Builder.column().id(2).name("lastname").type(Type.STRING).build();
-        final ColumnMetadata column3 = ColumnMetadata.Builder.column().id(3).name("firstname").type(Type.STRING).build();
+        final ColumnMetadata column3 =
+                ColumnMetadata.Builder.column().id(3).name("firstname").type(Type.STRING).build();
         final List<ColumnMetadata> columns = Arrays.asList(column1, column2, column3);
         final RowMetadata rowMetadata = new RowMetadata(columns);
 
@@ -326,10 +331,12 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
 
         // then
-        assertThat(out.toByteArray()).isEqualTo(
-                ("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(ISO_8859_1));
-        assertThat(out.toByteArray()).isNotEqualTo(
-                ("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
+        assertThat(out.toByteArray())
+                .isEqualTo(("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n")
+                        .getBytes(ISO_8859_1));
+        assertThat(out.toByteArray())
+                .isNotEqualTo(("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n")
+                        .getBytes(UTF_8));
     }
 
     @Test
@@ -346,8 +353,9 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         ByteArrayOutputStream out = writeCsv(parameters, row.getRowMetadata(), singletonList(row));
 
         // then
-        assertThat(out.toByteArray()).isEqualTo(
-                ("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n").getBytes(UTF_8));
+        assertThat(out.toByteArray())
+                .isEqualTo(("\"id\";\"firstname\"\n\"64a5456ac148b64524ef165\";\"" + NON_ASCII_TEST_CHARS + "\"\n")
+                        .getBytes(UTF_8));
     }
 
     @Test
@@ -385,8 +393,8 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         return dataSetRow;
     }
 
-    private ByteArrayOutputStream writeCsv(Map<String, String> parameters, RowMetadata rowMetadata, List<DataSetRow> rows)
-            throws IOException {
+    private ByteArrayOutputStream writeCsv(Map<String, String> parameters, RowMetadata rowMetadata,
+            List<DataSetRow> rows) throws IOException {
         final ByteArrayOutputStream temp = new ByteArrayOutputStream();
         final CSVWriter writer = (CSVWriter) context.getBean("writer#CSV", temp, parameters);
         if (rows != null) {
@@ -412,7 +420,8 @@ public class CSVWriterTest extends AbstractTransformerWriterTest {
         final ColumnMetadata column5 = column().id(5).name("alive").type(Type.BOOLEAN).build();
         final ColumnMetadata column6 = column().id(6).name("old").type(Type.NUMERIC).build();
         final ColumnMetadata column7 = column().id(7).name("any").type(Type.ANY).build();
-        final List<ColumnMetadata> columns = Arrays.asList(column1, column2, column3, column4, column5, column6, column7);
+        final List<ColumnMetadata> columns =
+                Arrays.asList(column1, column2, column3, column4, column5, column6, column7);
         final RowMetadata rowMetadata = new RowMetadata(columns);
 
         Map<String, String> values = new HashMap<>();

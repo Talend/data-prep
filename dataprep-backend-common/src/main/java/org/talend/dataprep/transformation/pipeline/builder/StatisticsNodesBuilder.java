@@ -35,8 +35,9 @@ import org.talend.dataquality.common.inference.Analyzers;
 
 public class StatisticsNodesBuilder {
 
-    private static final Set<ActionDefinition.Behavior> BEHAVIORS = Stream.of(NEED_STATISTICS_PATTERN, NEED_STATISTICS_INVALID,
-            NEED_STATISTICS_QUALITY, NEED_STATISTICS_FREQUENCY).collect(Collectors.toSet());
+    private static final Set<ActionDefinition.Behavior> BEHAVIORS = Stream
+            .of(NEED_STATISTICS_PATTERN, NEED_STATISTICS_INVALID, NEED_STATISTICS_QUALITY, NEED_STATISTICS_FREQUENCY)
+            .collect(Collectors.toSet());
 
     private static final Predicate<ColumnMetadata> ALL_COLUMNS = c -> true;
 
@@ -245,10 +246,8 @@ public class StatisticsNodesBuilder {
 
     private Node getTypeDetectionNode(final Predicate<ColumnMetadata> columnFilter,
             RowMetadataFallbackProvider rowMetadataFallbackProvider) {
-        return allowSchemaAnalysis
-                ? new TypeDetectionNode(columnFilter, statisticsAdapter, analyzerService::schemaAnalysis,
-                        rowMetadataFallbackProvider)
-                : new BasicNode();
+        return allowSchemaAnalysis ? new TypeDetectionNode(columnFilter, statisticsAdapter,
+                analyzerService::schemaAnalysis, rowMetadataFallbackProvider) : new BasicNode();
     }
 
     private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter,

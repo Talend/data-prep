@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.delete;
 
@@ -42,7 +42,7 @@ public class DeleteTest extends AbstractMetadataBaseTest<Delete> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.NA;
     }
 
@@ -74,7 +74,7 @@ public class DeleteTest extends AbstractMetadataBaseTest<Delete> {
         assertThat(adaptedAction.getDescription(Locale.US), is("Delete this row"));
         assertThat(adaptedAction.getLabel(Locale.US), is("Delete row"));
 
-        assertThat( adaptedAction, not(is(action)) );
+        assertThat(adaptedAction, not(is(action)));
     }
 
     @Test
@@ -146,7 +146,8 @@ public class DeleteTest extends AbstractMetadataBaseTest<Delete> {
         values.put("0000", "David Bowie");
         values.put("0001", "Paris");
         final DataSetRow original = new DataSetRow(values);
-        final List<DataSetRow> rows = Arrays.asList(original.clone(), original.clone(), original.clone(), original.clone());
+        final List<DataSetRow> rows =
+                Arrays.asList(original.clone(), original.clone(), original.clone(), original.clone());
         for (long i = 0; i < rows.size(); i++) {
             final DataSetRow dataSetRow = rows.get((int) i);
             dataSetRow.setTdpId(i);

@@ -139,8 +139,10 @@ public class CommonAPI extends APIService {
     @RequestMapping(value = "/api/queue/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get async method status.")
     @Timed
-    public AsyncExecutionMessage getQueue(@PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
-        HystrixCommand<AsyncExecutionMessage> queueStatusCommand = getCommand(QueueStatusCommand.class, GenericCommand.ServiceType.FULLRUN, id);
+    public AsyncExecutionMessage
+            getQueue(@PathVariable(value = "id") @ApiParam(name = "id", value = "queue id.") String id) {
+        HystrixCommand<AsyncExecutionMessage> queueStatusCommand =
+                getCommand(QueueStatusCommand.class, GenericCommand.ServiceType.FULLRUN, id);
         return queueStatusCommand.execute();
     }
 
@@ -167,7 +169,8 @@ public class CommonAPI extends APIService {
      * @throws IOException if an error occurs.
      */
     private void writeErrorsFromApi(JsonGenerator generator, InputStream input) throws IOException {
-        Iterator<JsonErrorCodeDescription> iterator = mapper.readerFor(JsonErrorCodeDescription.class).readValues(input);
+        Iterator<JsonErrorCodeDescription> iterator =
+                mapper.readerFor(JsonErrorCodeDescription.class).readValues(input);
         while (iterator.hasNext()) {
             final JsonErrorCodeDescription description = iterator.next();
             generator.writeObject(description);

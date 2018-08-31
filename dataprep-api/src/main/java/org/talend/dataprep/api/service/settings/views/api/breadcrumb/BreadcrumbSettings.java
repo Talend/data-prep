@@ -25,7 +25,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * Breadcrumb settings
  * see
- * https://talend.github.io/react-talend-components/?selectedKind=Breadcrumbs&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * https://talend.github.io/react-talend-components/?selectedKind=Breadcrumbs&selectedStory=default&full=0&down=1&left=1
+ * &panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 public class BreadcrumbSettings implements ViewSettings {

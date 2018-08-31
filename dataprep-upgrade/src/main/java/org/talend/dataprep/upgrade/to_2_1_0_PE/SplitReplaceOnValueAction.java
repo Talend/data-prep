@@ -38,7 +38,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import javax.annotation.PostConstruct;
 
 /**
- * Due to TDP-3303, the replace value was split to have 2 implementations : one for the whole column and one for a single cell.
+ * Due to TDP-3303, the replace value was split to have 2 implementations : one for the whole column and one for a
+ * single cell.
  */
 @Component
 public class SplitReplaceOnValueAction implements BaseUpgradeTaskTo_2_1_0_PE {
@@ -63,16 +64,16 @@ public class SplitReplaceOnValueAction implements BaseUpgradeTaskTo_2_1_0_PE {
     private ObjectMapper mapper;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         mapper.registerModule(new MixedContentMapModule());
     }
 
     @Override
     public void run() {
 
-        final Stream<PreparationActions> preparationActionsStream = preparationRepository.list(PreparationActions.class)
-                .filter(p -> p.getActions().stream()
-                        .anyMatch(a -> REPLACE_ON_VALUE.equals(a.getName()) && CELL.equals(a.getParameters().get("scope"))));
+        final Stream<PreparationActions> preparationActionsStream =
+                preparationRepository.list(PreparationActions.class).filter(p -> p.getActions().stream().anyMatch(
+                        a -> REPLACE_ON_VALUE.equals(a.getName()) && CELL.equals(a.getParameters().get("scope"))));
 
         AtomicLong actionsUpdated = new AtomicLong(0);
         preparationActionsStream.forEach(currentPrepActions -> {

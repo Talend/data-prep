@@ -107,7 +107,6 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
         assertThat(cache.has(key), is(true));
     }
 
-
     @Test
     public void testPutHas() throws Exception {
         // Put a content in cache...
@@ -297,7 +296,8 @@ public abstract class ContentCacheTests extends ServiceBaseTest {
      * @param timeToLive the time to live for entry
      * @throws IOException if an error occurs.
      */
-    private void addCacheEntry(ContentCacheKey key, String content, ContentCache.TimeToLive timeToLive) throws IOException {
+    private void addCacheEntry(ContentCacheKey key, String content, ContentCache.TimeToLive timeToLive)
+            throws IOException {
         try (OutputStream entry = cache.put(key, timeToLive)) {
             entry.write(content.getBytes());
             entry.flush();

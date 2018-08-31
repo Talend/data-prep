@@ -13,6 +13,12 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.BaseErrorCodes.UNEXPECTED_EXCEPTION;
+import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
+import static org.talend.dataprep.command.Defaults.emptyStream;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
 import java.io.InputStream;
 
 import org.apache.http.client.methods.HttpPost;
@@ -26,12 +32,6 @@ import org.talend.dataprep.api.export.ExportParameters.SourceType;
 import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static org.talend.dataprep.BaseErrorCodes.UNEXPECTED_EXCEPTION;
-import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
-import static org.talend.dataprep.command.Defaults.emptyStream;
-import static org.talend.dataprep.command.Defaults.pipeStream;
 
 /**
  * Command used to retrieve the preparation content.
@@ -58,7 +58,7 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
      * @param from where to read the data from.
      */
     private PreparationGetContent(String id, String version, SourceType from, String filter) {
-        super(PREPARATION_GROUP);
+        super(TRANSFORM_GROUP);
 
         execute(() -> {
             try {
@@ -69,7 +69,8 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
                 parameters.setFrom(from);
                 parameters.setFilter(filter);
 
-                final String parametersAsString = objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
+                final String parametersAsString =
+                        objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
                 final HttpPost post = new HttpPost(transformationServiceUrl + "/apply");
                 post.setEntity(new StringEntity(parametersAsString, ContentType.APPLICATION_JSON));
                 return post;

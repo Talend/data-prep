@@ -12,6 +12,7 @@ describe('bootstrap', () => {
 		it('should call fetchSettings and initializeRouter', () => {
 			const gen = effects.bootstrap();
 			expect(gen.next().value).toEqual(call(effects.fetchSettings));
+			expect(gen.next().value).toEqual(call(effects.setLanguage));
 			expect(gen.next().value).toEqual(call(effects.initializeRouter));
 		});
 	});

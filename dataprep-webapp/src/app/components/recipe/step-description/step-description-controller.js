@@ -63,6 +63,18 @@ class StepDescriptionCtrl {
 				});
 			}
 			break;
+		case 'multi_columns':
+			this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COLS', {
+				index: (this.index + 1),
+				label: this.step.transformation.label,
+				columnName: this.step.column.name.reduce((acc, next) => {
+					if (acc) {
+						return acc + ', ' + next;
+					}
+					return next;
+				}, ''),
+			});
+			break;
 		}
 	}
 

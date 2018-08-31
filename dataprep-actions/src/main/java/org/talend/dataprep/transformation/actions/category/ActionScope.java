@@ -45,7 +45,7 @@ public enum ActionScope {
     /**
      * Actions are showed only when more than one column is selected
      */
-    MULTI_COLUMN;
+    MULTI_COLUMNS;
 
     /**
      * @return A "user friendly" name for the action scope.

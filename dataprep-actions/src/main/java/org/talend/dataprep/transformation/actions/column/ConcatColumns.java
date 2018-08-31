@@ -67,7 +67,7 @@ public class ConcatColumns extends AbstractActionMetadata implements MultiColumn
     @Override
     public List<String> getActionScope() {
         if (ScopeCategory.MULTI_COLUMNS.equals(this.scope)) {
-            return singletonList(ActionScope.MULTI_COLUMN.getDisplayName());
+            return singletonList(ActionScope.MULTI_COLUMNS.getDisplayName());
         }
         return emptyList();
     }

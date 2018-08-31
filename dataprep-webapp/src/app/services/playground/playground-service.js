@@ -790,45 +790,47 @@ export default function PlaygroundService(
 				];
 				break;
 			}
-			case MULTI_COLUMNS: {
-				let parameters = { ...params };
-				parameters.scope = scope;
-				parameters.column_id = state.playground.grid.selectedColumns.map(col => col.id);
-
-				if (
-					state.playground.filter
-						.applyTransformationOnFilters
-				) {
-					const stepFilters = FilterAdapterService.toTree(
-						state.playground.filter.gridFilters,
-					);
-					parameters = { ...parameters, ...stepFilters };
-				}
-				actions = [{ action: action.name, parameters }];
-				break;
-			}
 			default:
-				actions = map(
-					state.playground.grid.selectedColumns,
-					(column) => {
-						let parameters = { ...params };
-						parameters.scope = scope;
-						parameters.column_id = column && column.id;
-						parameters.column_name = column && column.name;
-						parameters.row_id = line && line.tdpId;
+				if (action.actionScope.includes(MULTI_COLUMNS)) {
+					let parameters = { ...params };
+					parameters.scope = MULTI_COLUMNS;
+					parameters.column_id = state.playground.grid.selectedColumns.map(col => col.id);
+					parameters.column_name = state.playground.grid.selectedColumns.map(col => col.name);
 
-						if (
-							state.playground.filter
-								.applyTransformationOnFilters
-						) {
-							const stepFilters = FilterAdapterService.toTree(
-								state.playground.filter.gridFilters,
-							);
-							parameters = { ...parameters, ...stepFilters };
-						}
-						return { action: action.name, parameters };
-					},
-				);
+					if (
+						state.playground.filter
+							.applyTransformationOnFilters
+					) {
+						const stepFilters = FilterAdapterService.toTree(
+							state.playground.filter.gridFilters,
+						);
+						parameters = { ...parameters, ...stepFilters };
+					}
+					actions = [{ action: action.name, parameters }];
+				}
+				else {
+					actions = map(
+						state.playground.grid.selectedColumns,
+						(column) => {
+							let parameters = { ...params };
+							parameters.scope = scope;
+							parameters.column_id = column && column.id;
+							parameters.column_name = column && column.name;
+							parameters.row_id = line && line.tdpId;
+
+							if (
+								state.playground.filter
+									.applyTransformationOnFilters
+							) {
+								const stepFilters = FilterAdapterService.toTree(
+									state.playground.filter.gridFilters,
+								);
+								parameters = { ...parameters, ...stepFilters };
+							}
+							return { action: action.name, parameters };
+						},
+					);
+				}
 				break;
 			}
 			return service.appendStep(actions);

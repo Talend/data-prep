@@ -791,7 +791,7 @@ export default function PlaygroundService(
 				break;
 			}
 			default:
-				if (action.actionScope.includes(MULTI_COLUMNS)) {
+				if (action.actionScope && action.actionScope.includes(MULTI_COLUMNS)) {
 					let parameters = { ...params };
 					parameters.scope = MULTI_COLUMNS;
 					parameters.column_id = state.playground.grid.selectedColumns.map(col => col.id);

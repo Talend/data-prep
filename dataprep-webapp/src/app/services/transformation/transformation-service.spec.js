@@ -294,6 +294,9 @@ describe('Transformation Service', () => {
                         allCategories: generateCategories(),
                     },
                 },
+                grid: {
+	                selectedColumns: []
+                }
             },
         };
         $provide.constant('state', stateMock);

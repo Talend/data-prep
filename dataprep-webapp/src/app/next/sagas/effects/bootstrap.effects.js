@@ -11,6 +11,7 @@ import i18n from './../../../i18n';
  */
 export function* bootstrap() {
 	yield call(fetchSettings);
+	yield call(setLanguage);
 	// this should be called here because refresh use settings in the store
 	yield call(initializeRouter);
 }

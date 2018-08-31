@@ -1,5 +1,5 @@
 import { all, call, put, select } from 'redux-saga/effects';
-import api, { actions } from '@talend/react-cmf';
+import { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
 import i18next from '../../../i18n';

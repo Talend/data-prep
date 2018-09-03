@@ -267,6 +267,8 @@ public class ColumnMetadata implements Serializable {
                 ", domain='" + domain + '\'' + //
                 ", domainLabel='" + domainLabel + '\'' + //
                 ", semanticDomains=" + semanticDomains + //
+                ", domainForced=" +domainForced + //
+                ", typeForced=" +typeForced + //
                 '}';
     }
 

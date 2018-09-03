@@ -25,8 +25,8 @@ Belize|Belize|BZ|BLZ|84|BLZ|bh|BH|BZ|501|BLZ|BH|28|BIZ|BZD|BELIZE|2|Belize Dolla
 Benin|Bénin|BJ|BEN|204|BEN|dm|BJ|DY|229|BEN|BN|29|BEN|XOF|BENIN|0|CFA Franc BCEAO|952|Yes
 Bermuda|Bermudes|BM|BMU|60|BER|bm|BE| |1-441|BER|BD|30|BER|BMD|BERMUDA|2|Bermudian Dollar|60|Territory of GB
 Bhutan|Bhoutan|BT|BTN|64|BTN|bt| | |975|BHU|BT|31|BHU|INR|BHUTAN|2|Indian Rupee|356|Yes
-Bolivia|Bolivie|BO|BOL|68|BOL|bo|BO|BOL|591|BOL|BL|33|BOL|BOB|"BOLIVIA| PLURINATIONAL STATE OF"|2|Boliviano|68|Yes
 Plurinational State of Bolivia|l'État Plurinational de Bolivie|BO|BOL|68|BOL|bo|BO|BOL|591|BOL|BL|33|BOL|BOB|"BOLIVIA| PLURINATIONAL STATE OF"|2|Boliviano|68|Yes
+Bolivia|Bolivie|BO|BOL|68|BOL|bo|BO|BOL|591|BOL|BL|33|BOL|BOB|"BOLIVIA| PLURINATIONAL STATE OF"|2|Boliviano|68|Yes
 Bonaire, Sint Eustatius and Saba|Bonaire, Saint-Eustache et Saba|BQ|BES|535|ATN|ca|NU|NA|599|ANT|NL|176|AHO|USD|"BONAIRE| SINT EUSTATIUS AND SABA"|2|US Dollar|840|Part of NL
 Caribbean Netherlands|Pays-Bas caribéens|BQ|BES|535|ATN|ca|NU|NA|599|ANT|NL|176|AHO|USD|"BONAIRE| SINT EUSTATIUS AND SABA"|2|US Dollar|840|Part of NL
 Bosnia and Herzegovina|Bosnie-Herzégovine|BA|BIH|70|BIH|bn|BG|BIH|387|BIH|BK|34|BIH|BAM|BOSNIA AND HERZEGOVINA|2|Convertible Mark|977|Yes
@@ -165,8 +165,8 @@ Mauritania|Mauritanie|MR|MRT|478|MTN|mu|MT|RIM|222|MTN|MR|159|MTN|MRO|MAURITANIA
 Mauritius|Maurice|MU|MUS|480|MAU|mf|MA|MS|230|MRI|MP|160|MRI|MUR|MAURITIUS|2|Mauritius Rupee|480|Yes
 Mayotte|Mayotte|YT|MYT|175|MYT|ot| | |262|MYT|MF|161|MAY|EUR|MAYOTTE|2|Euro|978|Part of FR
 Mexico|Mexique|MX|MEX|484|MEX|mx|MX|MEX|52|MEX|MX|162|MEX|MXN|MEXICO|2|Mexican Peso|484|Yes
-Micronesia|Micronésie|FM|FSM|583|FSM|fm| | |691|FSM|FM|163|FSM|USD|"MICRONESIA| FEDERATED STATES OF"|2|US Dollar|840|Yes
 Federated States of Micronesia|États Fédérés de Micronésie|FM|FSM|583|FSM|fm| | |691|FSM|FM|163|FSM|USD|"MICRONESIA| FEDERATED STATES OF"|2|US Dollar|840|Yes
+Micronesia|Micronésie|FM|FSM|583|FSM|fm| | |691|FSM|FM|163|FSM|USD|"MICRONESIA| FEDERATED STATES OF"|2|US Dollar|840|Yes
 Republic of Moldova|République de Moldova|MD|MDA|498|MDA|mv|RM|MD|373|MDA|MD|165|MDA|MDL|"MOLDOVA| REPUBLIC OF"|2|Moldovan Leu|498|Yes
 Moldova|Moldova|MD|MDA|498|MDA|mv|RM|MD|373|MDA|MD|165|MDA|MDL|"MOLDOVA| REPUBLIC OF"|2|Moldovan Leu|498|Yes
 Monaco|Monaco|MC|MCO|492|MCO|mc| |MC|377|MON|MN|166|MON|EUR|MONACO|2|Euro|978|Yes
@@ -249,8 +249,8 @@ Syrian Arab Republic|République Arabe Syrienne|SY|SYR|760|SYR|sy|SY|SYR|963|SYR
 Syrian Arab Republic|Syrienne|SY|SYR|760|SYR|sy|SY|SYR|963|SYR|SY|238|SYR|SYP|SYRIAN ARAB REPUBLIC|2|Syrian Pound|760|Yes
 Taiwan|Taïwan|TW|TWN|158| |ch| |RC|886|TPE|TW|925|TPE|TWD|TAIWAN|2|New Taiwan Dollar|901|Yes
 Tajikistan|Tadjikistan|TJ|TJK|762|TJK|ta|TA|TJ|992|TJK|TI|239|TJK|TJS|TAJIKISTAN|2|Somoni|972|Yes
-Tanzania|Tanzanie|TZ|TZA|834|TZA|tz|TN|EAT|255|TAN|TZ|257|TAN|TZS|"TANZANIA| UNITED REPUBLIC OF"|2|Tanzanian Shilling|834|Yes
 United Republic of Tanzania|République-Unie de Tanzanie|TZ|TZA|834|TZA|tz|TN|EAT|255|TAN|TZ|257|TAN|TZS|"TANZANIA| UNITED REPUBLIC OF"|2|Tanzanian Shilling|834|Yes
+Tanzania|Tanzanie|TZ|TZA|834|TZA|tz|TN|EAT|255|TAN|TZ|257|TAN|TZS|"TANZANIA| UNITED REPUBLIC OF"|2|Tanzanian Shilling|834|Yes
 Thailand|Thaïlande|TH|THA|764|THA|th|TH|T|66|THA|TH|240|THA|THB|THAILAND|2|Baht|764|Yes
 Timor-Leste|Timor-Leste|TL|TLS|626|TLS|em|TM| |670|TLS|TT|242|TLS|USD|TIMOR-LESTE|2|US Dollar|840|Yes
 Togo|Togo|TG|TGO|768|TGO|tg|TG|TG|228|TOG|TO|243|TOG|XOF|TOGO|0|CFA Franc BCEAO|952|Yes

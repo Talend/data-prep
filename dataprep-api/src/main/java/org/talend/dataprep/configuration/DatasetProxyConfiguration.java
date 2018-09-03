@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
 // TODO : not sure if it should be only for catalog mode: frontend should not use /api/v1/datasets anyway in legacy mode

@@ -270,18 +270,25 @@ public class DatasetClient {
                 .stream()
                 .map(ColumnMetadata::getStatistics)
                 .anyMatch(this::isComputedStatistics)) {
-            Function<String, AnalysisResult> datasetAnalysisSupplier;
-            if (context.getBean(DatasetConfiguration.class).isLegacy()) {
-                datasetAnalysisSupplier = this::getAnalyseDatasetFromLegacy;
-            } else {
-                datasetAnalysisSupplier = this::analyseDataset;
-            }
-            AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
+            AnalysisResult analysisResult = getDatasetAnalysisSupplier().apply(dataset.getId());
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
             metadata.getContent().setNbRecords(analysisResult.rowcount);
         }
 
         return metadata;
+    }
+
+    /**
+     * @return The dataset analysis supplier according to the dataset provider
+     */
+    private Function<String, AnalysisResult> getDatasetAnalysisSupplier() {
+        Function<String, AnalysisResult> datasetAnalysisSupplier;
+        if (context.getBean(DatasetConfiguration.class).isLegacy()) {
+            datasetAnalysisSupplier = this::getAnalyseDatasetFromLegacy;
+        } else {
+            datasetAnalysisSupplier = this::analyseDataset;
+        }
+        return datasetAnalysisSupplier;
     }
 
     private boolean isComputedStatistics(Statistics statistics) {

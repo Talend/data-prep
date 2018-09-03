@@ -13,6 +13,7 @@ import javax.validation.constraints.*;
 import org.apache.commons.lang.*;
 import org.junit.*;
 import org.slf4j.*;
+import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.*;
 import org.talend.dataprep.qa.dto.*;
 
@@ -29,6 +30,8 @@ public class PreparationStep extends DataPrepStep {
     public static final String DATASET_NAME = "dataSetName";
 
     private static final String NB_STEPS = "nbSteps";
+
+    private static final String ACTIONS_LIST = "actionsList";
 
     /**
      * This class' logger.
@@ -60,7 +63,7 @@ public class PreparationStep extends DataPrepStep {
     }
 
     @Given("^A preparation with the following parameters exists :$")
-    public void checkPreparation(DataTable dataTable) {
+    public void checkPreparation(DataTable dataTable) throws Exception {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String suffixedPrepName = getSuffixedPrepName(params.get(PREPARATION_NAME));
         String prepPath = util.extractPathFromFullName(params.get(PREPARATION_NAME));
@@ -71,17 +74,28 @@ public class PreparationStep extends DataPrepStep {
         Assert.assertEquals(prepDet.dataSetId, context.getDatasetId(suffixName(params.get(DATASET_NAME))));
         Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
 
+        if (params.get("actionsList") != null) {
+            List<Action> actionsList = prepDet.actions;
+            String expectedActionsListFile = params.get("actionsList").toString();
+            checkActionsListOfPrepa(actionsList, expectedActionsListFile);
+        }
     }
 
-    public void existStepMigration(String prepFullName)throws IOException {
-        String prepPath = util.extractPathFromFullName(prepFullName);
-        String prepId = context.getPreparationId(prepFullName, prepPath);
-        PreparationDetails prepDet = getPreparationDetails(prepId);
-        long debug = prepDet.actions
-                .stream() //
-                .filter(action -> action.action.equals("blabla"))
-                .count();
-        System.out.println("*****debug****"+debug );
+    private void checkActionsListOfPrepa(List<Action> actionsList, String expectedActionsListFile) throws Exception {
+        if (expectedActionsListFile == null) {
+            return;
+        }
+        InputStream expectedActionsListStream = DataPrepStep.class.getResourceAsStream(expectedActionsListFile);
+        List<Action> expectedActionsList =
+                objectMapper.readValue(expectedActionsListStream, PreparationDetails.class).actions;
+        Assert.assertEquals(expectedActionsList.size(), actionsList.size());
+        //        Collections.sort(actionsList);
+        //        Collections.sort(expectedActionsList);
+        for (int i = 0; i < expectedActionsList.size(); i++) {
+            Action expectedAction = expectedActionsList.get(i);
+            Action action = actionsList.get(i);
+            Assert.assertEquals(expectedAction.action, action.action);
+        }
     }
 
     @When("^I load the existing preparation called \"(.*)\"$")

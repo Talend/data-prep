@@ -155,6 +155,7 @@
                                 <classesDirectory>${project.build.outputDirectory}</classesDirectory>
                                 <excludes>
                                     <exclude>**/application*.properties</exclude>
+                                    <exclude>**/audit.properties</exclude>
                                 </excludes>
                             </configuration>
                         </execution>

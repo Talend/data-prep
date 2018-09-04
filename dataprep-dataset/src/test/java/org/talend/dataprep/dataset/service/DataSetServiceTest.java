@@ -153,7 +153,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"BBBB", "AAAA"};
+        String[] expectedNames = new String[] { "BBBB", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -186,7 +186,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -215,7 +215,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"BBBB", "AAAA"};
+        String[] expectedNames = new String[] { "BBBB", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -246,14 +246,14 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // Ensure order by name (most recent first)
         final Iterator<JsonNode> elements = mapper.readTree(actualASC).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
         }
 
         mapper.readTree(actualDESC).elements();
-        expectedNames = new String[]{"BBBB", "AAAA"};
+        expectedNames = new String[] { "BBBB", "AAAA" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -362,7 +362,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (most recent first)
         String actual = when().get("/datasets?sort=name").asString();
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"BBBB", "AAAA"};
+        String[] expectedNames = new String[] { "BBBB", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -396,7 +396,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (most recent first)
         String actual = when().get("/datasets?sort=creationDate").asString();
         final Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -430,7 +430,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (most recent first)
         String actual = when().get("/datasets?sort=creationDate&order=desc").asString();
         Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"AAAA", "BBBB"};
+        String[] expectedNames = new String[] { "AAAA", "BBBB" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -438,7 +438,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (oldest first when no order value)
         actual = when().get("/datasets?sort=creationDate").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"AAAA", "BBBB"};
+        expectedNames = new String[] { "AAAA", "BBBB" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -446,7 +446,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by date (oldest first)
         actual = when().get("/datasets?sort=creationDate&order=asc").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"BBBB", "AAAA"};
+        expectedNames = new String[] { "BBBB", "AAAA" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -490,7 +490,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (last character from alphabet first)
         String actual = when().get("/datasets?sort=name&order=desc").asString();
         Iterator<JsonNode> elements = mapper.readTree(actual).elements();
-        String[] expectedNames = new String[]{"CCCC", "bbbb", "AAAA"};
+        String[] expectedNames = new String[] { "CCCC", "bbbb", "AAAA" };
         int i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -498,7 +498,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (last character from alphabet first when no order value)
         actual = when().get("/datasets?sort=name").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"CCCC", "bbbb", "AAAA"};
+        expectedNames = new String[] { "CCCC", "bbbb", "AAAA" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));
@@ -506,7 +506,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         // Ensure order by name (first character from alphabet first)
         actual = when().get("/datasets?sort=name&order=asc").asString();
         elements = mapper.readTree(actual).elements();
-        expectedNames = new String[]{"AAAA", "bbbb", "CCCC"};
+        expectedNames = new String[] { "AAAA", "bbbb", "CCCC" };
         i = 0;
         while (elements.hasNext()) {
             assertThat(elements.next().get("name").asText(), is(expectedNames[i++]));

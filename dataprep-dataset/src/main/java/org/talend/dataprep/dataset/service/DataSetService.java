@@ -443,15 +443,15 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @ResponseBody
     public Callable<DataSet>
-    get(@RequestParam(defaultValue = "true") @ApiParam(name = "metadata",
-            value = "Include metadata information in the response") boolean metadata, //
-        @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent",
-                value = "Include internal content in the response") boolean includeInternalContent, //
-        @RequestParam(defaultValue = "-1") @ApiParam(name = "limit", value = "limit") long limit, //
-        @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter",
-                defaultValue = "") String filter,
-        @PathVariable(value = "id") @ApiParam(name = "id",
-                value = "Id of the requested data set") String dataSetId) {
+            get(@RequestParam(defaultValue = "true") @ApiParam(name = "metadata",
+                    value = "Include metadata information in the response") boolean metadata, //
+                    @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent",
+                            value = "Include internal content in the response") boolean includeInternalContent, //
+                    @RequestParam(defaultValue = "-1") @ApiParam(name = "limit", value = "limit") long limit, //
+                    @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter",
+                            defaultValue = "") String filter,
+                    @PathVariable(value = "id") @ApiParam(name = "id",
+                            value = "Id of the requested data set") String dataSetId) {
         return () -> {
             final Marker marker = Markers.dataset(dataSetId);
             LOG.debug(marker, "Get data set #{}", dataSetId);
@@ -802,12 +802,12 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @ResponseBody
     public DataSet
-    preview(@RequestParam(defaultValue = "true") @ApiParam(name = "metadata",
-            value = "Include metadata information in the response") boolean metadata, //
-            @RequestParam(defaultValue = "") @ApiParam(name = "sheetName",
-                    value = "Sheet name to preview") String sheetName, //
-            @PathVariable(value = "id") @ApiParam(name = "id",
-                    value = "Id of the requested data set") String dataSetId) {
+            preview(@RequestParam(defaultValue = "true") @ApiParam(name = "metadata",
+                    value = "Include metadata information in the response") boolean metadata, //
+                    @RequestParam(defaultValue = "") @ApiParam(name = "sheetName",
+                            value = "Sheet name to preview") String sheetName, //
+                    @PathVariable(value = "id") @ApiParam(name = "id",
+                            value = "Id of the requested data set") String dataSetId) {
 
         DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
 
@@ -1010,8 +1010,8 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     public void setFavorites(@RequestParam(defaultValue = "false") @ApiParam(name = "unset",
             value = "if true then unset the dataset as favorite, if false (default value) set the favorite flag") boolean unset, //
-                             @PathVariable(value = "id") @ApiParam(name = "id",
-                                     value = "Id of the favorite data set, do nothing is the id does not exist.") String dataSetId) {
+            @PathVariable(value = "id") @ApiParam(name = "id",
+                    value = "Id of the favorite data set, do nothing is the id does not exist.") String dataSetId) {
         String userId = security.getUserId();
         // check that dataset exists
         DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
@@ -1130,8 +1130,8 @@ public class DataSetService extends BaseDataSetService {
     @Timed
     @Deprecated
     public Stream<DatasetDTO> search( //
-                                      @RequestParam @ApiParam(value = "What to search in data sets") final String name, //
-                                      @RequestParam @ApiParam(value = "The searched name should be the full name") final boolean strict) {
+            @RequestParam @ApiParam(value = "What to search in data sets") final String name, //
+            @RequestParam @ApiParam(value = "The searched name should be the full name") final boolean strict) {
         LOG.debug("search datasets metadata for {}", name);
         return list(null, null, name, strict, false, false, false);
     }
@@ -1307,7 +1307,7 @@ public class DataSetService extends BaseDataSetService {
      * @return the list of DataSetMetadata corresponding to the search
      */
     private Stream<DataSetMetadata> findDataset(Sort sort, Order order, String name, boolean nameStrict,
-                                                boolean certified, boolean favorite, boolean limit, Set<String> favoritesIds) {
+            boolean certified, boolean favorite, boolean limit, Set<String> favoritesIds) {
         // Build filter for data sets
         final List<String> predicates = new ArrayList<>();
         predicates.add("lifecycle.importing = false");

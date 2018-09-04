@@ -314,8 +314,7 @@ public class DataSetAPI extends APIService {
             }
 
             if (certified) {
-                datasetStream = datasetStream
-                        .filter(dataset -> dataset.getCertification() == CERTIFIED);
+                datasetStream = datasetStream.filter(dataset -> dataset.getCertification() == CERTIFIED);
             }
 
             if (limit) {

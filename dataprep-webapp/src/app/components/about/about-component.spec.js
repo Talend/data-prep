@@ -42,7 +42,7 @@ describe('Breadcrumb component', () => {
 		spyOn(AboutService, 'loadBuilds').and.returnValue();
 
 		createElement = () => {
-			const html = `<pure-about-dialod></pure-about-dialod>`;
+			const html = `<pure-about-dialog></pure-about-dialog>`;
 			element = $compile(html)(scope);
 			scope.$digest();
 			controller = element.controller('about');
@@ -63,7 +63,7 @@ describe('Breadcrumb component', () => {
 			stateMock.home.about.isVisible = true;
 			scope.$digest();
 
-			expect(element.find('pure-about-dialod').length).toBe(1);
+			expect(element.find('pure-about-dialog').length).toBe(1);
 		});
 	});
 });

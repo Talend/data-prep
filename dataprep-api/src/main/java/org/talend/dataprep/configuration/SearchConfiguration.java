@@ -30,8 +30,8 @@ public class SearchConfiguration {
 
     @Bean(name = "ordered#search")
     public OrderedBeans<SearchDelegate> searchDelegateOrderedBeans(FolderSearchDelegate folder, //
-                                                            DataSetSearchDelegate dataset, //
-                                                            PreparationSearchDelegate preparation) {
+            DataSetSearchDelegate dataset, //
+            PreparationSearchDelegate preparation) {
         return new OrderedBeans<>(asList(preparation, folder, dataset));
     }
 }

@@ -98,7 +98,8 @@ public class WrapperProcessor implements BeanPostProcessor, ApplicationContextAw
     private class InvalidWrapperDefinitionException extends BeansException {
 
         private InvalidWrapperDefinitionException(Set<Wrapper> invalidWrappers) {
-            super("Invalid Wrapper definition(s) found in context for: '" + invalidWrappers.stream() //
+            super("Invalid Wrapper definition(s) found in context for: '" + invalidWrappers
+                    .stream() //
                     .map(wrapper -> wrapper.getClass().getName()) //
                     .collect(joining(",")) + "'.");
         }

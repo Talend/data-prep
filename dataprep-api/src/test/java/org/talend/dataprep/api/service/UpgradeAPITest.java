@@ -86,7 +86,8 @@ public class UpgradeAPITest extends ApiServiceTestBase {
         // When
         String actual = RestAssured.when().get("/api/upgrade/check").asString();
 
-        List<UpgradeServerVersion> actualParsed = mapper.readerFor(UpgradeServerVersion.class).<UpgradeServerVersion>readValues(actual).readAll();
+        List<UpgradeServerVersion> actualParsed =
+                mapper.readerFor(UpgradeServerVersion.class).<UpgradeServerVersion> readValues(actual).readAll();
 
         // Then
         Assert.assertEquals(1, actualParsed.size());

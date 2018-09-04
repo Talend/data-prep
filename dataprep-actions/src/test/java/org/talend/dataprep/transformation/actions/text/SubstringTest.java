@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.text;
 
@@ -52,7 +52,8 @@ public class SubstringTest extends AbstractMetadataBaseTest<Substring> {
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils.parseParameters(SubstringTest.class.getResourceAsStream("substringAction.json"));
+        parameters = ActionMetadataTestUtils
+                .parseParameters(SubstringTest.class.getResourceAsStream("substringAction.json"));
     }
 
     @Test
@@ -125,6 +126,7 @@ public class SubstringTest extends AbstractMetadataBaseTest<Substring> {
         // then
         assertEquals(expectedValues, row.values());
     }
+
     @Test
     public void testApplyOnSurrogatePair() {
         // given
@@ -294,7 +296,8 @@ public class SubstringTest extends AbstractMetadataBaseTest<Substring> {
     }
 
     @Test
-    public void should_substring_resulting_to_empty_on_strange_bounds_start_index_sup_to_end_index() throws IOException {
+    public void should_substring_resulting_to_empty_on_strange_bounds_start_index_sup_to_end_index()
+            throws IOException {
         // given
         parameters.put(FROM_INDEX_PARAMETER, "6");
         parameters.put(TO_INDEX_PARAMETER, "1");
@@ -569,7 +572,8 @@ public class SubstringTest extends AbstractMetadataBaseTest<Substring> {
         expected.add(createMetadata("0002", "last update"));
 
         //when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters), factory.create(action, parameters));
+        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters),
+                factory.create(action, parameters));
 
         // then
         assertEquals(expected, row.getRowMetadata().getColumns());

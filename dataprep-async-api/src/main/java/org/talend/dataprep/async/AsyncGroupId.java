@@ -16,6 +16,7 @@ import java.lang.annotation.*;
 
 /**
  * Annotation to indicate the {@link AsyncExecution#getGroup()} value for the created execution.
+ * 
  * @see AsyncOperation
  */
 @Target(ElementType.PARAMETER)

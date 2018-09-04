@@ -233,7 +233,8 @@ public class ColumnMetadata implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return Optional.ofNullable(obj) //Colum
+        return Optional
+                .ofNullable(obj) //Colum
                 .filter(that -> that instanceof ColumnMetadata) //
                 .map(that -> (ColumnMetadata) that) //
                 .filter(that -> Objects.equals(this.getDiffFlagValue(), that.getDiffFlagValue())) //

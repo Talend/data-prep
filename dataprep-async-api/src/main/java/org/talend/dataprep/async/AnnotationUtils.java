@@ -55,7 +55,8 @@ public class AnnotationUtils {
         return idParameterIndex;
     }
 
-    public static List<Integer> getAnnotatedParameterIndexes(ProceedingJoinPoint pjp, Class<? extends Annotation> annotationClass) {
+    public static List<Integer> getAnnotatedParameterIndexes(ProceedingJoinPoint pjp,
+            Class<? extends Annotation> annotationClass) {
         MethodSignature ms = (MethodSignature) pjp.getSignature();
         Method m = ms.getMethod();
 
@@ -80,7 +81,7 @@ public class AnnotationUtils {
 
         List<Object> conditionArg = new ArrayList<>();
 
-        conditionArgIndex.forEach( (i) -> {
+        conditionArgIndex.forEach((i) -> {
             conditionArg.add(pjp.getArgs()[i]);
         });
 

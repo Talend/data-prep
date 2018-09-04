@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.transformation.actions.common;
 
@@ -73,7 +73,6 @@ public class ReplaceOnValueHelper {
         this.token = token;
         this.operator = operator;
     }
-
 
     /**
      * Build a ReplaceOnValueHelper out of the given json string.
@@ -178,22 +177,22 @@ public class ReplaceOnValueHelper {
 
         boolean matches = false;
         switch (this.getOperator()) {
-            case EQUALS_MODE:
-                matches = StringUtils.equals( value, this.getToken());
-                break;
-            case CONTAINS_MODE:
-                matches = value.contains(this.getToken());
-                break;
-            case STARTS_WITH_MODE:
-                matches = value.startsWith(this.getToken());
-                break;
-            case ENDS_WITH_MODE:
-                matches = value.endsWith(this.getToken());
-                break;
-            case REGEX_MODE:
-                final Matcher matcher = pattern.matcher(value);
-                matches = matcher.matches();
-                break;
+        case EQUALS_MODE:
+            matches = StringUtils.equals(value, this.getToken());
+            break;
+        case CONTAINS_MODE:
+            matches = value.contains(this.getToken());
+            break;
+        case STARTS_WITH_MODE:
+            matches = value.startsWith(this.getToken());
+            break;
+        case ENDS_WITH_MODE:
+            matches = value.endsWith(this.getToken());
+            break;
+        case REGEX_MODE:
+            final Matcher matcher = pattern.matcher(value);
+            matches = matcher.matches();
+            break;
         }
 
         return matches;
@@ -204,8 +203,8 @@ public class ReplaceOnValueHelper {
      */
     @Override
     public String toString() {
-        return "ReplaceOnValueParameter{" + "token='" + token + '\'' + ", operator='" + operator + '\'' + ", pattern=" + pattern
-                + ", strict=" + strict + '}';
+        return "ReplaceOnValueParameter{" + "token='" + token + '\'' + ", operator='" + operator + '\'' + ", pattern="
+                + pattern + ", strict=" + strict + '}';
     }
 
 }

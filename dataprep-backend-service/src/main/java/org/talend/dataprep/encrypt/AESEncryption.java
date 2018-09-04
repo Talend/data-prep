@@ -168,6 +168,7 @@ public class AESEncryption {
     }
 
     private static class UserInfo {
+
         String userName;
 
         String password;

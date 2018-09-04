@@ -55,9 +55,11 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         preparation.setHeadId("0");
         preparationRepository.add(preparation);
 
-        final TransformationCacheKey cacheKey = cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", HEAD, "");
+        final TransformationCacheKey cacheKey =
+                cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", HEAD, "");
         putKeyInCache(cacheKey);
-        final TransformationCacheKey filteredSampleCacheKey = cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", FILTER, "");
+        final TransformationCacheKey filteredSampleCacheKey =
+                cacheKeyGenerator.generateContentKey("1234", "1234", "0", "text", FILTER, "");
         putKeyInCache(filteredSampleCacheKey);
     }
 
@@ -79,7 +81,7 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         parameters.setFrom(from);
 
         // Then
-        assertTrue(cachedExportStrategy.accept(parameters));
+        assertTrue(cachedExportStrategy.test(parameters));
     }
 
     @Test
@@ -103,13 +105,13 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         parameters.setFrom(HEAD);
 
         // Then
-        assertFalse(cachedExportStrategy.accept(parameters));
+        assertFalse(cachedExportStrategy.test(parameters));
     }
 
     @Test
     public void shouldNotAcceptNullParameter() throws Exception {
         // Then
-        assertFalse(cachedExportStrategy.accept(null));
+        assertFalse(cachedExportStrategy.test(null));
     }
 
     @Test
@@ -117,7 +119,7 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         // Then
         final ExportParameters parameters = new ExportParameters();
         parameters.setContent(new DataSet());
-        assertFalse(cachedExportStrategy.accept(parameters));
+        assertFalse(cachedExportStrategy.test(parameters));
     }
 
     @Test
@@ -126,7 +128,7 @@ public class CachedExportStrategyTest extends ServiceBaseTest {
         final ExportParameters parameters = new ExportParameters();
         parameters.setContent(new DataSet());
         parameters.setPreparationId(null);
-        assertFalse(cachedExportStrategy.accept(parameters));
+        assertFalse(cachedExportStrategy.test(parameters));
     }
 
 }

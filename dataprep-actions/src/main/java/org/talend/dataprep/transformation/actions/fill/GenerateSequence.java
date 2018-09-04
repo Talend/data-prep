@@ -62,16 +62,12 @@ public class GenerateSequence extends AbstractGenerateSequenceAction {
         final List<Parameter> parameters = super.getParameters(locale);
         parameters.add(ActionsUtils.getColumnCreationParameter(locale, true));
 
-        Parameter startParameter = parameter(locale).setName(START_VALUE)
-                .setType(INTEGER)
-                .setDefaultValue("1")
-                .build(this);
+        Parameter startParameter =
+                parameter(locale).setName(START_VALUE).setType(INTEGER).setDefaultValue("1").build(this);
         parameters.add(startParameter);
 
-        Parameter stepParameter = parameter(locale).setName(STEP_VALUE)
-                .setType(INTEGER)
-                .setDefaultValue("1")
-                .build(this);
+        Parameter stepParameter =
+                parameter(locale).setName(STEP_VALUE).setType(INTEGER).setDefaultValue("1").build(this);
         parameters.add(stepParameter);
 
         return parameters;
@@ -100,8 +96,8 @@ public class GenerateSequence extends AbstractGenerateSequenceAction {
         }
         Map<String, String> parameters = actionContext.getParameters();
         if (isEmpty(parameters.get(START_VALUE)) || isEmpty(parameters.get(STEP_VALUE))) {
-            LOGGER.warn("At least one of the parameters is invalid {}/{} {}/{} ", START_VALUE, parameters.get(START_VALUE),
-                    STEP_VALUE, parameters.get(STEP_VALUE));
+            LOGGER.warn("At least one of the parameters is invalid {}/{} {}/{} ", START_VALUE,
+                    parameters.get(START_VALUE), STEP_VALUE, parameters.get(STEP_VALUE));
             actionContext.setActionStatus(CANCELED);
         }
         if (actionContext.getActionStatus() == OK) {

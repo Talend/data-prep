@@ -26,13 +26,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * An action split dropdown is a mix of simple button and a dropdown.
  * see
- * https://talend.github.io/react-talend-components/?selectedKind=ActionSplitDropdown&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * https://talend.github.io/react-talend-components/?selectedKind=ActionSplitDropdown&selectedStory=default&full=0&down=
+ * 1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  *
  * Button action
- * This part is configured with the ActionSettings properties. The whole items list will be passed to the action function.
+ * This part is configured with the ActionSettings properties. The whole items list will be passed to the action
+ * function.
  *
  * Dropdown
- * The dropdown options are the items. They are the models the actions applies to. The action configuration is the one from simple
+ * The dropdown options are the items. They are the models the actions applies to. The action configuration is the one
+ * from simple
  * button configuration.
  */
 @JsonInclude(NON_NULL)

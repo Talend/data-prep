@@ -22,8 +22,9 @@ public class ActionsProfile {
     private final Map<Action, ActionDefinition> metadataByAction;
 
     public ActionsProfile(final boolean needFullAnalysis, final boolean needOnlyInvalidAnalysis,
-                          final Predicate<ColumnMetadata> filterForFullAnalysis, final Predicate<ColumnMetadata> filterForInvalidAnalysis,
-                          final Predicate<ColumnMetadata> filterForPatternAnalysis, Map<Action, ActionDefinition> metadataByAction) {
+            final Predicate<ColumnMetadata> filterForFullAnalysis,
+            final Predicate<ColumnMetadata> filterForInvalidAnalysis,
+            final Predicate<ColumnMetadata> filterForPatternAnalysis, Map<Action, ActionDefinition> metadataByAction) {
         this.needFullAnalysis = needFullAnalysis;
         this.needOnlyInvalidAnalysis = needOnlyInvalidAnalysis;
         this.filterForFullAnalysis = filterForFullAnalysis;

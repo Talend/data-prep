@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.schema.csv;
 
@@ -30,12 +30,12 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
     public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @Test(expected = IllegalArgumentException.class)
-    public void should_not_construct_object_with_null_sample(){
+    public void should_not_construct_object_with_null_sample() {
         new CSVFastHeaderAndTypeAnalyzer(null, new Separator(';'));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void should_not_construct_object_with_null_separator(){
+    public void should_not_construct_object_with_null_separator() {
         new CSVFastHeaderAndTypeAnalyzer(null, new Separator(';'));
     }
 
@@ -51,7 +51,8 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
 
         // then
         List<Type> expectedTypes = Collections.emptyList();
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().stream().map( p -> p.getValue()).toArray());
+        Assert.assertArrayEquals(expectedTypes.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getValue()).toArray());
         Assert.assertFalse(analysis.isFirstLineAHeader());
     }
 
@@ -66,9 +67,11 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         CSVFastHeaderAndTypeAnalyzer analysis = new CSVFastHeaderAndTypeAnalyzer(list, separator);
 
         // then
-        List<Type> expectedTypes = Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE, Type.BOOLEAN, Type.STRING);
+        List<Type> expectedTypes =
+                Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE, Type.BOOLEAN, Type.STRING);
         Assert.assertFalse(analysis.isFirstLineAHeader());
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().stream().map( p -> p.getValue()).toArray());
+        Assert.assertArrayEquals(expectedTypes.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getValue()).toArray());
     }
 
     @Test
@@ -85,7 +88,8 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         // then
         List<Type> expectedTypes = Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE);
         Assert.assertFalse(analysis.isFirstLineAHeader());
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().stream().map( p -> p.getValue()).toArray());
+        Assert.assertArrayEquals(expectedTypes.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getValue()).toArray());
         Assert.assertTrue(analysis.isHeaderInfoReliable());
 
     }
@@ -103,8 +107,8 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         String record8 = "Toto; 4;1";
         String record9 = "Toto; 2;1";
         String record10 = "Toto;2;2; Hello;";
-        List<String> list = Arrays.asList(firstRecord, record2, record3, record4, record5, record6, record7, record8, record9,
-                record10);
+        List<String> list = Arrays.asList(firstRecord, record2, record3, record4, record5, record6, record7, record8,
+                record9, record10);
         Separator separator = new Separator(';');
         for (int i = 0; i < 10; i++) {
             separator.incrementCount(i);
@@ -116,7 +120,8 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         // then
         // List<Type> expectedTypes = Arrays.asList(Type.STRING, Type.STRING, Type.INTEGER, Type.STRING);
         List<Type> expectedTypes = Arrays.asList(Type.STRING, Type.STRING);
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().stream().map( p -> p.getValue()).toArray());
+        Assert.assertArrayEquals(expectedTypes.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getValue()).toArray());
         Assert.assertTrue(analysis.isFirstLineAHeader());
     }
 
@@ -134,7 +139,8 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
 
         // then
         List<Type> expectedTypes = Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE);
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().stream().map( p -> p.getValue()).toArray());
+        Assert.assertArrayEquals(expectedTypes.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getValue()).toArray());
         Assert.assertTrue(analysis.isFirstLineAHeader());
     }
 
@@ -153,8 +159,10 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
         // then
         List<String> expectedHeaders = Arrays.asList("COL1", "COL2", "COL3");
         List<Type> expectedTypes = Arrays.asList(Type.INTEGER, Type.STRING, Type.STRING);
-        Assert.assertArrayEquals(expectedHeaders.toArray(), analysis.getHeaders().stream().map( p -> p.getKey()).toArray());
-        Assert.assertArrayEquals(expectedTypes.toArray(), analysis.getHeaders().stream().map( p -> p.getValue()).toArray());
+        Assert.assertArrayEquals(expectedHeaders.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getKey()).toArray());
+        Assert.assertArrayEquals(expectedTypes.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getValue()).toArray());
         Assert.assertFalse(analysis.isFirstLineAHeader());
     }
 
@@ -174,7 +182,8 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
 
         // then
         List<String> expectedHeaders = Arrays.asList("user_id", "birth", "country", "page_visited", "first_item");
-        Assert.assertArrayEquals(expectedHeaders.toArray(), analysis.getHeaders().stream().map( p -> p.getKey()).toArray());
+        Assert.assertArrayEquals(expectedHeaders.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getKey()).toArray());
     }
 
     @Test
@@ -192,7 +201,8 @@ public class CSVFastHeaderAndTypeAnalyzerTest {
 
         // then
         List<String> expectedHeaders = Arrays.asList("COL1", "COL2");
-        Assert.assertArrayEquals(expectedHeaders.toArray(), analysis.getHeaders().stream().map( p -> p.getKey()).toArray());
+        Assert.assertArrayEquals(expectedHeaders.toArray(),
+                analysis.getHeaders().stream().map(p -> p.getKey()).toArray());
     }
 
     // When having a special pattern character as separator we had a PatternSyntaxException from java.util.Scanner

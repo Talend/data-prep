@@ -80,7 +80,8 @@ public class HtmlSerializerTest extends AbstractSchemaTestUtils {
 
             ObjectMapper mapper = new ObjectMapper();
 
-            CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, TreeMap.class);
+            CollectionType collectionType =
+                    mapper.getTypeFactory().constructCollectionType(ArrayList.class, TreeMap.class);
 
             List<Map<String, String>> values = mapper.readValue(json, collectionType);
 
@@ -118,7 +119,8 @@ public class HtmlSerializerTest extends AbstractSchemaTestUtils {
 
             String json = IOUtils.toString(jsonStream, UTF_8);
             ObjectMapper mapper = new ObjectMapper();
-            CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, TreeMap.class);
+            CollectionType collectionType =
+                    mapper.getTypeFactory().constructCollectionType(ArrayList.class, TreeMap.class);
             List<Map<String, String>> values = mapper.readValue(json, collectionType);
             Map<String, String> row0 = values.get(0);
             for (String s : row0.keySet()) {

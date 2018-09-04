@@ -50,7 +50,7 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
     }
 
     @Override
-    protected  CreateNewColumnPolicy getCreateNewColumnPolicy(){
+    protected CreateNewColumnPolicy getCreateNewColumnPolicy() {
         return CreateNewColumnPolicy.INVISIBLE_DISABLED;
     }
 
@@ -79,19 +79,20 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
             rowMetadata.getById("0002").setType(Type.STRING.getName());
         }
 
-
         // when
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get(0).values()) //
+        Assertions
+                .assertThat(rows.get(0).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
                         MapEntry.entry("0001", "N"), //
                         MapEntry.entry("0002", ""));
 
-        Assertions.assertThat(rows.get(1).values()) //
+        Assertions
+                .assertThat(rows.get(1).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "Beer"), //
@@ -125,28 +126,30 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
             rowMetadata.getById("0002").setType(Type.STRING.getName());
         }
 
-
         parameters.put(ClearMatching.VALUE_PARAMETER, generateJson(".*Something", ReplaceOnValueHelper.REGEX_MODE));
 
         // when
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get(0).values()) //
+        Assertions
+                .assertThat(rows.get(0).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
                         MapEntry.entry("0001", "N"), //
                         MapEntry.entry("0002", ""));
 
-        Assertions.assertThat(rows.get(1).values()) //
+        Assertions
+                .assertThat(rows.get(1).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "Beer"), //
                         MapEntry.entry("0001", "T"), //
                         MapEntry.entry("0002", ""));
 
-        Assertions.assertThat(rows.get(2).values()) //
+        Assertions
+                .assertThat(rows.get(2).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "Wine"), //
@@ -169,7 +172,8 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
@@ -191,7 +195,8 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
@@ -213,7 +218,8 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
@@ -235,7 +241,8 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(row.values()) //
+        Assertions
+                .assertThat(row.values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
@@ -270,21 +277,24 @@ public class ClearMatchingTest extends AbstractMetadataBaseTest<ClearMatching> {
         ActionTestWorkbench.test(rows, actionRegistry, factory.create(action, parameters));
 
         // then
-        Assertions.assertThat(rows.get(0).values()) //
+        Assertions
+                .assertThat(rows.get(0).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "David Bowie"), //
                         MapEntry.entry("0001", "N"), //
                         MapEntry.entry("0002", "123"));
 
-        Assertions.assertThat(rows.get(1).values()) //
+        Assertions
+                .assertThat(rows.get(1).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "Beer"), //
                         MapEntry.entry("0001", "T"), //
                         MapEntry.entry("0002", ""));
 
-        Assertions.assertThat(rows.get(2).values()) //
+        Assertions
+                .assertThat(rows.get(2).values()) //
                 .isNotEmpty() //
                 .hasSize(3) //
                 .containsExactly(MapEntry.entry("0000", "Wine"), //

@@ -52,7 +52,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
     @Test
     public void testAcceptNullParameters() {
-        assertFalse(optimizedExportStrategy.accept(null));
+        assertFalse(optimizedExportStrategy.test(null));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setContent(new DataSet());
 
         // Then
-        assertFalse(optimizedExportStrategy.accept(exportParameters));
+        assertFalse(optimizedExportStrategy.test(exportParameters));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setDatasetId("1234");
 
         // Then
-        assertFalse(optimizedExportStrategy.accept(exportParameters));
+        assertFalse(optimizedExportStrategy.test(exportParameters));
     }
 
     @Ignore
@@ -83,7 +83,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setPreparationId("1234");
 
         // Then
-        assertFalse(optimizedExportStrategy.accept(exportParameters));
+        assertFalse(optimizedExportStrategy.test(exportParameters));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setPreparationId("prep-1234");
 
         // Then
-        assertFalse(optimizedExportStrategy.accept(exportParameters));
+        assertFalse(optimizedExportStrategy.test(exportParameters));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setPreparationId(preparation);
 
         // Then
-        assertFalse(optimizedExportStrategy.accept(exportParameters));
+        assertFalse(optimizedExportStrategy.test(exportParameters));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setFrom(HEAD);
 
         // Then
-        assertFalse(optimizedExportStrategy.accept(exportParameters));
+        assertFalse(optimizedExportStrategy.test(exportParameters));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
 
         // Then
         assertFalse("The OptimizedExportStrategy should not be acceptable if version is ROOT_STEP",
-                optimizedExportStrategy.accept(exportParameters));
+                optimizedExportStrategy.test(exportParameters));
     }
 
     private void putTransformationAndMetadataInCacheForSteps(List<String> steps, String preparationId, String datasetId,
@@ -205,7 +205,7 @@ public class OptimizedExportStrategyTest extends TransformationServiceBaseTest {
         exportParameters.setFrom(HEAD);
 
         // Then
-        assertTrue(optimizedExportStrategy.accept(exportParameters));
+        assertTrue(optimizedExportStrategy.test(exportParameters));
     }
 
     @Test

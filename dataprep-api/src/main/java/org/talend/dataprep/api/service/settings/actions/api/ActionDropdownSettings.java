@@ -28,13 +28,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Keep in mind that a dropdown action is always applied to an object (called the model).
  * A dropdown can have several statics actions and/or a dynamic action.
  * see
- * https://talend.github.io/react-talend-components/?selectedKind=ActionDropdown&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * https://talend.github.io/react-talend-components/?selectedKind=ActionDropdown&selectedStory=default&full=0&down=1&
+ * left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  *
  * Static actions
  * They represents dropdown options displayed on top of the options, and triggers a simple action on the model.
  *
  * Dynamic action
- * The action that will be applied to the items (that will replace the model). They must be used in pair (if there are items,
+ * The action that will be applied to the items (that will replace the model). They must be used in pair (if there are
+ * items,
  * there is a dynamic action). The items String value is the property key to get the items objects from the model.
  *
  */

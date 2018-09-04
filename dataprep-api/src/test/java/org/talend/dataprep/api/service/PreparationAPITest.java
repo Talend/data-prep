@@ -138,8 +138,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Response response1 = when().get("/api/preparations/?format=long");
 
         // then
-        List<PreparationListItemDTO> preparations = mapper.readerFor(PreparationListItemDTO.class).<PreparationListItemDTO>readValues(
-                response1.asInputStream()).readAll();
+        List<PreparationListItemDTO> preparations = mapper
+                .readerFor(PreparationListItemDTO.class)
+                .<PreparationListItemDTO> readValues(response1.asInputStream())
+                .readAll();
         assertEquals(1, preparations.size());
         PreparationListItemDTO userPreparation = preparations.iterator().next();
         assertThat(userPreparation.getDataSet().getDataSetName(), is("tagada"));
@@ -149,9 +151,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Response response = when().get("/api/preparations/?format=summary");
 
         // then
-        List<PreparationListItemDTO> preparationSummaries =
-                mapper.readerFor(PreparationListItemDTO.class).<PreparationListItemDTO>readValues(
-                        response.asInputStream()).readAll();
+        List<PreparationListItemDTO> preparationSummaries = mapper
+                .readerFor(PreparationListItemDTO.class)
+                .<PreparationListItemDTO> readValues(response.asInputStream())
+                .readAll();
         assertEquals(1, preparationSummaries.size());
         PreparationListItemDTO preparationSummary = preparationSummaries.iterator().next();
         assertThat(preparationSummary.getId(), is(preparationId));
@@ -169,8 +172,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Response response1 = when().get("/api/preparations/{preparationId}/details", preparationId);
 
         // then
-        PreparationDTO userPreparation =
-                mapper.readerFor(PreparationDTO.class).readValue(response1.asInputStream());
+        PreparationDTO userPreparation = mapper.readerFor(PreparationDTO.class).readValue(response1.asInputStream());
         assertThat(userPreparation.getDataSetId(), is(tagadaId));
         assertThat(userPreparation.getAuthor(), is(security.getUserId()));
         assertThat(userPreparation.getId(), is(preparationId));
@@ -202,8 +204,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
 
         // then
-        List<PreparationDTO> result =
-                mapper.readerFor(PreparationDTO.class).<PreparationDTO>readValues(shouldNotBeEmpty.asInputStream()).readAll();
+        List<PreparationDTO> result = mapper
+                .readerFor(PreparationDTO.class)
+                .<PreparationDTO> readValues(shouldNotBeEmpty.asInputStream())
+                .readAll();
         assertThat(result.get(0).getId(), is(preparationId));
 
         // when
@@ -211,7 +215,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 when().get("/api/preparations/?format=short&folder_path={folder_path}", "/toto").jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String>getList("id"), is(empty()));
+        assertThat(shouldBeEmpty.<String> getList("id"), is(empty()));
     }
 
     @Test
@@ -226,14 +230,14 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 when().get("/api/preparations/?format=short&path={path}", "/" + preparationName).jsonPath();
 
         // then
-        assertThat(shouldNotBeEmpty.<String>getList("id").get(0), is(preparationId));
+        assertThat(shouldNotBeEmpty.<String> getList("id").get(0), is(preparationId));
 
         // when
         final JsonPath shouldBeEmpty =
                 when().get("/api/preparations/?format=short&path={path}", "/toto/" + preparationName).jsonPath();
 
         // then
-        assertThat(shouldBeEmpty.<String>getList("id"), is(empty()));
+        assertThat(shouldBeEmpty.<String> getList("id"), is(empty()));
     }
 
     @Test
@@ -268,7 +272,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .queryParam("destination", destination.getId()) //
                 .queryParam("newName", newPreparationName) //
                 .when()//
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("api/preparations/{id}/copy", preparationId);
 
         // then
@@ -299,7 +306,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final Response response = given() //
                 .queryParam("destination", "/destination") //
                 .when()//
-                .expect().statusCode(404).log().ifError() //
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError() //
                 .post("api/preparations/{id}/copy", "preparation_not_found");
 
         // then
@@ -321,7 +331,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .queryParam("destination", destination.getId()) //
                 .queryParam("newName", "NEW great preparation") //
                 .when()//
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .put("api/preparations/{id}/move", id);
 
         // then
@@ -347,7 +360,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .queryParam("destination", "/to") //
                 .queryParam("newName", "NEW great preparation") //
                 .when()//
-                .expect().statusCode(404).log().ifError() //
+                .expect()
+                .statusCode(404)
+                .log()
+                .ifError() //
                 .put("api/preparations/{id}/move", "unknown_preparation");
 
         // then
@@ -365,7 +381,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
-        InputStream inputStream = given().expect()
+        InputStream inputStream = given()
+                .expect()
                 .statusCode(200)
                 .get("/api/preparations/{preparation}/details", preparationId)
                 .asInputStream();
@@ -434,12 +451,14 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String list = when().get("/api/preparations").asString();
         assertThat(list.contains(preparationId), is(true));
 
-        final ContentCacheKey metadataKey = cacheKeyGenerator.metadataBuilder()
+        final ContentCacheKey metadataKey = cacheKeyGenerator
+                .metadataBuilder()
                 .preparationId(preparationId)
                 .stepId("step1")
                 .sourceType(FILTER)
                 .build();
-        final ContentCacheKey contentKey = cacheKeyGenerator.contentBuilder()
+        final ContentCacheKey contentKey = cacheKeyGenerator
+                .contentBuilder()
                 .datasetId("datasetId")
                 .preparationId(preparationId)
                 .stepId("step1")
@@ -516,13 +535,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", home.getId());
 
         // when
-        final Response request = given().contentType(ContentType.JSON)//
+        final Response request = given()
+                .contentType(ContentType.JSON)//
                 .body(missingScopeAction)//
                 .when()//
                 .post("/api/preparations/{id}/actions", preparationId);
 
         // then
-        request.then()//
+        request
+                .then()//
                 .statusCode(400)//
                 .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
     }
@@ -544,7 +565,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // another action
         final String actionContent3 = IOUtils.toString(
                 PreparationAPITest.class.getResourceAsStream("transformation/lower_case_lastname.json"), UTF_8);
-        given().contentType(ContentType.JSON)
+        given()
+                .contentType(ContentType.JSON)
                 .body(actionContent3)
                 .put("/api/preparations/{preparation}/actions/{action}", preparationId, steps.get(1))
                 .then()
@@ -571,13 +593,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String firstStep = steps.get(1);
 
         // when
-        final Response request = given().contentType(ContentType.JSON)//
+        final Response request = given()
+                .contentType(ContentType.JSON)//
                 .body(missingScopeAction)//
                 .when()//
                 .put("/api/preparations/{id}/actions/{step}", preparationId, firstStep);
 
         // then
-        request.then()//
+        request
+                .then()//
                 .statusCode(400)//
                 .body("code", is("TDP_BASE_MISSING_ACTION_SCOPE"));
     }
@@ -594,7 +618,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String firstStep = steps.get(1);
 
         // when
-        given().delete("/api/preparations/{preparation}/actions/{step}", preparationId, firstStep) //
+        given()
+                .delete("/api/preparations/{preparation}/actions/{step}", preparationId, firstStep) //
                 .then() //
                 .statusCode(is(200));
 
@@ -625,7 +650,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String newHead = preparationRepository.get(preparation.getHeadId(), Step.class).getParent();
 
         // when
-        given().when()//
+        given()
+                .when()//
                 .put("/api/preparations/{id}/head/{stepId}", preparationId, newHead)//
                 .then()//
                 .statusCode(200);
@@ -642,11 +668,13 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String preparationId = testClient.createPreparationFromDataset(tagadaId, "testPreparation", home.getId());
 
         // when
-        final Response response = given().when()//
+        final Response response = given()
+                .when()//
                 .put("/api/preparations/{id}/head/{stepId}", preparationId, "unknown_step_id");
 
         // then
-        response.then()//
+        response
+                .then()//
                 .statusCode(404)//
                 .assertThat()//
                 .body("code", is("TDP_PS_PREPARATION_STEP_DOES_NOT_EXIST"));
@@ -665,7 +693,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // when
         final Response response = given() //
                 .param("from", referenceId) //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .when()//
                 .put("/api/preparations/{id}/steps/copy", preparationId);
 
@@ -762,11 +793,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationFilteredInitialContent() throws Exception {
         // given
-        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGetWithFilter",
-                home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv",
+                "testPreparationContentGetWithFilter", home.getId());
 
-        final InputStream expected = PreparationAPITest.class
-                .getResourceAsStream("dataset/expected_filtered_dataset_with_columns.json");
+        final InputStream expected =
+                PreparationAPITest.class.getResourceAsStream("dataset/expected_filtered_dataset_with_columns.json");
 
         // when
         final String content = testClient.getPreparationWithFilter(preparationId, "0001 = 'John'").asString();
@@ -778,8 +809,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void testPreparationWithMalformedFilterShouldFail() throws Exception {
         // given
-        final String preparationId =
-                testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparationContentGetWithMalformedFilter", home.getId());
+        final String preparationId = testClient.createPreparationFromFile("dataset/dataset.csv",
+                "testPreparationContentGetWithMalformedFilter", home.getId());
 
         // when
         Response response = testClient.getFailedPreparationWithFilter(preparationId, "malformed filter");
@@ -834,20 +865,18 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertThat(steps.get(0), is(Step.ROOT_STEP.id()));
 
         // Request preparation content at different versions (preparation has 2 steps -> Root + Upper Case).
-        assertThat(testClient.getPreparation(preparationId).asString(), sameJSONAsFile(
-                PreparationAPITest.class.getResourceAsStream(
-                        "dataset/expected_dataset_firstname_uppercase_with_column.json")));
+        assertThat(testClient.getPreparation(preparationId).asString(), sameJSONAsFile(PreparationAPITest.class
+                .getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
 
-        assertThat(testClient.getPreparation(preparationId, "head").asString(), sameJSONAsFile(
-                PreparationAPITest.class.getResourceAsStream(
-                        "dataset/expected_dataset_firstname_uppercase_with_column.json")));
+        assertThat(testClient.getPreparation(preparationId, "head").asString(), sameJSONAsFile(PreparationAPITest.class
+                .getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
 
         assertThat(testClient.getPreparation(preparationId, steps.get(0)).asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
 
-        assertThat(testClient.getPreparation(preparationId, steps.get(1)).asString(), sameJSONAsFile(
-                PreparationAPITest.class.getResourceAsStream(
-                        "dataset/expected_dataset_firstname_uppercase_with_column.json")));
+        assertThat(testClient.getPreparation(preparationId, steps.get(1)).asString(),
+                sameJSONAsFile(PreparationAPITest.class
+                        .getResourceAsStream("dataset/expected_dataset_firstname_uppercase_with_column.json")));
 
         assertThat(testClient.getPreparation(preparationId, "origin").asString(), sameJSONAsFile(
                 PreparationAPITest.class.getResourceAsStream("dataset/expected_dataset_with_columns.json")));
@@ -913,7 +942,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 PreparationAPITest.class.getResourceAsStream("preview/expected_diff_preview.json");
 
         // when
-        final String diff = given().contentType(ContentType.JSON)
+        final String diff = given()
+                .contentType(ContentType.JSON)
                 .body(input)
                 .when()
                 .post("/api/preparations/preview/diff")
@@ -955,7 +985,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 PreparationAPITest.class.getResourceAsStream("preview/expected_update_preview.json");
 
         // when
-        final String diff = given().contentType(ContentType.JSON)
+        final String diff = given()
+                .contentType(ContentType.JSON)
                 .body(input)
                 .when()
                 .post("/api/preparations/preview/update")
@@ -989,7 +1020,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .contentType(ContentType.JSON) //
                 .body(input) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/api/preparations/preview/add") //
                 .asString();
 
@@ -1027,7 +1061,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         List<PatternFrequency> patternFrequencies =
                 preparationContent.getColumns().get(8).getStatistics().getPatternFrequencies();
 
-        assertTrue(patternFrequencies.stream() //
+        assertTrue(patternFrequencies
+                .stream() //
                 .map(PatternFrequency::getPattern) //
                 .anyMatch("yyyy-MM-dd"::equals));
 
@@ -1049,9 +1084,13 @@ public class PreparationAPITest extends ApiServiceTestBase {
         calculateTimeUntilAction.setParameters(actionParameters);
         previewAddParameters.setActions(Collections.singletonList(calculateTimeUntilAction));
 
-        JsonPath jsonPath = given().contentType(ContentType.JSON) //
+        JsonPath jsonPath = given()
+                .contentType(ContentType.JSON) //
                 .body(previewAddParameters) //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .when() //
                 .post("/api/preparations/preview/add") //
                 .jsonPath();
@@ -1080,7 +1119,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 PreparationAPITest.class.getResourceAsStream("preview/expected_add_preview_on_dataset.json");
 
         // when
-        final String preview = given().contentType(ContentType.JSON)
+        final String preview = given()
+                .contentType(ContentType.JSON)
                 .body(input)
                 .when()
                 .post("/api/preparations/preview/add")
@@ -1120,7 +1160,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .contentType(ContentType.JSON) //
                 .body(input) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/api/preparations/preview/add") //
                 .asString();
 
@@ -1137,8 +1180,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         AppendStep appendStep = new AppendStep();
         final Action actionToBeMoved = buildAction("uppercase",
                 buildParametersMap("column_id", "0001", "column_name", "firstname", "scope", "column"));
-        appendStep.setActions(Arrays.asList(buildAction("uppercase",
-                buildParametersMap("column_id", "0002", "column_name", "lastname", "scope", "column")),
+        appendStep.setActions(Arrays.asList(
+                buildAction("uppercase",
+                        buildParametersMap("column_id", "0002", "column_name", "lastname", "scope", "column")),
                 actionToBeMoved));
         appendStepsToPrep(testPrepId, appendStep);
 
@@ -1189,9 +1233,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         String firstStepId = preparationDetails.getSteps().get(0);
 
         // Now undo
-        expect().statusCode(OK.value())
-                .when()
-                .put("/api/preparations/{id}/head/{headId}", carsPreparationId, firstStepId);
+        expect().statusCode(OK.value()).when().put("/api/preparations/{id}/head/{headId}", carsPreparationId,
+                firstStepId);
 
         // Try again to delete lookup dataset
         expect().statusCode(OK.value()).when().get("/api/datasets/{id}", lookupDataSetId);
@@ -1277,9 +1320,12 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when trying to get the content of the preparation with an invalid version value
         String invalidVersionId = "%00";
-        TdpExceptionDto exception = given().queryParam("version", invalidVersionId) //
-                .expect().statusCode(404) //
-                .log().ifError() //
+        TdpExceptionDto exception = given()
+                .queryParam("version", invalidVersionId) //
+                .expect()
+                .statusCode(404) //
+                .log()
+                .ifError() //
                 .get("/api/preparations/{preparationId}/content", preparationId) //
                 .as(TdpExceptionDto.class);
 
@@ -1294,16 +1340,18 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when using an invalid folder id to create a preparation on the existing dataSet
         String invalidFolderId = "%40";
-        TdpExceptionDto exception = given().contentType(ContentType.JSON)
-                .body("{ \"name\": \"foo\", \"dataSetId\": \"" + dataSetId + "\"}") //
-                .queryParam("folder", invalidFolderId) //
-                .expect() //
-                .statusCode(400) //
-                .log()
-                .ifError() //
-                .when() //
-                .post("/api/preparations") //
-                .as(TdpExceptionDto.class);
+        TdpExceptionDto exception =
+                given()
+                        .contentType(ContentType.JSON)
+                        .body("{ \"name\": \"foo\", \"dataSetId\": \"" + dataSetId + "\"}") //
+                        .queryParam("folder", invalidFolderId) //
+                        .expect() //
+                        .statusCode(400) //
+                        .log()
+                        .ifError() //
+                        .when() //
+                        .post("/api/preparations") //
+                        .as(TdpExceptionDto.class);
         // assertions
         assertTrue(exception.getCode().endsWith(FOLDER_DOES_NOT_EXIST.getCode()));
     }
@@ -1312,7 +1360,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void shouldNotAcceptInvalidDataSetId_TDP_4959() {
         // when using an invalid dataSet id
         String invalidDataSetId = "@";
-        TdpExceptionDto exception = given().contentType(ContentType.JSON)
+        TdpExceptionDto exception = given()
+                .contentType(ContentType.JSON)
                 .body("{ \"name\": \"foo\", \"dataSetId\": \"" + invalidDataSetId + "\"}") //
                 .queryParam("folder", "5a549eea1235ef6ee90e2096") //
                 .expect() //
@@ -1336,7 +1385,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Response response = given() //
                 .queryParam("stepId", "%00") //
                 .when() //
-                .expect().statusCode(400).log().ifError()
+                .expect()
+                .statusCode(400)
+                .log()
+                .ifError()
                 .get("/api/preparations/{preparationId}/details", preparationId);
         TdpExceptionDto exception = response.as(TdpExceptionDto.class);
 
@@ -1347,7 +1399,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void datasetWithSameColumnsNameShouldBeHandled_TDP_5838() throws Exception {
         // given
         String inputFile = "/org/talend/dataprep/api/service/preparations/5L4Ccity_TDP-3858.csv";
-        CSVReader baseFileReader = new CSVReader(new InputStreamReader(getClass().getResourceAsStream(inputFile)), ';', '"');
+        CSVReader baseFileReader =
+                new CSVReader(new InputStreamReader(getClass().getResourceAsStream(inputFile)), ';', '"');
         String[] headers = baseFileReader.readNext();
         String[] record1 = baseFileReader.readNext();
         String datasetId = testClient.createDataset(inputFile, "5L4C city");
@@ -1356,14 +1409,16 @@ public class PreparationAPITest extends ApiServiceTestBase {
         Response datasetResponse = testClient.exportDataset(datasetId, "head");
 
         // then
-        CSVReader datasetFileReader = new CSVReader(new InputStreamReader(datasetResponse.asInputStream(), UTF_8), ';', '"');
+        CSVReader datasetFileReader =
+                new CSVReader(new InputStreamReader(datasetResponse.asInputStream(), UTF_8), ';', '"');
         String[] datasetHeaders = datasetFileReader.readNext();
         String[] datasetRecord1 = datasetFileReader.readNext();
         assertArrayEquals(headers, datasetHeaders);
         assertArrayEquals(record1, datasetRecord1);
 
         // and given
-        String preparationId = testClient.createPreparationFromDataset(datasetId, "5L4C city Preparation", home.getId());
+        String preparationId =
+                testClient.createPreparationFromDataset(datasetId, "5L4C city Preparation", home.getId());
 
         // when
         Response response = testClient.exportPreparation(preparationId, "head", ";");

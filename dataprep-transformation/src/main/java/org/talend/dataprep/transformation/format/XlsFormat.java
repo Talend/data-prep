@@ -39,13 +39,13 @@ public class XlsFormat extends ExportFormat {
 
     @Override
     public List<Parameter> getParameters() {
-        return Collections.singletonList(
-                Parameter.parameter(getLocale()) //
-                        .setName("fileName") //
-                        .setType(ParameterType.STRING) //
-                        .setDefaultValue(StringUtils.EMPTY) //
-                        .setCanBeBlank(false) //
-                        .build(null) //
+        return Collections.singletonList(Parameter
+                .parameter(getLocale()) //
+                .setName("fileName") //
+                .setType(ParameterType.STRING) //
+                .setDefaultValue(StringUtils.EMPTY) //
+                .setCanBeBlank(false) //
+                .build(null) //
         );
     }
 

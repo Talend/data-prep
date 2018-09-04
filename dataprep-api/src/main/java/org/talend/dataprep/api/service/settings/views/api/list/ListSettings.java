@@ -27,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * List settings.
  * It contains the list details configuration and its toolbar configuration.
  * see
- * https://talend.github.io/react-talend-components/?selectedKind=List&selectedStory=table%20%28default%29&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * https://talend.github.io/react-talend-components/?selectedKind=List&selectedStory=table%20%28default%29&full=0&down=1
+ * &left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  */
 @JsonInclude(NON_NULL)
 public class ListSettings implements ViewSettings {
@@ -166,16 +167,16 @@ public class ListSettings implements ViewSettings {
             if (Objects.nonNull(this.list)) {
                 this.list
                         .getColumns() //
-                        .forEach(mapEntry -> mapEntry.put("label", DataprepBundle.message((String) mapEntry.get("label"))));
+                        .forEach(mapEntry -> mapEntry.put("label",
+                                DataprepBundle.message((String) mapEntry.get("label"))));
             }
 
             if (Objects.nonNull(this.toolbar) && Objects.nonNull(this.toolbar.getSort())) {
-                this.toolbar.getSort()
+                this.toolbar
+                        .getSort()
                         .getOptions() //
-                        .forEach(mapEntry -> mapEntry.put(
-                            "name",
-                            DataprepBundle.message((String) mapEntry.get("name"))
-                        ));
+                        .forEach(mapEntry -> mapEntry.put("name",
+                                DataprepBundle.message((String) mapEntry.get("name"))));
             }
 
             return this;

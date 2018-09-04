@@ -44,8 +44,7 @@ public class HeaderbarInformationConfigurer extends AppSettingsConfigurer<Action
                 .staticActions(Arrays.asList( //
                         MODAL_ABOUT.getId(), //
                         ONBOARDING_PREPARATION.getId(), //
-                        DIVIDER.getId(),
-                        externalHelpActionsProvider.getExternalCommunityAction().getId(), //
+                        DIVIDER.getId(), externalHelpActionsProvider.getExternalCommunityAction().getId(), //
                         MODAL_FEEDBACK.getId() //
                 )) //
                 .build();

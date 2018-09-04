@@ -28,7 +28,8 @@ public class DatasetBeanConversionTest {
         // conversion registration
         new DatasetBeanConversion(objectMapper).doWith(beanConversionService, "toto", null);
         // create catalog dataset from json file
-        dataset = objectMapper.readValue(getClass().getResourceAsStream("../dataset_payload_example.json"), Dataset.class);
+        dataset = objectMapper.readValue(getClass().getResourceAsStream("../dataset_payload_example.json"),
+                Dataset.class);
     }
 
     @Test

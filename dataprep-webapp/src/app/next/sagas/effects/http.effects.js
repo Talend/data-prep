@@ -1,7 +1,7 @@
 import { put, select } from 'redux-saga/effects';
 import { HTTP_STATUS } from '@talend/react-cmf/lib/middlewares/http/constants';
 import { REDIRECT_WINDOW } from '../../constants/actions';
-import { default as creators } from '../../actions';
+import creators from '../../actions';
 
 export function* handle(event) {
 	if (!event.error || !event.error.stack) {

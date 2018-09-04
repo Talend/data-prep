@@ -65,7 +65,8 @@ public class TDPExceptionController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         TdpExceptionDto exceptionDto = conversionService.convert(e, TdpExceptionDto.class);
-        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders, HttpStatus.valueOf(e.getCode().getHttpStatus()));
+        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders,
+                HttpStatus.valueOf(e.getCode().getHttpStatus()));
     }
 
     /**
@@ -73,7 +74,8 @@ public class TDPExceptionController {
      * methods may have @Valid annotated arguments and validation may fail.
      */
     @ExceptionHandler({ MethodArgumentNotValidException.class })
-    public ResponseEntity<String> handleInvalidArguments(MethodArgumentNotValidException e) throws JsonProcessingException {
+    public ResponseEntity<String> handleInvalidArguments(MethodArgumentNotValidException e)
+            throws JsonProcessingException {
         final HttpHeaders httpHeaders = new HttpHeaders();
         final Map<String, Object> context = new HashMap<>();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);

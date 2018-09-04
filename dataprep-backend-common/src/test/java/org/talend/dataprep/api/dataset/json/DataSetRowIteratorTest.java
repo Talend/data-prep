@@ -72,7 +72,8 @@ public class DataSetRowIteratorTest {
             DataSetRow actualDataSetrow = actualDatasetRows.get(i);
             DataSetRow expectedDataSetrow = expectedDatasetRows.get(i);
             Assert.assertEquals(actualDataSetrow.getInternalValues(), expectedDataSetrow.getInternalValues());
-            Assert.assertEquals(actualDataSetrow.getRowMetadata().hashCode(), expectedDataSetrow.getRowMetadata().hashCode());
+            Assert.assertEquals(actualDataSetrow.getRowMetadata().hashCode(),
+                    expectedDataSetrow.getRowMetadata().hashCode());
         }
     }
 

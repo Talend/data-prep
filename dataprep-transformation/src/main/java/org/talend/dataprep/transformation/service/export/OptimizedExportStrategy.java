@@ -60,14 +60,14 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
     private CacheKeyGenerator cacheKeyGenerator;
 
     @Override
-    public boolean accept(ExportParameters parameters) {
+    public boolean test(ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }
         if (parameters.getContent() != null) {
             return false;
         }
-        if (StringUtils.isEmpty(parameters.getPreparationId())){
+        if (StringUtils.isEmpty(parameters.getPreparationId())) {
             return false;
         }
         final OptimizedPreparationInput optimizedPreparationInput = new OptimizedPreparationInput(parameters);
@@ -100,9 +100,10 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // Get content from previous step
-        try (JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8))) {
-            // Create dataset
-            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+        try (JsonParser parser = mapper
+                .getFactory()
+                .createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8));
+                final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser)) {
             dataSet.setMetadata(metadata);
 
             // get the actions to apply (no preparation ==> dataset export ==> no actions)
@@ -125,8 +126,10 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
             LOGGER.debug("Cache key: " + key.getKey());
             LOGGER.debug("Cache key details: " + key.toString());
 
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                final Configuration configuration = Configuration.builder() //
+            try (final TeeOutputStream tee =
+                    new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+                final Configuration configuration = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
                         .sourceType(parameters.getFrom())
@@ -278,7 +281,8 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
                 previousVersion = steps.get(preparation.getSteps().indexOf(version) - 1);
             }
             // Get metadata of previous step
-            final TransformationMetadataCacheKey transformationMetadataCacheKey = cacheKeyGenerator.generateMetadataKey(preparationId, previousVersion, sourceType);
+            final TransformationMetadataCacheKey transformationMetadataCacheKey =
+                    cacheKeyGenerator.generateMetadataKey(preparationId, previousVersion, sourceType);
             if (!contentCache.has(transformationMetadataCacheKey)) {
                 LOGGER.debug("No metadata cached for previous version '{}' (key for lookup: '{}')", previousVersion,
                         transformationMetadataCacheKey.getKey());

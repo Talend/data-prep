@@ -139,7 +139,8 @@ public class Step extends Identifiable implements Serializable {
 
     public void setContent(String preparationActions) {
         if (Step.ROOT_STEP.id().equals(id) && !PreparationActions.ROOT_ACTIONS.id().equals(preparationActions)) {
-            throw new IllegalArgumentException("Preparation action '" + preparationActions + "' is not valid for root step.");
+            throw new IllegalArgumentException(
+                    "Preparation action '" + preparationActions + "' is not valid for root step.");
         }
         this.preparationActions = preparationActions;
     }

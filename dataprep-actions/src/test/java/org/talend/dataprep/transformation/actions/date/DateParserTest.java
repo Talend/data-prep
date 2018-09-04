@@ -62,13 +62,14 @@ public class DateParserTest {
     public void getPatterns_should_remove_invalid_or_empty_then_sort_patterns() throws IOException {
         // given
         final DataSetRow row = ActionMetadataTestUtils.getRow("toto", "04/25/1999", "tata");
-        ActionMetadataTestUtils.setStatistics(row, "0001", getDateTestJsonAsStream("statistics_with_different_test_cases.json")); // contains
+        ActionMetadataTestUtils.setStatistics(row, "0001",
+                getDateTestJsonAsStream("statistics_with_different_test_cases.json")); // contains
                                                                                                                                   // valid,
-                                                                                                                                  // invalid,
-                                                                                                                                  // empty
-                                                                                                                                  // patterns
-        final List<PatternFrequency> patternFrequencies = row.getRowMetadata().getById("0001").getStatistics()
-                .getPatternFrequencies();
+                                                                                                                                          // invalid,
+                                                                                                                                          // empty
+                                                                                                                                          // patterns
+        final List<PatternFrequency> patternFrequencies =
+                row.getRowMetadata().getById("0001").getStatistics().getPatternFrequencies();
 
         // when
         final List<DatePattern> actual = action.getPatterns(patternFrequencies);
@@ -80,8 +81,6 @@ public class DateParserTest {
         expected.add(new DatePattern("yyyy", 0));
         assertEquals(expected, actual);
     }
-
-
 
     @Test
     public void parseDateFromPatterns_should_parse_from_multiple_patterns() throws ParseException {

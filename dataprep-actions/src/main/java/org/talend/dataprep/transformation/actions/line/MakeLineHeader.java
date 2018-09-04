@@ -75,10 +75,8 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
 
     @Override
     public List<Parameter> getParameters(Locale locale) {
-        return Collections.singletonList(Parameter.parameter(locale).setName(SKIP_UNTIL)
-                .setType(BOOLEAN)
-                .setDefaultValue(true)
-                .build(this));
+        return Collections.singletonList(
+                Parameter.parameter(locale).setName(SKIP_UNTIL).setType(BOOLEAN).setDefaultValue(true).build(this));
     }
 
     @Override
@@ -121,8 +119,9 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
             String newColumnName = context.get(column.getId(), p -> {
                 String name = row.get(column.getId());
                 if (StringUtils.isBlank(name)) {
-                    MessageFormat pattern = context.get(DEFAULT_TITLE_KEY, q -> new MessageFormat(DEFAULT_TITLE_VALUE_MASK));
-                    name = pattern.format(new Object[]{columnViewIndex});
+                    MessageFormat pattern =
+                            context.get(DEFAULT_TITLE_KEY, q -> new MessageFormat(DEFAULT_TITLE_VALUE_MASK));
+                    name = pattern.format(new Object[] { columnViewIndex });
                 }
                 return name;
             });
@@ -133,7 +132,8 @@ public class MakeLineHeader extends AbstractActionMetadata implements RowAction 
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.METADATA_CHANGE_NAME, Behavior.VALUES_ALL, Behavior.FORBID_DISTRIBUTED, Behavior.VALUES_DELETE_ROWS);
+        return EnumSet.of(Behavior.METADATA_CHANGE_NAME, Behavior.VALUES_ALL, Behavior.FORBID_DISTRIBUTED,
+                Behavior.VALUES_DELETE_ROWS);
     }
 
 }

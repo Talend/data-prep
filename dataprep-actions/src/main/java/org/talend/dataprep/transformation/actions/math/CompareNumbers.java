@@ -29,7 +29,8 @@ import org.talend.dataprep.transformation.actions.common.CompareAction;
 import org.talend.dataprep.transformation.actions.common.OtherColumnParameters;
 
 @Action(CompareNumbers.ACTION_NAME)
-public class CompareNumbers extends AbstractCompareAction implements ColumnAction, OtherColumnParameters, CompareAction {
+public class CompareNumbers extends AbstractCompareAction
+        implements ColumnAction, OtherColumnParameters, CompareAction {
 
     /**
      * The action name.

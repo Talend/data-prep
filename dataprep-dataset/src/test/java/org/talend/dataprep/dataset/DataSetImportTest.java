@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset;
 
@@ -76,9 +76,12 @@ public class DataSetImportTest extends DataSetBaseTest {
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
-                dataSetId = given().body(
-                        IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
-                        .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                dataSetId = given()
+                        .body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
+                        .queryParam("Content-Type", "text/csv")
+                        .when()
+                        .post("/datasets")
+                        .asString();
                 LOGGER.debug("testImportStatus dataset created #{}", dataSetId);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -116,9 +119,12 @@ public class DataSetImportTest extends DataSetBaseTest {
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
-                dataSetId = given().body(
-                        IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
-                        .queryParam("Content-Type", "text/csv").when().post("/datasets").asString();
+                dataSetId = given()
+                        .body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
+                        .queryParam("Content-Type", "text/csv")
+                        .when()
+                        .post("/datasets")
+                        .asString();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -143,8 +149,8 @@ public class DataSetImportTest extends DataSetBaseTest {
         final DataSetMetadata metadata = dataSetMetadataRepository.get(dataSetId);
         assertThat(dataSetMetadataRepository.size(), is(1));
         String expected = "[{\"id\":\"" + metadata.getId() + "\"}]";
-        when().get("/datasets").then().statusCode(HttpStatus.OK.value())
-                .body(sameJSONAs(expected).allowingAnyArrayOrdering().allowingExtraUnexpectedFields());
+        when().get("/datasets").then().statusCode(HttpStatus.OK.value()).body(
+                sameJSONAs(expected).allowingAnyArrayOrdering().allowingExtraUnexpectedFields());
     }
 
     /**
@@ -163,9 +169,12 @@ public class DataSetImportTest extends DataSetBaseTest {
         // Create a data set (asynchronously)
         Runnable creation = () -> {
             try {
-                dataSetId = given().body(
-                        IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
-                        .queryParam(CONTENT_TYPE, "text/csv").when().post("/datasets").asString();
+                dataSetId = given()
+                        .body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
+                        .queryParam(CONTENT_TYPE, "text/csv")
+                        .when()
+                        .post("/datasets")
+                        .asString();
                 LOGGER.debug("testCannotOpenDataSetBeingImported dataset created #{}", dataSetId);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -204,9 +213,12 @@ public class DataSetImportTest extends DataSetBaseTest {
     public void testImportFailure() throws Exception {
         try {
             System.setProperty("DataSetImportTest.FailingAnalyzer", "true");
-            final int statusCode = given().body(
-                    IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
-                    .queryParam("Content-Type", "text/csv").when().post("/datasets").statusCode();
+            final int statusCode = given()
+                    .body(IOUtils.toString(DataSetImportTest.class.getResourceAsStream("tagada.csv"), UTF_8))
+                    .queryParam("Content-Type", "text/csv")
+                    .when()
+                    .post("/datasets")
+                    .statusCode();
             assertEquals(500, statusCode);
             assertEquals(0, dataSetMetadataRepository.size());
         } finally {

@@ -80,11 +80,13 @@ public class CreateNewColumnTest extends AbstractMetadataBaseTest<CreateNewColum
         assertTrue(parameters.stream().anyMatch(p -> StringUtils.equals(p.getName(), "mode_new_column")));
 
         // then (start and step value cannot be blank)
-        assertTrue(parameters.stream() //
+        assertTrue(parameters
+                .stream() //
                 .filter(p -> p.getName().equalsIgnoreCase(CreateNewColumn.START_VALUE)) //
                 .noneMatch(Parameter::isCanBeBlank) //
         );
-        assertTrue(parameters.stream() //
+        assertTrue(parameters
+                .stream() //
                 .filter(p -> p.getName().equalsIgnoreCase(CreateNewColumn.STEP_VALUE)) //
                 .noneMatch(Parameter::isCanBeBlank) //
         );

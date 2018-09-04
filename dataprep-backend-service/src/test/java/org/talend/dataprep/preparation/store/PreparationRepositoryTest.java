@@ -37,7 +37,8 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTest {
         List<Integer> ids = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
 
         // store preparations
-        final List<Preparation> preparations = ids.stream() //
+        final List<Preparation> preparations = ids
+                .stream() //
                 .map(i -> getPreparation(String.valueOf(i))) //
                 .collect(Collectors.toList());
 
@@ -55,7 +56,8 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTest {
         List<Integer> ids = Arrays.asList(1, 2, 3);
 
         // store preparations
-        final List<Preparation> preparations = ids.stream() //
+        final List<Preparation> preparations = ids
+                .stream() //
                 .map(i -> getPreparation(String.valueOf(i))) //
                 .collect(Collectors.toList());
 
@@ -63,7 +65,9 @@ public abstract class PreparationRepositoryTest extends ServiceBaseTest {
 
         // get preparation by name
         final Preparation expected = preparations.get(1);
-        final Collection<Preparation> actual = getRepository().list(Preparation.class, eq("dataSetId", expected.getDataSetId())).collect(Collectors.toList());
+        final Collection<Preparation> actual = getRepository()
+                .list(Preparation.class, eq("dataSetId", expected.getDataSetId()))
+                .collect(Collectors.toList());
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(expected));

@@ -93,8 +93,7 @@ public class ActionsBundleTest {
 
     @Test
     public void customActionDescription() throws Exception {
-        assertEquals("Nice custom description",
-                ActionsBundle.actionDescription(new TestAction(), Locale.US, "custom"));
+        assertEquals("Nice custom description", ActionsBundle.actionDescription(new TestAction(), Locale.US, "custom"));
     }
 
     @Test

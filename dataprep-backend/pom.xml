@@ -43,6 +43,7 @@
 
         <spring-boot.version>1.5.15.RELEASE</spring-boot.version>
         <spring-cloud.version>Edgware.SR4</spring-cloud.version>
+        <kafka.version>1.1.1</kafka.version>
 
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
@@ -95,6 +96,27 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Enforce kafka version -->
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka_2.11</artifactId>
+                <version>${kafka.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.github.zafarkhaja</groupId>

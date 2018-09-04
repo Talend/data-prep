@@ -144,7 +144,7 @@ describe('home state', () => {
 
 		it('should set about modal visiblity', inject((homeState, HomeStateService) => {
 			//when
-			HomeStateService.setVisibility(true);
+			HomeStateService.setAboutVisibility(true);
 
 			//then
 			expect(homeState.about.isVisible).toBeTruthy();

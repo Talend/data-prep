@@ -30,7 +30,6 @@ fdescribe('about controller', () => {
 		spyOn(AboutService, 'loadBuilds').and.returnValue($q.when());
 	}));
 
-
 	it('should toggle build details display', () => {
 		const ctrl = createController();
 		ctrl.toggle();
@@ -38,11 +37,16 @@ fdescribe('about controller', () => {
 	});
 
 	it('should populate build details on controller instantiation', inject((AboutService) => {
-		createController();
+		const ctrl = createController();
+
+		// when
+		ctrl.$onInit();
+
+		// then
 		expect(AboutService.loadBuilds).toHaveBeenCalled();
 	}));
 
-	it('should return copyrights', inject((AboutService) => {
+	it('should return copyrights', inject(() => {
 		const ctrl = createController();
 		expect(ctrl.getCopyrights()).toBe('fake');
 	}));

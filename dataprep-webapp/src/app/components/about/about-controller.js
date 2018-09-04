@@ -13,15 +13,26 @@
 export default class AboutCtrl {
 	constructor(state, $translate, AboutService, HomeStateService) {
 		'ngInject';
+
 		this.state = state;
 		this.$translate = $translate;
 		this.HomeStateService = HomeStateService;
+		this.AboutService = AboutService;
+
 		this.loading = true;
 		this.expanded = false;
+
 		this.hide = this.hide.bind(this);
 		this.toggle = this.toggle.bind(this);
 		this.getCopyrights = this.getCopyrights.bind(this);
-		AboutService.loadBuilds().then(() => this.loading = false);
+	}
+
+	$onInit() {
+		this.AboutService
+			.loadBuilds()
+			.then(() => {
+				this.loading = false;
+			});
 	}
 
 	/**
@@ -41,7 +52,7 @@ export default class AboutCtrl {
 	 * @description hides the about modal
 	 */
 	hide() {
-		this.HomeStateService.setVisibility(false);
+		this.HomeStateService.setAboutVisibility(false);
 	}
 
 	/**

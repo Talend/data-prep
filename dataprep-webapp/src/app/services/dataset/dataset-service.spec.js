@@ -513,6 +513,23 @@ describe('Dataset Service', () => {
         });
     });
 
+	describe('related preparations', () => {
+		beforeEach(inject(($q, DatasetRestService) => {
+			spyOn(DatasetRestService, 'getRelatedPreparations');
+		}));
+
+		it('should get preparations from rest', inject((DatasetService, DatasetRestService) => {
+			// given
+			expect(DatasetRestService.getRelatedPreparations).not.toHaveBeenCalled();
+
+			// when
+			DatasetService.getRelatedPreparations({ id: '11' });
+
+			// then
+			expect(DatasetRestService.getRelatedPreparations).toHaveBeenCalledWith('11');
+		}));
+    });
+
     describe('compatible preparations', () => {
         const preparations = [
             { id: '1', dataSetId: '22' }, //datasets[1]
@@ -522,7 +539,7 @@ describe('Dataset Service', () => {
         ];
 
         beforeEach(inject(($q, DatasetRestService) => {
-            spyOn(DatasetRestService, 'getCompatiblePreparations').and.returnValue($q.when(preparations));
+            spyOn(DatasetRestServsice, 'getCompatiblePreparations').and.returnValue($q.when(preparations));
         }));
 
         it('should get preparations from rest', inject((DatasetService, DatasetRestService) => {

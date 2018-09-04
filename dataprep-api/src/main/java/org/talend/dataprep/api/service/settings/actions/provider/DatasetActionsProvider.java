@@ -41,6 +41,7 @@ public class DatasetActionsProvider implements AppSettingsProvider<ActionSetting
                 DatasetActions.DATASET_FAVORITE,
                 DatasetActions.DATASET_FETCH,
                 DatasetActions.DATASET_OPEN,
+                DatasetActions.DATASET_PREPARATIONS_FETCH,
                 DatasetActions.DATASET_PREPARATIONS,
                 DatasetActions.DATASET_REMOVE,
                 DatasetActions.DATASET_SORT,

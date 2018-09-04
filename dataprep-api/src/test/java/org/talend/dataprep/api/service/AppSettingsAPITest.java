@@ -77,6 +77,9 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetOpen.getIcon(), is("talend-datastore"));
         assertThat(datasetOpen.getType(), is("@@dataset/OPEN"));
 
+        final ActionSettings datasetPreparationsFetch = settings.getActions().get("dataset:preparations:fetch");
+        assertThat(datasetPreparationsFetch.getType(), is("@@dataset/RELATED_PREPARATIONS"));
+
         final ActionSettings datasetRemove = settings.getActions().get("dataset:remove");
         assertThat(datasetRemove.getName(), is("Remove dataset"));
         assertThat(datasetRemove.getIcon(), is("talend-trash"));
@@ -169,6 +172,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(listDatasetPreparations.getIcon(), is("talend-dataprep"));
         assertThat(listDatasetPreparations.getItems(), is("preparations"));
         assertThat(listDatasetPreparations.getDynamicAction(), is("menu:playground:preparation"));
+        assertThat(listDatasetPreparations.getDynamicFetchAction(), is("dataset:preparations:fetch"));
         assertThat(listDatasetPreparations.getStaticActions().iterator().next(), is("dataset:open"));
 
         final ActionSettings onboardingPreparation = settings.getActions().get("onboarding:preparation");

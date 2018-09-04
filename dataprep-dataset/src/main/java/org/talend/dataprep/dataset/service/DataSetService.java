@@ -56,7 +56,6 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCache.TimeToLive;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.DatasetInjection;
-import org.talend.dataprep.conversions.inject.OwnerInjection;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.event.DatasetImportedEvent;
@@ -215,9 +214,6 @@ public class DataSetService extends BaseDataSetService {
 
     @Autowired
     private BeanConversionService beanConversionService;
-
-    @Autowired
-    private OwnerInjection ownerInjection;
 
     @Autowired
     private DatasetInjection datasetInjection;

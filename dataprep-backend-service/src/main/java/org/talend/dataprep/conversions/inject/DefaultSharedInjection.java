@@ -1,7 +1,6 @@
 package org.talend.dataprep.conversions.inject;
 
 import org.talend.dataprep.api.preparation.PreparationDTO;
-import org.talend.dataprep.api.share.SharedResource;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 
 /**

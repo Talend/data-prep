@@ -32,6 +32,7 @@ import static org.talend.dataprep.transformation.actions.conversions.CountryConv
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +49,6 @@ import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Parameter;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
@@ -64,8 +64,9 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils
-                .parseParameters(CountryConverter.class.getResourceAsStream("countryConverterAction.json"));
+        parameters = new HashMap<>(2);
+        parameters.put("column_id", "0000");
+        parameters.put("scope", "column");
     }
 
     @Test
@@ -92,7 +93,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
-    public void should_accept_column() {
+    public void shouldAcceptColumn() {
         assertTrue(action.acceptField(getColumn(Type.NUMERIC)));
         assertTrue(action.acceptField(getColumn(Type.DOUBLE)));
         assertTrue(action.acceptField(getColumn(Type.FLOAT)));
@@ -100,14 +101,14 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
-    public void should_not_accept_column() {
+    public void shouldNotAcceptColumn() {
         assertFalse(action.acceptField(getColumn(Type.BOOLEAN)));
         assertFalse(action.acceptField(getColumn(Type.DATE)));
         assertFalse(action.acceptField(getColumn(Type.STRING)));
     }
 
     @Test
-    public void should_have_expected_behavior() {
+    public void shouldHaveExpectedBehavior() {
         assertEquals(1, action.getBehavior().size());
         assertTrue(action.getBehavior().contains(ActionDefinition.Behavior.VALUES_COLUMN));
     }
@@ -133,7 +134,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
-    public void test_default_params_ISO3_input() {
+    public void testDefaultParamsISO3input() {
         boolean result;
         ColumnMetadata column = new ColumnMetadata();
         List<SemanticDomain> domain = new ArrayList<>();
@@ -160,7 +161,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
-    public void test_default_params_ISO2_input() {
+    public void testDefaultParamsISO2input() {
         boolean result;
         ColumnMetadata column = new ColumnMetadata();
         List<SemanticDomain> domain = new ArrayList<>();
@@ -187,7 +188,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
-    public void test_default_params_default_input() {
+    public void testDefaultParamsDefaultInput() {
         boolean result;
         ColumnMetadata column = new ColumnMetadata();
 
@@ -261,7 +262,7 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
-    public void test_country_number_input() {
+    public void testCountryNumberInput() {
         // given
         final Map<String, String> values = new LinkedHashMap<>();
         values.put("0000", "710");
@@ -290,12 +291,10 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
      * should normalize the column.
      */
     @Test
-    public void test_should_normalize_iso2_column() {
+    public void testShouldNormalizeISO2column() {
         // given
         final DataSetRow row1 = getRow("AF", "Pomme de terre");
-
         final DataSetRow row2 = getRow("AX", "Pomme de pain");
-
         final DataSetRow row3 = getRow("GEO", "Pomme d'api");
 
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
@@ -306,13 +305,131 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
         ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
 
         // then
-        assertFalse(row1.get("0000").isEmpty());
-        assertFalse(row2.get("0000").isEmpty());
+        assertEquals("AF", row1.get("0000"));
+        assertEquals("AX", row2.get("0000"));
         assertTrue(row3.get("0000").isEmpty());
     }
 
     @Test
-    public void test_should_return_empty_cell_because_not_a_valid_country_name() {
+    public void testShouldConvertFromIso2ToFrenchCountryName() {
+        // given
+        final DataSetRow row1 = getRow("AF", "Pomme de terre");
+        final DataSetRow row2 = getRow("Ax", "Pomme de pain");
+        final DataSetRow row3 = getRow("af", "Pomme d'ammour");
+        final DataSetRow row4 = getRow("aF", "Pomme de reinnette");
+        final DataSetRow row5 = getRow("ir", "Pomme de pin");
+        final DataSetRow row6 = getRow("AX", "Pomme d'arrosoir");
+        final DataSetRow row7 = getRow("GEO", "Pomme d'api");
+        final DataSetRow row8 = getRow("TW", "Pomme d'Eve");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_CODE_ISO2);
+        parameters.put(TO_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8), actionRegistry,
+                factory.create(action, parameters));
+
+        // then
+        assertEquals("Afghanistan", row1.get("0000"));
+        assertEquals("Åland", row2.get("0000"));
+        assertEquals("Afghanistan", row3.get("0000"));
+        assertEquals("Afghanistan", row4.get("0000"));
+        assertEquals("Iran", row5.get("0000"));
+        assertEquals("Åland", row6.get("0000"));
+        assertTrue(row7.get("0000").isEmpty());
+        assertEquals("Taïwan", row8.get("0000"));
+    }
+
+    @Test
+    public void testShouldConvertFromIso3ToEnglishCountryName() {
+        // given
+        final DataSetRow row1 = getRow("AF", "Pomme de terre");
+        final DataSetRow row2 = getRow("ALA", "Pomme de pain");
+        final DataSetRow row3 = getRow("ala", "Pomme d'ammour");
+        final DataSetRow row4 = getRow("aLa", "Pomme de reinnette");
+        final DataSetRow row5 = getRow("irN", "Pomme de pin");
+        final DataSetRow row6 = getRow("AX", "Pomme d'arrosoir");
+        final DataSetRow row7 = getRow("GEO", "Pomme d'api");
+        final DataSetRow row8 = getRow("TWn", "Pomme d'Eve");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_CODE_ISO3);
+        parameters.put(TO_UNIT_PARAMETER, ENGLISH_COUNTRY_NAME);
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8), actionRegistry,
+                factory.create(action, parameters));
+
+        // then
+        assertTrue(row1.get("0000").isEmpty());
+        assertEquals("Åland Islands", row2.get("0000"));
+        assertEquals("Åland Islands", row3.get("0000"));
+        assertEquals("Åland Islands", row4.get("0000"));
+        assertEquals("Iran", row5.get("0000"));
+        assertTrue(row6.get("0000").isEmpty());
+        assertEquals("Georgia", row7.get("0000"));
+        assertEquals("Taiwan", row8.get("0000"));
+    }
+
+    @Test
+    public void testShouldConvertFromFrenchToEnglishCountryName() {
+        // given
+        final DataSetRow row1 = getRow("Îles Åland", "Pomme de terre");
+        final DataSetRow row2 = getRow("OuzBékistan", "Pomme de pain");
+        final DataSetRow row3 = getRow("Antigua et Barbuda", "Pomme d'ammour");
+        final DataSetRow row4 = getRow("Iran", "Pomme de reinnette");
+        final DataSetRow row5 = getRow("Kirghizistan ", "Pomme de pin");
+        final DataSetRow row6 = getRow("Taiwan", "Pomme d'arrosoir");
+        final DataSetRow row7 = getRow("Zimbabwe", "Pomme d'api");
+        final DataSetRow row8 = getRow("Afghanistan", "Pomme d'Eve");
+        final DataSetRow row9 = getRow("France", "Pomme de douche");
+        final DataSetRow row10 = getRow("Taïwan", "Pomme du Calvados");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
+        parameters.put(TO_UNIT_PARAMETER, ENGLISH_COUNTRY_NAME);
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10),
+                actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("Åland Islands", row1.get("0000"));
+        assertEquals("Uzbekistan", row2.get("0000"));
+        assertEquals("Antigua and Barbuda", row3.get("0000"));
+        assertEquals("Iran", row4.get("0000"));
+        // TODO : this part should be improved and result should be Kirghizistan because this name is recognized by DQ as
+        // TODO a valid country name
+        assertEquals("", row5.get("0000"));
+        assertEquals("Taiwan", row6.get("0000"));
+        assertEquals("Zimbabwe", row7.get("0000"));
+        assertEquals("Afghanistan", row8.get("0000"));
+        assertEquals("France", row9.get("0000"));
+        assertEquals("Taiwan", row10.get("0000"));
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
+        parameters.put(TO_UNIT_PARAMETER, FRENCH_COUNTRY_NAME);
+
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10),
+                actionRegistry, factory.create(action, parameters));
+
+        // then
+        assertEquals("Åland", row1.get("0000"));
+        assertEquals("Ouzbékistan", row2.get("0000"));
+        assertEquals("Antigua Et Barbuda", row3.get("0000"));
+        assertEquals("Iran", row4.get("0000"));
+        assertEquals("", row5.get("0000"));
+        assertEquals("Taïwan", row6.get("0000"));
+        assertEquals("Zimbabwe", row7.get("0000"));
+        assertEquals("Afghanistan", row8.get("0000"));
+        assertEquals("France", row9.get("0000"));
+        assertEquals("Taïwan", row10.get("0000"));
+    }
+
+    @Test
+    public void testShouldReturnEmptyCellBecauseNotValidCountryName() {
         // given
         final Map<String, String> values = new LinkedHashMap<>();
         values.put("0000", "Pomme de reinette");
@@ -338,25 +455,72 @@ public class CountryConverterTest extends AbstractMetadataBaseTest<CountryConver
     }
 
     @Test
-    public void test_should_convert_with_english_french_country_name() {
+    public void testShouldConvertWithEnglishOrFrenchCountryName() {
         // given
         final DataSetRow row1 = getRow("Chine", "Pomme de terre");
-
         final DataSetRow row2 = getRow("Colombia", "Pomme de pain");
-
         final DataSetRow row3 = getRow("Japon", "Pomme d'api");
+
+        // test case sensitive
+        final DataSetRow row4 = getRow("chine", "Pomme de douche");
+        final DataSetRow row5 = getRow("colomBIa", "Pomme de discorde");
+        final DataSetRow row6 = getRow("JAPON", "Pomme d'Adam");
+
+        final DataSetRow row7 = getRow("Antigua and Barbuda", "Pomme d'Adam"); // Antigua-et-Barbuda
+        final DataSetRow row8 = getRow("uzbekistan", "Pomme de tournevire");
+        final DataSetRow row9 = getRow("Ouzbékistan", "Pomme de merveille");
+
+        final DataSetRow row10 = getRow("chinA", "Pomme de Newton");
+        final DataSetRow row11 = getRow("coLOMbie", "Pomme d'églantier");
 
         parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
         parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
         parameters.put(TO_UNIT_PARAMETER, COUNTRY_CODE_ISO3);
 
         // when
-        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3), actionRegistry, factory.create(action, parameters));
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11),
+                actionRegistry, factory.create(action, parameters));
 
         // then
         assertEquals("CHN", row1.get("0000"));
         assertEquals("COL", row2.get("0000"));
         assertEquals("JPN", row3.get("0000"));
+        assertEquals("CHN", row4.get("0000"));
+        assertEquals("COL", row5.get("0000"));
+        assertEquals("JPN", row6.get("0000"));
+        assertEquals("ATG", row7.get("0000"));
+        assertEquals("UZB", row8.get("0000"));
+        assertEquals("UZB", row9.get("0000"));
+        assertEquals("CHN", row10.get("0000"));
+        assertEquals("COL", row11.get("0000"));
     }
 
+    @Test
+    public void testShouldConvertValidAndNotOthers() {
+        // given
+        final DataSetRow row1 = getRow("Chine", "Pomme de terre");
+        final DataSetRow row2 = getRow("Colombia", "Pomme de pain");
+        final DataSetRow row3 = getRow("Japon", "Pomme d'api");
+
+        // test not country case
+        final DataSetRow row4 = getRow("Hawaii", "Pomme de douche");
+        final DataSetRow row5 = getRow("Michigan", "Pomme de discorde");
+        final DataSetRow row6 = getRow("Wisconsin", "Pomme d'Adam");
+
+        parameters.put(ActionsUtils.CREATE_NEW_COLUMN, "false");
+        parameters.put(FROM_UNIT_PARAMETER, COUNTRY_NAME);
+        parameters.put(TO_UNIT_PARAMETER, COUNTRY_CODE_ISO3);
+
+        // when
+        ActionTestWorkbench.test(Arrays.asList(row1, row2, row3, row4, row5, row6), actionRegistry,
+                factory.create(action, parameters));
+
+        // then
+        assertEquals("CHN", row1.get("0000"));
+        assertEquals("COL", row2.get("0000"));
+        assertEquals("JPN", row3.get("0000"));
+        assertEquals("", row4.get("0000"));
+        assertEquals("", row5.get("0000"));
+        assertEquals("", row6.get("0000"));
+    }
 }

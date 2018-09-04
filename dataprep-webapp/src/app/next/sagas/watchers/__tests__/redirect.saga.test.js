@@ -1,6 +1,6 @@
 import { takeEvery } from 'redux-saga/effects';
 import { OPEN_WINDOW, REDIRECT_WINDOW } from '../../../constants/actions';
-import { default as sagas } from '../redirect.saga';
+import sagas from '../redirect.saga';
 import * as effects from '../../effects/redirect.effects';
 
 

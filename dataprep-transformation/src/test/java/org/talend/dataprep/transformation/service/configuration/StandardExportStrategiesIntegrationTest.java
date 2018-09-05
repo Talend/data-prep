@@ -55,7 +55,6 @@ import org.talend.dataprep.cache.TransformationMetadataCacheKey;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportStrategy;
 import org.talend.dataprep.transformation.service.export.ApplyPreparationExportStrategy;
 import org.talend.dataprep.transformation.service.export.CachedExportStrategy;
 import org.talend.dataprep.transformation.service.export.DataSetExportStrategy;
@@ -129,7 +128,7 @@ public class StandardExportStrategiesIntegrationTest {
                 dataSetExportStrategy, optimizedExportStrategy, preparationExportStrategy, cachedExportStrategy);
     }
 
-    private void injectObjectMapper(ExportStrategy exportStrategy) throws Exception {
+    private void injectObjectMapper(SampleExportStrategy exportStrategy) {
         Field mapperField = ReflectionUtils.findField(BaseExportStrategy.class, "mapper");
         ReflectionUtils.makeAccessible(mapperField);
         ReflectionUtils.setField(mapperField, exportStrategy, mapper);
@@ -178,20 +177,19 @@ public class StandardExportStrategiesIntegrationTest {
         when(contentCache.has(transformationCacheKey)).thenReturn(true);
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertElectedStrategyIsInstanceOf(electedStrategy, CachedExportStrategy.class);
     }
 
-    protected Optional<? extends ExportStrategy> chooseExportStrategy(ExportParameters parameters) {
+    protected Optional<SampleExportStrategy> chooseExportStrategy(ExportParameters parameters) {
         return sampleExportStrategies //
-                .filter(exportStrategy -> exportStrategy.accept(parameters)) //
+                .filter(exportStrategy -> exportStrategy.test(parameters)) //
                 .findFirst();
     }
 
-    protected void assertElectedStrategyIsInstanceOf(Optional<? extends ExportStrategy> electedStrategy,
-            Class<?> clazz) {
+    protected void assertElectedStrategyIsInstanceOf(Optional<SampleExportStrategy> electedStrategy, Class<?> clazz) {
         assertTrue("An ExportStrategy should be chosen but none was found", electedStrategy.isPresent());
         assertThat("The chosen ExportStrategy is not the expected one", electedStrategy.get(), instanceOf(clazz));
     }
@@ -227,7 +225,7 @@ public class StandardExportStrategiesIntegrationTest {
         when(contentCache.has(transformationMetadataCacheKeyPreviousVersion)).thenReturn(true);
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertElectedStrategyIsInstanceOf(electedStrategy, OptimizedExportStrategy.class);
@@ -288,7 +286,7 @@ public class StandardExportStrategiesIntegrationTest {
         when(contentCache.has(transformationMetadataCacheKeyPreviousVersion)).thenReturn(false);
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertTrue("An ExportStrategy should be chosen but none was found", electedStrategy.isPresent());
@@ -323,7 +321,7 @@ public class StandardExportStrategiesIntegrationTest {
         when(contentCache.has(transformationMetadataCacheKeyPreviousVersion)).thenReturn(true);
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertTrue("An ExportStrategy should be chosen but none was found", electedStrategy.isPresent());
@@ -352,7 +350,7 @@ public class StandardExportStrategiesIntegrationTest {
         parameters.setDatasetId(null);
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertElectedStrategyIsInstanceOf(electedStrategy, PreparationExportStrategy.class);
@@ -377,7 +375,7 @@ public class StandardExportStrategiesIntegrationTest {
         parameters.setDatasetId("dataset-5678");
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertElectedStrategyIsInstanceOf(electedStrategy, DataSetExportStrategy.class);
@@ -392,7 +390,7 @@ public class StandardExportStrategiesIntegrationTest {
         parameters.setDatasetId("dataset-5678");
 
         // When
-        Optional<? extends ExportStrategy> electedStrategy = chooseExportStrategy(parameters);
+        Optional<SampleExportStrategy> electedStrategy = chooseExportStrategy(parameters);
 
         // Then
         assertElectedStrategyIsInstanceOf(electedStrategy, ApplyPreparationExportStrategy.class);

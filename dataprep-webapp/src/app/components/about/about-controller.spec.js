@@ -11,35 +11,43 @@
 
  ============================================================================*/
 
-describe('about controller', () => {
+fdescribe('about controller', () => {
 	let scope;
 	let createController;
 
 	beforeEach(angular.mock.module('data-prep.about'));
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', {
+			COPYRIGHTS: 'fake',
+		});
+		$translateProvider.preferredLanguage('en');
+	}));
 
-	beforeEach(inject(($rootScope, $componentController, AboutService) => {
+	beforeEach(inject(($q, $rootScope, $componentController, AboutService) => {
 		scope = $rootScope.$new();
 
 		createController = () => $componentController('about', { $scope: scope });
-		spyOn(AboutService, 'loadBuilds').and.returnValue();
+		spyOn(AboutService, 'loadBuilds').and.returnValue($q.when());
 	}));
 
 	it('should toggle build details display', () => {
-		// given
 		const ctrl = createController();
-
-		// when
-		ctrl.toggleDetailsDisplay();
-
-		// then
-		expect(ctrl.showBuildDetails).toBe(true);
+		ctrl.toggle();
+		expect(ctrl.expanded).toBe(true);
 	});
 
 	it('should populate build details on controller instantiation', inject((AboutService) => {
+		const ctrl = createController();
+
 		// when
-		createController();
+		ctrl.$onInit();
 
 		// then
 		expect(AboutService.loadBuilds).toHaveBeenCalled();
+	}));
+
+	it('should return copyrights', inject(() => {
+		const ctrl = createController();
+		expect(ctrl.getCopyrights()).toBe('fake');
 	}));
 });

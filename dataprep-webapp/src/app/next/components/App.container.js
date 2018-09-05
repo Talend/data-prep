@@ -4,8 +4,12 @@ import { Helmet } from 'react-helmet';
 import { I18nextProvider } from 'react-i18next';
 import { List, Map } from 'immutable';
 import { IconsProvider } from '@talend/react-components';
-import { Notification, ShortcutManager } from '@talend/react-containers';
-import AppLoader from '@talend/react-containers/lib/AppLoader/index';
+import {
+	Notification,
+	ShortcutManager,
+	AppLoader,
+	AboutDialog,
+} from '@talend/react-containers';
 
 import components from './';
 import i18n from './../../i18n';
@@ -25,7 +29,7 @@ export default function App(props) {
 						<IconsProvider />
 						<ShortcutManager />
 						<Notification initialState={initialNotificationsState} />
-						<components.AboutModal />
+						<AboutDialog />
 						<components.PreparationCreatorModal />
 						<components.PreparationCopyMoveModal />
 						{props.children}

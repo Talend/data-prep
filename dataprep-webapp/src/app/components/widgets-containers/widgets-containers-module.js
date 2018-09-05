@@ -14,6 +14,7 @@
 import angular from 'angular';
 
 import { ActionButton } from '@talend/react-components/lib/index';
+import AboutDialog from '@talend/react-components/lib/AboutDialog';
 import AppLoader from '@talend/react-components/lib/AppLoader';
 import AppHeaderBar from '@talend/react-components/lib/HeaderBar';
 import Breadcrumbs from '@talend/react-components/lib/Breadcrumbs';
@@ -62,6 +63,9 @@ angular.module(MODULE_NAME,
 	])
 	.directive('pureAppHeaderBar', ['reactDirective', reactDirective => reactDirective(
 		getTranslated(AppHeaderBar, { i18n })
+	)])
+	.directive('pureAboutDialog', ['reactDirective', reactDirective => reactDirective(
+		getTranslated(AboutDialog, { i18n })
 	)])
 	.directive('pureAppLoader', ['reactDirective', reactDirective => reactDirective(AppLoader)])
 	.directive('pureBreadcrumb', ['reactDirective', reactDirective => reactDirective(Breadcrumbs)])

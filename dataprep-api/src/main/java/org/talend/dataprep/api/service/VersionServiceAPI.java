@@ -13,19 +13,19 @@
 package org.talend.dataprep.api.service;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.talend.dataprep.dataset.DatasetConfiguration.Service.Provider.CATALOG;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.PredicateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.talend.dataprep.api.service.version.DatasetVersionSupplier;
 import org.talend.dataprep.api.service.version.VersionsSupplier;
 import org.talend.dataprep.info.BuildDetails;
 import org.talend.dataprep.info.Version;
@@ -37,10 +37,11 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 public class VersionServiceAPI extends APIService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VersionServiceAPI.class);
-
     @Value("${dataprep.display.version}")
     private String applicationVersion;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private List<VersionsSupplier> versionsSuppliers;
@@ -57,13 +58,19 @@ public class VersionServiceAPI extends APIService {
     @Timed
     @PublicAPI
     public BuildDetails allVersions() {
-        final List<Version> versions = new ArrayList<>();
-
-        for (VersionsSupplier versionsSupplier : versionsSuppliers) {
-            versions.addAll(versionsSupplier.getVersions());
+        Stream<VersionsSupplier> supplierStream = versionsSuppliers.stream();
+        final String datasetProvider = environment.getProperty("dataset.service.provider");
+        if (CATALOG.name().equalsIgnoreCase(datasetProvider)) {
+            supplierStream =
+                    supplierStream.filter(versionsSupplier -> !(versionsSupplier instanceof DatasetVersionSupplier));
         }
-        CollectionUtils.filter(versions, PredicateUtils.notNullPredicate());
 
-        return new BuildDetails(applicationVersion, versions.toArray(new Version[0]));
+        final Version[] versions = supplierStream //
+                .map(VersionsSupplier::getVersions)
+                .flatMap(List::stream)
+                .filter(Objects::nonNull)
+                .toArray(Version[]::new);
+
+        return new BuildDetails(applicationVersion, versions);
     }
 }

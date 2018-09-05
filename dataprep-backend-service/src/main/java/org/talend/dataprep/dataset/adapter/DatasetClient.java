@@ -23,6 +23,7 @@ import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
+import org.talend.dataprep.dataset.DatasetConfiguration;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadataLegacy;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
@@ -31,7 +32,6 @@ import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -86,22 +86,8 @@ public class DatasetClient {
             .softValues() //
             .build();
 
-    private Function<String, AnalysisResult> datasetAnalysisSupplier;
-
     @Autowired
     private ApplicationContext context;
-
-    @Value("${dataset.service.provider:legacy}")
-    private String catalogMode;
-
-    @PostConstruct
-    private void initializeAnalysisSupplier() {
-        if ("legacy".equals(catalogMode)) {
-            datasetAnalysisSupplier = this::getAnalyseDatasetFromLegacy;
-        } else {
-            datasetAnalysisSupplier = this::analyseDataset;
-        }
-    }
 
     // ------- Composite adapters -------
 
@@ -237,7 +223,7 @@ public class DatasetClient {
      */
     @Deprecated
     public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent,
-            final boolean includeInternalContent) {
+                                                            final boolean includeInternalContent) {
         return new HystrixCommand<InputStream>(DATASET_GROUP) {
 
             @Override
@@ -283,7 +269,12 @@ public class DatasetClient {
                 .stream()
                 .map(ColumnMetadata::getStatistics)
                 .anyMatch(this::isComputedStatistics)) {
-            AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
+            AnalysisResult analysisResult;
+            if (context.getBean(DatasetConfiguration.class).isLegacy()) {
+                analysisResult = getAnalyseDatasetFromLegacy(dataset.getId());
+            } else {
+                analysisResult = analyseDataset(dataset.getId());
+            }
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
             metadata.getContent().setNbRecords(analysisResult.rowcount);
         }
@@ -307,7 +298,7 @@ public class DatasetClient {
                 AtomicLong count = new AtomicLong(0);
                 RowMetadata rowMetadata = getDataSetRowMetadata(id);
                 try (Stream<DataSetRow> records =
-                        dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
+                             dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
                     analyzerService.analyzeFull(records, rowMetadata.getColumns());
                 }
                 return new AnalysisResult(rowMetadata, count.get());

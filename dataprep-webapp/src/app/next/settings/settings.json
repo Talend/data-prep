@@ -222,6 +222,9 @@
       "hasCollections": ["settings"]
     },
     "Breadcrumbs#default": {},
+    "AboutDialog#default": {
+      "icon": "talend-tdp-colored"
+    },
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {
@@ -320,26 +323,6 @@
     },
     "SidePanel#default": {
       "actionIds": ["menu:preparations", "menu:datasets", "menu:datastores"]
-    },
-    "Version#default": {
-      "displayVersionExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.displayVersion", []]
-      },
-      "servicesExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.services", []]
-      }
-    },
-    "AboutModal#default": {
-      "servicesExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.services", []]
-      },
-      "displayVersionExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.displayVersion", ""]
-      }
     },
     "HomeListView#datastores": {
       "hasTheme": true

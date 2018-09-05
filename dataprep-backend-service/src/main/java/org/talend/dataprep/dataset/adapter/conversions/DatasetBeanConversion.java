@@ -143,10 +143,6 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
 
     private BiFunction<DataSetMetadata, DatasetDTO, DatasetDTO> convertDatasetMetadataToDatasetDTO() {
         return (datasetMetadata, datasetDTO) -> {
-            datasetDTO.setName(datasetMetadata.getName());
-            datasetDTO.setCreationDate(datasetMetadata.getCreationDate());
-            datasetDTO.setLastModificationDate(datasetMetadata.getLastModificationDate());
-            datasetDTO.setAuthor(datasetMetadata.getAuthor());
             if (datasetDTO.getOwner() == null) {
                 datasetDTO.setOwner(new Owner());
             }
@@ -156,8 +152,6 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                 datasetDTO.setCertification(Dataset.CertificationState
                         .valueOf(datasetMetadata.getGovernance().getCertificationStep().name()));
             }
-            datasetDTO.setDraft(datasetMetadata.isDraft());
-
             datasetDTO.setType(datasetMetadata.getContent().getMediaType());
             datasetDTO.setRecords(datasetMetadata.getContent().getNbRecords());
 
@@ -171,8 +165,6 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
             dataset.setCreated(datasetDTO.getCreationDate());
             dataset.setUpdated(datasetDTO.getLastModificationDate());
             dataset.setOwner(datasetDTO.getAuthor());
-            dataset.setType(datasetDTO.getType());
-            dataset.setFavorite(datasetDTO.isFavorite());
 
             if (dataset.getDataSetMetadataLegacy() == null) {
                 dataset.setDataSetMetadataLegacy(new Dataset.DataSetMetadataLegacy());
@@ -193,8 +185,6 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
             datasetDTO.setAuthor(dataset.getOwner());
 
             datasetDTO.setCertification(dataset.getCertification());
-            datasetDTO.setType(dataset.getType());
-            datasetDTO.setFavorite(dataset.isFavorite());
 
             // Manage legacy fields that doesn't match data catalog concept
             Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = dataset.getDataSetMetadataLegacy();

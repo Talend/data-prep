@@ -539,7 +539,7 @@ describe('Dataset Service', () => {
         ];
 
         beforeEach(inject(($q, DatasetRestService) => {
-            spyOn(DatasetRestServsice, 'getCompatiblePreparations').and.returnValue($q.when(preparations));
+            spyOn(DatasetRestService, 'getCompatiblePreparations').and.returnValue($q.when(preparations));
         }));
 
         it('should get preparations from rest', inject((DatasetService, DatasetRestService) => {

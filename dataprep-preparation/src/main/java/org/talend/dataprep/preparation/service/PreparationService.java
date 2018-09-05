@@ -75,6 +75,7 @@ import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
+import org.talend.dataprep.conversions.inject.SharedInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
@@ -161,6 +162,12 @@ public class PreparationService {
 
     @Autowired
     private DatasetClient datasetClient;
+
+    @Autowired
+    private OwnerInjection ownerInjection;
+
+    @Autowired
+    private SharedInjection sharedInjection;
 
     /**
      * Create a preparation from the http request body.
@@ -288,9 +295,9 @@ public class PreparationService {
             preparationStream = preparationStream.filter(p -> folderEntries.contains(p.id()));
         }
 
-        final OwnerInjection ownerInjection = springContext.getBean(OwnerInjection.class);
         return preparationStream
-                .map(p -> beanConversionService.convert(p, PreparationDTO.class, ownerInjection)) //
+                .map(p -> beanConversionService.convert(p, PreparationDTO.class, ownerInjection.injectIntoPreparation(),
+                        sharedInjection)) //
                 .sorted(getPreparationComparator(sort, order));
     }
 

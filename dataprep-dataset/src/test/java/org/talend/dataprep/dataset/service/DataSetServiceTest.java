@@ -12,6 +12,52 @@
 
 package org.talend.dataprep.dataset.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
+import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Assertions;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.talend.daikon.content.DeletableResource;
+import org.talend.daikon.content.ResourceResolver;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSet;
+import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.api.user.UserData;
+import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.dataset.DataSetBaseTest;
+import org.talend.dataprep.dataset.DataSetMetadataBuilder;
+import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
+import org.talend.dataprep.dataset.store.QuotaService;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
+import org.talend.dataprep.lock.DistributedLock;
+import org.talend.dataprep.schema.csv.CSVFormatFamily;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -45,53 +91,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.util.SortAndOrderHelper.Sort.LAST_MODIFICATION_DATE;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import org.apache.commons.io.IOUtils;
-import org.assertj.core.api.Assertions;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.talend.daikon.content.DeletableResource;
-import org.talend.daikon.content.ResourceResolver;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
-import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.api.dataset.DataSetGovernance.Certification;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
-import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
-import org.talend.dataprep.api.dataset.statistics.Statistics;
-import org.talend.dataprep.api.type.Type;
-import org.talend.dataprep.api.user.UserData;
-import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.dataset.DataSetBaseTest;
-import org.talend.dataprep.dataset.DataSetMetadataBuilder;
-import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
-import org.talend.dataprep.dataset.store.QuotaService;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
-import org.talend.dataprep.lock.DistributedLock;
-import org.talend.dataprep.schema.csv.CSVFormatFamily;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
 
 public class DataSetServiceTest extends DataSetBaseTest {
 
@@ -272,8 +271,8 @@ public class DataSetServiceTest extends DataSetBaseTest {
         metadata.getContent().addParameter(CSVFormatFamily.SEPARATOR_PARAMETER, ";");
         dataSetMetadataRepository.save(metadata);
 
-        String expected = "[{\"id\":\"" + id1
-                + "\",\"name\":\"name1\",\"records\":0,\"author\":\"anonymous\",\"nbLinesHeader\":0,\"nbLinesFooter\":0,\"created\":0}]";
+        String expected =
+                "[{\"id\":\"" + id1 + "\",\"name\":\"name1\",\"records\":0,\"ownerId\":\"anonymous\",\"created\":0}]";
 
         InputStream content = when().get("/datasets").asInputStream();
         String contentAsString = IOUtils.toString(content, UTF_8);
@@ -305,6 +304,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         userDataRepository.save(userData);
 
         favoritesResp = from(when().get("/datasets").asString()).get("favorite"); //$NON-NLS-1$
+
         assertEquals(2, favoritesResp.size());
         assertTrue(favoritesResp.get(0));
         assertTrue(favoritesResp.get(1));

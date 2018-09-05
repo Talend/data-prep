@@ -298,9 +298,17 @@ public class APIClientTest {
      */
     public Response getPreparation(String preparationId, String version, String stepId) throws IOException {
         // when
-        Response transformedResponse = given() //
-                .when() //
-                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+        Response transformedResponse;
+        RequestSpecification initialRequest = given().when();
+        if (filter.isEmpty()) {
+            transformedResponse = initialRequest //
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version,
+                            stepId);
+        } else {
+            transformedResponse = initialRequest //
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
+                            preparationId, version, stepId, filter);
+        }
 
         if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status

@@ -40,6 +40,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
 
 		toggleFavorite,
 
+		getRelatedPreparations,
 		getCompatiblePreparations,
 	};
 
@@ -296,6 +297,18 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      */
 	function getEncodings() {
 		return $http.get(`${RestURLs.datasetUrl}/encodings`, { failSilently: true })
+			.then(response => response.data);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name getRelatedPreparations
+	 * @methodOf data-prep.services.dataset.service:DatasetRestService
+	 * @description Get the related preparation list for a given dataset
+	 * @returns {Promise} The GET promise
+	 */
+	function getRelatedPreparations(datasetId) {
+		return $http.get(`${RestURLs.datasetUrl}/${datasetId}/preparations`)
 			.then(response => response.data);
 	}
 

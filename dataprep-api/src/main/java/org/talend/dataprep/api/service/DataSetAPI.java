@@ -12,26 +12,9 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.dataprep.command.CommandHelper.toPublisher;
-import static org.talend.dataprep.command.CommandHelper.toStreaming;
-import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
-
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.netflix.hystrix.HystrixCommand;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,11 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
-import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.DatasetDTO;
+import org.talend.dataprep.api.dataset.DatasetDetailsDTO;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.service.api.EnrichedDataSetMetadata;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.dataset.CopyDataSet;
 import org.talend.dataprep.api.service.command.dataset.CreateDataSet;
@@ -69,19 +53,34 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
-import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
-
-import com.netflix.hystrix.HystrixCommand;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
+
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.dataprep.command.CommandHelper.toPublisher;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+import static org.talend.dataprep.command.CommandHelper.toStreaming;
+import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -274,24 +273,28 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List data sets.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets the user can use.")
     @Timed
-    public Stream<UserDataSetMetadata> list(
-            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order,
-            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
+    public Stream<DatasetDTO> list(
+            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(
+                    defaultValue = "creationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
+                    defaultValue = "desc") Order order,
+            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(
+                    defaultValue = "") String name,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
         try {
             CertificationState certification = certified ? CERTIFIED : null;
-                Boolean filterOnFavorite = favorite ? Boolean.TRUE : null;
-                Stream<DataSetMetadata> datasetStream = datasetClient.listDataSetMetadata(certification, filterOnFavorite);
+
+            Boolean filterOnFavorite = favorite ? Boolean.TRUE : null;
+            Stream<DatasetDTO> datasetStream = datasetClient.listDataSetMetadata(certification, filterOnFavorite);
 
             if (isNotBlank(name)) {
                 datasetStream = datasetStream.filter(ds -> containsIgnoreCase(ds.getName(), name));
             }
 
             if (certified) {
-                datasetStream = datasetStream.filter(dataset -> dataset.getGovernance().getCertificationStep() == DataSetGovernance.Certification.CERTIFIED);
+                datasetStream = datasetStream.filter(dataset -> dataset.getCertification() == CERTIFIED);
             }
 
             if (limit) {
@@ -299,43 +302,99 @@ public class DataSetAPI extends APIService {
             }
 
             return datasetStream //
-                    .map(dataSetMetadata -> beanConversionService.convert(dataSetMetadata, UserDataSetMetadata.class)) //
-                    .sorted(SortAndOrderHelper.getDataSetMetadataComparator(sort, order));
+                    .sorted(SortAndOrderHelper.getDatasetDTOComparator(sort, order));
         } finally {
             LOG.info("listing datasets done [favorite: {}, certified: {}, name: {}, limit: {}]", favorite, certified, name,
                     limit);
         }
     }
 
+    /**
+     * Return the dataset details.
+     *
+     * @param id the wanted dataset details.
+     * @return the dataset datails or no content if not found.
+     */
+    @RequestMapping(value = "/api/datasets/{id}/details", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get a data set detail by id.", produces = APPLICATION_JSON_VALUE,
+            notes = "Get a data set metadata based on given id.")
+    @Timed
+    public DatasetDetailsDTO
+            getDetails(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Requesting dataset details #{} (pool: {})...", id, getConnectionStats());
+        }
+        try {
+            DatasetDetailsDTO details = datasetClient.getDataSetDetails(id);
+
+            List<DatasetDetailsDTO.Preparation> preps = getPreparation(details.getId());
+
+            details.setPreparations(preps);
+
+            return details;
+
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Request dataset details #{} (pool: {}) done.", id, getConnectionStats());
+            }
+        }
+    }
+
+    /**
+     * Return the list of preparation using a dataset
+     *
+     * @param id the wanted dataset.
+     * @return the list of preparation using the dataset
+     */
+    @RequestMapping(value = "/api/datasets/{id}/preparations", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get the list of preparation using a dataset by the dataset id.",
+            produces = APPLICATION_JSON_VALUE, notes = "Get the list of preparation using a dataset by the dataset id.")
+    @Timed
+    public List<DatasetDetailsDTO.Preparation>
+            getPreparation(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Requesting preparations using dataset #{} (pool: {})...", id, getConnectionStats());
+        }
+        try {
+            DatasetDetailsDTO details = datasetClient.getDataSetDetails(id);
+
+            // Add the related preparations list to the given dataset metadata.
+            final PreparationSearchByDataSetId getPreparations =
+                    getCommand(PreparationSearchByDataSetId.class, details.getId());
+
+            List<DatasetDetailsDTO.Preparation> preps = new ArrayList<>();
+
+            toStream(PreparationDTO.class, mapper, getPreparations) //
+                    .filter(p -> p.getSteps() != null)
+                    .forEach(p -> preps.add(new DatasetDetailsDTO.Preparation(p.getId(), p.getName(),
+                            (long) p.getSteps().size(), p.getLastModificationDate())));
+
+            return preps;
+
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Request preparations using dataset #{} (pool: {}) done.", id, getConnectionStats());
+            }
+        }
+    }
+
     @RequestMapping(value = "/api/datasets/summary", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List data sets summary.", produces = APPLICATION_JSON_VALUE, notes = "Returns a list of data sets summary the user can use.")
     @Timed
-    public Stream<EnrichedDataSetMetadata> listSummary(
-            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") Sort sort,
-            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") Order order,
-            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(defaultValue = "") String name,
+    public Stream<DatasetDTO> listSummary(
+            @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(
+                    defaultValue = "creationDate") Sort sort,
+            @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
+                    defaultValue = "desc") Order order,
+            @ApiParam(value = "Filter on name containing the specified name") @RequestParam(
+                    defaultValue = "") String name,
             @ApiParam(value = "Filter on certified data sets") @RequestParam(defaultValue = "false") boolean certified,
             @ApiParam(value = "Filter on favorite data sets") @RequestParam(defaultValue = "false") boolean favorite,
             @ApiParam(value = "Filter on recent data sets") @RequestParam(defaultValue = "false") boolean limit) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing datasets summary (pool: {})...", getConnectionStats());
         }
-        Stream<UserDataSetMetadata> listDataSets = list(sort, order, name, certified, favorite, limit);
-        return listDataSets //
-                .map(m -> {
-                    LOG.debug("found dataset [{}] in the summary list", m.getName());
-                    // Add the related preparations list to the given dataset metadata.
-                    final PreparationSearchByDataSetId getPreparations = getCommand(PreparationSearchByDataSetId.class,
-                            m.getId());
-                    return Flux.from(CommandHelper.toPublisher(Preparation.class, mapper, getPreparations)).collectList() //
-                            .map(preparations -> {
-                                final List<Preparation> list = preparations.stream() //
-                                        .filter(p -> p.getSteps() != null) //
-                                        .collect(Collectors.toList());
-                                return new EnrichedDataSetMetadata(m, list);
-                            }) //
-                            .block();
-                });
+        return list(sort, order, name, certified, favorite, limit);
     }
 
     /**
@@ -451,7 +510,7 @@ public class DataSetAPI extends APIService {
      * Return the semantic types for a given dataset / column.
      *
      * @param datasetId the dataset id.
-     * @param columnId the column id.
+     * @param columnId  the column id.
      * @return the semantic types for a given dataset / column.
      */
     @RequestMapping(value = "/api/datasets/{datasetId}/columns/{columnId}/types", method = GET, produces = APPLICATION_JSON_VALUE)

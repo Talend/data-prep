@@ -35,12 +35,18 @@ public interface DatasetActions {
             .type("@@dataset/OPEN")
             .build();
 
+    ActionSettings DATASET_PREPARATIONS_FETCH = builder()
+            .id("dataset:preparations:fetch")
+            .type("@@dataset/RELATED_PREPARATIONS")
+            .build();
+
     ActionSettings DATASET_PREPARATIONS = dropdownBuilder()
             .id("list:dataset:preparations")
             .name("dataset.preparations")
             .icon("talend-dataprep")
             .items("preparations")
             .dynamicAction(MENU_PLAYGROUND_PREPARATION.getId())
+            .dynamicFetchAction(DATASET_PREPARATIONS_FETCH.getId())
             .staticAction(DATASET_OPEN.getId())
             .build();
 

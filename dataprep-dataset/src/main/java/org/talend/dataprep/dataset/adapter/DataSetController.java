@@ -15,13 +15,7 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
+import com.google.common.base.Throwables;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -49,7 +43,12 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.util.ConverterBasedPropertyEditor;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import com.google.common.base.Throwables;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -83,9 +82,9 @@ public class DataSetController {
         boolean legacyCertified = CERTIFIED == certification;
         boolean legacyFavorite = favorite != null && favorite == TRUE;
 
-        return dataSetService.list(Sort.CREATION_DATE, Order.DESC, null, false, legacyCertified, legacyFavorite,
-                false) //
-                .map(userDataSetMetadata -> beanConversionService.convert(userDataSetMetadata, Dataset.class));
+        return dataSetService
+                .list(Sort.CREATION_DATE, Order.DESC, null, false, legacyCertified, legacyFavorite, false) //
+                .map(datasetDTO -> beanConversionService.convert(datasetDTO, Dataset.class));
     }
 
     /**

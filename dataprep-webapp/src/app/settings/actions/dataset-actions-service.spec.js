@@ -455,5 +455,35 @@ describe('Datasets actions service', () => {
 			// then
 			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset, event);
 		}));
+
+		it('should retrieve related preparations for a dataset', inject(($q, $rootScope, DatasetActionsService, DatasetService, StateService) => {
+			// given
+			const dataset = { id: 'myDatasetId', draft: true };
+			stateMock.inventory.datasets.content = [
+				dataset,
+			];
+			const action = {
+				type: '@@dataset/RELATED_PREPARATIONS',
+				payload: { isOpen: true, model: dataset },
+			};
+			spyOn(DatasetService, 'getRelatedPreparations')
+				.and.returnValue(
+					$q.when(['a', 'b', 'c']),
+			);
+			spyOn(StateService, 'setDatasets');
+
+			// when
+			DatasetActionsService.dispatch(action);
+			$rootScope.$digest();
+
+			// then
+			expect(StateService.setDatasets)
+				.toHaveBeenCalledWith([
+					{
+						...dataset,
+						preparations: ['a', 'b', 'c'],
+					},
+				]);
+		}));
 	});
 });

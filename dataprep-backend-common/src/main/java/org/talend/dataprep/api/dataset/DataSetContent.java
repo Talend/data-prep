@@ -13,7 +13,8 @@
 
 package org.talend.dataprep.api.dataset;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -21,15 +22,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * Dataset content summary.
  */
 public class DataSetContent implements Serializable {
 
-    /** Serialization UID. */
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("records")
@@ -50,7 +52,9 @@ public class DataSetContent implements Serializable {
     @JsonProperty("formatGuess")
     private String formatFamilyId;
 
-    /** If the dataset is too big, */
+    /**
+     * If the dataset is too big,
+     */
     @JsonProperty("limit")
     @JsonInclude(value = NON_NULL)
     private Optional<Long> limit = Optional.empty();

@@ -54,6 +54,11 @@ public class ActionDropdownSettings extends ActionSettings {
     private String dynamicAction;
 
     /**
+     * The action id that will be applied to fetch dynamic the items
+     */
+    private String dynamicFetchAction;
+
+    /**
      * The statics actions ids that will be applied to the hosting model
      */
     private List<String> staticActions;
@@ -72,6 +77,14 @@ public class ActionDropdownSettings extends ActionSettings {
 
     public void setDynamicAction(String dynamicAction) {
         this.dynamicAction = dynamicAction;
+    }
+
+    public String getDynamicFetchAction() {
+        return dynamicFetchAction;
+    }
+
+    public void setDynamicFetchAction(String dynamicFetchAction) {
+        this.dynamicFetchAction = dynamicFetchAction;
     }
 
     public List<String> getStaticActions() {
@@ -98,6 +111,7 @@ public class ActionDropdownSettings extends ActionSettings {
                 .bsStyle(actionSettings.getBsStyle()) //
                 .items(actionSettings.getItems()) //
                 .dynamicAction(actionSettings.getDynamicAction()) //
+                .dynamicFetchAction(actionSettings.getDynamicFetchAction()) //
                 .staticActions(actionSettings.getStaticActions()) //
                 .enabled(actionSettings.isEnabled());
     }
@@ -121,6 +135,8 @@ public class ActionDropdownSettings extends ActionSettings {
         private boolean enabled = true;
 
         private String dynamicAction;
+
+        private String dynamicFetchAction;
 
         private List<String> staticActions = new ArrayList<>();
 
@@ -159,6 +175,11 @@ public class ActionDropdownSettings extends ActionSettings {
             return this;
         }
 
+        public Builder dynamicFetchAction(final String dynamicFetchAction) {
+            this.dynamicFetchAction = dynamicFetchAction;
+            return this;
+        }
+
         public Builder staticAction(final String staticAction) {
             this.staticActions.add(staticAction);
             return this;
@@ -186,6 +207,7 @@ public class ActionDropdownSettings extends ActionSettings {
             action.setBsStyle(this.bsStyle);
             action.setItems(this.items);
             action.setDynamicAction(dynamicAction);
+            action.setDynamicFetchAction(dynamicFetchAction);
             action.setStaticActions(staticActions.isEmpty() ? null : staticActions);
             action.setEnabled(this.enabled);
             return action;

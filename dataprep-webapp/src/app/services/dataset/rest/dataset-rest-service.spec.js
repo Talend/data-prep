@@ -629,6 +629,30 @@ describe('Dataset Rest Service', () => {
 		}));
 	});
 
+	describe('related preparations', () => {
+		it('should call rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
+			//given
+			let result = null;
+			const datasetId = 'e85afAa78556d5425bc2';
+			const preparations = [{ id: '36c2692ef5' }];
+
+			$httpBackend
+				.expectGET(`${RestURLs.datasetUrl}/${datasetId}/preparations`)
+				.respond(200, preparations);
+
+			//when
+			DatasetRestService.getRelatedPreparations(datasetId)
+				.then((preps) => {
+					result = preps;
+				});
+			$httpBackend.flush();
+			$rootScope.$digest();
+
+			//then
+			expect(result).toEqual(preparations);
+		}));
+	});
+
 	describe('compatible preparations', () => {
 		it('should call rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
 			//given

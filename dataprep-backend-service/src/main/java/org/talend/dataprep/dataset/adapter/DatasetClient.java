@@ -293,8 +293,8 @@ public class DatasetClient {
             return computedMetadataCache.get(id, () -> {
                 AtomicLong count = new AtomicLong(0);
                 RowMetadata rowMetadata = getDataSetRowMetadata(id);
-                try (Stream<DataSetRow> records = dataCatalogClient.getDataSetContent(id, sampleSize)
-                        .map(toDatasetRow(rowMetadata))) {
+                try (Stream<DataSetRow> records =
+                        dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
                     analyzerService.analyzeFull(records, rowMetadata.getColumns());
                 }
                 return new AnalysisResult(rowMetadata, count.get());

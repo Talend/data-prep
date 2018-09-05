@@ -36,10 +36,12 @@ import static org.talend.dataprep.command.CommandHelper.toStream;
  * Settings configurer that insert the imports types as the DATASET_CREATE split dropdown items.
  */
 @Component
+@Scope(SCOPE_PROTOTYPE)
+@ConditionalOnProperty(name = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
 public class ImportTypesConfigurer extends AppSettingsConfigurer<ActionSettings> {
 
     @Autowired
-    private ObjectMapper mapper;
+    ObjectMapper mapper;
 
     @Override
     public boolean isApplicable(final ActionSettings actionSettings) {

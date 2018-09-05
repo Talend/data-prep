@@ -1,9 +1,22 @@
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.netflix.hystrix.HystrixCommand;
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +36,6 @@ import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
-import org.talend.dataprep.dataset.DatasetConfiguration;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadataLegacy;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
@@ -32,21 +44,10 @@ import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
 
 /**
  * Adapter for legacy data model over the {@link DataCatalogClient}.
@@ -86,8 +87,22 @@ public class DatasetClient {
             .softValues() //
             .build();
 
+    private Function<String, AnalysisResult> datasetAnalysisSupplier;
+
     @Autowired
     private ApplicationContext context;
+
+    @Value("${dataset.service.provider:legacy}")
+    private String catalogMode;
+
+    @PostConstruct
+    private void initializeAnalysisSupplier() {
+        if ("legacy".equals(catalogMode)) {
+            datasetAnalysisSupplier = this::getAnalyseDatasetFromLegacy;
+        } else {
+            datasetAnalysisSupplier = this::analyseDataset;
+        }
+    }
 
     // ------- Composite adapters -------
 
@@ -269,12 +284,7 @@ public class DatasetClient {
                 .stream()
                 .map(ColumnMetadata::getStatistics)
                 .anyMatch(this::isComputedStatistics)) {
-            AnalysisResult analysisResult;
-            if (context.getBean(DatasetConfiguration.class).isLegacy()) {
-                analysisResult = getAnalyseDatasetFromLegacy(dataset.getId());
-            } else {
-                analysisResult = analyseDataset(dataset.getId());
-            }
+            AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
             metadata.getContent().setNbRecords(analysisResult.rowcount);
         }

@@ -1,11 +1,11 @@
 import { all, call, put, select } from 'redux-saga/effects';
-import api, { actions } from '@talend/react-cmf';
+import { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
 import i18next from '../../../i18n';
 
 import http from './http';
-import { default as creators } from '../../actions';
+import creators from '../../actions';
 import PreparationService from '../../services/preparation.service';
 import PreparationCopyMoveModal from '../../components/PreparationCopyMoveModal';
 

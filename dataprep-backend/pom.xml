@@ -602,6 +602,11 @@
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging-api</artifactId>
                     </exclusion>
+                    <!-- exclusion can be removed after update to 1.18 -->
+                    <exclusion>
+                        <groupId>com.tdunning</groupId>
+                        <artifactId>json</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -698,6 +703,12 @@
                 <artifactId>hamcrest-json</artifactId>
                 <version>0.2</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.json</groupId>
+                        <artifactId>json</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>

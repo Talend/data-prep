@@ -81,7 +81,7 @@ export default class AboutCtrl {
 	 * @returns {string} copyrights with current year
 	 */
 	getCopyrights() {
-		return this.$translate.instant('COPYRIGHTS', {
+		return this.$translate.instant('ABOUT_COPYRIGHTS', {
 			year: new Date().getFullYear(),
 		});
 	}

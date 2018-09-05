@@ -33,13 +33,13 @@
         <tika.version>1.16</tika.version>
         <org.talend.daikon.version>0.26.0-SNAPSHOT</org.talend.daikon.version>
         <dataquality-libraries.version>6.1.0-SNAPSHOT</dataquality-libraries.version>
-        <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
-        <org.talend.dataquality.semantic.version>${dataquality-libraries.version}</org.talend.dataquality.semantic.version>
-        <org.talend.dataquality.statistics.version>${dataquality-libraries.version}</org.talend.dataquality.statistics.version>
-        <org.talend.dataquality.record.linkage.version>${dataquality-libraries.version}</org.talend.dataquality.record.linkage.version>
-        <org.talend.dataquality.sampling.version>${dataquality-libraries.version}</org.talend.dataquality.sampling.version>
-        <org.talend.dataquality.standardization.version>${dataquality-libraries.version}</org.talend.dataquality.standardization.version>
-        <org.talend.dataquality.converters.version>${dataquality-libraries.version}</org.talend.dataquality.converters.version>
+        <dataquality-common.version>${dataquality-libraries.version}</dataquality-common.version>
+        <dataquality-semantic.version>${dataquality-libraries.version}</dataquality-semantic.version>
+        <dataquality-statistics.version>${dataquality-libraries.version}</dataquality-statistics.version>
+        <dataquality-record-linkage.version>${dataquality-libraries.version}</dataquality-record-linkage.version>
+        <dataquality-sampling.version>${dataquality-libraries.version}</dataquality-sampling.version>
+        <dataquality-standardization.version>${dataquality-libraries.version}</dataquality-standardization.version>
+        <dataquality-converters.version>${dataquality-libraries.version}</dataquality-converters.version>
 
         <spring-boot.version>1.5.15.RELEASE</spring-boot.version>
         <spring-cloud.version>Edgware.SR4</spring-cloud.version>
@@ -98,6 +98,8 @@
                 <scope>import</scope>
             </dependency>
             <!-- Enforce kafka version -->
+            <!-- Could be done only with kafka.version properties override if the pom parent is spring boot -->
+            <!-- in order to avoid exclusion -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
@@ -131,7 +133,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-semantic</artifactId>
-                <version>${org.talend.dataquality.semantic.version}</version>
+                <version>${dataquality-semantic.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -158,7 +160,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-common</artifactId>
-                <version>${org.talend.dataquality.common.version}</version>
+                <version>${dataquality-common.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -193,7 +195,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-statistics</artifactId>
-                <version>${org.talend.dataquality.statistics.version}</version>
+                <version>${dataquality-statistics.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.clearspring.analytics</groupId>
@@ -216,7 +218,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-record-linkage</artifactId>
-                <version>${org.talend.dataquality.record.linkage.version}</version>
+                <version>${dataquality-record-linkage.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -239,7 +241,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-standardization</artifactId>
-                <version>${org.talend.dataquality.standardization.version}</version>
+                <version>${dataquality-standardization.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -262,7 +264,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-converters</artifactId>
-                <version>${org.talend.dataquality.converters.version}</version>
+                <version>${dataquality-converters.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -285,7 +287,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-sampling</artifactId>
-                <version>${org.talend.dataquality.sampling.version}</version>
+                <version>${dataquality-sampling.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>

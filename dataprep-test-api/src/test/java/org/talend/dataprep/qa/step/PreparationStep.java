@@ -31,8 +31,6 @@ public class PreparationStep extends DataPrepStep {
 
     private static final String NB_STEPS = "nbSteps";
 
-    private static final String ACTIONS_LIST = "actionsList";
-
     /**
      * This class' logger.
      */
@@ -76,8 +74,7 @@ public class PreparationStep extends DataPrepStep {
 
         if (params.get("actionsList") != null) {
             List<Action> actionsList = prepDet.actions;
-            String expectedActionsListFile = params.get("actionsList").toString();
-            checkActionsListOfPrepa(actionsList, expectedActionsListFile);
+            checkActionsListOfPrepa(actionsList, params.get("actionsList").toString());
         }
     }
 
@@ -89,8 +86,6 @@ public class PreparationStep extends DataPrepStep {
         List<Action> expectedActionsList =
                 objectMapper.readValue(expectedActionsListStream, PreparationDetails.class).actions;
         Assert.assertEquals(expectedActionsList.size(), actionsList.size());
-        //        Collections.sort(actionsList);
-        //        Collections.sort(expectedActionsList);
         for (int i = 0; i < expectedActionsList.size(); i++) {
             Action expectedAction = expectedActionsList.get(i);
             Action action = actionsList.get(i);

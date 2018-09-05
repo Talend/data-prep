@@ -143,6 +143,9 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
 
     private BiFunction<DataSetMetadata, DatasetDTO, DatasetDTO> convertDatasetMetadataToDatasetDTO() {
         return (datasetMetadata, datasetDTO) -> {
+            datasetDTO.setCreationDate(datasetMetadata.getCreationDate());
+            datasetDTO.setLastModificationDate(datasetMetadata.getLastModificationDate());
+
             if (datasetDTO.getOwner() == null) {
                 datasetDTO.setOwner(new Owner());
             }

@@ -51,7 +51,6 @@ import org.talend.dataprep.api.service.command.transformation.SuggestLookupActio
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.configuration.EncodingSupport;
-import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.metrics.Timed;

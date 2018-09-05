@@ -223,7 +223,7 @@ public class DatasetClient {
      */
     @Deprecated
     public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent,
-                                                            final boolean includeInternalContent) {
+            final boolean includeInternalContent) {
         return new HystrixCommand<InputStream>(DATASET_GROUP) {
 
             @Override
@@ -298,7 +298,7 @@ public class DatasetClient {
                 AtomicLong count = new AtomicLong(0);
                 RowMetadata rowMetadata = getDataSetRowMetadata(id);
                 try (Stream<DataSetRow> records =
-                             dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
+                        dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
                     analyzerService.analyzeFull(records, rowMetadata.getColumns());
                 }
                 return new AnalysisResult(rowMetadata, count.get());

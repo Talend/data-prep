@@ -18,7 +18,7 @@ fdescribe('about controller', () => {
 	beforeEach(angular.mock.module('data-prep.about'));
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
-			COPYRIGHTS: 'fake',
+			ABOUT_COPYRIGHTS: 'fake',
 		});
 		$translateProvider.preferredLanguage('en');
 	}));

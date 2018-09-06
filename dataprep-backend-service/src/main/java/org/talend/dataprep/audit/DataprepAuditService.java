@@ -14,11 +14,13 @@
 package org.talend.dataprep.audit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.logging.audit.ContextBuilder;
 
 @Component
-public class DataprepAuditService {
+@ConditionalOnProperty(name = "audit.log.enabled", havingValue = "true")
+public class DataprepAuditService implements BaseDataprepAuditService {
 
     private static final String PREPARATION_NAME_CONTEXT_KEY = "preparationName";
 

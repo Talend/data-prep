@@ -30,7 +30,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.info.VersionService;
-import org.talend.dataprep.audit.DataprepAuditService;
+import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.info.Version;
@@ -42,7 +42,7 @@ import org.talend.dataprep.security.Security;
 public class PreparationServiceUnitTest {
 
     @Mock
-    private DataprepAuditService auditService;
+    private BaseDataprepAuditService auditService;
 
     @Mock
     private VersionService versionService;
@@ -87,8 +87,9 @@ public class PreparationServiceUnitTest {
     public void testCreateShouldNotLogAuditEventOnFailure() {
         // given
         when(datasetClient.getDataSetMetadata(any())).thenReturn(mock(DataSetMetadata.class));
-        doThrow(new RuntimeException("on-purpose thrown exception")).when(preparationRepository).add(
-                any(PersistentPreparation.class));
+        doThrow(new RuntimeException("on-purpose thrown exception"))
+                .when(preparationRepository)
+                .add(any(PersistentPreparation.class));
 
         // when
         preparationService.create(mock(Preparation.class), "folder-9012");

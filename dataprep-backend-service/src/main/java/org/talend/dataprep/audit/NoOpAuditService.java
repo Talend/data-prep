@@ -18,10 +18,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnProperty(name = "audit.log.enabled", havingValue = "false", matchIfMissing = true)
-public class NoOpAuditLogger implements DataprepEventAuditLogger {
+public class NoOpAuditService implements BaseDataprepAuditService {
 
     @Override
-    public void preparationCreated(Object... args) {
+    public void auditPreparationCreation(String prepName, String prepId, String datasetName, String datasetId,
+            String folderId) {
 
     }
 }

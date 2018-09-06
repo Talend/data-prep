@@ -73,7 +73,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
-import org.talend.dataprep.audit.DataprepAuditService;
+import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
@@ -164,7 +164,7 @@ public class PreparationService {
     private DatasetClient datasetClient;
 
     @Autowired
-    private DataprepAuditService auditService;
+    private BaseDataprepAuditService auditService;
 
     /**
      * Create a preparation from the http request body.

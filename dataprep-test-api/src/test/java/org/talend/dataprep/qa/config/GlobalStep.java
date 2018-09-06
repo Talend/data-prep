@@ -70,7 +70,7 @@ public class GlobalStep extends DataPrepStep {
         context.clearAction();
 
         // cleaning temporary files
-        //        context.clearTempFile();
+        context.clearTempFile();
 
         // cleaning application's preparations
         List<String> listPreparationDeletionPb = context

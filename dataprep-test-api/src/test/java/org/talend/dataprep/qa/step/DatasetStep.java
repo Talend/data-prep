@@ -81,12 +81,6 @@ public class DatasetStep extends DataPrepStep {
                 .count();
     }
 
-    public String getDatasetIdByName(List<ContentMetadata> datasetMetas, String datasetName) {
-        ContentMetadata dataset =
-                datasetMetas.stream().filter(d -> (suffixName(datasetName).equals(d.name))).findAny().orElse(null);
-        return dataset.id;
-    }
-
     /**
      * List all accessible datasets.
      *

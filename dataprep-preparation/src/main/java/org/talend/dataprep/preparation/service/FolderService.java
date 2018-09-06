@@ -12,44 +12,32 @@
 
 package org.talend.dataprep.preparation.service;
 
-import static java.util.stream.Collectors.toList;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
-import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
-import static org.talend.dataprep.util.SortAndOrderHelper.getFolderComparator;
+import static java.util.stream.Collectors.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.*;
+import static org.talend.dataprep.api.folder.FolderContentType.*;
+import static org.talend.dataprep.exception.error.FolderErrorCodes.*;
+import static org.talend.dataprep.util.SortAndOrderHelper.*;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.*;
+import java.util.concurrent.atomic.*;
+import java.util.stream.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.folder.Folder;
-import org.talend.dataprep.api.folder.FolderInfo;
-import org.talend.dataprep.api.folder.FolderTreeNode;
-import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.folder.store.FolderRepository;
-import org.talend.dataprep.http.HttpResponseContext;
-import org.talend.dataprep.metrics.Timed;
-import org.talend.dataprep.security.Security;
-import org.talend.dataprep.util.SortAndOrderHelper.Order;
-import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.slf4j.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.talend.daikon.exception.*;
+import org.talend.dataprep.api.folder.*;
+import org.talend.dataprep.audit.*;
+import org.talend.dataprep.exception.*;
+import org.talend.dataprep.folder.store.*;
+import org.talend.dataprep.http.*;
+import org.talend.dataprep.metrics.*;
+import org.talend.dataprep.security.*;
+import org.talend.dataprep.util.SortAndOrderHelper.*;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 
 @RestController
 @Api(value = "folders", basePath = "/folders", description = "Operations on folders")
@@ -65,6 +53,9 @@ public class FolderService {
     /** DataPrep abstraction to the underlying security (whether it's enabled or not). */
     @Autowired
     private Security security;
+
+    @Autowired
+    private DataprepAuditService auditService;
 
     /**
      * Get folders. If parentId is supplied, it will be used as filter.
@@ -170,7 +161,11 @@ public class FolderService {
         if (parentId == null) {
             parentId = folderRepository.getHome().getId();
         }
-        return folderRepository.addFolder(parentId, path);
+        Folder folderCreated = folderRepository.addFolder(parentId, path);
+
+        auditService.auditFolderCreation(folderCreated.getId(), folderCreated.getName());
+
+        return folderCreated;
     }
 
     /**
@@ -200,6 +195,7 @@ public class FolderService {
     @Timed
     public void renameFolder(@PathVariable String id, @RequestBody String newName) {
         folderRepository.renameFolder(id, newName);
+        auditService.auditFolderRename(id, newName);
     }
 
     @RequestMapping(value = "/folders/tree", method = GET)

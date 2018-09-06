@@ -13,11 +13,19 @@
 
 package org.talend.dataprep.audit;
 
-import org.talend.logging.audit.AuditEvent;
-import org.talend.logging.audit.EventAuditLogger;
+import org.talend.logging.audit.*;
 
 public interface DataprepEventAuditLogger extends EventAuditLogger {
 
     @AuditEvent(category = "activity", message = "Preparation has been created")
     void preparationCreated(Object... args);
+
+    @AuditEvent(category = "activity", message = "Folder has been created")
+    void folderCreated(Object... args);
+
+    @AuditEvent(category = "activity", message = "Folder has been renamed")
+    void folderRename(Object... args);
+
+    @AuditEvent(category = "activity", message = "Folder has been shared")
+    void folderShare(Object... args);
 }

@@ -624,7 +624,6 @@
                 <artifactId>multitenant-spring-web</artifactId>
                 <version>${org.talend.daikon.version}</version>
             </dependency>
-
             <!-- SWAGGER DEPENDENCIES -->
             <dependency>
                 <groupId>io.springfox</groupId>

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class NoOpAuditLogger implements DataprepEventAuditLogger {
 
     @Override
-    public void preparationsListed(Object... args) {
+    public void preparationCreated(Object... args) {
 
     }
 }

@@ -73,6 +73,7 @@ import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
+import org.talend.dataprep.audit.DataprepAuditService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
@@ -162,6 +163,9 @@ public class PreparationService {
     @Autowired
     private DatasetClient datasetClient;
 
+    @Autowired
+    private DataprepAuditService auditService;
+
     /**
      * Create a preparation from the http request body.
      *
@@ -195,6 +199,8 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, id);
         folderRepository.addFolderEntry(folderEntry, folderId);
 
+        auditService.auditPreparationCreation(preparation.getName(), id, preparation.getDataSetName(),
+                preparation.getDataSetId(), folderId);
         LOGGER.info("New preparation {} created and stored in {} ", preparation, folderId);
         return id;
     }
@@ -1214,7 +1220,7 @@ public class PreparationService {
             }
             final int columnId = Integer.parseInt(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
             if (columnId > shiftColumnAfterId) {
-                parameters.put(ImplicitParameters.COLUMN_ID.getKey(), format.format(columnId + (long) shiftNumber)); //$NON-NLS-1$
+                parameters.put(ImplicitParameters.COLUMN_ID.getKey(), format.format(columnId + (long) shiftNumber)); // $NON-NLS-1$
             }
             return step;
         };

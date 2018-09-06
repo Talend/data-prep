@@ -18,6 +18,6 @@ import org.talend.logging.audit.EventAuditLogger;
 
 public interface DataprepEventAuditLogger extends EventAuditLogger {
 
-    @AuditEvent(category = "activity", message = "Preparations were listed successfully")
-    void preparationsListed(Object... args);
+    @AuditEvent(category = "activity", message = "Preparation has been created")
+    void preparationCreated(Object... args);
 }

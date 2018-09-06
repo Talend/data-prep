@@ -81,5 +81,9 @@ import 'react';
 import 'react-dom';
 import 'ngreact';
 
+// focus-visible
+import 'focus-visible';
+
 // slickgrid-column-data-autosize https://github.com/naresh-n/slickgrid-column-data-autosize
 import './lib/slick.autocolumnsize';
+

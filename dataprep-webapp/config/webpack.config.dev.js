@@ -6,7 +6,7 @@ const config = require('./webpack.config');
 config.devtool = 'eval-source-map';
 
 config.module.loaders.push({
-	test: /src\/.*\.js$/,
+	test: /src\/app\/.*\.js$/,
 	enforce: 'pre',
 	loader: 'eslint-loader',
 	exclude: /node_modules/,

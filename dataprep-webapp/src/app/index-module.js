@@ -22,7 +22,7 @@ import store from 'store';
 
 import i18n, {
 	fallbackLng,
-	defaultNS,
+	fallbackNS,
 } from './i18n';
 import bootstrapReact from './index.cmf';
 
@@ -79,7 +79,7 @@ const app = angular
 
 				i18n.addResourceBundle(
 					translationKey,
-					defaultNS,
+					fallbackNS,
 					translations[translationKey],
 					false,
 					false,

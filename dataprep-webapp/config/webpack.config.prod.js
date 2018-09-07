@@ -20,6 +20,10 @@ config.plugins = config.plugins.concat([
 		mangle: true,
 		minimize: true,
 	}),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'vendor',
+		minChunks: Infinity,
+	}),
 ]);
 
 module.exports = config;

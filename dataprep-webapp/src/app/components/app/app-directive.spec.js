@@ -48,7 +48,7 @@ describe('App directive', () => {
 			.respond(200, {});
 
 		spyOn(UpgradeVersionService, 'retrieveNewVersions').and.returnValue($q.when([]));
-		spyOn(AboutService, 'loadBuilds').and.returnValue();
+		spyOn(AboutService, 'loadBuilds').and.returnValue($q.when([]));
 	}));
 
 	afterEach(() => {

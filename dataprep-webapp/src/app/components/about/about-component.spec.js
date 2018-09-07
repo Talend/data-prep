@@ -13,41 +13,45 @@
 
 import i18n from './../../../i18n/en';
 
-describe('Breadcrumb component', () => {
+describe('About component', () => {
 	let scope;
 	let element;
 	let createElement;
 	let stateMock;
-	let controller;
 
-	beforeEach(angular.mock.module('data-prep.about', ($provide) => {
-		stateMock = {
-			home: {
-				about: {
-					isVisible: true,
-					builds: allBuildDetails
+	beforeEach(
+		angular.mock.module('data-prep.about', $provide => {
+			stateMock = {
+				home: {
+					about: {
+						isVisible: false,
+					},
 				},
-			},
-		};
-		$provide.constant('state', stateMock);
-	}));
+			};
+			$provide.constant('state', stateMock);
+		}),
+	);
 
-	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', i18n);
-		$translateProvider.preferredLanguage('en');
-	}));
+	beforeEach(
+		angular.mock.module('pascalprecht.translate', $translateProvider => {
+			$translateProvider.translations('en', i18n);
+			$translateProvider.preferredLanguage('en');
+		}),
+	);
 
-	beforeEach(inject(($rootScope, $compile, AboutService) => {
-		scope = $rootScope.$new(true);
-		spyOn(AboutService, 'loadBuilds').and.returnValue();
+	beforeEach(
+		inject(($q, $rootScope, $compile, AboutService) => {
+			scope = $rootScope.$new(true);
 
-		createElement = () => {
-			const html = `<pure-about-dialog></pure-about-dialog>`;
-			element = $compile(html)(scope);
-			scope.$digest();
-			controller = element.controller('about');
-		};
-	}));
+			spyOn(AboutService, 'loadBuilds').and.returnValue($q.when([]));
+
+			createElement = () => {
+				element = angular.element(`<about></about>`);
+				$compile(element)(scope);
+				scope.$digest();
+			};
+		}),
+	);
 
 	afterEach(() => {
 		scope.$destroy();
@@ -56,12 +60,7 @@ describe('Breadcrumb component', () => {
 
 	describe('render', () => {
 		it('should render about modal', () => {
-			stateMock.home.about.isVisible = false;
 			createElement();
-			expect(element.find('talend-modal').length).toBe(0);
-
-			stateMock.home.about.isVisible = true;
-			scope.$digest();
 
 			expect(element.find('pure-about-dialog').length).toBe(1);
 		});

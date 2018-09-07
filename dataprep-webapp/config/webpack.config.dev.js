@@ -17,6 +17,10 @@ config.plugins.push(
 	new webpack.DefinePlugin({
 		'process.env.NODE_ENV': JSON.stringify('development'),
 	}),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'vendor',
+		minChunks: Infinity,
+	}),
 );
 
 config.watchOptions = {

@@ -37,6 +37,13 @@ export function* handle(event) {
 		}));
 		break;
 	}
+	case HTTP_STATUS.CONFLICT: {
+		yield put(creators.notification.error(null, {
+			title: 'An error has occurred',
+			message: event.error.message,
+		}));
+		break;
+	}
 	default: {
 		yield put(creators.notification.error(null, {
 			title: 'An error has occurred',

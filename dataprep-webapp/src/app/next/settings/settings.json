@@ -181,6 +181,57 @@
       },
       "actionCreator": "preparation:rename"
     },
+    "preparation:remove": {
+      "id": "preparation:remove",
+      "icon": "talend-trash",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "preparation:remove"
+    },
+    "folder:remove": {
+      "id": "folder:remove",
+      "bsStyle": "danger",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "folder:remove"
+    },
+    "folder:remove:close": {
+      "id": "folder:remove:close",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:CANCEL",
+          "options": {
+            "defaultValue": "Cancel"
+          }
+        }
+      },
+      "bsStyle": "default btn-inverse",
+      "actionCreator": "folder:remove:close"
+    },
+    "folder:remove:open": {
+      "id": "folder:remove:open",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "folder:remove:open"
+    },
     "preparation:duplicate": {
       "id": "preparation:duplicate",
       "label": {
@@ -417,6 +468,7 @@
           ],
           "items": [
             "preparation:rename",
+            "preparation:remove",
             "preparation:copy:open",
             "preparation:move:open"
           ],

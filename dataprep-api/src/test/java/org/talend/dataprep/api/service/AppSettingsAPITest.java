@@ -404,16 +404,16 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
 
         final List<String> ids = mapOfStrings((toolbar.getSort().getOptions()), "id");
         final List<String> names = mapOfStrings(toolbar.getSort().getOptions(), "name");
-        assertThat(ids, contains("name", "author", "creationDate", "nbRecords"));
-        assertThat(names, contains("Name", "Author", "Created", "Rows"));
+        assertThat(ids, contains("name", "author", "creationDate"));
+        assertThat(names, contains("Name", "Author", "Created"));
 
         final ListSettings list = (ListSettings) settings.getViews().get("listview:datasets");
         assertThat(list.getDidMountActionCreator(), is("datasets:fetch"));
 
         final List<String> keys = map(list.getList().getColumns(), "key");
         final List<String> labels = map(list.getList().getColumns(), "label");
-        assertThat(keys, contains("name", "author", "creationDate", "nbRecords"));
-        assertThat(labels, contains("Name", "Author", "Created", "Rows"));
+        assertThat(keys, contains("name", "author", "creationDate"));
+        assertThat(labels, contains("Name", "Author", "Created"));
         assertThat(list.getList().getItemProps().getClassNameKey(), is("className"));
         assertThat(list.getList().getTitleProps().getIconKey(), is("icon"));
         assertThat(list.getList().getTitleProps().getKey(), is("name"));

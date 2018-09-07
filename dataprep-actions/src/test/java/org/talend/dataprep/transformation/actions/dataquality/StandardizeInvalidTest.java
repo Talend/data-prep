@@ -112,7 +112,6 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         final Map<String, Object> expectedValues = new LinkedHashMap<>();
         expectedValues.put(columnId0, fixedName);
         expectedValues.put(columnId1, "Russian Federation");
-        expectedValues.put("__tdpInvalid", ",0001");
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -127,7 +126,6 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         final Map<String, String> values = new HashMap<>();
         values.put(columnId0, fixedName);
         values.put(columnId1, "Russian Federatio");
-        values.put("__tdpInvalid", ",0001");
 
         final DataSetRow row = createRow(values, columnId1, "");
 
@@ -199,7 +197,6 @@ public class StandardizeInvalidTest extends AbstractMetadataBaseTest<Standardize
         final Map<String, String> values = new HashMap<>();
         values.put(columnId0, "David Bowie");
         values.put(columnId1, "");
-        values.put("__tdpInvalid", ",0001");
 
         // set semantic domain
         final DataSetRow row = createRow(values, columnId1, "COUNTRY");

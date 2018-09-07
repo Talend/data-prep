@@ -15,6 +15,16 @@ import org.talend.dataprep.transformation.pipeline.Visitor;
 import reactor.core.publisher.BlockingSink;
 import reactor.core.publisher.ReplayProcessor;
 
+/**
+ * <p>
+ * A {@link Node} implementation that stores all processed rows till
+ * {@link org.talend.dataprep.transformation.pipeline.RuntimeNode#signal(Signal)} is called.
+ * </p>
+ * <p>
+ * This is especially useful when a node needs to process all records first then resend oll processed rows to following
+ * nodes.
+ * </p>
+ */
 public class ReservoirNode extends BasicNode implements Monitored, ApplyToColumn {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReservoirNode.class);
@@ -23,14 +33,16 @@ public class ReservoirNode extends BasicNode implements Monitored, ApplyToColumn
 
     private final BlockingSink<DataSetRow> sink;
 
+    private final Node wrapped;
+
     private long count;
 
     private long totalTime;
 
-    private Node wrapped;
-
     /**
-     * @param wrapped
+     * Create a reservoir around the given node.
+     *
+     * @param wrapped The {@link Node} to create a reservoir for.
      * @see #convertToReservoir(Node)
      */
     private ReservoirNode(Node wrapped) {
@@ -43,7 +55,18 @@ public class ReservoirNode extends BasicNode implements Monitored, ApplyToColumn
         });
     }
 
+    /**
+     * Creates a reservoir for the given node. Reservoir node stores all rows received in
+     * {@link #receive(DataSetRow, RowMetadata)} and <b>only</b> send rows to next nodes when {@link #signal(Signal)} is
+     * called.
+     * 
+     * @param node The {@link Node} to create a reservoir around.
+     * @return A {@link ReservoirNode} for the given node.
+     */
     public static Node convertToReservoir(Node node) {
+        if (node instanceof ReactiveTypeDetectionNode) {
+            return node;
+        }
         return new ReservoirNode(node);
     }
 
@@ -86,7 +109,7 @@ public class ReservoirNode extends BasicNode implements Monitored, ApplyToColumn
 
     @Override
     public Node copyShallow() {
-        return convertToReservoir(wrapped.copyShallow());
+        return convertToReservoir(wrapped);
     }
 
     @Override
@@ -102,6 +125,9 @@ public class ReservoirNode extends BasicNode implements Monitored, ApplyToColumn
         return Collections.emptyList();
     }
 
+    /**
+     * @return The {@link Node} wrapped by this reservoir.
+     */
     public Node getWrapped() {
         return wrapped;
     }

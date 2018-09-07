@@ -54,7 +54,8 @@ public class CompileNode extends BasicNode implements ApplyToColumn, Monitored {
     public void receive(DataSetRow row, RowMetadata metadata) {
         final long start = System.currentTimeMillis();
         try {
-            if (hashCode != metadata.hashCode() || actionContext.getActionStatus() == ActionContext.ActionStatus.NOT_EXECUTED) { // Metadata changed, force re-compile
+            if (hashCode != metadata.hashCode()
+                    || actionContext.getActionStatus() == ActionContext.ActionStatus.NOT_EXECUTED) { // Metadata changed, force re-compile
                 actionContext.setRowMetadata(metadata.clone());
                 action.getRowAction().compile(actionContext);
                 hashCode = actionContext.getRowMetadata().hashCode();

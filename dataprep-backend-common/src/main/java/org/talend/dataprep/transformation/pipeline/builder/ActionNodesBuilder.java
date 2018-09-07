@@ -120,20 +120,24 @@ public class ActionNodesBuilder {
         // * a compile node
         // * an action node
         RowMetadata lastRowMetadata = initialMetadata.clone();
+        boolean continuePreCompile = true;
         for (final RunnableAction nextAction : actions) {
             // some actions need fresh statistics
             // in those cases, we gather the rows in a reservoir node that triggers statistics computation
             // before dispatching each row to the next node
-            final Node neededReservoir = statisticsNodesBuilder.buildIntermediateStatistics(nextAction);
-            if (neededReservoir != null) {
+            final boolean needIntermediateStatistics = statisticsNodesBuilder.needIntermediateStatistics(nextAction);
+            if (needIntermediateStatistics) {
+                final Node neededReservoir = statisticsNodesBuilder.buildIntermediateStatistics(nextAction);
                 builder.to(convertToReservoir(neededReservoir));
+                continuePreCompile = false;
             }
 
             final DataSetRowAction rowAction = nextAction.getRowAction();
 
+            lastRowMetadata.clearDiffStatus();
             final ActionContext actionContext = context.create(rowAction, lastRowMetadata.clone());
             actionContext.setParameters(nextAction.getParameters());
-            if (neededReservoir == null) {
+            if (continuePreCompile) {
                 nextAction.getRowAction().compile(actionContext);
             }
             lastRowMetadata = actionContext.getRowMetadata();
@@ -147,6 +151,8 @@ public class ActionNodesBuilder {
         if (needStatisticsAfter) {
             statisticsNodesBuilder.columns(lastRowMetadata.getColumns());
             builder.to(statisticsNodesBuilder.buildPostStatistics());
+        } else {
+            builder.to(statisticsNodesBuilder.buildTypeDetection());
         }
 
         // cleanup all contexts after all actions

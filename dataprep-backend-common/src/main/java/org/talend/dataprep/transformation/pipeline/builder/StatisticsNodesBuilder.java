@@ -187,7 +187,8 @@ public class StatisticsNodesBuilder {
         }
     }
 
-    private boolean needIntermediateStatistics(final Action nextAction) {
+    public boolean needIntermediateStatistics(final Action nextAction) {
+        performActionsProfiling();
         // next action indicates that it need fresh statistics
         final ActionDefinition actionDefinition = actionToMetadata.get(nextAction);
         if (actionDefinition != null) {
@@ -275,5 +276,10 @@ public class StatisticsNodesBuilder {
 
     private Node getFrequencyStatisticsNode(final Predicate<String> columnFilter) {
         return new StatisticsNode(new RowMetadata(columns), getFrequencyAnalyzer(), columnFilter, statisticsAdapter);
+    }
+
+    public Node buildTypeDetection() {
+        performActionsProfiling();
+        return getTypeDetectionNode(actionsProfile.getFilterForFullAnalysis());
     }
 }

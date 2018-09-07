@@ -574,7 +574,9 @@ public class TransformationService extends BaseTransformationService {
             RowMetadata metadataAfter = metadataBase.clone();
 
             applyActionsOnMetadata(metadataBase, previewParameters.getBaseActions());
+            metadataBase.clearDiffStatus();
             applyActionsOnMetadata(metadataAfter, previewParameters.getNewActions());
+            metadataAfter.clearDiffStatus();
 
             metadataAfter.diff(metadataBase);
 

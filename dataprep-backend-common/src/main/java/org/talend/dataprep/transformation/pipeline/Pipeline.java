@@ -388,8 +388,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             // Add step node
             LOG.debug("Adding step nodes...");
             actionsNode.logStatus(LOG, "Before add step nodes\n{}");
-            final Node node = StepNodeTransformer.transform(actionsNode, preparation.getSteps(),
-                    parentStepRowMetadataSupplier);
+            final Node node =
+                    StepNodeTransformer.transform(actionsNode, preparation.getSteps(), parentStepRowMetadataSupplier);
             current.to(node);
             node.logStatus(LOG, "After add step nodes\n{}");
         }

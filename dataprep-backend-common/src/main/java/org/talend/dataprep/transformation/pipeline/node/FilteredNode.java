@@ -12,9 +12,12 @@
 
 package org.talend.dataprep.transformation.pipeline.node;
 
+import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.pipeline.Monitored;
@@ -22,6 +25,8 @@ import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.Signal;
 
 public class FilteredNode extends BasicNode implements Monitored {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilteredNode.class);
 
     private final Function<RowMetadata, Predicate<DataSetRow>> filter;
 
@@ -32,6 +37,8 @@ public class FilteredNode extends BasicNode implements Monitored {
     private transient Predicate<DataSetRow> instance;
 
     private RowMetadata lastMetadata;
+
+    private boolean hasMatchedOnce = false;
 
     private boolean hasMatched;
 
@@ -50,13 +57,19 @@ public class FilteredNode extends BasicNode implements Monitored {
                     instance = filter.apply(metadata);
                 }
             }
-            hasMatched = instance.test(row);
+            if (!row.isDeleted()) {
+                hasMatched = instance.test(row);
+                if (hasMatched) {
+                    hasMatchedOnce = true;
+                }
+                count++;
+            } else {
+                LOGGER.debug("Skip row '{}': row is deleted.", Arrays.toString(row.toArray(DataSetRow.SKIP_TDP_ID)));
+            }
+            metadata.setSampleNbRows(count);
         } finally {
             totalTime += System.currentTimeMillis() - start;
-            count++;
         }
-
-        metadata.setSampleNbRows(count);
 
         if (hasMatched) {
             super.receive(row, metadata);
@@ -72,7 +85,7 @@ public class FilteredNode extends BasicNode implements Monitored {
         case END_OF_STREAM:
         case STOP:
         case CANCEL:
-            if (!hasMatched && lastRow != null) {
+            if (!hasMatchedOnce && lastRow != null) {
                 lastRow.setDeleted(true);
                 super.receive(lastRow, lastMetadata);
             }

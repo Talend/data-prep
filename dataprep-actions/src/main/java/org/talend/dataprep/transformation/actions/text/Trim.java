@@ -14,7 +14,6 @@ package org.talend.dataprep.transformation.actions.text;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
@@ -105,7 +104,6 @@ public class Trim extends AbstractMultiScopeAction {
         return singletonList(ActionsUtils
                 .additionalColumn()
                 .withName(context.getColumnName() + NEW_COLUMN_SUFFIX)
-                .withType(STRING)
                 .withCopyMetadataFromId(context.getColumnId()));
     }
 

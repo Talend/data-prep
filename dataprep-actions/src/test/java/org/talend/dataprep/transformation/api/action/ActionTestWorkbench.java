@@ -98,8 +98,6 @@ public class ActionTestWorkbench {
         public void receive(DataSetRow row, RowMetadata metadata) {
             if (input.hasNext()) {
                 final DataSetRow next = input.next();
-                next.values().clear();
-                next.values().putAll(row.values());
                 for (Map.Entry<String, String> entry : row.getInternalValues().entrySet()) {
                     next.set(entry.getKey(), entry.getValue());
                 }

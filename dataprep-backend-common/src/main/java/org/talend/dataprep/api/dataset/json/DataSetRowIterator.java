@@ -46,9 +46,6 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
     /** The json parser. */
     private final JsonParser parser;
 
-    /** DataSetRow object used to read rows (cleaned and reused at each iteration). */
-    private DataSetRow row;
-
     /** RowMetadata to link to the row. */
     private final RowMetadata rowMetadata;
 
@@ -61,7 +58,6 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
     public DataSetRowIterator(JsonParser parser, RowMetadata rowMetadata) {
         this.parser = parser;
         this.rowMetadata = rowMetadata;
-        this.row = new DataSetRow(rowMetadata);
     }
 
     /**
@@ -73,7 +69,6 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
         try {
             this.parser = new JsonFactory().createParser(new InputStreamReader(inputStream, UTF_8));
             this.rowMetadata = new RowMetadata();
-            this.row = new DataSetRow(rowMetadata);
         } catch (IOException e) {
             throw new TalendRuntimeException(BaseErrorCodes.UNABLE_TO_PARSE_JSON, e);
         }
@@ -118,7 +113,7 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
         try {
             String currentFieldName = StringUtils.EMPTY;
             JsonToken nextToken;
-            row.clear();
+            final DataSetRow row = new DataSetRow(rowMetadata);
             while ((nextToken = parser.nextToken()) != JsonToken.END_OBJECT) {
                 if (nextToken == null) {
                     // End of input, return the current row.
@@ -131,7 +126,7 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
                     currentFieldName = parser.getText();
                     break;
                 case VALUE_STRING:
-                    setStringValue(currentFieldName, parser.getText());
+                    setStringValue(row, currentFieldName, parser.getText());
                     break;
                 case VALUE_NULL:
                     row.set(currentFieldName, "");
@@ -163,10 +158,11 @@ public class DataSetRowIterator implements Iterator<DataSetRow> {
     /**
      * Set the string value and deal with the TDP-ID case.
      *
+     * @param row the {@link DataSetRow} to change.
      * @param fieldName the name of the field.
      * @param value the value.
      */
-    private void setStringValue(String fieldName, String value) {
+    private void setStringValue(DataSetRow row, String fieldName, String value) {
         if (TDP_ID.equals(fieldName)) {
             row.setTdpId(Long.parseLong(value));
         } else {

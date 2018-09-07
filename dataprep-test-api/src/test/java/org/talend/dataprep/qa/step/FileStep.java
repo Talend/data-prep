@@ -13,11 +13,14 @@
 
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -27,8 +30,6 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.ExcelComparator;
 
 import cucumber.api.java.en.Then;
-
-import static org.junit.Assert.fail;
 
 /**
  * Store all steps related to files and temporary files.
@@ -45,7 +46,7 @@ public class FileStep extends DataPrepStep {
             throws IOException {
         LOG.debug("I check that {} temporary file equals {} file", temporaryFilename, expectedFilename);
 
-        Path tempFile = context.getTempFile(temporaryFilename).toPath();
+        Path tempFile = Objects.requireNonNull(context.getTempFile(temporaryFilename)).toPath();
 
         try (InputStream tempFileStream = Files.newInputStream(tempFile);
                 InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {

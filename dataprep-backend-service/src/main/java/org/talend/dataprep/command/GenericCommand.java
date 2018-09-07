@@ -21,6 +21,11 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -115,6 +120,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             .filter(HttpStatus::is5xxServerError) //
             .collect(Collectors.toList()) //
             .toArray(new HttpStatus[0]);
+
+    private static final ExecutorService delayedProcessor = new ThreadPoolExecutor(4, //
+            4, //
+            1, //
+            TimeUnit.SECONDS, //
+            new LinkedTransferQueue<>() //
+    );
 
     /** Behaviours map. */
     private final Map<HttpStatus, BiFunction<HttpRequestBase, HttpResponse, T>> behavior =
@@ -263,6 +275,18 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             }
         } finally {
             tracer.close(requestSpan);
+        }
+    }
+
+    @Override
+    protected T getFallback() {
+        try {
+            LOGGER.info("Command '{}' is having trouble with timeout execution.", getClass().getName());
+            final Future<T> future = delayedProcessor.submit(this::run);
+            return future.get();
+        } catch (Exception e) {
+            LOGGER.error("Unable to switch to fall back.", e);
+            return super.getFallback();
         }
     }
 

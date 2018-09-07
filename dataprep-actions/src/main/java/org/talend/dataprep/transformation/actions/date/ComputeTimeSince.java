@@ -13,6 +13,23 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
+import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
+import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
+
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,23 +45,6 @@ import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ColumnAction;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;
-
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.OTHER_COLUMN_MODE;
-import static org.talend.dataprep.transformation.actions.common.OtherColumnParameters.SELECTED_COLUMN_PARAMETER;
-import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;
 
 @Action(ComputeTimeSince.TIME_SINCE_ACTION_NAME)
 public class ComputeTimeSince extends AbstractDate implements ColumnAction {
@@ -155,10 +155,10 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext context) {
         super.compile(context);
-        if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
-            ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
-        }
         if (context.getActionStatus() == OK) {
+            if (ActionsUtils.doesCreateNewColumn(context.getParameters(), CREATE_NEW_COLUMN_DEFAULT)) {
+                ActionsUtils.createNewColumn(context, getAdditionalColumns(context));
+            }
             // Create new column
             Map<String, String> parameters = context.getParameters();
             context.get(SINCE_WHEN_PARAMETER, m -> parameters.getOrDefault(SINCE_WHEN_PARAMETER, NOW_SERVER_SIDE_MODE));
@@ -195,10 +195,14 @@ public class ComputeTimeSince extends AbstractDate implements ColumnAction {
                 newValue = StringUtils.EMPTY;
             } else {
                 String value = row.get(columnId);
-                LocalDateTime temporalAccessor =
-                        Providers.get().parse(value, context.getRowMetadata().getById(columnId));
-                Temporal valueAsDate = LocalDateTime.from(temporalAccessor);
-                newValue = String.valueOf(unit.between(valueAsDate, since));
+                if (value == null) {
+                    newValue = StringUtils.EMPTY;
+                } else {
+                    LocalDateTime temporalAccessor =
+                            Providers.get().parse(value, context.getRowMetadata().getById(columnId));
+                    Temporal valueAsDate = LocalDateTime.from(temporalAccessor);
+                    newValue = String.valueOf(unit.between(valueAsDate, since));
+                }
             }
         } catch (DateTimeException e) {
             LOGGER.trace("Error on dateTime parsing", e);

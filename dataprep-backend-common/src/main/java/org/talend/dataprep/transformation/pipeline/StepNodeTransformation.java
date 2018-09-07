@@ -30,7 +30,6 @@ import org.talend.dataprep.transformation.pipeline.node.CompileNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
-import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 /**
  * An {@link Visitor} for node that groups all step related nodes into a {@link StepNode}.
@@ -55,8 +54,9 @@ class StepNodeTransformation extends Visitor {
      * Build a new visitor to transform nodes into new node pipeline which will eventually use {@link StepNode} if
      * applicable. For each new {@link StepNode}, one of the <code>steps</code> is consumed.
      *
-     * @param steps                           The {@link Step steps} to be used when creating new {@link StepNode}.
-     * @param stepRowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with step.
+     * @param steps The {@link Step steps} to be used when creating new {@link StepNode}.
+     * @param stepRowMetadataSupplier An function that allows this code to fetch {@link RowMetadata} to associate with
+     * step.
      */
     StepNodeTransformation(List<String> steps, Function<String, RowMetadata> stepRowMetadataSupplier) {
         this.steps = steps.iterator();
@@ -99,12 +99,6 @@ class StepNodeTransformation extends Visitor {
     public void visitNode(Node node) {
         processNode(node);
         super.visitNode(node);
-    }
-
-    @Override
-    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
-        processNode(typeDetectionNode);
-        super.visitTypeDetection(typeDetectionNode);
     }
 
     @Override
@@ -270,12 +264,6 @@ class StepNodeTransformation extends Visitor {
             public void visitNode(Node node) {
                 builder.to(node.copyShallow());
                 super.visitNode(node);
-            }
-
-            @Override
-            public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
-                visitNode(typeDetectionNode);
-                super.visitTypeDetection(typeDetectionNode);
             }
 
             /**

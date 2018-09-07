@@ -146,13 +146,6 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
                 totalTime += System.currentTimeMillis() - start;
             }
         }
-        if (signal == Signal.END_OF_STREAM || signal == Signal.STOP) {
-            // In the end of records the row metaData are correct, so we set this metaData as fallback
-            // To send number of records to front we use the number of count of statistic.
-            if (workingMetadata.getColumns().get(0).getStatistics() != null) {
-                workingMetadata.setSampleNbRows(workingMetadata.getColumns().get(0).getStatistics().getCount());
-            }
-        }
         super.signal(signal);
     }
 

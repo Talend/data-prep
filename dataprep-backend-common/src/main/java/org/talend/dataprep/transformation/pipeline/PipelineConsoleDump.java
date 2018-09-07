@@ -23,7 +23,6 @@ import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
-import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 public class PipelineConsoleDump extends Visitor {
 
@@ -142,15 +141,6 @@ public class PipelineConsoleDump extends Visitor {
     }
 
     @Override
-    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
-        buildMonitorInformation(typeDetectionNode);
-        builder.append("TYPE DETECTION NODE ");
-        buildApplyToColumn(typeDetectionNode);
-        builder.append('\n');
-        super.visitTypeDetection(typeDetectionNode);
-    }
-
-    @Override
     public void visitInvalidDetection(InvalidDetectionNode invalidDetectionNode) {
         buildMonitorInformation(invalidDetectionNode);
         builder.append("INVALID DETECTION NODE ");
@@ -164,12 +154,11 @@ public class PipelineConsoleDump extends Visitor {
         final Node wrapped = reservoirNode.getWrapped();
 
         buildMonitorInformation(reservoirNode);
-        builder.append("Reservoir (of ").append(formatClassName(wrapped)).append(") ");
+        builder.append("Reservoir (of ").append(formatClassName(wrapped)).append(")");
         buildApplyToColumn(reservoirNode);
-        builder.append("{\n");
+        builder.append("\n{\n");
         wrapped.accept(this);
         builder.append("}\n");
-        builder.append('\n');
         super.visitReservoir(reservoirNode);
     }
 }

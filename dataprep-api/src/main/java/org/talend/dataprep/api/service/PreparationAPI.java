@@ -166,7 +166,8 @@ public class PreparationAPI extends APIService {
             final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
             preparation.setRowMetadata(rowMetadata);
         } catch (TDPException e) {
-            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST, ExceptionContext.withBuilder().put("id", preparation.getDataSetId()).build());
+            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST,
+                    ExceptionContext.withBuilder().put("id", preparation.getDataSetId()).build());
         }
 
         PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation, folder);

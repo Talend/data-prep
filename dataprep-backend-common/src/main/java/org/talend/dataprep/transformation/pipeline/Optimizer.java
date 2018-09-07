@@ -20,7 +20,6 @@ import org.talend.dataprep.transformation.pipeline.node.ReactiveTypeDetectionNod
 import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
-import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 /**
  * <p>
@@ -44,6 +43,9 @@ import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 public class Optimizer extends Visitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Optimizer.class);
+
+    private static final List<Class> allowedNodesForUnknownColumns =
+            Arrays.asList(StepNode.class, ActionNode.class, CompileNode.class);
 
     private final Set<String> currentlyModifiedColumns = new HashSet<>();
 
@@ -69,13 +71,17 @@ public class Optimizer extends Visitor {
         builder.to(lastLink, node.copyShallow());
     }
 
-    private static final List<Class> allowedNodesForUnknownColumns = Arrays.asList(StepNode.class, ActionNode.class, CompileNode.class);
-
     private void handleApplyToColumn(Node node) {
+        if (!(node instanceof ApplyToColumn)) {
+            keep(node);
+            return;
+        }
+
         final ApplyToColumn applyToColumn = (ApplyToColumn) node;
         if (applyToColumn.getColumnNames().isEmpty()) {
             if (nonSourceNodeKept == 0 && !allowedNodesForUnknownColumns.contains(node.getClass())) {
-                discard(node, "Applies to 0 columns (and only source node(s) met so far, and not an allowed empty column node).");
+                discard(node,
+                        "Applies to 0 columns (and only source node(s) met so far, and not an allowed empty column node).");
             } else {
                 keep(node);
             }
@@ -83,8 +89,7 @@ public class Optimizer extends Visitor {
             if (node.getClass().equals(ActionNode.class) || node.getClass().equals(StepNode.class)) {
                 currentlyModifiedColumns.addAll(applyToColumn.getColumnNames());
                 keep(node);
-            } else if (node.getClass().equals(ReactiveTypeDetectionNode.class)
-                    || node.getClass().equals(TypeDetectionNode.class)) {
+            } else if (node.getClass().equals(ReactiveTypeDetectionNode.class)) {
                 if (applyToColumn.getColumnNames().stream().anyMatch(currentlyModifiedColumns::contains)) {
                     keep(node);
                     currentlyModifiedColumns.clear();
@@ -136,7 +141,7 @@ public class Optimizer extends Visitor {
     }
 
     @Override
-    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
+    public void visitTypeDetection(ReactiveTypeDetectionNode typeDetectionNode) {
         handleApplyToColumn(typeDetectionNode);
         super.visitTypeDetection(typeDetectionNode);
     }
@@ -156,6 +161,7 @@ public class Optimizer extends Visitor {
     @Override
     public void visitReservoir(ReservoirNode reservoirNode) {
         if (reservoirNode.getWrapped() instanceof BasicNode) {
+            // TODO Should be equals use (there seems to be an issue with type detection here).
             discard(reservoirNode, "No need for reservoir over a no-op node.");
         } else {
             keep(reservoirNode);

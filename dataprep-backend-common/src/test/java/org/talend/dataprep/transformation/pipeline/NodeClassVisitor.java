@@ -24,7 +24,6 @@ import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
 import org.talend.dataprep.transformation.pipeline.node.SourceNode;
 import org.talend.dataprep.transformation.pipeline.node.StepNode;
-import org.talend.dataprep.transformation.pipeline.node.TypeDetectionNode;
 
 public class NodeClassVisitor extends Visitor {
 
@@ -80,12 +79,6 @@ public class NodeClassVisitor extends Visitor {
     public void visitStepNode(StepNode stepNode) {
         traversedClasses.add(stepNode.getClass());
         super.visitStepNode(stepNode);
-    }
-
-    @Override
-    public void visitTypeDetection(TypeDetectionNode typeDetectionNode) {
-        traversedClasses.add(typeDetectionNode.getClass());
-        super.visitTypeDetection(typeDetectionNode);
     }
 
     @Override

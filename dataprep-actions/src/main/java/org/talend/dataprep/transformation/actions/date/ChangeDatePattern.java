@@ -102,18 +102,16 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
     @Override
     public void compile(ActionContext actionContext) {
         super.compile(actionContext);
-        boolean doesCreateNewColumn =
-                ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
-
-        if (doesCreateNewColumn) {
-            ActionsUtils.createNewColumn(actionContext,
-                    singletonList(ActionsUtils
-                            .additionalColumn()
-                            .withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)
-                            .withCopyMetadataFromId(actionContext.getColumnId())));
-        }
-
         if (actionContext.getActionStatus() == OK) {
+            boolean doesCreateNewColumn =
+                    ActionsUtils.doesCreateNewColumn(actionContext.getParameters(), CREATE_NEW_COLUMN_DEFAULT);
+            if (doesCreateNewColumn) {
+                ActionsUtils.createNewColumn(actionContext,
+                        singletonList(ActionsUtils
+                                .additionalColumn()
+                                .withName(actionContext.getColumnName() + NEW_COLUMN_SUFFIX)
+                                .withCopyMetadataFromId(actionContext.getColumnId())));
+            }
             compileDatePattern(actionContext);
 
             if (actionContext.getActionStatus() == OK) {
@@ -201,7 +199,7 @@ public class ChangeDatePattern extends AbstractDate implements ColumnAction {
             }
         } catch (DateTimeException e) {
             // cannot parse the date, let's leave it as is
-            LOGGER.debug("Unable to parse date {}.", originalValue, e);
+            LOGGER.trace("Unable to parse date {}.", originalValue, e);
         }
     }
 

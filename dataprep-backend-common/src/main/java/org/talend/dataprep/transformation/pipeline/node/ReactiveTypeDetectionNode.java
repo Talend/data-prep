@@ -66,7 +66,8 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
 
     private void initAnalyzer() {
         if (resultAnalyzer == null) {
-            final List<ColumnMetadata> filteredColumns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
+            final List<ColumnMetadata> filteredColumns =
+                    getFilteredColumns(workingMetadata).collect(Collectors.toList());
             resultAnalyzer = analyzer.apply(filteredColumns);
         }
     }
@@ -88,7 +89,7 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
     public void receive(DataSetRow row, RowMetadata metadata) {
         this.workingMetadata = metadata;
         initAnalyzer();
-        sink.emit(row.clone());
+        sink.emit(row);
     }
 
     @Override

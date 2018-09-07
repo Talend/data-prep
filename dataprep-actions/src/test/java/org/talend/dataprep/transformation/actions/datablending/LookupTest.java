@@ -228,12 +228,14 @@ public class LookupTest extends AbstractMetadataBaseTest<Lookup> {
         ActionTestWorkbench.test(Arrays.asList(rows), actionRegistry, factory.create(action, parameters));
 
         // then (check values)
-        DataSetRow[] expectedRows = new DataSetRow[] {
-                ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta"),
-                ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Florida", "Tallahassee"),
-                ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Illinois", "Springfield"),
-                ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Texas", "Austin"),
-                ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "California", "Sacramento") };
+        DataSetRow[] expectedRows =
+                new DataSetRow[] {
+                        ActionMetadataTestUtils.getRow("Atlanta", "GA", "Philips Arena", "Georgia", "Atlanta"),
+                        ActionMetadataTestUtils.getRow("Miami", "FL", "American Airlines Arena", "Florida",
+                                "Tallahassee"),
+                        ActionMetadataTestUtils.getRow("Chicago", "IL", "United Center", "Illinois", "Springfield"),
+                        ActionMetadataTestUtils.getRow("San Antonio", "TX", "AT&T Center", "Texas", "Austin"),
+                        ActionMetadataTestUtils.getRow("Oakland", "CA", "Oracle Arena", "California", "Sacramento") };
         for (int i = 0; i < rows.length; i++) {
             Assert.assertEquals(expectedRows[i], rows[i]);
         }

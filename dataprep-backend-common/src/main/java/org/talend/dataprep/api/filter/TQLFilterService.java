@@ -194,7 +194,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public List<String> visit(FieldWordCompliesPattern fieldWordCompliesPattern) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -363,7 +363,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(FieldWordCompliesPattern fieldWordCompliesPattern) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override

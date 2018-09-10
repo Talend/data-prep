@@ -6,7 +6,7 @@ const config = require('./webpack.config');
 config.devtool = 'eval-source-map';
 
 config.module.loaders.push({
-	test: /src\/.*\.js$/,
+	test: /src\/app\/.*\.js$/,
 	enforce: 'pre',
 	loader: 'eslint-loader',
 	exclude: /node_modules/,
@@ -16,6 +16,10 @@ config.module.loaders.push({
 config.plugins.push(
 	new webpack.DefinePlugin({
 		'process.env.NODE_ENV': JSON.stringify('development'),
+	}),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'vendor',
+		minChunks: Infinity,
 	}),
 );
 

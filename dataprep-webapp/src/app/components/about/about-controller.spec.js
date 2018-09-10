@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-fdescribe('about controller', () => {
+describe('about controller', () => {
 	let scope;
 	let createController;
 

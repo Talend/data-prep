@@ -78,7 +78,8 @@
                ng-click="$ctrl.onLookup()"
                ng-class="{pressed: $ctrl.lookupVisible}"
                translate-once-title="LOOKUP_ICON_TOOLTIP">
-                <icon name="'talend-chain'"/>
+                <loader ng-if="$ctrl.lookupLoading"></loader>
+                <icon ng-if="!$ctrl.lookupLoading" name="'talend-chain'"/>
             </a>
         </li>
         <li id="export-data"

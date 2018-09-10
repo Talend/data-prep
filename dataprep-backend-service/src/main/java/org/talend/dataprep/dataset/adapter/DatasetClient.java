@@ -1,9 +1,23 @@
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.netflix.hystrix.HystrixCommand;
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +44,6 @@ import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
-
-import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
 
 /**
  * Adapter for legacy data model over the {@link DataCatalogClient}.
@@ -112,7 +109,7 @@ public class DatasetClient {
      * </p>
      *
      * @param certification filter with a specific certification state
-     * @param favorite      filter with favorite only
+     * @param favorite filter with favorite only
      * @return DataSetMetadata without rowMetadata
      */
     public Stream<DatasetDTO> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
@@ -151,7 +148,7 @@ public class DatasetClient {
     /**
      * Get a dataSet by id.
      *
-     * @param id          the dataset to fetch
+     * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      */
     public DataSet getDataSet(String id, boolean fullContent) {
@@ -161,8 +158,8 @@ public class DatasetClient {
     /**
      * Get a dataSet by id.
      *
-     * @param id                    the dataset to fetch
-     * @param fullContent           we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param withRowValidityMarker perform a quality analysis on the dataset records
      */
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker) {
@@ -173,10 +170,10 @@ public class DatasetClient {
      * Get a dataSet by id.
      * Convert metadata and records from {@link Dataset} to {@link DataSet}
      *
-     * @param id                    the dataset to fetch
-     * @param fullContent           we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param withRowValidityMarker perform a quality analysis on the dataset records
-     * @param filter                TQL filter for content
+     * @param filter TQL filter for content
      */
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
         DataSet dataset = new DataSet();
@@ -201,7 +198,8 @@ public class DatasetClient {
 
         // DataSet specifics
         if (!fullContent) {
-            dataSetMetadata.getContent().getLimit().ifPresent(limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
+            dataSetMetadata.getContent().getLimit().ifPresent(
+                    limit -> dataset.setRecords(dataset.getRecords().limit(limit)));
         }
         return dataset;
     }
@@ -234,7 +232,7 @@ public class DatasetClient {
      */
     @Deprecated
     public HystrixCommand<InputStream> getDataSetGetCommand(final String dataSetId, final boolean fullContent,
-                                                            final boolean includeInternalContent) {
+            final boolean includeInternalContent) {
         return new HystrixCommand<InputStream>(DATASET_GROUP) {
 
             @Override
@@ -275,8 +273,8 @@ public class DatasetClient {
         metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 
-        if (rowMetadata != null
-                && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
+        if (rowMetadata != null && rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(
+                this::isComputedStatistics)) {
             AnalysisResult analysisResult = datasetAnalysisSupplier.apply(dataset.getId());
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
             metadata.getContent().setNbRecords(analysisResult.rowcount);
@@ -301,7 +299,7 @@ public class DatasetClient {
                 AtomicLong count = new AtomicLong(0);
                 RowMetadata rowMetadata = getDataSetRowMetadata(id);
                 try (Stream<DataSetRow> records =
-                             dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
+                        dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
                     analyzerService.analyzeFull(records, rowMetadata.getColumns());
                 }
                 return new AnalysisResult(rowMetadata, count.get());

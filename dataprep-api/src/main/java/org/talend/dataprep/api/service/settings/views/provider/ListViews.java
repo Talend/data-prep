@@ -127,7 +127,6 @@ public abstract class ListViews {
                                 .column("name", "list.column.name")
                                 .column("author", "list.column.author")
                                 .column("creationDate", "list.column.created")
-                                .column("nbRecords", "list.column.rows")
                                 .itemProps(ListItemsSettings.builder().classNameKey("className").build())
                                 .sort(ListSortSettings.builder().onChange(DATASET_SORT.getId()).build())
                                 .titleProps(
@@ -163,7 +162,6 @@ public abstract class ListViews {
                                                 .options("name", "list.column.name")
                                                 .options("author", "list.column.author")
                                                 .options("creationDate", "list.column.created")
-                                                .options("nbRecords", "list.column.rows")
                                                 .build()
                                 )
                                 .build()

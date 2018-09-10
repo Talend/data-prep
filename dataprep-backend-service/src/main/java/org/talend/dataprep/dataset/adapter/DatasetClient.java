@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.avro.Schema;
@@ -113,7 +114,7 @@ public class DatasetClient {
      * </p>
      *
      * @param certification filter with a specific certification state
-     * @param favorite      filter with favorite only
+     * @param favorite filter with favorite only
      * @return DataSetMetadata without rowMetadata
      */
     public Stream<DatasetDTO> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
@@ -152,7 +153,7 @@ public class DatasetClient {
     /**
      * Get a dataSet by id.
      *
-     * @param id          the dataset to fetch
+     * @param id the dataset to fetch
      * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      */
     public DataSet getDataSet(String id, boolean fullContent) {
@@ -162,8 +163,8 @@ public class DatasetClient {
     /**
      * Get a dataSet by id.
      *
-     * @param id                    the dataset to fetch
-     * @param fullContent           we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param withRowValidityMarker perform a quality analysis on the dataset records
      */
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker) {
@@ -174,10 +175,10 @@ public class DatasetClient {
      * Get a dataSet by id.
      * Convert metadata and records from {@link Dataset} to {@link DataSet}
      *
-     * @param id                    the dataset to fetch
-     * @param fullContent           we need the full dataset or a sample (see sample limit in datset: 10k rows)
+     * @param id the dataset to fetch
+     * @param fullContent we need the full dataset or a sample (see sample limit in datset: 10k rows)
      * @param withRowValidityMarker perform a quality analysis on the dataset records
-     * @param filter                TQL filter for content
+     * @param filter TQL filter for content
      */
     public DataSet getDataSet(String id, boolean fullContent, boolean withRowValidityMarker, String filter) {
         DataSet dataset = new DataSet();

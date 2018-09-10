@@ -23,8 +23,8 @@
  */
 export default class LookupService {
 	constructor($q, state, DatasetListService,
-				StateService, TransformationRestService,
-				DatasetRestService, StorageService) {
+	            StateService, TransformationRestService,
+	            DatasetRestService, StorageService) {
 		'ngInject';
 
 		this.$q = $q;
@@ -48,6 +48,7 @@ export default class LookupService {
 	 * an existing one
 	 */
 	initLookups() {
+		this.StateService.setLookupLoading(true);
 		return this._getDatasets()
 			.then(() => {
 				return this._getActions(this.state.playground.dataset.id)
@@ -61,6 +62,9 @@ export default class LookupService {
 							return this.loadFromStep(step);
 						}
 						return this.loadFromAction(lookupActions[0]);
+					})
+					.finally(() => {
+						this.StateService.setLookupLoading(false);
 					});
 			});
 	}

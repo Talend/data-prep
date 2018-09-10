@@ -40,6 +40,7 @@ export const lookupState = {
 	showTooltip: false,
 	tooltip: {},
 	tooltipRuler: null,
+	loading: false,
 };
 
 /**
@@ -51,7 +52,7 @@ export function LookupStateService() {
 	return {
 		reset,
 		setVisibility,
-
+		setLoading,
 		// lookup user selection update
 		setSelectedColumn,
 		updateColumnsToAdd,
@@ -114,6 +115,16 @@ export function LookupStateService() {
 	 */
 	function setVisibility(visibility) {
 		lookupState.visibility = visibility;
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name setLoading
+	 * @methodOf data-prep.services.state.service:LookupStateService
+	 * @description Set the lookup loading
+	 */
+	function setLoading(bool) {
+		lookupState.loading = bool;
 	}
 
 	/**

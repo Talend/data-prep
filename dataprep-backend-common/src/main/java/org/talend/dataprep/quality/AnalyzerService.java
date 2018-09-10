@@ -43,6 +43,7 @@ import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.Metadata;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
 import org.talend.dataquality.semantic.classifier.SemanticCategoryEnum;
+import org.talend.dataquality.semantic.datamasking.ValueDataMasker;
 import org.talend.dataquality.semantic.snapshot.DictionarySnapshot;
 import org.talend.dataquality.semantic.snapshot.DictionarySnapshotProvider;
 import org.talend.dataquality.semantic.snapshot.StandardDictionarySnapshotProvider;
@@ -100,10 +101,6 @@ public class AnalyzerService {
 
     public void setDictionarySnapshotProvider(DictionarySnapshotProvider provider) {
         this.dictionarySnapshotProvider = provider;
-    }
-
-    public DictionarySnapshotProvider getDictionarySnapshotProvider() {
-        return dictionarySnapshotProvider;
     }
 
     private static AbstractFrequencyAnalyzer buildPatternAnalyzer(List<ColumnMetadata> columns) {
@@ -313,6 +310,17 @@ public class AnalyzerService {
         final List<Analyzers.Result> analyzerResult = analyzer.getResult();
         final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
         statisticsAdapter.adapt(columns, analyzerResult);
+    }
+
+    /**
+     * Create a ValueDataMasker by given parameters and the dictionarySnapshot
+     * @param domain the semantic category name
+     * @param dataTypeName the data type name
+     * @param dateTimePatternList the dateTime patterns, could be null when the column is not dateTime type
+     * @return a ValueDataMasker
+     */
+    public ValueDataMasker createValueDataMasker(String domain, String dataTypeName, List<String> dateTimePatternList) {
+        return new ValueDataMasker(domain, dataTypeName, dateTimePatternList, dictionarySnapshotProvider.get());
     }
 
     public enum Analysis {

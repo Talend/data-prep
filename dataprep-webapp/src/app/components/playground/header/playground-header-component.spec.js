@@ -36,6 +36,7 @@ describe('Playground header component', () => {
 			<playground-header
                     preview="preview"
                     lookup-visible="lookupVisible"
+                    lookup-loading="lookupLoading"
                     preparation-picker="preparationPicker"
                     parameters-visible="parametersVisible"
                     enable-export="enableExport"
@@ -167,6 +168,18 @@ describe('Playground header component', () => {
 
 			// then
 			expect(playgroundLookupIcon.hasClass('pressed')).toBe(true);
+		});
+
+		it('lookup toggle button looks in progress', () => {
+			// given
+			scope.lookupLoading = true;
+			createElement();
+
+			// when
+			let playgroundLookupIcon = element.find('#playground-lookup-icon').eq(0);
+
+			// then
+			expect(playgroundLookupIcon.find('loader').length).toBe(1);
 		});
 
 		it('should call lookup callback', () => {

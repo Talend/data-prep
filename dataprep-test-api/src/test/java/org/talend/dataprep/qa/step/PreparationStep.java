@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 import org.apache.commons.lang.*;
 import org.junit.*;
 import org.slf4j.*;
-import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.helper.api.*;
 import org.talend.dataprep.qa.config.*;
 import org.talend.dataprep.qa.dto.*;
 
@@ -69,8 +69,8 @@ public class PreparationStep extends DataPrepStep {
 
         PreparationDetails prepDet = getPreparationDetails(prepId);
         Assert.assertNotNull(prepDet);
-        Assert.assertEquals(prepDet.dataSetId, context.getDatasetId(suffixName(params.get(DATASET_NAME))));
-        Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
+        assertEquals(prepDet.dataSetId, context.getDatasetId(suffixName(params.get(DATASET_NAME))));
+        assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
 
         if (params.get("actionsList") != null) {
             List<Action> actionsList = prepDet.actions;
@@ -85,11 +85,11 @@ public class PreparationStep extends DataPrepStep {
         InputStream expectedActionsListStream = DataPrepStep.class.getResourceAsStream(expectedActionsListFile);
         List<Action> expectedActionsList =
                 objectMapper.readValue(expectedActionsListStream, PreparationDetails.class).actions;
-        Assert.assertEquals(expectedActionsList.size(), actionsList.size());
-        for (int i = 0; i < expectedActionsList.size(); i++) {
-            Action expectedAction = expectedActionsList.get(i);
-            Action action = actionsList.get(i);
-            Assert.assertEquals(expectedAction.action, action.action);
+        assertEquals(expectedActionsList.size(), actionsList.size());
+        ListIterator<Action> expectedActions = expectedActionsList.listIterator();
+        ListIterator<Action> actions = actionsList.listIterator();
+        while (expectedActions.hasNext() && actions.hasNext()) {
+            assertEquals(expectedActions.next().action, actions.next().action);
         }
     }
 

@@ -60,8 +60,16 @@ public class PreparationStep extends DataPrepStep {
         context.storePreparationRef(preparationId, suffixedPrepName, prepFolder.getPath());
     }
 
+    /**
+     * Check if an existing preparation contains the same actions as the one given in parameters.
+     * Be careful ! If your preparation contains lookup actions, you'll need to load your dataset by restoring a Mongo
+     * dump, else the lookup_ds_id won't be the same in actions' parameter value.
+     * 
+     * @param dataTable step parameters.
+     * @throws IOException in case of exception.
+     */
     @Given("^A preparation with the following parameters exists :$")
-    public void checkPreparation(DataTable dataTable) throws Exception {
+    public void checkPreparation(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String suffixedPrepName = getSuffixedPrepName(params.get(PREPARATION_NAME));
         String prepPath = util.extractPathFromFullName(params.get(PREPARATION_NAME));
@@ -78,19 +86,14 @@ public class PreparationStep extends DataPrepStep {
         }
     }
 
-    private void checkActionsListOfPrepa(List<Action> actionsList, String expectedActionsListFile) throws Exception {
+    private void checkActionsListOfPrepa(List<Action> actionsList, String expectedActionsListFile) throws IOException {
         if (expectedActionsListFile == null) {
             return;
         }
         InputStream expectedActionsListStream = DataPrepStep.class.getResourceAsStream(expectedActionsListFile);
         List<Action> expectedActionsList =
                 objectMapper.readValue(expectedActionsListStream, PreparationDetails.class).actions;
-        assertEquals(expectedActionsList.size(), actionsList.size());
-        ListIterator<Action> expectedActions = expectedActionsList.listIterator();
-        ListIterator<Action> actions = actionsList.listIterator();
-        while (expectedActions.hasNext() && actions.hasNext()) {
-            assertEquals(expectedActions.next().action, actions.next().action);
-        }
+        assertEquals(expectedActionsList, actionsList);
     }
 
     @When("^I load the existing preparation called \"(.*)\"$")

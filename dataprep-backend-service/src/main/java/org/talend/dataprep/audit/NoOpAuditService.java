@@ -13,8 +13,6 @@
 
 package org.talend.dataprep.audit;
 
-import java.util.*;
-
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.stereotype.*;
 
@@ -38,8 +36,4 @@ public class NoOpAuditService implements BaseDataprepAuditService {
         // Do nothing
     }
 
-    @Override
-    public void auditFolderShare(String folderId, Map<String, String> actionByUser) {
-        // Do nothing
-    }
 }

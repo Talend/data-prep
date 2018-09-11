@@ -25,21 +25,21 @@ public class NoOpAuditService implements BaseDataprepAuditService {
     @Override
     public void auditPreparationCreation(String prepName, String prepId, String datasetName, String datasetId,
             String folderId) {
-
+        // Do nothing
     }
 
     @Override
     public void auditFolderCreation(String folderId, String folderName) {
-
+        // Do nothing
     }
 
     @Override
     public void auditFolderRename(String folderId, String folderName) {
-
+        // Do nothing
     }
 
     @Override
     public void auditFolderShare(String folderId, Map<String, String> actionByUser) {
-
+        // Do nothing
     }
 }

@@ -55,7 +55,7 @@ public class FolderService {
     private Security security;
 
     @Autowired
-    private DataprepAuditService auditService;
+    private BaseDataprepAuditService auditService;
 
     /**
      * Get folders. If parentId is supplied, it will be used as filter.

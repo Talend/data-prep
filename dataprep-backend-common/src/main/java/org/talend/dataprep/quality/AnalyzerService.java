@@ -186,7 +186,7 @@ public class AnalyzerService {
         // Column types
         DataTypeEnum[] types = TypeUtils.convert(columns);
         // Semantic domains
-        List<String> domainList = columns
+        List<String> domainList = columns //
                 .stream() //
                 .map(ColumnMetadata::getDomain) //
                 .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d) //
@@ -211,8 +211,9 @@ public class AnalyzerService {
                 break;
             case QUALITY:
                 final DataTypeQualityAnalyzer dataTypeQualityAnalyzer = new DataTypeQualityAnalyzer(types);
-                columns.forEach(c -> dataTypeQualityAnalyzer
-                        .addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
+                columns.forEach(//
+                        c -> dataTypeQualityAnalyzer //
+                                .addCustomDateTimePattern(RowMetadataUtils.getMostUsedDatePattern(c)));
                 analyzers.add(new ValueQualityAnalyzer(dataTypeQualityAnalyzer,
                         new SemanticQualityAnalyzer(dictionarySnapshot, domains, false), true)); // NOSONAR
                 break;
@@ -276,7 +277,7 @@ public class AnalyzerService {
 
     public Analyzer<Analyzers.Result> full(final List<ColumnMetadata> columns) {
         // Configure quality & semantic analysis (if column metadata information is present in stream).
-        return build(columns, Analysis.QUALITY, Analysis.CARDINALITY, Analysis.FREQUENCY, Analysis.PATTERNS,
+        return build(columns, Analysis.QUALITY, Analysis.CARDINALITY, Analysis.FREQUENCY, Analysis.PATTERNS, //
                 Analysis.LENGTH, Analysis.SEMANTIC, Analysis.QUANTILES, Analysis.SUMMARY, Analysis.HISTOGRAM);
     }
 
@@ -314,6 +315,7 @@ public class AnalyzerService {
 
     /**
      * Create a ValueDataMasker by given parameters and the dictionarySnapshot
+     * 
      * @param domain the semantic category name
      * @param dataTypeName the data type name
      * @param dateTimePatternList the dateTime patterns, could be null when the column is not dateTime type
@@ -424,10 +426,9 @@ public class AnalyzerService {
         public String toString() {
             StringBuilder toStringBuilder = new StringBuilder();
             toStringBuilder //
-                    .append(analyzer.toString())
+                    .append(analyzer.toString()) //
                     .append(' ') //
-                    .append(" last used (")
-                    .append(System.currentTimeMillis() - lastCall) //
+                    .append(" last used (").append(System.currentTimeMillis() - lastCall) //
                     .append(" ms ago) ");
 
             final StringWriter toStringCaller = new StringWriter();

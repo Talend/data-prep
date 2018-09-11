@@ -111,7 +111,7 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
                 final AnalyzerService analyzerService = Providers.get(AnalyzerService.class);
                 if (DATE.equals(type)) {
                     final List<PatternFrequency> patternFreqList = column.getStatistics().getPatternFrequencies();
-                    final List<String> dateTimePatternList = patternFreqList
+                    final List<String> dateTimePatternList = patternFreqList //
                             .stream() //
                             .map(PatternFrequency::getPattern) //
                             .collect(toList());

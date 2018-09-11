@@ -15,6 +15,8 @@ import d3 from 'd3';
 import d3Tip from 'd3-tip';
 import _ from 'lodash';
 
+const formatNumber = d3.format(',d');
+
 /**
  * @ngdoc directive
  * @name talend.widget.directive:horizontalBarchart
@@ -171,7 +173,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 
 				xAxis = d3.svg.axis()
 					.scale(xScale)
-					.tickFormat(d3.format(',d'))
+					.tickFormat(formatNumber)
 					.orient('top')
 					.tickSize(-height)
 					.ticks(ticksNbre);
@@ -380,7 +382,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 						$timeout.cancel(renderSecondaryTimeout);
 						renderSecondaryTimeout = $timeout(renderSecondaryBars.bind(this, secondVisuData), 100, false);
 					}
-				}
+				},
 			);
 
 			scope.$on('$destroy', () => {

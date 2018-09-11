@@ -19,12 +19,12 @@ describe('Lookup directive', () => {
 	let element;
 	let StateMock;
 
-	let sortList = [
+	const sortList = [
         { id: 'name', name: 'NAME_SORT', property: 'name' },
         { id: 'date', name: 'DATE_SORT', property: 'created' },
     ];
 
-	let orderList = [
+	const orderList = [
         { id: 'asc', name: 'ASC_ORDER' },
         { id: 'desc', name: 'DESC_ORDER' },
     ];

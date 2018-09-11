@@ -10,31 +10,31 @@
   9 rue Pages 92150 Suresnes, France
 
   ============================================================================*/
-$lookup-datagrid-height: 273px;
-.content-container {
-	position: relative;
-}
+$lookup-header-height: 15px;
+$lookup-body-height: 273px;
+$lookup-footer-height: 30px;
 
 .lookup {
-
 	display: flex;
 	flex-direction: column;
+	height: $lookup-header-height + $lookup-body-height + $lookup-footer-height;
 
-	.loader-container {
-		position: absolute;
-		width: 100%;
-		height: 100%;
+	&-loader,
+	&-content {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
 	}
 
-	.lookup-header {
-		flex-basis: 15px;
+	&-header {
+		flex-basis: $lookup-header-height;
 		flex-grow: 0;
 		flex-shrink: 0;
 		border-top: 1px solid $medium-gray;
 	}
 
-	.lookup-container {
-		flex-basis: $lookup-datagrid-height;
+	&-container {
+		flex-basis: $lookup-body-height;
 		flex-grow: 0;
 		flex-shrink: 0;
 		border-top: 1px solid $medium-gray;
@@ -47,7 +47,7 @@ $lookup-datagrid-height: 273px;
 			flex-grow: 1;
 			flex-shrink: 1;
 
-			height: $lookup-datagrid-height;
+			height: $lookup-body-height;
 			position: relative;
 		}
 
@@ -83,8 +83,8 @@ $lookup-datagrid-height: 273px;
 		}
 	}
 
-	.lookup-footer {
-		flex-basis: 30px;
+	&-footer {
+		flex-basis: $lookup-footer-height;
 		flex-grow: 0;
 		flex-shrink: 0;
 	}

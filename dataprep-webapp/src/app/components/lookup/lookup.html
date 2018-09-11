@@ -13,11 +13,11 @@
   ~ ============================================================================
   -->
 <div class="lookup">
-    <div class="loader-container" ng-if="lookupCtrl.state.playground.lookup.loading">
+    <div class="lookup-header"></div>
+    <div class="lookup-loader" ng-if="lookupCtrl.state.playground.lookup.loading">
         <loader></loader>
     </div>
-    <div ng-if="!lookupCtrl.state.playground.lookup.loading">
-        <div class="lookup-header"></div>
+    <div class="lookup-content" ng-if="!lookupCtrl.state.playground.lookup.loading">
         <div class="lookup-container">
             <div id="lookup-left" ng-switch="!!lookupCtrl.state.playground.lookup.addedActions.length">
                 <lookup-datagrid ng-switch-when="true"></lookup-datagrid>

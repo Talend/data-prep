@@ -314,8 +314,8 @@ public class AnalyzerService {
     }
 
     /**
-     * Create a ValueDataMasker by given parameters and the dictionarySnapshot
-     * 
+     * Create a ValueDataMasker by given parameters and the analyser dictionary.
+     *
      * @param domain the semantic category name
      * @param dataTypeName the data type name
      * @param dateTimePatternList the dateTime patterns, could be null when the column is not dateTime type

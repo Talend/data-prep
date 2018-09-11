@@ -428,7 +428,8 @@ public class AnalyzerService {
             toStringBuilder //
                     .append(analyzer.toString()) //
                     .append(' ') //
-                    .append(" last used (").append(System.currentTimeMillis() - lastCall) //
+                    .append(" last used (")
+                    .append(System.currentTimeMillis() - lastCall) //
                     .append(" ms ago) ");
 
             final StringWriter toStringCaller = new StringWriter();

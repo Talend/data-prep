@@ -6,6 +6,7 @@
   "ARRAY_FIELD_TEMPLATE_ACTION_NEW_ELEMENT": "Nouvel élément",
   "ARRAY_ITEM_MOVE_DOWN": "Descendre",
   "ARRAY_ITEM_MOVE_UP": "Remonter",
+  "DATALIST_WIDGET_LOADING_LABELS": "loading labels",
   "ENUMERATION_WIDGET_ABORT": "Abandonner",
   "ENUMERATION_WIDGET_ADD_FROM_FILE": "Ajouter des valeurs depuis un fichier",
   "ENUMERATION_WIDGET_ADD_ITEM": "Ajouter un élément",

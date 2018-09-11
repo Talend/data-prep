@@ -145,19 +145,14 @@ export default function DatasetListService($q, state, DatasetRestService, StateS
 	 * @param {object} item The dataset
 	 * @returns {string[]} The available actions
 	 */
-	function getDatasetActions(item) {
-		const actions = [
+	function getDatasetActions() {
+		return [
 			'inventory:edit',
+			'list:dataset:preparations',
 			'dataset:update',
 			'dataset:clone',
 			'dataset:remove',
 		];
-
-		if (item.preparations && item.preparations.length > 0) {
-			actions.splice(1, 0, 'list:dataset:preparations');
-		}
-
-		return actions;
 	}
 
 	/**

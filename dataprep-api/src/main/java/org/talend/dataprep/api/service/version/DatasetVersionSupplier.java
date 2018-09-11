@@ -13,17 +13,19 @@
 
 package org.talend.dataprep.api.service.version;
 
-import static java.util.Collections.singletonList;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.info.Version;
 
+import static java.util.Collections.singletonList;
+
 @Component
 @Order(value = 1)
+@ConditionalOnProperty(name = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
 public class DatasetVersionSupplier extends AbstractVersionSupplier {
 
     @Value("${dataset.service.url}")

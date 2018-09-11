@@ -52,6 +52,7 @@ import org.talend.tql.model.FieldIsInvalidExpression;
 import org.talend.tql.model.FieldIsValidExpression;
 import org.talend.tql.model.FieldMatchesRegex;
 import org.talend.tql.model.FieldReference;
+import org.talend.tql.model.FieldWordCompliesPattern;
 import org.talend.tql.model.LiteralValue;
 import org.talend.tql.model.NotExpression;
 import org.talend.tql.model.OrExpression;
@@ -189,6 +190,11 @@ public class TQLFilterService implements FilterService {
         public List<String> visit(FieldCompliesPattern fieldCompliesPattern) {
             fieldCompliesPattern.getField().accept(this);
             return columns;
+        }
+
+        @Override
+        public List<String> visit(FieldWordCompliesPattern fieldWordCompliesPattern) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -353,6 +359,11 @@ public class TQLFilterService implements FilterService {
             final String pattern = fieldCompliesPattern.getPattern();
 
             return createCompliesPredicate(columnName, pattern);
+        }
+
+        @Override
+        public Predicate<DataSetRow> visit(FieldWordCompliesPattern fieldWordCompliesPattern) {
+            throw new UnsupportedOperationException();
         }
 
         @Override

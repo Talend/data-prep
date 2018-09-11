@@ -72,7 +72,7 @@ public class AnalyzerServiceTest {
         try (Analyzer<Analyzers.Result> analyzer = service.build(column, allAnalysis)) {
             assertNotNull(analyzer);
             // When
-            analyzer.analyze("");
+            analyzer.analyze("hello@talend.com");
 
             // Then
             assertEquals(1, analyzer.getResult().size());

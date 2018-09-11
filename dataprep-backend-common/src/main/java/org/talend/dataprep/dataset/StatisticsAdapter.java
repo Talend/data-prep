@@ -261,6 +261,18 @@ public class StatisticsAdapter {
         }
     }
 
+    private void injectWordPatternFrequency(final ColumnMetadata column, final Analyzers.Result result) {
+        if (result.exist(PatternFrequencyStatistics.class)) {
+            final Statistics statistics = column.getStatistics();
+            final PatternFrequencyStatistics patternFrequencyStatistics = result.get(PatternFrequencyStatistics.class);
+            final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(15);
+            if (topTerms != null) {
+                statistics.getPatternFrequencies().clear();
+                topTerms.forEach((s, o) -> statistics.getPatternFrequencies().add(new PatternFrequency(s, o)));
+            }
+        }
+    }
+
     private void injectQuantile(final ColumnMetadata column, final Analyzers.Result result) {
         if (result.exist(QuantileStatistics.class)) {
             try {

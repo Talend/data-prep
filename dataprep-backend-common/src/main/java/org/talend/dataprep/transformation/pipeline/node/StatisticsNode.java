@@ -90,6 +90,7 @@ public class StatisticsNode extends ColumnFilteredNode {
                 AnalyzerService.Analysis.CARDINALITY, //
                 AnalyzerService.Analysis.FREQUENCY, //
                 AnalyzerService.Analysis.PATTERNS, //
+                AnalyzerService.Analysis.WORD_PATTERNS, //
                 AnalyzerService.Analysis.LENGTH, //
                 AnalyzerService.Analysis.QUANTILES, //
                 AnalyzerService.Analysis.SUMMARY, //

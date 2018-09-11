@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
+import org.talend.daikon.pattern.word.WordPatternToRegex;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -70,8 +71,7 @@ public class TQLFilterService implements FilterService {
         if (StringUtils.isEmpty(filterAsString)) {
             return row -> true;
         }
-        final TqlElement parsedPredicate = Tql.parse(filterAsString);
-        return parsedPredicate.accept(new DataSetPredicateVisitor(rowMetadata));
+        return Tql.parse(filterAsString).accept(new DataSetPredicateVisitor(rowMetadata));
     }
 
     /**
@@ -194,7 +194,8 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public List<String> visit(FieldWordCompliesPattern fieldWordCompliesPattern) {
-            throw new UnsupportedOperationException();
+            fieldWordCompliesPattern.getField().accept(this);
+            return columns;
         }
 
         @Override
@@ -357,13 +358,15 @@ public class TQLFilterService implements FilterService {
             fieldCompliesPattern.getField().accept(this);
             final String columnName = fields.pop();
             final String pattern = fieldCompliesPattern.getPattern();
-
             return createCompliesPredicate(columnName, pattern);
         }
 
         @Override
         public Predicate<DataSetRow> visit(FieldWordCompliesPattern fieldWordCompliesPattern) {
-            throw new UnsupportedOperationException();
+            fieldWordCompliesPattern.getField().accept(this);
+            final String columnName = fields.pop();
+            final String wordPattern = fieldWordCompliesPattern.getPattern();
+            return createMatchesPredicate(columnName, WordPatternToRegex.toRegex(wordPattern, false));
         }
 
         @Override

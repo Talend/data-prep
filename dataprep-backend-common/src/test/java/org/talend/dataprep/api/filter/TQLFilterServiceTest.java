@@ -116,6 +116,23 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
                 .assertFilterReturnsFalseForValues("Nicolas", "Stéphane");
     }
 
+
+    @Test
+    public void testWhatever() throws Exception {
+        // given
+        final String tqlFilter = "0001 wordComplies '[word][digit]'";
+
+        // when
+        filter = service.build(tqlFilter, rowMetadata);
+
+        // then
+        whateverValidity()
+                .withColumns("0001", "0002")
+                .assertFilterReturnsTrueForValues("vincent1", "François")
+                .assertFilterReturnsTrueForValues("Nicolas2", "Stéphane")
+                .assertFilterReturnsFalseForValues("3Nicolas", "Stéphane");
+    }
+
     @Override
     protected String givenFilter_0001_equals_toto() {
         return "0001 = 'toto'";

@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -57,10 +56,7 @@ import org.talend.dataquality.statistics.frequency.DataTypeFrequencyAnalyzer;
 import org.talend.dataquality.statistics.frequency.DataTypeFrequencyStatistics;
 import org.talend.dataquality.statistics.frequency.pattern.CompositePatternFrequencyAnalyzer;
 import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
-import org.talend.dataquality.statistics.frequency.recognition.AbstractPatternRecognizer;
-import org.talend.dataquality.statistics.frequency.recognition.DateTimePatternRecognizer;
-import org.talend.dataquality.statistics.frequency.recognition.EmptyPatternRecognizer;
-import org.talend.dataquality.statistics.frequency.recognition.GenericCharPatternRecognizer;
+import org.talend.dataquality.statistics.frequency.recognition.*;
 import org.talend.dataquality.statistics.numeric.quantile.QuantileAnalyzer;
 import org.talend.dataquality.statistics.numeric.quantile.QuantileStatistics;
 import org.talend.dataquality.statistics.numeric.summary.SummaryAnalyzer;
@@ -72,6 +68,9 @@ import org.talend.dataquality.statistics.text.TextLengthStatistics;
 import org.talend.dataquality.statistics.type.DataTypeAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
 import org.talend.dataquality.statistics.type.DataTypeOccurences;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * Service in charge of analyzing dataset quality.
@@ -142,9 +141,9 @@ public class AnalyzerService {
      */
     public Analyzer<Analyzers.Result> build(ColumnMetadata column, Analysis... settings) {
         if (column == null) {
-            return build(Collections.emptyList(), settings);
+            return build(emptyList(), settings);
         } else {
-            return build(Collections.singletonList(column), settings);
+            return build(singletonList(column), settings);
         }
     }
 
@@ -186,12 +185,11 @@ public class AnalyzerService {
         // Column types
         DataTypeEnum[] types = TypeUtils.convert(columns);
         // Semantic domains
-        List<String> domainList = columns //
+        final String[] domains = columns //
                 .stream() //
                 .map(ColumnMetadata::getDomain) //
-                .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d) //
-                .collect(Collectors.toList());
-        final String[] domains = domainList.toArray(new String[domainList.size()]);
+                .map(d -> StringUtils.isBlank(d) ? SemanticCategoryEnum.UNKNOWN.getId() : d)
+                .toArray(String[]::new);
 
         DictionarySnapshot dictionarySnapshot = dictionarySnapshotProvider.get();
 
@@ -222,6 +220,9 @@ public class AnalyzerService {
                 break;
             case PATTERNS:
                 analyzers.add(buildPatternAnalyzer(columns));
+                break;
+            case WORD_PATTERNS:
+                analyzers.add(new CompositePatternFrequencyAnalyzer(singletonList(TypoUnicodePatternRecognizer.noCase()), TypeUtils.convert(columns)));
                 break;
             case LENGTH:
                 analyzers.add(new TextLengthAnalyzer());
@@ -265,7 +266,7 @@ public class AnalyzerService {
         }
 
         // Merge all analyzers into one
-        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(analyzers.toArray(new Analyzer[analyzers.size()]));
+        final Analyzer<Analyzers.Result> analyzer = Analyzers.with(analyzers.toArray(new Analyzer[0]));
         analyzer.init();
         if (LOGGER.isDebugEnabled()) {
             // Wrap analyzer for usage monitoring (to diagnose non-closed analyzer issues).
@@ -278,7 +279,8 @@ public class AnalyzerService {
     public Analyzer<Analyzers.Result> full(final List<ColumnMetadata> columns) {
         // Configure quality & semantic analysis (if column metadata information is present in stream).
         return build(columns, Analysis.QUALITY, Analysis.CARDINALITY, Analysis.FREQUENCY, Analysis.PATTERNS, //
-                Analysis.LENGTH, Analysis.SEMANTIC, Analysis.QUANTILES, Analysis.SUMMARY, Analysis.HISTOGRAM);
+                Analysis.WORD_PATTERNS, Analysis.LENGTH, Analysis.SEMANTIC, Analysis.QUANTILES, Analysis.SUMMARY,
+                Analysis.HISTOGRAM);
     }
 
     public Analyzer<Analyzers.Result> qualityAnalysis(List<ColumnMetadata> columns) {
@@ -307,6 +309,7 @@ public class AnalyzerService {
         analyzer.init();
         records.map(r -> r.toArray()).forEach(analyzer::analyze);
         analyzer.end();
+
 
         final List<Analyzers.Result> analyzerResult = analyzer.getResult();
         final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
@@ -349,7 +352,10 @@ public class AnalyzerService {
         /**
          * String patterns
          */
-        PATTERNS(PatternFrequencyStatistics.class),
+        PATTERNS(PatternFrequencyStatistics.class),        /**
+         * String patterns
+         */
+        WORD_PATTERNS(PatternFrequencyStatistics.class),
         /**
          * Text length (min / max length)
          */

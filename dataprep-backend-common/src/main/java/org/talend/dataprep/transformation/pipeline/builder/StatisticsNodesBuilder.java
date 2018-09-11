@@ -252,10 +252,11 @@ public class StatisticsNodesBuilder {
 
     private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter,
             RowMetadataFallbackProvider rowMetadataFallbackProvider) {
-        return allowSchemaAnalysis
-                ? new TypeDetectionNode(columnFilter, statisticsAdapter,
-                        c -> analyzerService.build(c, AnalyzerService.Analysis.PATTERNS), rowMetadataFallbackProvider)
-                : new BasicNode();
+        return allowSchemaAnalysis ?
+                new TypeDetectionNode(columnFilter, statisticsAdapter, c -> analyzerService
+                        .build(c, AnalyzerService.Analysis.PATTERNS, AnalyzerService.Analysis.WORD_PATTERNS),
+                        rowMetadataFallbackProvider) :
+                new BasicNode();
     }
 
     private Node getInvalidDetectionNode(final Predicate<ColumnMetadata> columnFilter) {

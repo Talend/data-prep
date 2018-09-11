@@ -45,6 +45,11 @@ import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.netflix.hystrix.HystrixCommand;
+
 /**
  * Adapter for legacy data model over the {@link DataCatalogClient}.
  */

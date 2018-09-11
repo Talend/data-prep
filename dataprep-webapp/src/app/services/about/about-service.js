@@ -44,7 +44,7 @@ export default class AboutService {
 	 * @description sets the fetched builds in the state
 	 */
 	loadBuilds() {
-		this.fetchBuildDetails().then((details) => {
+		return this.fetchBuildDetails().then((details) => {
 			this.stateService.setBuilds(details);
 		});
 	}

@@ -51,7 +51,6 @@ import org.talend.dataprep.transformation.format.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
-import org.talend.dataprep.transformation.service.ExportStrategy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreparationExportStrategyTest {
@@ -124,7 +123,7 @@ public class PreparationExportStrategyTest {
         when(contentCache.put(any(), any())).thenReturn(new NullOutputStream());
     }
 
-    private void injectObjectMapper(ExportStrategy exportStrategy) throws Exception {
+    private void injectObjectMapper(SampleExportStrategy exportStrategy) throws Exception {
         Field mapperField = ReflectionUtils.findField(BaseExportStrategy.class, "mapper");
         ReflectionUtils.makeAccessible(mapperField);
         ReflectionUtils.setField(mapperField, exportStrategy, mapper);
@@ -139,7 +138,7 @@ public class PreparationExportStrategyTest {
     @Test
     public void shouldNotAcceptNullParameters() {
         // Then
-        assertFalse(strategy.accept(null));
+        assertFalse(strategy.test(null));
     }
 
     @Test
@@ -151,7 +150,7 @@ public class PreparationExportStrategyTest {
         parameters.setFrom(ExportParameters.SourceType.HEAD);
         parameters.setPreparationId("prep-1234");
         parameters.setDatasetId("");
-        assertTrue(strategy.accept(parameters));
+        assertTrue(strategy.test(parameters));
     }
 
     @Test

@@ -60,7 +60,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
     private CacheKeyGenerator cacheKeyGenerator;
 
     @Override
-    public boolean accept(ExportParameters parameters) {
+    public boolean test(ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }
@@ -102,9 +102,8 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         // Get content from previous step
         try (JsonParser parser = mapper
                 .getFactory()
-                .createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8))) {
-            // Create dataset
-            final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
+                .createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8));
+                final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser)) {
             dataSet.setMetadata(metadata);
 
             // get the actions to apply (no preparation ==> dataset export ==> no actions)

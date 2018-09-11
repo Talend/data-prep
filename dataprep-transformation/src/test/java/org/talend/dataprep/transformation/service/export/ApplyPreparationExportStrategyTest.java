@@ -28,7 +28,7 @@ public class ApplyPreparationExportStrategyTest extends ServiceBaseTest {
     @Test
     public void shouldNotAcceptNullParameter() throws Exception {
         // Then
-        assertFalse(applyPreparationExportStrategy.accept(null));
+        assertFalse(applyPreparationExportStrategy.test(null));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ApplyPreparationExportStrategyTest extends ServiceBaseTest {
         parameters.setFrom(ExportParameters.SourceType.HEAD);
 
         // Then
-        assertFalse(applyPreparationExportStrategy.accept(parameters));
+        assertFalse(applyPreparationExportStrategy.test(parameters));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ApplyPreparationExportStrategyTest extends ServiceBaseTest {
         parameters.setFrom(ExportParameters.SourceType.HEAD);
 
         // Then
-        assertFalse(applyPreparationExportStrategy.accept(parameters));
+        assertFalse(applyPreparationExportStrategy.test(parameters));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ApplyPreparationExportStrategyTest extends ServiceBaseTest {
         parameters.setPreparationId("1234");
 
         // Then
-        assertTrue(applyPreparationExportStrategy.accept(parameters));
+        assertTrue(applyPreparationExportStrategy.test(parameters));
 
     }
 

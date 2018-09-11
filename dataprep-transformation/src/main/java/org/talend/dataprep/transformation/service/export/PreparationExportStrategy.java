@@ -59,7 +59,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
     private DatasetClient datasetClient;
 
     @Override
-    public boolean accept(final ExportParameters parameters) {
+    public boolean test(final ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }

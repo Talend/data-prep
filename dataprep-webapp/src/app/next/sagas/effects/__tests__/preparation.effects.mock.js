@@ -60,4 +60,5 @@ export const API_PAYLOAD = { test: 'lol' };
 
 export const API_RESPONSE = {
 	data: API_PAYLOAD,
+	response: { ok: true },
 };

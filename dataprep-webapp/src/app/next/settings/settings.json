@@ -32,8 +32,10 @@
           }
         }
       },
-      "href":
-        "https://help.talend.com/search/all?filters=EnrichPlatform%7E%2522Talend+Data+Preparation%2522*EnrichVersion%7E%2522Cloud%2522&utm_medium=dpdesktop&utm_source=&content-lang=en",
+      "hrefExpression": {
+        "id": "cmf.collections.get",
+        "args": ["settings.help.fuzzyUrl", ""]
+      },
       "target": "_blank"
     },
     "help:community": {
@@ -179,6 +181,57 @@
       },
       "actionCreator": "preparation:rename"
     },
+    "preparation:remove": {
+      "id": "preparation:remove",
+      "icon": "talend-trash",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "preparation:remove"
+    },
+    "folder:remove": {
+      "id": "folder:remove",
+      "bsStyle": "danger",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "folder:remove"
+    },
+    "folder:remove:close": {
+      "id": "folder:remove:close",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:CANCEL",
+          "options": {
+            "defaultValue": "Cancel"
+          }
+        }
+      },
+      "bsStyle": "default btn-inverse",
+      "actionCreator": "folder:remove:close"
+    },
+    "folder:remove:open": {
+      "id": "folder:remove:open",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "folder:remove:open"
+    },
     "preparation:duplicate": {
       "id": "preparation:duplicate",
       "label": {
@@ -220,6 +273,9 @@
       "hasCollections": ["settings"]
     },
     "Breadcrumbs#default": {},
+    "AboutDialog#default": {
+      "icon": "talend-tdp-colored"
+    },
     "HeaderBar#default": {
       "app": "Data Preparation",
       "logo": {
@@ -285,8 +341,10 @@
           }
         },
         "target": "_blank",
-        "href":
-          "https://help.talend.com/search/all?filters=EnrichPlatform~%2522Talend+Data+Preparation%2522*EnrichVersion~%2522Cloud%2522&utm_medium=dpdesktop&utm_source=header"
+        "hrefExpression": {
+          "id": "cmf.collections.get",
+          "args": ["settings.help.fuzzyUrl", ""]
+        }
       },
       "information": {
         "id": "headerbar:information",
@@ -316,26 +374,6 @@
     },
     "SidePanel#default": {
       "actionIds": ["menu:preparations", "menu:datasets", "menu:datastores"]
-    },
-    "Version#default": {
-      "displayVersionExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.displayVersion", []]
-      },
-      "servicesExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.services", []]
-      }
-    },
-    "AboutModal#default": {
-      "servicesExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.services", []]
-      },
-      "displayVersionExpression": {
-        "id": "cmf.collections.get",
-        "args": ["versions.displayVersion", ""]
-      }
     },
     "HomeListView#datastores": {
       "hasTheme": true
@@ -430,6 +468,7 @@
           ],
           "items": [
             "preparation:rename",
+            "preparation:remove",
             "preparation:copy:open",
             "preparation:move:open"
           ],

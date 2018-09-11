@@ -93,4 +93,30 @@ describe('Preparation action', () => {
 
 		expect(action).toMatchSnapshot();
 	});
+
+	it('should create a preparation remove action', () => {
+		const event = {};
+		const payload = {
+			model: {
+				id: 42,
+				type: 'preparation'
+			},
+		};
+		const action = actions.remove(event, payload);
+
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create a folder remove action', () => {
+		const event = {};
+		const payload = {
+			model: {
+				id: 42,
+				type: 'folder',
+			},
+		};
+		const action = actions.remove(event, payload);
+
+		expect(action).toMatchSnapshot();
+	});
 });

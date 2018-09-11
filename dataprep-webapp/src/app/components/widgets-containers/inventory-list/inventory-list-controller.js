@@ -19,16 +19,17 @@ const ACTION_TYPE = 'actions';
 const LOADING_TIMEOUT_VALUE = 400;
 
 export default class InventoryListCtrl {
-	constructor($element, $translate, $timeout, appSettings, state, InventoryListService, SettingsActionsService, StateService) {
+	constructor($element, $translate, $timeout, appSettings, state, DatasetService, InventoryListService, SettingsActionsService, StateService) {
 		'ngInject';
 
 		this.$element = $element;
 		this.$translate = $translate;
 		this.$timeout = $timeout;
 		this.appSettings = appSettings;
-		this.stateService = StateService;
+		this.DatasetService = DatasetService;
 		this.InventoryListService = InventoryListService;
 		this.SettingsActionsService = SettingsActionsService;
+		this.StateService = StateService;
 		this.state = state;
 
 		this.actionsDispatchers = [];
@@ -261,10 +262,21 @@ export default class InventoryListCtrl {
 					const staticActions = actionSettings.staticActions.map(
 						staticAction => this.createDropdownItemAction(hostModel, staticAction),
 					);
-					// dropdown dynamic action is the unique action on each item click
-					// ex: dataset > "open preparation x" is applied to "preparation x"
-					const dynamicActions = this.createDropdownActions(modelItems, actionSettings.dynamicAction);
-					adaptedAction.items = staticActions.concat(dynamicActions);
+					if (!modelItems && actionSettings.dynamicFetchAction) {
+						// dropdown dynamic fetch items action dispatched on toggle
+						adaptedAction.items = staticActions.concat({ divider: true });
+						adaptedAction.loading = true;
+						const dispatch = this.getActionDispatcher(actionSettings.dynamicFetchAction);
+						adaptedAction.onToggle = isOpen => dispatch(null, { isOpen, model: hostModel });
+					}
+					else {
+						// dropdown dynamic action is the unique action on each item click
+						// ex: dataset > "open preparation x" is applied to "preparation x"
+						const dynamicActions = this.createDropdownActions(modelItems, actionSettings.dynamicAction);
+						adaptedAction.items = dynamicActions.length
+							? staticActions.concat({ divider: true }).concat(dynamicActions)
+							: staticActions.concat(dynamicActions);
+					}
 				}
 				else if (adaptedAction.displayMode === SPLITDROPDOWN_ACTION) {
 					const dispatch = this.getActionDispatcher(actionName);

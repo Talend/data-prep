@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.avro.Schema;
@@ -27,12 +28,15 @@ import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.api.dataset.DatasetDTO;
+import org.talend.dataprep.api.dataset.DatasetDetailsDTO;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.row.InvalidMarker;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.conversions.inject.OwnerInjection;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadataLegacy;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
@@ -75,6 +79,9 @@ public class DatasetClient {
     @Autowired
     private FilterService filterService;
 
+    @Autowired
+    private OwnerInjection ownerInjection;
+
     private final Cache<String, AnalysisResult> computedMetadataCache = CacheBuilder
             .newBuilder() //
             .maximumSize(50) //
@@ -110,9 +117,10 @@ public class DatasetClient {
      * @param favorite filter with favorite only
      * @return DataSetMetadata without rowMetadata
      */
-    public Stream<DataSetMetadata> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
+    public Stream<DatasetDTO> listDataSetMetadata(Dataset.CertificationState certification, Boolean favorite) {
+
         return dataCatalogClient.listDataset(certification, favorite).map(
-                dataset -> conversionService.convert(dataset, DataSetMetadata.class));
+                dataset -> conversionService.convert(dataset, DatasetDTO.class, ownerInjection.injectIntoDataset()));
     }
 
     public DataSetMetadata getDataSetMetadata(String id) {
@@ -310,6 +318,12 @@ public class DatasetClient {
             // source method do not throw checked exception
             throw (RuntimeException) e.getCause();
         }
+    }
+
+    public DatasetDetailsDTO getDataSetDetails(String id) {
+        Dataset dataset = dataCatalogClient.getMetadata(id);
+        return conversionService.convert(dataset, DatasetDetailsDTO.class, ownerInjection.injectIntoDatasetDetails());
+
     }
 
     private class AnalysisResult {

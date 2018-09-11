@@ -65,7 +65,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
     private Boolean technicianIdentityReleased = true;
 
     @Override
-    public boolean accept(ExportParameters parameters) {
+    public boolean test(ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }
@@ -195,10 +195,9 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         LOGGER.info("using {} as content input", asyncSampleKey.getKey());
 
         if (contentCache.has(asyncSampleKey)) {
-            try (JsonParser parser =
-                    mapper.getFactory().createParser(new InputStreamReader(contentCache.get(asyncSampleKey), UTF_8))) {
-                return mapper.readerFor(DataSet.class).readValue(parser);
-            }
+            JsonParser parser =
+                    mapper.getFactory().createParser(new InputStreamReader(contentCache.get(asyncSampleKey), UTF_8));
+            return mapper.readerFor(DataSet.class).readValue(parser);
         }
 
         final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;

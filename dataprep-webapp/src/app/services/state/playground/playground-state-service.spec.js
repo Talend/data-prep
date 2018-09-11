@@ -71,6 +71,19 @@ describe('Playground state service', () => {
         }));
     });
 
+	describe('preview loading', () => {
+		it('should set preview loading in state', inject((playgroundState, PlaygroundStateService) => {
+			//given
+			expect(playgroundState.isPreviewLoading).toBe(false);
+
+			//when
+			PlaygroundStateService.setPreviewIsLoading(true);
+
+			//then
+			expect(playgroundState.isPreviewLoading).toBe(true);
+		}));
+	});
+
     describe('saving preparation', () => {
         it('should set NameValidation visibility', inject((playgroundState, PlaygroundStateService) => {
             //given

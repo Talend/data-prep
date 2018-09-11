@@ -174,10 +174,6 @@ if (!isTestMode) {
 		new webpack.BannerPlugin({
 			banner: LICENSE_BANNER,
 		}),
-		new webpack.optimize.CommonsChunkPlugin({
-			name: 'vendor',
-			minChunks: Infinity,
-		}),
 	]);
 }
 

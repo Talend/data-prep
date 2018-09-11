@@ -35,6 +35,7 @@ describe('Playground header component', () => {
 			element = angular.element(`
 			<playground-header
                     preview="preview"
+                    preview-loading="previewLoading"
                     lookup-visible="lookupVisible"
                     lookup-loading="lookupLoading"
                     preparation-picker="preparationPicker"
@@ -268,6 +269,17 @@ describe('Playground header component', () => {
 
 			// then
 			expect(element.find('#preview').length).toBe(0);
+		});
+
+		it('should render preview badge', () => {
+			// given
+			scope.previewLoading = true;
+			scope.preview = true;
+			// when
+			createElement();
+
+			// then
+			expect(element.find('loader').length).toBe(1);
 		});
 	});
 });

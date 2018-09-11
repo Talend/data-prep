@@ -53,6 +53,7 @@ const PlaygroundHeader = {
 		parametersVisible: '<',
 		preparationPicker: '<',
 		preview: '<',
+		previewLoading: '<',
 		isReadonly: '<',
 		preparationName: '<',
 		nameEditionMode: '<',

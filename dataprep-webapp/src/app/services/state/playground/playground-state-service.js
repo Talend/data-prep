@@ -24,6 +24,7 @@ export const playgroundState = {
 	stepInEditionMode: null,
 	transformationInProgress: false,
 	lastActiveStepId: null,
+	isPreviewLoading: false,
 };
 
 export function PlaygroundStateService($translate,
@@ -68,6 +69,7 @@ export function PlaygroundStateService($translate,
 		setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading,
 		setTransformationInProgress,
+		setPreviewIsLoading,
 
 		// parameters
 		toggleDatasetParameters,
@@ -236,6 +238,11 @@ export function PlaygroundStateService($translate,
 	function setTransformationInProgress(bool) {
 		playgroundState.transformationInProgress = bool;
 	}
+
+	function setPreviewIsLoading(value) {
+		playgroundState.isPreviewLoading = value;
+	}
+
 	//--------------------------------------------------------------------------------------------------------------
 	// -------------------------------------------------PARAMETERS---------------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------

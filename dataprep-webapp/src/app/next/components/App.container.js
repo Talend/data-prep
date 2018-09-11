@@ -9,14 +9,24 @@ import {
 	ShortcutManager,
 	AppLoader,
 	AboutDialog,
+	ConfirmDialog,
 } from '@talend/react-containers';
 
 import components from './';
 import i18n from './../../i18n';
 import settingsService from './../services/settings.service';
+import './App.scss';
 
 const initialNotificationsState = new Map({
 	notifications: new List([]),
+});
+
+const initialAddFolderState = new Map({
+	show: false,
+});
+
+const initialConfirmDialogState = new Map({
+	show: false,
 });
 
 export default function App(props) {
@@ -30,8 +40,10 @@ export default function App(props) {
 						<ShortcutManager />
 						<Notification initialState={initialNotificationsState} />
 						<AboutDialog />
+						<ConfirmDialog initialState={initialConfirmDialogState} />
 						<components.PreparationCreatorModal />
 						<components.PreparationCopyMoveModal />
+						<components.FolderCreatorModal initialState={initialAddFolderState} />
 						{props.children}
 					</div>
 				</AppLoader>

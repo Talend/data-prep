@@ -37,6 +37,23 @@ Object {
 }
 `;
 
+exports[`Preparation action should create a folder remove action 1`] = `
+Object {
+  "payload": Object {
+    "id": 42,
+    "type": "folder",
+  },
+  "type": "TDP_OPEN_REMOVE_FOLDER_MODAL",
+}
+`;
+
+exports[`Preparation action should create a preparation remove action 1`] = `
+Object {
+  "payload": 42,
+  "type": "TDP_REMOVE_PREPARATION",
+}
+`;
+
 exports[`Preparation action should create a rename action 1`] = `
 Object {
   "payload": Object {

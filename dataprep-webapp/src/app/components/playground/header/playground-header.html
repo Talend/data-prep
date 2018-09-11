@@ -46,7 +46,8 @@
             <span translate-once="READ_ONLY"></span>
         </li>
         <li class="preview" ng-if="$ctrl.preview">
-            <icon class="playground-header-icon" name="'talend-eye'"/>
+            <icon ng-if="!$ctrl.previewLoading" class="playground-header-icon" name="'talend-eye'"/>
+            <loader ng-if="$ctrl.previewLoading"></loader>
             <span translate-once="PREVIEW"></span>
         </li>
     </ul>

@@ -15,9 +15,9 @@
 
 <div class="playground-container" tabindex="0">
     <pure-app-loader ng-if="playgroundCtrl.state.playground.isLoading"></pure-app-loader>
-
     <playground-header ng-if="!playgroundCtrl.state.playground.isLoading"
                        preview="playgroundCtrl.previewInProgress()"
+                       preview-loading="playgroundCtrl.state.playground.isPreviewLoading"
                        lookup-visible="playgroundCtrl.state.playground.lookup.visibility"
                        lookup-loading="playgroundCtrl.state.playground.lookup.loading"
                        parameters-visible="playgroundCtrl.state.playground.parameters.visible"

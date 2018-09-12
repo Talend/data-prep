@@ -50,7 +50,7 @@ public class DatasetDTO implements SharedResource {
 
     private Set<String> roles;
 
-    private String locationType;
+    private String type;
 
     private Long records;
 
@@ -176,12 +176,12 @@ public class DatasetDTO implements SharedResource {
         this.favorite = favorite;
     }
 
-    public String getLocationType() {
-        return locationType;
+    public String getType() {
+        return type;
     }
 
-    public void setLocationType(String locationType) {
-        this.locationType = locationType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Long getRecords() {

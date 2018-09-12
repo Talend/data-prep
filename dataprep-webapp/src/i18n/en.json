@@ -169,7 +169,7 @@
   "EDIT_DATASET": "Edit dataset",
 
   "_comment": "Common",
-  "LOADING": "Loading…",
+  "LOADING": "Loading",
   "PROCESSING": "Processing",
   "UPLOAD_PROCESSING": "Profiling data, please wait…",
   "COMING_SOON": "Coming soon…",

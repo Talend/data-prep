@@ -116,6 +116,19 @@ describe('Lookup state service', () => {
 		}));
 	});
 
+	describe('loading', () => {
+		it('should set loading flag', inject((lookupState, LookupStateService) => {
+			//given
+			lookupState.loading = false;
+
+			//when
+			LookupStateService.setLoading(true);
+
+			//then
+			expect(lookupState.loading).toBe(true);
+		}));
+	});
+
 	describe('reset', () => {
 		it('should reset state', inject((lookupState, LookupStateService) => {
 			// given

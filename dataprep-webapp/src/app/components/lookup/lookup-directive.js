@@ -25,9 +25,6 @@ export default function Lookup() {
 	return {
 		restrict: 'E',
 		templateUrl: template,
-		scope: {
-			visible: '=',
-		},
 		bindToController: true,
 		controllerAs: 'lookupCtrl',
 		controller: 'LookupCtrl',

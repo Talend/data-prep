@@ -116,8 +116,8 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 			StateService.setStepInEditionMode(null);
 		}
 		else {
-			LookupService.initLookups()
-				.then(StateService.setLookupVisibility.bind(null, true));
+			StateService.setLookupVisibility(true);
+			LookupService.initLookups();
 		}
 	};
 

@@ -22,7 +22,6 @@ import HelpService from './config/utils-help-service';
 import StepUtilsService from './step/step-utils-service';
 import StorageService from './storage/storage-service';
 import TextFormatService from './text-format/text-format-service';
-import DisableRightClick from './click/disable-right-click-directive';
 import HtmlLang from './html/htmlLang-directive';
 import TitleService from './title/title-service';
 import FilterUtilsService from './filter/filter-utils-service';
@@ -47,7 +46,6 @@ angular
 	.service('TextFormatService', TextFormatService)
 	.service('TitleService', TitleService)
 	.service('FilterUtilsService', FilterUtilsService)
-	.directive('disableRightClick', DisableRightClick)
 	.directive('htmlLang', HtmlLang);
 
 export default MODULE_NAME;

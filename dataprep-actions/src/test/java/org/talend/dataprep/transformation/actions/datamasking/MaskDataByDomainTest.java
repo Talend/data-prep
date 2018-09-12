@@ -148,23 +148,6 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     }
 
     @Test
-    public void testShouldNotMaskSurrogatePairAsStringType() {
-        // given
-        final DataSetRow row = builder() //
-                .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING)) //
-                .build();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        // Function is ReplaceCharactersWithGeneration so that surrogate pair will not mask
-        String realValueAsDtr = (String) row.values().get("0000");
-        LOGGER.info("Row value: {}", realValueAsDtr);
-        assertTrue("中崎𠀀𠀁𠀂𠀃𠀄".equalsIgnoreCase(realValueAsDtr));
-    }
-
-    @Test
     public void testShouldMaskSurrogatePairAsSingleChar() {
         // given
         final DataSetRow row = builder() //

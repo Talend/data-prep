@@ -137,9 +137,15 @@ public class PreparationAPI extends APIService {
                     defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
                     defaultValue = "desc") Order order) {
+
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
-        return toStream(PreparationDTO.class, mapper, command)//
-                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        if ("summary".equalsIgnoreCase(format)) {
+            return toStream(PreparationDTO.class, mapper, command)//
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        } else {
+            return toStream(PreparationDTO.class, mapper, command)//
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        }
     }
 
     //@formatter:off

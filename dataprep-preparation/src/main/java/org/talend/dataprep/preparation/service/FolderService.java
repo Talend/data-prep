@@ -12,32 +12,45 @@
 
 package org.talend.dataprep.preparation.service;
 
-import static java.util.stream.Collectors.*;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-import static org.talend.daikon.exception.ExceptionContext.*;
-import static org.talend.dataprep.api.folder.FolderContentType.*;
-import static org.talend.dataprep.exception.error.FolderErrorCodes.*;
-import static org.talend.dataprep.util.SortAndOrderHelper.*;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
+import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
+import static org.talend.dataprep.util.SortAndOrderHelper.getFolderComparator;
 
-import java.util.*;
-import java.util.concurrent.atomic.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import org.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
-import org.talend.daikon.exception.*;
-import org.talend.dataprep.api.folder.*;
-import org.talend.dataprep.audit.*;
-import org.talend.dataprep.exception.*;
-import org.talend.dataprep.folder.store.*;
-import org.talend.dataprep.http.*;
-import org.talend.dataprep.metrics.*;
-import org.talend.dataprep.security.*;
-import org.talend.dataprep.util.SortAndOrderHelper.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.api.folder.Folder;
+import org.talend.dataprep.api.folder.FolderInfo;
+import org.talend.dataprep.api.folder.FolderTreeNode;
+import org.talend.dataprep.audit.BaseDataprepAuditService;
+import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.folder.store.FolderRepository;
+import org.talend.dataprep.http.HttpResponseContext;
+import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.security.Security;
+import org.talend.dataprep.util.SortAndOrderHelper.Order;
+import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @Api(value = "folders", basePath = "/folders", description = "Operations on folders")

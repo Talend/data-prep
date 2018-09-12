@@ -197,6 +197,7 @@ public class FolderAPI extends APIService {
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
         final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
                 .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+
         return new PreparationsByFolder(folders, preparations);
     }
 

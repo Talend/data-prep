@@ -13,8 +13,8 @@
 
 package org.talend.dataprep.audit;
 
-import org.springframework.boot.autoconfigure.condition.*;
-import org.springframework.stereotype.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnProperty(name = "audit.log.enabled", havingValue = "false", matchIfMissing = true)

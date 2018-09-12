@@ -37,7 +37,6 @@ import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.transformation.actions.AbstractMetadataBaseTest;
-import org.talend.dataprep.transformation.actions.ActionMetadataTestUtils;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.api.action.ActionTestWorkbench;
 import org.talend.dataquality.semantic.datamasking.MaskableCategoryEnum;
@@ -78,10 +77,8 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     public void testShouldMaskDatetime() {
 
         // given
-        final DataSetRow row = builder()
-                .with(value("2015-09-15").type(Type.DATE).statistics(
-                        MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json")))
-                .build();
+        final DataSetRow row = builder().with(value("2015-09-15").type(Type.DATE)
+                .statistics(MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json"))).build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -102,8 +99,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
 
         // given
         final DataSetRow row = builder()
-                .with(value("azerty@talend.com").type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name()))
-                .build();
+                .with(value("azerty@talend.com").type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name())).build();
 
         final Map<String, String> expectedValues = new HashMap<>();
         expectedValues.put("0000", "XXXXXX@talend.com");
@@ -149,19 +145,22 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
 
     @Test
     public void testShouldNotMaskSurrogatePairAsStringType() {
+        String input = "中崎𠀀𠀁𠀂𠀃𠀄";
+
         // given
+        long codePoint = input.codePoints().count();
         final DataSetRow row = builder() //
-                .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING)) //
+                .with(value(input).type(Type.STRING)) //
                 .build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
 
         // then
-        // Function is ReplaceCharactersWithGeneration so that surrogate pair will not mask
         String realValueAsDtr = (String) row.values().get("0000");
-        LOGGER.info("Row value: {}", realValueAsDtr);
-        assertTrue("中崎𠀀𠀁𠀂𠀃𠀄".equalsIgnoreCase(realValueAsDtr));
+        // FixMe : we are not able to test the content because of the parameter random of ReplaceCharactersWithGeneration
+        // see with DQ
+        assertEquals(codePoint, realValueAsDtr.codePoints().count());
     }
 
     @Test

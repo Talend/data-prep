@@ -2,7 +2,6 @@ import api, { store as cmfstore, sagaRouter, actions as cmfActions } from '@tale
 import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
 import dataset from '@talend/dataset';
-import localStorage from 'store';
 import '@talend/dataset/lib/app/index.scss';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
@@ -16,6 +15,7 @@ import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
 import locales from './next/locales';
 import { registerLocales } from './i18n';
+import settingsService from './next/services/settings.service';
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;
@@ -128,7 +128,6 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register expressions in CMF expressions dictionary
 		 */
-		registerExpressions(api.expressions);
 		const additionalExpressions = additionalConfiguration.expressions;
 		if (additionalExpressions) {
 			registerExpressions(additionalExpressions);
@@ -151,9 +150,16 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
 		registerActionCreator('preparation:open', actions.preparation.open);
 		registerActionCreator('folder:open', actions.folder.open);
+		registerActionCreator('folder:add', actions.folder.add);
+		registerActionCreator('folder:add:open', actions.folder.openAddFolderModal);
+		registerActionCreator('folder:add:close', actions.folder.closeAddFolderModal);
+		registerActionCreator('folder:remove', actions.folder.remove);
+		registerActionCreator('folder:remove:open', actions.folder.openRemoveFolderModal);
+		registerActionCreator('folder:remove:close', actions.folder.closeRemoveFolderModal);
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
 		registerActionCreator('preparation:copy', actions.preparation.copy);
 		registerActionCreator('preparation:move', actions.preparation.move);
+		registerActionCreator('preparation:remove', actions.preparation.remove);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
 		registerActionCreator('preparation:add:open', actions.preparation.openPreparationCreatorModal);
 		registerActionCreator('preparation:copy:open', actions.preparation.openCopyModal);
@@ -177,9 +183,8 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */
-		const settings = localStorage.get('settings');
 		store.dispatch(
-			cmfActions.settingsActions.fetchSettings(`/settings.${settings.context.language}.json`),
+			cmfActions.settingsActions.fetchSettings(`/settings.${settingsService.getLanguage()}.json`),
 		);
 
 		reduxLocalStorage.saveOnReload({

@@ -59,7 +59,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
     private Boolean technicianIdentityReleased = true;
 
     @Override
-    public boolean accept(ExportParameters parameters) {
+    public boolean test(ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }

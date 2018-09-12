@@ -90,7 +90,7 @@ export function StateService(RouteStateService, routeState,
 		setLastActiveStepId: PlaygroundStateService.setLastActiveStepId,
 		getLastActiveStepId: PlaygroundStateService.getLastActiveStepId,
 		resetLastActiveStepId: PlaygroundStateService.resetLastActiveStepId,
-
+		setPreviewIsLoading: PlaygroundStateService.setPreviewIsLoading,
 		// playground - dataset parameters
 		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,
 		hideDatasetParameters: PlaygroundStateService.hideDatasetParameters,

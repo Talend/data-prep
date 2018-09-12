@@ -13,16 +13,23 @@ import {
 	SET_TITLE_EDITION_MODE,
 	OPEN_PREPARATION_CREATOR,
 	CANCEL_RENAME_PREPARATION,
+	OPEN_REMOVE_FOLDER_MODAL,
+	REMOVE_PREPARATION,
 } from '../constants/actions';
+
+const TYPES = {
+	FOLDER: 'folder',
+	PREPARATION: 'preparation',
+};
 
 // FIXME [NC]: folder management has nothing to do here
 // we're in the `preparation` action creators file,
 // so I think that the `type` argument should not exists
 function open(event, { type, id }) {
 	switch (type) {
-	case 'folder':
+	case TYPES.FOLDER:
 		return folder.open(event, { id });
-	case 'preparation':
+	case TYPES.PREPARATION:
 		return {
 			type: REDIRECT_WINDOW,
 			payload: {
@@ -57,6 +64,21 @@ function rename(event, data) {
 			name: data.value,
 		},
 	};
+}
+
+function remove(event, payload) {
+	switch (payload.model.type) {
+	case TYPES.FOLDER:
+		return {
+			type: OPEN_REMOVE_FOLDER_MODAL,
+			payload: payload.model,
+		};
+	case TYPES.PREPARATION:
+		return {
+			type: REMOVE_PREPARATION,
+			payload: payload.model.id,
+		};
+	}
 }
 
 function cancelRename(event, { id }) {
@@ -124,6 +146,7 @@ export default {
 	copy,
 	move,
 	fetch,
+	remove,
 	rename,
 	cancelRename,
 	openCopyModal,

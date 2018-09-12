@@ -50,6 +50,7 @@ export function HomeStateService($translate) {
 		setCopyMoveTreeLoading,
 		setSidePanelDock,
 		setContentLoading,
+		setAboutVisibility,
 		toggleAbout,
 		toggleCopyMovePreparation,
 		toggleFolderCreator,
@@ -96,6 +97,10 @@ export function HomeStateService($translate) {
 
 	function toggleAbout() {
 		homeState.about.isVisible = !homeState.about.isVisible;
+	}
+
+	function setAboutVisibility(visibility) {
+		homeState.about.isVisible = visibility;
 	}
 
 	function setBuilds(builds) {

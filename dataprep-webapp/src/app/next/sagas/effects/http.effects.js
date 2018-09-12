@@ -1,7 +1,7 @@
 import { put, select } from 'redux-saga/effects';
 import { HTTP_STATUS } from '@talend/react-cmf/lib/middlewares/http/constants';
 import { REDIRECT_WINDOW } from '../../constants/actions';
-import { default as creators } from '../../actions';
+import creators from '../../actions';
 
 export function* handle(event) {
 	if (!event.error || !event.error.stack) {
@@ -34,6 +34,13 @@ export function* handle(event) {
 		yield put(creators.notification.error(null, {
 			title: 'An error has occurred',
 			message: 'Service unavailable',
+		}));
+		break;
+	}
+	case HTTP_STATUS.CONFLICT: {
+		yield put(creators.notification.error(null, {
+			title: 'An error has occurred',
+			message: event.error.message,
 		}));
 		break;
 	}

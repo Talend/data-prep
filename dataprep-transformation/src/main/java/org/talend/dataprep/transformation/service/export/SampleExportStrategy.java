@@ -11,10 +11,21 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import org.talend.dataprep.transformation.service.ExportStrategy;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.dataprep.api.export.ExportParameters;
+
+import java.util.function.Predicate;
 
 /**
  * Tagging interface for export strategies that can be used for sampling.
  */
-public interface SampleExportStrategy extends ExportStrategy {
+public interface SampleExportStrategy extends Predicate<ExportParameters> {
+
+    /**
+     * Execute export strategy with given parameters. Callers are expected to ensure {@link #test(Object)}
+     * returns <code>true</code> before calling this method.
+     * @param parameters Export parameters (can <b>not</b> be null).
+     * @return A {@link StreamingResponseBody} that streams the export data to the provided output stream.
+     */
+    StreamingResponseBody execute(ExportParameters parameters);
 }

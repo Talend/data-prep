@@ -35,7 +35,7 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
     private DatasetClient datasetClient;
 
     @Override
-    public boolean accept(ExportParameters parameters) {
+    public boolean test(ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }

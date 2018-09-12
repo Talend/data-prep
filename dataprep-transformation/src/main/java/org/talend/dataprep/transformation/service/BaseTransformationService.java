@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.service;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +85,7 @@ public abstract class BaseTransformationService {
     StreamingResponseBody executeSampleExportStrategy(final ExportParameters parameters) {
         LOG.debug("Export for preparation #{}.", parameters.getPreparationId());
         try {
-            final Optional<? extends ExportStrategy> electedStrategy =
+            final Optional<SampleExportStrategy> electedStrategy =
                     chooseExportStrategy(sampleExportStrategies, parameters);
             if (electedStrategy.isPresent()) {
                 LOG.debug("Strategy for execution: {}", electedStrategy.get().getClass());
@@ -99,10 +100,10 @@ public abstract class BaseTransformationService {
         }
     }
 
-    protected <T extends ExportStrategy> Optional<T> chooseExportStrategy(OrderedBeans<T> exportStrategies,
+    protected <T extends Predicate<ExportParameters>> Optional<T> chooseExportStrategy(OrderedBeans<T> exportStrategies,
             final ExportParameters parameters) {
         return exportStrategies //
-                .filter(exportStrategy -> exportStrategy.accept(parameters)) //
+                .filter(exportStrategy -> exportStrategy.test(parameters)) //
                 .findFirst();
     }
 }

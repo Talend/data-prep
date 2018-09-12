@@ -153,7 +153,7 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 			'ngInject';
 
 			$translate.fallbackLanguage(fallbackLng);
-			$translate.preferredLanguage(preferredLanguage);
+			$translate.use(preferredLanguage);
 		});
 };
 

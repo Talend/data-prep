@@ -11,14 +11,13 @@
 
   ============================================================================*/
 
-div[data-prep-tooltip]:hover:after {
+label[data-prep-tooltip]:hover:after {
   $background: rgba(89, 89, 100, 0.9);
 
   content: attr(data-prep-tooltip);
 
   position: absolute;
   display: table-cell;
-  bottom: 10%;
   left: 180px;
   padding: 4px 8px;
 
@@ -34,6 +33,6 @@ div[data-prep-tooltip]:hover:after {
   min-width: 110px;
 }
 
-div[data-prep-tooltip=""]:hover:after{
+label[data-prep-tooltip=""]:hover:after{
   content: none;
 }

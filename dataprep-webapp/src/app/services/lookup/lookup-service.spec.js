@@ -266,6 +266,7 @@ describe('Lookup service', () => {
 		spyOn(StateService, 'setLookupSelectedColumn').and.returnValue();
 		spyOn(StateService, 'setLookupData').and.returnValue();
 		spyOn(StateService, 'setLookupDatasets').and.returnValue();
+		spyOn(StateService, 'setLookupLoading');
 	}));
 
 	describe('init lookup', () => {
@@ -290,6 +291,24 @@ describe('Lookup service', () => {
 				expect(StateService.setLookupDataset)
 					.toHaveBeenCalledWith(lookupActions[0]);
 		}));
+
+		describe('loading', () => {
+			it('should enable loading while fetching datasets', inject((LookupService, StateService) => {
+				//when
+				LookupService.initLookups();
+				//then
+				expect(StateService.setLookupLoading).toHaveBeenCalledWith(true);
+			}));
+
+			it('should disable loading when fetching datasets is done', inject(($rootScope, LookupService, StateService) => {
+				//when
+				LookupService.initLookups();
+				$rootScope.$digest();
+
+				//then
+				expect(StateService.setLookupLoading).toHaveBeenCalledWith(false);
+			}));
+		});
 
 		describe('datasets', () => {
 			it('should fetch datasets list', inject((LookupService, DatasetListService) => {
@@ -375,11 +394,12 @@ describe('Lookup service', () => {
 			stateMock.playground.stepInEditionMode = lookupStep;
 		}));
 
-		it('should not get dataset transformations if there is not dataset yet', inject((LookupService, TransformationRestService) => {
+		it('should not get dataset transformations if there is not dataset yet', inject((LookupService, StateService, TransformationRestService) => {
 			//when
 			LookupService.loadFromStep(lookupStep);
 
 			//then
+			expect(StateService.setLookupLoading).toHaveBeenCalledWith(true);
 			expect(TransformationRestService.getDatasetTransformations).not.toHaveBeenCalled();
 		}));
 
@@ -393,6 +413,7 @@ describe('Lookup service', () => {
 
 			//then
 			expect(StateService.setLookupSelectedColumn).toHaveBeenCalledWith(dsLookupContent.metadata.columns[0]);
+			expect(StateService.setLookupLoading).toHaveBeenCalledWith(false);
 		}));
 
 		it('should update the base lookup column', inject(($rootScope, LookupService, StateService) => {

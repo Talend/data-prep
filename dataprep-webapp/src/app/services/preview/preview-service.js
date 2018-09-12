@@ -22,7 +22,7 @@ import { range, chain, map } from 'lodash';
  * @requires data-prep.services.preparation.service:PreparationService
  * @requires data-prep.services.utils.service:StepUtilsService
  */
-export default function PreviewService($q, state, DatagridService, PreparationService, StepUtilsService) {
+export default function PreviewService($q, state, DatagridService, PreparationService, StepUtilsService, StateService) {
 	'ngInject';
 
     /**
@@ -186,6 +186,7 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			tdpIds: displayedTdpIds,
 			sourceType: state.playground.sampleType,
 		};
+		StateService.setPreviewIsLoading(true);
 		return PreparationService.getPreviewDiff(params, previewCanceler)
 			.then((response) => {
 				DatagridService.focusedColumn = targetColumnId;
@@ -196,7 +197,10 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 				cancelPreview();
 				return $q.reject(e);
 			})
-			.finally(() => previewCanceler = null);
+			.finally(() => {
+				previewCanceler = null;
+				StateService.setPreviewIsLoading(false);
+			});
 	}
 
     /**
@@ -229,6 +233,7 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			},
 			sourceType: state.playground.sampleType,
 		};
+		StateService.setPreviewIsLoading(true);
 		return PreparationService.getPreviewUpdate(params, previewCanceler)
 			.then((response) => {
 				DatagridService.focusedColumn = updateStep.column.id;
@@ -239,7 +244,10 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 				cancelPreview();
 				return $q.reject(e);
 			})
-			.finally(() => previewCanceler = null);
+			.finally(() => {
+				previewCanceler = null;
+				StateService.setPreviewIsLoading(false);
+			});
 	}
 
     /**
@@ -268,8 +276,7 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			preparationId,
 			sourceType: state.playground.sampleType,
 		};
-
-
+		StateService.setPreviewIsLoading(true);
 		return PreparationService.getPreviewAdd(params, previewCanceler)
 			.then((response) => {
 				DatagridService.focusedColumn = actionParams[0].column_id;
@@ -280,7 +287,10 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 				cancelPreview();
 				return $q.reject(e);
 			})
-			.finally(() => previewCanceler = null);
+			.finally(() => {
+				previewCanceler = null;
+				StateService.setPreviewIsLoading(false);
+			});
 	}
 
     /**

@@ -11,18 +11,20 @@
 
   ============================================================================*/
 
-export default function htmlLang($rootScope) {
+export default function htmlLang($rootScope, $translate) {
 	'ngInject';
 
 	return {
 		restrict: 'A',
 		link: (scope, element) => {
-			const listener = function (event, translationResp) {
-				const defaultLang = 'en';
-				const currentlang = translationResp && translationResp.language;
+			const defaultLang = $translate.use() || 'en';
+			element
+				.removeAttr('html-lang')
+				.attr('lang', defaultLang);
 
+			const listener = function (event, translationResp) {
+				const currentlang = translationResp && translationResp.language;
 				element
-					.removeAttr('html-lang')
 					.attr('lang', currentlang || defaultLang);
 			};
 

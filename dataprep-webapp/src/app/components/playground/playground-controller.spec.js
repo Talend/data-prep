@@ -235,10 +235,9 @@ describe('Playground controller', () => {
 
 			// when
 			ctrl.toggleLookup();
-			scope.$digest();
 
 			// then
-			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true, undefined);
+			expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true);
 		}));
 
 		it('should hide lookup panel when it is visible', inject((LookupService, StateService) => {

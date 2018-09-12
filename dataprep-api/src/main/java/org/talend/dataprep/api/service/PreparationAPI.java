@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -88,6 +89,7 @@ import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -159,9 +161,14 @@ public class PreparationAPI extends APIService {
             LOG.debug("Creating a preparation in {} (pool: {} )...", folder, getConnectionStats());
         }
 
-        RowMetadata rowMetadata = datasetClient.getDataSetRowMetadata(preparation.getDataSetId());
-
-        preparation.setRowMetadata(rowMetadata);
+        try {
+            final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+            final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
+            preparation.setRowMetadata(rowMetadata);
+        } catch (TDPException e) {
+            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST,
+                    ExceptionContext.withBuilder().put("id", preparation.getDataSetId()).build());
+        }
 
         PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation, folder);
         final String preparationId = preparationCreate.execute();

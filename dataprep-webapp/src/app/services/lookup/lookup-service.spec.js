@@ -448,6 +448,23 @@ describe('Lookup service', () => {
 	});
 
 	describe('add datasets to lookup', () => {
+		it('should fetch to refresh Lookup Datasets And Actions',
+			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService) => {
+				// given
+				spyOn(LookupService, 'updateLookupDatasetsProperties').and.returnValue();
+				spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
+				spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
+
+				// when
+				LookupService.updateLookupDatasetsAndActions();
+				$rootScope.$digest();
+
+				// then
+				expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
+				expect(TransformationRestService.getDatasetTransformations).toHaveBeenCalledWith(stateMock.playground.dataset.id);
+				expect(LookupService.updateLookupDatasetsProperties).toHaveBeenCalledWith({ data: lookupActions });
+			}));
+
 		it('should disable datasets which are used in recipe steps', inject(($rootScope, LookupService) => {
 			//given
 			stateMock.playground.lookup.datasets = [

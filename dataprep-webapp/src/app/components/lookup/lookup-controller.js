@@ -171,8 +171,11 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @description Open the add lookup dataset modal
 	 */
 	vm.openAddLookupDatasetModal = function openAddLookupDatasetModal() {
-		LookupService.disableDatasetsUsedInRecipe();
-		vm.addLookupDatasetModal = true;
+		LookupService.updateLookupDatasetsAndActions()
+			.then(() => {
+				LookupService.disableDatasetsUsedInRecipe();
+				vm.addLookupDatasetModal = true;
+			});
 	};
 
 	/**

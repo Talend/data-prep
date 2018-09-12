@@ -162,6 +162,35 @@ export default class LookupService {
 		this.StorageService.setLookupDatasets(datasetsIdsToSave);
 	}
 
+	updateLookupDatasetsAndActions() {
+		return this.DatasetListService.refreshDatasets()
+			.then(() => this.TransformationRestService.getDatasetTransformations(this.state.playground.dataset.id))
+			.then(lookup => this.updateLookupDatasetsProperties(lookup));
+	}
+
+	updateLookupDatasetsProperties(lookup) {
+		const actionsList = lookup.data;
+		const datasetsToAdd = _.chain(actionsList)
+			.map((action) => { // map action to dataset
+				return this.state
+					.inventory
+					.datasets
+					.content
+					.find(dataset => dataset.id === this._getDsId(action));
+			})
+			.filter(dataset => dataset)
+			.forEach((dataset) => {
+				dataset.addedToLookup = false;
+				dataset.enableToAddToLookup = true;
+			})
+			.value();
+		this.StateService.setLookupDatasets(datasetsToAdd);
+		this.StateService.setLookupActions(actionsList);
+
+		this._initLookupDatasets();
+
+		return this.state.playground.lookup.addedActions;
+	}
 	/**
 	 * @ngdoc method
 	 * @name disableDatasetsUsedInRecipe
@@ -178,6 +207,7 @@ export default class LookupService {
 			dataset.enableToAddToLookup = !lookupStep;
 		});
 	}
+
 
 	//------------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------PRIVATE--------------------------------------------------------
@@ -208,30 +238,7 @@ export default class LookupService {
 		}
 		else {
 			return this.TransformationRestService.getDatasetTransformations(datasetId)
-				.then((lookup) => {
-					const actionsList = lookup.data;
-
-					const datasetsToAdd = _.chain(actionsList)
-						.map((action) => { // map action to dataset
-							return this.state
-								.inventory
-								.datasets
-								.content
-								.find(dataset => dataset.id === this._getDsId(action));
-						})
-						.filter(dataset => dataset)
-						.forEach((dataset) => {
-							dataset.addedToLookup = false;
-							dataset.enableToAddToLookup = true;
-						})
-						.value();
-					this.StateService.setLookupDatasets(datasetsToAdd);
-					this.StateService.setLookupActions(actionsList);
-
-					this._initLookupDatasets();
-
-					return this.state.playground.lookup.addedActions;
-				});
+				.then(lookup => this.updateLookupDatasetsProperties(lookup));
 		}
 	}
 

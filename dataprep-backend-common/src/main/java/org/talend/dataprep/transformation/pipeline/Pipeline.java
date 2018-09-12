@@ -374,8 +374,7 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             current.to(outputSupplier.get());
             current.to(monitorSupplier.get());
 
-            final Node sourceNode = current.build();
-            pipeline.setNode(sourceNode);
+            pipeline.setNode(current.build());
 
             // Run optimizations
             optimize(pipeline);

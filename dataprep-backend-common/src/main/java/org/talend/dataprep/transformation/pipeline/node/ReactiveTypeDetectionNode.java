@@ -95,31 +95,24 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
     @Override
     public void signal(Signal signal) {
         try {
-            switch (signal) {
-            case END_OF_STREAM:
-            case STOP:
-            case CANCEL:
-            default:
-                final long start = System.currentTimeMillis();
-                try {
-                    initAnalyzer();
+            final long start = System.currentTimeMillis();
+            try {
+                initAnalyzer();
 
-                    // Adapt row metadata to infer type (adapter takes care of type-forced columns)
-                    resultAnalyzer.end();
-                    final List<ColumnMetadata> columns =
-                            getFilteredColumns(workingMetadata).collect(Collectors.toList());
-                    adapter.adapt(columns, resultAnalyzer.getResult(), filter);
-                } finally {
-                    totalTime += System.currentTimeMillis() - start;
-                    resultAnalyzer.close();
-                }
-
-                processor.onComplete();
-                processor.subscribe(row -> {
-                    LOGGER.trace("forward row: {}", row);
-                    link.exec().emit(row, workingMetadata);
-                });
+                // Adapt row metadata to infer type (adapter takes care of type-forced columns)
+                resultAnalyzer.end();
+                final List<ColumnMetadata> columns = getFilteredColumns(workingMetadata).collect(Collectors.toList());
+                adapter.adapt(columns, resultAnalyzer.getResult(), filter);
+            } finally {
+                totalTime += System.currentTimeMillis() - start;
+                resultAnalyzer.close();
             }
+
+            processor.onComplete();
+            processor.subscribe(row -> {
+                LOGGER.trace("forward row: {}", row);
+                link.exec().emit(row, workingMetadata);
+            });
         } catch (Exception e) {
             LOGGER.warn("Unable to perform delayed analysis.", e);
         }

@@ -45,6 +45,7 @@ const PlaygroundHeader = {
 	bindings: {
 		enableExport: '<',
 		lookupVisible: '<',
+		lookupLoading: '<',
 		onClose: '&',
 		onLookup: '&',
 		onParameters: '&',

@@ -45,7 +45,7 @@ public class DatasetBeanConversionTest {
         assertEquals(dataset.getUpdated(), datasetDTO.getLastModificationDate());
         assertEquals(dataset.getLabel(), datasetDTO.getName());
         assertEquals(dataset.getOwner(), datasetDTO.getAuthor());
-        assertEquals(dataset.getType(), datasetDTO.getType());
+        assertEquals(dataset.getType(), datasetDTO.getLocationType());
     }
 
     @Test

@@ -1,12 +1,13 @@
 package org.talend.dataprep.api.dataset;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Set;
+
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.api.share.SharedResource;
 import org.talend.dataprep.dataset.adapter.Dataset;
 
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DatasetDTO implements SharedResource {
 
@@ -49,7 +50,7 @@ public class DatasetDTO implements SharedResource {
 
     private Set<String> roles;
 
-    private String type;
+    private String locationType;
 
     private Long records;
 
@@ -175,12 +176,12 @@ public class DatasetDTO implements SharedResource {
         this.favorite = favorite;
     }
 
-    public String getType() {
-        return type;
+    public String getLocationType() {
+        return locationType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setLocationType(String locationType) {
+        this.locationType = locationType;
     }
 
     public Long getRecords() {

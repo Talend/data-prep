@@ -155,7 +155,7 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                 datasetDTO.setCertification(Dataset.CertificationState
                         .valueOf(datasetMetadata.getGovernance().getCertificationStep().name()));
             }
-            datasetDTO.setType(datasetMetadata.getContent().getMediaType());
+            datasetDTO.setLocationType(datasetMetadata.getContent().getMediaType());
             datasetDTO.setRecords(datasetMetadata.getContent().getNbRecords());
 
             return datasetDTO;

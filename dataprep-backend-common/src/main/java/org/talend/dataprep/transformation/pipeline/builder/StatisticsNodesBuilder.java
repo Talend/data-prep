@@ -137,6 +137,7 @@ public class StatisticsNodesBuilder {
     /**
      * Insert statistics computing nodes before the supplied action node if needed.
      * Will try each case one by one.
+     *
      * @param nextAction action needing
      * @return
      */
@@ -252,11 +253,12 @@ public class StatisticsNodesBuilder {
 
     private Node getPatternDetectionNode(final Predicate<ColumnMetadata> columnFilter,
             RowMetadataFallbackProvider rowMetadataFallbackProvider) {
-        return allowSchemaAnalysis ?
-                new TypeDetectionNode(columnFilter, statisticsAdapter, c -> analyzerService
-                        .build(c, AnalyzerService.Analysis.PATTERNS, AnalyzerService.Analysis.WORD_PATTERNS),
-                        rowMetadataFallbackProvider) :
-                new BasicNode();
+        return allowSchemaAnalysis
+                ? new TypeDetectionNode(
+                        columnFilter, statisticsAdapter, c -> analyzerService.build(c,
+                                AnalyzerService.Analysis.PATTERNS, AnalyzerService.Analysis.WORD_PATTERNS),
+                        rowMetadataFallbackProvider)
+                : new BasicNode();
     }
 
     private Node getInvalidDetectionNode(final Predicate<ColumnMetadata> columnFilter) {

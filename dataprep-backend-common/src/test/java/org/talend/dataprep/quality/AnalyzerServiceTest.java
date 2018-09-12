@@ -6,16 +6,20 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import org.mockito.Mockito;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
@@ -88,6 +92,16 @@ public class AnalyzerServiceTest {
         }
     }
 
+    @Test
+    public void analyseFull() {
+        RowMetadata metadata = RowMetadataBuilder.rowMetadata().withColumnNames("id", "firstName", "name").build();
+        DataSetRow row = DataSetRowBuilder.row(metadata).withValues("1", "Robert", "de Niro").build();
+
+        service.analyzeFull(Stream.of(row), metadata.getColumns());
+
+        assertFalse(metadata.getColumns().iterator().next().getStatistics().getWordPatternFrequencyTable().isEmpty());
+    }
+
     private Map<String, DQCategory> createMetadata() {
         Map<String, DQCategory> metadata = new HashMap<>();
 
@@ -98,5 +112,61 @@ public class AnalyzerServiceTest {
 
         metadata.put("AIRPORT_CODE", airportCodeCategory);
         return metadata;
+    }
+
+    private static NumberFormat COLUMN_ID_FORMAT = NumberFormat.getInstance();
+
+    static {
+        COLUMN_ID_FORMAT.setMaximumFractionDigits(0);
+        COLUMN_ID_FORMAT.setMinimumFractionDigits(0);
+        COLUMN_ID_FORMAT.setMaximumIntegerDigits(4);
+        COLUMN_ID_FORMAT.setMinimumIntegerDigits(4);
+        COLUMN_ID_FORMAT.setGroupingUsed(false);
+    }
+
+    private static class RowMetadataBuilder {
+
+        private RowMetadata rowMetadata = new RowMetadata();
+
+        public static RowMetadataBuilder rowMetadata() {
+            return new RowMetadataBuilder();
+        }
+
+        public RowMetadataBuilder withColumnNames(String... names) {
+            for (int i = 0; i < names.length; i++) {
+                ColumnMetadata columnMetadata = new ColumnMetadata();
+                columnMetadata.setId(COLUMN_ID_FORMAT.format(i));
+                columnMetadata.setName(names[i]);
+                rowMetadata.addColumn(columnMetadata);
+            }
+            return this;
+        }
+
+        public RowMetadata build() {
+            return rowMetadata;
+        }
+    }
+
+    private static class DataSetRowBuilder {
+
+        private DataSetRow dataSetRow;
+
+        public static DataSetRowBuilder row(RowMetadata rowMetadata) {
+            DataSetRowBuilder builder = new DataSetRowBuilder();
+            builder.dataSetRow = new DataSetRow(rowMetadata);
+            return builder;
+        }
+
+        public DataSetRowBuilder withValues(String... values) {
+            for (int i = 0; i < values.length; i++) {
+                dataSetRow.set(COLUMN_ID_FORMAT.format(i), values[i]);
+            }
+            return this;
+        }
+
+        public DataSetRow build() {
+            return dataSetRow;
+        }
+
     }
 }

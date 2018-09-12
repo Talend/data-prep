@@ -23,8 +23,8 @@
  */
 export default class LookupService {
 	constructor($q, state, DatasetListService,
-	            StateService, TransformationRestService,
-	            DatasetRestService, StorageService) {
+				StateService, TransformationRestService,
+				DatasetRestService, StorageService) {
 		'ngInject';
 
 		this.$q = $q;

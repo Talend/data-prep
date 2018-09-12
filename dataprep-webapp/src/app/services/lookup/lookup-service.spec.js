@@ -387,7 +387,7 @@ describe('Lookup service', () => {
 	});
 
 	describe('update a lookup step', () => {
-		beforeEach(inject(($q, TransformationRestService, DatasetListService, StateService) => {
+		beforeEach(inject(($q, TransformationRestService, DatasetListService) => {
 			spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
 			spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
 			stateMock.playground.data = { metadata: { columns: [{ id: '0000' }] } };

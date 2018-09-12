@@ -1,16 +1,23 @@
 package org.talend.dataprep.qa.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.junit.*;
-import org.junit.runner.*;
-import org.mockito.*;
-import org.mockito.runners.*;
-import org.springframework.test.context.*;
-import org.talend.dataprep.helper.api.*;
-import org.talend.dataprep.qa.config.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.config.FeatureContext;
+import org.talend.dataprep.qa.config.UnitTestsUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(classes = { OSIntegrationTestUtil.class })

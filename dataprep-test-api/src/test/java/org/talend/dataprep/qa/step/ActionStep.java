@@ -13,23 +13,30 @@
 
 package org.talend.dataprep.qa.step;
 
-import static org.junit.Assert.*;
-import static org.springframework.http.HttpStatus.*;
-import static org.talend.dataprep.qa.config.FeatureContext.*;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.slf4j.*;
-import org.talend.dataprep.helper.api.*;
-import org.talend.dataprep.qa.config.*;
-import org.talend.dataprep.qa.dto.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.PreparationContent;
+import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import com.jayway.restassured.response.*;
+import com.jayway.restassured.response.Response;
 
-import cucumber.api.*;
-import cucumber.api.java.en.*;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with action

@@ -13,20 +13,27 @@
 
 package org.talend.dataprep.qa.config;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
-import javax.annotation.*;
-import javax.validation.constraints.*;
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
-import org.talend.dataprep.format.export.*;
-import org.talend.dataprep.helper.api.*;
-import org.talend.dataprep.qa.dto.*;
-import org.talend.dataprep.qa.util.*;
-import org.talend.dataprep.qa.util.folder.*;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.format.export.ExportFormatMessage;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.dto.Folder;
+import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
+import org.talend.dataprep.qa.util.PreparationUID;
+import org.talend.dataprep.qa.util.folder.FolderUtil;
 
 /**
  * Used to share data within steps.

@@ -1,19 +1,24 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.qa.config.FeatureContext.*;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.*;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
-import org.talend.dataprep.helper.api.*;
-import org.talend.dataprep.qa.config.*;
-import org.talend.dataprep.qa.dto.*;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.config.FeatureContext;
+import org.talend.dataprep.qa.dto.Folder;
 
 /**
  * Utility class for Integration Tests in Data-prep OS.

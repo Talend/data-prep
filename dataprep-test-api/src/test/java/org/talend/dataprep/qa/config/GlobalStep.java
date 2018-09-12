@@ -13,15 +13,17 @@
 
 package org.talend.dataprep.qa.config;
 
-import static org.talend.dataprep.qa.config.FeatureContext.*;
+import static org.talend.dataprep.qa.config.FeatureContext.setUseSuffix;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.slf4j.*;
-import org.talend.dataprep.qa.dto.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.talend.dataprep.qa.dto.Folder;
 
-import cucumber.api.java.*;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 
 /**
  * Storage for Before and After actions.

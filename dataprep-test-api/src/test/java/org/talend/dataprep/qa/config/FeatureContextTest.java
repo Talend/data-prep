@@ -1,12 +1,18 @@
 package org.talend.dataprep.qa.config;
 
-import static org.junit.Assert.*;
-import static org.talend.dataprep.qa.config.FeatureContext.*;
-import static org.talend.dataprep.qa.config.UnitTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.talend.dataprep.qa.config.FeatureContext.getSuffix;
+import static org.talend.dataprep.qa.config.FeatureContext.isUseSuffix;
+import static org.talend.dataprep.qa.config.FeatureContext.setUseSuffix;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.qa.config.UnitTestsUtil.injectFieldInClass;
 
-import org.junit.*;
-import org.junit.runner.*;
-import org.mockito.runners.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FeatureContextTest {

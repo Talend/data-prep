@@ -14,6 +14,7 @@
 package org.talend.dataprep.helper.api;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,6 +26,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Action {
 
+    /** This specific parameters should be ignored. */
+    private static final String LOOKUP_DS_ID_PARAMETER = "lookup_ds_id";
+
     public String action;
 
     // not to be loaded by jackson but to be inferred from steps attribute @see PreparationDetails
@@ -33,7 +37,12 @@ public class Action {
 
     public Map<String, Object> parameters = new HashMap<>();
 
-    // Generated equals() on action & parameters attributes
+    /**
+     * Specific equals in order to ignore lookup_ds_id parameter from lookup actions.
+     * 
+     * @param o action to check equality with.
+     * @return <code>true</code> if both objects are equals, <code>else</code> else.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -45,7 +54,26 @@ public class Action {
 
         if (action != null ? !action.equals(action1.action) : action1.action != null)
             return false;
-        return parameters != null ? parameters.equals(action1.parameters) : action1.parameters == null;
+
+        if (parameters.size() != action1.parameters.size())
+            return false;
+
+        Iterator<Map.Entry<String, Object>> esIterator = parameters.entrySet().iterator();
+        while (esIterator.hasNext()) {
+            Map.Entry<String, Object> entry = esIterator.next();
+            String key = entry.getKey();
+            if (!key.equals(LOOKUP_DS_ID_PARAMETER)) {
+                Object value = entry.getValue();
+                if (value == null) {
+                    if (!(action1.parameters.get(key) == null && action1.parameters.containsKey(key)))
+                        return false;
+                } else {
+                    if (!value.equals(action1.parameters.get(key)))
+                        return false;
+                }
+            }
+        }
+        return true;
     }
 
     // Generated hashCode() on action & parameters attributes

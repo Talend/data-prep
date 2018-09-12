@@ -116,7 +116,6 @@ public class TQLFilterServiceTest extends AbstractFilterServiceTest {
                 .assertFilterReturnsFalseForValues("Nicolas", "Stéphane");
     }
 
-
     @Test
     public void testWhatever() throws Exception {
         // given

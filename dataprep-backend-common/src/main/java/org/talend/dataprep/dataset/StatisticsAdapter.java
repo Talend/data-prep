@@ -33,6 +33,7 @@ import org.talend.dataprep.api.dataset.statistics.number.NumberHistogram;
 import org.talend.dataprep.api.dataset.statistics.number.StreamNumberHistogramStatistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.api.type.TypeUtils;
+import org.talend.dataprep.quality.WordPatternFrequencyAccumulator;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
@@ -116,6 +117,7 @@ public class StatisticsAdapter {
         injectCardinality(currentColumn, result); // distinct + duplicates
         injectDataFrequency(currentColumn, result);
         injectPatternFrequency(currentColumn, result);
+        injectWordPatternFrequency(currentColumn, result);
         injectQuantile(currentColumn, result);
         injectNumberSummary(currentColumn, result); // min, max, mean, variance
         injectTextLength(currentColumn, result);
@@ -262,13 +264,14 @@ public class StatisticsAdapter {
     }
 
     private void injectWordPatternFrequency(final ColumnMetadata column, final Analyzers.Result result) {
-        if (result.exist(PatternFrequencyStatistics.class)) {
+        if (result.exist(WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics.class)) {
             final Statistics statistics = column.getStatistics();
-            final PatternFrequencyStatistics patternFrequencyStatistics = result.get(PatternFrequencyStatistics.class);
+            final WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics patternFrequencyStatistics =
+                    result.get(WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics.class);
             final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(15);
             if (topTerms != null) {
-                statistics.getPatternFrequencies().clear();
-                topTerms.forEach((s, o) -> statistics.getPatternFrequencies().add(new PatternFrequency(s, o)));
+                statistics.getWordPatternFrequencyTable().clear();
+                topTerms.forEach((s, o) -> statistics.getWordPatternFrequencyTable().add(new PatternFrequency(s, o)));
             }
         }
     }

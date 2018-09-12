@@ -222,7 +222,7 @@ public class AnalyzerService {
                 analyzers.add(buildPatternAnalyzer(columns));
                 break;
             case WORD_PATTERNS:
-                analyzers.add(new CompositePatternFrequencyAnalyzer(singletonList(TypoUnicodePatternRecognizer.noCase()), TypeUtils.convert(columns)));
+                analyzers.add(buildWordPatternAnalyzer(columns));
                 break;
             case LENGTH:
                 analyzers.add(new TextLengthAnalyzer());
@@ -276,6 +276,12 @@ public class AnalyzerService {
         }
     }
 
+    private PatternAnalyzer<RecognitionResult, WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics>
+            buildWordPatternAnalyzer(List<ColumnMetadata> columns) {
+        return new PatternAnalyzer<>(TypeUtils.convert(columns), TypoUnicodePatternRecognizer.noCase()::recognize,
+                WordPatternFrequencyAccumulator::new);
+    }
+
     public Analyzer<Analyzers.Result> full(final List<ColumnMetadata> columns) {
         // Configure quality & semantic analysis (if column metadata information is present in stream).
         return build(columns, Analysis.QUALITY, Analysis.CARDINALITY, Analysis.FREQUENCY, Analysis.PATTERNS, //
@@ -309,7 +315,6 @@ public class AnalyzerService {
         analyzer.init();
         records.map(r -> r.toArray()).forEach(analyzer::analyze);
         analyzer.end();
-
 
         final List<Analyzers.Result> analyzerResult = analyzer.getResult();
         final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
@@ -352,9 +357,10 @@ public class AnalyzerService {
         /**
          * String patterns
          */
-        PATTERNS(PatternFrequencyStatistics.class),        /**
-         * String patterns
-         */
+        PATTERNS(PatternFrequencyStatistics.class),
+        /**
+        * String patterns
+        */
         WORD_PATTERNS(PatternFrequencyStatistics.class),
         /**
          * Text length (min / max length)

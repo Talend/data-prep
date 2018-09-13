@@ -1,13 +1,13 @@
 package org.talend.dataprep.api.dataset;
 
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.api.share.SharedResource;
 import org.talend.dataprep.dataset.adapter.Dataset;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Set;
 
 public class DatasetDTO implements SharedResource {
 

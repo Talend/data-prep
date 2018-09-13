@@ -6,8 +6,8 @@ import org.talend.dataquality.statistics.frequency.recognition.RecognitionResult
 import java.util.Locale;
 import java.util.Map;
 
-public class PatternFrequencyAccumulator<T extends PatternFrequencyStatistics> implements
-        PatternAnalyzer.Accumulator<RecognitionResult, T> {
+public class PatternFrequencyAccumulator<T extends PatternFrequencyStatistics>
+        implements PatternAnalyzer.Accumulator<RecognitionResult, T> {
 
     private T statistics;
 

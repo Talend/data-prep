@@ -279,8 +279,7 @@ public class AnalyzerService {
         }
     }
 
-    private Analyzer<WordPatternFrequencyStatistics>
-            buildWordPatternAnalyzer(List<ColumnMetadata> columns) {
+    private Analyzer<WordPatternFrequencyStatistics> buildWordPatternAnalyzer(List<ColumnMetadata> columns) {
         return new PatternAnalyzer<>(TypeUtils.convert(columns), TypoUnicodePatternRecognizer.noCase()::recognize,
                 () -> new PatternFrequencyAccumulator<>(new WordPatternFrequencyStatistics()));
     }

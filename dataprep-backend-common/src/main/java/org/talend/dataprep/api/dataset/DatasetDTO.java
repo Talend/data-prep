@@ -2,7 +2,6 @@ package org.talend.dataprep.api.dataset;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.talend.dataprep.api.share.Owner;
 import org.talend.dataprep.api.share.SharedResource;
 import org.talend.dataprep.dataset.adapter.Dataset;

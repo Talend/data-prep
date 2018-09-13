@@ -32,8 +32,7 @@ public class FolderStep extends DataPrepStep {
     private static final Logger LOG = LoggerFactory.getLogger(FolderStep.class);
 
     @Then("^I create a folder with the following parameters :$")
-    public void createFolder(@NotNull DataTable dataTable) throws IOException {
-        Map<String, String> params = dataTable.asMap(String.class, String.class);
+    public void createFolder(@NotNull Map<String, String> params) throws IOException {
         String parentFolderName = params.get(ORIGIN);
         String folder = suffixFolderName(params.get(FOLDER_NAME));
 

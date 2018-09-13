@@ -177,7 +177,9 @@ export default class DatasetImportCtrl {
 	 * @param changes Form changes
 	 */
 	onDatastoreFormSubmit(event, changes) {
-		const { formData, definitionName = (this.locationType || (this.item && this.item.componentType) || LIVE_LOCATION_TYPE) } = changes;
+		// Get item type from its mime type
+		const itemType = this.item && this.item.type && this.item.type.split('.').reverse()[0];
+		const { formData, definitionName = (this.locationType || itemType || LIVE_LOCATION_TYPE) } = changes;
 		if (this.submitLock) {
 			const formsData = {
 				dataStoreProperties: formData,

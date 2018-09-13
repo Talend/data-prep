@@ -14,7 +14,7 @@
     "build": "cmf-settings && cross-env NODE_ENV=production webpack --config config/webpack.config.prod.js --progress",
     "build:dist": "cmf-settings && cross-env NODE_ENV=production webpack --config config/webpack.config.prod.js --progress",
     "prebuild": "rimraf ./build",
-    "start": "cmf-settings && cross-env NODE_ENV=development webpack-dev-server --config config/webpack.config.dev.js --progress --content-base build/",
+    "start": "cmf-settings && cross-env NODE_ENV=development node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js --config config/webpack.config.dev.js --progress --content-base build/",
     "test": "cross-env NODE_ENV=test karma start && jest",
     "test:karma": "cross-env NODE_ENV=test karma start",
     "test:jest": "cross-env NODE_ENV=test jest",

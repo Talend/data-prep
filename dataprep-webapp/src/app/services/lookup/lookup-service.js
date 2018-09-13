@@ -48,6 +48,11 @@ export default class LookupService {
 	 * an existing one
 	 */
 	initLookups() {
+		const step = this.state.playground.stepInEditionMode;
+		if (step) {
+			return this.loadFromStep(step);
+		}
+		this.StateService.setLookupLoading(true);
 		return this._getDatasets()
 			.then(() => {
 				return this._getActions(this.state.playground.dataset.id)
@@ -55,12 +60,10 @@ export default class LookupService {
 						if (!lookupActions.length) {
 							return;
 						}
-
-						const step = this.state.playground.stepInEditionMode;
-						if (step) {
-							return this.loadFromStep(step);
-						}
 						return this.loadFromAction(lookupActions[0]);
+					})
+					.finally(() => {
+						this.StateService.setLookupLoading(false);
 					});
 			});
 	}
@@ -101,6 +104,7 @@ export default class LookupService {
 	 * @description Loads the lookup parameters from the step
 	 */
 	loadFromStep(step) {
+		this.StateService.setLookupLoading(true);
 		return this._getDatasets()
 			.then(() => {
 				return this._getActions(this.state.playground.dataset.id)
@@ -121,6 +125,9 @@ export default class LookupService {
 								const selectedColumn = lookupDsContent.metadata
 									.columns.find(col => col.id === step.actionParameters.parameters.lookup_join_on);
 								this.StateService.setLookupSelectedColumn(selectedColumn);
+							})
+							.finally(() => {
+								this.StateService.setLookupLoading(false);
 							});
 					});
 			});

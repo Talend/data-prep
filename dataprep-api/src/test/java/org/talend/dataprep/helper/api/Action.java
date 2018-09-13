@@ -13,8 +13,10 @@
 
 package org.talend.dataprep.helper.api;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,8 +28,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Action {
 
-    /** This specific parameters should be ignored. */
-    private static final String LOOKUP_DS_ID_PARAMETER = "lookup_ds_id";
+    private static Map<String, List<String>> ignoredParams = new HashMap<>();
+    static {
+        ignoredParams.put("lookup", Arrays.asList("lookup_ds_id"));
+        ignoredParams.put("split", Arrays.asList("row_id"));
+        ignoredParams.put("extract_date_tokens", Arrays.asList("row_id"));
+        ignoredParams.put("delete_invalid", Arrays.asList("row_id"));
+        ignoredParams.put("change_date_pattern", Arrays.asList("row_id"));
+
+    }
 
     public String action;
 
@@ -38,8 +47,25 @@ public class Action {
     public Map<String, Object> parameters = new HashMap<>();
 
     /**
-     * Specific equals in order to ignore lookup_ds_id parameter from lookup actions.
+     * Verify if we should ignore a parameter during equals check.
      * 
+     * @param actionName the action name
+     * @param paramName the parameter name
+     * @return <code>true</code> or <code>false</code>
+     */
+    private static boolean isIgnored(String actionName, String paramName) {
+        List<String> ignoredParam = ignoredParams.get(actionName);
+        if (ignoredParam != null) {
+            if (ignoredParam.contains(paramName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Specific equals in order to ignore lookup_ds_id parameter from lookup actions.
+     *
      * @param o action to check equality with.
      * @return <code>true</code> if both objects are equals, <code>else</code> else.
      */
@@ -62,7 +88,7 @@ public class Action {
         while (esIterator.hasNext()) {
             Map.Entry<String, Object> entry = esIterator.next();
             String key = entry.getKey();
-            if (!key.equals(LOOKUP_DS_ID_PARAMETER)) {
+            if (!isIgnored(action, key)) {
                 Object value = entry.getValue();
                 if (value == null) {
                     if (!(action1.parameters.get(key) == null && action1.parameters.containsKey(key)))

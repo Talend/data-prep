@@ -144,7 +144,7 @@ export default class LookupService {
 			.filter('addedToLookup') // filter addedToLookup = true
 			.map((dataset) => { // map dataset to action
 				return _.find(this.state.playground.lookup.actions, (action) => {
-					return _.find(action.parameters, { name: 'lookup_ds_id' }).default === dataset.id;
+					return this._getDsId(action) === dataset.id;
 				});
 			})
 			.filter(action => action) // remove falsy action (added dataset but no action with this dataset)
@@ -285,11 +285,21 @@ export default class LookupService {
 		const actionsToAdd = _.chain(addedDatasets)
 			.map((datasetId) => { // map dataset to action
 				return _.find(this.state.playground.lookup.actions, (action) => {
-					return _.find(action.parameters, { name: 'lookup_ds_id' }).default === datasetId;
+					return this._getDsId(action) === datasetId;
 				});
 			})
 			.filter(action => action) // remove falsy action
 			.value();
 		this.StateService.setLookupAddedActions(actionsToAdd);
+
+		// when lookup.dataset is removed from addedDatasets
+		if (this.state.playground.lookup.dataset && actionsToAdd.length) {
+			const isLookupDatasetRemoved = _.find(addedDatasets, (datasetId) => {
+				return this._getDsId(this.state.playground.lookup.dataset) === datasetId;
+			});
+			if (isLookupDatasetRemoved) {
+				this.loadFromAction(actionsToAdd[0]);
+			}
+		}
 	}
 }

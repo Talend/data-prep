@@ -18,14 +18,14 @@ class AutoResizeList<T> implements List<T> {
     }
 
     /**
-     * fill the list up to supplied index using {@link Supplier<T>} to get values.
+     * fill the list to reach given size using {@link Supplier<T>} to get values.
      *
-     * @param targetIndex the new biggest index of the list queryable using {@link #get(int) get(targetIndex)}
+     * @param targetSize the new list {@link #size() size}.
      */
-    public void ensureSize(int targetIndex) {
+    public void ensureSize(int targetSize) {
         int currentSize = delegate.size();
-        if (currentSize <= targetIndex) {
-            for (int indexAdded = currentSize; indexAdded <= targetIndex; indexAdded++) {
+        if (currentSize < targetSize) {
+            for (int indexAdded = currentSize; indexAdded < targetSize; indexAdded++) {
                 delegate.add(elementSupplier.get());
             }
         }

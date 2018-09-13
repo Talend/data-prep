@@ -539,7 +539,7 @@ describe('Lookup service', () => {
 			$rootScope.$digest();
 
 			//then
-			expect(StorageService.setLookupDatasets).toHaveBeenCalledWith(['first_lookup_dataset_id', '4']);
+			expect(StorageService.setLookupDatasets).toHaveBeenCalledWith(['first_lookup_dataset_id']);
 		}));
 	});
 });

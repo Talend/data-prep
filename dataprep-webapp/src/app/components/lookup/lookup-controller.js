@@ -108,6 +108,10 @@ export default function LookupCtrl($timeout, state, StateService,
 		return _.find(item.parameters, { name: 'lookup_ds_name' }).default;
 	};
 
+	vm.getDsId = function getDsId(item) {
+		return _.find(item.parameters, { name: 'lookup_ds_id' }).default;
+	};
+
 	/**
 	 * @ngdoc method
 	 * @name extractLookupParams

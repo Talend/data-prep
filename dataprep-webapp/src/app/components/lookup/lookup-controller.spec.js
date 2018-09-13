@@ -300,6 +300,16 @@ describe('Lookup controller', () => {
 			//then
 			expect(label).toBe('lookup_2');
 		}));
+
+		it('should return the action id', inject(function () {
+			//given
+			const ctrl = createController();
+
+			//when
+			const id = ctrl.getDsId(dsActions[0]);
+			//then
+			expect(id).toBe('lookup_dataset_id');
+		}));
 	});
 
 	describe('add datasets ', () => {

@@ -43,6 +43,7 @@ export default function NavigationList($timeout) {
 			selectedItem: '=',
 			onClick: '&',
 			getLabel: '&',
+			getId: '&',
 			onAddItem: '&',
 		},
 		bindToController: true,

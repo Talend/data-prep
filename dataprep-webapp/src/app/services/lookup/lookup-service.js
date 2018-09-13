@@ -294,11 +294,11 @@ export default class LookupService {
 
 		// when lookup.dataset is removed from addedDatasets
 		if (this.state.playground.lookup.dataset && actionsToAdd.length) {
-			const isLookupDatasetRemoved = _.find(addedDatasets, (datasetId) => {
-				return this._getDsId(this.state.playground.lookup.dataset) === datasetId;
+			const isLookupDatasetStillAdded = _.find(actionsToAdd, (action) => {
+				return this._getDsId(this.state.playground.lookup.dataset) === this._getDsId(action);
 			});
-			if (isLookupDatasetRemoved) {
-				this.loadFromAction(actionsToAdd[0]);
+			if (!isLookupDatasetStillAdded) {
+				this.loadFromAction(actionsToAdd[0]); // sync lookup dataset/navigation list
 			}
 		}
 	}

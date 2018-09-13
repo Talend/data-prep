@@ -541,5 +541,37 @@ describe('Lookup service', () => {
 			//then
 			expect(StorageService.setLookupDatasets).toHaveBeenCalledWith(['first_lookup_dataset_id']);
 		}));
+
+		it('should refresh lookup dataset if it is removed from added datasets', inject(($q, $rootScope, LookupService, StorageService, StateService) => {
+			//given
+			stateMock.playground.lookup.datasets = [
+				{ id: 'first_lookup_dataset_id', addedToLookup: true, created: 90 },
+				{ id: 'second_lookup_dataset_id', addedToLookup: false, created: 80 },
+			];
+
+			stateMock.playground.lookup.actions = lookupActions;
+			stateMock.playground.lookup.addedActions = [];
+			stateMock.playground.lookup.dataset = {
+				category: 'data_blending',
+				name: 'lookup',
+				parameters: [
+					{
+						name: 'lookup_ds_id',
+						type: 'string',
+						default: 'third_lookup_dataset_id',
+					}
+				]
+			};
+
+			spyOn(StorageService, 'getLookupDatasets').and.returnValue(['first_lookup_dataset_id', 'second_lookup_dataset_id', 'third_lookup_dataset_id']);
+			spyOn(LookupService, 'loadFromAction').and.returnValue();
+
+			//when
+			LookupService._initLookupDatasets();
+			$rootScope.$digest();
+
+			//then
+			expect(LookupService.loadFromAction).toHaveBeenCalledWith(lookupActions[0]);
+		}));
 	});
 });

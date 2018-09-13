@@ -168,7 +168,7 @@
   "EDIT_DATASET": "データセットの編集",
 
   "_comment": "オンボーディング",
-  "LOADING": "読み込んでいます…",
+  "LOADING": "読み込んでいます",
   "PROCESSING": "処理中",
   "UPLOAD_PROCESSING": "データをプロファイリング中です。お待ちください…",
   "COMING_SOON": "近日公開…",

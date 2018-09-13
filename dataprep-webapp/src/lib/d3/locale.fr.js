@@ -1,4 +1,4 @@
-const d3LocaleFr = {
+const frFR = {
 	decimal: ',',
 	thousands: '.',
 	grouping: [3],
@@ -13,4 +13,4 @@ const d3LocaleFr = {
 	shortMonths: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
 };
 
-export default d3LocaleFr;
+export default frFR;

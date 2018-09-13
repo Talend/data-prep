@@ -13,6 +13,8 @@
 
 import d3 from 'd3';
 
+const formatNumber = d3.format(',');
+
 /**
  * @ngdoc directive
  * @name talend.widget.directive:boxplotChart
@@ -184,7 +186,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('class', 'max-min-labels')
 					.attr('x', width / 2)
 					.attr('y', vScale(boxValues.min) / 2)
-					.text(d3.format(',')(boxValues.max))
+					.text(formatNumber(boxValues.max))
 					.style('opacity', 1)
 					.attr('text-anchor', 'middle')
 					.transition()
@@ -196,7 +198,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('class', 'max-min-labels')
 					.attr('x', width / 2)
 					.attr('y', vScale(boxValues.min) / 2)
-					.text(d3.format(',')(boxValues.min))
+					.text(formatNumber(boxValues.min))
 					.style('opacity', 1)
 					.attr('text-anchor', 'middle')
 					.transition()
@@ -217,7 +219,7 @@ export default function BoxplotChart($timeout, $translate) {
 							return vScale(boxValues.mean) - 10;
 						}
 					})
-					.text(`${$translate.instant('MEAN')}${$translate.instant('COLON')}` + d3.format(',')(boxValues.mean))
+					.text(`${$translate.instant('MEAN')}${$translate.instant('COLON')}` + formatNumber(boxValues.mean))
 					.style('opacity', 1e-6)
 					.attr('text-anchor', 'middle')
 					.transition()
@@ -229,7 +231,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('class', 'low-quantile-labels')
 					.attr('x', width + 5)
 					.attr('y', vScale(boxValues.min) / 2)
-					.text(d3.format(',')(boxValues.q1))
+					.text(formatNumber(boxValues.q1))
 					.style('opacity', 1)
 					.attr('text-anchor', 'start')
 					.transition()
@@ -265,7 +267,7 @@ export default function BoxplotChart($timeout, $translate) {
 					.attr('class', 'up-quantile-labels')
 					.attr('x', width + 5)
 					.attr('y', vScale(boxValues.min) / 2)
-					.text(d3.format(',')(boxValues.q2))
+					.text(formatNumber(boxValues.q2))
 					.style('opacity', 1)
 					.attr('text-anchor', 'start')
 					.transition()
@@ -275,7 +277,7 @@ export default function BoxplotChart($timeout, $translate) {
 				// median value
 				gTexts.append('text')
 					.attr('x', width - 5)
-					.text(d3.format(',')(boxValues.median))
+					.text(formatNumber(boxValues.median))
 					.style('opacity', 1e-6)
 					.attr('text-anchor', 'end')
 					.attr('y', () => {

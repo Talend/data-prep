@@ -1,4 +1,4 @@
-package org.talend.dataprep.quality;
+package org.talend.dataprep.api.dataset.statistics.pattern;
 
 import org.talend.dataquality.statistics.frequency.pattern.PatternFrequencyStatistics;
 import org.talend.dataquality.statistics.frequency.recognition.RecognitionResult;
@@ -6,10 +6,14 @@ import org.talend.dataquality.statistics.frequency.recognition.RecognitionResult
 import java.util.Locale;
 import java.util.Map;
 
-public class WordPatternFrequencyAccumulator implements
-        PatternAnalyzer.Accumulator<RecognitionResult, WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics> {
+public class PatternFrequencyAccumulator<T extends PatternFrequencyStatistics> implements
+        PatternAnalyzer.Accumulator<RecognitionResult, T> {
 
-    private WordPatternFrequencyStatistics statistics = new WordPatternFrequencyStatistics();
+    private T statistics;
+
+    public PatternFrequencyAccumulator(T statistics) {
+        this.statistics = statistics;
+    }
 
     @Override
     public void accept(RecognitionResult result) {
@@ -18,11 +22,8 @@ public class WordPatternFrequencyAccumulator implements
         }
     }
 
-    public WordPatternFrequencyStatistics get() {
+    public T get() {
         return statistics;
     }
 
-    public static class WordPatternFrequencyStatistics extends PatternFrequencyStatistics {
-
-    }
 }

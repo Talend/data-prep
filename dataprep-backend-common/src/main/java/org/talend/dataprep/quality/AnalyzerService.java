@@ -33,6 +33,9 @@ import org.talend.dataprep.api.dataset.row.RowMetadataUtils;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramAnalyzer;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramStatistics;
 import org.talend.dataprep.api.dataset.statistics.number.StreamNumberHistogramAnalyzer;
+import org.talend.dataprep.api.dataset.statistics.pattern.PatternAnalyzer;
+import org.talend.dataprep.api.dataset.statistics.pattern.PatternFrequencyAccumulator;
+import org.talend.dataprep.api.dataset.statistics.pattern.WordPatternFrequencyStatistics;
 import org.talend.dataprep.api.type.TypeUtils;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.transformation.actions.date.DateParser;
@@ -276,10 +279,10 @@ public class AnalyzerService {
         }
     }
 
-    private PatternAnalyzer<RecognitionResult, WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics>
+    private Analyzer<WordPatternFrequencyStatistics>
             buildWordPatternAnalyzer(List<ColumnMetadata> columns) {
         return new PatternAnalyzer<>(TypeUtils.convert(columns), TypoUnicodePatternRecognizer.noCase()::recognize,
-                WordPatternFrequencyAccumulator::new);
+                () -> new PatternFrequencyAccumulator<>(new WordPatternFrequencyStatistics()));
     }
 
     public Analyzer<Analyzers.Result> full(final List<ColumnMetadata> columns) {
@@ -361,7 +364,7 @@ public class AnalyzerService {
         /**
         * String patterns
         */
-        WORD_PATTERNS(PatternFrequencyStatistics.class),
+        WORD_PATTERNS(WordPatternFrequencyStatistics.class),
         /**
          * Text length (min / max length)
          */

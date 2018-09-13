@@ -31,9 +31,9 @@ import org.talend.dataprep.api.dataset.statistics.date.DateHistogram;
 import org.talend.dataprep.api.dataset.statistics.date.StreamDateHistogramStatistics;
 import org.talend.dataprep.api.dataset.statistics.number.NumberHistogram;
 import org.talend.dataprep.api.dataset.statistics.number.StreamNumberHistogramStatistics;
+import org.talend.dataprep.api.dataset.statistics.pattern.WordPatternFrequencyStatistics;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.api.type.TypeUtils;
-import org.talend.dataprep.quality.WordPatternFrequencyAccumulator;
 import org.talend.dataquality.common.inference.Analyzers;
 import org.talend.dataquality.common.inference.ValueQualityStatistics;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
@@ -264,10 +264,10 @@ public class StatisticsAdapter {
     }
 
     private void injectWordPatternFrequency(final ColumnMetadata column, final Analyzers.Result result) {
-        if (result.exist(WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics.class)) {
+        if (result.exist(WordPatternFrequencyStatistics.class)) {
             final Statistics statistics = column.getStatistics();
-            final WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics patternFrequencyStatistics =
-                    result.get(WordPatternFrequencyAccumulator.WordPatternFrequencyStatistics.class);
+            final WordPatternFrequencyStatistics patternFrequencyStatistics =
+                    result.get(WordPatternFrequencyStatistics.class);
             final Map<String, Long> topTerms = patternFrequencyStatistics.getTopK(15);
             if (topTerms != null) {
                 statistics.getWordPatternFrequencyTable().clear();

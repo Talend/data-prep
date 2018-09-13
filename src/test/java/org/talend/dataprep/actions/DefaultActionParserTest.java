@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.actions;
 
+import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,12 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.NotSerializableException;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
@@ -49,6 +45,7 @@ import org.talend.dataprep.ClassPathActionRegistry;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.test.LocalizationRule;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
+import org.talend.dataquality.semantic.broadcast.BroadcastDocumentObject;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 import org.talend.dataquality.semantic.broadcast.TdqCategoriesFactory;
 
@@ -669,6 +666,43 @@ public class DefaultActionParserTest {
         assertNotEquals(initialEmailAddress, result.get(0));
         assertEquals(initialEmailAddress.length(), String.valueOf(result.get(0)).length());
         assertTrue(String.valueOf(result.get(0)).contains("@"));
+    }
+
+    @Test
+    public void testDataMaskingActionWithDictionary() throws Exception {
+        // Given
+        final String initialCivility = "Mlle";
+        IndexedRecord record = GenericDataRecordHelper.createRecord(new Object[] { initialCivility });
+        TdqCategories tdqCategories = TdqCategoriesFactory.createTdqCategories(singleton("CIVILITY"));
+        final ByteArrayOutputStream categoriesAsBytesOS = new ByteArrayOutputStream();
+        try (ObjectOutputStream categoriesGzipObjectWriter =
+                new ObjectOutputStream(new GZIPOutputStream(categoriesAsBytesOS))) {
+            categoriesGzipObjectWriter.writeObject(tdqCategories);
+        }
+
+        final List<BroadcastDocumentObject> documentList = tdqCategories.getDictionary().getDocumentList();
+        final Set<String> values =
+                documentList.stream().flatMap(doc -> doc.getValueSet().stream()).collect(Collectors.toSet());
+
+        final Function<IndexedRecord, IndexedRecord> function;
+        try (final InputStream resourceAsStream =
+                DefaultActionParser.class.getResourceAsStream("action_mask_civility.json")) {
+            serverMock.addEndPoint("/api/preparations/" + preparationId + "/details", resourceAsStream, header);
+            serverMock.addEndPoint("/login", "", header);
+            serverMock.addEndPoint("/api/transform/dictionary",
+                    new ByteArrayInputStream(categoriesAsBytesOS.toByteArray()), header);
+            function = parser.parse(preparationId);
+        }
+        assertNotNull(function);
+
+        // When
+        final IndexedRecord result = function.apply(record);
+
+        // Then
+        assertSerializable(function);
+        Object firstRecordElement = result.get(0);
+        assertNotEquals(initialCivility, firstRecordElement);
+        assertTrue(values.contains(firstRecordElement));
     }
 
     @Test

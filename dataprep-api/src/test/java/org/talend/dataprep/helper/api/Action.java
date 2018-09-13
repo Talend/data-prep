@@ -35,7 +35,8 @@ public class Action {
         ignoredParams.put("extract_date_tokens", Arrays.asList("row_id"));
         ignoredParams.put("delete_invalid", Arrays.asList("row_id"));
         ignoredParams.put("change_date_pattern", Arrays.asList("row_id"));
-
+        ignoredParams.put("change_number_format", Arrays.asList("row_id"));
+        ignoredParams.put("uppercase", Arrays.asList("row_id"));
     }
 
     public String action;
@@ -48,7 +49,7 @@ public class Action {
 
     /**
      * Verify if we should ignore a parameter during equals check.
-     * 
+     *
      * @param actionName the action name
      * @param paramName the parameter name
      * @return <code>true</code> or <code>false</code>

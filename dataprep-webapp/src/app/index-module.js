@@ -38,8 +38,7 @@ import SETTINGS_MODULE from './settings/settings-module';
 
 import { routeConfig, routeInterceptor } from './index-route';
 import getAppConfiguration from './index-config';
-import translations from '../i18n';
-import d3LocaleFr from '../lib/d3.locale.fr';
+import translations, { getD3Locale } from '../i18n';
 
 const MODULE_NAME = 'data-prep';
 
@@ -117,11 +116,11 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 
 			if (preferredLanguage !== fallbackLng) {
 				i18n.changeLanguage(preferredLanguage);
-
-				if (preferredLanguage === 'fr') {
-					const d3locale = d3.locale(d3LocaleFr);
-					d3.format = d3locale.numberFormat;
-					d3.time.format = d3locale.timeFormat;
+				const d3CustomLocale = getD3Locale(preferredLanguage);
+				if (d3CustomLocale) {
+					const localizedD3 = d3.locale(d3CustomLocale);
+					d3.format = localizedD3.numberFormat;
+					d3.time.format = localizedD3.timeFormat;
 				}
 				if ($.datetimepicker) {
 					$.datetimepicker.setLocale(preferredLanguage);
@@ -153,7 +152,7 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 			'ngInject';
 
 			$translate.fallbackLanguage(fallbackLng);
-			$translate.preferredLanguage(preferredLanguage);
+			$translate.use(preferredLanguage);
 		});
 };
 

@@ -49,20 +49,11 @@ public class FeatureContext {
     /**
      * Suffix used to differentiate persisted TDP items during parallel IT runs.
      */
-    private static final String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
+    private static String TI_SUFFIX_UID = "_" + Long.toString(Math.round(Math.random() * 1000000));
 
-    private static boolean USE_SUFFIX = true;
-
-    /** Classify dataset id by their suffixed name (Map< Name, Id >) */
+    /** Classify uploaded dataset id by their suffixed name (Map< Name, Id >) */
     protected Map<String, String> datasetIdByName = new HashMap<>();
 
-    /** Classify uploaded dataset id by their suffixed name (Map< Name, Id >) in order to delete them later. */
-    protected Map<String, String> datasetIdByNameToDelete = new HashMap<>();
-
-    /** Classify uploaded preparation id by their full suffixed name (Map< Name, Id >) in order to delete them later. */
-    protected Map<PreparationUID, String> preparationIdByFullNameToDelete = new HashMap<>();
-
-    /** Classify preparation id by their full suffixed name (Map< Name, Id >). */
     protected Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();
 
     protected SortedSet<Folder> folders;
@@ -91,11 +82,16 @@ public class FeatureContext {
      * @return the suffixed name.
      */
     public static String suffixName(String name) {
-        return name + getSuffix();
+        return name + TI_SUFFIX_UID;
     }
 
     public static String removeSuffixName(String name) {
         return name.substring(0, name.indexOf(TI_SUFFIX_UID));
+    }
+
+    @PostConstruct
+    public void init() {
+        folders = folderUtil.getEmptyReverseSortedSet();
     }
 
     /**
@@ -106,43 +102,13 @@ public class FeatureContext {
      */
     public static String suffixFolderName(String folderPath) {
         // The Home folder does not be suffixed
-        if (folderPath.isEmpty() || StringUtils.equals(folderPath, "/")) {
+        if (StringUtils.equals(folderPath, "/")) {
             return folderPath;
         }
-        String cleanedFolderPath = folderPath;
-        StringBuilder suffixedfolderPath = new StringBuilder();
-        if (folderPath.startsWith("/")) {
-            cleanedFolderPath = cleanedFolderPath.substring(1);
-            suffixedfolderPath.append("/");
-        }
-        if (folderPath.endsWith("/")) {
-            cleanedFolderPath = cleanedFolderPath.substring(0, cleanedFolderPath.length() - 1);
-            suffixedfolderPath.append(cleanedFolderPath.replace("/", getSuffix() + "/"));
-            suffixedfolderPath.append(getSuffix());
-            suffixedfolderPath.append("/");
-        } else {
-            suffixedfolderPath.append(cleanedFolderPath.replace("/", getSuffix() + "/"));
-            suffixedfolderPath.append(getSuffix());
-        }
-
-        return suffixedfolderPath.toString();
-    }
-
-    public static String getSuffix() {
-        return USE_SUFFIX ? TI_SUFFIX_UID : "";
-    }
-
-    public static boolean isUseSuffix() {
-        return USE_SUFFIX;
-    }
-
-    public static void setUseSuffix(boolean UseSuffix) {
-        USE_SUFFIX = UseSuffix;
-    }
-
-    @PostConstruct
-    public void init() {
-        folders = folderUtil.getEmptyReverseSortedSet();
+        // 2 cases, following the path starts from the root or not
+        return folderPath.startsWith("/")
+                ? "/" + folderPath.substring(1).replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID
+                : folderPath.replace("/", TI_SUFFIX_UID + "/") + TI_SUFFIX_UID;
     }
 
     /**
@@ -152,17 +118,6 @@ public class FeatureContext {
      * @param name the dataset name.
      */
     public void storeDatasetRef(@NotNull String id, @NotNull String name) {
-        storeExistingDatasetRef(id, name);
-        datasetIdByNameToDelete.put(name, id);
-    }
-
-    /**
-     * Store an existing dataset reference.
-     *
-     * @param id the dataset id.
-     * @param name the dataset name.
-     */
-    public void storeExistingDatasetRef(@NotNull String id, @NotNull String name) {
         datasetIdByName.put(name, id);
     }
 
@@ -173,21 +128,6 @@ public class FeatureContext {
      * @param name the preparation name.
      */
     public void storePreparationRef(@NotNull String id, @NotNull String name, @NotNull String path) {
-        storeExistingPreparationRef(id, name, path);
-        preparationIdByFullNameToDelete.put( //
-                new PreparationUID() //
-                        .setName(name) //
-                        .setPath(path), //
-                id);
-    }
-
-    /**
-     * Store an existing preparation reference.
-     *
-     * @param id the preparation id.
-     * @param name the preparation name.
-     */
-    public void storeExistingPreparationRef(@NotNull String id, @NotNull String name, @NotNull String path) {
         preparationIdByFullName.put( //
                 new PreparationUID() //
                         .setName(name) //
@@ -206,12 +146,8 @@ public class FeatureContext {
      */
     public void storePreparationMove(@NotNull String id, @NotNull String oldName, @NotNull String oldPath,
             @NotNull String newName, @NotNull String newPath) {
-        // Note : it's inferred that the moved preparation is a created one and not a loaded one (see
-        // #storeExistingPreparationRef())
         preparationIdByFullName.remove(new PreparationUID().setName(oldName).setPath(oldPath));
-        preparationIdByFullNameToDelete.remove(new PreparationUID().setName(oldName).setPath(oldPath));
         preparationIdByFullName.put(new PreparationUID().setName(newName).setPath(newPath), id);
-        preparationIdByFullNameToDelete.put(new PreparationUID().setName(newName).setPath(newPath), id);
     }
 
     /**
@@ -220,7 +156,7 @@ public class FeatureContext {
      * @param prepName the preparation name.
      */
     public void removePreparationRef(@NotNull String prepName, @NotNull String prepPath) {
-        preparationIdByFullNameToDelete.remove(new PreparationUID().setPath(prepPath).setName(prepName));
+        preparationIdByFullName.remove(new PreparationUID().setPath(prepPath).setName(prepName));
     }
 
     /**
@@ -248,8 +184,13 @@ public class FeatureContext {
      * @return a {@link List} of all created dataset id.
      */
     @NotNull
-    public List<String> getDatasetIdsToDelete() {
-        return new ArrayList<>(datasetIdByNameToDelete.values());
+    public List<String> getDatasetIds() {
+        return new ArrayList<>(datasetIdByName.values());
+    }
+
+    @NotNull
+    public List<String> getDatasetNames() {
+        return new ArrayList<>(datasetIdByName.keySet());
     }
 
     /**
@@ -258,8 +199,8 @@ public class FeatureContext {
      * @return a {@link List} of all created preparation id.
      */
     @NotNull
-    public List<String> getPreparationIdsToDelete() {
-        return new ArrayList<>(preparationIdByFullNameToDelete.values());
+    public List<String> getPreparationIds() {
+        return new ArrayList<>(preparationIdByFullName.values());
     }
 
     /**
@@ -320,19 +261,17 @@ public class FeatureContext {
     }
 
     /**
-     * Clear the lists of dataset.
+     * Clear the list of dataset.
      */
-    public void clearDatasetLists() {
+    public void clearDataset() {
         datasetIdByName.clear();
-        datasetIdByNameToDelete.clear();
     }
 
     /**
      * Clear the list of preparation.
      */
-    public void clearPreparationLists() {
+    public void clearPreparation() {
         preparationIdByFullName.clear();
-        preparationIdByFullNameToDelete.clear();
     }
 
     /**
@@ -400,4 +339,5 @@ public class FeatureContext {
     public ExportFormatMessage[] getExportFormatsByPreparationName(String preparationName) {
         return parametersByPreparationName.get(preparationName);
     }
+
 }

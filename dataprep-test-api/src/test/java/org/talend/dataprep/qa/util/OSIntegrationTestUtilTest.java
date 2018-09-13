@@ -11,27 +11,26 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.ReflectionUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.FeatureContext;
-import org.talend.dataprep.qa.config.UnitTestsUtil;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { OSIntegrationTestUtil.class })
 public class OSIntegrationTestUtilTest {
 
-    @Mock
-    private FeatureContext featureContext;
-
-    @InjectMocks
+    @Autowired
     private OSIntegrationTestUtil util;
+
+    private FeatureContext featureContext;
 
     @Before
     public void setUp() throws Exception {
-        UnitTestsUtil.injectFieldInClass(featureContext, "TI_SUFFIX_UID", "_TI_SUFFIX_UID");
+        ReflectionUtils.setField(FeatureContext.class.getDeclaredField("TI_SUFFIX_UID"), featureContext,
+                "_TI_SUFFIX_UID");
     }
 
     @Test

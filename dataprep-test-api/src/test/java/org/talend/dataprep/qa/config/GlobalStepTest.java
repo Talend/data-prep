@@ -12,14 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.qa.config;
 
-import static org.mockito.Matchers.endsWith;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.jayway.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,7 +25,13 @@ import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
-import com.jayway.restassured.response.Response;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.mockito.Matchers.endsWith;
+import static org.mockito.Mockito.when;
 
 @RunWith(org.mockito.runners.MockitoJUnitRunner.class)
 public class GlobalStepTest {
@@ -88,8 +87,8 @@ public class GlobalStepTest {
     public void shouldCleanContextIsOK() {
 
         // when
-        when(context.getPreparationIdsToDelete()).thenReturn(getOKList());
-        when(context.getDatasetIdsToDelete()).thenReturn(getOKList());
+        when(context.getPreparationIds()).thenReturn(getOKList());
+        when(context.getDatasetIds()).thenReturn(getOKList());
         when(context.getFolders()).thenReturn(getOKFolderSet());
 
         gobalstep.context = this.context;
@@ -108,8 +107,8 @@ public class GlobalStepTest {
     public void shouldCleanContextWithDatasetError() throws Exception {
 
         // when
-        when(context.getPreparationIdsToDelete()).thenReturn(getOKList());
-        when(context.getDatasetIdsToDelete()).thenReturn(getNotFoundList());
+        when(context.getPreparationIds()).thenReturn(getOKList());
+        when(context.getDatasetIds()).thenReturn(getNotFoundList());
         when(context.getFolders()).thenReturn(getOKFolderSet());
 
         gobalstep.context = this.context;
@@ -123,8 +122,8 @@ public class GlobalStepTest {
     public void shouldCleanContextWithPreparationError() throws Exception {
 
         // when
-        when(context.getPreparationIdsToDelete()).thenReturn(getNotFoundList());
-        when(context.getDatasetIdsToDelete()).thenReturn(getOKList());
+        when(context.getPreparationIds()).thenReturn(getNotFoundList());
+        when(context.getDatasetIds()).thenReturn(getOKList());
         when(context.getFolders()).thenReturn(getOKFolderSet());
 
         gobalstep.context = this.context;
@@ -138,8 +137,8 @@ public class GlobalStepTest {
     public void shouldCleanContextWithFolderError() throws Exception {
 
         // when
-        when(context.getPreparationIdsToDelete()).thenReturn(getOKList());
-        when(context.getDatasetIdsToDelete()).thenReturn(getOKList());
+        when(context.getPreparationIds()).thenReturn(getOKList());
+        when(context.getDatasetIds()).thenReturn(getOKList());
         when(context.getFolders()).thenReturn(getNotFoundFolderSet());
 
         gobalstep.context = this.context;

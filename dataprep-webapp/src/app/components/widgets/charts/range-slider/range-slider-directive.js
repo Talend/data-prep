@@ -14,6 +14,9 @@
 import d3 from 'd3';
 import template from './range-slider.html';
 
+const formatDate = d3.time.format('%b %Y');
+const formatNumber = d3.format(',');
+
 /**
  * Return the timestamp at midnight
  */
@@ -123,7 +126,7 @@ export default function RangeSlider($timeout) {
 						.orient('top')
 						.ticks(axisTicksNumber)
 						.tickFormat((d) => {
-							return isDateType ? d3.time.format('%b %Y')(new Date(d)) : d3.format(',')(d);
+							return isDateType ? formatDate(new Date(d)) : formatNumber(d);
 						}))
 					.selectAll('text')
 					.attr('y', -13);

@@ -15,6 +15,9 @@ import template from './loader.html';
 
 const Loader = {
 	templateUrl: template,
+	bindings: {
+		text: '@',
+	},
 };
 
 export default Loader;

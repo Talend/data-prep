@@ -26,7 +26,7 @@ import {
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.filter.service:FilterService
  */
-export default function DatagridHeaderCtrl($scope, state,
+export default function DatagridHeaderCtrl($q, $scope, state,
                                            TransformationService, ConverterService,
                                            PlaygroundService, FilterService,
                                            ColumnTypesService, FilterManagerService) {
@@ -69,10 +69,18 @@ export default function DatagridHeaderCtrl($scope, state,
 	 * @description Get transformations from REST call
 	 */
 	vm.initTransformations = () => {
-		if (!state.playground.isReadOnly && !vm.transformations && !vm.initTransformationsInProgress) {
-			vm.transformationsRetrieveError = false;
+		if (!vm.initTransformationsInProgress) {
 			vm.initTransformationsInProgress = true;
+			$q.all([vm.getTransformations(), ColumnTypesService.refreshSemanticDomains(vm.column.id), ColumnTypesService.refreshTypes()])
+				.finally(() => {
+					vm.initTransformationsInProgress = false;
+				});
+		}
+	};
 
+	vm.getTransformations = () => {
+		if (!state.playground.isReadOnly && !vm.transformations) {
+			vm.transformationsRetrieveError = false;
 			TransformationService.getTransformations('column', vm.column)
 				.then((columnTransformations) => {
 					vm.transformations = columnTransformations
@@ -81,13 +89,8 @@ export default function DatagridHeaderCtrl($scope, state,
 				})
 				.catch(() => {
 					vm.transformationsRetrieveError = true;
-				})
-				.finally(() => {
-					vm.initTransformationsInProgress = false;
 				});
 		}
-		ColumnTypesService.refreshSemanticDomains(vm.column.id);
-		ColumnTypesService.refreshTypes();
 	};
 
 	/**

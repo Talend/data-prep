@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.datamasking;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.talend.dataprep.api.type.Type.DATE;
@@ -34,6 +35,8 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.quality.AnalyzerService;
+import org.talend.dataprep.transformation.actions.Providers;
 import org.talend.dataprep.transformation.actions.category.ActionCategory;
 import org.talend.dataprep.transformation.actions.common.AbstractActionMetadata;
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
@@ -105,16 +108,20 @@ public class MaskDataByDomain extends AbstractActionMetadata implements ColumnAc
             final Type type = get(column.getType());
             LOGGER.trace(">>> type: " + type + " metadata: " + column);
             try {
+                final AnalyzerService analyzerService = Providers.get(AnalyzerService.class);
+                final List<String> parameters;
                 if (DATE.equals(type)) {
-                    final List<PatternFrequency> patternFreqList = column.getStatistics().getPatternFrequencies();
-                    final List<String> dateTimePatternList = patternFreqList
-                            .stream() //
-                            .map(PatternFrequency::getPattern) //
+                    parameters = column
+                            .getStatistics()
+                            .getPatternFrequencies()
+                            .stream()
+                            .map(PatternFrequency::getPattern)
                             .collect(toList());
-                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName(), dateTimePatternList));
                 } else {
-                    actionContext.get(MASKER, p -> new ValueDataMasker(domain, type.getName()));
+                    parameters = emptyList();
                 }
+                actionContext.get(MASKER,
+                        p -> analyzerService.createValueDataMasker(domain, type.getName(), parameters));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 actionContext.setActionStatus(CANCELED);

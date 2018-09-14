@@ -59,8 +59,9 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
 
     @Before
     public void init() throws IOException {
-        parameters = ActionMetadataTestUtils
-                .parseParameters(MaskDataByDomainTest.class.getResourceAsStream("maskDataByDomainAction.json"));
+        parameters = new HashMap<>();
+        parameters.put("column_id", "0000");
+        parameters.put("scope", "column");
     }
 
     @Test
@@ -74,15 +75,13 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     }
 
     @Test
-    public void testShouldMaskDatetime() throws IOException {
+    public void testShouldMaskDatetime() {
 
         // given
-        final DataSetRow row =
-                builder() //
-                        .with(value("2015-09-15") //
-                                .type(Type.DATE) //
-                                .statistics(MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json"))) //
-                        .build();
+        final DataSetRow row = builder()
+                .with(value("2015-09-15").type(Type.DATE).statistics(
+                        MaskDataByDomainTest.class.getResourceAsStream("statistics_datetime.json")))
+                .build();
 
         // when
         ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
@@ -102,8 +101,8 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     public void test_apply_inplace() {
 
         // given
-        final DataSetRow row = builder() //
-                .with(value("azerty@talend.com").type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name())) //
+        final DataSetRow row = builder()
+                .with(value("azerty@talend.com").type(Type.STRING).domain(MaskableCategoryEnum.EMAIL.name()))
                 .build();
 
         final Map<String, String> expectedValues = new HashMap<>();
@@ -149,25 +148,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
     }
 
     @Test
-    public void testShouldNotMaskSurrogatePairAsStringType() {
-        // given
-        final DataSetRow row = builder() //
-                .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING)) //
-                .build();
-
-        // when
-        ActionTestWorkbench.test(row, actionRegistry, factory.create(action, parameters));
-
-        // then
-        // Function is ReplaceCharactersWithGeneration so that surrogate pair will not mask
-        String realValueAsDtr = (String) row.values().get("0000");
-        LOGGER.info("Row value: {}", realValueAsDtr);
-        assertTrue("中崎𠀀𠀁𠀂𠀃𠀄".equalsIgnoreCase(realValueAsDtr));
-    }
-
-    @Test
-    // See TDQ-14216
-    public void testShouldNotMaskSurrogatePairWhenInvalidAddressLine() {
+    public void testShouldMaskSurrogatePairAsSingleChar() {
         // given
         final DataSetRow row = builder() //
                 .with(value("中崎𠀀𠀁𠀂𠀃𠀄").type(Type.STRING).domain(MaskableCategoryEnum.ADDRESS_LINE.name())) //
@@ -181,7 +162,7 @@ public class MaskDataByDomainTest extends AbstractMetadataBaseTest<MaskDataByDom
         String realValueAsDtr = (String) row.values().get("0000");
         LOGGER.info("Row value: {}", realValueAsDtr);
         assertSame(7, realValueAsDtr.codePointCount(0, realValueAsDtr.length()));
-        assertEquals("中崎𠀀𠀁𠀂𠀃𠀄", realValueAsDtr);
+        assertEquals("XXXXXXX", realValueAsDtr);
     }
 
     @Test

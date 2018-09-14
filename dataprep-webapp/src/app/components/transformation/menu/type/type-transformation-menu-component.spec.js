@@ -69,6 +69,7 @@ describe('Transformation menu component', () => {
 					types="types"
 					domains="domains"
 					column="column"
+					loading="loading"
 				></type-transform-menu>
             `);
 			$compile(element)(scope);
@@ -81,6 +82,17 @@ describe('Transformation menu component', () => {
 	afterEach(() => {
 		scope.$destroy();
 		element.remove();
+	});
+
+	it('should render loader', () => {
+		//given
+		scope.loading = true;
+
+		//when
+		createElement();
+
+		//then
+		expect(element.find('loader').length).toBe(1);
 	});
 
 	it('should display domain', () => {

@@ -60,6 +60,8 @@ import 'store';
 // Moment https://github.com/moment/moment/
 import 'moment';
 import 'moment/locale/fr';
+import 'moment/locale/ja';
+import 'moment/locale/zh-cn';
 import 'moment-jdateformatparser';
 
 // https://github.com/danialfarid/ng-file-upload

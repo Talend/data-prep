@@ -49,7 +49,7 @@ describe('Preview Service', () => {
         $provide.constant('state', stateMock);
     }));
 
-    beforeEach(inject(($q, PreviewService, DatagridService, PreparationService) => {
+    beforeEach(inject(($q, PreviewService, DatagridService, PreparationService, StateService) => {
         stateMock.playground.data = originalData;
         dataViewMock = new DataViewMock();
         stateMock.playground.grid.dataView = dataViewMock;
@@ -92,6 +92,8 @@ describe('Preview Service', () => {
         spyOn(PreparationService, 'getPreviewDiff').and.callFake(previewMock);
         spyOn(PreparationService, 'getPreviewUpdate').and.callFake(previewMock);
         spyOn(PreparationService, 'getPreviewAdd').and.callFake(previewMock);
+
+	    spyOn(StateService, 'setPreviewIsLoading').and.callFake(previewMock);
     }));
 
     describe('Disable preview when the datagrid is empty', () => {
@@ -182,7 +184,27 @@ describe('Preview Service', () => {
     });
 
     describe('diff preview', () => {
-        it('should call and display preview', inject(($rootScope, PreviewService, PreparationService, DatagridService) => {
+	    it('should set preview loading to true', inject(($rootScope, PreviewService, StateService) => {
+		    // given
+		    const preparationId = '86c4135ab218646f54';
+		    const currentStep = {
+			    column: { id: '0001' },
+			    transformation: { stepId: '1' },
+		    };
+		    const previewStep = {
+			    column: { id: '0000' },
+			    transformation: { stepId: '2' },
+		    };
+
+		    // when
+		    PreviewService.getPreviewDiffRecords(preparationId, currentStep, previewStep, null);
+		    $rootScope.$digest();
+
+		    // then
+		    expect(StateService.setPreviewIsLoading).toHaveBeenCalledWith(true);
+	    }));
+
+        it('should call and display preview', inject(($rootScope, PreviewService, PreparationService, DatagridService, StateService) => {
             // given
             const preparationId = '86c4135ab218646f54';
             const currentStep = {
@@ -212,6 +234,7 @@ describe('Preview Service', () => {
 
             expect(DatagridService.execute).toHaveBeenCalledWith(undefined); //reverter but no preview to revert
             expect(DatagridService.execute).toHaveBeenCalledWith(previewExecutor); //preview diff
+	        expect(StateService.setPreviewIsLoading).toHaveBeenCalledWith(false);
         }));
 
         it('should cancel preview on error', inject(($rootScope, PreviewService) => {
@@ -287,7 +310,28 @@ describe('Preview Service', () => {
     });
 
     describe('update preview', () => {
-        it('should call and display preview', inject(($rootScope, PreviewService, PreparationService, DatagridService) => {
+	    it('should set preview loading to true', inject(($rootScope, PreviewService, StateService) => {
+		    // given
+		    const preparationId = '86c4135ab218646f54';
+		    const currentStep = {
+			    column: { id: '0001' },
+			    transformation: { stepId: '1' },
+			    actionParameters: { action: 'fillEmptyWithValue' },
+		    };
+		    const updateStep = {
+			    column: { id: '0000' },
+			    transformation: { stepId: '2' },
+			    actionParameters: { action: 'fillEmptyWithValue' },
+		    };
+		    const newParams = { value: '--' };
+
+		    // when
+		    PreviewService.getPreviewUpdateRecords(preparationId, currentStep, updateStep, newParams);
+
+		    // then
+		    expect(StateService.setPreviewIsLoading).toHaveBeenCalledWith(true);
+	    }));
+        it('should call and display preview', inject(($rootScope, PreviewService, PreparationService, DatagridService, StateService) => {
             // given
             const preparationId = '86c4135ab218646f54';
             const currentStep = {
@@ -324,6 +368,7 @@ describe('Preview Service', () => {
 
             expect(DatagridService.execute).toHaveBeenCalledWith(undefined); //reverter but no preview to revert
             expect(DatagridService.execute).toHaveBeenCalledWith(previewExecutor); //preview diff
+	        expect(StateService.setPreviewIsLoading).toHaveBeenCalledWith(false);
         }));
 
         it('should cancel preview on error', inject(($rootScope, PreviewService) => {
@@ -408,7 +453,24 @@ describe('Preview Service', () => {
     });
 
     describe('add preview', () => {
-        it('should call and display preview', inject(($rootScope, PreviewService, PreparationService, DatagridService) => {
+	    it('should set preview loading to true', inject(($rootScope, PreviewService, StateService) => {
+		    // given
+		    const preparationId = '86c4135ab218646f54';
+		    const datasetId = '46c541b683ef5151';
+		    const action = 'fillEmptyWithValue';
+		    const actionParams = [
+			    { scope: 'column', column_id: '0001', value: '--' },
+			    { scope: 'column', column_id: '0002', value: '--' },
+		    ];
+
+		    // when
+		    PreviewService.getPreviewAddRecords(preparationId, datasetId, action, actionParams);
+
+		    // then
+		    expect(StateService.setPreviewIsLoading).toHaveBeenCalledWith(true);
+	    }));
+
+        it('should call and display preview', inject(($rootScope, PreviewService, PreparationService, DatagridService, StateService) => {
             // given
             const preparationId = '86c4135ab218646f54';
             const datasetId = '46c541b683ef5151';
@@ -439,6 +501,7 @@ describe('Preview Service', () => {
 
             expect(DatagridService.execute).toHaveBeenCalledWith(undefined); //reverter but no preview to revert
             expect(DatagridService.execute).toHaveBeenCalledWith(previewExecutor); //preview diff
+	        expect(StateService.setPreviewIsLoading).toHaveBeenCalledWith(false);
         }));
 
         it('should cancel preview on error', inject(($rootScope, PreviewService) => {

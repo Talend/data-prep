@@ -69,18 +69,10 @@ export default function DatagridHeaderCtrl($q, $scope, state,
 	 * @description Get transformations from REST call
 	 */
 	vm.initTransformations = () => {
-		if (!vm.initTransformationsInProgress) {
-			vm.initTransformationsInProgress = true;
-			$q.all([vm.getTransformations(), ColumnTypesService.refreshSemanticDomains(vm.column.id), ColumnTypesService.refreshTypes()])
-				.finally(() => {
-					vm.initTransformationsInProgress = false;
-				});
-		}
-	};
-
-	vm.getTransformations = () => {
-		if (!state.playground.isReadOnly && !vm.transformations) {
+		if (!state.playground.isReadOnly && !vm.transformations && !vm.initTransformationsInProgress) {
 			vm.transformationsRetrieveError = false;
+			vm.initTransformationsInProgress = true;
+
 			TransformationService.getTransformations('column', vm.column)
 				.then((columnTransformations) => {
 					vm.transformations = columnTransformations
@@ -89,10 +81,21 @@ export default function DatagridHeaderCtrl($q, $scope, state,
 				})
 				.catch(() => {
 					vm.transformationsRetrieveError = true;
+				})
+				.finally(() => {
+					vm.initTransformationsInProgress = false;
 				});
 		}
+		vm.fetchMatchingSemanticTypes();
 	};
 
+	vm.fetchMatchingSemanticTypes = () => {
+		vm.typeLoading = true;
+		$q.all([ColumnTypesService.refreshSemanticDomains(vm.column.id), ColumnTypesService.refreshTypes()])
+			.finally(() => {
+				vm.typeLoading = false;
+			});
+	};
 	/**
 	 * @ngdoc method
 	 * @name updateColumnName

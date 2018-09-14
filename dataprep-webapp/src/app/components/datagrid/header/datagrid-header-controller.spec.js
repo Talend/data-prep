@@ -240,6 +240,33 @@ describe('Datagrid header controller', () => {
 			expect(ctrl.transformationsRetrieveError).toBeTruthy();
 			expect(ctrl.initTransformationsInProgress).toBeFalsy();
 		}));
+
+		it('should set loading flag to true when fetching domains and types is in progress',
+			inject(() => {
+				// given
+				const ctrl = createController();
+
+				// when
+				ctrl.fetchMatchingSemanticTypes();
+
+				//then
+				expect(ctrl.typeLoading).toBe(true);
+			})
+		);
+
+		it('should set loading flag to false when fetching domains and types is done',
+			inject(() => {
+				// given
+				const ctrl = createController();
+
+				// when
+				ctrl.fetchMatchingSemanticTypes();
+				scope.$digest();
+
+				//then
+				expect(ctrl.typeLoading).toBe(false);
+			})
+		);
 	});
 
 	describe('update column name', () => {
@@ -247,7 +274,7 @@ describe('Datagrid header controller', () => {
 			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when(true));
 		}));
 
-		it('should update column name', inject((PlaygroundService, FilterManagerService) => {
+		it('should update column name', inject((PlaygroundService) => {
 			//given
 			const ctrl = createController();
 			ctrl.newName = 'new name';

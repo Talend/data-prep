@@ -16,11 +16,13 @@
 <ul>
     <type-transform-menu column="menuCtrl.column"
                          domains="menuCtrl.state.playground.grid.semanticDomains"
-                         types="menuCtrl.state.playground.grid.primitiveTypes"></type-transform-menu>
-
-    <li class="divider"></li>
-
-    <li ng-repeat="menu in menuCtrl.menuItems track by menu.name">
+                         types="menuCtrl.state.playground.grid.primitiveTypes"
+                         loading="menuCtrl.typeLoading"></type-transform-menu>
+    <li ng-if="menuCtrl.menuItems.length || menuCtrl.transformationsLoading" class="divider"></li>
+    <li ng-if="menuCtrl.transformationsLoading">
+        <loader text="{{'LOADING' | translate}}" />
+    </li>
+    <li ng-if="!menuCtrl.transformationsLoading" ng-repeat="menu in menuCtrl.menuItems track by menu.name">
         <a href
            title="{{ menu.label }}"
            data-feature="{{ 'column.' + menu.name }}"

@@ -12,12 +12,8 @@
 
 package org.talend.dataprep.api.service.settings.actions.configurer;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.Import;
 import org.talend.dataprep.api.service.command.dataset.DataSetGetImports;
@@ -26,9 +22,9 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
 import org.talend.dataprep.exception.TDPException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.DATASET_CREATE;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 

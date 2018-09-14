@@ -65,7 +65,7 @@ public class AppSettingsAPI extends APIService {
                 LocaleContextHolder.setLocale(userLocale);
                 LOGGER.info("No request locale, locale changed from {} to {}.", previous, userLocale);
             }
-            return appSettingsService.getSettings();
+            return context.getBean(AppSettingsService.class).getSettings();
         };
     }
 }

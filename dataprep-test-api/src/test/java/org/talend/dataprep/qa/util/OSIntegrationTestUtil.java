@@ -1,6 +1,5 @@
 package org.talend.dataprep.qa.util;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.SCOPE;
 
@@ -15,8 +14,10 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.helper.api.Action;
+import org.talend.dataprep.qa.config.FeatureContext;
 import org.talend.dataprep.qa.dto.Folder;
 
 /**
@@ -27,6 +28,9 @@ public class OSIntegrationTestUtil {
 
     private static final List<String> PARAMETERS_TO_BE_SUFFIXED =
             Arrays.asList("new_domain_id", "new_domain_label", "lookup_ds_name");
+
+    @Autowired
+    FeatureContext context;
 
     /**
      * Split a folder in a {@link Set} folder and subfolders.
@@ -112,7 +116,7 @@ public class OSIntegrationTestUtil {
         if (fullName.contains("/") && fullName.lastIndexOf("/") != 0) {
             foundPath = fullName.substring(0, fullName.lastIndexOf("/"));
         }
-        return suffixFolderName(foundPath);
+        return context.suffixFolderName(foundPath);
     }
 
     /**

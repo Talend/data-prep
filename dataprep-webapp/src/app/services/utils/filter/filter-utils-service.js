@@ -15,16 +15,15 @@ import d3 from 'd3';
 
 const RANGE_SEPARATOR = ' .. ';
 
+const formatDate = d3.time.format('%Y-%m-%d');
+const formatNumber = d3.format(',');
+
 export default function FilterUtilsService($filter) {
 	'ngInject';
-
-	const formatDate = d3.time.format('%Y-%m-%d');
-	const formatNumber = d3.format(',');
 
 	const service = {
 		getRangeLabelFor,
 		getDateLabel,
-		getDateFormat,
 	};
 	return service;
 
@@ -74,19 +73,19 @@ export default function FilterUtilsService($filter) {
 	 * @name getDateFormat
 	 * @methodOf data-prep.services.statistics.service:StatisticsService
 	 * @param {String} pace The histogram time pace
-	 * @param {Date} startDate The range starting date
-	 * @description Returns the date pattern that fit the pace at the starting date
+	 * @param {Date} date The date to format
+	 * @description Returns the date pattern that fits the pace at the date
 	 */
-	function getDateFormat(pace, startDate) {
+	function getDateFormat(pace, date) {
 		switch (pace) {
 		case 'CENTURY':
 		case 'DECADE':
 		case 'YEAR':
 			return 'yyyy';
 		case 'HALF_YEAR':
-			return `'H'${(startDate.getMonth() / 6) + 1} yyyy`;
+			return `'H'${(date.getMonth() / 6) + 1} yyyy`;
 		case 'QUARTER':
-			return `Q${(startDate.getMonth() / 3) + 1} yyyy`;
+			return `Q${(date.getMonth() / 3) + 1} yyyy`;
 		case 'MONTH':
 			return 'MMM yyyy';
 		case 'WEEK':

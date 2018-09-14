@@ -14,6 +14,8 @@
 import d3 from 'd3';
 import d3Tip from 'd3-tip';
 
+const formatNumber = d3.format(',d');
+
 /**
  * @ngdoc directive
  * @name talend.widget.directive:verticalBarchart
@@ -276,7 +278,7 @@ export default function VerticalBarchart($timeout) {
 						.scale(yScale)
 						.orient('right')
 						.tickSize(width, 0, 0)
-						.tickFormat(d3.format(',d'))
+						.tickFormat(formatNumber)
 						.ticks(ticksNbre)
 					)
 					// place text

@@ -22,7 +22,7 @@ describe('Loader component', () => {
 		scope = $rootScope.$new(true);
 
 		createElement = () => {
-			const html = `<loader></loader>`;
+			const html = `<loader text="text"></loader>`;
 			element = $compile(html)(scope);
 			scope.$digest();
 		};
@@ -39,5 +39,15 @@ describe('Loader component', () => {
 
 		// then
 		expect(element.length).toBe(1);
+	});
+
+	it('should render loader with text', () => {
+		// given
+		scope.text = 'loading';
+		createElement();
+
+		// then
+		expect(element.find('span').length).toBe(1);
+		expect(element.find('pure-loader').length).toBe(1);
 	});
 });

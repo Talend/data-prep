@@ -171,11 +171,6 @@ public class FeatureContext {
         folders = folderUtil.getEmptyReverseSortedSet();
     }
 
-    @PostConstruct
-    public void init() {
-        folders = folderUtil.getEmptyReverseSortedSet();
-    }
-
     /**
      * Store a new dataset reference. In order to delete it later.
      *

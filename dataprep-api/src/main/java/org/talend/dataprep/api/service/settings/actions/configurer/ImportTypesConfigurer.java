@@ -12,7 +12,12 @@
 
 package org.talend.dataprep.api.service.settings.actions.configurer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.DATASET_CREATE;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.Import;
@@ -22,11 +27,7 @@ import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSplitDropdownSettings;
 import org.talend.dataprep.exception.TDPException;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.talend.dataprep.api.service.settings.actions.provider.DatasetActions.DATASET_CREATE;
-import static org.talend.dataprep.command.CommandHelper.toStream;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Settings configurer that insert the imports types as the DATASET_CREATE split dropdown items.

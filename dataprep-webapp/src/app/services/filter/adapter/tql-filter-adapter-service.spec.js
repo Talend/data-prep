@@ -12,11 +12,11 @@
   ============================================================================*/
 
 import {
-    CONTAINS,
-    EXACT,
-    INSIDE_RANGE,
-    MATCHES,
-    QUALITY,
+	CONTAINS,
+	EXACT,
+	INSIDE_RANGE,
+	MATCHES, MATCHES_WORDS,
+	QUALITY,
 } from './tql-filter-adapter-service';
 
 import i18n from './../../../../i18n/en.json';
@@ -370,6 +370,15 @@ describe('TQL Filter Adapter Service', () => {
 			expect(filter.type).toEqual(MATCHES);
 			expect(filter.colId).toEqual('0000');
 			expect(filter.args.patterns[0].value).toEqual('Aa9');
+		}));
+
+		it('should return MATCHES_WORDS filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 wordComplies '[alnum]'))", columns)[0];
+			// then
+			expect(filter.type).toEqual(MATCHES_WORDS);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args.patterns[0].value).toEqual('[alnum]');
 		}));
 
 		it('should return OR filter', inject((TqlFilterAdapterService) => {

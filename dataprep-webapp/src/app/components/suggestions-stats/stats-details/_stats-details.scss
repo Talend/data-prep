@@ -48,6 +48,29 @@
         }
     }
 
+    .stat-detail-tab-switcher {
+      padding: 1rem;
+      text-align: right;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+          display: inline-block;
+
+          + li {
+            padding-right: 0.5rem;
+          }
+        }
+      }
+
+      + .stat-detail-tab-items {
+        top: 4rem;
+      }
+    }
+
     .stat-detail-tab-items {
       top: 0;
       bottom: 0;

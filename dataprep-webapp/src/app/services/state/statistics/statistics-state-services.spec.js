@@ -52,17 +52,29 @@ describe('Statistics state service', function () {
         expect(statisticsState.activeLimits).toBe(activeLimits);
     }));
 
-    it('should set patterns', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        expect(statisticsState.patterns).toBeFalsy();
-        var patterns = { data: [] };
+	it('should set patterns', inject(function (statisticsState, StatisticsStateService) {
+		//given
+		expect(statisticsState.patterns).toBeFalsy();
+		var patterns = { data: [] };
 
-        //when
-        StatisticsStateService.setPatterns(patterns);
+		//when
+		StatisticsStateService.setPatterns(patterns);
 
-        //then
-        expect(statisticsState.patterns).toBe(patterns);
-    }));
+		//then
+		expect(statisticsState.patterns).toBe(patterns);
+	}));
+
+	it('should set word patterns', inject(function (statisticsState, StatisticsStateService) {
+		//given
+		expect(statisticsState.wordPatterns).toBeFalsy();
+		var wordPatterns = { data: [] };
+
+		//when
+		StatisticsStateService.setWordPatterns(wordPatterns);
+
+		//then
+		expect(statisticsState.wordPatterns).toBe(wordPatterns);
+	}));
 
     it('should set filtered patterns', inject(function (statisticsState, StatisticsStateService) {
         //given
@@ -92,6 +104,7 @@ describe('Statistics state service', function () {
         statisticsState.histogram = {};
         statisticsState.filteredHistogram = {};
         statisticsState.patterns = {};
+        statisticsState.wordPatterns = {};
         statisticsState.filteredPatterns = {};
         statisticsState.activeLimits = {};
         statisticsState.boxPlot = {};
@@ -106,6 +119,7 @@ describe('Statistics state service', function () {
         expect(statisticsState.histogram).toBe(null);
         expect(statisticsState.filteredHistogram).toBe(null);
         expect(statisticsState.patterns).toBe(null);
+        expect(statisticsState.wordPatterns).toBe(null);
         expect(statisticsState.filteredPatterns).toBe(null);
         expect(statisticsState.activeLimits).toBe(null);
         expect(statisticsState.boxPlot).toBe(null);

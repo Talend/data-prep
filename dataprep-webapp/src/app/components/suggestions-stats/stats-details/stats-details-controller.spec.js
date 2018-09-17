@@ -22,6 +22,7 @@ describe('Stats-details controller', () => {
 		stateMock = {
 			playground: {
 				grid: {},
+				statistics: {},
 			},
 		};
 		$provide.constant('state', stateMock);

@@ -67,7 +67,8 @@ $matches-color: $brown;
     }
   }
 
-  &.matches {
+  &.matches,
+  &.word_matches {
     .badge {
       @include badge($matches-color);
     }

@@ -151,6 +151,7 @@ export function StateService(RouteStateService, routeState,
 		setStatisticsFilteredHistogram: PlaygroundStateService.setStatisticsFilteredHistogram,
 		setStatisticsHistogramActiveLimits: PlaygroundStateService.setStatisticsHistogramActiveLimits,
 		setStatisticsPatterns: PlaygroundStateService.setStatisticsPatterns,
+		setStatisticsWordPatterns: PlaygroundStateService.setStatisticsWordPatterns,
 		setStatisticsFilteredPatterns: PlaygroundStateService.setStatisticsFilteredPatterns,
 		setStatisticsLoading: PlaygroundStateService.setStatisticsLoading,
 

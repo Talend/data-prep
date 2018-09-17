@@ -548,9 +548,18 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	 * @description update patterns statistics
 	 */
 	function initPatternsFrequency() {
-		const patternFrequency = state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable;
+		const statistics = state.playground.grid.selectedColumns[0].statistics;
+		const patternFrequency = statistics.patternFrequencyTable;
+		const wordPatternFrequency = statistics.wordPatternFrequencyTable;
 		if (patternFrequency) {
 			StateService.setStatisticsPatterns(adaptPatternsToGridConstraints(patternFrequency));
+			createFilteredPatternsFrequency()
+				.then((filteredPatternFrequency) => {
+					StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
+				});
+		}
+		if (wordPatternFrequency) {
+			StateService.setStatisticsWordPatterns(adaptPatternsToGridConstraints(wordPatternFrequency));
 			createFilteredPatternsFrequency()
 				.then((filteredPatternFrequency) => {
 					StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
@@ -574,16 +583,21 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		};
 
 		const defer = $q.defer();
-		service.patternWorker = new PatternOccurrenceWorker();
-		service.patternWorker.onmessage = (event) => {
-			defer.resolve(adaptPatternsToGridConstraints(event.data));
-		};
-
-		service.patternWorker.onerror = (error) => {
-			defer.reject(error);
-		};
-
-		service.patternWorker.postMessage(parameters);
+		// if (column.type) {
+			// service.patternWorker = new PatternOccurrenceWorker();
+			// service.patternWorker.onmessage = (event) => {
+			// defer.resolve(adaptPatternsToGridConstraints(event.data));
+			// };
+			//
+			// service.patternWorker.onerror = (error) => {
+			// 	defer.reject(error);
+			// };
+			//
+			// service.patternWorker.postMessage(parameters);
+		// }
+		// else {
+			defer.resolve(adaptPatternsToGridConstraints(column.statistics.patternFrequencyTable));
+		// }
 		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 

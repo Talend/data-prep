@@ -22,6 +22,7 @@ export function StatisticsStateService() {
 		setFilteredHistogram,
 		setHistogramActiveLimits,
 		setPatterns,
+		setWordPatterns,
 		setFilteredPatterns,
 		setLoading,
 
@@ -58,6 +59,11 @@ export function StatisticsStateService() {
 		statisticsState.filteredPatterns = null;
 	}
 
+	function setWordPatterns(patterns) {
+		statisticsState.wordPatterns = patterns;
+		statisticsState.filteredPatterns = null;
+	}
+
 	function setFilteredPatterns(filteredPatterns) {
 		statisticsState.filteredPatterns = filteredPatterns;
 	}
@@ -74,6 +80,7 @@ export function StatisticsStateService() {
 		statisticsState.filteredHistogram = null;
 		statisticsState.activeLimits = null;
 		statisticsState.patterns = null;
+		statisticsState.wordPatterns = null;
 		statisticsState.filteredPatterns = null;
 		statisticsState.loading = false;
 	}

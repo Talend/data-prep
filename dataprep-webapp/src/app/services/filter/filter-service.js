@@ -17,6 +17,7 @@ import {
 	EXACT,
 	INSIDE_RANGE,
 	MATCHES,
+	MATCHES_WORDS,
 	QUALITY,
 } from './adapter/tql-filter-adapter-service';
 
@@ -202,6 +203,9 @@ export default class FilterService {
 				const sameColMatchFilter = find(this.state.playground.filter.gridFilters, {
 					colId,
 					type: MATCHES,
+				}) || find(this.state.playground.filter.gridFilters, {
+					colId,
+					type: MATCHES_WORDS,
 				});
 				if (sameColExactFilter) {
 					hasEmptyRecordsExactFilter = (
@@ -261,7 +265,8 @@ export default class FilterService {
 
 			break;
 		}
-		case MATCHES: {
+		case MATCHES:
+		case MATCHES_WORDS: {
 			// If we want to select records and a empty filter is already applied to that column
 			// Then we need remove it before
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
@@ -420,7 +425,8 @@ export default class FilterService {
 			editableFilter = false;
 			break;
 		}
-		case MATCHES: {
+		case MATCHES:
+		case MATCHES_WORDS: {
 			let newComputedPattern;
 			if (addOrCriteria) {
 				newComputedPattern = this._computeOr(oldFilter.args.patterns, newValue);

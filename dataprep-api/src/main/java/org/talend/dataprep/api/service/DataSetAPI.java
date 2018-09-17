@@ -181,23 +181,23 @@ public class DataSetAPI extends APIService {
         LOG.debug("Dataset creation or update for #{} done.", id);
     }
 
-    @RequestMapping(value = "/api/datasets/{id}", method = POST, produces = TEXT_PLAIN_VALUE)
-    @ApiOperation(value = "Update a dataset.", produces = TEXT_PLAIN_VALUE, //
-            notes = "Update a data set based on content provided in POST body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
-    @Timed
-    public Callable<String> update(
-            @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
-            @ApiParam(value = "content") InputStream dataSetContent) {
-        return () -> {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating or updating dataset #{} (pool: {})...", id, getConnectionStats());
-            }
-            HystrixCommand<String> creation = getCommand(UpdateDataSet.class, id, dataSetContent);
-            String result = creation.execute();
-            LOG.debug("Dataset creation or update for #{} done.", id);
-            return result;
-        };
-    }
+    //    @RequestMapping(value = "/api/datasets/{id}", method = POST, produces = TEXT_PLAIN_VALUE)
+    //    @ApiOperation(value = "Update a dataset.", produces = TEXT_PLAIN_VALUE, //
+    //            notes = "Update a data set based on content provided in POST body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
+    //    @Timed
+    //    public Callable<String> update(
+    //            @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
+    //            @ApiParam(value = "content") InputStream dataSetContent) {
+    //        return () -> {
+    //            if (LOG.isDebugEnabled()) {
+    //                LOG.debug("Creating or updating dataset #{} (pool: {})...", id, getConnectionStats());
+    //            }
+    //            HystrixCommand<String> creation = getCommand(UpdateDataSet.class, id, dataSetContent);
+    //            String result = creation.execute();
+    //            LOG.debug("Dataset creation or update for #{} done.", id);
+    //            return result;
+    //        };
+    //    }
 
     @RequestMapping(value = "/api/datasets/{datasetId}/column/{columnId}", method = POST,
             consumes = APPLICATION_JSON_VALUE)

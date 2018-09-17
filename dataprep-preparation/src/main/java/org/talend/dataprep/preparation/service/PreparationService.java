@@ -385,7 +385,8 @@ public class PreparationService {
      */
     public String copy(String preparationId, String name, String destination) {
 
-        LOGGER.debug("copy {} to folder {} with {} as new name");
+        LOGGER.debug("Copy {} preparation to folder '{}' with '{}' as new name requested.", preparationId, destination,
+                name);
 
         Preparation original = preparationRepository.get(preparationId, Preparation.class);
 
@@ -424,7 +425,8 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, newId);
         folderRepository.addFolderEntry(folderEntry, destination);
 
-        LOGGER.debug("copy {} to folder {} with {} as new name", preparationId, destination, name);
+        LOGGER.debug("{} preparation to folder '{}' with '{}' as new name copied.", preparationId, destination, name);
+        auditService.auditPreparationCopy(preparationId, destination, name, newId);
         return newId;
     }
 
@@ -496,7 +498,8 @@ public class PreparationService {
      * @param newName The new preparation name.
      */
     public void move(String preparationId, String folder, String destination, String newName) {
-        LOGGER.debug("moving {} from {} to {} with the new name '{}'", preparationId, folder, destination, newName);
+        LOGGER.debug("Moving {} preparation from '{}' folder to '{}' folder with the new name '{}' requested",
+                preparationId, folder, destination, newName);
 
         // get and lock the preparation to move
         final PersistentPreparation original = lockPreparation(preparationId);
@@ -518,8 +521,9 @@ public class PreparationService {
             FolderEntry folderEntry = new FolderEntry(PREPARATION, preparationId);
             folderRepository.moveFolderEntry(folderEntry, folder, destination);
 
-            LOGGER.info("preparation {} moved from {} to {} with the new name {}", preparationId, folder, destination,
-                    targetName);
+            LOGGER.info("Preparation {} moved from '{}' folder to '{}' folder with the new name '{}'", preparationId,
+                    folder, destination, targetName);
+            auditService.auditPreparationMove(preparationId, folder, destination, targetName);
         } finally {
             unlockPreparation(preparationId);
         }
@@ -542,6 +546,7 @@ public class PreparationService {
             try (final Stream<FolderEntry> entries = folderRepository.findFolderEntries(preparationId, PREPARATION)) {
                 entries.forEach(e -> folderRepository.removeFolderEntry(e.getFolderId(), preparationId, PREPARATION));
                 LOGGER.info("Deletion of preparation #{} done.", preparationId);
+                auditService.auditPreparationDeletion(preparationId);
             }
         } finally {
             // Just in case remove failed
@@ -574,6 +579,7 @@ public class PreparationService {
             preparationRepository.add(updated);
 
             LOGGER.info("Preparation {} updated -> {}", preparationId, updated);
+            auditService.auditPreparationRename(preparationId, updated.getName());
 
             return updated.id();
         } finally {
@@ -738,6 +744,9 @@ public class PreparationService {
         step.setDiff(actionCreatedColumns);
         appendSteps(preparationId, Collections.singletonList(step));
         LOGGER.debug("Added action to preparation.");
+
+        auditService.auditPreparationAddStep(preparationId,
+                step.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
     }
 
     /**
@@ -824,6 +833,8 @@ public class PreparationService {
             final PersistentStep stepToModify = getStep(stepToModifyId);
             replaceHistory(preparation, stepToModify.getParentId(), actionsSteps);
             LOGGER.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
+            auditService.auditPreparationUpdateStep(preparationId, stepToModifyId,
+                    newStep.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
         } finally {
             unlockPreparation(preparationId);
         }
@@ -856,6 +867,7 @@ public class PreparationService {
         final PersistentPreparation preparation = lockPreparation(id);
         try {
             deleteAction(preparation, stepToDeleteId);
+            auditService.auditPreparationDeleteStep(preparation.getId(), preparation.getName(), stepToDeleteId);
         } finally {
             unlockPreparation(id);
         }
@@ -948,6 +960,7 @@ public class PreparationService {
         final PersistentPreparation preparation = lockPreparation(preparationId);
         try {
             reorderSteps(preparation, stepId, parentStepId);
+            auditService.auditPreparationMoveStep(preparationId, preparation.getName(), stepId, parentStepId);
         } finally {
             unlockPreparation(preparationId);
         }

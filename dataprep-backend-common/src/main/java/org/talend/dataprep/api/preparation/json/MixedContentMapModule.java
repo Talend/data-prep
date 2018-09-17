@@ -15,7 +15,7 @@ package org.talend.dataprep.api.preparation.json;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 
 import com.fasterxml.jackson.core.JsonGenerator;

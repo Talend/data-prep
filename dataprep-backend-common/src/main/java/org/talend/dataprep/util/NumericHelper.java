@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.AbstractFormatValidator;
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.slf4j.Logger;

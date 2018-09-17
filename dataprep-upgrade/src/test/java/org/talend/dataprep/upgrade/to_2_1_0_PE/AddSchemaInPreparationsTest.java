@@ -19,7 +19,7 @@ import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.preparation.Preparation;

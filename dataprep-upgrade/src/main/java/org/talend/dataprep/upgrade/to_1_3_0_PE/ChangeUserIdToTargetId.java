@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ import org.talend.dataprep.upgrade.model.UpgradeTask;
 
 /**
  * Because upgrade tasks not only apply to user anymore, the userId needs to be changed to targetId.
- * 
+ *
  * @see org.talend.dataprep.upgrade.model.UpgradeTask.target
  */
 @Component

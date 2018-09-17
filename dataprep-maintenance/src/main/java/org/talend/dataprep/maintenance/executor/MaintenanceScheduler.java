@@ -1,6 +1,6 @@
 package org.talend.dataprep.maintenance.executor;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.NIGHT;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.ONCE;
 import static org.talend.dataprep.maintenance.executor.ScheduleFrequency.REPEAT;

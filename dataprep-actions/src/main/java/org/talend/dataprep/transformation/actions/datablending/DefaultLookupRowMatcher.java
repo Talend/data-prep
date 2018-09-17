@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.transformation.actions.datablending;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.actions.datablending.Lookup.Parameters.LOOKUP_DS_ID;
 
 import java.util.HashMap;

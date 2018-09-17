@@ -17,7 +17,7 @@ import static org.talend.dataprep.api.filter.JSONFilterWalker.walk;
 
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.dataset.RowMetadata;
 
 import com.fasterxml.jackson.databind.JsonNode;

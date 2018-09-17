@@ -16,7 +16,7 @@ package org.talend.dataprep.api.service.settings.actions.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.i18n.DataprepBundle;
 
 import java.util.HashMap;

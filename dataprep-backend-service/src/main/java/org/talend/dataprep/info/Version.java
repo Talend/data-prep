@@ -15,7 +15,7 @@ package org.talend.dataprep.info;
 
 import com.github.zafarkhaja.semver.ParseException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,7 +14,7 @@
 package org.talend.dataprep.transformation.actions.fill;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.*;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;

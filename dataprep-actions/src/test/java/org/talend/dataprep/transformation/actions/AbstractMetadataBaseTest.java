@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.talend.dataprep.ClassPathActionRegistry;

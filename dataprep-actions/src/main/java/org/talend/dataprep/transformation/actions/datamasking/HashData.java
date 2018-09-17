@@ -31,7 +31,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.talend.dataprep.transformation.actions.common.ActionsUtils.appendColumnCreationParameter;
 
 @Action(HashData.ACTION_NAME)

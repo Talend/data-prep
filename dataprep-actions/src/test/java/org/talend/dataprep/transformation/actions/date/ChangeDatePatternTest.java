@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.daikon.exception.TalendRuntimeException;

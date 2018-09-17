@@ -916,6 +916,75 @@ describe('Filter service', () => {
 			}));
 		});
 
+		describe('with "word_matches" type', () => {
+			it('should remove filter when it already exists', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'removeGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('word_matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[alnum]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);
+			}));
+
+			it('should update filter when it already exists with a different pattern', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'updateGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('word_matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[number]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.updateGridFilter).toHaveBeenCalled();
+				expect(StateService.updateGridFilter.calls.argsFor(0)[0]).toBe(oldFilter);
+				const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
+				expect(newFilter.type).toBe('word_matches');
+				expect(newFilter.colId).toBe('col1');
+				expect(newFilter.args.patterns).toEqual([
+					{
+						value: '[number]',
+					},
+				]);
+			}));
+		});
+
 		it('should not throw exception on non existing column (that could be removed by a step) in exact filter', inject((FilterService, StateService) => {
 			//given
 			expect(StateService.addGridFilter).not.toHaveBeenCalled();

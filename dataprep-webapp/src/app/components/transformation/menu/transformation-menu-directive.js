@@ -30,7 +30,6 @@ export default function TransformMenu() {
 			column: '=',
 			menuItems: '=',
 			typeLoading: '<',
-			transformationsLoading: '<',
 		},
 		bindToController: true,
 		controllerAs: 'menuCtrl',

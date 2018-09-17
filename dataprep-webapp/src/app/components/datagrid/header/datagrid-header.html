@@ -17,12 +17,14 @@
         <sc-dropdown on-open="ctrl.initTransformations()">
             <sc-dropdown-trigger class="grid-header-caret" title="{{ ctrl.column.name }}"><icon name="'talend-burger'"/></sc-dropdown-trigger>
             <sc-dropdown-content class="grid-header-menu">
-                <ul>
+                <ul ng-if="ctrl.initTransformationsInProgress">
+                    <li><loader text="{{'LOADING' | translate}}" /></li>
+                </ul>
+                <ul ng-if="!ctrl.initTransformationsInProgress">
                     <li ng-if="ctrl.transformations && !ctrl.transformations.length" translate-once="NO_TRANSFORMATION"></li>
                     <transform-menu column="ctrl.column"
                                     menu-items="ctrl.transformations"
-                                    type-loading="ctrl.typeLoading"
-                                    transformations-loading="ctrl.initTransformationsInProgress">
+                                    type-loading="ctrl.typeLoading">
                     </transform-menu>
                     <li class="divider"></li>
                     <li>

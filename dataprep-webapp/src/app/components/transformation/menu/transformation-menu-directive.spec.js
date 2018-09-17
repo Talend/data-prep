@@ -59,8 +59,7 @@ describe('Transformation menu directive', () => {
 			element = angular.element(`<transform-menu 
 				column="column" 
 				menu-items="menu"
-				type-loading="typeLoading"
-				transformations-loading="transformationsLoading">
+				type-loading="typeLoading">
 				</transform-menu>`);
 			$compile(element)(scope);
 			scope.$digest();
@@ -72,18 +71,6 @@ describe('Transformation menu directive', () => {
 		scope.$destroy();
 		element.remove();
 	});
-
-	it('should render a loader transformations', () => {
-		//given
-		scope.transformationsLoading = true;
-
-		//when
-		const element = createElement();
-
-		//then
-		expect(element.find('loader').length).toBe(1);
-	});
-
 	it('should render a simple action', () => {
 		//given
 		scope.menu = [{ label: 'uppercase' }];

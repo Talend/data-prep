@@ -159,9 +159,11 @@ export default class LookupService {
 	}
 
 	updateLookupDatasetsAndActions() {
+		this.StateService.setLookupModalLoading(true);
 		return this.DatasetListService.refreshDatasets()
 			.then(() => this.TransformationRestService.getDatasetTransformations(this.state.playground.dataset.id))
-			.then(lookup => this.updateLookupDatasetsProperties(lookup));
+			.then(lookup => this.updateLookupDatasetsProperties(lookup))
+			.finally(() => this.StateService.setLookupModalLoading(false));
 	}
 
 	updateLookupDatasetsProperties(lookup) {

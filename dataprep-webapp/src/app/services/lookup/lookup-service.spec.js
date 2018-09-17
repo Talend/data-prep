@@ -448,12 +448,28 @@ describe('Lookup service', () => {
 	});
 
 	describe('add datasets to lookup', () => {
-		it('should fetch to refresh Lookup Datasets And Actions',
-			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService) => {
+		it('should show loading when refreshing Lookup Datasets And Actions',
+			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService, StateService) => {
 				// given
 				spyOn(LookupService, 'updateLookupDatasetsProperties').and.returnValue();
 				spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
 				spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
+				spyOn(StateService, 'setLookupModalLoading');
+
+				// when
+				LookupService.updateLookupDatasetsAndActions();
+
+				// then
+				expect(StateService.setLookupModalLoading).toHaveBeenCalledWith(true);
+			}));
+
+		it('should fetch to refresh Lookup Datasets And Actions',
+			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService, StateService) => {
+				// given
+				spyOn(LookupService, 'updateLookupDatasetsProperties').and.returnValue();
+				spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
+				spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
+				spyOn(StateService, 'setLookupModalLoading');
 
 				// when
 				LookupService.updateLookupDatasetsAndActions();
@@ -463,6 +479,7 @@ describe('Lookup service', () => {
 				expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
 				expect(TransformationRestService.getDatasetTransformations).toHaveBeenCalledWith(stateMock.playground.dataset.id);
 				expect(LookupService.updateLookupDatasetsProperties).toHaveBeenCalledWith({ data: lookupActions });
+				expect(StateService.setLookupModalLoading).toHaveBeenCalledWith(false);
 			}));
 
 		it('should disable datasets which are used in recipe steps', inject(($rootScope, LookupService) => {

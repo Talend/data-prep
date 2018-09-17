@@ -321,12 +321,24 @@ describe('Lookup controller', () => {
 
 			//when
 			ctrl.openAddLookupDatasetModal();
+
+			//then
+			expect(ctrl.addLookupDatasetModal).toBe(true);
+		}));
+
+		it('show call updateLookupDatasetsAndActions when modal is opened', inject(($q, LookupService) => {
+			//given
+			const ctrl = createController();
+			spyOn(LookupService, 'disableDatasetsUsedInRecipe').and.returnValue();
+			spyOn(LookupService, 'updateLookupDatasetsAndActions').and.returnValue($q.when());
+
+			//when
+			ctrl.openAddLookupDatasetModal();
 			scope.$digest();
 
 			//then
 			expect(LookupService.updateLookupDatasetsAndActions).toHaveBeenCalled();
 			expect(LookupService.disableDatasetsUsedInRecipe).toHaveBeenCalled();
-			expect(ctrl.addLookupDatasetModal).toBe(true);
 		}));
 
 		it('should add datasets and close the modal', inject((LookupService) => {

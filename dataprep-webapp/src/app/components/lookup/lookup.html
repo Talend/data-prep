@@ -95,7 +95,10 @@
                        ng-model-options="{debounce: { default: 300, blur: 0 }}"
                        talend-search-input>
             </div>
-            <div class="inventory-list">
+            <div class="lookup-loader" ng-if="lookupCtrl.state.playground.lookup.modalLoading">
+                <loader></loader>
+            </div>
+            <div class="inventory-list" ng-if="!lookupCtrl.state.playground.lookup.modalLoading">
                 <lookup-dataset-list datasets="lookupCtrl.state.playground.lookup.datasets"
                                      search-text="lookupCtrl.state.playground.lookup.searchDatasetString">
                 </lookup-dataset-list>

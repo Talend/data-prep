@@ -28,8 +28,10 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
@@ -204,4 +206,19 @@ public abstract class BaseExportStrategy {
         return preparationSummaryGet.execute();
     }
 
+    /**
+     * Get the full details preparation.
+     *
+     * @param preparationId the wanted preparation id.
+     * @param stepId the preparation step (might be different from head's to navigate through versions).
+     * @return the preparation out of its id.
+     */
+    protected PreparationDetailsDTO getFullPreparation(String preparationId, String stepId) {
+        if ("origin".equals(stepId)) {
+            stepId = Step.ROOT_STEP.id();
+        }
+        final PreparationDetailsGet preparationDetailsGet =
+                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
+        return preparationDetailsGet.execute();
+    }
 }

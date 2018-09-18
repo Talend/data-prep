@@ -8,7 +8,7 @@ import org.springframework.context.annotation.FilterType;
  */
 @ComponentScan( //
         value = { "org.talend.dataprep", "org.talend.daikon.content", "org.talend.daikon.security",
-                "org.talend.tenancy" }, //
+                "org.talend.tenancy", "org.talend.pendo" }, //
         // Currently we have two controllers for the same entry point '/docs' one from daikon, another one from dataprep.
         // We filter the daikon one. It's a workaround before daikon documentation controller will be optional.
         excludeFilters = @ComponentScan.Filter( //

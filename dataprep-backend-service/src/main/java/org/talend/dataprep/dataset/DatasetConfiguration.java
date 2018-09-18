@@ -12,26 +12,18 @@
 
 package org.talend.dataprep.dataset;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "dataset")
+@Scope(SCOPE_PROTOTYPE)
 public class DatasetConfiguration {
 
-    private static final Logger LOGGER = getLogger(DatasetConfiguration.class);
-
     private final Service service = new Service();
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Dataset configuration is retrieved from properties");
-    }
 
     public static class Service {
 

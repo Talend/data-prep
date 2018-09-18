@@ -55,6 +55,7 @@
         <validation-api.version>1.1.0.Final</validation-api.version>
         <httpclient.version>4.5.3</httpclient.version>
         <httpclient.tests.version>4.3.6</httpclient.tests.version>
+        <cucumber.version>1.2.5</cucumber.version>
     </properties>
 
     <dependencyManagement>
@@ -618,6 +619,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>ST4</artifactId>
+                <version>4.0.8</version>
+            </dependency>
             <!-- UNIT TEST DEPENDENCIES -->
 
             <dependency>
@@ -629,7 +635,7 @@
             <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
-                <version>1.2.3</version>
+                <version>1.4.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

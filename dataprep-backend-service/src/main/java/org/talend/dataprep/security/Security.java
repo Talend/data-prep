@@ -16,6 +16,7 @@ package org.talend.dataprep.security;
 import java.util.Locale;
 import java.util.Set;
 
+import org.talend.dataprep.analytics.Analytics;
 import org.talend.dataprep.api.user.UserGroup;
 
 public interface Security {
@@ -63,4 +64,9 @@ public interface Security {
      */
     Locale getLocale();
 
+    /**
+     *
+     * @return {@link Analytics} information
+     */
+    Analytics getAnalytics();
 }

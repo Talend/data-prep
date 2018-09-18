@@ -18,11 +18,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.talend.dataprep</groupId>
-        <artifactId>dataprep-core</artifactId>
+        <artifactId>dataprep-base</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../dataprep-base</relativePath>
     </parent>
 
-    <artifactId>dataprep-backend-core</artifactId>
+    <artifactId>dataprep-core</artifactId>
     <packaging>jar</packaging>
     <dependencyManagement>
         <dependencies>

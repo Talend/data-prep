@@ -2,23 +2,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.talend.dataprep</groupId>
-    <artifactId>dataprep-core</artifactId>
+    <artifactId>dataprep-base</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>dataprep-dependencies</module>
-        <module>dataprep-backend-core</module>
-        <module>dataprep-core-actions</module>
-        <module>dataprep-actions-parser</module>
-    </modules>
+    <description>
+        Defines dataprep dataprep artifacts build.
+    </description>
+
     <scm>
         <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
         <url>https://github.com/Talend/data-prep</url>
     </scm>
+
+    <properties>
+        <!-- Sonar -->
+        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+        <sonar.exclusions>**/build/**,**/node_modules/**,**/bower_components/**,**/target/**</sonar.exclusions>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.exclusions>**/itests/**</sonar.coverage.exclusions>
+    </properties>
 
     <build>
         <pluginManagement>
@@ -45,6 +52,19 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
                     <version>1.4</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>create</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <doCheck>false</doCheck>
+                        <doUpdate>false</doUpdate>
+                        <revisionOnScmFailure>false</revisionOnScmFailure>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -62,6 +82,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.0</version>
                     <configuration>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
                         <systemPropertyVariables>
                             <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
                         </systemPropertyVariables>
@@ -88,6 +109,20 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>default-jar</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>net.masterthought</groupId>
@@ -118,6 +153,18 @@
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
                     <version>2.2.5</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <generateGitPropertiesFilename>${project.build.outputDirectory}/dataprep-git.properties
+                        </generateGitPropertiesFilename>
+                        <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -234,52 +281,14 @@
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/dataprep-git.properties
-                    </generateGitPropertiesFilename>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <doCheck>false</doCheck>
-                    <doUpdate>false</doUpdate>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -288,9 +297,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -344,4 +350,85 @@
         </profile>
     </profiles>
 
+    <repositories>
+        <repository>
+            <id>snapshots</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>releases</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>opensource-snapshots</id>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>opensource-releases</id>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>opensource-snapshots</id>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>opensource-releases</id>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>talend_nexus_deployment</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>talend_nexus_deployment</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 </project>

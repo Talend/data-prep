@@ -19,8 +19,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.talend.dataprep</groupId>
-        <artifactId>dataprep-core</artifactId>
+        <artifactId>dataprep-base</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../dataprep-base</relativePath>
     </parent>
 
     <artifactId>dataprep-core-actions</artifactId>
@@ -38,6 +39,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- TALEND -->
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
             <artifactId>dataquality-semantic</artifactId>
@@ -55,6 +61,20 @@
             <artifactId>dataquality-converters</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.talend.dataquality</groupId>
+            <artifactId>dataquality-statistics</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+        </dependency>
+
+        <!-- EXT -->
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
@@ -63,12 +83,18 @@
             <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-core</artifactId>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <!-- TEST -->
+        <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-core</artifactId>
+            <artifactId>dataprep-core</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>
@@ -88,7 +114,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-junit</artifactId>
-            <version>2.0.0.0</version>
             <scope>test</scope>
         </dependency>
         <!-- Enforce those (potentially older) versions for compatibility with Studio -->
@@ -96,17 +121,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.4</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.4</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.14-TALEND</version>
         </dependency>
         <!-- END -->
     </dependencies>

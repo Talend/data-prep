@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ ============================================================================
+  ~ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+  ~
+  ~ This source code is available under agreement available at
+  ~ https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~ You should have received a copy of the agreement
+  ~ along with this program; if not, write to Talend SA
+  ~ 9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.talend.dataprep</groupId>
+    <artifactId>dataprep-parent</artifactId>
+    <version>2.8.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>dataprep-parent</name>
+    <description>dataprep parent pom</description>
+    <modules>
+        <module>dataprep-core-reactor</module>
+        <module>dataprep-backend</module>
+        <module>dataprep-webapp</module>
+    </modules>
+    <scm>
+        <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
+        <url>https://github.com/Talend/data-prep.git</url>
+    </scm>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+</project>

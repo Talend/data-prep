@@ -26,7 +26,6 @@
     <name>dataprep-backend-service</name>
     <packaging>jar</packaging>
     <artifactId>dataprep-backend-service</artifactId>
-
     <dependencies>
         <!-- SPRING DEPENDENCIES -->
         <dependency>
@@ -88,12 +87,6 @@
         <dependency>
             <groupId>org.talend.dataquality</groupId>
             <artifactId>dataquality-semantic</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
@@ -117,11 +110,11 @@
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-common</artifactId>
+            <artifactId>dataprep-backend-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-actions</artifactId>
+            <artifactId>dataprep-core-actions</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
@@ -163,6 +156,10 @@
         <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
             <groupId>io.reactivex</groupId>
@@ -275,16 +272,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-common</artifactId>
+            <artifactId>dataprep-backend-core</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>

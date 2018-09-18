@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "id": "A1B2C3D4",
+    "sharedDataSet": false,
+    "sharedByMe": false,
+    "owner": null,
+    "roles": [],
+    "tag": null,
+    "columns": [
+      {
+        "name": "state",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 50
+        },
+        "id": "0000",
+        "statistics": {
+          "count": 50,
+          "valid": 50,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 1,
+          "distinctCount": 49,
+          "frequencyTable": [
+            {
+              "data": "MA",
+              "occurrences": 2
+            },
+            {
+              "data": "HI",
+              "occurrences": 1
+            },
+            {
+              "data": "DE",
+              "occurrences": 1
+            },
+            {
+              "data": "TX",
+              "occurrences": 1
+            },
+            {
+              "data": "MD",
+              "occurrences": 1
+            },
+            {
+              "data": "IA",
+              "occurrences": 1
+            },
+            {
+              "data": "ID",
+              "occurrences": 1
+            },
+            {
+              "data": "MI",
+              "occurrences": 1
+            },
+            {
+              "data": "UT",
+              "occurrences": 1
+            },
+            {
+              "data": "MN",
+              "occurrences": 1
+            },
+            {
+              "data": "MO",
+              "occurrences": 1
+            },
+            {
+              "data": "IL",
+              "occurrences": 1
+            },
+            {
+              "data": "IN",
+              "occurrences": 1
+            },
+            {
+              "data": "MS",
+              "occurrences": 1
+            },
+            {
+              "data": "MT",
+              "occurrences": 1
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "AA",
+              "occurrences": 50
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": 2.0,
+            "maximalLength": 2.0,
+            "averageLength": 2.0
+          }
+        },
+        "domain": "US_STATE_CODE",
+        "domainLabel": "US State Code",
+        "domainFrequency": 100.0,
+        "semanticDomains": [
+          {
+            "id": "US_STATE_CODE",
+            "label": "US State Code",
+            "frequency": 100.0
+          },
+          {
+            "id": "LANGUAGE_CODE_ISO2",
+            "label": "Language Code ISO2",
+            "frequency": 54.0
+          },
+          {
+            "id": "COUNTRY_CODE_ISO2",
+            "label": "Country Code ISO2",
+            "frequency": 52.0
+          },
+          {
+            "id": "CITY",
+            "label": "City",
+            "frequency": 18.0
+          },
+          {
+            "id": "CIVILITY",
+            "label": "Civility",
+            "frequency": 2.0
+          },
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 8.0
+          },
+          {
+            "id": "FR_COMMUNE",
+            "label": "FR Commune",
+            "frequency": 2.0
+          },
+          {
+            "id": "FIRST_NAME",
+            "label": "First Name",
+            "frequency": 4.0
+          },
+          {
+            "id": "COMPANY",
+            "label": "Company",
+            "frequency": 4.0
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      },
+      {
+        "name": "Region",
+        "headerSize": 0,
+        "type": "string",
+        "quality": {
+          "empty": 0,
+          "invalid": 0,
+          "valid": 50
+        },
+        "id": "0001",
+        "statistics": {
+          "count": 50,
+          "valid": 50,
+          "invalid": 0,
+          "empty": 0,
+          "max": "NaN",
+          "min": "NaN",
+          "mean": "NaN",
+          "variance": "NaN",
+          "duplicateCount": 45,
+          "distinctCount": 5,
+          "frequencyTable": [
+            {
+              "data": "South East",
+              "occurrences": 12
+            },
+            {
+              "data": "Mid West",
+              "occurrences": 12
+            },
+            {
+              "data": "West",
+              "occurrences": 11
+            },
+            {
+              "data": "North East",
+              "occurrences": 11
+            },
+            {
+              "data": "South West",
+              "occurrences": 4
+            }
+          ],
+          "patternFrequencyTable": [
+            {
+              "pattern": "Aaaaa Aaaa",
+              "occurrences": 27
+            },
+            {
+              "pattern": "Aaa Aaaa",
+              "occurrences": 12
+            },
+            {
+              "pattern": "Aaaa",
+              "occurrences": 11
+            }
+          ],
+          "quantiles": {
+            "median": "NaN",
+            "lowerQuantile": "NaN",
+            "upperQuantile": "NaN"
+          },
+          "histogram": null,
+          "textLengthSummary": {
+            "minimalLength": 4.0,
+            "maximalLength": 10.0,
+            "averageLength": 8.2
+          }
+        },
+        "domain": "CITY",
+        "domainLabel": "City",
+        "domainFrequency": 44.0,
+        "semanticDomains": [
+          {
+            "id": "CITY",
+            "label": "City",
+            "frequency": 44.0
+          },
+          {
+            "id": "LAST_NAME",
+            "label": "Last Name",
+            "frequency": 22.0
+          },
+          {
+            "id": "COMPANY",
+            "label": "Company",
+            "frequency": 22.0
+          }
+        ],
+        "domainForced": false,
+        "typeForced": false
+      }
+    ],
+    "lifecycle": {
+      "inProgress": false,
+      "importing": false,
+      "contentAnalyzed": true,
+      "schemaAnalyzed": true,
+      "qualityAnalyzed": true
+    },
+    "records": 5,
+    "nbLinesHeader": 1,
+    "nbLinesFooter": 0,
+    "type": "text/csv",
+    "parameters": {
+      "HEADER_NB_LINES": "1",
+      "SEPARATOR": ";",
+      "COLUMN_HEADERS": "[\"state\",\"Region\"]"
+    },
+    "formatGuess": "formatGuess#csv",
+    "limit": null,
+    "certificationStep": "NONE",
+    "location": {
+      "type": "local",
+      "dynamic": false,
+      "title": null,
+      "label": null
+    },
+    "name": "reference_lookup",
+    "author": "2",
+    "created": 1480696959861,
+    "lastModificationDate": 1480696959861,
+    "sheetName": null,
+    "app-version": null,
+    "draft": false,
+    "schemaParserResult": null,
+    "favorite": false,
+    "encoding": "windows-1252"
+  },
+  "records": [
+    {
+      "0000": "WA",
+      "0001": "West",
+      "tdpId": 1
+    },
+    {
+      "0000": "MT",
+      "0001": "West",
+      "tdpId": 2
+    },
+    {
+      "0000": "OR",
+      "0001": "West",
+      "tdpId": 3
+    },
+    {
+      "0000": "AL",
+      "0001": "South East",
+      "tdpId": 4
+    },
+    {
+      "0000": "CA",
+      "0001": "West",
+      "tdpId": 5
+    }
+  ]
+}

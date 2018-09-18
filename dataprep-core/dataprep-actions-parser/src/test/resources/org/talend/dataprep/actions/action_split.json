@@ -1,0 +1,31 @@
+{
+  "name": "action split",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "a1",
+        "type": "string"
+      },
+      {
+        "id": "0001",
+        "name": "a2",
+        "type": "string"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "split",
+      "parameters": {
+        "limit": 3,
+        "separator": "other_string",
+        "manual_separator_string": " ",
+        "scope": "column",
+        "column_id": "0000",
+        "column_name": "a1",
+        "row_id": 1
+      }
+    }
+  ]
+}

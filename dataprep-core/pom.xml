@@ -1,57 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-  ~ ============================================================================
-  ~ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
-  ~
-  ~ This source code is available under agreement available at
-  ~ https://github.com/Talend/data-prep/blob/master/LICENSE
-  ~
-  ~ You should have received a copy of the agreement
-  ~ along with this program; if not, write to Talend SA
-  ~ 9 rue Pages 92150 Suresnes, France
-  ~
-  ~ ============================================================================
-  -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.talend.dataprep</groupId>
-    <artifactId>dataprep-parent</artifactId>
-    <version>2.8.0-SNAPSHOT</version>
+    <artifactId>dataprep-core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>dataprep-parent</name>
-    <description>dataprep parent pom</description>
+
     <modules>
-        <module>dataprep-core</module>
-        <module>dataprep-backend</module>
-        <module>dataprep-webapp</module>
+        <module>dataprep-dependencies</module>
+        <module>dataprep-backend-core</module>
+        <module>dataprep-core-actions</module>
+        <module>dataprep-actions-parser</module>
     </modules>
     <scm>
         <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
-        <url>https://github.com/Talend/data-prep.git</url>
+        <url>https://github.com/Talend/data-prep</url>
     </scm>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-             <distribution>repo</distribution>
-        </license>
-    </licenses>
 
-    <properties>
-        <!-- Sonar -->
-        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
-        <sonar.exclusions>**/build/**,**/node_modules/**,**/bower_components/**,**/target/**</sonar.exclusions>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.coverage.exclusions>**/itests/**</sonar.coverage.exclusions>
-    </properties>
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>3.8.0</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
@@ -60,7 +34,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.3.2</version>
+                    <version>1.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -75,12 +49,12 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>1.16</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.7</version>
                 </plugin>
 
                 <plugin>
@@ -113,12 +87,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>net.masterthought</groupId>
                     <artifactId>maven-cucumber-reporting</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.20.0</version>
                     <executions>
                         <execution>
                             <id>cucumber-report</id>
@@ -138,17 +112,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.3</version>
+                    <version>1.8</version>
                 </plugin>
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
-                    <version>2.2.2</version>
+                    <version>2.2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -158,7 +132,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -251,6 +225,7 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -306,6 +281,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -358,84 +344,4 @@
         </profile>
     </profiles>
 
-    <repositories>
-        <repository>
-            <id>snapshots</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <updatePolicy>never</updatePolicy>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>releases</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases</url>
-            <releases>
-                <updatePolicy>never</updatePolicy>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>opensource-snapshots</id>
-            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <updatePolicy>never</updatePolicy>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>opensource-releases</id>
-            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease</url>
-            <releases>
-                <updatePolicy>never</updatePolicy>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>opensource-snapshots</id>
-            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <updatePolicy>never</updatePolicy>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>opensource-releases</id>
-            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease</url>
-            <releases>
-                <updatePolicy>never</updatePolicy>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>talend_nexus_deployment</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>talend_nexus_deployment</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
-        </repository>
-    </distributionManagement>
 </project>

@@ -1,0 +1,1260 @@
+{
+  "name": "action lookup",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "Stadium",
+        "type": "string"
+      },
+      {
+        "id": "0001",
+        "name": "Postal",
+        "type": "string"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "lookup",
+      "parameters": {
+        "column_id": "0001",
+        "filter": "",
+        "lookup_ds_id": "A1B2C3",
+        "lookup_join_on": "0000",
+        "scope": "dataset",
+        "column_name": "Postal",
+        "lookup_selected_cols": [
+          {
+            "id": "0001",
+            "name": "State"
+          },
+          {
+            "id": "0002",
+            "name": "Capital"
+          }
+        ],
+        "row_id": "",
+        "lookup_join_on_name": "Postal",
+        "lookup_ds_name": "us_states"
+      }
+    },
+    {
+      "action": "lookup",
+      "parameters": {
+        "column_id": "0001",
+        "filter": "",
+        "lookup_ds_id": "A1B2C3D4",
+        "lookup_join_on": "0000",
+        "scope": "dataset",
+        "column_name": "State",
+        "lookup_selected_cols": [
+          {
+            "id": "0001",
+            "name": "Region"
+          }
+        ],
+        "row_id": null,
+        "lookup_join_on_name": "State",
+        "lookup_ds_name": "us_regions"
+      }
+    },
+    {
+      "action": "uppercase",
+      "parameters": {
+        "column_id": "0003",
+        "scope": "column",
+        "column_name": "Capital"
+      }
+    },
+    {
+      "action": "uppercase",
+      "parameters": {
+        "column_id": "0004",
+        "scope": "column",
+        "column_name": "Region"
+      }
+    }
+  ],
+  "dictionary": [
+    {
+      "category": "AIRPORT",
+      "valueSet": [
+        "Talladega Municipal Airport",
+        "Talladega",
+        "Talladega Municipal"
+      ]
+    },
+    {
+      "category": "ANIMAL",
+      "valueSet": [
+        "ANE",
+        "ASS",
+        "DONKEY",
+        "BURRO"
+      ]
+    },
+    {
+      "category": "ANSWER",
+      "valueSet": [
+        "No",
+        "Yes"
+      ]
+    },
+    {
+      "category": "AIRPORT_CODE",
+      "valueSet": [
+        "ADI"
+      ]
+    },
+    {
+      "category": "CITY",
+      "valueSet": [
+        "Кампу-Гранді",
+        "কাম্পো গ্রান্ডে",
+        "Campus Magnus",
+        "Kampo Grandi",
+        "Kampu-Grandi",
+        "کیمپو گراندے",
+        "Кампу-Гранды",
+        "Kampo Grande",
+        "Kampu-Grande",
+        "Кампо Гранди",
+        "Горад Кампу-Гранды",
+        "kang pu krang ci",
+        "Kampu-Grandy",
+        "kympw grandے",
+        "qmpw grʼndh",
+        "格蘭德營",
+        "kʼampʼu-grandi",
+        "カンポ・グランデ",
+        "Кампу-Гранди",
+        "Кампо Гранде",
+        "کامپوگرانده",
+        "Кампу-Гранде",
+        "캄푸그란지",
+        "กังปูกรังจี",
+        "kambw ghrandy",
+        "kampugeulanji",
+        "كامبو غراندي",
+        "Gorad Kampu-Grandy",
+        "kampwgrandh",
+        "קמפו גראנדה",
+        "Kampo Grandė",
+        "კამპუ-გრანდი"
+      ]
+    },
+    {
+      "category": "CONTINENT",
+      "valueSet": [
+        "AFROEURASIA",
+        "AFRO-EURASIA",
+        "EURAFRASIA"
+      ]
+    },
+    {
+      "category": "CIVILITY",
+      "valueSet": [
+        "MADAME",
+        "FRAU",
+        "SENORA",
+        "SENHORA",
+        "SIGNORA",
+        "MADAM"
+      ]
+    },
+    {
+      "category": "COUNTRY",
+      "valueSet": [
+        "Afghanistan"
+      ]
+    },
+    {
+      "category": "CURRENCY_NAME",
+      "valueSet": [
+        "Afghani"
+      ]
+    },
+    {
+      "category": "COUNTRY_CODE_ISO3",
+      "valueSet": [
+        "AFG"
+      ]
+    },
+    {
+      "category": "COUNTRY_CODE_ISO2",
+      "valueSet": [
+        "AF"
+      ]
+    },
+    {
+      "category": "FIRST_NAME",
+      "valueSet": [
+        "ABBAS"
+      ]
+    },
+    {
+      "category": "CURRENCY_CODE",
+      "valueSet": [
+        "AFN"
+      ]
+    },
+    {
+      "category": "HR_DEPARTMENT",
+      "valueSet": [
+        "import department",
+        "accounts department",
+        "warehousing department",
+        "secretary's office",
+        "information technology",
+        "materials administration",
+        "customer service",
+        "logistics",
+        "Quality Management",
+        "HR",
+        "production department",
+        "staff department",
+        "EDP",
+        "QA",
+        "purchasing department",
+        "Catering Services",
+        "service team",
+        "electronic data processing",
+        "dispatch department",
+        "administrative accounting",
+        "technical support team",
+        "public relations department",
+        "Waste Management",
+        "export team",
+        "shipping department",
+        "public relations team",
+        "research and development team",
+        "IT",
+        "human resources",
+        "IT department",
+        "engineering department",
+        "import team",
+        "R&D",
+        "marketing",
+        "accounting department",
+        "personnel department",
+        "export department",
+        "support team",
+        "manufacturing department",
+        "sales department",
+        "export sales department"
+      ]
+    },
+    {
+      "category": "CONTINENT_CODE",
+      "valueSet": [
+        "AFR"
+      ]
+    },
+    {
+      "category": "LAST_NAME",
+      "valueSet": [
+        "TYLER"
+      ]
+    },
+    {
+      "category": "JOB_TITLE",
+      "valueSet": [
+        "Able Seamen"
+      ]
+    },
+    {
+      "category": "MUSEUM",
+      "valueSet": [
+        "Musée de l'Amérique francophone"
+      ]
+    },
+    {
+      "category": "STREET_TYPE",
+      "valueSet": [
+        "STR",
+        "ST",
+        "RUE",
+        "STRADA",
+        "CALLE",
+        "STREET",
+        "STRAßE",
+        "RUA"
+      ]
+    },
+    {
+      "category": "MONTH",
+      "valueSet": [
+        "JANUARY",
+        "JANUAR",
+        "GENNAIO",
+        "ENERO",
+        "JANEIRO",
+        "JANVIER"
+      ]
+    },
+    {
+      "category": "WEEKDAY",
+      "valueSet": [
+        "MONDAY",
+        "LUNDI",
+        "LUNES",
+        "MONTAG",
+        "LUNEDI",
+        "SEGUNDA-FEIRA"
+      ]
+    },
+    {
+      "category": "GENDER",
+      "valueSet": [
+        "MUJERES",
+        "FEMME",
+        "FRAUEN",
+        "MULHERES",
+        "DONNA",
+        "WOMAN"
+      ]
+    },
+    {
+      "category": "US_COUNTY",
+      "valueSet": [
+        "Abbeville County",
+        "Abbeville"
+      ]
+    },
+    {
+      "category": "ORGANIZATION",
+      "valueSet": [
+        "Miss Korea"
+      ]
+    },
+    {
+      "category": "COMPANY",
+      "valueSet": [
+        "Aquafon"
+      ]
+    },
+    {
+      "category": "FR_COMMUNE",
+      "valueSet": [
+        "La Neuve-Lyre"
+      ]
+    },
+    {
+      "category": "BEVERAGE",
+      "valueSet": [
+        "5-hour Energy"
+      ]
+    },
+    {
+      "category": "INDUSTRY",
+      "valueSet": [
+        "Health Care Equipment & Supplies",
+        "Transportation Infrastructure",
+        "Diversified Consumer Services",
+        "Communications Equipment",
+        "Water Utilities",
+        "Personal Products",
+        "Auto Components",
+        "Marine",
+        "Air Freight & Logistics",
+        "Independent Power Producers & Energy Traders",
+        "Metals & Mining",
+        "Textiles, Apparel & Luxury Goods",
+        "Distributors",
+        "Trading Companies & Distributors",
+        "Household Durables",
+        "Building Products",
+        "Media",
+        "Construction & Engineering",
+        "Automobiles",
+        "Commercial Banks",
+        "Chemicals",
+        "Food Products",
+        "Household Products",
+        "REITs",
+        "Hotels, Restaurants & Leisure",
+        "Tobacco",
+        "Electrical Equipment",
+        "Energy Equipment & Services",
+        "Real Estate",
+        "Software",
+        "IT Services",
+        "Leisure Equipment & Products",
+        "Aerospace & Defense",
+        "Biotechnology",
+        "Real Estate Management & Development",
+        "Specialty Retail",
+        "Internet & Catalog Retail",
+        "Office Electronics",
+        "Road & Rail",
+        "Gas Utilities",
+        "Machinery",
+        "Consumer Finance",
+        "Multiline Retail",
+        "Food & Staples Retailing",
+        "Airlines",
+        "Computers & Peripherals",
+        "Industrial Conglomerates",
+        "Electronic Equipment, Instruments & Components",
+        "Oil, Gas & Consumable Fuels",
+        "Health Care Providers & Services",
+        "Diversified Financial Services",
+        "Beverages",
+        "Health Care Technology",
+        "Capital Markets",
+        "Multi-Utilities",
+        "Wireless Telecommunication Services",
+        "Semiconductor Equipment & Products",
+        "Electric Utilities",
+        "Containers & Packaging",
+        "Professional Services",
+        "Internet Software & Services",
+        "Construction Materials",
+        "Semiconductors & Semiconductor Equipment",
+        "Life Sciences Tools & Services",
+        "Diversified Telecommunication Services",
+        "Paper & Forest Products",
+        "Insurance",
+        "Commercial Services & Supplies",
+        "Real Estate Investment Trusts",
+        "Thrifts & Mortgage Finance",
+        "Pharmaceuticals"
+      ]
+    },
+    {
+      "category": "MEASURE_UNIT",
+      "valueSet": [
+        "Pound"
+      ]
+    },
+    {
+      "category": "INDUSTRY_GROUP",
+      "valueSet": [
+        "Technology Hardware & Equipment",
+        "Commercial & Professional Services",
+        "Transportation",
+        "Software & Services",
+        "Materials",
+        "Consumer Services",
+        "Media",
+        "Capital Goods",
+        "Retailing",
+        "Health Care Equipment & Services",
+        "Automobiles & Components",
+        "Diversified Financials",
+        "Pharmaceuticals, Biotechnology & Life Sciences",
+        "Semiconductors & Semiconductor Equipment",
+        "Food & Staples Retailing",
+        "Utilities",
+        "Household & Personal Products",
+        "Energy",
+        "Telecommunication Services",
+        "Insurance",
+        "Real Estate",
+        "Banks",
+        "Consumer Durables & Apparel",
+        "Food, Beverage & Tobacco"
+      ]
+    },
+    {
+      "category": "SECTOR",
+      "valueSet": [
+        "Utilities",
+        "Health Care",
+        "Energy",
+        "Consumer Staples",
+        "Telecommunication Services",
+        "Materials",
+        "Financials",
+        "Industrials",
+        "Consumer Discretionary",
+        "Information Technology"
+      ]
+    },
+    {
+      "category": "LANGUAGE",
+      "valueSet": [
+        "Afar",
+        "Danakil-Sprache"
+      ]
+    },
+    {
+      "category": "LANGUAGE_CODE_ISO3",
+      "valueSet": [
+        "aar"
+      ]
+    },
+    {
+      "category": "FR_DEPARTEMENT",
+      "valueSet": [
+        "Ain"
+      ]
+    },
+    {
+      "category": "LANGUAGE_CODE_ISO2",
+      "valueSet": [
+        "aa"
+      ]
+    },
+    {
+      "category": "FR_REGION",
+      "valueSet": [
+        "Guadeloupe"
+      ]
+    },
+    {
+      "category": "FR_REGION_LEGACY",
+      "valueSet": [
+        "Guadeloupe"
+      ]
+    },
+    {
+      "category": "CA_PROVINCE_TERRITORY",
+      "valueSet": [
+        "Alberta"
+      ]
+    },
+    {
+      "category": "CA_PROVINCE_TERRITORY_CODE",
+      "valueSet": [
+        "AB"
+      ]
+    },
+    {
+      "category": "MX_ESTADO",
+      "valueSet": [
+        "Aguascalientes"
+      ]
+    },
+    {
+      "category": "MX_ESTADO_CODE",
+      "valueSet": [
+        "AGU"
+      ]
+    }
+  ],
+  "keyword": [
+    {
+      "category": "ADDRESS_LINE",
+      "valueSet": [
+        "STR",
+        "ST",
+        "RUE",
+        "STRADA",
+        "CALLE",
+        "STREET",
+        "STRAßE",
+        "RUA"
+      ]
+    },
+    {
+      "category": "FULL_NAME",
+      "valueSet": [
+        "MADAME",
+        "FRAU",
+        "SENORA",
+        "SENHORA",
+        "SIGNORA",
+        "MADAM"
+      ]
+    }
+  ],
+  "lookupDataSets": {
+    "A1B2C3": {
+      "metadata": {
+        "id": "A1B2C3",
+        "sharedDataSet": false,
+        "sharedByMe": false,
+        "owner": null,
+        "roles": [],
+        "tag": null,
+        "columns": [
+          {
+            "name": "Postal",
+            "headerSize": 0,
+            "type": "string",
+            "quality": {
+              "empty": 0,
+              "invalid": 0,
+              "valid": 50
+            },
+            "id": "0000",
+            "statistics": {
+              "count": 50,
+              "valid": 50,
+              "invalid": 0,
+              "empty": 0,
+              "max": "NaN",
+              "min": "NaN",
+              "mean": "NaN",
+              "variance": "NaN",
+              "duplicateCount": 0,
+              "distinctCount": 0,
+              "frequencyTable": [],
+              "patternFrequencyTable": [],
+              "quantiles": {
+                "median": "NaN",
+                "lowerQuantile": "NaN",
+                "upperQuantile": "NaN"
+              },
+              "histogram": null,
+              "textLengthSummary": {
+                "minimalLength": "NaN",
+                "maximalLength": "NaN",
+                "averageLength": "NaN"
+              }
+            },
+            "domain": "US_STATE_CODE",
+            "domainLabel": "US State Code",
+            "domainFrequency": 100.0,
+            "semanticDomains": [
+              {
+                "id": "US_STATE_CODE",
+                "label": "US State Code",
+                "frequency": 100.0
+              },
+              {
+                "id": "LANGUAGE_CODE_ISO2",
+                "label": "Language Code ISO2",
+                "frequency": 54.0
+              },
+              {
+                "id": "COUNTRY_CODE_ISO2",
+                "label": "Country Code ISO2",
+                "frequency": 52.0
+              },
+              {
+                "id": "CITY",
+                "label": "City",
+                "frequency": 18.0
+              },
+              {
+                "id": "CIVILITY",
+                "label": "Civility",
+                "frequency": 2.0
+              },
+              {
+                "id": "LAST_NAME",
+                "label": "Last Name",
+                "frequency": 6.0
+              },
+              {
+                "id": "FR_COMMUNE",
+                "label": "FR Commune",
+                "frequency": 2.0
+              },
+              {
+                "id": "FIRST_NAME",
+                "label": "First Name",
+                "frequency": 4.0
+              },
+              {
+                "id": "COMPANY",
+                "label": "Company",
+                "frequency": 4.0
+              }
+            ],
+            "domainForced": false,
+            "typeForced": false
+          },
+          {
+            "name": "State",
+            "headerSize": 0,
+            "type": "string",
+            "quality": {
+              "empty": 0,
+              "invalid": 0,
+              "valid": 50
+            },
+            "id": "0001",
+            "statistics": {
+              "count": 50,
+              "valid": 50,
+              "invalid": 0,
+              "empty": 0,
+              "max": "NaN",
+              "min": "NaN",
+              "mean": "NaN",
+              "variance": "NaN",
+              "duplicateCount": 0,
+              "distinctCount": 0,
+              "frequencyTable": [],
+              "patternFrequencyTable": [],
+              "quantiles": {
+                "median": "NaN",
+                "lowerQuantile": "NaN",
+                "upperQuantile": "NaN"
+              },
+              "histogram": null,
+              "textLengthSummary": {
+                "minimalLength": "NaN",
+                "maximalLength": "NaN",
+                "averageLength": "NaN"
+              }
+            },
+            "domain": "US_STATE",
+            "domainLabel": "US State",
+            "domainFrequency": 100.0,
+            "semanticDomains": [
+              {
+                "id": "CITY",
+                "label": "City",
+                "frequency": 52.0
+              },
+              {
+                "id": "AIRPORT",
+                "label": "Airport",
+                "frequency": 10.0
+              },
+              {
+                "id": "COUNTRY",
+                "label": "Country",
+                "frequency": 2.0
+              },
+              {
+                "id": "US_COUNTY",
+                "label": "US County",
+                "frequency": 34.0
+              },
+              {
+                "id": "LAST_NAME",
+                "label": "Last Name",
+                "frequency": 6.0
+              },
+              {
+                "id": "US_STATE",
+                "label": "US State",
+                "frequency": 100.0
+              },
+              {
+                "id": "FIRST_NAME",
+                "label": "First Name",
+                "frequency": 12.0
+              }
+            ],
+            "domainForced": false,
+            "typeForced": false
+          },
+          {
+            "name": "Capital",
+            "headerSize": 0,
+            "type": "string",
+            "quality": {
+              "empty": 0,
+              "invalid": 0,
+              "valid": 50
+            },
+            "id": "0002",
+            "statistics": {
+              "count": 50,
+              "valid": 50,
+              "invalid": 0,
+              "empty": 0,
+              "max": "NaN",
+              "min": "NaN",
+              "mean": "NaN",
+              "variance": "NaN",
+              "duplicateCount": 0,
+              "distinctCount": 0,
+              "frequencyTable": [],
+              "patternFrequencyTable": [],
+              "quantiles": {
+                "median": "NaN",
+                "lowerQuantile": "NaN",
+                "upperQuantile": "NaN"
+              },
+              "histogram": null,
+              "textLengthSummary": {
+                "minimalLength": "NaN",
+                "maximalLength": "NaN",
+                "averageLength": "NaN"
+              }
+            },
+            "domain": "CITY",
+            "domainLabel": "City",
+            "domainFrequency": 100.0,
+            "semanticDomains": [
+              {
+                "id": "CITY",
+                "label": "City",
+                "frequency": 100.0
+              },
+              {
+                "id": "AIRPORT",
+                "label": "Airport",
+                "frequency": 62.0
+              },
+              {
+                "id": "US_COUNTY",
+                "label": "US County",
+                "frequency": 46.0
+              },
+              {
+                "id": "LAST_NAME",
+                "label": "Last Name",
+                "frequency": 34.0
+              },
+              {
+                "id": "FR_COMMUNE",
+                "label": "FR Commune",
+                "frequency": 2.0
+              },
+              {
+                "id": "FIRST_NAME",
+                "label": "First Name",
+                "frequency": 28.0
+              },
+              {
+                "id": "COMPANY",
+                "label": "Company",
+                "frequency": 6.0
+              }
+            ],
+            "domainForced": false,
+            "typeForced": false
+          },
+          {
+            "name": "MostPopulousCity",
+            "headerSize": 0,
+            "type": "string",
+            "quality": {
+              "empty": 0,
+              "invalid": 0,
+              "valid": 50
+            },
+            "id": "0003",
+            "statistics": {
+              "count": 50,
+              "valid": 50,
+              "invalid": 0,
+              "empty": 0,
+              "max": "NaN",
+              "min": "NaN",
+              "mean": "NaN",
+              "variance": "NaN",
+              "duplicateCount": 0,
+              "distinctCount": 0,
+              "frequencyTable": [],
+              "patternFrequencyTable": [],
+              "quantiles": {
+                "median": "NaN",
+                "lowerQuantile": "NaN",
+                "upperQuantile": "NaN"
+              },
+              "histogram": null,
+              "textLengthSummary": {
+                "minimalLength": "NaN",
+                "maximalLength": "NaN",
+                "averageLength": "NaN"
+              }
+            },
+            "domain": "CITY",
+            "domainLabel": "City",
+            "domainFrequency": 98.0,
+            "semanticDomains": [
+              {
+                "id": "CITY",
+                "label": "City",
+                "frequency": 98.0
+              },
+              {
+                "id": "AIRPORT",
+                "label": "Airport",
+                "frequency": 48.0
+              },
+              {
+                "id": "US_COUNTY",
+                "label": "US County",
+                "frequency": 40.0
+              },
+              {
+                "id": "LAST_NAME",
+                "label": "Last Name",
+                "frequency": 14.0
+              },
+              {
+                "id": "FIRST_NAME",
+                "label": "First Name",
+                "frequency": 12.0
+              }
+            ],
+            "domainForced": false,
+            "typeForced": false
+          }
+        ],
+        "lifecycle": {
+          "inProgress": false,
+          "importing": true,
+          "contentAnalyzed": true,
+          "schemaAnalyzed": true,
+          "qualityAnalyzed": true
+        },
+        "records": 5,
+        "nbLinesHeader": 1,
+        "nbLinesFooter": 0,
+        "type": "text/csv",
+        "parameters": {
+          "HEADER_NB_LINES": "1",
+          "SEPARATOR": ";",
+          "COLUMN_HEADERS": "[\"Postal\",\"State\",\"Capital\",\"MostPopulousCity\"]"
+        },
+        "formatGuess": "formatGuess#csv",
+        "limit": "",
+        "certificationStep": "NONE",
+        "location": {
+          "type": "local",
+          "dynamic": false
+        },
+        "name": "us_states",
+        "author": "4",
+        "created": 1479465787717,
+        "lastModificationDate": 1479465787717,
+        "sheetName": null,
+        "app-version": "2.0.0-SNAPSHOT",
+        "draft": false,
+        "schemaParserResult": null,
+        "favorite": false,
+        "encoding": "windows-1252"
+      },
+      "records": {
+        "AL": {
+          "0001": "Alabama",
+          "0002": "Montgomery",
+          "tdpId": 1
+        },
+        "CA": {
+          "0001": "California",
+          "0002": "Sacramento",
+          "tdpId": 2
+        },
+        "WA": {
+          "0001": "Washington",
+          "0002": "Olympia",
+          "tdpId": 3
+        },
+        "OR": {
+          "0001": "Oregon",
+          "0002": "Salem",
+          "tdpId": 4
+        },
+        "NM": {
+          "0001": "New Mexico",
+          "0002": "Santa Fe",
+          "tdpId": 5
+        }
+      }
+    },
+    "A1B2C3D4": {
+      "metadata": {
+        "id": "A1B2C3D4",
+        "sharedDataSet": false,
+        "sharedByMe": false,
+        "owner": null,
+        "roles": [],
+        "tag": null,
+        "columns": [
+          {
+            "name": "state",
+            "headerSize": 0,
+            "type": "string",
+            "quality": {
+              "empty": 0,
+              "invalid": 0,
+              "valid": 50
+            },
+            "id": "0000",
+            "statistics": {
+              "count": 50,
+              "valid": 50,
+              "invalid": 0,
+              "empty": 0,
+              "max": "NaN",
+              "min": "NaN",
+              "mean": "NaN",
+              "variance": "NaN",
+              "duplicateCount": 1,
+              "distinctCount": 49,
+              "frequencyTable": [
+                {
+                  "data": "MA",
+                  "occurrences": 2
+                },
+                {
+                  "data": "HI",
+                  "occurrences": 1
+                },
+                {
+                  "data": "DE",
+                  "occurrences": 1
+                },
+                {
+                  "data": "TX",
+                  "occurrences": 1
+                },
+                {
+                  "data": "MD",
+                  "occurrences": 1
+                },
+                {
+                  "data": "IA",
+                  "occurrences": 1
+                },
+                {
+                  "data": "ID",
+                  "occurrences": 1
+                },
+                {
+                  "data": "MI",
+                  "occurrences": 1
+                },
+                {
+                  "data": "UT",
+                  "occurrences": 1
+                },
+                {
+                  "data": "MN",
+                  "occurrences": 1
+                },
+                {
+                  "data": "MO",
+                  "occurrences": 1
+                },
+                {
+                  "data": "IL",
+                  "occurrences": 1
+                },
+                {
+                  "data": "IN",
+                  "occurrences": 1
+                },
+                {
+                  "data": "MS",
+                  "occurrences": 1
+                },
+                {
+                  "data": "MT",
+                  "occurrences": 1
+                }
+              ],
+              "patternFrequencyTable": [
+                {
+                  "pattern": "AA",
+                  "occurrences": 50
+                }
+              ],
+              "quantiles": {
+                "median": "NaN",
+                "lowerQuantile": "NaN",
+                "upperQuantile": "NaN"
+              },
+              "histogram": null,
+              "textLengthSummary": {
+                "minimalLength": 2.0,
+                "maximalLength": 2.0,
+                "averageLength": 2.0
+              }
+            },
+            "domain": "US_STATE_CODE",
+            "domainLabel": "US State Code",
+            "domainFrequency": 100.0,
+            "semanticDomains": [
+              {
+                "id": "US_STATE_CODE",
+                "label": "US State Code",
+                "frequency": 100.0
+              },
+              {
+                "id": "LANGUAGE_CODE_ISO2",
+                "label": "Language Code ISO2",
+                "frequency": 54.0
+              },
+              {
+                "id": "COUNTRY_CODE_ISO2",
+                "label": "Country Code ISO2",
+                "frequency": 52.0
+              },
+              {
+                "id": "CITY",
+                "label": "City",
+                "frequency": 18.0
+              },
+              {
+                "id": "CIVILITY",
+                "label": "Civility",
+                "frequency": 2.0
+              },
+              {
+                "id": "LAST_NAME",
+                "label": "Last Name",
+                "frequency": 8.0
+              },
+              {
+                "id": "FR_COMMUNE",
+                "label": "FR Commune",
+                "frequency": 2.0
+              },
+              {
+                "id": "FIRST_NAME",
+                "label": "First Name",
+                "frequency": 4.0
+              },
+              {
+                "id": "COMPANY",
+                "label": "Company",
+                "frequency": 4.0
+              }
+            ],
+            "domainForced": false,
+            "typeForced": false
+          },
+          {
+            "name": "Region",
+            "headerSize": 0,
+            "type": "string",
+            "quality": {
+              "empty": 0,
+              "invalid": 0,
+              "valid": 50
+            },
+            "id": "0001",
+            "statistics": {
+              "count": 50,
+              "valid": 50,
+              "invalid": 0,
+              "empty": 0,
+              "max": "NaN",
+              "min": "NaN",
+              "mean": "NaN",
+              "variance": "NaN",
+              "duplicateCount": 45,
+              "distinctCount": 5,
+              "frequencyTable": [
+                {
+                  "data": "South East",
+                  "occurrences": 12
+                },
+                {
+                  "data": "Mid West",
+                  "occurrences": 12
+                },
+                {
+                  "data": "West",
+                  "occurrences": 11
+                },
+                {
+                  "data": "North East",
+                  "occurrences": 11
+                },
+                {
+                  "data": "South West",
+                  "occurrences": 4
+                }
+              ],
+              "patternFrequencyTable": [
+                {
+                  "pattern": "Aaaaa Aaaa",
+                  "occurrences": 27
+                },
+                {
+                  "pattern": "Aaa Aaaa",
+                  "occurrences": 12
+                },
+                {
+                  "pattern": "Aaaa",
+                  "occurrences": 11
+                }
+              ],
+              "quantiles": {
+                "median": "NaN",
+                "lowerQuantile": "NaN",
+                "upperQuantile": "NaN"
+              },
+              "histogram": null,
+              "textLengthSummary": {
+                "minimalLength": 4.0,
+                "maximalLength": 10.0,
+                "averageLength": 8.2
+              }
+            },
+            "domain": "CITY",
+            "domainLabel": "City",
+            "domainFrequency": 44.0,
+            "semanticDomains": [
+              {
+                "id": "CITY",
+                "label": "City",
+                "frequency": 44.0
+              },
+              {
+                "id": "LAST_NAME",
+                "label": "Last Name",
+                "frequency": 22.0
+              },
+              {
+                "id": "COMPANY",
+                "label": "Company",
+                "frequency": 22.0
+              }
+            ],
+            "domainForced": false,
+            "typeForced": false
+          }
+        ],
+        "lifecycle": {
+          "inProgress": false,
+          "importing": false,
+          "contentAnalyzed": true,
+          "schemaAnalyzed": true,
+          "qualityAnalyzed": true
+        },
+        "records": 5,
+        "nbLinesHeader": 1,
+        "nbLinesFooter": 0,
+        "type": "text/csv",
+        "parameters": {
+          "HEADER_NB_LINES": "1",
+          "SEPARATOR": ";",
+          "COLUMN_HEADERS": "[\"state\",\"Region\"]"
+        },
+        "formatGuess": "formatGuess#csv",
+        "limit": null,
+        "certificationStep": "NONE",
+        "location": {
+          "type": "local",
+          "dynamic": false,
+          "title": null,
+          "label": null
+        },
+        "name": "reference_lookup",
+        "author": "2",
+        "created": 1480696959861,
+        "lastModificationDate": 1480696959861,
+        "sheetName": null,
+        "app-version": null,
+        "draft": false,
+        "schemaParserResult": null,
+        "favorite": false,
+        "encoding": "windows-1252"
+      },
+      "records": {
+        "WA": {
+          "0001": "West"
+        },
+        "MT": {
+          "0001": "West"
+        },
+        "OR": {
+          "0001": "West"
+        },
+        "AL": {
+          "0001": "South East"
+        },
+        "CA": {
+          "0001": "West"
+        }
+      }
+    }
+  },
+  "filterOut": ""
+}

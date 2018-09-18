@@ -30,6 +30,11 @@
     <packaging>pom</packaging>
     <artifactId>dataprep-backend-service-parent</artifactId>
 
+    <properties>
+        <!-- for spring boot plugin -->
+        <spring-boot.version>1.5.2.RELEASE</spring-boot.version>
+    </properties>
+
     <dependencies>
         <!-- SPRING DEPENDENCIES -->
         <dependency>
@@ -53,16 +58,6 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka-clients</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -78,12 +73,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
@@ -104,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-common</artifactId>
+            <artifactId>dataprep-backend-core</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

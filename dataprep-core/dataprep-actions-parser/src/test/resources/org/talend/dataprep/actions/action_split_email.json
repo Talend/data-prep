@@ -1,0 +1,23 @@
+{
+  "name": "action split email",
+  "rowMetadata": {
+    "columns": [
+      {
+        "id": "0000",
+        "name": "a1",
+        "type": "string",
+        "domain": "EMAIL"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "extractemaildomain",
+      "parameters": {
+        "column_id": "0000",
+        "column_name": "a1",
+        "scope": "column"
+      }
+    }
+  ]
+}

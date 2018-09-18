@@ -83,10 +83,25 @@ export default class FilterService {
 	 * @description Adds a filter
 	 */
 	addFilter(type, colId, colName, args, removeFilterFn, keyName) {
-		const sameColAndTypeFilter = find(this.state.playground.filter.gridFilters, {
+		const defaultSameColAndTypeFilterMatcher = find(this.state.playground.filter.gridFilters, {
 			colId,
 			type,
 		});
+		let sameColAndTypeFilter = defaultSameColAndTypeFilterMatcher;
+		if (type === MATCHES) {
+			const specificSameColAndTypeFilterMatcher = find(this.state.playground.filter.gridFilters, {
+				colId,
+				type: MATCHES_WORDS,
+			});
+			sameColAndTypeFilter = defaultSameColAndTypeFilterMatcher || specificSameColAndTypeFilterMatcher;
+		}
+		else if (type === MATCHES_WORDS) {
+			const specificSameColAndTypeFilterMatcher = find(this.state.playground.filter.gridFilters, {
+				colId,
+				type: MATCHES,
+			});
+			sameColAndTypeFilter = defaultSameColAndTypeFilterMatcher || specificSameColAndTypeFilterMatcher;
+		}
 
 		let filterFn;
 		let createFilter;
@@ -320,7 +335,7 @@ export default class FilterService {
 		}
 		else {
 			const filterValue = getFilterValue();
-			this.updateFilter(sameColAndTypeFilter, filterValue, keyName);
+			this.updateFilter(sameColAndTypeFilter, type, filterValue, keyName);
 		}
 	}
 
@@ -354,11 +369,12 @@ export default class FilterService {
 	 * @name updateFilter
 	 * @methodOf data-prep.services.filter.service:FilterService
 	 * @param {object} oldFilter The filter to update
+	 * @param {string} newType The new filter if different
 	 * @param {object} newValue The filter update parameters
 	 * @param {string} keyName keyboard key
 	 * @description Updates an existing filter
 	 */
-	updateFilter(oldFilter, newValue, keyName) {
+	updateFilter(oldFilter, newType, newValue, keyName) {
 		let newArgs;
 		let editableFilter;
 
@@ -443,7 +459,7 @@ export default class FilterService {
 		}
 		}
 
-		const newFilter = this.TqlFilterAdapterService.createFilter(oldFilter.type, oldFilter.colId, oldFilter.colName, editableFilter, newArgs, oldFilter.removeFilterFn);
+		const newFilter = this.TqlFilterAdapterService.createFilter(newType, oldFilter.colId, oldFilter.colName, editableFilter, newArgs, oldFilter.removeFilterFn);
 		this.StateService.updateGridFilter(oldFilter, newFilter);
 	}
 

@@ -946,7 +946,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'contains', [
 				{
 					value: 'Tata\\n',
 				},
@@ -986,7 +986,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'exact', [
 				{
 					value: 'Tata\\n',
 				},
@@ -1033,7 +1033,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					value: [0, 22],
 					label: '[0 .. 22[',
@@ -1103,7 +1103,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					label: 'Mar 2015',
 					value: [
@@ -1230,7 +1230,7 @@ describe('Filter service', () => {
 			};
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'exact', [
 				{
 					value: 'Tata',
 				},
@@ -1280,7 +1280,7 @@ describe('Filter service', () => {
 			};
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					label: 'Feb 2014',
 					value: [
@@ -1349,7 +1349,7 @@ describe('Filter service', () => {
 			};
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					label: 'Apr 2014',
 					value: [

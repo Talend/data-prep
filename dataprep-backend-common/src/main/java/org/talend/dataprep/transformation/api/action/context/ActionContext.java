@@ -14,7 +14,11 @@
 package org.talend.dataprep.transformation.api.action.context;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -189,7 +193,7 @@ public class ActionContext implements Serializable {
         if (value == null) {
             value = supplier.apply(parameters);
             getContext().put(key, value);
-            LOGGER.debug("adding {}->{} in this context {}", key, value, this);
+            LOGGER.trace("adding {}->{} in this context {}", key, value, this);
         }
         return value;
     }
@@ -227,7 +231,7 @@ public class ActionContext implements Serializable {
                 .filter(s -> s.startsWith(COLUMN_CONTEXT_PREFIX)) //
                 .collect(Collectors.toList());
         toRemove.forEach(getContext()::remove);
-        LOGGER.debug("Removed {} when new row was set.", toRemove);
+        LOGGER.trace("Removed {} when new row was set.", toRemove);
     }
 
     private Map<String, Object> getContext() {

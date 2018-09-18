@@ -29,7 +29,11 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
         });
         updateFlux.subscribe(updateMessage -> {
             LOGGER.debug("Delayed update of step #{}.", updateMessage.stepId);
-            delegate.update(updateMessage.stepId, updateMessage.rowMetadata);
+            try {
+                delegate.update(updateMessage.stepId, updateMessage.rowMetadata);
+            } catch (Exception e) {
+                LOGGER.error("Unable to update step metadata.", e);
+            }
             LOGGER.debug("Delayed update of step #{} done.", updateMessage.stepId);
         });
 

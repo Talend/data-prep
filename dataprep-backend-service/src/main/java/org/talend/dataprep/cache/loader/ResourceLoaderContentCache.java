@@ -101,6 +101,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public boolean has(ContentCacheKey key) {
+        LOGGER.debug("Has '{}'", key.getKey());
         return ofNullable(getResource(key)).isPresent();
     }
 
@@ -108,6 +109,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @VolumeMetered
     @Override
     public InputStream get(ContentCacheKey key) {
+        LOGGER.debug("Get '{}'", key.getKey());
         return ofNullable(getResource(key)).map(r -> {
             try {
                 return r.getInputStream();
@@ -121,6 +123,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @VolumeMetered
     @Override
     public OutputStream put(ContentCacheKey key, TimeToLive timeToLive) {
+        LOGGER.debug("Put '{}' (TTL: {})", key.getKey(), timeToLive);
         try {
             return getOrCreateResource(key, timeToLive).getOutputStream();
         } catch (IOException e) {
@@ -131,6 +134,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void evict(ContentCacheKey key) {
+        LOGGER.debug("Evict '{}'", key.getKey());
         ofNullable(getResource(key)).ifPresent(r -> {
             try {
                 r.delete();
@@ -143,6 +147,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void evictMatch(ContentCacheKey key) {
+        LOGGER.debug("Evict match '{}'", key.getKey());
         try {
             final DeletableResource[] resources = resolver.getResources("/cache/" + key.getPrefix() + "**");
             final Predicate<String> matcher = key.getMatcher();
@@ -161,6 +166,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
+        LOGGER.debug("Move '{}' -> '{}' (TTL: {})", from.getKey(), to.getKey(), toTimeToLive);
         final DeletableResource resource = getResource(from);
         if (resource != null) {
             try {
@@ -174,6 +180,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void clear() {
+        LOGGER.debug("Clear all");
         try {
             resolver.clear("/cache/**");
         } catch (IOException e) {

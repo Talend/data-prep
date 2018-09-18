@@ -64,7 +64,7 @@ public class FilteredNode extends BasicNode implements Monitored {
                 }
                 count++;
             } else {
-                LOGGER.debug("Skip row '{}': row is deleted.", Arrays.toString(row.toArray(DataSetRow.SKIP_TDP_ID)));
+                LOGGER.trace("Skip row (row is deleted): '{}'", Arrays.toString(row.toArray(DataSetRow.SKIP_TDP_ID)));
             }
             metadata.setSampleNbRows(count);
         } finally {

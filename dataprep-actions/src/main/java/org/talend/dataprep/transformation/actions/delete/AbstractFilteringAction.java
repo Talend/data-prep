@@ -39,7 +39,7 @@ public abstract class AbstractFilteringAction extends AbstractActionMetadata imp
 
     @Override
     public Set<Behavior> getBehavior() {
-        return EnumSet.of(Behavior.VALUES_ALL);
+        return EnumSet.of(Behavior.VALUES_COLUMN);
     }
 
     @Override

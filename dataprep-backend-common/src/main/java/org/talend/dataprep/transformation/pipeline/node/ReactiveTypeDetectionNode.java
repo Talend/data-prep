@@ -51,7 +51,7 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
         this.adapter = adapter;
         this.workingMetadata = initialRowMetadata;
 
-        this.processor = ReplayProcessor.create(30000, false);
+        this.processor = ReplayProcessor.create(10000, true);
         this.sink = processor.connectSink();
         processor.subscribe(row -> {
             LOGGER.trace("Analyze row: {}", row);

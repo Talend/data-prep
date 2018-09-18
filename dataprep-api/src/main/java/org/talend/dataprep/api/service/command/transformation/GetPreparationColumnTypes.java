@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.springframework.context.annotation.Scope;

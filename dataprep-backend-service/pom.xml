@@ -183,10 +183,6 @@
             <artifactId>opencsv</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava</artifactId>
         </dependency>

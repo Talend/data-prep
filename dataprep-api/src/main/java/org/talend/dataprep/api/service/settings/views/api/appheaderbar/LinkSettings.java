@@ -15,7 +15,7 @@ package org.talend.dataprep.api.service.settings.views.api.appheaderbar;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.i18n.DataprepBundle;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

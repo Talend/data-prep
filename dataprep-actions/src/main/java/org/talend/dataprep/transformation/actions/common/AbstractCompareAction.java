@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.COLUMN;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
@@ -23,8 +23,8 @@ import java.util.*;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.ColumnMetadata;

@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.column;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.COLUMN_METADATA;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 

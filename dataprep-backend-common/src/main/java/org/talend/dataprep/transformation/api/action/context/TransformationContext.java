@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.RowMetadata;

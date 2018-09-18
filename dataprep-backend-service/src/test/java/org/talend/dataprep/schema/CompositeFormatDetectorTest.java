@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.html.HtmlEncodingDetector;
 import org.junit.Assert;

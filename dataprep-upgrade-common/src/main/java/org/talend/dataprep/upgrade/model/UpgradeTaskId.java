@@ -13,9 +13,9 @@
 
 package org.talend.dataprep.upgrade.model;
 
-import static org.apache.commons.lang.StringUtils.leftPad;
+import static org.apache.commons.lang3.StringUtils.leftPad;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Defines an upgrade task getId.

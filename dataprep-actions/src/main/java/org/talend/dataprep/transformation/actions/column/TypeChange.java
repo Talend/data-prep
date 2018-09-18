@@ -14,7 +14,7 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.HIDDEN_IN_ACTION_LIST;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.DONE;
 import static org.talend.dataprep.transformation.api.action.context.ActionContext.ActionStatus.OK;

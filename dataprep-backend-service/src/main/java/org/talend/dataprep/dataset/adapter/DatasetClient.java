@@ -1,6 +1,6 @@
 package org.talend.dataprep.dataset.adapter;
 
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.talend.dataprep.command.GenericCommand.DATASET_GROUP;
 

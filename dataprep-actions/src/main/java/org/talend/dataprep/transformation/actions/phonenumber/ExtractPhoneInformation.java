@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;

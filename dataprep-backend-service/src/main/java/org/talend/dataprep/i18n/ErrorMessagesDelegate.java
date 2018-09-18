@@ -1,6 +1,6 @@
 package org.talend.dataprep.i18n;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.daikon.exception.error.ErrorCode;
 
 class ErrorMessagesDelegate {

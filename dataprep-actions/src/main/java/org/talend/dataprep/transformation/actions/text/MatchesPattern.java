@@ -14,8 +14,8 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.BooleanUtils.toStringTrueFalse;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.REGEX;

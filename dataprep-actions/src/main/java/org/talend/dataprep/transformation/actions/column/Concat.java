@@ -14,7 +14,7 @@
 package org.talend.dataprep.transformation.actions.column;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.COLUMN;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
@@ -23,7 +23,7 @@ import static org.talend.dataprep.transformation.api.action.context.ActionContex
 
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.action.Action;

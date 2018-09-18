@@ -21,9 +21,11 @@ export function StatisticsStateService() {
 		setHistogram,
 		setFilteredHistogram,
 		setHistogramActiveLimits,
+		setPatternsType,
 		setPatterns,
 		setWordPatterns,
 		setFilteredPatterns,
+		setFilteredWordPatterns,
 		setLoading,
 
 		reset,
@@ -54,6 +56,10 @@ export function StatisticsStateService() {
 		statisticsState.activeLimits = activeLimits;
 	}
 
+	function setPatternsType(patternsType) {
+		statisticsState.patternsType = patternsType;
+	}
+
 	function setPatterns(patterns) {
 		statisticsState.patterns = patterns;
 		statisticsState.filteredPatterns = null;
@@ -61,11 +67,15 @@ export function StatisticsStateService() {
 
 	function setWordPatterns(patterns) {
 		statisticsState.wordPatterns = patterns;
-		statisticsState.filteredPatterns = null;
+		statisticsState.filteredWordPatterns = null;
 	}
 
 	function setFilteredPatterns(filteredPatterns) {
 		statisticsState.filteredPatterns = filteredPatterns;
+	}
+
+	function setFilteredWordPatterns(filteredWordPatterns) {
+		statisticsState.filteredWordPatterns = filteredWordPatterns;
 	}
 
 	function setLoading(loading) {
@@ -79,9 +89,11 @@ export function StatisticsStateService() {
 		statisticsState.histogram = null;
 		statisticsState.filteredHistogram = null;
 		statisticsState.activeLimits = null;
+		statisticsState.patternsType = null;
 		statisticsState.patterns = null;
 		statisticsState.wordPatterns = null;
 		statisticsState.filteredPatterns = null;
+		statisticsState.filteredWordPatterns = null;
 		statisticsState.loading = false;
 	}
 }

@@ -11,16 +11,12 @@
 
   ============================================================================*/
 import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
+import { PATTERNS_TYPE } from '../../../services/statistics/statistics-service.js';
 import {
 	MATCHES,
 	MATCHES_WORDS,
 	QUALITY,
 } from '../../../services/filter/adapter/tql-filter-adapter-service';
-
-const PATTERNS_TYPE = {
-	CHARACTER: 'character',
-	WORD: 'word',
-};
 
 /**
  * @ngdoc controller
@@ -42,9 +38,10 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 	vm.StateService = StateService;
 
 	vm.addPatternFilter = addPatternFilter;
-	vm.getCurrentPatterns = getCurrentPatterns;
 	vm.onCharacterPatternSelect = onCharacterPatternSelect;
 	vm.onWordPatternSelect = onWordPatternSelect;
+
+	vm.PATTERNS = PATTERNS_TYPE;
 
 	vm.tabs = [
 		{
@@ -90,44 +87,10 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 				},
 			],
 		};
+		const isWordPatternType = vm.state.playground.statistics.patternsType === PATTERNS_TYPE.WORD;
 		return item.pattern || keyName === CTRL_KEY_NAME ?
-			FilterManagerService.addFilterAndDigest(vm.patternType === PATTERNS_TYPE.WORD ? MATCHES_WORDS : MATCHES, column.id, column.name, args, null, keyName) :
-			FilterManagerService.addFilterAndDigest(QUALITY, column.id, column.name, {
-				empty: true,
-				invalid: false,
-			}, null, keyName);
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name hasWordPatterns
-	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
-	 */
-	function getCurrentPatterns() {
-		const column = state.playground.grid.selectedColumns[0];
-		if (vm.previousColumn === column) {
-			// FIXME use state instead
-			return vm.patternType === PATTERNS_TYPE.WORD
-				? state.playground.statistics.wordPatterns
-				: state.playground.statistics.patterns;
-		}
-		else {
-			vm.previousColumn = column;
-			delete vm.patternType;
-		}
-		if (!vm.patternType) {
-			if (column.type === 'string' || column.type === 'boolean') {
-				vm.patternType = PATTERNS_TYPE.CHARACTER;
-				vm.onWordPatternSelect();
-			}
-			else {
-				vm.patternType = PATTERNS_TYPE.W;
-				vm.onCharacterPatternSelect();
-			}
-		}
-		return vm.patternType === PATTERNS_TYPE.WORD
-			? state.playground.statistics.wordPatterns
-			: state.playground.statistics.patterns;
+			FilterManagerService.addFilterAndDigest(isWordPatternType ? MATCHES_WORDS : MATCHES, column.id, column.name, args, null, keyName) :
+			FilterManagerService.addFilterAndDigest(QUALITY, column.id, column.name, { empty: true, invalid: false }, null, keyName);
 	}
 
 	/**
@@ -136,7 +99,7 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
 	 */
 	function onCharacterPatternSelect() {
-		vm.patternType = PATTERNS_TYPE.CHARACTER;
+		vm.StateService.setStatisticsPatternsType(PATTERNS_TYPE.CHARACTER);
 	}
 
 	/**
@@ -145,6 +108,6 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
 	 */
 	function onWordPatternSelect() {
-		vm.patternType = PATTERNS_TYPE.WORD;
+		vm.StateService.setStatisticsPatternsType(PATTERNS_TYPE.WORD);
 	}
 }

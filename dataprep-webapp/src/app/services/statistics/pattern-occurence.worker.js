@@ -138,7 +138,7 @@ function valueMatchPatternFn(pattern) {
  * @param {object} parameters {columnId: The column id, patternFrequencyTable: The pattern frequencies to update, filteredRecords: The filtered records to process for the filtered occurrences number}
  */
 function patternOccurrenceWorker(parameters) {
-	const { columnId, patternFrequencyTable, filteredRecords } = parameters;
+	const { columnId, patternFrequencyTable, wordPatternFrequencyTable, filteredRecords } = parameters;
 
 	_.forEach(patternFrequencyTable, (patternFrequency) => {
 		const pattern = patternFrequency.pattern;
@@ -155,7 +155,14 @@ function patternOccurrenceWorker(parameters) {
 				.value();
 	});
 
-	return patternFrequencyTable;
+	_.forEach(wordPatternFrequencyTable, (patternFrequency) => {
+		patternFrequency.filteredOccurrences = patternFrequency.occurrences;
+	});
+
+	return {
+		patternFrequencyTable,
+		wordPatternFrequencyTable,
+	};
 }
 
 /* eslint-disable no-undef */

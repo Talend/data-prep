@@ -18,6 +18,10 @@ const DateOccurrenceWorker = require('worker-loader!./date-occurence.worker');
 const PatternOccurrenceWorker = require('worker-loader!./pattern-occurence.worker');
 /* eslint-enable import/no-extraneous-dependencies */
 
+export const PATTERNS_TYPE = {
+	CHARACTER: 'character',
+	WORD: 'word',
+};
 
 /**
  * @ngdoc service
@@ -548,23 +552,31 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	 * @description update patterns statistics
 	 */
 	function initPatternsFrequency() {
-		const statistics = state.playground.grid.selectedColumns[0].statistics;
+		const firstSelectedColumn = state.playground.grid.selectedColumns[0];
+		const statistics = firstSelectedColumn.statistics;
 		const patternFrequency = statistics.patternFrequencyTable;
 		const wordPatternFrequency = statistics.wordPatternFrequencyTable;
-		if (patternFrequency) {
-			StateService.setStatisticsPatterns(adaptPatternsToGridConstraints(patternFrequency));
-			createFilteredPatternsFrequency()
-				.then((filteredPatternFrequency) => {
-					StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-				});
-		}
-		if (wordPatternFrequency) {
-			StateService.setStatisticsWordPatterns(adaptPatternsToGridConstraints(wordPatternFrequency));
-			createFilteredPatternsFrequency()
-				.then((filteredPatternFrequency) => {
-					StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-				});
-		}
+		StateService.setStatisticsPatterns(adaptPatternsToGridConstraints(patternFrequency));
+		StateService.setStatisticsWordPatterns(adaptPatternsToGridConstraints(wordPatternFrequency));
+		createFilteredPatternsFrequency()
+			.then(({ patternFrequencyTable, wordPatternFrequencyTable }) => {
+				StateService.setStatisticsFilteredPatterns(patternFrequencyTable);
+				StateService.setStatisticsFilteredWordPatterns(wordPatternFrequencyTable);
+			})
+			.then(() => {
+				// initialize patterns type regarding column type
+				if (firstSelectedColumn.id !== service.previousSelectedColumnId) {
+					if (['string', 'boolean'].includes(firstSelectedColumn.type)) {
+						StateService.setStatisticsPatternsType(PATTERNS_TYPE.WORD);
+					}
+					else {
+						StateService.setStatisticsPatternsType(PATTERNS_TYPE.CHARACTER);
+					}
+				}
+			})
+			.then(() => {
+				service.previousSelectedColumnId = firstSelectedColumn.id;
+			});
 	}
 
 	/**
@@ -579,25 +591,25 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		const parameters = {
 			columnId: column.id,
 			patternFrequencyTable: column.statistics.patternFrequencyTable,
+			wordPatternFrequencyTable: column.statistics.wordPatternFrequencyTable,
 			filteredRecords: state.playground.filter.gridFilters.length ? state.playground.grid.filteredRecords : null,
 		};
 
 		const defer = $q.defer();
-		// if (column.type) {
-			// service.patternWorker = new PatternOccurrenceWorker();
-			// service.patternWorker.onmessage = (event) => {
-			// defer.resolve(adaptPatternsToGridConstraints(event.data));
-			// };
-			//
-			// service.patternWorker.onerror = (error) => {
-			// 	defer.reject(error);
-			// };
-			//
-			// service.patternWorker.postMessage(parameters);
-		// }
-		// else {
-			defer.resolve(adaptPatternsToGridConstraints(column.statistics.patternFrequencyTable));
-		// }
+		service.patternWorker = new PatternOccurrenceWorker();
+		service.patternWorker.onmessage = (event) => {
+			const { patternFrequencyTable, wordPatternFrequencyTable } = event.data;
+			defer.resolve({
+				patternFrequencyTable: adaptPatternsToGridConstraints(patternFrequencyTable),
+				wordPatternFrequencyTable: adaptPatternsToGridConstraints(wordPatternFrequencyTable),
+			});
+		};
+
+		service.patternWorker.onerror = (error) => {
+			defer.reject(error);
+		};
+
+		service.patternWorker.postMessage(parameters);
 		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 

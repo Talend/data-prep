@@ -68,7 +68,12 @@ public class ResourceLoaderContentCache implements ContentCache {
 
     private DeletableResource getResource(ContentCacheKey key) {
         try {
-            final DeletableResource[] resources = resolver.getResources("/cache/" + key.getKey() + "*");
+            final DeletableResource[] patternMatches = resolver.getResources("/cache/" + key.getKey() + "*");
+            final DeletableResource[] directMatches = resolver.getResources("/cache/" + key.getKey());
+            final DeletableResource[] resources = new DeletableResource[patternMatches.length + directMatches.length];
+            System.arraycopy(patternMatches, 0, resources, 0, patternMatches.length);
+            System.arraycopy(directMatches, 0, resources, patternMatches.length, directMatches.length);
+
             if (resources.length <= 0) {
                 return null;
             } else { // resources.length > 0
@@ -165,12 +170,23 @@ public class ResourceLoaderContentCache implements ContentCache {
 
     @Timed
     @Override
-    public void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
+    public synchronized void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
         LOGGER.debug("Move '{}' -> '{}' (TTL: {})", from.getKey(), to.getKey(), toTimeToLive);
         final DeletableResource resource = getResource(from);
         if (resource != null) {
+            final String destination = getLocation(to, toTimeToLive);
+            if (!resource.exists()) {
+                LOGGER.debug("Source file no longer exists.");
+                if (resolver.getResource(destination).exists()) {
+                    LOGGER.debug("No need to move file (destination already exists).");
+                    return;
+                } else {
+                    LOGGER.error("Source file '{}' no longer exists, neither does destination '{}'", from.getKey(), destination);
+                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION);
+                }
+            }
             try {
-                resource.move(getLocation(to, toTimeToLive));
+                resource.move(destination);
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }

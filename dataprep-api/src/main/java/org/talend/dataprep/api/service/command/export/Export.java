@@ -23,12 +23,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
-import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -39,9 +37,6 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class Export extends GenericCommand<InputStream> {
-
-    @Autowired
-    private BaseDataprepAuditService auditService;
 
     /**
      * @param parameters the export parameters.
@@ -64,7 +59,6 @@ public class Export extends GenericCommand<InputStream> {
                     objectMapper.writerFor(ExportParameters.class).writeValueAsString(parameters);
             final HttpPost post = new HttpPost(transformationServiceUrl + "/apply");
             post.setEntity(new StringEntity(parametersAsString, ContentType.APPLICATION_JSON));
-            auditService.auditPreparationExport(parameters.getPreparationId(), parameters.toString());
             return post;
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_EXPORT_CONTENT, e);

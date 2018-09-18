@@ -32,7 +32,7 @@ public interface BaseDataprepAuditService {
 
     void auditPreparationImport(String preparationId, String preparationName, String folderId);
 
-    void auditPreparationExport(String preparationId, String exportOptions);
+    void auditPreparationExport(String preparationId, String exportType, Map<String, String> exportOptions);
 
     void auditPreparationAddStep(String preparationId, Map<String, Map<String, String>> stepActionsAndParameters);
 
@@ -44,7 +44,12 @@ public interface BaseDataprepAuditService {
     void auditPreparationMoveStep(String preparationId, String preparationName, String movedStepId,
             String parentStepId);
 
+    void auditPreparationCopySteps(String fromPreparationId, String fromPreparationName, String newPreparationId,
+            String newPreparationName);
+
     void auditFolderCreation(String folderId, String folderName, String parentFolderId);
+
+    void auditFolderDeletion(String folderId);
 
     void auditFolderRename(String folderId, String folderName);
 

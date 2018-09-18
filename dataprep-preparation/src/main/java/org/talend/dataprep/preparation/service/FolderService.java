@@ -194,6 +194,7 @@ public class FolderService {
             HttpResponseContext.status(HttpStatus.NOT_FOUND);
         } else {
             folderRepository.removeFolder(id);
+            auditService.auditFolderDeletion(id);
         }
     }
 

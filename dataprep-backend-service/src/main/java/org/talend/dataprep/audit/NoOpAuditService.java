@@ -56,7 +56,7 @@ public class NoOpAuditService implements BaseDataprepAuditService {
     }
 
     @Override
-    public void auditPreparationExport(String preparationId, String exportOptions) {
+    public void auditPreparationExport(String preparationId, String exportType, Map<String, String> exportOptions) {
         // Do nothing
     }
 
@@ -84,7 +84,18 @@ public class NoOpAuditService implements BaseDataprepAuditService {
     }
 
     @Override
+    public void auditPreparationCopySteps(String fromPreparationId, String fromPreparationName, String newPreparationId,
+            String newPreparationName) {
+        // Do nothing
+    }
+
+    @Override
     public void auditFolderCreation(String folderId, String folderName, String parentFolderId) {
+        // Do nothing
+    }
+
+    @Override
+    public void auditFolderDeletion(String folderId) {
         // Do nothing
     }
 

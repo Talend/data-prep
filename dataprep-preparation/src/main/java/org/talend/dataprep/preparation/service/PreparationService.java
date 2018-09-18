@@ -622,6 +622,7 @@ public class PreparationService {
         preparationRepository.add(preparationToUpdate);
 
         LOGGER.info("clone steps from {} to {} done --> {}", from, id, preparationToUpdate);
+        auditService.auditPreparationCopySteps(from, referencePreparation.getName(), id, preparationToUpdate.getName());
     }
 
     /**

@@ -2,7 +2,6 @@
   "ADD": "Ajouter",
   "ADD_FOLDER_HEADER": "Ajout de dossier",
   "ADD_FOLDER_NAME_LABEL": "Saisir le nom du dossier",
-  "Cancel": "Cancel",
   "COPY_MOVE_MODAL_SUBTITLE": "Sélectionner le dossier dans lequel {{action, lowercase}} la préparation",
   "COPY_MOVE_MODAL_TITLE": "{{action}} la préparation",
   "DATASETS": "Jeux de données",

@@ -16,12 +16,14 @@ class FolderCreatorModal extends React.Component {
 	onChange() {
 		const name = this.folderNameInput.value;
 		const validateAction = { ...this.props.state.validateAction };
-		validateAction.disabled = !name;
+		validateAction.disabled = !name.trim();
 		this.props.setState({ name, error: '', validateAction });
 	}
 
 	onSubmit(event, data) {
-		this.props.state.validateAction.onClick(event, data);
+		if (this.folderNameInput.value.trim()) {
+			this.props.state.validateAction.onClick(event, data);
+		}
 		event.preventDefault();
 	}
 	render() {

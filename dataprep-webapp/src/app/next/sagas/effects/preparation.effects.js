@@ -210,7 +210,7 @@ export function* openAddFolderModal() {
 			actionCreator: 'folder:add',
 		},
 		cancelAction: {
-			label: i18next.t('tdp-app:Cancel', {
+			label: i18next.t('tdp-app:CANCEL', {
 				defaultValue: 'Cancel',
 			}),
 			id: 'folder:add:close',
@@ -226,9 +226,10 @@ export function* closeAddFolderModal() {
 }
 
 export function* addFolder() {
-	const newFolderName = yield select(state =>
+	let newFolderName = yield select(state =>
 		state.cmf.components.getIn(['FolderCreatorModal', 'add_folder_modal', 'name']),
 	);
+	newFolderName = newFolderName.trim();
 	if (!newFolderName.length) {
 		const error = i18next.t('tdp-app:FOLDER_EMPTY_MESSAGE', {
 			defaultValue: 'Folder name is empty',

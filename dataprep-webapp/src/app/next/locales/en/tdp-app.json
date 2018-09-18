@@ -2,7 +2,6 @@
   "ADD": "Add",
   "ADD_FOLDER_HEADER": "Add a folder",
   "ADD_FOLDER_NAME_LABEL": "Enter folder name",
-  "Cancel": "Cancel",
   "COPY_MOVE_MODAL_SUBTITLE": "Click on the folder you want to {{action, lowercase}} your preparation",
   "COPY_MOVE_MODAL_TITLE": "{{action}} your preparation",
   "DATASETS": "Datasets",

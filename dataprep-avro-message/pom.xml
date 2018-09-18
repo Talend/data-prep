@@ -22,7 +22,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.2</version>
                 <executions>
                     <execution>
                         <id>unpack</id>
@@ -47,7 +46,6 @@
             <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
-                <version>1.8.1</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>

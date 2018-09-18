@@ -40,48 +40,43 @@
         <dependency>
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-api</artifactId>
-            <version>${project.version}</version>
             <type>test-jar</type>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!--Cucumber-->
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java8</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-spring</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!--JUnit-->
@@ -96,7 +91,6 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility-proxy</artifactId>
-            <version>3.1.0</version>
         </dependency>
     </dependencies>
 

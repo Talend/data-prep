@@ -47,6 +47,7 @@
         <java-semver.version>0.9.0</java-semver.version>
         <commons-math3.version>3.5</commons-math3.version>
         <!-- (CVE-2017-7525 and 15095) Override Jackson version by patched ones -->
+        <!-- WARN: do not change this version without checking with studio first -->
         <jackson.version>2.9.4</jackson.version>
         <!-- validataion and httpclients Must be compatible with what is imported by spring-boot-starter-web version -->
         <!-- Because we do not import web components in backend lib -->
@@ -62,17 +63,17 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-core-actions</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-actions-parser</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
 
 
@@ -81,7 +82,7 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0-SNAPSHOT</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -469,6 +470,8 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <!-- Jackson -->
+            <!-- WARNING: Enforce those (potentially older) versions for compatibility with Studio -->
+            <!-- BEGIN -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -479,6 +482,7 @@
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
+            <!-- END -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -531,6 +535,16 @@
                 <version>${apache.poi.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.monitorjbl</groupId>
+                <artifactId>xlsx-streamer</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.11.0</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mailapi</artifactId>
                 <version>1.4.3</version>
@@ -539,6 +553,11 @@
                 <groupId>com.sun.mail</groupId>
                 <artifactId>smtp</artifactId>
                 <version>1.4.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mitre.dsmiley.httpproxy</groupId>
+                <artifactId>smiley-http-proxy-servlet</artifactId>
+                <version>1.10</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
@@ -600,6 +619,7 @@
                 </exclusions>
             </dependency>
             <!-- UNIT TEST DEPENDENCIES -->
+
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -672,6 +692,30 @@
                         <artifactId>fongo</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility-proxy</artifactId>
+                <version>3.1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-java8</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-junit</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-spring</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

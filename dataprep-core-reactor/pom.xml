@@ -10,8 +10,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>dataprep-base</module>
         <module>dataprep-dependencies</module>
+        <module>dataprep-base</module>
         <module>dataprep-core</module>
         <module>dataprep-core-actions</module>
         <module>dataprep-actions-parser</module>

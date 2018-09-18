@@ -25,17 +25,8 @@
 
     <artifactId>dataprep-core</artifactId>
     <packaging>jar</packaging>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.talend.dataprep</groupId>
-                <artifactId>dataprep-dependencies</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+
+    <description>Core dataprep classes.</description>
 
     <dependencies>
         <dependency>
@@ -114,27 +105,21 @@
             <groupId>org.talend.daikon</groupId>
             <artifactId>daikon</artifactId>
         </dependency>
-        <!-- Enforce those (potentially older) versions for compatibility with Studio -->
-        <!-- BEGIN -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.14-TALEND</version>
             <scope>provided</scope>
         </dependency>
-        <!-- END -->
         <dependency>
             <groupId>org.talend.dataquality</groupId>
             <artifactId>dataquality-common</artifactId>

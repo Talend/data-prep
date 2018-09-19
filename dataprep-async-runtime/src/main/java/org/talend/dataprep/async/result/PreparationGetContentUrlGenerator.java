@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.async.result;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Component;

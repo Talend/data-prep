@@ -35,7 +35,7 @@ import javax.validation.Valid;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.command.CommandHelper.toStream;

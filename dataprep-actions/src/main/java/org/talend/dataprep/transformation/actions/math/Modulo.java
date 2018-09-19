@@ -17,7 +17,7 @@ import java.math.RoundingMode;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.daikon.number.BigDecimalParser;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.transformation.api.action.context.ActionContext;

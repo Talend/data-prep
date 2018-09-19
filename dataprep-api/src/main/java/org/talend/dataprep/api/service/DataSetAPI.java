@@ -21,7 +21,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.dataprep.command.CommandHelper.toPublisher;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.command.CommandHelper.toStreaming;
 import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
@@ -34,7 +33,6 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -81,8 +79,6 @@ import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -105,10 +101,9 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Create a data set", produces = TEXT_PLAIN_VALUE,
             notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
-    public Callable<String> create(
-            @ApiParam(
-                    value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
-                            defaultValue = "", required = false) String name,
+    public Callable<String> create(@ApiParam(
+            value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
+                    defaultValue = "", required = false) String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(
                     defaultValue = "", required = false) String tag,
             @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
@@ -131,10 +126,9 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Update a data set by id.", produces = TEXT_PLAIN_VALUE, //
             notes = "Create or update a data set based on content provided in PUT body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
-    public Callable<String> createOrUpdateById(
-            @ApiParam(
-                    value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
-                            defaultValue = "", required = false) String name,
+    public Callable<String> createOrUpdateById(@ApiParam(
+            value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
+                    defaultValue = "", required = false) String name,
             @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
             @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
             @ApiParam(value = "content") InputStream dataSetContent) {
@@ -407,8 +401,8 @@ public class DataSetAPI extends APIService {
      * compatible preparation is found an empty list is returned.
      *
      * @param dataSetId the specified data set id
-     * @param sort      the sort criterion: either name or date.
-     * @param order     the sorting order: either asc or desc
+     * @param sort the sort criterion: either name or date.
+     * @param order the sorting order: either asc or desc
      */
     @RequestMapping(value = "/api/datasets/{id}/compatiblepreparations", method = GET,
             produces = APPLICATION_JSON_VALUE)
@@ -429,9 +423,8 @@ public class DataSetAPI extends APIService {
                 getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
 
         final List<String> compatibleList =
-                toStream(DataSetMetadata.class, mapper, compatibleDataSetList)
-                        .map(DataSetMetadata::getId)
-                        .collect(Collectors.toList());
+                toStream(DataSetMetadata.class, mapper, compatibleDataSetList).map(DataSetMetadata::getId).collect(
+                        Collectors.toList());
 
         // get list of preparations
         GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, sort, order);

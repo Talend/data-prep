@@ -14,8 +14,8 @@
 package org.talend.dataprep.transformation.actions.text;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.BooleanUtils.toStringTrueFalse;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.BooleanUtils.toStringTrueFalse;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.*;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
@@ -23,8 +23,8 @@ import static org.talend.dataprep.transformation.actions.common.OtherColumnParam
 
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.talend.dataprep.api.action.Action;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;

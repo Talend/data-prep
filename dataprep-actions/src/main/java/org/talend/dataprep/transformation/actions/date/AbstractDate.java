@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.date;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.api.type.Type.DATE;
 import static org.talend.dataprep.i18n.ActionsBundle.choice;
 
@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.parameters.Item;

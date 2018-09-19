@@ -33,8 +33,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
@@ -115,7 +114,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public List<String> visit(ComparisonOperator comparisonOperator) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -131,7 +130,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public List<String> visit(Expression expression) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -242,7 +241,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(ComparisonOperator comparisonOperator) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -259,7 +258,7 @@ public class TQLFilterService implements FilterService {
 
         @Override
         public Predicate<DataSetRow> visit(Expression expression) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override

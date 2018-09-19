@@ -18,9 +18,9 @@ import static org.talend.dataprep.parameters.Parameter.parameter;
 import static org.talend.dataprep.parameters.ParameterType.INTEGER;
 import static org.talend.dataprep.parameters.ParameterType.STRING;
 import static org.talend.dataprep.parameters.SelectParameter.selectParameter;
-import static org.apache.commons.lang.StringUtils.leftPad;
-import static org.apache.commons.lang.StringUtils.rightPad;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.leftPad;
+import static org.apache.commons.lang3.StringUtils.rightPad;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.*;
 

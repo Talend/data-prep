@@ -161,9 +161,6 @@ public class WriterNode extends BasicNode implements Monitored {
 
         try {
             // no row received, let's switch to the fallback row metadata
-            if (!startRecords) {
-                lastRowMetadata = fallBackRowMetadata;
-            }
             writer.write(lastRowMetadata);
 
             writer.flush();

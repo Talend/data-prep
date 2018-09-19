@@ -15,6 +15,7 @@ import org.talend.dataprep.transformation.pipeline.node.ActionNode;
 import org.talend.dataprep.transformation.pipeline.node.ApplyToColumn;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.CompileNode;
+import org.talend.dataprep.transformation.pipeline.node.FilterNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.ReactiveTypeDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
@@ -68,7 +69,11 @@ public class Optimizer extends Visitor {
             nonSourceNodeKept++;
         }
         LOGGER.debug("Keep node '{}'.", node);
-        builder.to(lastLink, node.copyShallow());
+        if (!node.getClass().equals(FilterNode.class)) {
+            builder.to(lastLink, node.copyShallow());
+        } else {
+            builder.to(lastLink, node);
+        }
     }
 
     private void handleApplyToColumn(Node node) {

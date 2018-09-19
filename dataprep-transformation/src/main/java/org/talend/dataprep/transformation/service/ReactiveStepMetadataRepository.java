@@ -32,7 +32,11 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
             try {
                 delegate.update(updateMessage.stepId, updateMessage.rowMetadata);
             } catch (Exception e) {
-                LOGGER.error("Unable to update step metadata.", e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Unable to update step metadata for step #{}.", updateMessage.stepId, e);
+                } else {
+                    LOGGER.error("Unable to update step metadata for step #{}.", updateMessage.stepId);
+                }
             }
             LOGGER.debug("Delayed update of step #{} done.", updateMessage.stepId);
         });

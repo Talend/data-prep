@@ -1,6 +1,10 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.talend.dataprep.api.dataset.RowMetadata;

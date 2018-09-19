@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.transformation.pipeline;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
@@ -109,6 +110,8 @@ public class PipelineConsoleDump extends Visitor {
             buildMonitorInformation((Monitored) node);
         }
         builder.append(formatClassName(node));
+        final String uid = DigestUtils.sha1Hex(String.valueOf(node.hashCode()));
+        builder.append(" (").append(uid, 0, 8).append(")");
         if (node instanceof ApplyToColumn) {
             buildApplyToColumn((ApplyToColumn) node);
         }

@@ -16,15 +16,20 @@ import java.util.function.BiPredicate;
 
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
+import org.talend.dataprep.transformation.pipeline.Monitored;
 import org.talend.dataprep.transformation.pipeline.Node;
 
 /**
  * Node that filter input using a provided predicate.
  * If the predicate returns true, it is emited to the next node.
  */
-public class FilterNode extends BasicNode {
+public class FilterNode extends BasicNode implements Monitored {
 
     private final BiPredicate<DataSetRow, RowMetadata>[] filters;
+
+    private long count = 0;
+
+    private long totalTime = 0;
 
     @SafeVarargs
     public FilterNode(final BiPredicate<DataSetRow, RowMetadata>... filters) {
@@ -33,14 +38,35 @@ public class FilterNode extends BasicNode {
 
     @Override
     public void receive(final DataSetRow row, final RowMetadata metadata) {
-        if (filters != null && filters[0].test(row, metadata)) {
+        long start = System.currentTimeMillis();
+        boolean match = false;
+        try {
+            match = filters != null && filters[0].test(row, metadata);
+        } finally {
+            if (match) {
+                count++;
+            }
+            totalTime += System.currentTimeMillis() - start;
+        }
+        if (match) {
             super.receive(row, metadata);
         }
     }
 
     @Override
     public void receive(final DataSetRow[] rows, final RowMetadata[] metadatas) {
-        if (test(rows, metadatas)) {
+        long start = System.currentTimeMillis();
+        boolean match = false;
+        try {
+            match = test(rows, metadatas);
+        } finally {
+            if (match) {
+                count++;
+            }
+            totalTime += System.currentTimeMillis() - start;
+        }
+
+        if (match) {
             super.receive(rows, metadatas);
         }
     }
@@ -61,5 +87,15 @@ public class FilterNode extends BasicNode {
     @Override
     public Node copyShallow() {
         return new FilterNode(filters);
+    }
+
+    @Override
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    @Override
+    public long getCount() {
+        return count;
     }
 }

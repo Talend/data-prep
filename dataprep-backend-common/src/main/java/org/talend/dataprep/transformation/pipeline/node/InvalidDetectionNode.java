@@ -57,14 +57,16 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
     @Override
     public void receive(DataSetRow row, RowMetadata metadata) {
         final long start = System.currentTimeMillis();
+        DataSetRow markedRow = row;
         try {
-
-            final DataSetRow markedRow = invalidMarker.apply(row);
-            totalTime += System.currentTimeMillis() - start;
-            super.receive(markedRow, metadata);
+            if (!row.isDeleted()) {
+                markedRow = invalidMarker.apply(row);
+                count++;
+            }
         } finally {
-            count++;
+            totalTime += System.currentTimeMillis() - start;
         }
+        super.receive(markedRow, metadata);
     }
 
     private AnalyzerService getAnalyzerService() {

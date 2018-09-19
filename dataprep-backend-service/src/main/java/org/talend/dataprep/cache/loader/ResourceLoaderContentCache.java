@@ -89,6 +89,9 @@ public class ResourceLoaderContentCache implements ContentCache {
                     return Long.compare(i1, i2);
                 }));
                 return reduce.filter(r -> {
+                    if (!r.exists()) {
+                        return false;
+                    }
                     final String suffix = StringUtils.substringAfterLast(r.getFilename(), ".");
                     if (NumberUtils.isNumber(suffix)) {
                         final long time = parseLong(suffix);
@@ -106,8 +109,9 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public boolean has(ContentCacheKey key) {
-        LOGGER.debug("Has '{}'", key.getKey());
-        return ofNullable(getResource(key)).isPresent();
+        final boolean present = ofNullable(getResource(key)).isPresent();
+        LOGGER.debug("Has '{}': {}", key.getKey(), present);
+        return present;
     }
 
     @Timed
@@ -158,6 +162,7 @@ public class ResourceLoaderContentCache implements ContentCache {
             final Predicate<String> matcher = key.getMatcher();
             stream(resources).filter(r -> matcher.test(r.getFilename())).forEach(r -> {
                 try {
+                    LOGGER.debug("Delete file '{}'.", r.getFilename());
                     r.delete();
                 } catch (IOException e) {
                     throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
@@ -170,7 +175,7 @@ public class ResourceLoaderContentCache implements ContentCache {
 
     @Timed
     @Override
-    public synchronized void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
+    public void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
         LOGGER.debug("Move '{}' -> '{}' (TTL: {})", from.getKey(), to.getKey(), toTimeToLive);
         final DeletableResource resource = getResource(from);
         if (resource != null) {

@@ -14,6 +14,9 @@ package org.talend.dataprep.transformation.pipeline;
 
 import static java.util.Optional.ofNullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.talend.dataprep.transformation.pipeline.link.BasicLink;
 import org.talend.dataprep.transformation.pipeline.link.CloneLink;
 import org.talend.dataprep.transformation.pipeline.node.ActionNode;
@@ -26,9 +29,13 @@ import org.talend.dataprep.transformation.pipeline.node.StepNode;
 
 public abstract class Visitor {
 
+    private final Set<Node> visitedNodes = new HashSet<>();
+
     protected void doNodeVisit(Node node) {
-        if (node != null && node.getLink() != null) {
-            node.getLink().accept(this);
+        if (visitedNodes.add(node)) {
+            if (node != null && node.getLink() != null) {
+                node.getLink().accept(this);
+            }
         }
     }
 

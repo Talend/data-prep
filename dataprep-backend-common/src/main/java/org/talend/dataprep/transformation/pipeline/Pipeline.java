@@ -96,6 +96,8 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
             synchronized (isFinished) {
 
                 AtomicLong counter = new AtomicLong();
+                AtomicLong duplicatedRows = new AtomicLong();
+                AtomicLong lastId = new AtomicLong(-1);
 
                 // we use map/allMatch to stop the stream when isStopped = true
                 // with only forEach((row) -> if(isStopped)) for ex we just stop the processed code
@@ -103,11 +105,18 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 // to replace when java introduce more useful functions to stream (ex: takeWhile)
                 records //
                         .peek(row -> { //
-                            node.exec().receive(row, rowMetadata);
-                            counter.addAndGet(1L);
+                            if (lastId.doubleValue() != row.getTdpId()) {
+                                lastId.set(row.getTdpId());
+                                node.exec().receive(row, rowMetadata);
+                                counter.addAndGet(1L);
+                            } else {
+                                LOG.trace("Skip a duplicated row (id: {}).", row.getTdpId());
+                                duplicatedRows.incrementAndGet();
+                            }
                         }) //
                         .noneMatch(row -> isStopped.get());
                 LOG.debug("{} rows sent in the pipeline", counter.get());
+                LOG.debug("{} duplicated rows ignored", duplicatedRows.get());
                 node.exec().signal(Signal.END_OF_STREAM);
             }
         }

@@ -167,7 +167,11 @@ public class FilterStep extends DataPrepStep {
         Response response = api.getPreparationContent(preparationId, "head", "HEAD", tql);
         response.then().statusCode(200);
 
-        return response.as(PreparationContent.class);
+        try {
+            return response.as(PreparationContent.class);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Then("^The characteristics of the preparation \"(.*)\" match:$")

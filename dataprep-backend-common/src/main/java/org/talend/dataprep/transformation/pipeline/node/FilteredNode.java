@@ -62,10 +62,10 @@ public class FilteredNode extends BasicNode implements Monitored {
                 if (hasMatched) {
                     hasMatchedOnce = true;
                 }
-                count++;
             } else {
                 LOGGER.trace("Skip row (row is deleted): '{}'", Arrays.toString(row.toArray(DataSetRow.SKIP_TDP_ID)));
             }
+            count++;
             metadata.setSampleNbRows(count);
         } finally {
             totalTime += System.currentTimeMillis() - start;

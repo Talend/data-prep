@@ -112,10 +112,10 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
                     values[i++] = rowValue == null ? StringUtils.EMPTY : rowValue;
                 }
                 configuredAnalyzer.analyze(values);
+                count++;
             }
         } finally {
             totalTime += System.currentTimeMillis() - start;
-            count++;
         }
         super.receive(row, metadata);
     }

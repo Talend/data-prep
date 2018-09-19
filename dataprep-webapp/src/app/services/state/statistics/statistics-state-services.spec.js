@@ -11,6 +11,8 @@
 
   ============================================================================*/
 
+import { PATTERNS_TYPE } from '../../statistics/statistics-service';
+
 describe('Statistics state service', function() {
 	'use strict';
 
@@ -62,6 +64,21 @@ describe('Statistics state service', function() {
 	);
 
 	it(
+		'should set patterns type',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.patternsType).toBe(PATTERNS_TYPE.CHARACTER);
+			const patternsType = PATTERNS_TYPE.WORD;
+
+			//when
+			StatisticsStateService.setPatternsType(patternsType);
+
+			//then
+			expect(statisticsState.patternsType).toBe(patternsType);
+		}),
+	);
+
+	it(
 		'should set patterns',
 		inject(function(statisticsState, StatisticsStateService) {
 			//given
@@ -107,6 +124,21 @@ describe('Statistics state service', function() {
 	);
 
 	it(
+		'should set filtered word patterns',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.filteredWordPatterns).toBeFalsy();
+			const filteredWordPatterns = { data: [] };
+
+			//when
+			StatisticsStateService.setFilteredWordPatterns(filteredWordPatterns);
+
+			//then
+			expect(statisticsState.filteredWordPatterns).toBe(filteredWordPatterns);
+		}),
+	);
+
+	it(
 		'should set loading flag',
 		inject(function(statisticsState, StatisticsStateService) {
 			//given
@@ -129,6 +161,7 @@ describe('Statistics state service', function() {
 			statisticsState.patterns = {};
 			statisticsState.wordPatterns = {};
 			statisticsState.filteredPatterns = {};
+			statisticsState.filteredWordPatterns = {};
 			statisticsState.activeLimits = {};
 			statisticsState.boxPlot = {};
 			statisticsState.rangeLimits = {};
@@ -144,6 +177,7 @@ describe('Statistics state service', function() {
 			expect(statisticsState.patterns).toBe(null);
 			expect(statisticsState.wordPatterns).toBe(null);
 			expect(statisticsState.filteredPatterns).toBe(null);
+			expect(statisticsState.filteredWordPatterns).toBe(null);
 			expect(statisticsState.activeLimits).toBe(null);
 			expect(statisticsState.boxPlot).toBe(null);
 			expect(statisticsState.rangeLimits).toBe(null);

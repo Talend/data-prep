@@ -573,8 +573,6 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 						StateService.setStatisticsPatternsType(PATTERNS_TYPE.CHARACTER);
 					}
 				}
-			})
-			.then(() => {
 				service.previousSelectedColumnId = firstSelectedColumn.id;
 			});
 	}

@@ -770,6 +770,43 @@ describe('Filter service', () => {
 					},
 				]);
 			}));
+			it('should update filter when it already exists with a different pattern type', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'updateGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: 'Aa9',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.updateGridFilter).toHaveBeenCalled();
+				expect(StateService.updateGridFilter.calls.argsFor(0)[0]).toBe(oldFilter);
+				const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
+				expect(newFilter.type).toBe('matches');
+				expect(newFilter.colId).toBe('col1');
+				expect(newFilter.args.patterns).toEqual([
+					{
+						value: 'Aa9',
+					},
+				]);
+			}));
 		});
 
 		describe('with "word_matches" type', () => {
@@ -814,6 +851,44 @@ describe('Filter service', () => {
 						],
 					},
 					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'updateGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('word_matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[number]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.updateGridFilter).toHaveBeenCalled();
+				expect(StateService.updateGridFilter.calls.argsFor(0)[0]).toBe(oldFilter);
+				const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
+				expect(newFilter.type).toBe('word_matches');
+				expect(newFilter.colId).toBe('col1');
+				expect(newFilter.args.patterns).toEqual([
+					{
+						value: '[number]',
+					},
+				]);
+			}));
+
+			it('should update filter when it already exists with a different pattern type', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: 'Aa9',
+							},
+						],
+					},
+					type: 'matches',
 				};
 				stateMock.playground.filter.gridFilters = [oldFilter];
 				spyOn(StateService, 'updateGridFilter').and.returnValue();

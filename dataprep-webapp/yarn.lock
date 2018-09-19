@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@talend/bootstrap-theme@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.207.1.tgz#3490b563f3f7a29c9c5e7588759c6575dc7a3e59"
+"@talend/bootstrap-theme@0.210.0-0":
+  version "0.210.0-0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.210.0-0.tgz#44963564e48e0f6d901aa8528a81d589a63b00a2"
   dependencies:
     bootstrap-sass "3.3.7"
 
@@ -27,9 +27,9 @@
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@talend/html-webpack-plugin/-/html-webpack-plugin-0.0.3.tgz#461c7d0877e497ca7c8f63ccbf7ef8603edf64f5"
 
-"@talend/icons@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.207.1.tgz#8335ba5519bd3ea4f6edb79aa2c1ebdd0ad69d27"
+"@talend/icons@0.210.0-0":
+  version "0.210.0-0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.210.0-0.tgz#6349041da829db69b90a7a828f93dbedc97cf76f"
 
 "@talend/json-schema-form-core@1.0.0-alpha.4":
   version "1.0.0-alpha.4"
@@ -38,9 +38,9 @@
     objectpath "^1.2.1"
     tv4 "^1.3.0"
 
-"@talend/react-cmf-cqrs@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-0.207.1.tgz#7694fca9f48e843d394cbd29129ed505c794580f"
+"@talend/react-cmf-cqrs@0.210.0-0":
+  version "0.210.0-0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-0.210.0-0.tgz#72c337af858064a722ca3c87a9bb17c290bab863"
   dependencies:
     babel-polyfill "^6.26.0"
     hoist-non-react-statics "^1.2.0"
@@ -55,9 +55,9 @@
     deepmerge "1.5.1"
     mkdirp "^0.5.1"
 
-"@talend/react-cmf@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.207.1.tgz#91080020b29f360575d93144f6dcb5ed39cab82e"
+"@talend/react-cmf@0.210.0-0":
+  version "0.210.0-0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.210.0-0.tgz#466a2b80dbbc1d10afa402c7944c46b47d1980dd"
   dependencies:
     ajv "^6.2.1"
     babel-polyfill "^6.26.0"
@@ -95,9 +95,9 @@
     hoist-non-react-statics "^1.2.0"
     react-immutable-proptypes "2.1.0"
 
-"@talend/react-components@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.207.1.tgz#69ae979374f918fff1b3760c4a73bca232ed4a0b"
+"@talend/react-components@0.210.0-0":
+  version "0.210.0-0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.210.0-0.tgz#8a5fbb93ce588edb3cd8b8810b0aa18e9dcd0e9d"
   dependencies:
     ally.js "^1.4.1"
     date-fns "^1.27.2"
@@ -113,26 +113,28 @@
     react-virtualized "9.19.1"
     simulant "^0.2.2"
 
-"@talend/react-containers@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-0.207.1.tgz#f9112e660e3d820a6320cf637c6371917ed060c0"
+"@talend/react-containers@0.210.0-0":
+  version "0.210.0-0"
+  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-0.210.0-0.tgz#a7e9718f5c57e2a98e3731e5fc4e5d84104f1103"
   dependencies:
     memoize-one "^4.0.0"
     react-immutable-proptypes "^2.1.0"
 
-"@talend/react-forms@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.207.1.tgz#0858f8d7540b6dc95d824f0e4a32215d71990d31"
+"@talend/react-forms@0.210.0-0":
+  version "0.210.0-0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.210.0-0.tgz#e63a1953fc4cfc64e229f695f1c1ca07b36983bb"
   dependencies:
     "@talend/json-schema-form-core" "1.0.0-alpha.4"
     ajv "^6.2.1"
     classnames "^2.2.5"
+    json-logic-js "^1.2.2"
     keycode "^2.2.0"
     lodash "^4.17.4"
     prop-types "^15.5.10"
     react-autowhatever "10.1.2"
     react-jsonschema-form "0.51.0"
     tv4 "^1.3.0"
+    uuid "^3.0.1"
 
 "@talend/tql@1.1.0":
   version "1.1.0"
@@ -6008,6 +6010,10 @@ jsesc@^1.3.0:
 json-loader@^0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/json-loader/-/json-loader-0.5.4.tgz#8baa1365a632f58a3c46d20175fc6002c96e37de"
+
+json-logic-js@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/json-logic-js/-/json-logic-js-1.2.2.tgz#e5c382aa6df25df485edead339869396c533afe8"
 
 json-parse-better-errors@^1.0.1:
   version "1.0.2"

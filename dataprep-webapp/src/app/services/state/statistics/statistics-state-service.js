@@ -11,7 +11,11 @@
 
  ============================================================================*/
 
-export const statisticsState = {};
+import { PATTERNS_TYPE } from '../../statistics/statistics-service';
+
+export const statisticsState = {
+	patternsType: PATTERNS_TYPE.CHARACTER,
+};
 
 export function StatisticsStateService() {
 	return {
@@ -89,7 +93,6 @@ export function StatisticsStateService() {
 		statisticsState.histogram = null;
 		statisticsState.filteredHistogram = null;
 		statisticsState.activeLimits = null;
-		statisticsState.patternsType = null;
 		statisticsState.patterns = null;
 		statisticsState.wordPatterns = null;
 		statisticsState.filteredPatterns = null;

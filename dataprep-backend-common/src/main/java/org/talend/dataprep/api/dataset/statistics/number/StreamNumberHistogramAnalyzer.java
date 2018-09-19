@@ -74,8 +74,6 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
                     stats.get(index).add(BigDecimalParser.toBigDecimal(value).doubleValue());
                 } catch (NumberFormatException | IndexOutOfBoundsException e) {
                     LOGGER.debug("Unable to calculate action on {} due to the following exception {}.", value, e);
-                } catch (Exception e) {
-                    LOGGER.debug("Unable to calculate action on {} due to an unknown exception {}.", value, e);
                 }
             }
         }

@@ -26,7 +26,7 @@
             <li ng-repeat="item in navigationListCtrl.list track by $index"
                 ng-click="navigationListCtrl.onClick({item: item})"
                 class="item-label"
-                ng-class="{'selected-item-label': navigationListCtrl.getId({item: item}) === navigationListCtrl.getId({item: navigationListCtrl.selectedItem}) }"
+                ng-class="{'selected-item-label': navigationListCtrl.isCurrentItem(item) }"
                 title="{{navigationListCtrl.getLabel({item: item})}}">
                 {{navigationListCtrl.getLabel({item: item})}}
             </li>

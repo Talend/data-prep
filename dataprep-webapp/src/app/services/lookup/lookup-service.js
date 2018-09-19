@@ -296,7 +296,7 @@ export default class LookupService {
 
 		// when lookup.dataset is removed from addedDatasets
 		if (this.state.playground.lookup.dataset && actionsToAdd.length) {
-			const isLookupDatasetStillAdded = _.find(actionsToAdd, (action) => {
+			const isLookupDatasetStillAdded = actionsToAdd.find((action) => {
 				return this._getDsId(this.state.playground.lookup.dataset) === this._getDsId(action);
 			});
 			if (!isLookupDatasetStillAdded) {

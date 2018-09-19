@@ -105,11 +105,11 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @description loops over the dataset lookup action parameters to collect the dataset name
 	 */
 	vm.getDsName = (item) => {
-		return _.find(item.parameters, { name: 'lookup_ds_name' }).default;
+		return item.parameters.find(param => param.name === 'lookup_ds_name').default;
 	};
 
 	vm.getDsId = (item) => {
-		return _.find(item.parameters, { name: 'lookup_ds_id' }).default;
+		return item.parameters.find(param => param.name === 'lookup_ds_id').default;
 	};
 
 	/**

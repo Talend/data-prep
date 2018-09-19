@@ -27,35 +27,41 @@ public class StreamNumberHistogramAnalyzerTest {
     public void shouldComputeWithValidPercentageNumber() {
 
         // given
-        final DataTypeEnum[] types = { DataTypeEnum.DOUBLE, DataTypeEnum.DOUBLE, DataTypeEnum.DOUBLE, DataTypeEnum.DOUBLE };
+        final DataTypeEnum[] types =
+                { DataTypeEnum.DOUBLE, DataTypeEnum.DOUBLE, DataTypeEnum.DOUBLE, DataTypeEnum.DOUBLE };
         final StreamNumberHistogramAnalyzer streamNumberHistogramAnalyzer = new StreamNumberHistogramAnalyzer(types);
 
         // when
         streamNumberHistogramAnalyzer.analyze("3.6E2", "1.7976931348623157E308", "test", "3.6 E20000000000");
-        List<StreamNumberHistogramStatistics> listStreamNumberHistogramStatistics = streamNumberHistogramAnalyzer.getResult();
+        List<StreamNumberHistogramStatistics> listStreamNumberHistogramStatistics =
+                streamNumberHistogramAnalyzer.getResult();
 
         // then
         assertThat(listStreamNumberHistogramStatistics.size(), is(4));
 
-        StreamNumberHistogramStatistics validStreamNumberHistogramStatistics = listStreamNumberHistogramStatistics.get(0);
+        StreamNumberHistogramStatistics validStreamNumberHistogramStatistics =
+                listStreamNumberHistogramStatistics.get(0);
         assertThat(validStreamNumberHistogramStatistics.getNumberOfValues(), is(1L));
         assertThat(validStreamNumberHistogramStatistics.getMin(), is(360.0));
         assertThat(validStreamNumberHistogramStatistics.getMax(), is(360.0));
         assertThat(validStreamNumberHistogramStatistics.getMean(), is(360.0));
 
-        StreamNumberHistogramStatistics bigValidStreamNumberHistogramStatistics = listStreamNumberHistogramStatistics.get(1);
+        StreamNumberHistogramStatistics bigValidStreamNumberHistogramStatistics =
+                listStreamNumberHistogramStatistics.get(1);
         assertThat(bigValidStreamNumberHistogramStatistics.getNumberOfValues(), is(1L));
         assertThat(bigValidStreamNumberHistogramStatistics.getMin(), is(1.7976931348623157E308));
         assertThat(bigValidStreamNumberHistogramStatistics.getMax(), is(1.7976931348623157E308));
         assertThat(bigValidStreamNumberHistogramStatistics.getMean(), is(1.7976931348623157E308));
 
-        StreamNumberHistogramStatistics textStreamNumberHistogramStatistics = listStreamNumberHistogramStatistics.get(2);
+        StreamNumberHistogramStatistics textStreamNumberHistogramStatistics =
+                listStreamNumberHistogramStatistics.get(2);
         assertThat(textStreamNumberHistogramStatistics.getNumberOfValues(), is(0L));
         assertThat(textStreamNumberHistogramStatistics.getMin(), is(0.0));
         assertThat(textStreamNumberHistogramStatistics.getMax(), is(0.0));
         assertThat(textStreamNumberHistogramStatistics.getMean(), is(0.0));
 
-        StreamNumberHistogramStatistics inValidStreamNumberHistogramStatistics = listStreamNumberHistogramStatistics.get(3);
+        StreamNumberHistogramStatistics inValidStreamNumberHistogramStatistics =
+                listStreamNumberHistogramStatistics.get(3);
         assertThat(inValidStreamNumberHistogramStatistics.getNumberOfValues(), is(0L));
         // Note : getMean, getMin and getMax change Nan to 0
         // FixMe : fix this pb by https://jira.talendforge.org/browse/TDP-4684

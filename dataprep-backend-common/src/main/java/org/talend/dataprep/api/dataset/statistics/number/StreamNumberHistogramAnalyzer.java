@@ -33,8 +33,8 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
 
     private static final Logger LOGGER = getLogger(StreamNumberHistogramAnalyzer.class);
 
-    private final ResizableList<StreamNumberHistogramStatistics> stats = new ResizableList<>(
-            StreamNumberHistogramStatistics.class);
+    private final ResizableList<StreamNumberHistogramStatistics> stats =
+            new ResizableList<>(StreamNumberHistogramStatistics.class);
 
     /**
      * Constructor
@@ -50,10 +50,11 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
         DataTypeEnum[] types = getTypes();
 
         if (record.length != types.length)
-            throw new IllegalArgumentException("Each column of the record should be declared a DataType.Type corresponding! \n"
-                    + types.length + " type(s) declared in this histogram analyzer but " + record.length
-                    + " column(s) was found in this record. \n"
-                    + "Using method: setTypes(DataType.Type[] types) to set the types. ");
+            throw new IllegalArgumentException(
+                    "Each column of the record should be declared a DataType.Type corresponding! \n" + types.length
+                            + " type(s) declared in this histogram analyzer but " + record.length
+                            + " column(s) was found in this record. \n"
+                            + "Using method: setTypes(DataType.Type[] types) to set the types. ");
 
         if (stats.resize(record.length)) {
             for (StreamNumberHistogramStatistics stat : stats) {

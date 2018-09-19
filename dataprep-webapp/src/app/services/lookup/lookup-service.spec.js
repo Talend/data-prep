@@ -448,13 +448,16 @@ describe('Lookup service', () => {
 	});
 
 	describe('add datasets to lookup', () => {
+		beforeEach(inject(($q, TransformationRestService, DatasetListService, StateService) => {
+			spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
+			spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
+			spyOn(StateService, 'setLookupModalLoading');
+		}));
+
 		it('should show loading when refreshing Lookup Datasets And Actions',
 			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService, StateService) => {
 				// given
 				spyOn(LookupService, 'updateLookupDatasetsProperties').and.returnValue();
-				spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
-				spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
-				spyOn(StateService, 'setLookupModalLoading');
 
 				// when
 				LookupService.updateLookupDatasetsAndActions();
@@ -467,9 +470,6 @@ describe('Lookup service', () => {
 			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService, StateService) => {
 				// given
 				spyOn(LookupService, 'updateLookupDatasetsProperties').and.returnValue();
-				spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
-				spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
-				spyOn(StateService, 'setLookupModalLoading');
 
 				// when
 				LookupService.updateLookupDatasetsAndActions();
@@ -500,7 +500,7 @@ describe('Lookup service', () => {
 			expect(stateMock.playground.lookup.datasets[2].enableToAddToLookup).toBe(true);
 		}));
 
-		it('should initialize lookup datasets', inject(($q, $rootScope, LookupService, StorageService, StateService, TransformationRestService) => {
+		it('should initialize lookup datasets', inject(($q, $rootScope, LookupService, StorageService, StateService) => {
 			//given
 			stateMock.playground.lookup.datasets = [
 				{ id: 'first_lookup_dataset_id', addedToLookup: false, created: 80 },
@@ -521,7 +521,6 @@ describe('Lookup service', () => {
 			spyOn(StorageService, 'getLookupDatasets').and.returnValue(['1']);
 			spyOn(StorageService, 'setLookupDatasets').and.returnValue();
 			spyOn(StateService, 'setLookupAddedActions').and.returnValue();
-			spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
 
 			//when
 			LookupService.initLookups();

@@ -12,8 +12,8 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
@@ -101,9 +101,10 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Create a data set", produces = TEXT_PLAIN_VALUE,
             notes = "Create a new data set based on content provided in POST body. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
-    public Callable<String> create(@ApiParam(
-            value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
-                    defaultValue = "", required = false) String name,
+    public Callable<String> create(
+            @ApiParam(
+                    value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
+                            defaultValue = "", required = false) String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(
                     defaultValue = "", required = false) String tag,
             @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
@@ -126,9 +127,10 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Update a data set by id.", produces = TEXT_PLAIN_VALUE, //
             notes = "Create or update a data set based on content provided in PUT body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too. Returns the id of the newly created data set.")
     @Timed
-    public Callable<String> createOrUpdateById(@ApiParam(
-            value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
-                    defaultValue = "", required = false) String name,
+    public Callable<String> createOrUpdateById(
+            @ApiParam(
+                    value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
+                            defaultValue = "", required = false) String name,
             @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
             @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
             @ApiParam(value = "content") InputStream dataSetContent) {
@@ -422,9 +424,9 @@ public class DataSetAPI extends APIService {
         GenericCommand<InputStream> compatibleDataSetList =
                 getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
 
-        final List<String> compatibleList =
-                toStream(DataSetMetadata.class, mapper, compatibleDataSetList).map(DataSetMetadata::getId).collect(
-                        Collectors.toList());
+        final List<String> compatibleList = toStream(DataSetMetadata.class, mapper, compatibleDataSetList)
+                .map(DataSetMetadata::getId)
+                .collect(Collectors.toList());
 
         // get list of preparations
         GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, sort, order);

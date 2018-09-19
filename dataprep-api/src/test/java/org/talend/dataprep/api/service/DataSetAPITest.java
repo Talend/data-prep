@@ -602,11 +602,12 @@ public class DataSetAPITest extends ApiServiceTestBase {
     public void preview_xls_multi_sheet() throws Exception {
 
         // then
-        Response response = given() //
-                .body(IOUtils.toByteArray(
-                        DataSetAPITest.class.getResourceAsStream("dataset/Talend_Desk-Tableau_de_Bord-011214.xls"))) //
-                .when() //
-                .post("/api/datasets");
+        Response response =
+                given() //
+                        .body(IOUtils.toByteArray(DataSetAPITest.class
+                                .getResourceAsStream("dataset/Talend_Desk-Tableau_de_Bord-011214.xls"))) //
+                        .when() //
+                        .post("/api/datasets");
 
         assertThat(response.getStatusCode(), is(200));
         String datasetId = response.asString();

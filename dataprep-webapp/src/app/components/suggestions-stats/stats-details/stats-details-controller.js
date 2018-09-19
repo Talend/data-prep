@@ -97,6 +97,7 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 	 * @ngdoc method
 	 * @name onCharacterPatternSelect
 	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
+	 * @description Select character based patterns
 	 */
 	function onCharacterPatternSelect() {
 		vm.StateService.setStatisticsPatternsType(PATTERNS_TYPE.CHARACTER);
@@ -106,6 +107,7 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 	 * @ngdoc method
 	 * @name onWordPatternSelect
 	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
+	 * @description Select word based patterns
 	 */
 	function onWordPatternSelect() {
 		vm.StateService.setStatisticsPatternsType(PATTERNS_TYPE.WORD);

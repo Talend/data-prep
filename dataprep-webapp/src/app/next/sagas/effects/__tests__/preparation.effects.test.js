@@ -1,4 +1,5 @@
 import { all, call } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
 import { HTTPError } from '@talend/react-cmf/lib/sagas/http';
 import { Map } from 'immutable';
 import * as effects from '../../effects/preparation.effects';
@@ -11,6 +12,7 @@ import {
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
 import PreparationCopyMoveModal from '../../../components/PreparationCopyMoveModal';
+import preparationWatcher from '../../watchers/preparation.saga';
 
 describe('preparation', () => {
 	describe('cancelRename', () => {
@@ -379,6 +381,12 @@ describe('preparation', () => {
 			expect(gen.next().value).toEqual(
 				call(effects.closeRemoveFolderModal),
 			);
+			expect(gen.next().value).toEqual(
+				call(delay, 500),
+			);
+			expect(gen.next().value).toEqual(
+				call(preparationWatcher['preparation:folder:remove']),
+			);
 		});
 	});
 
@@ -479,15 +487,14 @@ describe('preparation', () => {
 			expect(effectSuccess.fn).toEqual(http.put);
 			expect(effectSuccess.args[0]).toEqual('/api/folders?parentId=folderId&path=folderName');
 
-			expect(gen.next().value).toEqual(
+			expect(gen.next(API_RESPONSE).value).toEqual(
 				call(effects.refreshCurrentFolder),
 			);
-
+			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
 			expect(gen.next().value).toEqual(
 				call(effects.closeAddFolderModal),
 			);
 
-			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
 		});
 	});
 });

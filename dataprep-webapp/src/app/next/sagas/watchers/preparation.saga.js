@@ -24,10 +24,8 @@ function* rename() {
 }
 
 function* removeFolder() {
-	while (true) {
-		yield take(actions.REMOVE_FOLDER);
-		yield call(effects.removeFolder);
-	}
+	yield take(actions.REMOVE_FOLDER);
+	yield call(effects.removeFolder);
 }
 
 function* openRemoveFolderModal() {

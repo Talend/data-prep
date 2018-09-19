@@ -1,7 +1,9 @@
 import { all, call, put, select } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
 import { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
+import preparationWatcher from './../watchers/preparation.saga';
 import i18next from '../../../i18n';
 
 import http from './http';
@@ -177,6 +179,8 @@ export function* removeFolder() {
 		);
 	}
 	yield call(closeRemoveFolderModal);
+	yield call(delay, 500); // necessary when multiple quick calls
+	yield call(preparationWatcher['preparation:folder:remove']);
 }
 
 export function* setTitleEditionMode(payload) {
@@ -252,23 +256,25 @@ export function* addFolder() {
 			yield put(actions.components.mergeState('FolderCreatorModal', 'add_folder_modal', { error }));
 		}
 		else {
-			yield call(
+			const { response } = yield call(
 				http.put,
 				`${uris.get('apiFolders')}?parentId=${currentFolderId}&path=${newFolderName}`,
 			);
-			yield call(refreshCurrentFolder);
+			if (response.ok) {
+				yield call(refreshCurrentFolder);
+				yield put(
+					creators.notification.success(null, {
+						title: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_TITLE', {
+							defaultValue: 'Folder Added',
+						}),
+						message: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_MESSAGE', {
+							defaultValue: `The folder "${newFolderName}" has been added.`,
+							name: newFolderName,
+						}),
+					}),
+				);
+			}
 			yield call(closeAddFolderModal);
-			yield put(
-				creators.notification.success(null, {
-					title: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_TITLE', {
-						defaultValue: 'Folder Added',
-					}),
-					message: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_MESSAGE', {
-						defaultValue: `The folder "${newFolderName}" has been added.`,
-						name: newFolderName,
-					}),
-				}),
-			);
 		}
 	}
 }

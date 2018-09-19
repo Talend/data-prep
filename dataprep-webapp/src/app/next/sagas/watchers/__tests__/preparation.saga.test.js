@@ -182,8 +182,6 @@ describe('preparation', () => {
 
 			expect(gen.next().value).toEqual(take(actions.REMOVE_FOLDER));
 			expect(gen.next().value).toEqual(call(effects.removeFolder));
-
-			expect(gen.next().value).toEqual(take(actions.REMOVE_FOLDER));
 		});
 	});
 });

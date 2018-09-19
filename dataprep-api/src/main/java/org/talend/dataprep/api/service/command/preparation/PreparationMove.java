@@ -18,7 +18,7 @@ import static org.talend.dataprep.command.Defaults.asNull;
 
 import java.net.URISyntaxException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;

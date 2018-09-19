@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.actions.common;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.talend.dataprep.i18n.ActionsBundle.parameterDescription;
 import static org.talend.dataprep.i18n.ActionsBundle.parameterLabel;
 import static org.talend.dataprep.parameters.ParameterType.STRING;

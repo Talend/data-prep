@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.date;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.data.MapEntry;
 import org.junit.Assert;
 import org.junit.Before;

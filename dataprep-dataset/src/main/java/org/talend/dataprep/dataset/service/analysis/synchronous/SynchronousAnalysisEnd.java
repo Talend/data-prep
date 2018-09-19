@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.dataset.service.analysis.synchronous;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import org.talend.dataprep.lock.DistributedLock;
 
 /**
  * A special implementation of {@link SynchronousAnalysisEnd} that is always executed after all other implementations.
- * 
+ *
  * @see #order()
  */
 @Component

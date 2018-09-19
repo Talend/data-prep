@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.format.export.ExportFormat;
 
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
  * Internal service in charge of format type registration.
@@ -47,7 +47,7 @@ public class FormatRegistrationService {
 
     /**
      * Return a registered format from its name or null if none found.
-     * 
+     *
      * @param formatName the wanted format name.
      * @return the wanted export format or null if not found.
      */

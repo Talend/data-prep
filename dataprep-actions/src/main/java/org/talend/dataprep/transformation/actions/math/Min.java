@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.dataprep.transformation.actions.math;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.math3.util.FastMath.min;
 import static org.talend.daikon.number.BigDecimalParser.toBigDecimal;
 import static org.talend.dataprep.transformation.actions.math.Min.MIN_NAME;

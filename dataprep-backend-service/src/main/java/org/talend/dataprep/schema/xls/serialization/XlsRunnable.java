@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.schema.xls.serialization;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.talend.dataprep.schema.xls.XlsSerializer.isHeaderLine;
 import static org.talend.dataprep.schema.xls.XlsUtils.getCellValueAsString;
@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;

@@ -12,10 +12,27 @@
 
 package org.talend.dataprep.api.service;
 
-import com.netflix.hystrix.HystrixCommand;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.talend.dataprep.command.CommandHelper.toStream;
+import static org.talend.dataprep.command.CommandHelper.toStreaming;
+import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -32,7 +49,6 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DatasetDTO;
 import org.talend.dataprep.api.dataset.DatasetDetailsDTO;
 import org.talend.dataprep.api.dataset.statistics.SemanticDomain;
-import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.dataset.CopyDataSet;
@@ -58,29 +74,11 @@ import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
+import com.netflix.hystrix.HystrixCommand;
 
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.dataprep.command.CommandHelper.toPublisher;
-import static org.talend.dataprep.command.CommandHelper.toStream;
-import static org.talend.dataprep.command.CommandHelper.toStreaming;
-import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 public class DataSetAPI extends APIService {
@@ -94,8 +92,8 @@ public class DataSetAPI extends APIService {
     /**
      * Create a dataset from request body content.
      *
-     * @param name           The dataset name.
-     * @param contentType    the request content type used to distinguish dataset creation or import.
+     * @param name The dataset name.
+     * @param contentType the request content type used to distinguish dataset creation or import.
      * @param dataSetContent the dataset content from the http request body.
      * @return The dataset id.
      */
@@ -180,24 +178,6 @@ public class DataSetAPI extends APIService {
         updateDataSetCommand.execute();
         LOG.debug("Dataset creation or update for #{} done.", id);
     }
-
-    //    @RequestMapping(value = "/api/datasets/{id}", method = POST, produces = TEXT_PLAIN_VALUE)
-    //    @ApiOperation(value = "Update a dataset.", produces = TEXT_PLAIN_VALUE, //
-    //            notes = "Update a data set based on content provided in POST body with given id. For documentation purposes, body is typed as 'text/plain' but operation accepts binary content too.")
-    //    @Timed
-    //    public Callable<String> update(
-    //            @ApiParam(value = "Id of the data set to update / create") @PathVariable(value = "id") String id,
-    //            @ApiParam(value = "content") InputStream dataSetContent) {
-    //        return () -> {
-    //            if (LOG.isDebugEnabled()) {
-    //                LOG.debug("Creating or updating dataset #{} (pool: {})...", id, getConnectionStats());
-    //            }
-    //            HystrixCommand<String> creation = getCommand(UpdateDataSet.class, id, dataSetContent);
-    //            String result = creation.execute();
-    //            LOG.debug("Dataset creation or update for #{} done.", id);
-    //            return result;
-    //        };
-    //    }
 
     @RequestMapping(value = "/api/datasets/{datasetId}/column/{columnId}", method = POST,
             consumes = APPLICATION_JSON_VALUE)
@@ -423,15 +403,15 @@ public class DataSetAPI extends APIService {
      * compatible preparation is found an empty list is returned.
      *
      * @param dataSetId the specified data set id
-     * @param sort      the sort criterion: either name or date.
-     * @param order     the sorting order: either asc or desc
+     * @param sort the sort criterion: either name or date.
+     * @param order the sorting order: either asc or desc
      */
     @RequestMapping(value = "/api/datasets/{id}/compatiblepreparations", method = GET,
             produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List compatible preparations.", produces = APPLICATION_JSON_VALUE,
             notes = "Returns a list of data sets that are compatible with the specified one.")
     @Timed
-    public Stream<Preparation> listCompatiblePreparations(
+    public Stream<PreparationDTO> listCompatiblePreparations(
             @ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String dataSetId,
             @ApiParam(value = "Sort key (by name or date), defaults to 'modification'.") @RequestParam(
                     defaultValue = "lastModificationDate") Sort sort,
@@ -443,22 +423,16 @@ public class DataSetAPI extends APIService {
         // get the list of compatible data sets
         GenericCommand<InputStream> compatibleDataSetList =
                 getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
-        final Mono<List<DataSetMetadata>> compatibleList =
-                Flux
-                        .from(toPublisher(DataSetMetadata.class, mapper, compatibleDataSetList)) //
-                        .collectList() //
-                        .cache(); // Keep it in cache for later reuse
+
+        final List<String> compatibleList = toStream(DataSetMetadata.class, mapper, compatibleDataSetList)
+                .map(DataSetMetadata::getId)
+                .collect(Collectors.toList());
+
         // get list of preparations
         GenericCommand<InputStream> preparationList = getCommand(PreparationList.class, sort, order);
-        return Flux
-                .from(toPublisher(Preparation.class, mapper, preparationList)) //
-                .filter(p -> compatibleList
-                        .flatMapIterable(l -> l) //
-                        .map(DataSetMetadata::getId) //
-                        .any(id -> StringUtils.equals(id, p.getDataSetId()) || dataSetId.equals(p.getDataSetId())) //
-                        .block() //
-                ) //
-                .toStream(1);
+
+        return toStream(PreparationDTO.class, mapper, preparationList)
+                .filter(p -> compatibleList.contains(p.getDataSetId()) || dataSetId.equals(p.getDataSetId()));
     }
 
     @RequestMapping(value = "/api/datasets/{id}", method = DELETE)
@@ -539,7 +513,7 @@ public class DataSetAPI extends APIService {
      * Return the semantic types for a given dataset / column.
      *
      * @param datasetId the dataset id.
-     * @param columnId  the column id.
+     * @param columnId the column id.
      * @return the semantic types for a given dataset / column.
      */
     @RequestMapping(value = "/api/datasets/{datasetId}/columns/{columnId}/types", method = GET,

@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.api.filter;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.util.Arrays;
 import java.util.Iterator;

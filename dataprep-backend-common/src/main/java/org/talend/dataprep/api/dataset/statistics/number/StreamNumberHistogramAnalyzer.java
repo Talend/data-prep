@@ -12,9 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.api.dataset.statistics.number;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.util.NumericHelper;
 import org.talend.dataquality.common.inference.ResizableList;
 import org.talend.dataquality.statistics.numeric.NumericalStatisticsAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
@@ -27,8 +31,10 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
 
     private static final long serialVersionUID = -3756520692420812485L;
 
-    private final ResizableList<StreamNumberHistogramStatistics> stats =
-            new ResizableList<>(StreamNumberHistogramStatistics.class);
+    private static final Logger LOGGER = getLogger(StreamNumberHistogramAnalyzer.class);
+
+    private final ResizableList<StreamNumberHistogramStatistics> stats = new ResizableList<>(
+            StreamNumberHistogramStatistics.class);
 
     /**
      * Constructor
@@ -44,11 +50,10 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
         DataTypeEnum[] types = getTypes();
 
         if (record.length != types.length)
-            throw new IllegalArgumentException(
-                    "Each column of the record should be declared a DataType.Type corresponding! \n" + types.length
-                            + " type(s) declared in this histogram analyzer but " + record.length
-                            + " column(s) was found in this record. \n"
-                            + "Using method: setTypes(DataType.Type[] types) to set the types. ");
+            throw new IllegalArgumentException("Each column of the record should be declared a DataType.Type corresponding! \n"
+                    + types.length + " type(s) declared in this histogram analyzer but " + record.length
+                    + " column(s) was found in this record. \n"
+                    + "Using method: setTypes(DataType.Type[] types) to set the types. ");
 
         if (stats.resize(record.length)) {
             for (StreamNumberHistogramStatistics stat : stats) {
@@ -62,7 +67,16 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
             if (!TypeInferenceUtils.isValid(types[index], value)) {
                 continue;
             }
-            stats.get(index).add(BigDecimalParser.toBigDecimal(value).doubleValue());
+            // FixMe : fix this pb by https://jira.talendforge.org/browse/TDP-4684
+            if (NumericHelper.isBigDecimal(value)) {
+                try {
+                    stats.get(index).add(BigDecimalParser.toBigDecimal(value).doubleValue());
+                } catch (ArithmeticException | NumberFormatException | NullPointerException e) {
+                    LOGGER.debug("Unable to calculate action on {} due to the following exception {}.", value, e);
+                } catch (Exception e) {
+                    LOGGER.debug("Unable to calculate action on {} due to an unknown exception {}.", value, e);
+                }
+            }
         }
         return true;
     }

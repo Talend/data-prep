@@ -99,4 +99,23 @@ public class FilterTranslatorTest {
         assertEquals(expectedTQLFilter, tql);
     }
 
+    @Test
+    public void testToTQL_TranslateCompliesExpression() {
+        // given
+        String filter = //
+                "{" + //
+                        "   \"matches\": {" + //
+                        "       \"field\": \"0006\"," + //
+                        "       \"value\": \"Aaaa\"" + //
+                        "   }" + //
+                        "}";
+
+        // when
+        String tql = filterTranslator.toTQL(filter);
+
+        // then
+        String expectedTQLFilter = "0006 complies 'Aaaa'";
+        assertEquals(expectedTQLFilter, tql);
+    }
+
 }

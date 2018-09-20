@@ -80,7 +80,7 @@ public class FilterTranslator {
 
         @Override
         public String createCompliesPredicate(JsonNode currentNode, String columnId, String value) {
-            return columnId + " matches " + value;
+            return columnId + " complies '" + value + "'";
         }
 
         @Override

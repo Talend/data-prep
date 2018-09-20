@@ -30,6 +30,11 @@
     <packaging>pom</packaging>
     <artifactId>dataprep-backend-service-parent</artifactId>
 
+    <properties>
+        <!-- for spring boot plugin -->
+        <spring-boot.version>1.5.2.RELEASE</spring-boot.version>
+    </properties>
+
     <dependencies>
         <!-- SPRING DEPENDENCIES -->
         <dependency>
@@ -104,7 +109,7 @@
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-common</artifactId>
+            <artifactId>dataprep-core</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

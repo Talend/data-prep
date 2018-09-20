@@ -15,14 +15,18 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Ignore
 public class DatasetTest {
@@ -31,9 +35,12 @@ public class DatasetTest {
     public void JsonDeserialization() throws IOException {
         InputStream resourceAsStream = this.getClass().getResourceAsStream("dataset-catalog-sample.json");
 
-        Dataset dataset = new ObjectMapper().readValue(resourceAsStream, Dataset.class);
+        Dataset dataset = new ObjectMapper() //
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                .readValue(resourceAsStream, Dataset.class);
 
         assertNotNull(dataset);
         assertNotNull(dataset.getId());
+        assertThat(dataset.getCertification(), is(Dataset.CertificationState.NONE));
     }
 }

@@ -72,6 +72,14 @@ function convertPatternToRegexp(pattern) {
 		case '9':
 			regexp += '[0-9]';
 			break;
+		case 'h':
+		case 'H':
+		case 'k':
+		case 'K':
+		case 'C':
+		case 'G':
+			regexp += '.';
+			break;
 		default:
 			regexp += escapeRegex(pattern[i]);
 		}
@@ -89,8 +97,6 @@ function isDatePattern(pattern) {
 	return (pattern.indexOf('d') > -1 ||
 	pattern.indexOf('M') > -1 ||
 	pattern.indexOf('y') > -1 ||
-	pattern.indexOf('H') > -1 ||
-	pattern.indexOf('h') > -1 ||
 	pattern.indexOf('m') > -1 ||
 	pattern.indexOf('s') > -1);
 }

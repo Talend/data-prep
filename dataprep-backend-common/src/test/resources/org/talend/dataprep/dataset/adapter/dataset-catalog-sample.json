@@ -16,8 +16,7 @@
   "enabled": true,
   "label": "French stations frequencies",
   "type": "SimpleFileIoDataset",
-  "version": 0,
-  "datastoreId": "9abb1206-5f2b-4d51-97cd-f742991d3533",
+  "certification": "none",
   "datastore": {
     "id": "9abb1206-5f2b-4d51-97cd-f742991d3533",
     "label": "HDFS Datastore",

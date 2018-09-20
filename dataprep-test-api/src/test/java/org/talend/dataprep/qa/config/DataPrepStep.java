@@ -174,7 +174,9 @@ public abstract class DataPrepStep {
     }
 
     protected ConditionFactory waitResponse(String message, int timeOut, int pollDelay, int pollInterval) {
-        return with().pollInterval(pollInterval, TimeUnit.SECONDS).and() //
+        return with() //
+                .pollInterval(pollInterval, TimeUnit.SECONDS) //
+                .and() //
                 .with() //
                 .pollDelay(pollDelay, TimeUnit.SECONDS) //
                 .await(message) //

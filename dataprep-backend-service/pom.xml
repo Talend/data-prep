@@ -24,6 +24,7 @@
     </parent>
     <packaging>jar</packaging>
     <artifactId>dataprep-backend-service</artifactId>
+
     <dependencies>
         <!-- SPRING DEPENDENCIES -->
         <dependency>

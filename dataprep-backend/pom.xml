@@ -19,6 +19,7 @@
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-base</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
     <artifactId>dataprep-backend</artifactId>
     <version>2.8.0-SNAPSHOT</version>
@@ -30,6 +31,22 @@
         <project.organization>Talend</project.organization>
         <start-class>fill.this.value.in.service.module</start-class>
     </properties>
+
+    <modules>
+        <module>../dataprep-backend-service</module>
+        <module>../dataprep-backend-service-parent</module>
+        <module>../dataprep-avro-message</module>
+        <module>../dataprep-async-api</module>
+        <module>../dataprep-async-runtime</module>
+        <module>../dataprep-dataset</module>
+        <module>../dataprep-transformation</module>
+        <module>../dataprep-preparation</module>
+        <module>../dataprep-api</module>
+        <module>../dataprep-maintenance</module>
+        <module>../dataprep-test-api</module>
+        <module>../dataprep-upgrade-common</module>
+        <module>../dataprep-upgrade</module>
+    </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -132,21 +149,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <modules>
-        <module>../dataprep-backend-service</module>
-        <module>../dataprep-backend-service-parent</module>
-        <module>../dataprep-avro-message</module>
-        <module>../dataprep-async-api</module>
-        <module>../dataprep-async-runtime</module>
-        <module>../dataprep-dataset</module>
-        <module>../dataprep-transformation</module>
-        <module>../dataprep-preparation</module>
-        <module>../dataprep-api</module>
-        <module>../dataprep-maintenance</module>
-        <module>../dataprep-test-api</module>
-        <module>../dataprep-upgrade-common</module>
-        <module>../dataprep-upgrade</module>
-    </modules>
     <build>
         <plugins>
             <plugin>

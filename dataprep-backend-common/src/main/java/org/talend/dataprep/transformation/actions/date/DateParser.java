@@ -73,7 +73,7 @@ public class DateParser {
         try {
             return parseDateFromPatterns(value, getPatterns(column.getStatistics().getPatternFrequencies()));
         } catch (DateTimeException e) {
-            LOGGER.debug("Unable to parse date '{}'", value, e);
+            LOGGER.trace("Unable to parse date '{}'", value, e);
             return guessAndParse(value, column);
         }
     }

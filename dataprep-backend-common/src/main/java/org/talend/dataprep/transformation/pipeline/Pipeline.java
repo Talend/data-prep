@@ -105,14 +105,17 @@ public class Pipeline implements Node, RuntimeNode, Serializable {
                 // to replace when java introduce more useful functions to stream (ex: takeWhile)
                 records //
                         .peek(row -> { //
-                            if (lastId.doubleValue() != row.getTdpId()) {
+                            if (row.getTdpId() != null) {
+                                if (lastId.doubleValue() == row.getTdpId()) {
+                                    LOG.trace("Skip a duplicated row (id: {}).", row.getTdpId());
+                                    duplicatedRows.incrementAndGet();
+                                    return;
+                                }
                                 lastId.set(row.getTdpId());
-                                node.exec().receive(row, rowMetadata);
-                                counter.addAndGet(1L);
-                            } else {
-                                LOG.trace("Skip a duplicated row (id: {}).", row.getTdpId());
-                                duplicatedRows.incrementAndGet();
                             }
+
+                            node.exec().receive(row, rowMetadata);
+                            counter.addAndGet(1L);
                         }) //
                         .noneMatch(row -> isStopped.get());
                 LOG.debug("{} rows sent in the pipeline", counter.get());

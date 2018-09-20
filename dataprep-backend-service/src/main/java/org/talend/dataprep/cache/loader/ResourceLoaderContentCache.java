@@ -186,7 +186,8 @@ public class ResourceLoaderContentCache implements ContentCache {
                     LOGGER.debug("No need to move file (destination already exists).");
                     return;
                 } else {
-                    LOGGER.error("Source file '{}' no longer exists, neither does destination '{}'", from.getKey(), destination);
+                    LOGGER.error("Source file '{}' no longer exists, neither does destination '{}'", from.getKey(),
+                            destination);
                     throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION);
                 }
             }

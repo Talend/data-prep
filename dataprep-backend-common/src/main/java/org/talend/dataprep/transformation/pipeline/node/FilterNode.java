@@ -21,7 +21,7 @@ import org.talend.dataprep.transformation.pipeline.Node;
 
 /**
  * Node that filter input using a provided predicate.
- * If the predicate returns true, it is emited to the next node.
+ * If the predicate returns true, it is emitted to the next node.
  */
 public class FilterNode extends BasicNode implements Monitored {
 

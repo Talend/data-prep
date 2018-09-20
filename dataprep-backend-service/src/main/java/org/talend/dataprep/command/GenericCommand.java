@@ -281,9 +281,14 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Override
     protected T getFallback() {
         try {
-            LOGGER.info("Command '{}' is having trouble with timeout execution.", getClass().getName());
-            final Future<T> future = delayedProcessor.submit(this::run);
-            return future.get();
+            if (status.is5xxServerError()) {
+                LOGGER.info("Command '{}' is having trouble with timeout execution.", getClass().getName());
+                final Future<T> future = delayedProcessor.submit(this::run);
+                return future.get();
+            } else {
+                LOGGER.debug("Command failed with user error, switch to default fallback");
+                return super.getFallback();
+            }
         } catch (Exception e) {
             LOGGER.error("Unable to switch to fall back.", e);
             return super.getFallback();

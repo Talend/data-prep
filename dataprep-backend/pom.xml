@@ -33,16 +33,18 @@
         <tika.version>1.16</tika.version>
         <org.talend.daikon.version>0.26.0-SNAPSHOT</org.talend.daikon.version>
         <dataquality-libraries.version>6.1.0-SNAPSHOT</dataquality-libraries.version>
-        <org.talend.dataquality.common.version>${dataquality-libraries.version}</org.talend.dataquality.common.version>
-        <org.talend.dataquality.semantic.version>${dataquality-libraries.version}</org.talend.dataquality.semantic.version>
-        <org.talend.dataquality.statistics.version>${dataquality-libraries.version}</org.talend.dataquality.statistics.version>
-        <org.talend.dataquality.record.linkage.version>${dataquality-libraries.version}</org.talend.dataquality.record.linkage.version>
-        <org.talend.dataquality.sampling.version>${dataquality-libraries.version}</org.talend.dataquality.sampling.version>
-        <org.talend.dataquality.standardization.version>${dataquality-libraries.version}</org.talend.dataquality.standardization.version>
-        <org.talend.dataquality.converters.version>${dataquality-libraries.version}</org.talend.dataquality.converters.version>
-        <spring-boot.version>1.5.2.RELEASE</spring-boot.version>
-        <spring-cloud.version>Dalston.SR5</spring-cloud.version>
-        <spring-cloud-sleuth-dependencies.version>1.3.0.RELEASE</spring-cloud-sleuth-dependencies.version>
+        <dataquality-common.version>${dataquality-libraries.version}</dataquality-common.version>
+        <dataquality-semantic.version>${dataquality-libraries.version}</dataquality-semantic.version>
+        <dataquality-statistics.version>${dataquality-libraries.version}</dataquality-statistics.version>
+        <dataquality-record-linkage.version>${dataquality-libraries.version}</dataquality-record-linkage.version>
+        <dataquality-sampling.version>${dataquality-libraries.version}</dataquality-sampling.version>
+        <dataquality-standardization.version>${dataquality-libraries.version}</dataquality-standardization.version>
+        <dataquality-converters.version>${dataquality-libraries.version}</dataquality-converters.version>
+
+        <spring-boot.version>1.5.16.RELEASE</spring-boot.version>
+        <spring-cloud.version>Edgware.SR4</spring-cloud.version>
+        <kafka.version>1.1.1</kafka.version>
+
         <project.inceptionYear>2015</project.inceptionYear>
         <project.organization>Talend</project.organization>
         <!-- This version should match the one pulled by tika-parsers -> geoapi -->
@@ -82,6 +84,43 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Enforce kafka version -->
+            <!-- Could be done only with kafka.version properties override if the pom parent is spring boot -->
+            <!-- in order to avoid exclusion -->
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka_2.11</artifactId>
+                <version>${kafka.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>com.github.zafarkhaja</groupId>
                 <artifactId>java-semver</artifactId>
                 <version>${java-semver.version}</version>
@@ -94,7 +133,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-semantic</artifactId>
-                <version>${org.talend.dataquality.semantic.version}</version>
+                <version>${dataquality-semantic.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -112,12 +151,16 @@
                         <groupId>org.apache.logging.log4j</groupId>
                         <artifactId>log4j-core</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.json</groupId>
+                        <artifactId>json</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-common</artifactId>
-                <version>${org.talend.dataquality.common.version}</version>
+                <version>${dataquality-common.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -152,7 +195,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-statistics</artifactId>
-                <version>${org.talend.dataquality.statistics.version}</version>
+                <version>${dataquality-statistics.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.clearspring.analytics</groupId>
@@ -175,7 +218,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-record-linkage</artifactId>
-                <version>${org.talend.dataquality.record.linkage.version}</version>
+                <version>${dataquality-record-linkage.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -198,7 +241,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-standardization</artifactId>
-                <version>${org.talend.dataquality.standardization.version}</version>
+                <version>${dataquality-standardization.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -221,7 +264,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-converters</artifactId>
-                <version>${org.talend.dataquality.converters.version}</version>
+                <version>${dataquality-converters.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -244,7 +287,7 @@
             <dependency>
                 <groupId>org.talend.dataquality</groupId>
                 <artifactId>dataquality-sampling</artifactId>
-                <version>${org.talend.dataquality.sampling.version}</version>
+                <version>${dataquality-sampling.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -556,6 +599,11 @@
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging-api</artifactId>
                     </exclusion>
+                    <!-- exclusion can be removed after update to 1.18 -->
+                    <exclusion>
+                        <groupId>com.tdunning</groupId>
+                        <artifactId>json</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -652,6 +700,12 @@
                 <artifactId>hamcrest-json</artifactId>
                 <version>0.2</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.json</groupId>
+                        <artifactId>json</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>

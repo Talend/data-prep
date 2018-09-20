@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
@@ -27,8 +29,6 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.ExcelComparator;
 
 import cucumber.api.java.en.Then;
-
-import static org.junit.Assert.fail;
 
 /**
  * Store all steps related to files and temporary files.
@@ -58,8 +58,8 @@ public class FileStep extends DataPrepStep {
                             + expectedFilename);
                 }
             } else if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
-                fail("Temporary file " + temporaryFilename + " isn't the same as the expected file "
-                        + expectedFilename);
+                fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename
+                        + ":\n" + String.join("\n", Files.readAllLines(tempFile)));
             }
         }
     }

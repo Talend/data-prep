@@ -448,6 +448,40 @@ describe('Lookup service', () => {
 	});
 
 	describe('add datasets to lookup', () => {
+		beforeEach(inject(($q, TransformationRestService, DatasetListService, StateService) => {
+			spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
+			spyOn(DatasetListService, 'refreshDatasets').and.returnValue($q.when());
+			spyOn(StateService, 'setLookupModalLoading');
+		}));
+
+		it('should show loading when refreshing Lookup Datasets And Actions',
+			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService, StateService) => {
+				// given
+				spyOn(LookupService, 'updateLookupDatasetsProperties').and.returnValue();
+
+				// when
+				LookupService.updateLookupDatasetsAndActions();
+
+				// then
+				expect(StateService.setLookupModalLoading).toHaveBeenCalledWith(true);
+			}));
+
+		it('should fetch to refresh Lookup Datasets And Actions',
+			inject(($q, $rootScope, LookupService, DatasetListService, TransformationRestService, StateService) => {
+				// given
+				spyOn(LookupService, 'updateLookupDatasetsProperties').and.returnValue();
+
+				// when
+				LookupService.updateLookupDatasetsAndActions();
+				$rootScope.$digest();
+
+				// then
+				expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
+				expect(TransformationRestService.getDatasetTransformations).toHaveBeenCalledWith(stateMock.playground.dataset.id);
+				expect(LookupService.updateLookupDatasetsProperties).toHaveBeenCalledWith({ data: lookupActions });
+				expect(StateService.setLookupModalLoading).toHaveBeenCalledWith(false);
+			}));
+
 		it('should disable datasets which are used in recipe steps', inject(($rootScope, LookupService) => {
 			//given
 			stateMock.playground.lookup.datasets = [
@@ -466,7 +500,7 @@ describe('Lookup service', () => {
 			expect(stateMock.playground.lookup.datasets[2].enableToAddToLookup).toBe(true);
 		}));
 
-		it('should initialize lookup datasets', inject(($q, $rootScope, LookupService, StorageService, StateService, TransformationRestService) => {
+		it('should initialize lookup datasets', inject(($q, $rootScope, LookupService, StorageService, StateService) => {
 			//given
 			stateMock.playground.lookup.datasets = [
 				{ id: 'first_lookup_dataset_id', addedToLookup: false, created: 80 },
@@ -487,7 +521,6 @@ describe('Lookup service', () => {
 			spyOn(StorageService, 'getLookupDatasets').and.returnValue(['1']);
 			spyOn(StorageService, 'setLookupDatasets').and.returnValue();
 			spyOn(StateService, 'setLookupAddedActions').and.returnValue();
-			spyOn(TransformationRestService, 'getDatasetTransformations').and.returnValue($q.when({ data: lookupActions }));
 
 			//when
 			LookupService.initLookups();
@@ -522,7 +555,39 @@ describe('Lookup service', () => {
 			$rootScope.$digest();
 
 			//then
-			expect(StorageService.setLookupDatasets).toHaveBeenCalledWith(['first_lookup_dataset_id', '4']);
+			expect(StorageService.setLookupDatasets).toHaveBeenCalledWith(['first_lookup_dataset_id']);
+		}));
+
+		it('should refresh lookup dataset if it is removed from added datasets', inject(($q, $rootScope, LookupService, StorageService) => {
+			//given
+			stateMock.playground.lookup.datasets = [
+				{ id: 'first_lookup_dataset_id', addedToLookup: true, created: 90 },
+				{ id: 'second_lookup_dataset_id', addedToLookup: false, created: 80 },
+			];
+
+			stateMock.playground.lookup.actions = lookupActions;
+			stateMock.playground.lookup.addedActions = [];
+			stateMock.playground.lookup.dataset = {
+				category: 'data_blending',
+				name: 'lookup',
+				parameters: [
+					{
+						name: 'lookup_ds_id',
+						type: 'string',
+						default: 'third_lookup_dataset_id',
+					}
+				]
+			};
+
+			spyOn(StorageService, 'getLookupDatasets').and.returnValue(['first_lookup_dataset_id', 'second_lookup_dataset_id', 'third_lookup_dataset_id']);
+			spyOn(LookupService, 'loadFromAction').and.returnValue();
+
+			//when
+			LookupService._initLookupDatasets();
+			$rootScope.$digest();
+
+			//then
+			expect(LookupService.loadFromAction).toHaveBeenCalledWith(lookupActions[0]);
 		}));
 	});
 });

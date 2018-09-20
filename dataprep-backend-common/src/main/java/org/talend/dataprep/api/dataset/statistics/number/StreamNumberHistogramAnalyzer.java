@@ -12,9 +12,13 @@
 // ============================================================================
 package org.talend.dataprep.api.dataset.statistics.number;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.talend.daikon.number.BigDecimalParser;
+import org.talend.dataprep.util.NumericHelper;
 import org.talend.dataquality.common.inference.ResizableList;
 import org.talend.dataquality.statistics.numeric.NumericalStatisticsAnalyzer;
 import org.talend.dataquality.statistics.type.DataTypeEnum;
@@ -26,6 +30,8 @@ import org.talend.dataquality.statistics.type.TypeInferenceUtils;
 public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<StreamNumberHistogramStatistics> {
 
     private static final long serialVersionUID = -3756520692420812485L;
+
+    private static final Logger LOGGER = getLogger(StreamNumberHistogramAnalyzer.class);
 
     private final ResizableList<StreamNumberHistogramStatistics> stats =
             new ResizableList<>(StreamNumberHistogramStatistics.class);
@@ -62,7 +68,14 @@ public class StreamNumberHistogramAnalyzer extends NumericalStatisticsAnalyzer<S
             if (!TypeInferenceUtils.isValid(types[index], value)) {
                 continue;
             }
-            stats.get(index).add(BigDecimalParser.toBigDecimal(value).doubleValue());
+            // FixMe : fix this pb by https://jira.talendforge.org/browse/TDP-4684
+            if (NumericHelper.isBigDecimal(value)) {
+                try {
+                    stats.get(index).add(BigDecimalParser.toBigDecimal(value).doubleValue());
+                } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                    LOGGER.debug("Unable to calculate action on {} due to the following exception {}.", value, e);
+                }
+            }
         }
         return true;
     }

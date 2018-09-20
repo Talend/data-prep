@@ -23,7 +23,6 @@
     <name>dataprep-parent</name>
     <description>dataprep parent pom</description>
     <modules>
-        <module>dataprep-core-reactor</module>
         <module>dataprep-backend</module>
         <module>dataprep-webapp</module>
     </modules>

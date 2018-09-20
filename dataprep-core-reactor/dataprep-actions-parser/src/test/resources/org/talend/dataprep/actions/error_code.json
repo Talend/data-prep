@@ -1,9 +1,0 @@
-{
-  "code": "Error",
-  "message": "Sorry an unexpected error occurred and we could not complete your last operation, but you can keep using Data Preparation",
-  "messageTitle": "An error has occurred",
-  "cause": "Today I don't feel like doing anything",
-  "context": {
-    "id": "1"
-  }
-}

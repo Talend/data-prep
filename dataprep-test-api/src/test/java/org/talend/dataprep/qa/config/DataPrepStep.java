@@ -23,7 +23,6 @@ import static org.springframework.http.HttpStatus.OK;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-
 import javax.annotation.PostConstruct;
 
 import org.awaitility.core.ConditionFactory;
@@ -154,20 +153,12 @@ public abstract class DataPrepStep {
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
-        assertNotNull(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(),
-                actual);
-        assertFalse(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(),
-                actual.isEmpty());
-        assertEquals(
-                new StringBuilder("Not the expected number of columns in \"")
-                        .append(datasetOrPreparationName)
-                        .append("\".")
-                        .toString(),
+        assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
+        assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
+        assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",
                 expectedColumnNames.size(), actual.size());
-        assertTrue(new StringBuilder("\"")
-                .append(datasetOrPreparationName)
-                .append("\" doesn't contain all expected columns.")
-                .toString(), actual.containsAll(expectedColumnNames));
+        assertTrue("\"" + datasetOrPreparationName + "\" doesn't contain all expected columns.",
+                actual.containsAll(expectedColumnNames));
     }
 
     protected ConditionFactory waitResponse(String message) {
@@ -183,9 +174,7 @@ public abstract class DataPrepStep {
     }
 
     protected ConditionFactory waitResponse(String message, int timeOut, int pollDelay, int pollInterval) {
-        return with()
-                .pollInterval(pollInterval, TimeUnit.SECONDS)
-                .and() //
+        return with().pollInterval(pollInterval, TimeUnit.SECONDS).and() //
                 .with() //
                 .pollDelay(pollDelay, TimeUnit.SECONDS) //
                 .await(message) //

@@ -558,7 +558,7 @@ describe('Lookup service', () => {
 			expect(StorageService.setLookupDatasets).toHaveBeenCalledWith(['first_lookup_dataset_id']);
 		}));
 
-		it('should refresh lookup dataset if it is removed from added datasets', inject(($q, $rootScope, LookupService, StorageService, StateService) => {
+		it('should refresh lookup dataset if it is removed from added datasets', inject(($q, $rootScope, LookupService, StorageService) => {
 			//given
 			stateMock.playground.lookup.datasets = [
 				{ id: 'first_lookup_dataset_id', addedToLookup: true, created: 90 },

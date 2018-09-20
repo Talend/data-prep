@@ -41,6 +41,7 @@ import org.talend.dataprep.api.service.command.export.DataSetExportTypes;
 import org.talend.dataprep.api.service.command.export.Export;
 import org.talend.dataprep.api.service.command.export.ExportTypes;
 import org.talend.dataprep.api.service.command.export.PreparationExportTypes;
+import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
@@ -60,6 +61,9 @@ public class ExportAPI extends APIService {
 
     @Autowired
     private DatasetClient datasetClient;
+
+    @Autowired
+    private BaseDataprepAuditService auditService;
 
     @RequestMapping(value = "/api/export", method = GET)
     @ApiOperation(value = "Export a dataset", consumes = APPLICATION_FORM_URLENCODED_VALUE,
@@ -81,8 +85,13 @@ public class ExportAPI extends APIService {
             parameters.setExportName(exportName);
 
             LOG.info("New Export {}", parameters);
-
-            return CommandHelper.toStreaming(getCommand(Export.class, parameters));
+            ResponseEntity<StreamingResponseBody> responseEntity =
+                    CommandHelper.toStreaming(getCommand(Export.class, parameters));
+            if (!parameters.getStepId().equals("head")) {
+                auditService.auditPreparationExport(parameters.getPreparationId(), parameters.getExportType(),
+                        parameters.getArguments());
+            }
+            return responseEntity;
         } catch (TDPException e) {
             throw e;
         } catch (Exception e) {

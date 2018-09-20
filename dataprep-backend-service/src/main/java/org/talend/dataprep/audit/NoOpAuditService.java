@@ -23,6 +23,11 @@ import org.springframework.stereotype.Component;
 public class NoOpAuditService implements BaseDataprepAuditService {
 
     @Override
+    public boolean isActive() {
+        return false;
+    }
+
+    @Override
     public void auditPreparationCreation(String prepName, String prepId, String datasetName, String datasetId,
             String folderId) {
         // Do nothing

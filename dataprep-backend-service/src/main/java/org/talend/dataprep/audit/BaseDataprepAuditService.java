@@ -17,6 +17,13 @@ import java.util.Map;
 
 public interface BaseDataprepAuditService {
 
+    /**
+     * Tells if audit logging is active or not.
+     * 
+     * @return <code>true</code> is active <code>else</code> if inactive.
+     */
+    boolean isActive();
+
     void auditPreparationCreation(String preparationName, String preparationId, String datasetName, String datasetId,
             String folderId);
 

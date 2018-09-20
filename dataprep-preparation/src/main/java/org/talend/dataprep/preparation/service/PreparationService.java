@@ -746,8 +746,10 @@ public class PreparationService {
         appendSteps(preparationId, Collections.singletonList(step));
         LOGGER.debug("Added action to preparation.");
 
-        auditService.auditPreparationAddStep(preparationId,
-                step.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
+        if (auditService.isActive()) {
+            auditService.auditPreparationAddStep(preparationId,
+                    step.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
+        }
     }
 
     /**
@@ -823,7 +825,8 @@ public class PreparationService {
                     .collect(toList());
             final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
             final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
+                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt()
+                    : MAX_VALUE;
 
             // Build list of actions from modified one to the head
             final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
@@ -834,8 +837,11 @@ public class PreparationService {
             final PersistentStep stepToModify = getStep(stepToModifyId);
             replaceHistory(preparation, stepToModify.getParentId(), actionsSteps);
             LOGGER.debug("Modified head of preparation #{}: head is now {}", preparation.getHeadId());
-            auditService.auditPreparationUpdateStep(preparationId, stepToModifyId,
-                    newStep.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
+            if (auditService.isActive()) {
+                auditService.auditPreparationUpdateStep(preparationId, stepToModifyId,
+                        newStep.getActions().stream().collect(
+                                Collectors.toMap(Action::getName, Action::getParameters)));
+            }
         } finally {
             unlockPreparation(preparationId);
         }

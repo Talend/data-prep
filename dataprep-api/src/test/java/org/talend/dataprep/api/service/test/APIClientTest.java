@@ -13,12 +13,8 @@
 
 package org.talend.dataprep.api.service.test;
 
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static com.jayway.restassured.RestAssured.with;
+import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.http.ContentType.JSON;
-import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.not;
@@ -47,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
@@ -122,10 +119,14 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public String createDataset(final InputStream resourceAsStream, final String name) throws IOException {
+        return createDataset(resourceAsStream, MediaType.TEXT_PLAIN, name);
+    }
+
+    public String createDataset(final InputStream resourceAsStream, MediaType contentType, final String name) throws IOException {
         assertNotNull(resourceAsStream);
         final String datasetContent = IOUtils.toString(resourceAsStream, UTF_8);
         final Response post = given() //
-                .contentType(TEXT) //
+                .contentType(contentType.toString()) //
                 .body(datasetContent) //
                 .queryParam("name", name) //
                 .when() //
@@ -141,6 +142,17 @@ public class APIClientTest {
         assertThat(dataSetId, not(""));
 
         return dataSetId;
+    }
+
+    public DataSetMetadata getDataSetMetadata(String dataSetId) throws IOException {
+        return mapper.readerFor(DataSetMetadata.class).readValue(get("/api/datasets/{id}/metadata", dataSetId).asInputStream());
+    }
+
+    public void setDataSetMetadata(DataSetMetadata dataSetMetadata) throws IOException {
+        String metadataAsJsonString = mapper.writerFor(DataSetMetadata.class).writeValueAsString(dataSetMetadata);
+        given()
+                .body(metadataAsJsonString)
+                .put("/api/datasets/{id}/metadata", dataSetMetadata.getId());
     }
 
     /**

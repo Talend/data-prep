@@ -1,0 +1,29 @@
+[Char]'[word] [word] [WORD] [Word] [char]'[word][WORD][word][Word] [word] [digit] [wORD] [word] ([word] [word] [word] [number])
+[Char] [word] [word] [WORD] [char] [Word]
+[word][Word][WORD][char][WORD]
+[Word][Word][Word]
+[char][Word][Word][Char]
+[Word][number]@[word].[word]
+[word][Word][digit]@[word].[word]
+[Ideogram][number][Ideogram]_[digit][IdeogramSeq]@[word].[word]
+[word][number]@[word].[word]
+[Word][Char][number]@[char][Word].[word]
+[digit]@[word][number].[word]
+[number]@[word][number].[word]
+[number][word]@[word]  [word][number].[word]
+[Ideogram] [IdeogramSeq][number]
+[IdeogramSeq]
+[IdeogramSeq]，[IdeogramSeq]。
+[IdeogramSeq]，[IdeogramSeq]。
+[IdeogramSeq]，[IdeogramSeq]？
+[IdeogramSeq]，[IdeogramSeq]。
+[IdeogramSeq]，[IdeogramSeq]，
+[IdeogramSeq][digit][IdeogramSeq]？[Ideogram]
+[word] [word] [word] [word]
+[Word] [word]· [word] [word] [word] [word] [word].
+[Char] [word], [word] [word] [word] [word],
+[word] [word] [word] [word] [word] [word] [word] [word], [word] [word] [word]
+[word] [word] [word], [word] [word] [word] [word] [word] [word].
+[IdeogramSeq]：「[IdeogramSeq]，[Ideogram][digit][IdeogramSeq]？[IdeogramSeq][Word][digit][WORD][number][IdeogramSeq]，[IdeogramSeq]？
+[Word][digit][IdeogramSeq]
+[IdeogramSeq][digit][Word]

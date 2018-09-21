@@ -17,6 +17,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
@@ -45,30 +46,26 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import avro.shaded.com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
+import org.talend.dataprep.api.dataset.statistics.Statistics;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.Action;
@@ -87,6 +84,7 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.preparation.store.PersistentStep;
+import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
 import org.talend.dataprep.transformation.actions.text.Trim;
@@ -99,6 +97,7 @@ import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 
 import au.com.bytecode.opencsv.CSVReader;
+import org.talend.dataprep.transformation.format.CSVFormat;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -295,7 +294,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
     private List<FolderEntry> getEntries(String folderId) {
         try (final Stream<FolderEntry> entriesStream = folderRepository.entries(folderId, PREPARATION)) {
-            return entriesStream.collect(Collectors.toList());
+            return entriesStream.collect(toList());
         }
     }
 
@@ -842,6 +841,40 @@ public class PreparationAPITest extends ApiServiceTestBase {
         for (ColumnMetadata column : columns) {
             assertTrue(expectedColumns.contains(column.getName()));
         }
+    }
+
+    @Test
+    @Ignore("TODO: this test does not pass yet")
+    public void testPreparationInitialMetadata_wordPatternStats() throws Exception {
+        // given
+        final String preparationName = "testPreparationContentGet";
+
+        String datasetId = testClient.createDataset(
+                PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition.txt"),
+                new MediaType("text", "csv", UTF_8),
+                "test-" + UUID.randomUUID());
+        DataSetMetadata dataSetMetadata = testClient.getDataSetMetadata(datasetId);
+        dataSetMetadata.getContent().getParameters().put(CSVFormatFamily.SEPARATOR_PARAMETER, ";");
+        testClient.setDataSetMetadata(dataSetMetadata);
+
+        final String preparationId = testClient.createPreparationFromDataset(datasetId, preparationName, home.getId());
+        List<String> wordPatterns = IOUtils.readLines(
+                getClass().getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition_result.txt"), UTF_8);
+
+        // when
+        final DataSetMetadata actual = testClient.getPrepMetadata(preparationId);
+
+        // then
+        assertNotNull(actual);
+        final List<ColumnMetadata> columns = actual.getRowMetadata().getColumns();
+
+        assertEquals(28, columns.size());
+
+        List<String> wordPatternDetected = columns.stream()
+                .map(c -> c.getStatistics().getWordPatternFrequencyTable().iterator().next().getPattern())
+                .collect(Collectors.toList());
+
+        assertEquals(wordPatterns, wordPatternDetected);
     }
 
     @Test

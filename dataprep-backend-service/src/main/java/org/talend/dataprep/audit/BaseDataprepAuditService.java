@@ -19,6 +19,7 @@ public interface BaseDataprepAuditService {
 
     /**
      * Tells if audit logging is active or not.
+     * Can be useful to check before calling an audit method if it implies to pre process data.
      * 
      * @return <code>true</code> is active <code>else</code> if inactive.
      */
@@ -37,9 +38,8 @@ public interface BaseDataprepAuditService {
 
     void auditPreparationRename(String preparationId, String prepNewName);
 
-    void auditPreparationImport(String preparationId, String preparationName, String folderId);
-
-    void auditPreparationExport(String preparationId, String exportType, Map<String, String> exportOptions);
+    void auditPreparationExport(String preparationId, String stepId, String exportType,
+            Map<String, String> exportOptions, boolean isFullRunExport);
 
     void auditPreparationAddStep(String preparationId, Map<String, Map<String, String>> stepActionsAndParameters);
 
@@ -59,7 +59,5 @@ public interface BaseDataprepAuditService {
     void auditFolderDeletion(String folderId);
 
     void auditFolderRename(String folderId, String folderName);
-
-    void auditTDataprepRun(String preparationId, String exportParameters);
 
 }

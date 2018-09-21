@@ -206,8 +206,8 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, id);
         folderRepository.addFolderEntry(folderEntry, folderId);
 
-        auditService.auditPreparationCreation(preparation.getName(), id, preparation.getDataSetName(),
-                preparation.getDataSetId(), folderId);
+        auditService.auditPreparationCreation(toCreate.getName(), id, toCreate.getDataSetName(),
+                toCreate.getDataSetId(), folderId);
         LOGGER.info("New preparation {} created and stored in {} ", preparation, folderId);
         return id;
     }

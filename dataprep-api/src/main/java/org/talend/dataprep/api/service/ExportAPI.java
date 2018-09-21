@@ -88,8 +88,11 @@ public class ExportAPI extends APIService {
             ResponseEntity<StreamingResponseBody> responseEntity =
                     CommandHelper.toStreaming(getCommand(Export.class, parameters));
             if (!parameters.getStepId().equals("head")) {
-                auditService.auditPreparationExport(parameters.getPreparationId(), parameters.getExportType(),
-                        parameters.getArguments());
+                // This endpoint is called 2 times by the front, once with http.HEAD, once with http.GET
+                // When called with http.HEAD request, stepId is always equals to "head"
+                // As we only want to log a message when called with http.GET we check that stepId=="head"
+                auditService.auditPreparationExport(parameters.getPreparationId(), parameters.getStepId(),
+                        parameters.getExportType(), parameters.getArguments(), false);
             }
             return responseEntity;
         } catch (TDPException e) {

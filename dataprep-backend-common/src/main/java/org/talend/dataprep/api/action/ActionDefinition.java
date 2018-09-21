@@ -260,6 +260,11 @@ public interface ActionDefinition extends Serializable {
          */
         NEED_STATISTICS_FREQUENCY,
         /**
+         * Indicates action requires a full scan of input data.
+         * @see org.talend.dataprep.transformation.pipeline.node.ReservoirNode
+         */
+        NEED_STATISTICS_WHOLE,
+        /**
          * Action can not run in distributed environment (it needs a common context that can't be shared by multiple
          * nodes in case of distributed run). Example for this includes: fill empty with non-empty value from above,
          * make line as header...

@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.talend.dataprep.processor.Wrapper;
 
+/**
+ * A configuration to wrap existing {@link StepMetadataRepository} using a {@link ReactiveStepMetadataRepository}.
+ */
 @Configuration
 public class StepMetadataRepositoryConfiguration {
 

@@ -15,7 +15,11 @@ package org.talend.dataprep.transformation.actions.delete;
 import static org.talend.dataprep.transformation.actions.category.ActionCategory.DATA_CLEANSING;
 import static org.talend.dataprep.transformation.actions.category.ActionScope.EMPTY;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
@@ -93,12 +97,12 @@ public class DeleteAllEmpty extends AbstractActionMetadata implements DataSetAct
         }
     }
 
-    public boolean toDelete(DataSetRow row, String mode) {
-        Predicate<String> nonDeletableCriteria;
+    private boolean toDelete(DataSetRow row, String mode) {
+        final Predicate<String> nonDeletableCriteria;
         if (KEEP.equals(mode)) {
-            nonDeletableCriteria = s -> StringUtils.isNotEmpty(s);
+            nonDeletableCriteria = StringUtils::isNotEmpty;
         } else {
-            nonDeletableCriteria = s -> StringUtils.isNotBlank(s);
+            nonDeletableCriteria = StringUtils::isNotBlank;
         }
         for (ColumnMetadata column : row.getRowMetadata().getColumns()) {
             String value = row.get(column.getId());

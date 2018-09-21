@@ -15,7 +15,6 @@ package org.talend.dataprep.transformation.pipeline.node;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,8 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
     public InvalidDetectionNode(RowMetadata initialRowMetadata, Predicate<String> filter) {
         super(filter, initialRowMetadata);
 
-        final List<ColumnMetadata> filteredColumns = getFilteredColumns().collect(Collectors.toList());
+        final List<ColumnMetadata> filteredColumns =
+                getFilteredColumns(initialRowMetadata).collect(Collectors.toList());
         this.configuredAnalyzer = getAnalyzerService().build(filteredColumns, AnalyzerService.Analysis.QUALITY);
         this.invalidMarker = new InvalidMarker(filteredColumns, configuredAnalyzer);
     }
@@ -108,15 +108,9 @@ public class InvalidDetectionNode extends ColumnFilteredNode implements Monitore
 
     @Override
     public List<String> getColumnNames() {
-        return getFilteredColumns() //
+        return getFilteredColumns(initialRowMetadata) //
                 .map(ColumnMetadata::getId) //
                 .collect(Collectors.toList());
     }
 
-    private Stream<ColumnMetadata> getFilteredColumns() {
-        return initialRowMetadata
-                .getColumns()
-                .stream() //
-                .filter(c -> filter.test(c.getId()));
-    }
 }

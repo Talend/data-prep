@@ -7,6 +7,7 @@ import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STAT
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_INVALID;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_PATTERN;
 import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_QUALITY;
+import static org.talend.dataprep.api.action.ActionDefinition.Behavior.NEED_STATISTICS_WHOLE;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
 import java.util.Collections;
@@ -34,6 +35,7 @@ import org.talend.dataprep.transformation.pipeline.Node;
 import org.talend.dataprep.transformation.pipeline.node.BasicNode;
 import org.talend.dataprep.transformation.pipeline.node.InvalidDetectionNode;
 import org.talend.dataprep.transformation.pipeline.node.ReactiveTypeDetectionNode;
+import org.talend.dataprep.transformation.pipeline.node.ReservoirNode;
 import org.talend.dataprep.transformation.pipeline.node.StatisticsNode;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
@@ -181,7 +183,13 @@ public class StatisticsNodesBuilder {
                 // equivalent to the default case
                 nodeBuilder.to(getInvalidDetectionNode(intermediateActionProfile.getFilterForInvalidAnalysis()));
             }
-            return nodeBuilder.build();
+
+            final Node node = nodeBuilder.build();
+            if (behavior.contains(NEED_STATISTICS_WHOLE)) {
+                return ReservoirNode.convertToReservoir(node);
+            } else {
+                return node;
+            }
         } else {
             return new BasicNode();
         }

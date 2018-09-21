@@ -13,7 +13,9 @@
 package org.talend.dataprep.transformation.pipeline.node;
 
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 
 abstract class ColumnFilteredNode extends BasicNode implements ApplyToColumn {
@@ -27,4 +29,10 @@ abstract class ColumnFilteredNode extends BasicNode implements ApplyToColumn {
         this.initialRowMetadata = initialRowMetadata;
     }
 
+    protected Stream<ColumnMetadata> getFilteredColumns(RowMetadata metadata) {
+        return metadata
+                .getColumns()
+                .stream() //
+                .filter(c -> filter.test(c.getId()));
+    }
 }

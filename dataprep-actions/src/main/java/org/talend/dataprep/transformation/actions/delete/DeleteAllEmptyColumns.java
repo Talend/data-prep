@@ -49,11 +49,11 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
      * @param parameter
      */
     private static boolean isColumnToDelete(ColumnMetadata columnMetadata, String parameter) {
-        // test if all cells are empty or blanck
+        // test if all cells are empty or blank
         if (columnMetadata.getQuality().getEmpty() != columnMetadata.getStatistics().getCount()) {
             return false;
         }
-        // here all cells are all empty or blanck
+        // here all cells are all empty or blank
         if (DELETE.equals(parameter)) {
             return true;
         }
@@ -142,6 +142,6 @@ public class DeleteAllEmptyColumns extends AbstractActionMetadata implements Dat
     @Override
     public Set<Behavior> getBehavior() {
         return EnumSet.of(Behavior.METADATA_DELETE_COLUMNS, Behavior.NEED_STATISTICS_QUALITY, //
-                Behavior.NEED_STATISTICS_FREQUENCY);
+                Behavior.NEED_STATISTICS_FREQUENCY, Behavior.NEED_STATISTICS_WHOLE);
     }
 }

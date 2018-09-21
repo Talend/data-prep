@@ -1,7 +1,5 @@
 package org.talend.dataprep.transformation.pipeline.builder;
 
-import static org.talend.dataprep.transformation.pipeline.node.ReservoirNode.convertToReservoir;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,7 +126,7 @@ public class ActionNodesBuilder {
             final boolean needIntermediateStatistics = statisticsNodesBuilder.needIntermediateStatistics(nextAction);
             if (needIntermediateStatistics) {
                 final Node neededReservoir = statisticsNodesBuilder.buildIntermediateStatistics(nextAction);
-                builder.to(convertToReservoir(neededReservoir));
+                builder.to(neededReservoir);
                 continuePreCompile = false;
             }
 

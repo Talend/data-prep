@@ -354,6 +354,11 @@ public class RowMetadata implements Serializable {
         columns.add(columns.indexOf(columnMetadata) + 1, movedColumn);
     }
 
+    /**
+     * Resets {@link ColumnMetadata#getDiffFlagValue()} diff} for all columns held by this row metadata.
+     * @see ColumnMetadata#getDiffFlagValue()
+     * @see Flag
+     */
     public void clearDiffStatus() {
         columns.forEach(c -> c.setDiffFlagValue(StringUtils.EMPTY));
     }

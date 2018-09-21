@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -170,12 +169,4 @@ public class StatisticsNode extends ColumnFilteredNode implements Monitored {
                 .map(ColumnMetadata::getId) //
                 .collect(Collectors.toList());
     }
-
-    private Stream<ColumnMetadata> getFilteredColumns(RowMetadata metadata) {
-        return metadata
-                .getColumns()
-                .stream() //
-                .filter(c -> filter.test(c.getId()));
-    }
-
 }

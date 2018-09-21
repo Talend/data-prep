@@ -64,7 +64,7 @@ public class PreparationParser {
         assertPreparation(preparation);
         try {
             final StandalonePreparation preparationMessage =
-                    mapper.reader(StandalonePreparation.class).readValue(preparation);
+                    mapper.readerFor(StandalonePreparation.class).readValue(preparation);
             if (preparationMessage.getRowMetadata() == null) {
                 preparationMessage.setRowMetadata(new RowMetadata());
             }

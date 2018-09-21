@@ -7,6 +7,15 @@ import org.talend.dataprep.api.dataset.RowMetadata;
 import reactor.core.publisher.BlockingSink;
 import reactor.core.publisher.TopicProcessor;
 
+/**
+ * <p>
+ * An implementation of {@link StepMetadataRepository} that uses {@link reactor.core.publisher.Flux} to process
+ * {@link #invalidate(String) invalidate} and {@link #update(String, RowMetadata) update} requests.
+ * </p>
+ * <p>
+ * Use this implementation for async writes operations to a {@link StepMetadataRepository}.
+ * </p>
+ */
 public class ReactiveStepMetadataRepository implements StepMetadataRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReactiveStepMetadataRepository.class);

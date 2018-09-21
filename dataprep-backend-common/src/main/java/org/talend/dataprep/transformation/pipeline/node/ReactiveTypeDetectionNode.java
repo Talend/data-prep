@@ -139,7 +139,8 @@ public class ReactiveTypeDetectionNode extends ColumnFilteredNode implements Mon
         return getFilteredColumns(workingMetadata).map(ColumnMetadata::getId).collect(Collectors.toList());
     }
 
-    private Stream<ColumnMetadata> getFilteredColumns(RowMetadata metadata) {
+    @Override
+    protected Stream<ColumnMetadata> getFilteredColumns(RowMetadata metadata) {
         return metadata.getColumns().stream().filter(c -> filter.test(c.getId()) && !c.isTypeForced());
     }
 }

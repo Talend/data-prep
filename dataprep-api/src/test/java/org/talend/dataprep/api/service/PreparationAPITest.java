@@ -849,8 +849,12 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // given
         final String preparationName = "testPreparationContentGet";
 
-        String datasetId = testClient.createDataset(
+        String patternsAsCsvLine = new BufferedReader(new InputStreamReader(
                 PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition.txt"),
+                UTF_8)).lines().collect(Collectors.joining(";"));
+
+        String datasetId = testClient.createDataset(
+                new ByteArrayInputStream(patternsAsCsvLine.getBytes(UTF_8)),
                 new MediaType("text", "csv", UTF_8),
                 "test-" + UUID.randomUUID());
         DataSetMetadata dataSetMetadata = testClient.getDataSetMetadata(datasetId);
@@ -858,8 +862,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         testClient.setDataSetMetadata(dataSetMetadata);
 
         final String preparationId = testClient.createPreparationFromDataset(datasetId, preparationName, home.getId());
-        List<String> wordPatterns = IOUtils.readLines(
-                getClass().getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition_result.txt"), UTF_8);
+        String wordPatterns = IOUtils.toString(
+                PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition_result.txt"), UTF_8);
 
         // when
         final DataSetMetadata actual = testClient.getPrepMetadata(preparationId);
@@ -868,11 +872,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertNotNull(actual);
         final List<ColumnMetadata> columns = actual.getRowMetadata().getColumns();
 
-        assertEquals(28, columns.size());
+        assertEquals(29, columns.size());
 
-        List<String> wordPatternDetected = columns.stream()
+        String wordPatternDetected = columns.stream()
                 .map(c -> c.getStatistics().getWordPatternFrequencyTable().iterator().next().getPattern())
-                .collect(Collectors.toList());
+                .collect(Collectors.joining("\n"));
 
         assertEquals(wordPatterns, wordPatternDetected);
     }

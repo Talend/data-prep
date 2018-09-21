@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +53,7 @@ import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.dataset.DataSetGovernance;
 import org.talend.dataprep.api.dataset.DataSetLocation;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
@@ -218,16 +218,6 @@ public class DataSetAPITest extends ApiServiceTestBase {
         for (JsonNode dataset : rootNode) {
             checkNotNull(dataset, "id");
             checkNotNull(dataset, "name");
-            //TODO We need to do another endpoint to test this
-            //            checkNotNull(dataset, "preparations");
-            //            final JsonNode preparations = dataset.get("preparations");
-            //            assertTrue(preparations.isArray());
-            //            for (JsonNode preparation : preparations) {
-            //                checkNotNull(preparation, "id");
-            //                checkNotNull(preparation, "name");
-            //                checkNotNull(preparation, "nbSteps");
-            //                checkNotNull(preparation, "lastModificationDate");
-            //            }
         }
     }
 
@@ -268,8 +258,9 @@ public class DataSetAPITest extends ApiServiceTestBase {
         final String prep2 = testClient.createPreparationFromDataset(dataSetId2, "prep2", home.getId());
 
         final String getResult = when().get("/api/datasets/{id}/compatiblepreparations", dataSetId).asString();
-        final List<Preparation> compatiblePreparations = mapper.readerFor(new TypeReference<Collection<Preparation>>() {
-        }).readValue(getResult);
+        final List<PreparationDTO> compatiblePreparations =
+                mapper.readerFor(new TypeReference<Collection<PreparationDTO>>() {
+                }).readValue(getResult);
 
         // then
         assertEquals(2, compatiblePreparations.size());

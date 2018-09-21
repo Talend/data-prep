@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.transformation.aggregation.operation;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.aggregation.api.AggregationResult;
 

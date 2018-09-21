@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.html.HtmlEncodingDetector;
 import org.junit.Test;

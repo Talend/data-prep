@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.i18n.DataprepBundle;
 import org.talend.dataprep.parameters.Parameterizable;

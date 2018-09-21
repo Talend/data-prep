@@ -144,7 +144,7 @@ export default class LookupService {
 			.filter('addedToLookup') // filter addedToLookup = true
 			.map((dataset) => { // map dataset to action
 				return _.find(this.state.playground.lookup.actions, (action) => {
-					return _.find(action.parameters, { name: 'lookup_ds_id' }).default === dataset.id;
+					return this._getDsId(action) === dataset.id;
 				});
 			})
 			.filter(action => action) // remove falsy action (added dataset but no action with this dataset)
@@ -155,13 +155,40 @@ export default class LookupService {
 			.filter('addedToLookup') // filter addedToLookup = true
 			.map('id')
 			.value();
-		if (this.StorageService.getLookupDatasets().indexOf(this.state.playground.dataset.id) > -1) { // If the playground dataset have been saved in localStorage for the lookup
-			datasetsIdsToSave.push(this.state.playground.dataset.id);
-		}
-
 		this.StorageService.setLookupDatasets(datasetsIdsToSave);
 	}
 
+	updateLookupDatasetsAndActions() {
+		this.StateService.setLookupModalLoading(true);
+		return this.DatasetListService.refreshDatasets()
+			.then(() => this.TransformationRestService.getDatasetTransformations(this.state.playground.dataset.id))
+			.then(lookup => this.updateLookupDatasetsProperties(lookup))
+			.finally(() => this.StateService.setLookupModalLoading(false));
+	}
+
+	updateLookupDatasetsProperties(lookup) {
+		const actionsList = lookup.data;
+		const datasetsToAdd = _.chain(actionsList)
+			.map((action) => { // map action to dataset
+				return this.state
+					.inventory
+					.datasets
+					.content
+					.find(dataset => dataset.id === this._getDsId(action));
+			})
+			.filter(dataset => dataset)
+			.forEach((dataset) => {
+				dataset.addedToLookup = false;
+				dataset.enableToAddToLookup = true;
+			})
+			.value();
+		this.StateService.setLookupDatasets(datasetsToAdd);
+		this.StateService.setLookupActions(actionsList);
+
+		this._initLookupDatasets();
+
+		return this.state.playground.lookup.addedActions;
+	}
 	/**
 	 * @ngdoc method
 	 * @name disableDatasetsUsedInRecipe
@@ -178,6 +205,7 @@ export default class LookupService {
 			dataset.enableToAddToLookup = !lookupStep;
 		});
 	}
+
 
 	//------------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------PRIVATE--------------------------------------------------------
@@ -208,30 +236,7 @@ export default class LookupService {
 		}
 		else {
 			return this.TransformationRestService.getDatasetTransformations(datasetId)
-				.then((lookup) => {
-					const actionsList = lookup.data;
-
-					const datasetsToAdd = _.chain(actionsList)
-						.map((action) => { // map action to dataset
-							return this.state
-								.inventory
-								.datasets
-								.content
-								.find(dataset => dataset.id === this._getDsId(action));
-						})
-						.filter(dataset => dataset)
-						.forEach((dataset) => {
-							dataset.addedToLookup = false;
-							dataset.enableToAddToLookup = true;
-						})
-						.value();
-					this.StateService.setLookupDatasets(datasetsToAdd);
-					this.StateService.setLookupActions(actionsList);
-
-					this._initLookupDatasets();
-
-					return this.state.playground.lookup.addedActions;
-				});
+				.then(lookup => this.updateLookupDatasetsProperties(lookup));
 		}
 	}
 
@@ -282,11 +287,21 @@ export default class LookupService {
 		const actionsToAdd = _.chain(addedDatasets)
 			.map((datasetId) => { // map dataset to action
 				return _.find(this.state.playground.lookup.actions, (action) => {
-					return _.find(action.parameters, { name: 'lookup_ds_id' }).default === datasetId;
+					return this._getDsId(action) === datasetId;
 				});
 			})
 			.filter(action => action) // remove falsy action
 			.value();
 		this.StateService.setLookupAddedActions(actionsToAdd);
+
+		// when lookup.dataset is removed from addedDatasets
+		if (this.state.playground.lookup.dataset && actionsToAdd.length) {
+			const isLookupDatasetStillAdded = actionsToAdd.find((action) => {
+				return this._getDsId(this.state.playground.lookup.dataset) === this._getDsId(action);
+			});
+			if (!isLookupDatasetStillAdded) {
+				this.loadFromAction(actionsToAdd[0]); // sync lookup dataset/navigation list
+			}
+		}
 	}
 }

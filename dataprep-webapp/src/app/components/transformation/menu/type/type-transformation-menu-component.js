@@ -28,6 +28,7 @@ const TypeTransformMenu = {
 		column: '<',
 		domains: '<',
 		types: '<',
+		loading: '<',
 	},
 };
 

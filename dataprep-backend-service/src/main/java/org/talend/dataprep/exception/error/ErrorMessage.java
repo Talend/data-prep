@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.exception.error;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.i18n.DataprepBundle;
 

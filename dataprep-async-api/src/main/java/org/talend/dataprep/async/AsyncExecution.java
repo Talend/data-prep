@@ -15,7 +15,7 @@ package org.talend.dataprep.async;
 import java.util.Comparator;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.daikon.exception.TalendRuntimeException;

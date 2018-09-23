@@ -17,7 +17,7 @@ import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

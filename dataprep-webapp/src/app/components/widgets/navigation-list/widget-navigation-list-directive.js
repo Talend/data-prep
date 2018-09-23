@@ -43,12 +43,18 @@ export default function NavigationList($timeout) {
 			selectedItem: '=',
 			onClick: '&',
 			getLabel: '&',
+			getId: '&',
 			onAddItem: '&',
 		},
 		bindToController: true,
 		controllerAs: 'navigationListCtrl',
-		controller() {},
+		controller() {
+			const vm = this;
 
+			vm.isCurrentItem = (item) => {
+				return vm.getId({ item }) === vm.getId({ item: vm.selectedItem });
+			};
+		},
 		link(scope, iElement, iAttrs, ctrl) {
 			const ITEM_WIDTH = 200;
 			ctrl.showAddButton = !!iAttrs.onAddItem;

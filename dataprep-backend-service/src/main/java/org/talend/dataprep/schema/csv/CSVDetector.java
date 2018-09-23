@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.io.IOUtils;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -104,7 +104,7 @@ public class CSVDetector implements Detector {
 
     /**
      * A private utility class used to detect format.
-     * 
+     *
      * @param metadata the specified TIKA {@link Metadata}
      * @param inputStream the specified input stream
      * @return either null or an CSV format

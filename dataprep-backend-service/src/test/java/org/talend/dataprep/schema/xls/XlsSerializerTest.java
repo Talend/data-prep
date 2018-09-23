@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;

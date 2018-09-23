@@ -14,7 +14,7 @@ package org.talend.dataprep.transformation.service.export;
 
 import java.io.InputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

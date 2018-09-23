@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.api.service;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.command.CommandHelper.toStream;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

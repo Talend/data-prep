@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.preparation.store.file;
 
-import static org.apache.commons.lang.StringUtils.startsWith;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

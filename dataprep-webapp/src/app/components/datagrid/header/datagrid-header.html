@@ -22,9 +22,9 @@
                 </ul>
                 <ul ng-if="!ctrl.initTransformationsInProgress">
                     <li ng-if="ctrl.transformations && !ctrl.transformations.length" translate-once="NO_TRANSFORMATION"></li>
-                    <transform-menu ng-if="ctrl.transformations.length"
-                                    column="ctrl.column"
-                                    menu-items="ctrl.transformations">
+                    <transform-menu column="ctrl.column"
+                                    menu-items="ctrl.transformations"
+                                    type-loading="ctrl.typeLoading">
                     </transform-menu>
                     <li class="divider"></li>
                     <li>

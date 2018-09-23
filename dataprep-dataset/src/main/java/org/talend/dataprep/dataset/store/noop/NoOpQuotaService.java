@@ -17,7 +17,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;

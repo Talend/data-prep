@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.dataset.row.DataSetRow;
 import org.talend.dataprep.transformation.aggregation.api.AggregationResult;
 import org.talend.dataprep.transformation.aggregation.api.WorkingContext;
@@ -29,7 +29,7 @@ public class Average extends AbstractAggregator implements Aggregator {
 
     /**
      * Count aggregator constructor. Package visible to ensure the use of the factory.
-     * 
+     *
      * @param groupBy group by key.
      * @param columnId column id to aggregate.
      */
@@ -86,7 +86,7 @@ public class Average extends AbstractAggregator implements Aggregator {
 
         /**
          * Update the context with the given value.
-         * 
+         *
          * @param value the row value to process.
          */
         void process(String value) {

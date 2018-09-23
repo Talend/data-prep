@@ -1,6 +1,6 @@
 package org.talend.dataprep.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class StringsHelper {
 

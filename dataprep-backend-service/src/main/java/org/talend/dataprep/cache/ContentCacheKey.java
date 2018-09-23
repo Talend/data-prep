@@ -14,7 +14,7 @@ package org.talend.dataprep.cache;
 
 import java.util.function.Predicate;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Content cache key used to group all information needed by the cache.

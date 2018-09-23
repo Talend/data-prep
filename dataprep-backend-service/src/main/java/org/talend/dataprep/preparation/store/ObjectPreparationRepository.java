@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.tql.bean.BeanPredicateVisitor;
 import org.talend.tql.model.Expression;

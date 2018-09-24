@@ -90,7 +90,6 @@ Feature: Filter features
       | preparationName      | 12L5C_preparation            |
       | csv_escape_character | "                            |
       | csv_enclosure_char   | "                            |
-      | dataSetName          | 12L5C_dataset                |
       | fileName             | 12L5C_export_with_filter.csv |
       | filter               | ((0004 contains 'domain'))   |
     Then I check that "12L5C_export_with_filter.csv" temporary file equals "/data/filter/12L5C_prep_filtered_processed.csv" file
@@ -100,7 +99,6 @@ Feature: Filter features
       | preparationName      | 12L5C_preparation |
       | csv_escape_character | "                 |
       | csv_enclosure_char   | "                 |
-      | dataSetName          | 12L5C_dataset     |
       | fileName             | 12L5C_export.csv  |
     Then I check that "12L5C_export.csv" temporary file equals "/data/filter/12L5C_processed.csv" file
 

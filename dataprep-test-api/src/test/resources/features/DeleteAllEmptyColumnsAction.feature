@@ -18,7 +18,6 @@ Feature: Perform scenarios with DeleteAllEmptyColumns related action
     When I export the preparation with parameters :
       | exportType           | CSV                                |
       | preparationName      | dataset_with_empty_columns_prep    |
-      | dataSetName          | dataset_with_empty_columns_dataset |
       | fileName             | <csv_name>                         |
       | csv_escape_character | "                                  |
       | csv_enclosure_char   | "                                  |
@@ -51,7 +50,6 @@ Feature: Perform scenarios with DeleteAllEmptyColumns related action
     When I export the preparation with parameters :
       | exportType           | CSV                                      |
       | preparationName      | dataset_with_empty_columns_prep_2        |
-      | dataSetName          | dataset_with_empty_columns_dataset       |
       | fileName             | delete_all_empty_columns_after_split.csv |
       | csv_escape_character | "                                        |
       | csv_enclosure_char   | "                                        |

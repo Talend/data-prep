@@ -3,6 +3,7 @@ package org.talend.dataprep.transformation.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.api.dataset.RowMetadata;
+import org.talend.dataprep.security.SecurityProxy;
 
 import reactor.core.publisher.BlockingSink;
 import reactor.core.publisher.TopicProcessor;
@@ -26,19 +27,25 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
 
     private final BlockingSink<UpdateMessage> updates;
 
-    public ReactiveStepMetadataRepository(StepMetadataRepository delegate) {
+    public ReactiveStepMetadataRepository(StepMetadataRepository delegate, SecurityProxy proxy) {
         this.delegate = delegate;
 
         final TopicProcessor<String> invalidateFlux = TopicProcessor.create();
         final TopicProcessor<UpdateMessage> updateFlux = TopicProcessor.create();
         invalidateFlux.subscribe(stepId -> {
             LOGGER.debug("Delayed invalidate of step #{}.", stepId);
-            invalidate(stepId);
+            try {
+                proxy.asTechnicalUser();
+                invalidate(stepId);
+            } finally {
+                proxy.releaseIdentity();
+            }
             LOGGER.debug("Delayed invalidate of step #{} done.", stepId);
         });
         updateFlux.subscribe(updateMessage -> {
             LOGGER.debug("Delayed update of step #{}.", updateMessage.stepId);
             try {
+                proxy.asTechnicalUser();
                 delegate.update(updateMessage.stepId, updateMessage.rowMetadata);
             } catch (Exception e) {
                 if (LOGGER.isDebugEnabled()) {
@@ -46,6 +53,8 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
                 } else {
                     LOGGER.error("Unable to update step metadata for step #{}.", updateMessage.stepId);
                 }
+            } finally {
+                proxy.releaseIdentity();
             }
             LOGGER.debug("Delayed update of step #{} done.", updateMessage.stepId);
         });

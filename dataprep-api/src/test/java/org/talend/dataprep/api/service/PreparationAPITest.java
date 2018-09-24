@@ -17,7 +17,9 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
@@ -66,6 +68,7 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.dataset.statistics.PatternFrequency;
 import org.talend.dataprep.api.dataset.statistics.Statistics;
+import org.talend.dataprep.api.dataset.statistics.pattern.WordPatternFrequencyStatistics;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.api.preparation.Action;
@@ -77,6 +80,7 @@ import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.api.preparation.PreparationListItemDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.service.api.PreviewAddParameters;
+import org.talend.dataprep.api.type.Type;
 import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.cache.CacheKeyGenerator;
@@ -84,6 +88,7 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.preparation.store.PersistentStep;
+import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
@@ -98,6 +103,8 @@ import com.jayway.restassured.response.Response;
 
 import au.com.bytecode.opencsv.CSVReader;
 import org.talend.dataprep.transformation.format.CSVFormat;
+import org.talend.dataquality.common.inference.Analyzer;
+import org.talend.dataquality.common.inference.Analyzers;
 
 public class PreparationAPITest extends ApiServiceTestBase {
 
@@ -843,6 +850,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         }
     }
 
+    @Autowired
+    private AnalyzerService analyzerService;
+
     @Test
     @Ignore("TODO: this test does not pass yet")
     public void testPreparationInitialMetadata_wordPatternStats() throws Exception {
@@ -879,6 +889,38 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .collect(Collectors.joining("\n"));
 
         assertEquals(wordPatterns, wordPatternDetected);
+    }
+
+    @Test
+    @Ignore("TODO: this test does not pass yet")
+    public void wordPatternStatsDirectTDQTest() throws IOException {
+        // Given
+        List<ColumnMetadata> columns = new ArrayList<>();
+        for (int i = 0; i < 29; i++) {
+            ColumnMetadata e = new ColumnMetadata();
+            e.setId("" + i);
+            e.setName("toto");
+            e.setType(Type.STRING.getName());
+            columns.add(e);
+        }
+        String patternLines;
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition_result.txt"), UTF_8))) {
+            patternLines = IOUtils.toString(reader);
+        }
+        Analyzer<Analyzers.Result> analyzer = analyzerService.build(columns, AnalyzerService.Analysis.WORD_PATTERNS);
+        try(Stream<String> reader = new BufferedReader(new InputStreamReader(
+                PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition.txt"),
+                UTF_8)).lines()) {
+            String[] strings = reader.toArray(String[]::new);
+
+            // When
+            analyzer.analyze(strings);
+
+        }
+        // Then
+        List<Analyzers.Result> result = analyzer.getResult();
+        String results = result.stream().map(c -> c.get(WordPatternFrequencyStatistics.class).getTopK(1).keySet().iterator().next()).collect(joining("\n"));
+        assertEquals(patternLines, results);
     }
 
     @Test

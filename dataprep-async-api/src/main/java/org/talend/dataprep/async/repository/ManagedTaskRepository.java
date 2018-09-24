@@ -17,7 +17,8 @@ import java.util.stream.Stream;
 import org.talend.dataprep.async.AsyncExecution;
 
 /**
- * Defines the managed task repository interface. This interface only stores information relative to executions (i.e. it does not
+ * Defines the managed task repository interface. This interface only stores information relative to executions (i.e. it
+ * does not
  * manage scheduling, cancel...).
  *
  */

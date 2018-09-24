@@ -14,9 +14,11 @@
 package org.talend.dataprep.dataset.service.analysis.synchronous;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,6 @@ import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
-import org.talend.dataquality.common.inference.ValueQualityStatistics;
 
 @Component
 public class QualityAnalysis implements SynchronousDataSetAnalyzer {
@@ -131,28 +132,24 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
      * @param limit indicates how many records will be read from stream. Use a number < 0 to perform a full scan of
      */
     public void computeQuality(DataSetMetadata dataset, Stream<DataSetRow> records, long limit) {
-        // Compute valid / invalid / empty count, need data types for analyzer first
+        // Compute sample / valid / invalid / empty / count, need data types for analyzer first
         final List<ColumnMetadata> columns = dataset.getRowMetadata().getColumns();
         if (columns.isEmpty()) {
             LOGGER.debug("Skip analysis of {} (no column information).", dataset.getId());
             return;
         }
         try (Analyzer<Analyzers.Result> analyzer = analyzerService.qualityAnalysis(columns)) {
-            if (limit > 0) { // Only limit number of rows if limit > 0 (use limit to speed up sync analysis.
-                LOGGER.debug("Limit analysis to the first {}.", limit);
-                records = records.limit(limit);
-            } else {
-                LOGGER.debug("Performing full analysis.");
-            }
-            records.map(row -> row.toArray(DataSetRow.SKIP_TDP_ID)).forEach(analyzer::analyze);
-            // Determine content size
+            AtomicLong sampleRecordsCount = new AtomicLong(0);
+            records.peek(r -> sampleRecordsCount.incrementAndGet()).map(row -> {
+                if (sampleRecordsCount.get() < limit) {
+                    return row.toArray(DataSetRow.SKIP_TDP_ID);
+                }
+                return null;
+            }).filter(Objects::nonNull).forEach(analyzer::analyze);
             final List<Analyzers.Result> result = analyzer.getResult();
             adapter.adapt(columns, result);
-            // Remember the number of records
-            if (!result.isEmpty()) {
-                final long recordCount = result.get(0).get(ValueQualityStatistics.class).getCount();
-                dataset.getContent().setNbRecords((int) recordCount);
-            }
+            // Remember the number of records of the current sample
+            dataset.getContent().setNbRecords((int) sampleRecordsCount.get());
         } catch (Exception e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

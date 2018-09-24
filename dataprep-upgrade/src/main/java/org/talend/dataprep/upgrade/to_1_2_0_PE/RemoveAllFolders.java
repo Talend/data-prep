@@ -34,7 +34,6 @@ public class RemoveAllFolders implements BaseUpgradeTaskTo_1_2_0_PE {
     @Autowired
     private FolderRepository folderRepository;
 
-
     /**
      * @see UpgradeTask#getOrder()
      */

@@ -43,19 +43,24 @@ public class TransformerFactoryTest extends TransformationBaseTest {
         // given
         Map<String, String> arguments = new HashMap<>();
         arguments.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER, ";");
-        arguments.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE, CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS);
+        arguments.put(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS);
         final OutputStream outputStream = new ByteArrayOutputStream();
-        final Configuration configuration = Configuration.builder() //
+        final Configuration configuration = Configuration
+                .builder() //
                 .args(arguments) //
                 .format(CSV) //
                 .output(outputStream) //
-                .actions(IOUtils.toString(TransformerFactoryTest.class.getResourceAsStream("upper_case_firstname.json"), UTF_8)) //
+                .actions(IOUtils.toString(TransformerFactoryTest.class.getResourceAsStream("upper_case_firstname.json"),
+                        UTF_8)) //
                 .build();
         final Transformer transformer = factory.get(configuration);
         final String expectedCsv = IOUtils.toString(
-                TransformerFactoryTest.class.getResourceAsStream("expected_export_preparation_uppercase_firstname.csv"), UTF_8);
+                TransformerFactoryTest.class.getResourceAsStream("expected_export_preparation_uppercase_firstname.csv"),
+                UTF_8);
 
-        final InputStream inputStream = TransformerFactoryTest.class.getResourceAsStream("../../format/export_dataset.json");
+        final InputStream inputStream =
+                TransformerFactoryTest.class.getResourceAsStream("../../format/export_dataset.json");
         try (JsonParser parser = mapper.getFactory().createParser(inputStream)) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
 

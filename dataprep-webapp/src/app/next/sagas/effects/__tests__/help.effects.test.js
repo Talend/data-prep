@@ -1,14 +1,17 @@
+import Constants from '@talend/react-containers/lib/AboutDialog/AboutDialog.constant';
+import { IMMUTABLE_SETTINGS } from './help.effects.mock';
 import * as effects from '../../effects/help.effects';
+
 
 describe('help', () => {
 	describe('open', () => {
-		it('should update AboutModal store', () => {
+		it('should update also fetch versions if they are not already present in the store', () => {
 			const gen = effects.open();
-			const effect = gen.next().value.PUT.action;
+			expect(gen.next().value.SELECT).toBeDefined();
 
-			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.componentName).toBe('AboutModal');
-			expect(effect.componentState).toEqual({ show: true });
+			const effect = gen.next(IMMUTABLE_SETTINGS).value.PUT.action;
+			expect(effect.type).toEqual(Constants.ABOUT_DIALOG_SHOW);
+			expect(effect.url).toEqual('/api/version');
 
 			expect(gen.next().done).toBeTruthy();
 		});

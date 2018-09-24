@@ -128,30 +128,30 @@ public class XlsWriter implements TransformerWriter {
             Cell cell = row.createCell(cellIdx);
             String val = nextRow[cellIdx];
             switch (Type.get(columnMetadata.getType())) {
-                case NUMERIC:
-                case INTEGER:
-                case DOUBLE:
-                case FLOAT:
-                    try {
-                        if (NumericHelper.isBigDecimal(val)) {
-                            cell.setCellValue(BigDecimalParser.toBigDecimal(val).doubleValue());
-                        } else {
-                            cell.setCellValue(val);
-                        }
-                    } catch (NumberFormatException e) {
-                        LOGGER.trace("Skip NumberFormatException and use string for value '{}' row '{}' column '{}'", //
-                                val, rowIdx - 1, cellIdx - 1);
+            case NUMERIC:
+            case INTEGER:
+            case DOUBLE:
+            case FLOAT:
+                try {
+                    if (NumericHelper.isBigDecimal(val)) {
+                        cell.setCellValue(BigDecimalParser.toBigDecimal(val).doubleValue());
+                    } else {
                         cell.setCellValue(val);
                     }
-                    break;
-                case BOOLEAN:
-                    cell.setCellValue(Boolean.valueOf(val));
-                    break;
-                // FIXME ATM we don't have any idea about the date format so this can generate exceptions
-                // case "date":
-                // cell.setCellValue( );
-                default:
+                } catch (NumberFormatException e) {
+                    LOGGER.trace("Skip NumberFormatException and use string for value '{}' row '{}' column '{}'", //
+                            val, rowIdx - 1, cellIdx - 1);
                     cell.setCellValue(val);
+                }
+                break;
+            case BOOLEAN:
+                cell.setCellValue(Boolean.valueOf(val));
+                break;
+            // FIXME ATM we don't have any idea about the date format so this can generate exceptions
+            // case "date":
+            // cell.setCellValue( );
+            default:
+                cell.setCellValue(val);
             }
             cellIdx++;
         }

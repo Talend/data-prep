@@ -22,7 +22,7 @@ import { range, chain, map } from 'lodash';
  * @requires data-prep.services.preparation.service:PreparationService
  * @requires data-prep.services.utils.service:StepUtilsService
  */
-export default function PreviewService($q, state, DatagridService, PreparationService, StepUtilsService) {
+export default function PreviewService($q, state, DatagridService, PreparationService, StepUtilsService, StateService) {
 	'ngInject';
 
     /**
@@ -186,17 +186,21 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			tdpIds: displayedTdpIds,
 			sourceType: state.playground.sampleType,
 		};
+		StateService.setPreviewIsLoading(true);
 		return PreparationService.getPreviewDiff(params, previewCanceler)
-            .then(function (response) {
-	DatagridService.focusedColumn = targetColumnId;
-	return response;
-})
-            .then(replaceRecords)
-            .catch((e) => {
-	cancelPreview();
-	return $q.reject(e);
-})
-            .finally(() => previewCanceler = null);
+			.then((response) => {
+				DatagridService.focusedColumn = targetColumnId;
+				return response;
+			})
+			.then(replaceRecords)
+			.catch((e) => {
+				cancelPreview();
+				return $q.reject(e);
+			})
+			.finally(() => {
+				previewCanceler = null;
+				StateService.setPreviewIsLoading(false);
+			});
 	}
 
     /**
@@ -229,17 +233,21 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			},
 			sourceType: state.playground.sampleType,
 		};
+		StateService.setPreviewIsLoading(true);
 		return PreparationService.getPreviewUpdate(params, previewCanceler)
-            .then(function (response) {
-	DatagridService.focusedColumn = updateStep.column.id;
-	return response;
-})
-            .then(replaceRecords)
-            .catch((e) => {
-	cancelPreview();
-	return $q.reject(e);
-})
-            .finally(() => previewCanceler = null);
+			.then((response) => {
+				DatagridService.focusedColumn = updateStep.column.id;
+				return response;
+			})
+			.then(replaceRecords)
+			.catch((e) => {
+				cancelPreview();
+				return $q.reject(e);
+			})
+			.finally(() => {
+				previewCanceler = null;
+				StateService.setPreviewIsLoading(false);
+			});
 	}
 
     /**
@@ -268,17 +276,21 @@ export default function PreviewService($q, state, DatagridService, PreparationSe
 			preparationId,
 			sourceType: state.playground.sampleType,
 		};
+		StateService.setPreviewIsLoading(true);
 		return PreparationService.getPreviewAdd(params, previewCanceler)
-            .then(function (response) {
-	DatagridService.focusedColumn = actionParams[0].column_id;
-	return response;
-})
-            .then(replaceRecords)
-            .catch((e) => {
-	cancelPreview();
-	return $q.reject(e);
-})
-            .finally(() => previewCanceler = null);
+			.then((response) => {
+				DatagridService.focusedColumn = actionParams[0].column_id;
+				return response;
+			})
+			.then(replaceRecords)
+			.catch((e) => {
+				cancelPreview();
+				return $q.reject(e);
+			})
+			.finally(() => {
+				previewCanceler = null;
+				StateService.setPreviewIsLoading(false);
+			});
 	}
 
     /**

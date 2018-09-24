@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
@@ -30,7 +30,8 @@ public class ReorderStepsUtils {
      */
     boolean isStepOrderValid(List<AppendStep> appendSteps) {
         // Add all the columns created by steps as not available at the beginning
-        final Set<String> notYetAvailableColumnsIds = appendSteps.stream()
+        final Set<String> notYetAvailableColumnsIds = appendSteps
+                .stream()
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
                 .collect(Collectors.toSet());
 
@@ -64,7 +65,8 @@ public class ReorderStepsUtils {
      */
     void renameCreatedColumns(List<AppendStep> appendSteps) {
 
-        final List<String> createdColumns = appendSteps.stream()
+        final List<String> createdColumns = appendSteps
+                .stream()
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
                 .collect(Collectors.toList());
 

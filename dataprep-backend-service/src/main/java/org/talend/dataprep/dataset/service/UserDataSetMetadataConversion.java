@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.dataset.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -32,7 +32,8 @@ import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
 public class UserDataSetMetadataConversion extends BeanConversionServiceWrapper {
 
     @Override
-    public BeanConversionService doWith(BeanConversionService conversionService, String beanName, ApplicationContext applicationContext) {
+    public BeanConversionService doWith(BeanConversionService conversionService, String beanName,
+            ApplicationContext applicationContext) {
         conversionService.register(fromBean(DataSetMetadata.class) //
                 .toBeans(UserDataSetMetadata.class) //
                 .using(UserDataSetMetadata.class, (dataSetMetadata, userDataSetMetadata) -> {
@@ -42,12 +43,14 @@ public class UserDataSetMetadataConversion extends BeanConversionServiceWrapper 
                     // update the dataset favorites
                     final UserData userData = applicationContext.getBean(UserDataRepository.class).get(userId);
                     if (userData != null) {
-                        userDataSetMetadata.setFavorite(userData.getFavoritesDatasets().contains(dataSetMetadata.getId()));
+                        userDataSetMetadata
+                                .setFavorite(userData.getFavoritesDatasets().contains(dataSetMetadata.getId()));
                     }
 
                     // and the owner (if not already present).
                     if (userDataSetMetadata.getOwner() == null) {
-                        userDataSetMetadata.setOwner(new Owner(userId, security.getUserDisplayName(), StringUtils.EMPTY));
+                        userDataSetMetadata
+                                .setOwner(new Owner(userId, security.getUserDisplayName(), StringUtils.EMPTY));
                     }
 
                     return userDataSetMetadata;

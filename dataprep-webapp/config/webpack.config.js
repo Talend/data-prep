@@ -105,13 +105,11 @@ const config = {
 			},
 			{
 				test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/,
-				loader: isTestMode ? 'null-loader' : 'file-loader',
+				loader: isTestMode ? 'null-loader' : 'url-loader',
 				options: {
-					name: '[name].[ext]',
-					limit: 10000,
+					name: '/assets/fonts/[name].[ext]',
+					limit: 50000,
 					mimetype: 'application/font-woff',
-					publicPath: '/',
-					outputPath: 'assets/fonts/',
 				},
 			},
 			{
@@ -175,10 +173,6 @@ if (!isTestMode) {
 		}),
 		new webpack.BannerPlugin({
 			banner: LICENSE_BANNER,
-		}),
-		new webpack.optimize.CommonsChunkPlugin({
-			name: 'vendor',
-			minChunks: Infinity,
 		}),
 	]);
 }

@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -35,7 +35,7 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
     private DatasetClient datasetClient;
 
     @Override
-    public boolean accept(ExportParameters parameters) {
+    public boolean test(ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }
@@ -54,9 +54,10 @@ public class DataSetExportStrategy extends BaseSampleExportStrategy {
         return outputStream -> {
             // get the dataset content (in an auto-closable block to make sure it is properly closed)
             final String datasetId = parameters.getDatasetId();
-            try(DataSet dataSet = datasetClient.getDataSet(datasetId, false, true)) {
+            try (DataSet dataSet = datasetClient.getDataSet(datasetId, false, true)) {
                 // get the actions to apply (no preparation ==> dataset export ==> no actions)
-                Configuration configuration = Configuration.builder() //
+                Configuration configuration = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
                         .format(format.getName()) //

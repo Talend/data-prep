@@ -34,7 +34,8 @@ public class ClassPathManifestInfoProviderTest {
     @Test
     public void shouldReadFromMissingFile() throws Exception {
         // given
-        final ClassPathManifestInfoProvider provider = new ClassPathManifestInfoProvider("/intentionally_missing_file.properties", "source2");
+        final ClassPathManifestInfoProvider provider =
+                new ClassPathManifestInfoProvider("/intentionally_missing_file.properties", "source2");
 
         // when
         final ManifestInfo manifestInfo = provider.getManifestInfo();

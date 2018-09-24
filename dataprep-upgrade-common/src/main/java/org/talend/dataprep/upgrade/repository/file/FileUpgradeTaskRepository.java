@@ -21,7 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +61,12 @@ public class FileUpgradeTaskRepository implements UpgradeTaskRepository {
 
         final Path start = getRootFolder(targetId).toPath();
         int maxDepth = 1;
-        try (Stream<Path> stream = Files.find(start, maxDepth, (path, attr) -> String.valueOf(path).endsWith(".json"))) {
+        try (Stream<Path> stream =
+                Files.find(start, maxDepth, (path, attr) -> String.valueOf(path).endsWith(".json"))) {
             final boolean found = stream //
                     .filter(p -> StringUtils.startsWith(p.getFileName().toString(), id.getUniqueKey())) //
-                    .findFirst().isPresent();
+                    .findFirst()
+                    .isPresent();
 
             LOG.debug("{} {} for {}", id, found ? "found" : "not found", targetId);
 
@@ -97,7 +99,8 @@ public class FileUpgradeTaskRepository implements UpgradeTaskRepository {
         if (rootFolder.exists()) {
             final Path start = rootFolder.toPath();
             int maxDepth = 2;
-            try (Stream<Path> stream = Files.find(start, maxDepth, (path, attr) -> String.valueOf(path).endsWith(".json"))) {
+            try (Stream<Path> stream =
+                    Files.find(start, maxDepth, (path, attr) -> String.valueOf(path).endsWith(".json"))) {
                 nbUpgradeTasks = (int) stream.count();
             } catch (IOException e) {
                 LOG.error("Unable to count upgraded tasks from {}", rootFolder.toString());

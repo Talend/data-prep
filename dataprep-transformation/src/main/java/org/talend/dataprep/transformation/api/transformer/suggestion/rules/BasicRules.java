@@ -52,18 +52,24 @@ public class BasicRules {
     /**
      * A helper to filter columns where semantic domain=email.
      */
-    protected static final Predicate<ColumnMetadata> IS_EMAIL = columnMetadata -> SemanticCategoryEnum.EMAIL.getId()
-            .equalsIgnoreCase(columnMetadata.getDomain());
+    protected static final Predicate<ColumnMetadata> IS_EMAIL =
+            columnMetadata -> SemanticCategoryEnum.EMAIL.getId().equalsIgnoreCase(columnMetadata.getDomain());
 
     /**
      * A helper to filter columns where semantic domain=url.
      */
-    protected static final Predicate<ColumnMetadata> IS_URL = columnMetadata -> SemanticCategoryEnum.URL.getId()
-            .equalsIgnoreCase(columnMetadata.getDomain());
+    protected static final Predicate<ColumnMetadata> IS_URL =
+            columnMetadata -> SemanticCategoryEnum.URL.getId().equalsIgnoreCase(columnMetadata.getDomain());
 
     /**
      * A helper to filter columns where semantic domain=phone.
      */
-    protected static final Predicate<ColumnMetadata> IS_PHONE = columnMetadata -> columnMetadata.getDomain().toLowerCase().contains("phone");
+    protected static final Predicate<ColumnMetadata> IS_PHONE =
+            columnMetadata -> columnMetadata.getDomain().toLowerCase().contains("phone");
 
+    /**
+     * A helper to filter columns where semantic domain=country.
+     */
+    protected static final Predicate<ColumnMetadata> IS_COUNTRY =
+            columnMetadata -> columnMetadata.getDomain().toLowerCase().contains("country");
 }

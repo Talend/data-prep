@@ -1,16 +1,16 @@
 /*
- *  ============================================================================
+ * ============================================================================
  *
- *  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
  *
- *  This source code is available under agreement available at
- *  https://github.com/Talend/data-prep/blob/master/LICENSE
+ * This source code is available under agreement available at
+ * https://github.com/Talend/data-prep/blob/master/LICENSE
  *
- *  You should have received a copy of the agreement
- *  along with this program; if not, write to Talend SA
- *  9 rue Pages 92150 Suresnes, France
+ * You should have received a copy of the agreement
+ * along with this program; if not, write to Talend SA
+ * 9 rue Pages 92150 Suresnes, France
  *
- *  ============================================================================
+ * ============================================================================
  */
 
 package org.talend.dataprep.dataset.adapter;
@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(DataSetController.class)
-@Import({DataPrepComponentScanConfiguration.class })
+@Import({ DataPrepComponentScanConfiguration.class })
 @Ignore
 public class DataSetControllerTest {
 
@@ -64,8 +64,8 @@ public class DataSetControllerTest {
 
     @Test
     public void findSample() throws Exception {
-        InputStream resourceAsStream = DataSetControllerTest.class.getResourceAsStream(
-                "/org/talend/dataprep/dataset/avengers_expected_limit_2.json");
+        InputStream resourceAsStream = DataSetControllerTest.class
+                .getResourceAsStream("/org/talend/dataprep/dataset/avengers_expected_limit_2.json");
 
         DataSet dataSet = objectMapper.readValue(resourceAsStream, DataSet.class);
 
@@ -74,10 +74,10 @@ public class DataSetControllerTest {
         //TODO mock the bean conversion
         when(beanConversionService.convert(any(DataSetMetadata.class), Dataset.class)).thenReturn(null);
 
-        MvcResult result =
-                mvc.perform(get("/api/v1/datasets/{datasetId}", "1234")) //
-                        .andExpect(status().isOk())
-                        .andReturn();
+        MvcResult result = mvc
+                .perform(get("/api/v1/datasets/{datasetId}", "1234")) //
+                .andExpect(status().isOk())
+                .andReturn();
 
         JsonNode jsonSchema = objectMapper.readTree(result.getResponse().getContentAsString());
 

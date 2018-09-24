@@ -116,6 +116,32 @@ describe('Lookup state service', () => {
 		}));
 	});
 
+	describe('loading', () => {
+		it('should set loading flag', inject((lookupState, LookupStateService) => {
+			//given
+			lookupState.loading = false;
+
+			//when
+			LookupStateService.setLoading(true);
+
+			//then
+			expect(lookupState.loading).toBe(true);
+		}));
+	});
+
+	describe('modalLoading', () => {
+		it('should set modalLoading flag', inject((lookupState, LookupStateService) => {
+			//given
+			lookupState.modalLoading = false;
+
+			//when
+			LookupStateService.setModalLoading(true);
+
+			//then
+			expect(lookupState.modalLoading).toBe(true);
+		}));
+	});
+
 	describe('reset', () => {
 		it('should reset state', inject((lookupState, LookupStateService) => {
 			// given

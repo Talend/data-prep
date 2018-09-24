@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,8 @@ public class SimpleManagedTaskExecutor implements ManagedTaskExecutor {
                     ExceptionContext.withBuilder().put("id", executionId).build());
         } else if (!execution.isResumable()) {
             // Execution is expected to be created as "RUNNING" or "NEW" before the dispatcher resumes it.
-            LOGGER.error("Execution #{} can't be resumed (status is {}) for tenant: {}", execution.getId(), execution.getStatus(), execution.getTenantId());
+            LOGGER.error("Execution #{} can't be resumed (status is {}) for tenant: {}", execution.getId(),
+                    execution.getStatus(), execution.getTenantId());
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_RESUME_EXECUTION,
                     ExceptionContext.withBuilder().put("id", executionId).build());
         }

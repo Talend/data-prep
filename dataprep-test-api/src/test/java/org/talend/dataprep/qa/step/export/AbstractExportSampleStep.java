@@ -4,6 +4,7 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.DATASET_ID;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.EXPORT_TYPE;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILENAME;
+import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILTER;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.PREPARATION_ID;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.STEP_ID;
 import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
@@ -22,6 +23,8 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.export.ExportParam;
 import org.talend.dataprep.qa.util.export.ExportUtil;
 import org.talend.dataprep.qa.util.export.MandatoryParameters;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * CSV Exporter.
@@ -53,7 +56,7 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
     }
 
     @Override
-    public Map<String, String> extractParameters(Map<String, String> params) {
+    public Map<String, String> extractParameters(Map<String, String> params) throws JsonProcessingException {
         Map<String, String> ret = new HashMap<>();
 
         // Preparation
@@ -70,16 +73,15 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         String filename = params.get(FILENAME.getName());
 
         // TODO manage export from step ? (or from version)
-        List<String> steps =
-                api
-                        .getPreparationDetails(preparationId)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .body()
-                        .jsonPath()
-                        .getJsonObject(
-                        "steps");
+        // TODO this call should be in OSDataPrepAPIHelper
+        List<String> steps = api //
+                .getPreparationDetails(preparationId) //
+                .then()
+                .statusCode(200) //
+                .extract() //
+                .body() //
+                .jsonPath() //
+                .getJsonObject("steps");
 
         exportUtil.feedExportParam(ret, PREPARATION_ID, preparationId);
         exportUtil.feedExportParam(ret, STEP_ID, steps.get(steps.size() - 1));
@@ -87,9 +89,17 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         exportUtil.feedExportParam(ret, FILENAME, filename);
 
         exportUtil.feedExportParam(ret, EXPORT_TYPE, getExportTypeName());
+        exportUtil.feedExportParam(ret, FILTER, params);
 
         for (ExportParam exportParam : getExtraExportParameter()) {
             exportUtil.feedExportParam(ret, exportParam, params);
+        }
+
+        // manage filter : for example for fetchmore
+        String tqlFilter = params.get(FILTER.getName());
+        if (tqlFilter != null) {
+            ret.put("filter", tqlFilter);
+            ret.put("from", "FILTER");
         }
 
         return ret;

@@ -150,8 +150,14 @@ public class DataSetJSONTest extends ServiceBaseTest {
                 .invalid(10) //
                 .valid(50);
 
-        DataSetMetadata metadata = metadataBuilder.metadata().id("1234").name("name").author("author").created(0)
-                .row(columnBuilder).build();
+        DataSetMetadata metadata = metadataBuilder
+                .metadata()
+                .id("1234")
+                .name("name")
+                .author("author")
+                .created(0)
+                .row(columnBuilder)
+                .build();
 
         final DataSetContent content = metadata.getContent();
         content.addParameter(CSVFormatFamily.SEPARATOR_PARAMETER, ",");

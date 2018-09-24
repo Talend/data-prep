@@ -21,7 +21,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,7 +85,8 @@ public class CSVSerializer implements Serializer {
                     // Consumer may very well interrupt consumption of stream (in case of limit(n) use for sampling).
                     // This is not an issue as consumer is allowed to partially consumes results, it's up to the
                     // consumer to ensure data it consumed is consistent.
-                    LOGGER.debug("Unable to continue serialization for {}. Skipping remaining content.", metadata.getId(), e);
+                    LOGGER.debug("Unable to continue serialization for {}. Skipping remaining content.",
+                            metadata.getId(), e);
                 } finally {
                     try {
                         jsonOutput.close();
@@ -117,7 +118,7 @@ public class CSVSerializer implements Serializer {
             return StringUtils.isEmpty(defaultValue) ? Character.MIN_VALUE : defaultValue.charAt(0);
         }
 
-        return (fromParameters.length() == 0)  ? Character.MIN_VALUE : fromParameters.charAt(0);
+        return (fromParameters.length() == 0) ? Character.MIN_VALUE : fromParameters.charAt(0);
     }
 
     /**

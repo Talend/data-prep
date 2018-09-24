@@ -450,7 +450,7 @@ describe('Dataset Rest Service', () => {
 			const data = [{ column: [], records: [] }];
 
 			$httpBackend
-				.expectGET(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?metadata=false&includeTechnicalProperties=true')
+				.expectGET(RestURLs.datasetUrl + '/e85afAa78556d5425bc2?filter=&metadata=false&includeTechnicalProperties=true')
 				.respond(200, data);
 
 			//when
@@ -471,7 +471,7 @@ describe('Dataset Rest Service', () => {
 			const data = [{ column: [], records: [] }];
 			const tql = "(0001='charles')";
 			$httpBackend
-				.expectGET(RestURLs.datasetUrl + "/e85afAa78556d5425bc2?filter=(0001%253D'charles')&includeTechnicalProperties=true&metadata=false")
+				.expectGET(RestURLs.datasetUrl + "/e85afAa78556d5425bc2?filter=(0001%3D'charles')&includeTechnicalProperties=true&metadata=false")
 				.respond(200, data);
 
 			//when
@@ -626,6 +626,30 @@ describe('Dataset Rest Service', () => {
 
 			//then
 			expect(result).toEqual(encodings);
+		}));
+	});
+
+	describe('related preparations', () => {
+		it('should call rest service', inject(($rootScope, DatasetRestService, RestURLs) => {
+			//given
+			let result = null;
+			const datasetId = 'e85afAa78556d5425bc2';
+			const preparations = [{ id: '36c2692ef5' }];
+
+			$httpBackend
+				.expectGET(`${RestURLs.datasetUrl}/${datasetId}/preparations`)
+				.respond(200, preparations);
+
+			//when
+			DatasetRestService.getRelatedPreparations(datasetId)
+				.then((preps) => {
+					result = preps;
+				});
+			$httpBackend.flush();
+			$rootScope.$digest();
+
+			//then
+			expect(result).toEqual(preparations);
 		}));
 	});
 

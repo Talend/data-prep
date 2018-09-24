@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.folder.FolderContentType;
 import org.talend.dataprep.api.folder.FolderEntry;
 import org.talend.dataprep.exception.TDPException;
@@ -101,7 +101,8 @@ class FileSystemUtils {
     static boolean hasEntry(Path path) {
         boolean hasChild;
         try (Stream<Path> pathsStream = Files.walk(path)) {
-            hasChild = pathsStream.filter(Files::isRegularFile).map(FileSystemUtils::toFolderEntry).findAny().isPresent();
+            hasChild =
+                    pathsStream.filter(Files::isRegularFile).map(FileSystemUtils::toFolderEntry).findAny().isPresent();
         } catch (IOException e) {
             throw new TDPException(UNABLE_TO_DELETE_FOLDER, e, build().put("path", path));
         }
@@ -116,7 +117,6 @@ class FileSystemUtils {
         properties.setProperty(FOLDER_ID, folderEntry.getFolderId());
         properties.store(outputStream, "saved");
     }
-
 
     /**
      * Converts this path to an identifier usable in an URL.

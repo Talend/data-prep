@@ -26,16 +26,16 @@ const PatternOccurrenceWorker = require('worker-loader!./pattern-occurence.worke
  * @requires data-prep.services.statistics.service:StatisticsRestService
  * @requires data-prep.services.state.service:StateService
  * @requires data-prep.services.utils.service:ConverterService
- * @requires data-prep.services.utils.service:FilterAdapterService
+ * @requires data-prep.services.utils.service:TqlFilterAdapterService
  * @requires data-prep.services.utils.service:TextFormatService
  * @requires data-prep.services.utils.service:StepUtilsService
  * @requires data-prep.services.utils.service:StorageService
  * @requires data-prep.services.utils.service:DateService
  */
 export default function StatisticsService($q, $log, $filter, $translate, state, StateService,
-                                          StepUtilsService, StatisticsRestService,
-                                          ConverterService, FilterAdapterService, TextFormatService,
-                                          StorageService) {
+											StepUtilsService, StatisticsRestService,
+											ConverterService, TqlFilterAdapterService, TextFormatService,
+											StorageService, FilterUtilsService) {
 	'ngInject';
 
 	const i18n = {
@@ -47,13 +47,13 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		dateWorker: null,
 		patternWorker: null,
 
-        // update range
+		// update range
 		initRangeLimits,
 
-        // filters
+		// filters
 		getRangeFilterRemoveFn,
 
-        // statistics entry points
+		// statistics entry points
 		processAggregation,             // aggregation charts
 		processClassicChart,            // classic charts (not aggregation)
 		updateStatistics,               // update all stats (values, charts)
@@ -62,24 +62,24 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	};
 	return service;
 
-    //
-    // BELOW ARE ALL THE STATISTICS TABS FUNCTIONS FOR (1-CHART, 2-VALUES, 3-PATTERN, 4-OTHERS)
-    //
+	//
+	// BELOW ARE ALL THE STATISTICS TABS FUNCTIONS FOR (1-CHART, 2-VALUES, 3-PATTERN, 4-OTHERS)
+	//
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- 1.1 Common barchart ---------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name initHorizontalHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {string} keyField The key field prop name
-     * @param {string} valueField The value field prop name
-     * @param {string} label The value label
-     * @param {Array} data The data to display
-     * @param {string} className The bar class name
-     * @description Create a records frequency ranges table that fit the histogram format
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------- 1.1 Common barchart ---------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name initHorizontalHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {string} keyField The key field prop name
+	 * @param {string} valueField The value field prop name
+	 * @param {string} label The value label
+	 * @param {Array} data The data to display
+	 * @param {string} className The bar class name
+	 * @description Create a records frequency ranges table that fit the histogram format
+	 */
 	function initHorizontalHistogram(keyField, valueField, label, data, className) {
 		return {
 			data,
@@ -92,16 +92,16 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		};
 	}
 
-    /**
-     * @ngdoc method
-     * @name initVerticalHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {string} keyField The key field prop name
-     * @param {string} valueField The value field prop name
-     * @param {string} label The value label
-     * @param {Array} data The data to display
-     * @description Create a records frequency ranges table that fit the histogram format
-     */
+	/**
+	 * @ngdoc method
+	 * @name initVerticalHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {string} keyField The key field prop name
+	 * @param {string} valueField The value field prop name
+	 * @param {string} label The value label
+	 * @param {Array} data The data to display
+	 * @description Create a records frequency ranges table that fit the histogram format
+	 */
 	function initVerticalHistogram(keyField, valueField, label, data) {
 		return {
 			data,
@@ -113,18 +113,18 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		};
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------ 1.2 Number Range barcharts ----------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name getRangeFilteredOccurrence
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {number} min The range min value
-     * @param {number} max The range max value
-     * @description Compute The filtered records that fullfill the given predicate
-     * @returns {number} The Number of records
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------ 1.2 Number Range barcharts ----------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getRangeFilteredOccurrence
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {number} min The range min value
+	 * @param {number} max The range max value
+	 * @description Compute The filtered records that fullfill the given predicate
+	 * @returns {number} The Number of records
+	 */
 	function getRangeFilteredOccurrence(min, max) {
 		return _.chain(state.playground.grid.filteredOccurences)
 			.keys()
@@ -177,12 +177,12 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		};
 	}
 
-    /**
-     * @ngdoc method
-     * @name initRangeHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Adapt the numeric range data to fit histogram format
-     */
+	/**
+	 * @ngdoc method
+	 * @name initRangeHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Adapt the numeric range data to fit histogram format
+	 */
 	function initRangeHistogram() {
 		const histograms = createNumberRangeHistograms();
 		if (histograms) {
@@ -191,16 +191,16 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		}
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------ 1.2 bis Number Range limits ---------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name getValueWithinRange
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Get the corresponding value within [min, max] interval.
-     * If the value is not in the interval, we return min or max if it is under min or above max respectively
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------ 1.2 bis Number Range limits ---------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getValueWithinRange
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Get the corresponding value within [min, max] interval.
+	 * If the value is not in the interval, we return min or max if it is under min or above max respectively
+	 */
 	function getValueWithinRange(value, min, max) {
 		if (value < min) {
 			return min;
@@ -213,13 +213,13 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return value;
 	}
 
-    /**
-     * @ngdoc method
-     * @name initRangeLimits
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Set the range slider limits to update the rangeSlider handlers
-     * and the active/inactive bars of the vertical barchart
-     */
+	/**
+	 * @ngdoc method
+	 * @name initRangeLimits
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Set the range slider limits to update the rangeSlider handlers
+	 * and the active/inactive bars of the vertical barchart
+	 */
 	function initRangeLimits() {
 		if (!state.playground.statistics.histogram) {
 			return;
@@ -237,14 +237,14 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 			const firstHistogramItem = _.first(state.playground.grid.selectedColumns[0].statistics.histogram.items);
 			const lastHistogramItem = _.last(state.playground.grid.selectedColumns[0].statistics.histogram.items);
 			rangeLimits = {
-				min: firstHistogramItem.range.min,
-				max: lastHistogramItem.range.max,
+				min: cleanNumber(firstHistogramItem.range.min),
+				max: cleanNumber(lastHistogramItem.range.max),
 			};
 		}
 		else {
 			rangeLimits = {
-				min: statistics.min,
-				max: statistics.max,
+				min: cleanNumber(statistics.min),
+				max: cleanNumber(statistics.max),
 			};
 		}
 
@@ -275,15 +275,15 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		StateService.setStatisticsRangeLimits(rangeLimits);
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- 1.3 Date Range barcharts ----------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name createDateRangeHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description prepares the date data to be visualized
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------- 1.3 Date Range barcharts ----------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name createDateRangeHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description prepares the date data to be visualized
+	 */
 	function createDateRangeHistogram() {
 		const histoData = state.playground.grid.selectedColumns[0].statistics.histogram;
 		if (!histoData) {
@@ -300,7 +300,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 			return {
 				data: {
 					type: 'date',
-					label: getDateLabel(histoData.pace, minDate, maxDate),
+					label: FilterUtilsService.getDateLabel(histoData.pace, minDate, maxDate),
 					min: minDate.getTime(),
 					max: maxDate.getTime(),
 				},
@@ -311,12 +311,12 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return initVerticalHistogram('data', 'occurrences', i18n.OCCURRENCES, dateRangeData);
 	}
 
-    /**
-     * @ngdoc method
-     * @name initDateRangeHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Adapt the date range data to fit histogram format
-     */
+	/**
+	 * @ngdoc method
+	 * @name initDateRangeHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Adapt the date range data to fit histogram format
+	 */
 	function initDateRangeHistogram() {
 		const dateRangeData = createDateRangeHistogram();
 		if (dateRangeData) {
@@ -327,13 +327,13 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name createFilteredDateRangeHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @params {Object} dateRangeData containing the data and the patterns
-     * @description Use a Worker to compute the date FilteredHistogram
-     */
+	/**
+	 * @ngdoc method
+	 * @name createFilteredDateRangeHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @params {Object} dateRangeData containing the data and the patterns
+	 * @description Use a Worker to compute the date FilteredHistogram
+	 */
 	function createFilteredDateRangeHistogram() {
 		StateService.setStatisticsLoading(true);
 		const parameters = {
@@ -362,80 +362,27 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 
-    /**
-     * @ngdoc method
-     * @name getDateFormat
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {String} pace The histogram time pace
-     * @param {Date} startDate The range starting date
-     * @description Returns the date pattern that fit the pace at the starting date
-     */
-	function getDateFormat(pace, startDate) {
-		switch (pace) {
-		case 'CENTURY':
-		case 'DECADE':
-		case 'YEAR':
-			return 'yyyy';
-		case 'HALF_YEAR':
-			return '\'H\'' + ((startDate.getMonth() / 6) + 1) + ' yyyy';
-		case 'QUARTER':
-			return 'Q' + ((startDate.getMonth() / 3) + 1) + ' yyyy';
-		case 'MONTH':
-			return 'MMM yyyy';
-		case 'WEEK':
-			return 'Www yyyy';
-		default:
-			return 'mediumDate';
-		}
-	}
-
-    /**
-     * @ngdoc method
-     * @name getDateLabel
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {string} pace The histogram time pace
-     * @param {Date} minDate The range starting date
-     * @param {Date} maxDate The range ending date
-     * @description Returns the range label
-     */
-	function getDateLabel(pace, minDate, maxDate) {
-		const dateFilter = $filter('date');
-		const format = getDateFormat(pace, minDate);
-
-		switch (pace) {
-		case 'YEAR':
-		case 'HALF_YEAR':
-		case 'QUARTER':
-		case 'MONTH':
-		case 'WEEK':
-		case 'DAY':
-			return dateFilter(minDate, format);
-		default:
-			return '[' + dateFilter(minDate, format) + ', ' + dateFilter(maxDate, format) + '[';
-		}
-	}
-
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- 1.4 Classical barcharts -----------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name getClassicFilteredOccurrence
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {string} value The value to have
-     * @description Get the occurrence of the provided value
-     * @returns {number} The Number of records
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------- 1.4 Classical barcharts -----------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getClassicFilteredOccurrence
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {string} value The value to have
+	 * @description Get the occurrence of the provided value
+	 * @returns {number} The Number of records
+	 */
 	function getClassicFilteredOccurrence(value) {
 		return state.playground.grid.filteredOccurences[value] || 0;
 	}
 
-    /**
-     * @ngdoc method
-     * @name initClassicHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Set the frequency table that fit the histogram format (filter is managed in frontend)
-     */
+	/**
+	 * @ngdoc method
+	 * @name initClassicHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Set the frequency table that fit the histogram format (filter is managed in frontend)
+	 */
 	function initClassicHistogram() {
 		const histograms = createClassicHistograms();
 		if (histograms) {
@@ -444,13 +391,13 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name createClassicHistograms
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description prepares the frequency data
-     * @return {Object} The classical and filtered histograms
-     */
+	/**
+	 * @ngdoc method
+	 * @name createClassicHistograms
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description prepares the frequency data
+	 * @return {Object} The classical and filtered histograms
+	 */
 	function createClassicHistograms() {
 		const dataTable = state.playground.grid.selectedColumns[0].statistics.frequencyTable;
 		if (!dataTable || !dataTable.length) {
@@ -483,18 +430,18 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		};
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- 1.5 Aggregation barcharts ---------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name getAggregationHistogram
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {string} valueField The value prop name
-     * @param {string} label The value label
-     * @param {Array} data The data to display
-     * @description Create the histogram format for aggregation (filter is managed in backend)
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------- 1.5 Aggregation barcharts ---------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name getAggregationHistogram
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {string} valueField The value prop name
+	 * @param {string} label The value label
+	 * @param {Array} data The data to display
+	 * @description Create the histogram format for aggregation (filter is managed in backend)
+	 */
 	function getAggregationHistogram(valueField, label, data) {
 		const keyField = 'formattedValue';
 
@@ -505,27 +452,36 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return initHorizontalHistogram(keyField, valueField, label, data, 'blueBar');
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------2- Values----------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name cleanNumber
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {number} value Value to clean the float
-     * @description Cleans the value to have 2 decimals (5.2568845842587425588 -> 5.25)
-     * @returns {number} The value in the clean format
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------2- Values----------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name cleanNumber
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {number} value Value to clean the float
+	 * @description Cleans the value to have 2 decimals (5.2568845842587425588 -> 5.25)
+	 * @returns {number} The value in the clean format
+	 */
 	function cleanNumber(value) {
-		return isNaN(value) || value === parseInt(value, 10) ? value : +value.toFixed(2);
+		const parsed = Number(value);
+
+		if (parsed === Infinity) {
+			return Number.MAX_SAFE_INTEGER;
+		}
+		else if (parsed === -Infinity) {
+			return Number.MIN_SAFE_INTEGER;
+		}
+
+		return isNaN(parsed) || parsed === parseInt(parsed, 10) ? parsed : +parsed.toFixed(2);
 	}
 
-    /**
-     * @ngdoc method
-     * @name initStatisticsValues
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Initialize the statistics to display in the values TAB of the stats part
-     */
+	/**
+	 * @ngdoc method
+	 * @name initStatisticsValues
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Initialize the statistics to display in the values TAB of the stats part
+	 */
 	function initStatisticsValues() {
 		const column = state.playground.grid.selectedColumns[0];
 		const stats = column.statistics;
@@ -568,14 +524,14 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		});
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------3- Pattern---------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name adaptPatternsToGridConstraints
-     * @description adapt pattern list to the grid constraints by adding a new 'formattedPattern' field
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------3- Pattern---------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name adaptPatternsToGridConstraints
+	 * @description adapt pattern list to the grid constraints by adding a new 'formattedPattern' field
+	 */
 	function adaptPatternsToGridConstraints(items) {
 		return items && items.length ? items.map((item) => {
 			return {
@@ -585,29 +541,29 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		}) : [];
 	}
 
-    /**
-     * @ngdoc method
-     * @name createFilteredPatternsFrequency
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description update patterns statistics
-     */
+	/**
+	 * @ngdoc method
+	 * @name createFilteredPatternsFrequency
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description update patterns statistics
+	 */
 	function initPatternsFrequency() {
 		const patternFrequency = state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable;
 		if (patternFrequency) {
 			StateService.setStatisticsPatterns(adaptPatternsToGridConstraints(patternFrequency));
 			createFilteredPatternsFrequency()
-			.then((filteredPatternFrequency) => {
-				StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
-			});
+				.then((filteredPatternFrequency) => {
+					StateService.setStatisticsFilteredPatterns(filteredPatternFrequency);
+				});
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name createFilteredPatternsFrequency
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Create the filtered patterns statistics
-     */
+	/**
+	 * @ngdoc method
+	 * @name createFilteredPatternsFrequency
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Create the filtered patterns statistics
+	 */
 	function createFilteredPatternsFrequency() {
 		StateService.setStatisticsLoading(true);
 		const column = state.playground.grid.selectedColumns[0];
@@ -631,18 +587,17 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return defer.promise.finally(() => StateService.setStatisticsLoading(false));
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------4- Others----------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name initBoxplotData
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Gathers the boxPlot data from the specific stats of the columns having a 'number' type
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------4- Others----------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name initBoxplotData
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Gathers the boxPlot data from the specific stats of the columns having a 'number' type
+	 */
 	function initBoxplotData() {
 		const specStats = state.playground.statistics.details.specific;
-
 		StateService.setStatisticsBoxPlot(
 			{
 				min: specStats.MIN,
@@ -653,44 +608,43 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 				mean: specStats.MEAN,
 				variance: specStats.VARIANCE,
 			}
-        );
+		);
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------FILTER-------------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------FILTER-------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
 
-    /**
-     * @ngdoc method
-     * @name getRangeFilterRemoveFn
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Create a remove callback to reinit the current active limits on the current column range chart
-     */
+	/**
+	 * @ngdoc method
+	 * @name getRangeFilterRemoveFn
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Create a remove callback to reinit the current active limits on the current column range chart
+	 */
 	function getRangeFilterRemoveFn() {
 		const selectedColumn = state.playground.grid.selectedColumns[0];
 		const columnMin = selectedColumn.statistics.min;
 		const columnMax = selectedColumn.statistics.max;
-
 		return function removeFilterFn(filter) {
 			const actualSelectedColumn = state.playground.grid.selectedColumns[0];
 			if (filter.colId === actualSelectedColumn.id) {
 				initRangeLimits();
-                // to reset the vertical bars colors
+				// to reset the vertical bars colors
 				StateService.setStatisticsHistogramActiveLimits([columnMin, columnMax]);
 			}
 		};
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // ---------------------------------------------NON AGGREGATION--------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------NON AGGREGATION--------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
 
-    /**
-     * @ngdoc method
-     * @name processClassicChart
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Compute the needed data for chart visualization
-     */
+	/**
+	 * @ngdoc method
+	 * @name processClassicChart
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Compute the needed data for chart visualization
+	 */
 	function processClassicChart() {
 		resetCharts();
 		removeSavedColumnAggregation();
@@ -719,17 +673,17 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		}
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------Aggregation--------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name processAggregation
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @param {object} column The column to visualize
-     * @param {string} aggregationName The aggregation to perform
-     * @description Processes the statistics aggregation for visualization
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------Aggregation--------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name processAggregation
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @param {object} column The column to visualize
+	 * @param {string} aggregationName The aggregation to perform
+	 * @description Processes the statistics aggregation for visualization
+	 */
 	function processAggregation(column, aggregationName) {
 		resetCharts();
 
@@ -739,7 +693,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		const stepId = lastActiveStep && lastActiveStep.transformation.stepId;
 		const selectedColumn = state.playground.grid.selectedColumns[0];
 
-		let aggregationParameters = {
+		const aggregationParameters = {
 			datasetId: preparationId ? null : datasetId,
 			preparationId,
 			stepId,
@@ -751,7 +705,9 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		};
 
 		// add filter in parameters only if there are filters
-		aggregationParameters = _.extend(aggregationParameters, FilterAdapterService.toTree(state.playground.filter.gridFilters));
+		if (state.playground.filter.gridFilters.length) {
+			Object.assign(aggregationParameters, { filter: TqlFilterAdapterService.toTQL(state.playground.filter.gridFilters) });
+		}
 
 		return StatisticsRestService.getAggregations(aggregationParameters)
 			.then(function (response) {
@@ -763,12 +719,12 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 			});
 	}
 
-    /**
-     * @ngdoc method
-     * @name getSavedColumnAggregation
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Get the saved dataset column aggregation.
-     */
+	/**
+	 * @ngdoc method
+	 * @name getSavedColumnAggregation
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Get the saved dataset column aggregation.
+	 */
 	function getSavedColumnAggregation() {
 		const datasetId = state.playground.dataset && state.playground.dataset.id;
 		const preparationId = state.playground.preparation && state.playground.preparation.id;
@@ -776,12 +732,12 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return StorageService.getAggregation(datasetId, preparationId, columnId);
 	}
 
-    /**
-     * @ngdoc method
-     * @name removeSavedColumnAggregation
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Delete the actual column aggregation key in localStorage
-     */
+	/**
+	 * @ngdoc method
+	 * @name removeSavedColumnAggregation
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Delete the actual column aggregation key in localStorage
+	 */
 	function removeSavedColumnAggregation() {
 		const datasetId = state.playground.dataset && state.playground.dataset.id;
 		const preparationId = state.playground.preparation && state.playground.preparation.id;
@@ -789,12 +745,12 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return StorageService.removeAggregation(datasetId, preparationId, columnId);
 	}
 
-    /**
-     * @ngdoc method
-     * @name saveColumnAggregation
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Update the actual dataset column aggregation in localStorage
-     */
+	/**
+	 * @ngdoc method
+	 * @name saveColumnAggregation
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Update the actual dataset column aggregation in localStorage
+	 */
 	function saveColumnAggregation(aggregationName, colId) {
 		const datasetId = state.playground.dataset && state.playground.dataset.id;
 		const preparationId = state.playground.preparation && state.playground.preparation.id;
@@ -808,15 +764,15 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return StorageService.setAggregation(datasetId, preparationId, columnId, aggregation);
 	}
 
-    //--------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------COMMON-------------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name updateFilteredStatistics
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description responsible for updating the filtered data according to the selected column type
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	// -------------------------------------------------COMMON-------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	/**
+	 * @ngdoc method
+	 * @name updateFilteredStatistics
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description responsible for updating the filtered data according to the selected column type
+	 */
 	function updateFilteredStatistics() {
 		resetWorkers();
 		const asyncProcess = [];
@@ -840,10 +796,10 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 				break;
 			case 'date': {
 				const dateRangeProcess = createFilteredDateRangeHistogram()
-						.then((histogram) => {
-							StateService.setStatisticsFilteredHistogram(histogram);
-							initRangeLimits();
-						});
+					.then((histogram) => {
+						StateService.setStatisticsFilteredHistogram(histogram);
+						initRangeLimits();
+					});
 				asyncProcess.push(dateRangeProcess);
 				break;
 			}
@@ -870,14 +826,14 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		return $q.all(asyncProcess);
 	}
 
-    /**
-     * @ngdoc method
-     * @name updateStatistics
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description update statistics for the selected column.
-     * If an aggregation is stored, we process the computation to init this aggregation chart.
-     * Otherwise, we init classic charts
-     */
+	/**
+	 * @ngdoc method
+	 * @name updateStatistics
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description update statistics for the selected column.
+	 * If an aggregation is stored, we process the computation to init this aggregation chart.
+	 * Otherwise, we init classic charts
+	 */
 	function updateStatistics() {
 		resetStatistics();
 		resetWorkers();
@@ -896,12 +852,12 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		}
 	}
 
-    /**
-     * @ngdoc method
-     * @name reset
-     * @methodOf data-prep.services.statistics.service:StatisticsService
-     * @description Removes all data (charts, statistics values, cache, workers)
-     */
+	/**
+	 * @ngdoc method
+	 * @name reset
+	 * @methodOf data-prep.services.statistics.service:StatisticsService
+	 * @description Removes all data (charts, statistics values, cache, workers)
+	 */
 	function reset() {
 		resetCharts();
 		resetStatistics();
@@ -910,9 +866,9 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		resetWorkers();
 	}
 
-    /**
-     * Reset the charts
-     */
+	/**
+	 * Reset the charts
+	 */
 	function resetCharts() {
 		StateService.setStatisticsRangeLimits(null);
 		StateService.setStatisticsBoxPlot(null);
@@ -920,23 +876,23 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		StateService.setStatisticsHistogramActiveLimits(null);
 	}
 
-    /**
-     * Reset the statistics
-     */
+	/**
+	 * Reset the statistics
+	 */
 	function resetStatistics() {
 		StateService.setStatisticsDetails(null);
 	}
 
-    /**
-     * Reset the statistics cache
-     */
+	/**
+	 * Reset the statistics cache
+	 */
 	function resetCache() {
 		StatisticsRestService.resetCache();
 	}
 
-    /**
-     * Reset web workers
-     */
+	/**
+	 * Reset web workers
+	 */
 	function resetWorkers() {
 		if (service.dateWorker) {
 			service.dateWorker.terminate();

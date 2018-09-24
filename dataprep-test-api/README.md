@@ -33,7 +33,6 @@ It is possible to launch a specific test by specifying it in the command line:
 $ mvn verify -DskipITs=false -Dcucumber.options="classpath:features/ExportPreparationFromCSV.feature"
 ```
 
-By default cucumber tests call the backend api on `http://dev.data-prep.talend.lan:8888`.
 By default cucumber tests call the backend api on `http://localhost:8888`.
 You can set another url value by using the following maven parameter:
 ```
@@ -41,7 +40,7 @@ $ mvn verify -DskipITs=false -Dbackend.api.url=http://dev.data-prep.talend.lan:8
 ```
 Available keys are:
 * ``backend.api.url`` : to specify the global api base url
-* ``restassured.debug`` : to switch on RestAssured library debug logs (default value : false)
+* ``restassured.debug`` : to specify which HTTP details to log, ie ALL, REQUESTS_ONLY or NONE (default value : NONE)
 
 ## Report
 The default cucumber report will be available in the `dataprep-test-api/target/cucumber` directory.

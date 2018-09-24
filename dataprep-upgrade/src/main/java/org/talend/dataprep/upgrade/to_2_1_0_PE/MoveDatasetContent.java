@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,8 @@ public class MoveDatasetContent implements BaseUpgradeTaskTo_2_1_0_PE {
 
     @Value("${content-service.store.local.path}")
     public void setTmp(String basePath) {
-        this.tmp = StringUtils.endsWith(basePath, "/") ? basePath + "store/datasets/tmp" : basePath + "/store/datasets/tmp";
+        this.tmp = StringUtils.endsWith(basePath, "/") ? basePath + "store/datasets/tmp"
+                : basePath + "/store/datasets/tmp";
     }
 
     @Value("${content-service.store.local.path}")

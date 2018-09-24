@@ -77,6 +77,9 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(datasetOpen.getIcon(), is("talend-datastore"));
         assertThat(datasetOpen.getType(), is("@@dataset/OPEN"));
 
+        final ActionSettings datasetPreparationsFetch = settings.getActions().get("dataset:preparations:fetch");
+        assertThat(datasetPreparationsFetch.getType(), is("@@dataset/RELATED_PREPARATIONS"));
+
         final ActionSettings datasetRemove = settings.getActions().get("dataset:remove");
         assertThat(datasetRemove.getName(), is("Remove dataset"));
         assertThat(datasetRemove.getIcon(), is("talend-trash"));
@@ -107,7 +110,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(externalHelp.getIcon(), is("talend-question-circle"));
         assertThat(externalHelp.getType(), is("@@external/OPEN_WINDOW"));
         assertThat(externalHelp.getPayload().get(PAYLOAD_METHOD_KEY), is("open"));
-        assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("/header?content-lang=en"));
+        assertThat(((List<String>) externalHelp.getPayload().get(PAYLOAD_ARGS_KEY)).get(0),
+                is("/header?content-lang=en"));
 
         final ActionSettings inventoryCancelEdit = settings.getActions().get("inventory:cancel-edit");
         assertThat(inventoryCancelEdit.getName(), is("Cancel name edition"));
@@ -147,7 +151,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(menuPreparations.getIcon(), is("talend-dataprep"));
         assertThat(menuPreparations.getType(), is("@@router/GO_CURRENT_FOLDER"));
         assertThat(menuPreparations.getPayload().get(PAYLOAD_METHOD_KEY), is("go"));
-        assertThat(((List<String>) menuPreparations.getPayload().get(PAYLOAD_ARGS_KEY)).get(0), is("home.preparations"));
+        assertThat(((List<String>) menuPreparations.getPayload().get(PAYLOAD_ARGS_KEY)).get(0),
+                is("home.preparations"));
 
         final ActionSettings modalAbout = settings.getActions().get("modal:about");
         assertThat(modalAbout.getName(), is("About Data Preparation"));
@@ -167,6 +172,7 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(listDatasetPreparations.getIcon(), is("talend-dataprep"));
         assertThat(listDatasetPreparations.getItems(), is("preparations"));
         assertThat(listDatasetPreparations.getDynamicAction(), is("menu:playground:preparation"));
+        assertThat(listDatasetPreparations.getDynamicFetchAction(), is("dataset:preparations:fetch"));
         assertThat(listDatasetPreparations.getStaticActions().iterator().next(), is("dataset:open"));
 
         final ActionSettings onboardingPreparation = settings.getActions().get("onboarding:preparation");
@@ -251,7 +257,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(sidepanelToggle.getType(), is("@@sidepanel/TOGGLE"));
         assertThat(sidepanelToggle.getPayload().get(PAYLOAD_METHOD_KEY), is("toggleHomeSidepanel"));
 
-        final ActionDropdownSettings headerbarInformation = (ActionDropdownSettings) settings.getActions().get("headerbar:information");
+        final ActionDropdownSettings headerbarInformation =
+                (ActionDropdownSettings) settings.getActions().get("headerbar:information");
         assertThat(headerbarInformation.getName(), is("Information"));
         assertThat(headerbarInformation.getIcon(), is("talend-information"));
         assertThat(headerbarInformation.getStaticActions().get(0), is("modal:about"));
@@ -260,7 +267,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         assertThat(headerbarInformation.getStaticActions().get(3), is("external:community"));
         assertThat(headerbarInformation.getStaticActions().get(4), is("modal:feedback"));
 
-        final ActionDropdownSettings playgroundHeaderbarInformation = (ActionDropdownSettings) settings.getActions().get("headerbar:playground:information");
+        final ActionDropdownSettings playgroundHeaderbarInformation =
+                (ActionDropdownSettings) settings.getActions().get("headerbar:playground:information");
         assertThat(playgroundHeaderbarInformation.getName(), is("Information"));
         assertThat(playgroundHeaderbarInformation.getIcon(), is("talend-information"));
         assertThat(playgroundHeaderbarInformation.getStaticActions().get(0), is("modal:about"));
@@ -355,7 +363,8 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final ToolbarDetailsSettings toolbar = ((ListSettings) settings.getViews().get("listview:preparations")).getToolbar();
+        final ToolbarDetailsSettings toolbar =
+                ((ListSettings) settings.getViews().get("listview:preparations")).getToolbar();
         assertThat(toolbar.getDisplay().getDisplayModes(), contains("table", "large"));
         assertThat(toolbar.getDisplay().getOnChange(), is("preparation:display-mode"));
 
@@ -388,23 +397,23 @@ public class AppSettingsAPITest extends ApiServiceTestBase {
         final AppSettings settings = when().get("/api/settings/").as(AppSettings.class);
 
         // then
-        final ToolbarDetailsSettings toolbar = ((ListSettings) settings.getViews().get("listview:datasets")).getToolbar();
+        final ToolbarDetailsSettings toolbar =
+                ((ListSettings) settings.getViews().get("listview:datasets")).getToolbar();
         assertThat(toolbar.getDisplay().getDisplayModes(), contains("table", "large"));
         assertThat(toolbar.getDisplay().getOnChange(), is("dataset:display-mode"));
 
         final List<String> ids = mapOfStrings((toolbar.getSort().getOptions()), "id");
         final List<String> names = mapOfStrings(toolbar.getSort().getOptions(), "name");
-        assertThat(ids, contains("name", "author", "creationDate", "nbRecords"));
-        assertThat(names, contains("Name", "Author", "Created", "Rows"));
-
+        assertThat(ids, contains("name", "author", "creationDate"));
+        assertThat(names, contains("Name", "Author", "Created"));
 
         final ListSettings list = (ListSettings) settings.getViews().get("listview:datasets");
         assertThat(list.getDidMountActionCreator(), is("datasets:fetch"));
 
         final List<String> keys = map(list.getList().getColumns(), "key");
         final List<String> labels = map(list.getList().getColumns(), "label");
-        assertThat(keys, contains("name", "author", "creationDate", "nbRecords"));
-        assertThat(labels, contains("Name", "Author", "Created", "Rows"));
+        assertThat(keys, contains("name", "author", "creationDate"));
+        assertThat(labels, contains("Name", "Author", "Created"));
         assertThat(list.getList().getItemProps().getClassNameKey(), is("className"));
         assertThat(list.getList().getTitleProps().getIconKey(), is("icon"));
         assertThat(list.getList().getTitleProps().getKey(), is("name"));

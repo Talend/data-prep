@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
@@ -45,7 +45,7 @@ public class CopyDataSet extends GenericCommand<String> {
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + id + "/copy");
-                if(StringUtils.isNotBlank(name)) {
+                if (StringUtils.isNotBlank(name)) {
                     uriBuilder.addParameter("copyName", name);
                 }
                 return new HttpPost(uriBuilder.build());

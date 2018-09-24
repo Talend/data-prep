@@ -111,7 +111,6 @@ public class Folder implements Serializable, SharedResource {
         this.name = name;
     }
 
-
     /**
      * @return the CreationDate
      */
@@ -294,7 +293,8 @@ public class Folder implements Serializable, SharedResource {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(path, id, name, ownerId, owner, creationDate, lastModificationDate, nbPreparations, roles, sharedFolder);
+        return Objects.hash(path, id, name, ownerId, owner, creationDate, lastModificationDate, nbPreparations, roles,
+                sharedFolder);
     }
 
     /**

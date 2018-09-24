@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -53,7 +53,7 @@ public class PreparationReorderStep extends GenericCommand<String> {
     private HttpRequestBase onExecute(final String preparationId, final String stepId, final String parentStepId) {
         try {
             URIBuilder builder = new URIBuilder(
-                    preparationServiceUrl + "/preparations/"+ preparationId + "/steps/" + stepId + "/order");
+                    preparationServiceUrl + "/preparations/" + preparationId + "/steps/" + stepId + "/order");
             if (StringUtils.isNotBlank(parentStepId)) {
                 builder.addParameter("parentStepId", parentStepId);
             }

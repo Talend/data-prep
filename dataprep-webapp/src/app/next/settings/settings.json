@@ -1,0 +1,485 @@
+{
+  "contentTypes": {},
+  "actions": {
+    "divider": {
+      "divider": true
+    },
+    "menu:preparations": {
+      "id": "menu:preparations",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATIONS",
+          "options": {
+            "defaultValue": "Preparations"
+          }
+        }
+      },
+      "icon": "talend-dataprep",
+      "payload": {
+        "type": "MENU_LINK",
+        "cmf": {
+          "routerReplace": "/preparations"
+        }
+      }
+    },
+    "help:external": {
+      "id": "help:external",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:HELP",
+          "options": {
+            "defaultValue": "Help"
+          }
+        }
+      },
+      "hrefExpression": {
+        "id": "cmf.collections.get",
+        "args": ["settings.help.fuzzyUrl", ""]
+      },
+      "target": "_blank"
+    },
+    "help:community": {
+      "id": "help:community",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:COMMUNITY",
+          "options": {
+            "defaultValue": "Community"
+          }
+        }
+      },
+      "href": "https://community.talend.com/t5/Data-Quality-and-Preparation/bd-p/prepare_govern",
+      "target": "_blank"
+    },
+    "help:tour": {
+      "id": "help:tour",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:GUIDED_TOUR",
+          "options": {
+            "defaultValue": "Guided tour"
+          }
+        }
+      },
+      "actionCreator": "help:tour"
+    },
+    "help:about:open": {
+      "id": "help:about:open",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:ABOUT",
+          "options": {
+            "defaultValue": "About Data Preparation"
+          }
+        }
+      },
+      "actionCreator": "help:about:open"
+    },
+    "help:about:toggle": {
+      "id": "help:about:toggle",
+      "bsStyle": "default btn-inverse"
+    },
+    "help:feedback:open": {
+      "id": "help:feedback:open",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:FEEDBACK",
+          "options": {
+            "defaultValue": "Feedback"
+          }
+        }
+      },
+      "actionCreator": "help:feedback:open"
+    },
+    "preparation:add:open": {
+      "id": "preparation:add:open",
+      "bsStyle": "info",
+      "icon": "talend-plus-circle",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_ADD",
+          "options": {
+            "defaultValue": "Add preparation"
+          }
+        }
+      },
+      "actionCreator": "preparation:add:open"
+    },
+    "preparation:copy": {
+      "id": "preparation:copy",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:COPY",
+          "options": {
+            "defaultValue": "Copy"
+          }
+        }
+      },
+      "bsStyle": "primary"
+    },
+    "preparation:move": {
+      "id": "preparation:move",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:MOVE",
+          "options": {
+            "defaultValue": "Move"
+          }
+        }
+      },
+      "bsStyle": "primary"
+    },
+    "preparation:copy:open": {
+      "id": "preparation:copy:open",
+      "icon": "talend-files-o",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_COPY",
+          "options": {
+            "defaultValue": "Copy preparation"
+          }
+        }
+      },
+      "actionCreator": "preparation:copy:open"
+    },
+    "preparation:copy:move:cancel": {
+      "id": "preparation:copy:move:cancel",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:CANCEL",
+          "options": {
+            "defaultValue": "Cancel"
+          }
+        }
+      },
+      "bsStyle": "default btn-inverse",
+      "actionCreator": "preparation:copy:move:cancel"
+    },
+    "preparation:move:open": {
+      "id": "preparation:move:open",
+      "icon": "talend-file-move",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_MOVE",
+          "options": {
+            "defaultValue": "Move preparation"
+          }
+        }
+      },
+      "actionCreator": "preparation:move:open"
+    },
+    "preparation:rename": {
+      "id": "preparation:rename",
+      "icon": "talend-pencil",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_RENAME",
+          "options": {
+            "defaultValue": "Rename"
+          }
+        }
+      },
+      "actionCreator": "preparation:rename"
+    },
+    "preparation:remove": {
+      "id": "preparation:remove",
+      "icon": "talend-trash",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "preparation:remove"
+    },
+    "folder:remove": {
+      "id": "folder:remove",
+      "bsStyle": "danger",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "folder:remove"
+    },
+    "folder:remove:close": {
+      "id": "folder:remove:close",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:CANCEL",
+          "options": {
+            "defaultValue": "Cancel"
+          }
+        }
+      },
+      "bsStyle": "default btn-inverse",
+      "actionCreator": "folder:remove:close"
+    },
+    "folder:remove:open": {
+      "id": "folder:remove:open",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "folder:remove:open"
+    },
+    "preparation:duplicate": {
+      "id": "preparation:duplicate",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATION_DUPLICATE",
+          "options": {
+            "defaultValue": "Duplicate"
+          }
+        }
+      },
+      "icon": "talend-folder",
+      "actionCreator": "preparation:duplicate"
+    },
+    "preparation:edit:submit": {
+      "id": "preparation:edit:submit",
+      "actionCreator": "preparation:edit:submit"
+    },
+    "preparation:edit:cancel": {
+      "id": "preparation:edit:cancel",
+      "actionCreator": "preparation:edit:cancel"
+    },
+    "folder:add:open": {
+      "id": "folder:add:open",
+      "icon": "talend-folder",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:FOLDER_ADD",
+          "options": {
+            "defaultValue": "Add folder"
+          }
+        }
+      },
+      "actionCreator": "folder:add:open"
+    }
+  },
+  "props": {
+    "AppLoader#default": {
+      "saga": "bootstrap",
+      "hasCollections": ["settings"]
+    },
+    "Breadcrumbs#default": {},
+    "AboutDialog#default": {
+      "icon": "talend-tdp-colored"
+    },
+    "HeaderBar#default": {
+      "app": "Data Preparation",
+      "logo": {
+        "id": "talend-logo",
+        "label": {
+          "i18n": {
+            "key": "tdp-cmf:GOTO_HOME",
+            "options": {
+              "defaultValue": "Go to home page"
+            }
+          }
+        },
+        "isFull": false,
+        "payload": {
+          "type": "MENU_LINK",
+          "cmf": {
+            "routerReplace": "/preparations"
+          }
+        }
+      },
+      "brand": {
+        "label": "Data Preparation (react-cmf)",
+        "payload": {
+          "type": "MENU_LINK",
+          "cmf": {
+            "routerReplace": "/preparations"
+          }
+        }
+      },
+      "search": {
+        "id": "headerbar:search",
+        "componentId": "headerbar:search",
+        "icon": {
+          "name": "talend-search",
+          "title": {
+            "i18n": {
+              "key": "tdp-cmf:SEARCH_TOGGLE",
+              "options": {
+                "defaultValue": "Toggle search input"
+              }
+            }
+          },
+          "bsStyle": "link",
+          "tooltipPlacement": "bottom"
+        },
+        "onChangeActionCreator": "headerbar:search:start",
+        "onSelectActionCreator": "headerbar:search:select",
+        "onBlurActionCreator": "headerbar:search:reset",
+        "itemsExpression": {
+          "id": "cmf.collections.get",
+          "args": ["search", null]
+        }
+      },
+      "help": {
+        "id": "header-help",
+        "icon": "talend-question-circle",
+        "label": {
+          "i18n": {
+            "key": "tdp-cmf:HELP",
+            "options": {
+              "defaultValue": "Help"
+            }
+          }
+        },
+        "target": "_blank",
+        "hrefExpression": {
+          "id": "cmf.collections.get",
+          "args": ["settings.help.fuzzyUrl", ""]
+        }
+      },
+      "information": {
+        "id": "headerbar:information",
+        "bsStyle": "link",
+        "icon": "talend-info-circle",
+        "label": {
+          "i18n": {
+            "key": "tdp-cmf:INFORMATION",
+            "options": {
+              "defaultValue": "Information"
+            }
+          }
+        },
+        "hideLabel": true,
+        "pullRight": true,
+        "noCaret": true,
+        "tooltipPlacement": "bottom",
+        "displayMode": "dropdown",
+        "actionIds": [
+          "help:about:open",
+          "help:tour",
+          "divider",
+          "help:community",
+          "help:feedback:open"
+        ]
+      }
+    },
+    "SidePanel#default": {
+      "actionIds": ["menu:preparations", "menu:datasets", "menu:datastores"]
+    },
+    "HomeListView#datastores": {
+      "hasTheme": true
+    },
+    "HomeListView#datasets": {
+      "hasTheme": true
+    },
+    "HomeListView#preparations": {
+      "didMountActionCreator": "preparation:fetch",
+      "hasTheme": true,
+      "header": {},
+      "sidepanel": {},
+      "list": {
+        "components": {
+          "before-component": [
+            {
+              "component": "Breadcrumbs"
+            }
+          ]
+        },
+        "collectionId": "preparations",
+        "list": {
+          "columns": [
+            {
+              "key": "name",
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:NAME",
+                  "options": {
+                    "defaultValue": "Name"
+                  }
+                }
+              }
+            },
+            {
+              "key": "author",
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:AUTHOR",
+                  "options": {
+                    "defaultValue": "Author"
+                  }
+                }
+              }
+            },
+            {
+              "key": "datasetName",
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:DATASET",
+                  "options": {
+                    "defaultValue": "Dataset"
+                  }
+                }
+              }
+            },
+            {
+              "key": "nbSteps",
+              "label": {
+                "i18n": {
+                  "key": "tdp-cmf:STEPS",
+                  "options": {
+                    "defaultValue": "Steps"
+                  }
+                }
+              }
+            }
+          ],
+          "titleProps": {
+            "key": "name",
+            "iconKey": "icon",
+            "displayModeKey": "display"
+          }
+        },
+        "toolbar": {
+          "filter": {
+            "placeholder": {
+              "i18n": {
+                "key": "tdp-cmf:PREPARATION_FIND",
+                "options": {
+                  "defaultValue": "Find a preparation"
+                }
+              }
+            }
+          }
+        },
+        "actions": {
+          "title": "preparation:open",
+          "left": [
+            "preparation:add:open",
+            "folder:add:open"
+          ],
+          "items": [
+            "preparation:rename",
+            "preparation:remove",
+            "preparation:copy:open",
+            "preparation:move:open"
+          ],
+          "editSubmit": "preparation:edit:submit",
+          "editCancel": "preparation:edit:cancel"
+        }
+      }
+    }
+  },
+  "ref": {
+    "SidePanel#default": {},
+    "AppHeaderBar#default": {}
+  }
+}

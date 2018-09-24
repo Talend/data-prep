@@ -15,7 +15,7 @@ package org.talend.dataprep.schema.xls;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
@@ -39,7 +39,8 @@ public class XlsDetector extends POIFSContainerDetector implements Detector {
     /**
      * The XLS MIME type returned by TIKA for XLS format
      */
-    private static final String OLD_XLS_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    private static final String OLD_XLS_MEDIA_TYPE =
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     private ZipContainerDetector zipContainerDetector = new ZipContainerDetector();
 
@@ -55,7 +56,7 @@ public class XlsDetector extends POIFSContainerDetector implements Detector {
      * The general contract of a detector is to not close the specified stream before returning. It is to the
      * responsibility of the caller to close it. The detector should leverage the mark/reset feature of the specified
      * {@see TikaInputStream} in order to let the stream always return the same bytes.
-     * 
+     *
      * @param metadata the specified TIKA {@link Metadata}
      * @param inputStream the specified input stream
      * @return either null or an XLS format

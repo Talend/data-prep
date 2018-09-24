@@ -23,36 +23,12 @@ import org.talend.dataprep.async.AsyncGroupKey;
 import org.talend.dataprep.validation.OneNotBlank;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Parameter for dataset/preparation format
  */
-@OneNotBlank({"preparationId", "datasetId"})
+@OneNotBlank({ "preparationId", "datasetId" })
 public class ExportParameters implements AsyncGroupKey {
-
-    /**
-     * Where should the data comes from.
-     */
-    public enum SourceType {
-        /**
-         * Export is performed from preparation's head. This corresponds to apply steps to dataset head (10k
-         * first lines).
-         */
-        HEAD,
-        /**
-         * Export is performed for building a new sample (out of a filter). This corresponds to "Fetch more"
-         * operation on UI side.
-         */
-        FILTER,
-        /**
-         * Export is performed from preparation's reservoir (not first 10K lines of the dataset). <b>Not used</b> at
-         * the moment.
-         */
-        RESERVOIR
-    }
 
     /**
      * The export format.
@@ -84,9 +60,7 @@ public class ExportParameters implements AsyncGroupKey {
 
     private Map<String, String> arguments = new HashMap<>();
 
-    @JsonProperty("filter")
-    @JsonRawValue
-    private Object filter;
+    private String filter;
 
     private Map<String, String> unmappedProperties = new HashMap<>();
 
@@ -158,21 +132,16 @@ public class ExportParameters implements AsyncGroupKey {
      * @return The filter (as raw JSON) for the export.
      * @see org.talend.dataprep.api.filter.FilterService
      */
-    @JsonRawValue
     public String getFilter() {
-        return filter == null ? null : filter.toString();
+        return filter;
     }
 
     /**
      * @param filter The filter (as raw JSON) for the export.
      * @see org.talend.dataprep.api.filter.FilterService
      */
-    public void setFilter(JsonNode filter) {
-        if (filter == null || filter.isNull()) {
-            this.filter = null;
-        } else {
-            this.filter = filter;
-        }
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     public Map<String, String> any() {
@@ -193,12 +162,12 @@ public class ExportParameters implements AsyncGroupKey {
         }
     }
 
-    public void setContent(DataSet content) {
-        this.content = content;
-    }
-
     public DataSet getContent() {
         return content;
+    }
+
+    public void setContent(DataSet content) {
+        this.content = content;
     }
 
     @Override
@@ -215,7 +184,28 @@ public class ExportParameters implements AsyncGroupKey {
                 '}';
     }
 
-    public String generateUniqueId(){
-        return DigestUtils.sha1Hex(preparationId +"_" + stepId + "_" + datasetId + "_" + from +"_" + filter);
+    public String generateUniqueId() {
+        return DigestUtils.sha1Hex(preparationId + "_" + stepId + "_" + datasetId + "_" + from + "_" + filter);
+    }
+
+    /**
+     * Where should the data comes from.
+     */
+    public enum SourceType {
+        /**
+         * Export is performed from preparation's head. This corresponds to apply steps to dataset head (10k
+         * first lines).
+         */
+        HEAD,
+        /**
+         * Export is performed for building a new sample (out of a filter). This corresponds to "Fetch more"
+         * operation on UI side.
+         */
+        FILTER,
+        /**
+         * Export is performed from preparation's reservoir (not first 10K lines of the dataset). <b>Not used</b> at
+         * the moment.
+         */
+        RESERVOIR
     }
 }

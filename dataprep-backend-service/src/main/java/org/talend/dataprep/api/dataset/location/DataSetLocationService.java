@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.dataset.DataSetLocation;
@@ -41,7 +41,8 @@ public class DataSetLocationService {
      * @return the available dataset locations.
      */
     public List<DataSetLocation> getAvailableLocations() {
-        List<DataSetLocation> suppliedLocations = datasetLocationsSuppliers.stream() //
+        List<DataSetLocation> suppliedLocations = datasetLocationsSuppliers
+                .stream() //
                 .flatMap(dls -> dls.getAvailableLocations().stream()) //
                 .collect(toList());
         ArrayList<DataSetLocation> allLocations = new ArrayList<>();
@@ -67,7 +68,8 @@ public class DataSetLocationService {
         return matchingDatasetLocation;
     }
 
-    private DataSetLocation findMatchingDataSetLocation(String locationType, Collection<? extends DataSetLocation> locations) {
+    private DataSetLocation findMatchingDataSetLocation(String locationType,
+            Collection<? extends DataSetLocation> locations) {
         DataSetLocation matchingDatasetLocation = null;
         for (DataSetLocation location : locations) {
             if (locationType.equals(location.getLocationType())) {
@@ -78,10 +80,11 @@ public class DataSetLocationService {
         return matchingDatasetLocation;
     }
 
-    private DataSetLocation findDataSetLocationFromSuppliers(String locationType, DataSetLocation matchingDatasetLocation) {
+    private DataSetLocation findDataSetLocationFromSuppliers(String locationType,
+            DataSetLocation matchingDatasetLocation) {
         for (DatasetLocationsSupplier datasetLocationsSupplier : datasetLocationsSuppliers) {
-            matchingDatasetLocation = findMatchingDataSetLocation(locationType,
-                    datasetLocationsSupplier.getAvailableLocations());
+            matchingDatasetLocation =
+                    findMatchingDataSetLocation(locationType, datasetLocationsSupplier.getAvailableLocations());
             if (matchingDatasetLocation != null)
                 break;
         }

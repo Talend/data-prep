@@ -35,7 +35,9 @@ describe('Playground header component', () => {
 			element = angular.element(`
 			<playground-header
                     preview="preview"
+                    preview-loading="previewLoading"
                     lookup-visible="lookupVisible"
+                    lookup-loading="lookupLoading"
                     preparation-picker="preparationPicker"
                     parameters-visible="parametersVisible"
                     enable-export="enableExport"
@@ -169,6 +171,18 @@ describe('Playground header component', () => {
 			expect(playgroundLookupIcon.hasClass('pressed')).toBe(true);
 		});
 
+		it('lookup toggle button looks in progress', () => {
+			// given
+			scope.lookupLoading = true;
+			createElement();
+
+			// when
+			let playgroundLookupIcon = element.find('#playground-lookup-icon').eq(0);
+
+			// then
+			expect(playgroundLookupIcon.find('loader').length).toBe(1);
+		});
+
 		it('should call lookup callback', () => {
 			// given
 			scope.onLookup = jasmine.createSpy('onLookup');
@@ -255,6 +269,17 @@ describe('Playground header component', () => {
 
 			// then
 			expect(element.find('#preview').length).toBe(0);
+		});
+
+		it('should render preview badge', () => {
+			// given
+			scope.previewLoading = true;
+			scope.preview = true;
+			// when
+			createElement();
+
+			// then
+			expect(element.find('loader').length).toBe(1);
 		});
 	});
 });

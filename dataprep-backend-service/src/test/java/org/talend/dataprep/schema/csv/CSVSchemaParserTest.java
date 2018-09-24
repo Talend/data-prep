@@ -34,7 +34,7 @@ import org.talend.dataprep.schema.SchemaParser;
 
 /**
  * Unit test for the CSVSchemaParser class.
- * 
+ *
  * @see CSVSchemaParser
  */
 public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
@@ -67,7 +67,7 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
 
     /**
      * When trying to guess the columns data type an IndexOutOfBoundsException should not be thrown.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -102,6 +102,26 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
             final Map<String, String> parameters = request.getMetadata().getContent().getParameters();
             char actual = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals('|', actual);
+        }
+    }
+
+    @Test
+    public void shouldPassOnNbLinesHeaderParameter_TDP_5925() throws IOException {
+        // given
+        String str = "1;2;3;4;5;6\n" + "1;John;Lennon;40;10/09/1940;false\n" + "2;David;Bowie;67;01/08/1947;true\n";
+        try (InputStream inputStream = new ByteArrayInputStream(str.getBytes())) {
+            // We do know the format and therefore we go directly to the CSV schema guessing
+            SchemaParser.Request request = getRequest(inputStream, "#3");
+            request.getMetadata().setEncoding("UTF-8");
+
+            // when
+            csvSchemaParser.parse(request);
+
+            // then
+            final Map<String, String> parameters = request.getMetadata().getContent().getParameters();
+            int actual = Integer.parseInt(parameters.get(CSVFormatFamily.HEADER_NB_LINES_PARAMETER));
+            // first line is not recognize by detector so just fallback to no header
+            assertEquals(0, actual);
         }
     }
 
@@ -196,7 +216,8 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
         Map<Character, Separator> separatorMap = new HashMap<>();
         char[] cases = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
         for (char candidate : cases) {
-            csvSchemaParser.processCharAsSeparatorCandidate(candidate, separatorMap, CSVSchemaParser.DEFAULT_VALID_SEPARATORS, 0);
+            csvSchemaParser.processCharAsSeparatorCandidate(candidate, separatorMap,
+                    CSVSchemaParser.DEFAULT_VALID_SEPARATORS, 0);
         }
         assertTrue(separatorMap.isEmpty());
     }
@@ -365,10 +386,10 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
 
             List<String> header = csvFormatUtils.retrieveHeader(parameters);
             assertEquals(';', actual);
-            List<String> expected = Arrays.asList("id", "first_name", "last_name", "email", "job_title", "company", "city",
-                    "state", "country", "date", "campaign_id", "lead_score", "registration", "city", "birth", "nbCommands", "id",
-                    "first_name", "last_name", "email", "job_title", "company", "city", "state", "country", "date", "campaign_id",
-                    "lead_score", "registration", "city", "birth", "nbCommands");
+            List<String> expected = Arrays.asList("id", "first_name", "last_name", "email", "job_title", "company",
+                    "city", "state", "country", "date", "campaign_id", "lead_score", "registration", "city", "birth",
+                    "nbCommands", "id", "first_name", "last_name", "email", "job_title", "company", "city", "state",
+                    "country", "date", "campaign_id", "lead_score", "registration", "city", "birth", "nbCommands");
             assertEquals(expected, header);
         }
     }
@@ -393,19 +414,22 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
 
     @Test
     public void should_accept_csv_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("toto").formatFamilyId("formatGuess#csv").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("toto").formatFamilyId("formatGuess#csv").build();
         assertTrue(csvSchemaParser.accept(metadata));
     }
 
     @Test
     public void should_not_accept_xls_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#xls").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#xls").build();
         assertFalse(csvSchemaParser.accept(metadata));
     }
 
     @Test
     public void should_not_accept_html_update() throws Exception {
-        final DataSetMetadata metadata = metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#html").build();
+        final DataSetMetadata metadata =
+                metadataBuilder.metadata().id("tata").formatFamilyId("formatGuess#html").build();
         assertFalse(csvSchemaParser.accept(metadata));
     }
 
@@ -419,8 +443,8 @@ public class CSVSchemaParserTest extends AbstractSchemaTestUtils {
      * @param headerNbLines the specified number of lines spanned by the headers
      * @param isFirstLineHeader true if the first line of the dataset is a headers
      */
-    private void resetParameters(DataSetMetadata dataSetMetadata, String separator, List<String> headers, int headerNbLines,
-            boolean isFirstLineHeader) {
+    private void resetParameters(DataSetMetadata dataSetMetadata, String separator, List<String> headers,
+            int headerNbLines, boolean isFirstLineHeader) {
         dataSetMetadata.getContent().setNbLinesInHeader(headerNbLines);
         Separator newSeparator = new Separator(separator.charAt(0));
         final List<Pair<String, Type>> columns = new ArrayList<>();

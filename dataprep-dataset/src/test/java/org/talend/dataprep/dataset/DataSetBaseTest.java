@@ -121,7 +121,8 @@ public abstract class DataSetBaseTest extends ServiceBaseTest {
                 .expect() //
                 .statusCode(200) //
                 .when() //
-                .get("/datasets/{id}/content?metadata={withMetadata}&sample={sampleSize}", dataSetId, withMetadata, sampleSize) //
+                .get("/datasets/{id}/content?metadata={withMetadata}&sample={sampleSize}", dataSetId, withMetadata,
+                        sampleSize) //
                 .asString();
 
     }
@@ -132,7 +133,10 @@ public abstract class DataSetBaseTest extends ServiceBaseTest {
                 .queryParam("Content-Type", "text/csv") //
                 .queryParam("name", name) //
                 .when() //
-                .expect().statusCode(200).log().ifError() //
+                .expect()
+                .statusCode(200)
+                .log()
+                .ifError() //
                 .post("/datasets") //
                 .asString();
         assertQueueMessages(dataSetId);

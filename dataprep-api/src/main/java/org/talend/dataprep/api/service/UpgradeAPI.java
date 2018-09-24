@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -87,7 +87,8 @@ public class UpgradeAPI extends APIService {
     }
 
     @RequestMapping(value = "/api/upgrade/check", method = GET)
-    @ApiOperation(value = "Checks if a newer versions are available and returns them as JSON.", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Checks if a newer versions are available and returns them as JSON.",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @PublicAPI
     public Stream<UpgradeServerVersion> check() {
@@ -115,7 +116,8 @@ public class UpgradeAPI extends APIService {
         }
     }
 
-    private List<UpgradeServerVersion> fetchServerUpgradeVersions(org.talend.dataprep.info.Version version) throws IOException {
+    private List<UpgradeServerVersion> fetchServerUpgradeVersions(org.talend.dataprep.info.Version version)
+            throws IOException {
         final HttpPost post = new HttpPost(upgradeVersionLocation);
         final String response;
         final StringWriter content = new StringWriter();

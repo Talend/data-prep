@@ -1,27 +1,21 @@
 /*
- *  ============================================================================
+ * ============================================================================
  *
- *  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
  *
- *  This source code is available under agreement available at
- *  https://github.com/Talend/data-prep/blob/master/LICENSE
+ * This source code is available under agreement available at
+ * https://github.com/Talend/data-prep/blob/master/LICENSE
  *
- *  You should have received a copy of the agreement
- *  along with this program; if not, write to Talend SA
- *  9 rue Pages 92150 Suresnes, France
+ * You should have received a copy of the agreement
+ * along with this program; if not, write to Talend SA
+ * 9 rue Pages 92150 Suresnes, France
  *
- *  ============================================================================
+ * ============================================================================
  */
 
 package org.talend.dataprep.dataset.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
+import com.google.common.base.Throwables;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -49,7 +43,12 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.util.ConverterBasedPropertyEditor;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import com.google.common.base.Throwables;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -73,19 +72,19 @@ public class DataSetController {
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(Dataset.CertificationState.class, new ConverterBasedPropertyEditor<>(Dataset.CertificationState::valueOf));
+        binder.registerCustomEditor(Dataset.CertificationState.class,
+                new ConverterBasedPropertyEditor<>(Dataset.CertificationState::valueOf));
     }
 
     @GetMapping
-    public Stream<Dataset> getAllDatasets(
-            @RequestParam(required = false) Dataset.CertificationState certification,
+    public Stream<Dataset> getAllDatasets(@RequestParam(required = false) Dataset.CertificationState certification,
             @RequestParam(required = false) Boolean favorite) {
         boolean legacyCertified = CERTIFIED == certification;
         boolean legacyFavorite = favorite != null && favorite == TRUE;
 
-        return dataSetService.list(Sort.CREATION_DATE, Order.DESC, null, false, legacyCertified, legacyFavorite,
-                false) //
-                .map(userDataSetMetadata -> beanConversionService.convert(userDataSetMetadata, Dataset.class));
+        return dataSetService
+                .list(Sort.CREATION_DATE, Order.DESC, null, false, legacyCertified, legacyFavorite, false) //
+                .map(datasetDTO -> beanConversionService.convert(datasetDTO, Dataset.class));
     }
 
     /**
@@ -97,11 +96,10 @@ public class DataSetController {
      * @return
      */
     @GetMapping("/{datasetId}")
-    public Dataset getDataset(@PathVariable String datasetId,
-            @RequestParam(required = false) boolean withUiSpec,
+    public Dataset getDataset(@PathVariable String datasetId, @RequestParam(required = false) boolean withUiSpec,
             @RequestParam(required = false) boolean advanced) {
         DataSet dataSet = dataSetService.getMetadata(datasetId);
-        if (dataSet != null){
+        if (dataSet != null) {
             DataSetMetadata metadata = dataSet.getMetadata();
             if (metadata != null) {
                 return beanConversionService.convert(metadata, Dataset.class);
@@ -123,8 +121,7 @@ public class DataSetController {
     }
 
     @GetMapping(value = "/{datasetId}/content", produces = AvroUtils.AVRO_BINARY_MIME_TYPES_UNOFFICIAL_VALID_VALUE)
-    public Resource getDatasetContent(@PathVariable String datasetId,
-            @RequestParam(defaultValue = "0") long offset,
+    public Resource getDatasetContent(@PathVariable String datasetId, @RequestParam(defaultValue = "0") long offset,
             @RequestParam(defaultValue = "-1") long limit) {
         InputStream result;
         Callable<DataSet> dataSetCallable = dataSetService.get(true, true, limit, EMPTY, datasetId);
@@ -151,7 +148,8 @@ public class DataSetController {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
 
-            records.map(AvroUtils.buildToGenericRecordConverter(schema)) //
+            records
+                    .map(AvroUtils.buildToGenericRecordConverter(schema)) //
                     .forEach(record -> {
                         try {
                             writer.write(record, encoder);

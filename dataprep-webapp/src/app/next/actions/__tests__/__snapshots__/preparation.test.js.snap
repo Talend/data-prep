@@ -28,21 +28,29 @@ Object {
 }
 `;
 
-exports[`Preparation action should create a duplicate action 1`] = `
-Object {
-  "payload": Object {
-    "id": 42,
-  },
-  "type": "TDP_PREPARATION_DUPLICATE",
-}
-`;
-
 exports[`Preparation action should create a fetch action 1`] = `
 Object {
   "payload": Object {
     "folderId": 42,
   },
   "type": "TDP_FETCH_PREPARATIONS",
+}
+`;
+
+exports[`Preparation action should create a folder remove action 1`] = `
+Object {
+  "payload": Object {
+    "id": 42,
+    "type": "folder",
+  },
+  "type": "TDP_OPEN_REMOVE_FOLDER_MODAL",
+}
+`;
+
+exports[`Preparation action should create a preparation remove action 1`] = `
+Object {
+  "payload": 42,
+  "type": "TDP_REMOVE_PREPARATION",
 }
 `;
 

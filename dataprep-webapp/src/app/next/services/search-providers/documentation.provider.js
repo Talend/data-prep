@@ -1,7 +1,6 @@
 import http from '@talend/react-cmf/lib/sagas/http';
 import SearchProvider from './search.provider';
-import { DOCUMENTATION_SEARCH_URL, DEFAULT_PAYLOAD } from '../../constants/search';
-
+import SettingsService from './../../services/settings.service';
 
 export default class DocumentationSearchProvider extends SearchProvider {
 	constructor(categories) {
@@ -12,9 +11,14 @@ export default class DocumentationSearchProvider extends SearchProvider {
 	build(query) {
 		return [
 			http.post,
-			DOCUMENTATION_SEARCH_URL,
+			SettingsService.help.searchUrl,
 			{
-				...DEFAULT_PAYLOAD,
+				contentLocale: SettingsService.help.languageFacet,
+				filters: [
+					{ key: 'version', values: [SettingsService.help.versionFacet] },
+					{ key: 'EnrichPlatform', values: ['Talend Data Preparation'] },
+				],
+				paging: { page: 1, perPage: 5 },
 				query,
 			},
 		];
@@ -22,7 +26,7 @@ export default class DocumentationSearchProvider extends SearchProvider {
 
 	transform(data) {
 		return {
-			title: this.category.label,
+			title: (this.category.labelFn && this.category.labelFn()) || this.category.label || '',
 			icon: {
 				name: this.category.icon,
 				title: this.category.type,

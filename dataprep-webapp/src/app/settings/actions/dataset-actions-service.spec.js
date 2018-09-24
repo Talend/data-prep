@@ -295,7 +295,7 @@ describe('Datasets actions service', () => {
 			expect(StateService.setDatasetToUpdate).toHaveBeenCalledWith({ id: 'dataset' });
 		}));
 
-		it('should remove dataset', inject(($q, $rootScope, DatasetService, DatasetActionsService, MessageService, TalendConfirmService) => {
+		it('should remove dataset', inject(($q, $rootScope, DatasetService, DatasetActionsService, MessageService, ConfirmService) => {
 			// given
 			const action = {
 				type: '@@dataset/REMOVE',
@@ -306,7 +306,7 @@ describe('Datasets actions service', () => {
 				}
 			};
 
-			spyOn(TalendConfirmService, 'confirm').and.returnValue($q.when());
+			spyOn(ConfirmService, 'confirm').and.returnValue($q.when());
 			spyOn(MessageService, 'success').and.returnValue();
 
 			// when
@@ -314,7 +314,7 @@ describe('Datasets actions service', () => {
 			$rootScope.$digest();
 
 			// then
-			expect(TalendConfirmService.confirm).toHaveBeenCalled();
+			expect(ConfirmService.confirm).toHaveBeenCalled();
 			expect(DatasetService.delete).toHaveBeenCalledWith({ id: 'dataset', name: 'dataset' });
 			expect(MessageService.success).toHaveBeenCalled();
 		}));
@@ -454,6 +454,36 @@ describe('Datasets actions service', () => {
 
 			// then
 			expect(UploadWorkflowService.openDataset).toHaveBeenCalledWith(dataset, event);
+		}));
+
+		it('should retrieve related preparations for a dataset', inject(($q, $rootScope, DatasetActionsService, DatasetService, StateService) => {
+			// given
+			const dataset = { id: 'myDatasetId', draft: true };
+			stateMock.inventory.datasets.content = [
+				dataset,
+			];
+			const action = {
+				type: '@@dataset/RELATED_PREPARATIONS',
+				payload: { isOpen: true, model: dataset },
+			};
+			spyOn(DatasetService, 'getRelatedPreparations')
+				.and.returnValue(
+					$q.when(['a', 'b', 'c']),
+			);
+			spyOn(StateService, 'setDatasets');
+
+			// when
+			DatasetActionsService.dispatch(action);
+			$rootScope.$digest();
+
+			// then
+			expect(StateService.setDatasets)
+				.toHaveBeenCalledWith([
+					{
+						...dataset,
+						preparations: ['a', 'b', 'c'],
+					},
+				]);
 		}));
 	});
 });

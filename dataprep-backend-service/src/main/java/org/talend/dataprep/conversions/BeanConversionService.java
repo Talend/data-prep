@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.conversions;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Stream.of;
 
 import java.beans.PropertyDescriptor;
@@ -58,7 +59,21 @@ public class BeanConversionService implements ConversionService {
      */
     private static void copyBean(Object source, Object converted) {
         // Find property(ies) to ignore during copy.
-        List<String> discardedProperties = new LinkedList<>();
+        final List<String> discardedProperties = getDiscardedProperties(source, converted);
+
+        // Perform copy
+        BeanUtils.copyProperties(source, converted, discardedProperties.toArray(new String[0]));
+    }
+
+    private static final Map<String, List<String>> discardedPropertiesCache = new HashMap<>();
+
+    private static List<String> getDiscardedProperties(Object source, Object converted) {
+        final String cacheKey = source.getClass().getName() + " to " + converted.getClass().getName();
+        if (discardedPropertiesCache.containsKey(cacheKey)) {
+            return discardedPropertiesCache.get(cacheKey);
+        }
+
+        final List<String> discardedProperties = new LinkedList<>();
         final BeanWrapper sourceBean = new BeanWrapperImpl(source);
         final BeanWrapper targetBean = new BeanWrapperImpl(converted);
         final PropertyDescriptor[] sourceProperties = sourceBean.getPropertyDescriptors();
@@ -72,9 +87,11 @@ public class BeanConversionService implements ConversionService {
                     final Type sourceReturnType = readMethod.getGenericReturnType();
                     final Method targetPropertyWriteMethod = targetProperty.getWriteMethod();
                     if (targetPropertyWriteMethod != null) {
-                        final Type targetReturnType = targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
-                        boolean valid = Object.class.equals(targetPropertyType) ||
-                                sourcePropertyType.equals(targetPropertyType) && sourceReturnType.equals(targetReturnType);
+                        final Type targetReturnType =
+                                targetPropertyWriteMethod.getParameters()[0].getParameterizedType();
+                        boolean valid =
+                                Object.class.equals(targetPropertyType) || sourcePropertyType.equals(targetPropertyType)
+                                        && sourceReturnType.equals(targetReturnType);
                         if (!valid) {
                             discardedProperties.add(sourceProperty.getName());
                         }
@@ -84,16 +101,16 @@ public class BeanConversionService implements ConversionService {
                 }
             }
         }
+        discardedPropertiesCache.put(cacheKey, unmodifiableList(discardedProperties));
 
-        // Perform copy
-        BeanUtils.copyProperties(source, converted, discardedProperties.toArray(new String[discardedProperties.size()]));
+        return discardedProperties;
     }
 
     public static <T> RegistrationBuilder<T> fromBean(Class<T> source) {
         return new RegistrationBuilder<>(source);
     }
 
-    public  void register(Registration<?> registration) {
+    public void register(Registration<?> registration) {
         registrations.merge(registration.getModelClass(), (Registration<Object>) registration, Registration::merge);
     }
 
@@ -130,7 +147,7 @@ public class BeanConversionService implements ConversionService {
     public <U, T> T convert(U source, Class<T> aClass, BiFunction<U, T, T>... onTheFlyConvert) {
         try {
             T current = convert(source, aClass);
-            for (BiFunction<U, T, T> function: onTheFlyConvert) {
+            for (BiFunction<U, T, T> function : onTheFlyConvert) {
                 current = function.apply(source, current);
             }
             return current;
@@ -145,12 +162,12 @@ public class BeanConversionService implements ConversionService {
         if (source == null) {
             return null;
         }
-        if (source.getClass().equals(targetClass)) {
-            return (U) source;
-        }
         if (tracer != null) {
             tracer.addTag(Span.SPAN_LOCAL_COMPONENT_TAG_NAME, BeanConversionService.class.getName());
-            tracer.addTag("source", source.getClass().getName());
+            tracer.addTag("source", "class " + source.getClass().getName());
+        }
+        if (source.getClass().equals(targetClass)) {
+            return (U) source;
         }
         try {
             U converted = targetClass.newInstance();
@@ -187,7 +204,7 @@ public class BeanConversionService implements ConversionService {
 
     /** Get all available transformations in this registration. */
     private <T, U> List<BiFunction<T, U, U>> getRegistrationFunctions(Class<U> targetClass,
-                                                                                  Registration<T> registration) {
+            Registration<T> registration) {
         List<BiFunction<T, U, U>> customs = new ArrayList<>();
         Class<U> currentClass = targetClass;
         while (currentClass != null) {

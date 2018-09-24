@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.folder.FolderTreeNode;
@@ -113,7 +113,8 @@ public class PreparationClientTest {
      * @return The created stepContent id.
      */
     public String addStep(final String preparationId, final String stepContent) throws IOException {
-        final Response post = given().body(stepContent)//
+        final Response post = given()
+                .body(stepContent)//
                 .contentType(JSON)//
                 .when()//
                 .post("/preparations/{id}/actions", preparationId);
@@ -131,8 +132,15 @@ public class PreparationClientTest {
      * @return The created stepContent id.
      */
     public void addStep(final String preparationId, AppendStep stepToAppend) {
-        given().body(singletonList(stepToAppend)).contentType(ContentType.JSON).when()
-                .post("/preparations/{id}/actions", preparationId).then().statusCode(200).log().ifError();
+        given()
+                .body(singletonList(stepToAppend))
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/preparations/{id}/actions", preparationId)
+                .then()
+                .statusCode(200)
+                .log()
+                .ifError();
     }
 
     /**
@@ -184,8 +192,9 @@ public class PreparationClientTest {
     }
 
     public PreparationDTO createPreparation(final Preparation preparation) {
-        Response post = given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails()
-                .post("/preparations?folderId={folderId}", homeFolderId);
+        Response post =
+                given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails().post(
+                        "/preparations?folderId={folderId}", homeFolderId);
         return getPreparation(post.asString());
     }
 
@@ -196,8 +205,9 @@ public class PreparationClientTest {
      * @return the newly created preparation
      */
     public PreparationDTO createPreparation(final Preparation preparation, final String folderId) {
-        Response post = given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails()
-                .post("/preparations?folderId={folderId}", folderId);
+        Response post =
+                given().contentType(JSON).content(preparation).expect().statusCode(200).log().ifValidationFails().post(
+                        "/preparations?folderId={folderId}", folderId);
         return getPreparation(post.asString());
     }
 

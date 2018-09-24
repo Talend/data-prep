@@ -163,16 +163,16 @@ describe('Datagrid header controller', () => {
 		}));
 
 		it('should refresh domains and types',
-			inject((StateService, ColumnTypesService) => {
+			inject(() => {
 				// given
 				const ctrl = createController();
+				spyOn(ctrl, 'fetchMatchingSemanticTypes').and.returnValue();
 
 				// when
 				ctrl.initTransformations();
 
 				//then
-				expect(ColumnTypesService.refreshSemanticDomains).toHaveBeenCalledWith(ctrl.column.id);
-				expect(ColumnTypesService.refreshTypes).toHaveBeenCalled();
+				expect(ctrl.fetchMatchingSemanticTypes).toHaveBeenCalled();
 			})
 		);
 
@@ -243,6 +243,35 @@ describe('Datagrid header controller', () => {
 			expect(ctrl.transformationsRetrieveError).toBeTruthy();
 			expect(ctrl.initTransformationsInProgress).toBeFalsy();
 		}));
+
+		it('should set loading flag to true when fetching domains and types is in progress',
+			inject(() => {
+				// given
+				const ctrl = createController();
+
+				// when
+				ctrl.fetchMatchingSemanticTypes();
+
+				//then
+				expect(ctrl.typeLoading).toBe(true);
+			})
+		);
+
+		it('should set loading flag to false when fetching domains and types is done',
+			inject((ColumnTypesService) => {
+				// given
+				const ctrl = createController();
+
+				// when
+				ctrl.fetchMatchingSemanticTypes();
+				scope.$digest();
+
+				//then
+				expect(ColumnTypesService.refreshSemanticDomains).toHaveBeenCalledWith(ctrl.column.id);
+				expect(ColumnTypesService.refreshTypes).toHaveBeenCalled();
+				expect(ctrl.typeLoading).toBe(false);
+			})
+		);
 	});
 
 	describe('update column name', () => {
@@ -373,10 +402,10 @@ describe('Datagrid header controller', () => {
 				spyOn(ctrl.filterManagerService, 'addFilter');
 
 				// when
-				ctrl.addFilter('valid_records');
+				ctrl.addFilter('quality', { valid: true });
 
 				//then
-				expect(ctrl.filterManagerService.addFilter).toHaveBeenCalledWith('valid_records', 'id1', 'col1');
+				expect(ctrl.filterManagerService.addFilter).toHaveBeenCalledWith('quality', 'id1', 'col1', { valid: true });
 			})
 		);
 	});

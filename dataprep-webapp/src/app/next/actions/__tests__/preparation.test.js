@@ -2,7 +2,7 @@ import actions from '../preparation';
 
 jest.mock('@talend/react-cmf/lib/sagaRouter', () => {
 	return () => ({
-		matchPath: (_, payload) => {
+		matchPath: () => {
 			return 'yo';
 		},
 	});
@@ -53,18 +53,6 @@ describe('Preparation action', () => {
 		expect(action).toMatchSnapshot();
 	});
 
-	it('should create a duplicate action', () => {
-		const event = {};
-		const payload = {
-			model: {
-				id: 42,
-			},
-		};
-		const action = actions.duplicate(event, payload);
-
-		expect(action).toMatchSnapshot();
-	});
-
 	it('should create a rename action', () => {
 		const event = {};
 		const payload = {
@@ -101,7 +89,33 @@ describe('Preparation action', () => {
 	});
 
 	it('should create an open creator action', () => {
-		const action = actions.openCreator();
+		const action = actions.openPreparationCreatorModal();
+
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create a preparation remove action', () => {
+		const event = {};
+		const payload = {
+			model: {
+				id: 42,
+				type: 'preparation'
+			},
+		};
+		const action = actions.remove(event, payload);
+
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create a folder remove action', () => {
+		const event = {};
+		const payload = {
+			model: {
+				id: 42,
+				type: 'folder',
+			},
+		};
+		const action = actions.remove(event, payload);
 
 		expect(action).toMatchSnapshot();
 	});

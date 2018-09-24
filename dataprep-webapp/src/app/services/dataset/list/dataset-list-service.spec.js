@@ -92,7 +92,7 @@ describe('Dataset List Service', () => {
 				displayMode: 'text',
 				className: '',
 				icon: 'talend-file-xls-o',
-				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove'],
+				actions: ['inventory:edit', 'list:dataset:preparations', 'dataset:update', 'dataset:clone', 'dataset:remove'],
 				statusActions: ['dataset:favorite'],
 				preparations: undefined,
 				model: datasets[1],
@@ -109,7 +109,7 @@ describe('Dataset List Service', () => {
 				displayMode: 'text',
 				className: '',
 				icon: 'talend-file-csv-o',
-				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove'],
+				actions: ['inventory:edit', 'list:dataset:preparations', 'dataset:update', 'dataset:clone', 'dataset:remove'],
 				statusActions: ['dataset:favorite'],
 				preparations: undefined,
 				model: datasets[2],
@@ -126,7 +126,7 @@ describe('Dataset List Service', () => {
 				displayMode: 'text',
 				className: '',
 				icon: 'talend-file-o',
-				actions: ['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove'],
+				actions: ['inventory:edit', 'list:dataset:preparations', 'dataset:update', 'dataset:clone', 'dataset:remove'],
 				statusActions: ['dataset:favorite'],
 				preparations: undefined,
 				model: datasets[3],
@@ -432,14 +432,6 @@ describe('Dataset List Service', () => {
 		it('should return actions for a dataset which does not have related preparations', inject((DatasetListService) => {
 			//given
 			const dataset = { id: 'dataset' };
-
-			//then
-			expect(DatasetListService.getDatasetActions(dataset)).toEqual(['inventory:edit', 'dataset:update', 'dataset:clone', 'dataset:remove']);
-		}));
-
-		it('should return actions for a dataset which has related preparations', inject((DatasetListService) => {
-			//given
-			const dataset = { id: 'dataset', preparations: [{ id: 'preparation' }] };
 
 			//then
 			expect(DatasetListService.getDatasetActions(dataset)).toEqual(['inventory:edit', 'list:dataset:preparations', 'dataset:update', 'dataset:clone', 'dataset:remove']);

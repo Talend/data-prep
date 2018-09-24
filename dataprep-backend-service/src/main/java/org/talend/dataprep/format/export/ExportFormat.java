@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.i18n.DataprepBundle;
 import org.talend.dataprep.parameters.Parameterizable;
@@ -57,7 +57,8 @@ public abstract class ExportFormat extends Parameterizable {
      * @param needParameters if the type needs parameters.
      * @param defaultExport if it's the default format.
      */
-    public ExportFormat(final String name, final String mimeType, final String extension, final boolean needParameters, final boolean defaultExport) {
+    public ExportFormat(final String name, final String mimeType, final String extension, final boolean needParameters,
+            final boolean defaultExport) {
         super(needParameters);
         this.name = name;
         this.mimeType = mimeType;
@@ -73,13 +74,14 @@ public abstract class ExportFormat extends Parameterizable {
      * @return cleaned parameters
      */
     public static Map<String, String> cleanParameters(Map<String, String> params) {
-        return params.entrySet().stream() //
+        return params
+                .entrySet()
+                .stream() //
                 .filter(e -> nonNull(e.getValue())) //
                 .filter(e -> e.getKey().startsWith(PREFIX)) //
                 .collect(toMap( //
-                        k -> k.getKey().substring(PREFIX.length()),
-                        Map.Entry::getValue) //
-                );
+                        k -> k.getKey().substring(PREFIX.length()), Map.Entry::getValue) //
+        );
     }
 
     /**

@@ -16,7 +16,10 @@
 <li class="more">
     <span translate-once="COLUMN_TYPE_IS"></span>
     <span class="info"> {{ $ctrl.currentSimplifiedDomain }}</span>
-    <ul class="submenu">
+    <ul ng-if="$ctrl.loading" class="submenu">
+        <li><loader text="{{'LOADING' | translate}}" /></li>
+    </ul>
+    <ul ng-if="!$ctrl.loading" class="submenu">
         <li ng-repeat="semanticDomain in $ctrl.domains track by semanticDomain.id">
             <div class="radio">
                 <label data-feature="column.semantic_type.change">

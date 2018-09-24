@@ -18,7 +18,7 @@ import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_AN
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,7 +154,7 @@ public class BackgroundAnalysis {
         }
         // get the analyzer of the first column
         final Analyzers.Result result = results.get(0);
-        if (result.exist(ValueQualityStatistics.class)) {
+        if (metadata.getContent().getNbRecords() == 0 && result.exist(ValueQualityStatistics.class)) {
             final ValueQualityStatistics valueQualityStatistics = result.get(ValueQualityStatistics.class);
             metadata.getContent().setNbRecords(valueQualityStatistics.getCount());
         }

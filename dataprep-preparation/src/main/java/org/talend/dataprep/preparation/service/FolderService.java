@@ -39,6 +39,7 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderInfo;
 import org.talend.dataprep.api.folder.FolderTreeNode;
+import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.http.HttpResponseContext;
@@ -65,6 +66,9 @@ public class FolderService {
     /** DataPrep abstraction to the underlying security (whether it's enabled or not). */
     @Autowired
     private Security security;
+
+    @Autowired
+    private BaseDataprepAuditService auditService;
 
     /**
      * Get folders. If parentId is supplied, it will be used as filter.
@@ -137,8 +141,8 @@ public class FolderService {
     @ApiOperation(value = "Search Folders with parameter as part of the name")
     @Timed
     public Stream<Folder> search(@RequestParam(required = false, defaultValue = "") final String name,
-                                   @RequestParam(required = false, defaultValue = "false") final Boolean strict,
-                                   @RequestParam(required = false) final String path) {
+            @RequestParam(required = false, defaultValue = "false") final Boolean strict,
+            @RequestParam(required = false) final String path) {
         Stream<Folder> folders;
         if (path == null) {
             folders = folderRepository.searchFolders(name, strict);
@@ -170,7 +174,11 @@ public class FolderService {
         if (parentId == null) {
             parentId = folderRepository.getHome().getId();
         }
-        return folderRepository.addFolder(parentId, path);
+        Folder folderCreated = folderRepository.addFolder(parentId, path);
+
+        auditService.auditFolderCreation(folderCreated.getId(), folderCreated.getName());
+
+        return folderCreated;
     }
 
     /**
@@ -200,6 +208,7 @@ public class FolderService {
     @Timed
     public void renameFolder(@PathVariable String id, @RequestBody String newName) {
         folderRepository.renameFolder(id, newName);
+        auditService.auditFolderRename(id, newName);
     }
 
     @RequestMapping(value = "/folders/tree", method = GET)
@@ -212,8 +221,8 @@ public class FolderService {
 
     private FolderTreeNode getTree(final Folder root) {
         try (final Stream<Folder> children = folderRepository.children(root.getId())) {
-            final List<FolderTreeNode> childrenSubtrees = StreamSupport.stream(children.spliterator(), false).map(this::getTree)
-                    .collect(toList());
+            final List<FolderTreeNode> childrenSubtrees =
+                    StreamSupport.stream(children.spliterator(), false).map(this::getTree).collect(toList());
             return new FolderTreeNode(root, childrenSubtrees);
         }
     }

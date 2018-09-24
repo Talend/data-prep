@@ -1,0 +1,81 @@
+{
+  "props": {
+    "RedirectContainer#default": {
+      "path": "/preparations"
+    },
+    "RedirectContainer#unknownRouteRedirect": {
+      "path": "/404"
+    },
+    "HttpErrorView#404": {
+      "header": {},
+      "sidepanel": {},
+      "status": 404,
+      "title": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_404_TITLE",
+          "options": {
+            "defaultValue": "Oops"
+          }
+        }
+      },
+      "message": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_404_MESSAGE",
+          "options": {
+            "defaultValue": "We didn't find the requested page"
+          }
+        }
+      }
+    },
+    "HttpErrorView#403": {
+      "header": {},
+      "sidepanel": {},
+      "status": 403,
+      "title": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_403_TITLE",
+          "options": {
+            "defaultValue": "Access denied"
+          }
+        }
+      },
+      "message": {
+        "i18n": {
+          "key": "tdp-cmf:ERROR_403_MESSAGE",
+          "options": {
+            "defaultValue": "You are not allowed to access this page"
+          }
+        }
+      }
+    }
+  },
+  "routes": {
+    "path": "/",
+    "component": "App",
+    "indexRoute": {
+      "component": "Redirect"
+    },
+    "childRoutes": [
+      {
+        "path": "404",
+        "component": "HttpErrorView",
+        "componentId": "404"
+      },
+      {
+        "path": "403",
+        "component": "HttpErrorView",
+        "componentId": "403"
+      },
+      {
+        "path": "preparations(/:folderId)",
+        "component": "HomeListView",
+        "componentId": "preparations"
+      },
+      {
+        "path": "*",
+        "component": "Redirect",
+        "componentId": "unknownRouteRedirect"
+      }
+    ]
+  }
+}

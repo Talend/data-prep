@@ -22,9 +22,9 @@ import HelpService from './config/utils-help-service';
 import StepUtilsService from './step/step-utils-service';
 import StorageService from './storage/storage-service';
 import TextFormatService from './text-format/text-format-service';
-import DisableRightClick from './click/disable-right-click-directive';
 import HtmlLang from './html/htmlLang-directive';
 import TitleService from './title/title-service';
+import FilterUtilsService from './filter/filter-utils-service';
 
 
 const MODULE_NAME = 'data-prep.services.utils';
@@ -45,7 +45,7 @@ angular
 	.service('StorageService', StorageService)
 	.service('TextFormatService', TextFormatService)
 	.service('TitleService', TitleService)
-	.directive('disableRightClick', DisableRightClick)
+	.service('FilterUtilsService', FilterUtilsService)
 	.directive('htmlLang', HtmlLang);
 
 export default MODULE_NAME;

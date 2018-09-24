@@ -34,8 +34,8 @@ public class CommonAPITest extends ApiServiceTestBase {
 
     @Test
     public void testCORSHeaders() throws Exception {
-        given().header("Origin", "fake.host.to.trigger.cors").when().post("/datasets").then()
-                .header("Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
+        given().header("Origin", "fake.host.to.trigger.cors").when().post("/datasets").then().header(
+                "Access-Control-Allow-Origin", "fake.host.to.trigger.cors");
     }
 
     /**
@@ -70,9 +70,11 @@ public class CommonAPITest extends ApiServiceTestBase {
         // when
         final String badRequest = when().get("/command/test/fail_bad_request_exception").asString();
         final String commandException = when().get("//command/test/fail_command_exception").asString();
-        final String rejectedSemaphoreExecution = when().get("/command/test/fail_rejected_semaphore_execution").asString();
+        final String rejectedSemaphoreExecution =
+                when().get("/command/test/fail_rejected_semaphore_execution").asString();
         final String rejectedExecution = when().get("/command/test/fail_rejected_execution").asString();
-        final String rejectedSemaphoreFallback = when().get("/command/test/fail_rejected_semaphore_fallback").asString();
+        final String rejectedSemaphoreFallback =
+                when().get("/command/test/fail_rejected_semaphore_fallback").asString();
         final String shortCircuit = when().get("/command/test/fail_short_circuit").asString();
         final String timeout = when().get("/command/test/fail_timeout").asString();
 

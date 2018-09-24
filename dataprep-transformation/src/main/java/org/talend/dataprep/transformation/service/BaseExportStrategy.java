@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,10 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.filter.FilterService;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.ContentCache;
+import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
@@ -94,7 +96,6 @@ public abstract class BaseExportStrategy {
         return format;
     }
 
-
     /**
      * Return the real step id in case of "head" or empty
      * @param preparation The preparation
@@ -117,17 +118,19 @@ public abstract class BaseExportStrategy {
      */
     protected String getActions(String preparationId, String stepId) {
         String actions;
-        if (StringUtils.isBlank(preparationId) || StringUtils.isBlank(stepId)) {
+        if (StringUtils.isBlank(preparationId) || StringUtils.isBlank(stepId)
+                || Step.ROOT_STEP.getId().equals(stepId)) {
             actions = "{\"actions\": []}";
         } else {
-            final PreparationGetActions getActionsCommand = applicationContext.getBean(PreparationGetActions.class, preparationId,
-                    stepId);
+            final PreparationGetActions getActionsCommand =
+                    applicationContext.getBean(PreparationGetActions.class, preparationId, stepId);
             try {
                 final String actionsAsString = mapper.writerFor(new TypeReference<List<Action>>() {
                 }).writeValueAsString(getActionsCommand.execute());
                 actions = "{\"actions\": " + actionsAsString + '}';
             } catch (IOException e) {
-                final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", stepId);
+                final ExceptionContext context =
+                        ExceptionContext.build().put("id", preparationId).put("version", stepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }
@@ -153,17 +156,18 @@ public abstract class BaseExportStrategy {
             actions = "{\"actions\": []}";
         } else {
             try {
-                final PreparationGetActions startStepActions = applicationContext.getBean(PreparationGetActions.class,
-                        preparationId, startStepId);
-                final PreparationGetActions endStepActions = applicationContext.getBean(PreparationGetActions.class,
-                        preparationId, endStepId);
+                final PreparationGetActions startStepActions =
+                        applicationContext.getBean(PreparationGetActions.class, preparationId, startStepId);
+                final PreparationGetActions endStepActions =
+                        applicationContext.getBean(PreparationGetActions.class, preparationId, endStepId);
                 final StringWriter actionsAsString = new StringWriter();
                 final Action[] startActions = startStepActions.execute().toArray(new Action[0]);
                 final Action[] endActions = endStepActions.execute().toArray(new Action[0]);
                 if (endActions.length > startActions.length) {
-                    final Action[] filteredActions = (Action[]) ArrayUtils.subarray(endActions, startActions.length,
-                            endActions.length);
-                    LOGGER.debug("Reduced actions list from {} to {} action(s)", endActions.length, filteredActions.length);
+                    final Action[] filteredActions =
+                            (Action[]) ArrayUtils.subarray(endActions, startActions.length, endActions.length);
+                    LOGGER.debug("Reduced actions list from {} to {} action(s)", endActions.length,
+                            filteredActions.length);
                     mapper.writeValue(actionsAsString, filteredActions);
                 } else {
                     LOGGER.debug("Unable to reduce list of actions (has {})", endActions.length);
@@ -172,7 +176,8 @@ public abstract class BaseExportStrategy {
 
                 return "{\"actions\": " + actionsAsString + '}';
             } catch (IOException e) {
-                final ExceptionContext context = ExceptionContext.build().put("id", preparationId).put("version", endStepId);
+                final ExceptionContext context =
+                        ExceptionContext.build().put("id", preparationId).put("version", endStepId);
                 throw new TDPException(UNABLE_TO_READ_PREPARATION, e, context);
             }
         }
@@ -196,9 +201,24 @@ public abstract class BaseExportStrategy {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationSummaryGet preparationSummaryGet = applicationContext.getBean(PreparationSummaryGet.class,
-                preparationId, stepId);
+        final PreparationSummaryGet preparationSummaryGet =
+                applicationContext.getBean(PreparationSummaryGet.class, preparationId, stepId);
         return preparationSummaryGet.execute();
     }
 
+    /**
+     * Get the full details preparation.
+     *
+     * @param preparationId the wanted preparation id.
+     * @param stepId the preparation step (might be different from head's to navigate through versions).
+     * @return the preparation out of its id.
+     */
+    protected PreparationDetailsDTO getFullPreparation(String preparationId, String stepId) {
+        if ("origin".equals(stepId)) {
+            stepId = Step.ROOT_STEP.id();
+        }
+        final PreparationDetailsGet preparationDetailsGet =
+                applicationContext.getBean(PreparationDetailsGet.class, preparationId, stepId);
+        return preparationDetailsGet.execute();
+    }
 }

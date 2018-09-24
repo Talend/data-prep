@@ -12,26 +12,18 @@
 
 package org.talend.dataprep.dataset;
 
-import javax.annotation.PostConstruct;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @ConfigurationProperties(prefix = "dataset")
+@Scope(SCOPE_PROTOTYPE)
 public class DatasetConfiguration {
 
-    private static final Logger LOGGER = getLogger(DatasetConfiguration.class);
-
     private final Service service = new Service();
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Dataset configuration is retrieved from properties");
-    }
 
     public static class Service {
 
@@ -55,7 +47,10 @@ public class DatasetConfiguration {
             this.url = url;
         }
 
-        public enum Provider {LEGACY, CATALOG}
+        public enum Provider {
+            LEGACY,
+            CATALOG
+        }
     }
 
     public Service getService() {
@@ -64,5 +59,9 @@ public class DatasetConfiguration {
 
     public String getProvider() {
         return service.getProvider().name().toLowerCase();
+    }
+
+    public boolean isLegacy() {
+        return service.getProvider() == Service.Provider.LEGACY;
     }
 }

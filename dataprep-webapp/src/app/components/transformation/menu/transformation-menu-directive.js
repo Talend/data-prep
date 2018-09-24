@@ -29,6 +29,7 @@ export default function TransformMenu() {
 		scope: {
 			column: '=',
 			menuItems: '=',
+			typeLoading: '<',
 		},
 		bindToController: true,
 		controllerAs: 'menuCtrl',

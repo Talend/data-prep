@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.qa.config;
 
+import static org.talend.dataprep.qa.config.FeatureContext.setUseSuffix;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.dto.Folder;
 
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 
 /**
  * Storage for Before and After actions.
@@ -33,11 +36,33 @@ public class GlobalStep extends DataPrepStep {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalStep.class);
 
     /**
+     * Suffix deactivation for a scenario.
+     * First @Before to be executed in OS context.
+     * Second @Before to be executed in EE context.
+     */
+    @Before(value = "@SuffixOff", order = 200)
+    public void deactivateSuffix() {
+        setUseSuffix(false);
+    }
+
+    /**
+     * Suffix reactivation after an explicit deactivation in a scenario.
+     * Second @After to be executed in OS context
+     * Third @After to be executed in EE context
+     */
+    @After(value = "@SuffixOff", order = 200)
+    public void reactivateSuffix() {
+        setUseSuffix(true);
+    }
+
+    /**
      * Clean the created objects in the test environment.
      * This method must be called on the last scenario of each feature in order to keep the tests reentrant.
      * It also can be called on demand to clean the context for the next scenario.
+     * First @After to be executed in OS context
+     * Second @After to be executed in EE context
      */
-    @After("@CleanAfter")
+    @After(value = "@CleanAfter", order = 300)
     public void cleanAfter() {
         LOGGER.debug("Cleaning IT context.");
 
@@ -50,20 +75,23 @@ public class GlobalStep extends DataPrepStep {
         context.clearTempFile();
 
         // cleaning application's preparations
-        List<String> listPreparationDeletionPb =
-                context.getPreparationIds().stream().filter(preparationDeletionIsNotOK()).collect(Collectors.toList());
+        List<String> listPreparationDeletionPb = context
+                .getPreparationIdsToDelete()
+                .stream()
+                .filter(preparationDeletionIsNotOK())
+                .collect(Collectors.toList());
         cleanAfterOSStepIsOK = listPreparationDeletionPb.size() == 0;
 
         // cleaning preparations's related context
-        context.clearPreparation();
+        context.clearPreparationLists();
 
         // cleaning application's datasets
         List<String> listDatasetDeletionPb =
-                context.getDatasetIds().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
+                context.getDatasetIdsToDelete().stream().filter(datasetDeletionIsNotOK()).collect(Collectors.toList());
         cleanAfterOSStepIsOK &= listDatasetDeletionPb.size() == 0;
 
         // cleaning dataset's related context
-        context.clearDataset();
+        context.clearDatasetLists();
 
         // cleaning application's folders
         List<Folder> listFolderDeletionPb =

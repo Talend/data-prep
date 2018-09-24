@@ -14,16 +14,19 @@
 package org.talend.dataprep.api.service.settings;
 
 import static java.util.Arrays.stream;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.api.service.settings.actions.api.ActionSettings;
-import org.talend.dataprep.api.service.settings.context.api.ContextSettings;
 import org.talend.dataprep.api.service.settings.analytics.api.AnalyticsSettings;
+import org.talend.dataprep.api.service.settings.context.api.ContextSettings;
 import org.talend.dataprep.api.service.settings.help.api.HelpSettings;
 import org.talend.dataprep.api.service.settings.uris.api.UriSettings;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
@@ -32,6 +35,7 @@ import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
  * App settings service
  */
 @Service
+@Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class AppSettingsService {
 
     @Autowired
@@ -78,6 +82,22 @@ public class AppSettingsService {
         this.actionsConfigurers = actionsConfigurers;
     }
 
+    public AppSettingsProvider<ActionSettings>[] getActionsProviders() {
+        return actionsProviders;
+    }
+
+    public void setActionsProviders(AppSettingsProvider<ActionSettings>[] actionsProviders) {
+        this.actionsProviders = actionsProviders;
+    }
+
+    public AppSettingsProvider<ViewSettings>[] getViewsProviders() {
+        return viewsProviders;
+    }
+
+    public void setViewsProviders(AppSettingsProvider<ViewSettings>[] viewsProviders) {
+        this.viewsProviders = viewsProviders;
+    }
+
     /**
      * Generate the app settings
      */
@@ -121,7 +141,8 @@ public class AppSettingsService {
      * @return The function
      */
     private <T> Function<T, T> configure(final AppSettingsConfigurer<T> configurer) {
-        return action -> configurer.isApplicable(action) && configurer.isUserAuthorized() ? configurer.configure(action) : action;
+        return action -> configurer.isApplicable(action) && configurer.isUserAuthorized() ? configurer.configure(action)
+                : action;
     }
 
     /**

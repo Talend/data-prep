@@ -39,6 +39,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.ServiceBaseTest;
 import org.talend.dataprep.BaseErrorCodes;
+import org.talend.dataprep.analytics.Analytics;
 import org.talend.dataprep.api.user.UserGroup;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -46,8 +47,8 @@ import org.talend.dataprep.security.Security;
 
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
-@TestPropertySource(properties = { "security.mode=genericCommandTest", "transformation.service.url=", "preparation.service.url=",
-        "dataset.service.url=" })
+@TestPropertySource(properties = { "security.mode=genericCommandTest", "transformation.service.url=",
+        "preparation.service.url=", "dataset.service.url=" })
 public class GenericCommandTest extends ServiceBaseTest {
 
     private static TDPException lastException;
@@ -82,8 +83,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testSuccess() throws Exception {
         // Given
-        final GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/success",
-                GenericCommandTest::error);
+        final GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/success", GenericCommandTest::error);
         // When
         final String result = command.run();
         // Then
@@ -105,8 +106,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testAuthenticationToken() throws Exception {
         // Given
-        final GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/authentication/token",
-                GenericCommandTest::error);
+        final GenericCommand<String> command = getCommand(
+                "http://localhost:" + port + "/command/test/authentication/token", GenericCommandTest::error);
         // When
         final String result = command.run();
         // Then
@@ -131,8 +132,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testSuccessWithMissingBehavior() throws Exception {
         // Given
-        final GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/success_with_unknown",
-                GenericCommandTest::error);
+        final GenericCommand<String> command = getCommand(
+                "http://localhost:" + port + "/command/test/success_with_unknown", GenericCommandTest::error);
         // When
         final String result = command.run();
         // Then
@@ -143,8 +144,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testFail_With_400() throws Exception {
         // Given
-        GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/fail_with_400",
-                GenericCommandTest::error);
+        GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/fail_with_400", GenericCommandTest::error);
         try {
             // When
             command.run();
@@ -164,8 +165,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testFail_With_404() throws Exception {
         // Given
-        GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/not_found",
-                GenericCommandTest::error);
+        GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/not_found", GenericCommandTest::error);
         try {
             // When
             command.run();
@@ -185,8 +186,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testFail_With_500() throws Exception {
         // Given
-        GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/fail_with_500",
-                GenericCommandTest::error);
+        GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/fail_with_500", GenericCommandTest::error);
         try {
             // When
             command.run();
@@ -206,8 +207,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testFail_With_Unknown() throws Exception {
         // Given
-        GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/fail_with_unknown",
-                GenericCommandTest::error);
+        GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/fail_with_unknown", GenericCommandTest::error);
         try {
             // When
             command.run();
@@ -228,8 +229,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testPassThrough() throws Exception {
         // Given
-        GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/fail_with_500",
-                Defaults.passthrough());
+        GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/fail_with_500", Defaults.passthrough());
         try {
             // When
             command.run();
@@ -245,8 +246,8 @@ public class GenericCommandTest extends ServiceBaseTest {
     @Test
     public void testUnexpected() throws Exception {
         // Given
-        GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/unexpected",
-                Defaults.passthrough());
+        GenericCommand<String> command =
+                getCommand("http://localhost:" + port + "/command/test/unexpected", Defaults.passthrough());
         try {
             // When
             command.run();
@@ -322,6 +323,11 @@ public class GenericCommandTest extends ServiceBaseTest {
         @Override
         public Locale getLocale() {
             return Locale.getDefault();
+        }
+
+        @Override
+        public Analytics getAnalytics() {
+            return null;
         }
 
         @Override

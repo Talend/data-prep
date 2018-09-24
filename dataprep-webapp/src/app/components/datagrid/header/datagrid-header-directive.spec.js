@@ -158,6 +158,16 @@ describe('Datagrid header directive', () => {
 		expect(element.find('.grid-header-type').text()).toBe('text');
 	});
 
+	it('should display loader when fetching transformations', () => {
+		//when
+		createElement();
+		ctrl.initTransformationsInProgress = true;
+		scope.$digest();
+
+		//then
+		expect(element.find('loader').length).toBe(1);
+	});
+
 	it('should close dropdown on get transform list error', inject(($timeout, $q, TransformationService) => {
 		//given
 		createElement();
@@ -359,19 +369,19 @@ describe('Datagrid header directive', () => {
 		expect(element.find('.dropdown-menu').hasClass('show-menu')).toBeFalsy();
 	});
 
-	it('should render quality filters', () => {
-		// given
-		createElement();
-
-		// then
-		const dropdownItems = element.find('sc-dropdown li');
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_VALID_VALUES"]').length).toBe(1);
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_INVALID_VALUES"]').length).toBe(1);
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_EMPTY_VALUES"]').length).toBe(1);
-		expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES"]').length).toBe(1);
-	});
-
 	describe('quality bar', () => {
+		it('should render quality filters', () => {
+			// given
+			createElement();
+
+			// then
+			const dropdownItems = element.find('sc-dropdown li');
+			expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_VALID_VALUES"]').length).toBe(1);
+			expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_INVALID_VALUES"]').length).toBe(1);
+			expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_EMPTY_VALUES"]').length).toBe(1);
+			expect(dropdownItems.find('a[translate-once="DISPLAY_ROWS_INVALID_EMPTY_VALUES"]').length).toBe(1);
+		});
+
 		it('should render quality bar', () => {
 			// when
 			createElement();
@@ -402,7 +412,7 @@ describe('Datagrid header directive', () => {
 				element.find('quality-bar empty-menu-items > li').eq(0).click();
 
 				// then
-				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('empty_records', column.id, column.name);
+				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('quality', column.id, column.name, { invalid: false, empty: true });
 			}));
 
 			it('should delete rows on 2nd item menu click', inject((PlaygroundService) => {
@@ -438,7 +448,7 @@ describe('Datagrid header directive', () => {
 				element.find('quality-bar invalid-menu-items > li').eq(0).click();
 
 				// then
-				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('invalid_records', column.id, column.name);
+				expect(FilterManagerService.addFilter).toHaveBeenCalledWith('quality', column.id, column.name, { invalid: true, empty: false });
 			}));
 
 			it('should clear invalid cells on 2nd item menu click', inject((PlaygroundService) => {

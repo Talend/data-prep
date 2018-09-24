@@ -8,11 +8,14 @@ import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import { all, call, fork } from 'redux-saga/effects';
 import actions from './next/actions';
-import components from './next/components/index';
+import components from './next/components';
 import App from './next/components/App.container';
 import { ALERT } from './next/constants/actions';
 import { default as constants } from './next/constants';
 import sagas from './next/sagas/watchers';
+import locales from './next/locales';
+import { registerLocales } from './i18n';
+import settingsService from './next/services/settings.service';
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;
@@ -26,14 +29,24 @@ const registerRouteFunction = api.route.registerFunction;
  * - Register action creators in CMF actions dictionary
  */
 export default function initialize(additionalConfiguration = {}) {
+	// window.registry = api.registry;
+
 	// register all saga api
 	api.registry.addToRegistry(
 		'SEARCH_CATEGORIES_BY_PROVIDER',
 		constants.search.SEARCH_CATEGORIES_BY_PROVIDER,
 	);
 
+	const routerSagas = {
+		...dataset.datasetSagas,
+	};
+	const additionalRouterSagas = additionalConfiguration.routerSagas;
+	if (additionalRouterSagas) {
+		Object.assign(routerSagas, additionalRouterSagas);
+	}
+
 	const rootSagas = [
-		fork(sagaRouter, browserHistory, dataset.datasetSagas),
+		fork(sagaRouter, browserHistory, routerSagas),
 		fork(api.sagas.component.handle),
 	];
 	const rootSagasToStart = {
@@ -84,8 +97,16 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register your app reducers
 		 */
+		let reducers = {};
+		const additionalReducers = additionalConfiguration.reducers;
+		if (additionalReducers) {
+			reducers = {
+				...additionalReducers,
+			};
+		}
+
 		const sagaMiddleware = createSagaMiddleware();
-		const store = cmfstore.initialize(undefined, initialState, undefined, [sagaMiddleware]);
+		const store = cmfstore.initialize(reducers, initialState, undefined, [sagaMiddleware]);
 		sagaMiddleware.run(rootSaga);
 
 		api.registerInternals();
@@ -107,7 +128,6 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register expressions in CMF expressions dictionary
 		 */
-		registerExpressions(api.expressions);
 		const additionalExpressions = additionalConfiguration.expressions;
 		if (additionalExpressions) {
 			registerExpressions(additionalExpressions);
@@ -126,18 +146,29 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register action creators in CMF Actions dictionary
 		 */
-		registerActionCreator('preparation:duplicate', actions.preparation.duplicate);
 		registerActionCreator('preparation:edit:submit', actions.preparation.rename);
 		registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
 		registerActionCreator('preparation:open', actions.preparation.open);
 		registerActionCreator('folder:open', actions.folder.open);
+		registerActionCreator('folder:add', actions.folder.add);
+		registerActionCreator('folder:add:open', actions.folder.openAddFolderModal);
+		registerActionCreator('folder:add:close', actions.folder.closeAddFolderModal);
+		registerActionCreator('folder:remove', actions.folder.remove);
+		registerActionCreator('folder:remove:open', actions.folder.openRemoveFolderModal);
+		registerActionCreator('folder:remove:close', actions.folder.closeRemoveFolderModal);
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
+		registerActionCreator('preparation:copy', actions.preparation.copy);
+		registerActionCreator('preparation:move', actions.preparation.move);
+		registerActionCreator('preparation:remove', actions.preparation.remove);
 		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
-		registerActionCreator('preparation:add:open', actions.preparation.openCreator);
+		registerActionCreator('preparation:add:open', actions.preparation.openPreparationCreatorModal);
+		registerActionCreator('preparation:copy:open', actions.preparation.openCopyModal);
+		registerActionCreator('preparation:move:open', actions.preparation.openMoveModal);
+		registerActionCreator('preparation:copy:move:cancel', actions.preparation.closeCopyMoveModal);
 		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
 		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
+		registerActionCreator('help:about:open', actions.help.openAbout);
 		registerActionCreator('redirect', actions.redirect);
-		registerActionCreator('version:fetch', actions.version.fetch);
 		registerActionCreator('headerbar:search:start', actions.search.start);
 		registerActionCreator('headerbar:search:select', actions.search.select);
 		registerActionCreator('headerbar:search:reset', actions.search.reset);
@@ -149,18 +180,26 @@ export default function initialize(additionalConfiguration = {}) {
 				registerActionCreator(k, additionalActionCreators[k]),
 			);
 		}
-
 		/**
 		 * Fetch the CMF settings and configure the CMF app
 		 */
 		store.dispatch(
-			cmfActions.settingsActions.fetchSettings(`/settings.${constants.I18N.DEFAULT_LOCALE}.json`),
+			cmfActions.settingsActions.fetchSettings(`/settings.${settingsService.getLanguage()}.json`),
 		);
 
 		reduxLocalStorage.saveOnReload({
 			engine,
 			store,
 		});
+
+		/**
+		 * Register i18next locales per namespace
+		 */
+		registerLocales(locales);
+		const additionalLocales = additionalConfiguration.locales;
+		if (additionalLocales) {
+			registerLocales(additionalLocales);
+		}
 
 		const additionalCallback = additionalConfiguration.callback;
 		if (additionalCallback) {

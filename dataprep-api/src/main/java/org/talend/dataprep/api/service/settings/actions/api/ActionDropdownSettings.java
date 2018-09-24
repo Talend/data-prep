@@ -18,7 +18,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.dataprep.i18n.DataprepBundle;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -28,13 +28,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Keep in mind that a dropdown action is always applied to an object (called the model).
  * A dropdown can have several statics actions and/or a dynamic action.
  * see
- * https://talend.github.io/react-talend-components/?selectedKind=ActionDropdown&selectedStory=default&full=0&down=1&left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
+ * https://talend.github.io/react-talend-components/?selectedKind=ActionDropdown&selectedStory=default&full=0&down=1&
+ * left=1&panelRight=0&downPanel=kadirahq%2Fstorybook-addon-actions%2Factions-panel
  *
  * Static actions
  * They represents dropdown options displayed on top of the options, and triggers a simple action on the model.
  *
  * Dynamic action
- * The action that will be applied to the items (that will replace the model). They must be used in pair (if there are items,
+ * The action that will be applied to the items (that will replace the model). They must be used in pair (if there are
+ * items,
  * there is a dynamic action). The items String value is the property key to get the items objects from the model.
  *
  */
@@ -52,6 +54,11 @@ public class ActionDropdownSettings extends ActionSettings {
      * The action id that will be applied to the items
      */
     private String dynamicAction;
+
+    /**
+     * The action id that will be applied to fetch dynamic the items
+     */
+    private String dynamicFetchAction;
 
     /**
      * The statics actions ids that will be applied to the hosting model
@@ -72,6 +79,14 @@ public class ActionDropdownSettings extends ActionSettings {
 
     public void setDynamicAction(String dynamicAction) {
         this.dynamicAction = dynamicAction;
+    }
+
+    public String getDynamicFetchAction() {
+        return dynamicFetchAction;
+    }
+
+    public void setDynamicFetchAction(String dynamicFetchAction) {
+        this.dynamicFetchAction = dynamicFetchAction;
     }
 
     public List<String> getStaticActions() {
@@ -98,6 +113,7 @@ public class ActionDropdownSettings extends ActionSettings {
                 .bsStyle(actionSettings.getBsStyle()) //
                 .items(actionSettings.getItems()) //
                 .dynamicAction(actionSettings.getDynamicAction()) //
+                .dynamicFetchAction(actionSettings.getDynamicFetchAction()) //
                 .staticActions(actionSettings.getStaticActions()) //
                 .enabled(actionSettings.isEnabled());
     }
@@ -121,6 +137,8 @@ public class ActionDropdownSettings extends ActionSettings {
         private boolean enabled = true;
 
         private String dynamicAction;
+
+        private String dynamicFetchAction;
 
         private List<String> staticActions = new ArrayList<>();
 
@@ -159,6 +177,11 @@ public class ActionDropdownSettings extends ActionSettings {
             return this;
         }
 
+        public Builder dynamicFetchAction(final String dynamicFetchAction) {
+            this.dynamicFetchAction = dynamicFetchAction;
+            return this;
+        }
+
         public Builder staticAction(final String staticAction) {
             this.staticActions.add(staticAction);
             return this;
@@ -186,6 +209,7 @@ public class ActionDropdownSettings extends ActionSettings {
             action.setBsStyle(this.bsStyle);
             action.setItems(this.items);
             action.setDynamicAction(dynamicAction);
+            action.setDynamicFetchAction(dynamicFetchAction);
             action.setStaticActions(staticActions.isEmpty() ? null : staticActions);
             action.setEnabled(this.enabled);
             return action;

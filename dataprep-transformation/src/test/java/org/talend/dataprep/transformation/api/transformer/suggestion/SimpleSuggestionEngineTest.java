@@ -85,6 +85,7 @@ public class SimpleSuggestionEngineTest {
         rules.add(TypeDomainRules.phoneRule());
         rules.add(TypeDomainRules.phoneExtractRule());
         rules.add(TypeDomainRules.dataMaskingRule());
+        rules.add(TypeDomainRules.countryRule());
 
         // String Rules
         rules.add(StringRules.trailingSpaceRule());

@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.html.HtmlEncodingDetector;
 import org.junit.Test;
@@ -41,7 +41,8 @@ public class HtmlDetectorTest extends AbstractSchemaTestUtils {
 
         datasetMetadata.setEncoding("UTF-16");
 
-        Charset charset = new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
+        Charset charset =
+                new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
         Format actual = htmlDetector.detect(this.getClass().getResourceAsStream(fileName));
 
         assertTrue(actual.getFormatFamily() instanceof HtmlFormatFamily);

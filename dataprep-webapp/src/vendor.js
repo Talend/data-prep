@@ -60,6 +60,8 @@ import 'store';
 // Moment https://github.com/moment/moment/
 import 'moment';
 import 'moment/locale/fr';
+import 'moment/locale/ja';
+import 'moment/locale/zh-cn';
 import 'moment-jdateformatparser';
 
 // https://github.com/danialfarid/ng-file-upload
@@ -81,5 +83,9 @@ import 'react';
 import 'react-dom';
 import 'ngreact';
 
+// focus-visible
+import 'focus-visible';
+
 // slickgrid-column-data-autosize https://github.com/naresh-n/slickgrid-column-data-autosize
 import './lib/slick.autocolumnsize';
+

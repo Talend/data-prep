@@ -25,7 +25,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +41,8 @@ import org.talend.dataprep.transformation.api.transformer.AbstractTransformerWri
 /**
  * Write datasets in CSV.
  *
- * <strong>Warning</strong>: implementation does not support sending records after metadata. Metadata MUST be sent last or will
+ * <strong>Warning</strong>: implementation does not support sending records after metadata. Metadata MUST be sent last
+ * or will
  * not be written.
  */
 @Scope("prototype")
@@ -110,10 +111,12 @@ public class CSVWriter extends AbstractTransformerWriter {
     @PostConstruct
     private void initWriter() {
         separator = getParameterCharValue(parameters, CSVFormat.ParametersCSV.FIELDS_DELIMITER, defaultSeparator);
-        escapeCharacter = getParameterCharValueWithEmpty(parameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, defaultEscapeChar);
+        escapeCharacter =
+                getParameterCharValueWithEmpty(parameters, CSVFormat.ParametersCSV.ESCAPE_CHAR, defaultEscapeChar);
         enclosureCharacter = getParameterCharValueWithEmpty(parameters, CSVFormat.ParametersCSV.ENCLOSURE_CHAR,
                 defaultTextEnclosure);
-        enclosureMode = getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
+        enclosureMode =
+                getParameterStringValue(parameters, CSVFormat.ParametersCSV.ENCLOSURE_MODE, DEFAULT_ENCLOSURE_MODE);
 
         encoding = extractEncodingWithFallback(parameters.get(CSVFormat.ParametersCSV.ENCODING));
     }
@@ -131,7 +134,8 @@ public class CSVWriter extends AbstractTransformerWriter {
     /**
      * separator value can't be empty
      */
-    private static char getParameterCharValue(Map<String, String> parameters, String parameterName, String defaultValue) {
+    private static char getParameterCharValue(Map<String, String> parameters, String parameterName,
+            String defaultValue) {
         String parameter = parameters.get(parameterName);
         if (parameter == null || StringUtils.isEmpty(parameter) || parameter.length() > 1) {
             return defaultValue.charAt(0);
@@ -155,7 +159,8 @@ public class CSVWriter extends AbstractTransformerWriter {
         }
     }
 
-    private static String getParameterStringValue(Map<String, String> parameters, String parameterName, String defaultValue) {
+    private static String getParameterStringValue(Map<String, String> parameters, String parameterName,
+            String defaultValue) {
         String parameter = parameters.get(parameterName);
         if (parameter == null || StringUtils.isEmpty(parameter)) {
             return String.valueOf(defaultValue);
@@ -198,7 +203,8 @@ public class CSVWriter extends AbstractTransformerWriter {
      */
     @Override
     public void write(final RowMetadata rowMetadata) throws IOException {
-        csvWriter = new CSVWriterCustom(new OutputStreamWriter(output, encoding), separator, enclosureCharacter, escapeCharacter);
+        csvWriter = new CSVWriterCustom(new OutputStreamWriter(output, encoding), separator, enclosureCharacter,
+                escapeCharacter);
 
         // write the columns names, i.e. the header of the file
         csvWriter.writeNext(new BufferedDatasetRow(rowMetadata).nextLine);
@@ -208,7 +214,7 @@ public class CSVWriter extends AbstractTransformerWriter {
             // Warning: if an exception occurs in the stream it will terminate the stream thus stopping the writing.
             try {
                 objectBuffer.readAll().forEach(this::internalWrite);
-                LOGGER.debug("Finished writing temporary values into TComp.");
+                LOGGER.debug("Finished writing temporary values into the CSV file.");
             } finally {
                 safeCloseObjectBuffer();
             }
@@ -264,14 +270,23 @@ public class CSVWriter extends AbstractTransformerWriter {
 
         public BufferedDatasetRow(RowMetadata rowMetadata) {
             nextLine = rowMetadata.getColumns().stream().map(ColumnMetadata::getName).toArray(String[]::new);
-            isEnclosedTypeValues = rowMetadata.getColumns().stream().map(ColumnMetadata::getType)
-                    .map(v -> v.equals(Type.STRING.getName())).toArray(Boolean[]::new);
+            isEnclosedTypeValues = rowMetadata
+                    .getColumns()
+                    .stream()
+                    .map(ColumnMetadata::getType)
+                    .map(v -> v.equals(Type.STRING.getName()))
+                    .toArray(Boolean[]::new);
         }
 
         public BufferedDatasetRow(DataSetRow row) {
             nextLine = row.order().toArray(DataSetRow.SKIP_TDP_ID);
-            isEnclosedTypeValues = row.getRowMetadata().getColumns().stream().map(ColumnMetadata::getType)
-                    .map(v -> v.equals(Type.STRING.getName())).toArray(Boolean[]::new);
+            isEnclosedTypeValues = row
+                    .getRowMetadata()
+                    .getColumns()
+                    .stream()
+                    .map(ColumnMetadata::getType)
+                    .map(v -> v.equals(Type.STRING.getName()))
+                    .toArray(Boolean[]::new);
         }
     }
 }

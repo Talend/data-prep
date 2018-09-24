@@ -46,7 +46,7 @@ public class Localization {
 
         @Override
         public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
-                                            BeanDefinitionRegistry registry) {
+                BeanDefinitionRegistry registry) {
             if (registry instanceof BeanFactory) {
                 final Environment environment = ((BeanFactory) registry).getBean(Environment.class);
 

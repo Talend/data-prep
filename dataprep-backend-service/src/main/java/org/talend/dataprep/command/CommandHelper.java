@@ -56,7 +56,8 @@ public class CommandHelper {
                     try {
                         inputStream.close();
                     } catch (IOException closingException) {
-                        LOGGER.warn("could not close command result, a http connection may be leaked !", closingException);
+                        LOGGER.warn("could not close command result, a http connection may be leaked !",
+                                closingException);
                     }
                     LOGGER.error("Unable to fully copy command result '{}'.", command.getClass(), e);
                 }
@@ -90,7 +91,8 @@ public class CommandHelper {
                     try {
                         is.close();
                     } catch (IOException closingException) {
-                        LOGGER.warn("could not close command result, a http connection may be leaked !", closingException);
+                        LOGGER.warn("could not close command result, a http connection may be leaked !",
+                                closingException);
                     }
                     LOGGER.error("Unable to fully copy command result '{}'.", command.getClass(), e);
                 }
@@ -120,22 +122,24 @@ public class CommandHelper {
         AtomicInteger count = new AtomicInteger(0);
         return Flux.create(sink -> {
             final Observable<InputStream> observable = command.toObservable();
-            observable.map(i -> {
-                try {
-                    return mapper.readerFor(clazz).<T> readValues(i);
-                } catch (IOException e) {
-                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-                }
-            }) //
-            .doOnCompleted(() -> LOGGER.debug("Completed command '{}' (emits '{}') with '{}' records.", command.getClass().getName(), clazz.getName(), count.get())) //
-            .toBlocking() //
-            .forEach(s -> {
-                while (s.hasNext()) {
-                    sink.next(s.next());
-                    count.incrementAndGet();
-                }
-                sink.complete();
-            });
+            observable
+                    .map(i -> {
+                        try {
+                            return mapper.readerFor(clazz).<T> readValues(i);
+                        } catch (IOException e) {
+                            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                        }
+                    }) //
+                    .doOnCompleted(() -> LOGGER.debug("Completed command '{}' (emits '{}') with '{}' records.",
+                            command.getClass().getName(), clazz.getName(), count.get())) //
+                    .toBlocking() //
+                    .forEach(s -> {
+                        while (s.hasNext()) {
+                            sink.next(s.next());
+                            count.incrementAndGet();
+                        }
+                        sink.complete();
+                    });
         }, FluxSink.OverflowStrategy.BUFFER);
     }
 

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.stream.Stream;
 
@@ -24,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetContent;
@@ -48,6 +50,7 @@ import org.talend.dataprep.transformation.format.JsonFormat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import org.talend.dataprep.transformation.service.BaseExportStrategy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreparationExportStrategyTest {
@@ -88,7 +91,7 @@ public class PreparationExportStrategyTest {
     public void setUp() throws Exception {
         // Given
         mapper.registerModule(new Jdk8Module());
-        strategy.setMapper(new ObjectMapper());
+        injectObjectMapper(strategy);
 
         when(formatRegistrationService.getByName(eq("JSON"))).thenReturn(new JsonFormat());
 
@@ -120,6 +123,12 @@ public class PreparationExportStrategyTest {
         when(contentCache.put(any(), any())).thenReturn(new NullOutputStream());
     }
 
+    private void injectObjectMapper(SampleExportStrategy exportStrategy) throws Exception {
+        Field mapperField = ReflectionUtils.findField(BaseExportStrategy.class, "mapper");
+        ReflectionUtils.makeAccessible(mapperField);
+        ReflectionUtils.setField(mapperField, exportStrategy, mapper);
+    }
+
     private void configurePreparation(PreparationDTO preparation, String preparationId, String stepId) {
         when(preparationSummaryGet.execute()).thenReturn(preparation);
         when(applicationContext.getBean(eq(PreparationSummaryGet.class), eq(preparationId), eq(stepId)))
@@ -129,7 +138,7 @@ public class PreparationExportStrategyTest {
     @Test
     public void shouldNotAcceptNullParameters() {
         // Then
-        assertFalse(strategy.accept(null));
+        assertFalse(strategy.test(null));
     }
 
     @Test
@@ -141,7 +150,7 @@ public class PreparationExportStrategyTest {
         parameters.setFrom(ExportParameters.SourceType.HEAD);
         parameters.setPreparationId("prep-1234");
         parameters.setDatasetId("");
-        assertTrue(strategy.accept(parameters));
+        assertTrue(strategy.test(parameters));
     }
 
     @Test

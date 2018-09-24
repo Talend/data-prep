@@ -98,7 +98,8 @@ public class CloseableResourceWatchTest extends ServiceBaseTest {
             assertTrue(watcher.getEntries().stream().anyMatch(handler -> handler.getCloseable() == closeableForLookup));
         } else {
             assertEquals(previousWatchers, watcher.getEntries().size());
-            assertFalse(watcher.getEntries().stream().anyMatch(handler -> handler.getCloseable() == closeableForLookup));
+            assertFalse(
+                    watcher.getEntries().stream().anyMatch(handler -> handler.getCloseable() == closeableForLookup));
         }
         watcher.log();
 
@@ -111,6 +112,5 @@ public class CloseableResourceWatchTest extends ServiceBaseTest {
         assertEquals(previousWatchers, watcher.getEntries().size());
         assertFalse(watcher.getEntries().stream().anyMatch(handler -> handler.getCloseable() == closeableForLookup));
     }
-
 
 }

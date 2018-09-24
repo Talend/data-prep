@@ -593,19 +593,19 @@ describe('Import service', () => {
 			const existingDataset = { id: '2', name: 'my cool dataset' };
 			let confirmDefer;
 
-			beforeEach(inject(($q, StateService, DatasetService, ImportService, UpdateWorkflowService, TalendConfirmService) => {
+			beforeEach(inject(($q, StateService, DatasetService, ImportService, UpdateWorkflowService, ConfirmService) => {
 				confirmDefer = $q.defer();
 
 				spyOn(StateService, 'resetPlayground').and.returnValue();
 				spyOn(DatasetService, 'checkNameAvailability').and.returnValue($q.reject(existingDataset));
-				spyOn(TalendConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
+				spyOn(ConfirmService, 'confirm').and.returnValue(confirmDefer.promise);
 				spyOn(UpdateWorkflowService, 'updateDataset').and.returnValue($q.when());
 
 				ImportService.currentInputType = importTypes[0];
 				ImportService.datasetName = dataset.name;
 			}));
 
-			it('should do nothing on confirm modal dismiss', inject(($rootScope, $q, TalendConfirmService, DatasetService, ImportService) => {
+			it('should do nothing on confirm modal dismiss', inject(($rootScope, $q, ConfirmService, DatasetService, ImportService) => {
 				// given
 				spyOn(DatasetService, 'getUniqueName').and.returnValue($q.when('my cool dataset (1)'));
 				ImportService.onImportNameValidation();
@@ -617,12 +617,12 @@ describe('Import service', () => {
 
 				// then
 				expect(DatasetService.checkNameAvailability).toHaveBeenCalledWith(ImportService.datasetName);
-				expect(TalendConfirmService.confirm).toHaveBeenCalledWith(['UPDATE_EXISTING_DATASET'], { dataset: 'my cool dataset' });
+				expect(ConfirmService.confirm).toHaveBeenCalledWith(['UPDATE_EXISTING_DATASET'], { dataset: 'my cool dataset' });
 				expect(DatasetService.create).not.toHaveBeenCalled();
 				expect(DatasetService.update).not.toHaveBeenCalled();
 			}));
 
-			it('should create dataset with modified name', inject(($rootScope, $q, TalendConfirmService, DatasetService, ImportService) => {
+			it('should create dataset with modified name', inject(($rootScope, $q, DatasetService, ImportService) => {
 				// given
 				spyOn(DatasetService, 'getUniqueName').and.returnValue($q.when('my cool dataset (1)'));
 				ImportService.onImportNameValidation();

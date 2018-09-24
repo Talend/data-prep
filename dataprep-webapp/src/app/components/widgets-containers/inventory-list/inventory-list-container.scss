@@ -35,6 +35,10 @@ $icon-xls-badge-color: #8ABC00;
 		&-creationDate,
 		&-lastModificationDate { flex: 1 0 120px;}
 	}
+
+	.btn-group {
+		overflow: visible;
+	}
 }
 
 .list-item-preparation {

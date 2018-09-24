@@ -15,7 +15,8 @@ package org.talend.dataprep.preparation.store;
 import org.talend.dataprep.api.preparation.Identifiable;
 
 /**
- * A marker interface for identifiable instances persisted in a storage (even in-memory and of course others such as file
+ * A marker interface for identifiable instances persisted in a storage (even in-memory and of course others such as
+ * file
  * or mongodb or yet to be created storages).
  */
 abstract class PersistentIdentifiable extends Identifiable {

@@ -14,7 +14,7 @@ package org.talend.dataprep.api.export;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -48,19 +48,18 @@ public class ExportParametersUtil {
         result.setArguments(exportParam.getArguments());
         result.setExportName(exportParam.getExportName());
         result.setDatasetId(exportParam.getDatasetId());
-
-        if (StringUtils.isNotEmpty(exportParam.getFilter())) {
-            result.setFilter(mapper.readTree(exportParam.getFilter()));
-        }
+        result.setFilter(exportParam.getFilter());
 
         // we deal with a preparation export parameter. We need to populate stepId and datasetId
-        if(StringUtils.isNotEmpty(exportParam.getPreparationId())){
+        if (StringUtils.isNotEmpty(exportParam.getPreparationId())) {
             PreparationDTO prep = getPreparation(exportParam.getPreparationId(), exportParam.getStepId());
             result.setStepId(getCleanStepId(prep, exportParam.getStepId()));
-            if(exportParam.getFrom() != ExportParameters.SourceType.FILTER){
+            // if we don't have dataSetId and don't have content to apply the preparation, we apply on the dataSet use
+            // for the preparation
+            if (exportParam.getDatasetId() == null && exportParam.getContent() == null) {
                 result.setDatasetId(prep.getDataSetId());
             }
-        } else{
+        } else {
             // it'w a dataset export parameter. We need to switch stepId to empty
             result.setStepId("");
         }
@@ -77,7 +76,8 @@ public class ExportParametersUtil {
         if ("origin".equals(stepId)) {
             stepId = Step.ROOT_STEP.id();
         }
-        final PreparationSummaryGet preparationSummaryGet = applicationContext.getBean(PreparationSummaryGet.class, preparationId, stepId);
+        final PreparationSummaryGet preparationSummaryGet =
+                applicationContext.getBean(PreparationSummaryGet.class, preparationId, stepId);
         return preparationSummaryGet.execute();
     }
 

@@ -23,7 +23,6 @@ import static org.springframework.http.HttpStatus.OK;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-
 import javax.annotation.PostConstruct;
 
 import org.awaitility.core.ConditionFactory;
@@ -35,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
+import org.talend.dataprep.helper.VerboseMode;
 import org.talend.dataprep.qa.SpringContextConfiguration;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.PreparationDetails;
@@ -89,12 +89,12 @@ public abstract class DataPrepStep {
     @Autowired
     protected FolderUtil folderUtil;
 
-    @Value("${restassured.debug:false}")
-    private boolean enableRestAssuredDebug;
+    @Value("${restassured.debug:NONE}")
+    private VerboseMode restAssuredDebug;
 
     @PostConstruct
     public void init() {
-        api.setEnableRestAssuredDebug(enableRestAssuredDebug);
+        api.setRestAssuredDebug(restAssuredDebug);
     }
 
     /**
@@ -151,14 +151,14 @@ public abstract class DataPrepStep {
         }
     }
 
-    protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames, List<String> actual) {
-        assertNotNull(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(), actual);
-        assertFalse(new StringBuilder("No columns in \"").append(datasetOrPreparationName).append("\".").toString(),
-                actual.isEmpty());
-        assertEquals(new StringBuilder("Not the expected number of columns in \"").append(datasetOrPreparationName).append("\".")
-                .toString(), expectedColumnNames.size(), actual.size());
-        assertTrue(new StringBuilder("\"").append(datasetOrPreparationName).append("\" doesn't contain all expected columns.")
-                .toString(), actual.containsAll(expectedColumnNames));
+    protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
+            List<String> actual) {
+        assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
+        assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
+        assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",
+                expectedColumnNames.size(), actual.size());
+        assertTrue("\"" + datasetOrPreparationName + "\" doesn't contain all expected columns.",
+                actual.containsAll(expectedColumnNames));
     }
 
     protected ConditionFactory waitResponse(String message) {
@@ -174,7 +174,9 @@ public abstract class DataPrepStep {
     }
 
     protected ConditionFactory waitResponse(String message, int timeOut, int pollDelay, int pollInterval) {
-        return with().pollInterval(pollInterval, TimeUnit.SECONDS).and() //
+        return with() //
+                .pollInterval(pollInterval, TimeUnit.SECONDS) //
+                .and() //
                 .with() //
                 .pollDelay(pollDelay, TimeUnit.SECONDS) //
                 .await(message) //

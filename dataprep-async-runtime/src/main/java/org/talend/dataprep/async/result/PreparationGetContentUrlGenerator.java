@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.async.result;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Component;
@@ -41,6 +41,10 @@ public class PreparationGetContentUrlGenerator implements ResultUrlGenerator {
 
         if (param.getFrom() != null) {
             builder.setParameter("from", param.getFrom().name());
+        }
+
+        if (StringUtils.isNotEmpty(param.getFilter())) {
+            builder.setParameter("filter", param.getFilter());
         }
 
         return new AsyncExecutionResult(builder.toString());

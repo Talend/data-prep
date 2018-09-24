@@ -122,7 +122,7 @@ describe('Filter Item Component', () => {
             createElement();
 
             //then
-            expect(element.find('a.badge-btn-close').size()).toBe(1);
+            expect(element.find('button.badge-btn-close').size()).toBe(1);
         });
 
         it('should call onClose when badge close button is clicked', () => {
@@ -131,7 +131,7 @@ describe('Filter Item Component', () => {
             createElement();
 
             //when
-            const $removeBtn = element.find('a.badge-btn-close').eq(0);
+            const $removeBtn = element.find('button.badge-btn-close').eq(0);
             $removeBtn.click();
 
             //then
@@ -143,7 +143,7 @@ describe('Filter Item Component', () => {
             createElement();
 
             //then
-            expect(element.find('a.badge-btn-close').size()).toBe(0);
+            expect(element.find('button.badge-btn-close').size()).toBe(0);
         });
     });
 });

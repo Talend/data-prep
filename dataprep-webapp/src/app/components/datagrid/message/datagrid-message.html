@@ -19,3 +19,7 @@
     <span class="here" translate-once="HERE" ng-click="$ctrl.removeFilters()"></span>
     <span translate-once="EMPTY_GRID_2"></span>
 </div>
+<div class="datagrid-message"
+     ng-if="!$ctrl.nbLines && !$ctrl.filters.length">
+    <span translate-once="NO_ROWS"></span>
+</div>

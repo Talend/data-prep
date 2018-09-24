@@ -14,6 +14,7 @@ package org.talend.dataprep.preparation.store;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,12 +40,14 @@ public class PersistentPreparationRepository implements PreparationRepository {
 
     private final PreparationRepository delegate;
 
-    public PersistentPreparationRepository(PreparationRepository delegate, BeanConversionService beanConversionService) {
+    public PersistentPreparationRepository(PreparationRepository delegate,
+            BeanConversionService beanConversionService) {
         this.delegate = delegate;
         this.beanConversionService = beanConversionService;
     }
 
-    private static Class<? extends Identifiable> selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
+    private static Class<? extends Identifiable>
+            selectPersistentClass(Class<? extends Identifiable> identifiableClass) {
         if (Preparation.class.isAssignableFrom(identifiableClass)) {
             return PersistentPreparation.class;
         } else if (Step.class.isAssignableFrom(identifiableClass)) {
@@ -53,6 +56,15 @@ public class PersistentPreparationRepository implements PreparationRepository {
             // No need for specific persistent class.
             return identifiableClass;
         }
+    }
+
+    private <T extends Identifiable> Stream<T> applyConversions(Supplier<Stream<T>> supplier, Class<T> clazz,
+            Class<T> persistentClass) {
+        Stream<T> delegateStream = supplier.get();
+        if (!persistentClass.equals(clazz)) {
+            delegateStream = delegateStream.map(i -> beanConversionService.convert(i, clazz));
+        }
+        return delegateStream;
     }
 
     @Timed
@@ -66,7 +78,8 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return Stream.concat(delegate.list(persistentClass).map(i -> beanConversionService.convert(i, clazz)), getRootElement(persistentClass, clazz));
+        Stream<T> delegateStream = applyConversions(() -> delegate.list(persistentClass), clazz, persistentClass);
+        return Stream.concat(delegateStream, getRootElement(persistentClass, clazz));
     }
 
     private <T extends Identifiable> Stream<T> getRootElement(Class<T> clazz, Class<T> targetClass) {
@@ -83,13 +96,17 @@ public class PersistentPreparationRepository implements PreparationRepository {
     @Override
     public <T extends Identifiable> Stream<T> list(Class<T> clazz, Expression expression) {
         final Class<T> persistentClass = (Class<T>) selectPersistentClass(clazz);
-        return Stream.concat(delegate.list(persistentClass, expression).map(i -> beanConversionService.convert(i, clazz)), getRootElement(clazz, clazz));
+        Stream<T> delegateStream =
+                applyConversions(() -> delegate.list(persistentClass, expression), clazz, persistentClass);
+        return Stream.concat(delegateStream, getRootElement(clazz, clazz));
     }
 
     @Timed
     @Override
     public void add(Identifiable object) {
-        final List<? extends Identifiable> objects = PreparationUtils.scatter(object).stream() //
+        final List<? extends Identifiable> objects = PreparationUtils
+                .scatter(object)
+                .stream() //
                 .filter(o -> !(Step.ROOT_STEP.equals(o) || PreparationActions.ROOT_ACTIONS.equals(o))) //
                 .map(identifiable -> {
                     final Class<? extends Identifiable> targetClass = selectPersistentClass(identifiable.getClass());
@@ -120,7 +137,7 @@ public class PersistentPreparationRepository implements PreparationRepository {
             persistentStep.setId(Step.ROOT_STEP.id());
             persistentStep.setContent(PreparationActions.ROOT_ACTIONS.id());
             return (T) persistentStep;
-        }  else if (clazz.equals(PreparationActions.class) && PreparationActions.ROOT_ACTIONS.getId().equals(id)) {
+        } else if (clazz.equals(PreparationActions.class) && PreparationActions.ROOT_ACTIONS.getId().equals(id)) {
             return (T) PreparationActions.ROOT_ACTIONS;
         } else {
             beanToConvert = delegate.get(id, targetClass);

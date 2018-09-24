@@ -20,15 +20,19 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.*;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -42,9 +46,9 @@ import com.monitorjbl.xlsx.impl.StreamingRow;
 
 public class StreamingSheetReader implements Iterable<Row> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger( StreamingSheetReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StreamingSheetReader.class);
 
-    private final SharedStringsTable sst;
+    private final ReadOnlySharedStringsTable sst;
 
     private final StylesTable stylesTable;
 
@@ -75,7 +79,8 @@ public class StreamingSheetReader implements Iterable<Row> {
     // <dimension ref="A1:B60"/>
     private String dimension = StringUtils.EMPTY;
 
-    public StreamingSheetReader(SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
+    public StreamingSheetReader(ReadOnlySharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser,
+            int rowCacheSize) {
         this.sst = sst;
         this.stylesTable = stylesTable;
         this.parser = parser;
@@ -96,7 +101,7 @@ public class StreamingSheetReader implements Iterable<Row> {
             rowCacheIterator = rowCache.iterator();
             return rowCacheIterator.hasNext();
         } catch (XMLStreamException | SAXException e) {
-            LOGGER.debug( "End of stream");
+            LOGGER.debug("End of stream");
         }
         return false;
     }
@@ -128,7 +133,6 @@ public class StreamingSheetReader implements Iterable<Row> {
             StartElement startElement = event.asStartElement();
             String tagLocalName = startElement.getName().getLocalPart();
 
-
             if ("row".equals(tagLocalName)) {
                 Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
                 if (firstRowIndex == -1) {
@@ -138,12 +142,13 @@ public class StreamingSheetReader implements Iterable<Row> {
             } else if ("cols".equals(tagLocalName)) {
                 parsingCols = true;
             } else if ("col".equals(tagLocalName) && parsingCols) {
-                colNumber = colNumber +1;
+                colNumber = colNumber + 1;
             } else if ("c".equals(tagLocalName)) {
                 Attribute ref = startElement.getAttributeByName(new QName("r"));
 
                 String[] coord = ref.getValue().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-                currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]), Integer.parseInt(coord[1]) - 1);
+                currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]),
+                        Integer.parseInt(coord[1]) - 1);
                 setFormatString(startElement, currentCell);
 
                 Attribute type = startElement.getAttributeByName(new QName("t"));
@@ -160,15 +165,15 @@ public class StreamingSheetReader implements Iterable<Row> {
                         int index = Integer.parseInt(indexStr);
                         currentCell.setCellStyle(stylesTable.getStyleAt(index));
                     } catch (NumberFormatException nfe) {
-                        LOGGER.warn( "Ignoring invalid style index {}", indexStr);
+                        LOGGER.warn("Ignoring invalid style index {}", indexStr);
                     }
                 }
-            // we store the dimension as well to revert with this method when cols not found
-            // can happen see xlsx attached here https://jira.talendforge.org/browse/TDP-1957
-            // <dimension ref="A1:B60"/>
-            } else if ("dimension".equals( tagLocalName )) {
-                Attribute attribute = startElement.getAttributeByName( new QName( "ref" ) );
-                if (attribute != null){
+                // we store the dimension as well to revert with this method when cols not found
+                // can happen see xlsx attached here https://jira.talendforge.org/browse/TDP-1957
+                // <dimension ref="A1:B60"/>
+            } else if ("dimension".equals(tagLocalName)) {
+                Attribute attribute = startElement.getAttributeByName(new QName("ref"));
+                if (attribute != null) {
                     this.dimension = attribute.getValue();
                 }
             }
@@ -244,8 +249,8 @@ public class StreamingSheetReader implements Iterable<Row> {
             return StringUtils.EMPTY;// "ERROR:  " + lastContents;
         case "n": // numeric type
             if (currentCell.getNumericFormat() != null && lastContents.length() > 0) {
-                return dataFormatter.formatRawCellContents(Double.parseDouble(lastContents), currentCell.getNumericFormatIndex(),
-                        currentCell.getNumericFormat());
+                return dataFormatter.formatRawCellContents(Double.parseDouble(lastContents),
+                        currentCell.getNumericFormatIndex(), currentCell.getNumericFormat());
             } else {
                 return lastContents;
             }
@@ -314,14 +319,14 @@ public class StreamingSheetReader implements Iterable<Row> {
         }
     }
 
-
     class CustomDataFormatter extends DataFormatter {
 
         @Override
-        public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
+        public String formatRawCellContents(double value, int formatIndex, String formatString,
+                boolean use1904Windowing) {
             // TDP-1656 (olamy) for some reasons poi use date format with only 2 digits for years
             // even the excel data ws using 4 so force the pattern here
-            if ( DateUtil.isValidExcelDate( value) && StringUtils.countMatches( formatString, "y") == 2) {
+            if (DateUtil.isValidExcelDate(value) && StringUtils.countMatches(formatString, "y") == 2) {
                 formatString = StringUtils.replace(formatString, "yy", "yyyy");
             }
             if (DateUtil.isValidExcelDate(value) && StringUtils.countMatches(formatString, "Y") == 2) {

@@ -12,6 +12,11 @@
  ============================================================================*/
 
 import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
+import {
+	EXACT,
+	QUALITY,
+	INSIDE_RANGE,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -22,8 +27,15 @@ import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
  * @requires data-prep.statistics.service:StatisticsTooltipService
  * @requires data-prep.services.filter-manager.service:FilterManagerService
  */
-export default function ColumnProfileCtrl($translate, $timeout, state, FilterManagerService,
-                                          StatisticsService, StatisticsTooltipService) {
+export default function ColumnProfileCtrl(
+	$translate,
+	$timeout,
+	state,
+	FilterManagerService,
+	FilterUtilsService,
+	StatisticsService,
+	StatisticsTooltipService
+) {
 	'ngInject';
 
 	const vm = this;
@@ -48,9 +60,23 @@ export default function ColumnProfileCtrl($translate, $timeout, state, FilterMan
 			],
 			caseSensitive: true,
 		};
-		return value.length || keyName === CTRL_KEY_NAME ?
-			FilterManagerService.addFilterAndDigest('exact', column.id, column.name, args, null, keyName) :
-			FilterManagerService.addFilterAndDigest('empty_records', column.id, column.name, null, null, keyName);
+		return value.length || keyName === CTRL_KEY_NAME
+			? FilterManagerService.addFilterAndDigest(
+					EXACT,
+					column.id,
+					column.name,
+					args,
+					null,
+					keyName
+				)
+			: FilterManagerService.addFilterAndDigest(
+					QUALITY,
+					column.id,
+					column.name,
+					{ empty: true, invalid: false },
+					null,
+					keyName
+				);
 	}
 
 	/**
@@ -77,17 +103,31 @@ export default function ColumnProfileCtrl($translate, $timeout, state, FilterMan
 		const max = interval.max;
 		const isDateRange = selectedColumn.type === 'date';
 		const removeFilterFn = StatisticsService.getRangeFilterRemoveFn();
+		const excludeMax = min !== max && interval.excludeMax;
 		const args = {
 			intervals: [
 				{
-					label: interval.label || FilterManagerService.getRangeLabelFor(interval, isDateRange),
+					label:
+						interval.label ||
+						FilterUtilsService.getRangeLabelFor(
+							interval,
+							isDateRange
+						),
 					value: [min, max],
-					isMaxReached: interval.isMaxReached,
+					excludeMax,
 				},
 			],
 			type: selectedColumn.type,
 		};
-		FilterManagerService.addFilterAndDigest('inside_range', selectedColumn.id, selectedColumn.name, args, removeFilterFn, keyName);
+
+		FilterManagerService.addFilterAndDigest(
+			INSIDE_RANGE,
+			selectedColumn.id,
+			selectedColumn.name,
+			args,
+			removeFilterFn,
+			keyName
+		);
 	}
 
 	function changeAggregation(column, aggregation) {

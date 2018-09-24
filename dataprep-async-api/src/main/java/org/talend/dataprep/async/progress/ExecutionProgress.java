@@ -19,9 +19,9 @@ package org.talend.dataprep.async.progress;
  * Asynchronously executed code may store :
  * </p>
  * <ul>
- *   <li>processedRows: the number of rows processed so far</li>
- *   <li>targetRows: the number of rows expected to be processed</li>
- *   <li>percentage: the 0 to 1 float value that represents the advancement.</li>
+ * <li>processedRows: the number of rows processed so far</li>
+ * <li>targetRows: the number of rows expected to be processed</li>
+ * <li>percentage: the 0 to 1 float value that represents the advancement.</li>
  * </ul>
  */
 public class ExecutionProgress {

@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.schema.csv;
 
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,11 +112,11 @@ public class CSVFastHeaderAndTypeAnalyzer {
      * @param separator the specified character or string used as a separator
      */
     public CSVFastHeaderAndTypeAnalyzer(List<String> sampleLines, Separator separator) {
-        if (sampleLines == null || sampleLines.isEmpty()){
-            throw  new IllegalArgumentException("The sample used for analysis must neither be null nor empty!");
+        if (sampleLines == null || sampleLines.isEmpty()) {
+            throw new IllegalArgumentException("The sample used for analysis must neither be null nor empty!");
         }
-        if ( separator == null){
-            throw  new IllegalArgumentException("The separator used for analysis must not be null!");
+        if (separator == null) {
+            throw new IllegalArgumentException("The separator used for analysis must not be null!");
         }
 
         this.sampleLines = sampleLines;
@@ -160,7 +160,7 @@ public class CSVFastHeaderAndTypeAnalyzer {
             return result;
         }
         List<String> fields = readLine(line);
-        for (String field: fields) {
+        for (String field : fields) {
             Scanner scanner = new Scanner(field);
             scanner.useDelimiter(Pattern.quote(Character.toString(separator.getSeparator())));
             // called integer but we are looking for long in Java parlance
@@ -194,9 +194,10 @@ public class CSVFastHeaderAndTypeAnalyzer {
      * @param line line as it's in the CSV raw file
      * @return a list of ordered fields
      */
-    private List<String> readLine(String line){
+    private List<String> readLine(String line) {
         List<String> result = Collections.emptyList();
-        try (CSVReader csvReader = new CSVReader(new InputStreamReader(IOUtils.toInputStream(line)), separator.getSeparator())) {
+        try (CSVReader csvReader =
+                new CSVReader(new InputStreamReader(IOUtils.toInputStream(line)), separator.getSeparator())) {
             String[] fields = csvReader.readNext();
             csvReader.close();
             if (fields != null && fields.length != 0) {
@@ -226,7 +227,8 @@ public class CSVFastHeaderAndTypeAnalyzer {
     private List<Type> columnTyping(int start, int end) {
 
         if (start > end) {
-            throw new IllegalArgumentException("The end column " + end + " should be greater than the start column " + start);
+            throw new IllegalArgumentException(
+                    "The end column " + end + " should be greater than the start column " + start);
         }
 
         if (sampleTypes.length <= start || sampleTypes.length <= end || start < 0 || end < 0) {
@@ -243,8 +245,8 @@ public class CSVFastHeaderAndTypeAnalyzer {
                 Integer oldValue = typeCount.get(currentType);
                 typeCount.put(currentType, oldValue != null ? oldValue + 1 : 1);
             }
-            Optional<Map.Entry<Integer, Integer>> optional = typeCount.entrySet().stream().filter(e -> e.getValue() > size)
-                    .findFirst();
+            Optional<Map.Entry<Integer, Integer>> optional =
+                    typeCount.entrySet().stream().filter(e -> e.getValue() > size).findFirst();
 
             try {
                 Map.Entry<Integer, Integer> mostFrequentEntry = optional.get();
@@ -334,40 +336,40 @@ public class CSVFastHeaderAndTypeAnalyzer {
                 // if the first line is all text and all fields are present and following lines have some columns
                 // which are at least 50% not text
                 // mark the separator as having a header
-                if (firstRecordTypes.contains(Type.INTEGER) || firstRecordTypes.contains(Type.DOUBLE) || firstRecordTypes.contains(Type.BOOLEAN)){
+                if (firstRecordTypes.contains(Type.INTEGER) || firstRecordTypes.contains(Type.DOUBLE)
+                        || firstRecordTypes.contains(Type.BOOLEAN)) {
                     firstLineAHeader = false;
                     headerInfoReliable = true;
-                }
-                else if (allStringTypes(firstRecordTypes) && !sampleTypes[0].contains(ABSENT) &&
-                        (columnTypingWithoutFirstRecord.contains(Type.INTEGER) ||
-                                columnTypingWithoutFirstRecord.contains(Type.DOUBLE) || columnTypingWithoutFirstRecord.contains(Type.BOOLEAN))){
+                } else if (allStringTypes(firstRecordTypes) && !sampleTypes[0].contains(ABSENT)
+                        && (columnTypingWithoutFirstRecord.contains(Type.INTEGER)
+                                || columnTypingWithoutFirstRecord.contains(Type.DOUBLE)
+                                || columnTypingWithoutFirstRecord.contains(Type.BOOLEAN))) {
                     firstLineAHeader = true;
                     headerInfoReliable = true;
 
-                    }
                 }
             }
-            else{
-                firstLineAHeader = false;
-            }
-            // type analysis: if there is a header the first line is excluded from type analysis, otherwise it is
-            // included
-            headers = new ArrayList<>();
-            if (firstLineAHeader) {
-                List<Type> columnTypes = columnTypingWithoutFirstRecord();
+        } else {
+            firstLineAHeader = false;
+        }
+        // type analysis: if there is a header the first line is excluded from type analysis, otherwise it is
+        // included
+        headers = new ArrayList<>();
+        if (firstLineAHeader) {
+            List<Type> columnTypes = columnTypingWithoutFirstRecord();
 
-                List<String> firstLine = readLine(sampleLines.get(0));
-                int i = 0;
-                for(String field: firstLine) {
-                    headers.add(new Pair<>(field, columnTypes.get(i++)));
-                }
-            } else {
-                List<Type> columnTypes = allRecordsColumnTyping();
-                int i = 1;
-                for (Type type : columnTypes) {
-                    headers.add(new Pair<>(message("import.local.generated_column_name", i++), type));
-                }
+            List<String> firstLine = readLine(sampleLines.get(0));
+            int i = 0;
+            for (String field : firstLine) {
+                headers.add(new Pair<>(field, columnTypes.get(i++)));
             }
+        } else {
+            List<Type> columnTypes = allRecordsColumnTyping();
+            int i = 1;
+            for (Type type : columnTypes) {
+                headers.add(new Pair<>(message("import.local.generated_column_name", i++), type));
+            }
+        }
 
         analysisPerformed = true;
     }

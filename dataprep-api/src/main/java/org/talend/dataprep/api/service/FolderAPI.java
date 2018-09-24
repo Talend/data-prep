@@ -12,22 +12,19 @@
 
 package org.talend.dataprep.api.service;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.command.CommandHelper.toPublisher;
+import static org.talend.dataprep.command.CommandHelper.toStream;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,12 +54,10 @@ import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import reactor.core.publisher.Flux;
 
 @RestController
 public class FolderAPI extends APIService {
@@ -71,7 +66,8 @@ public class FolderAPI extends APIService {
     private DataSetNameInjection dataSetNameInjection;
 
     @RequestMapping(value = "/api/folders", method = GET)
-    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
+            produces = APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<StreamingResponseBody> listFolders(@RequestParam(required = false) String parentId) {
         try {
@@ -97,10 +93,14 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get folder by id", produces = APPLICATION_JSON_VALUE, notes = "Get a folder by id")
     @Timed
-    public StreamingResponseBody getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
+    public ResponseEntity<StreamingResponseBody>
+            getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
         try {
             final HystrixCommand<InputStream> foldersList = getCommand(GetFolder.class, id);
-            return CommandHelper.toStreaming(foldersList);
+            return ResponseEntity
+                    .ok() //
+                    .contentType(APPLICATION_JSON_UTF8) //
+                    .body(CommandHelper.toStreaming(foldersList));
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_FOLDERS, e);
         }
@@ -109,7 +109,8 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders", method = PUT)
     @ApiOperation(value = "Add a folder.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId, @RequestParam final String path) {
+    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId,
+            @RequestParam final String path) {
         try {
             final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, parentId, path);
             return CommandHelper.toStreaming(createChildFolder);
@@ -121,7 +122,7 @@ public class FolderAPI extends APIService {
     /**
      * no javadoc here so see description in @ApiOperation notes.
      */
-    @RequestMapping(value = "/api/folders/{id}", method = DELETE)
+    @RequestMapping(value = "/api/folders/{id}", method = DELETE, produces = TEXT_PLAIN_VALUE)
     @ApiOperation(value = "Remove a Folder")
     @Timed
     public ResponseEntity<String> removeFolder(@PathVariable final String id, final OutputStream output) {
@@ -160,8 +161,7 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "Search Folders with parameter as part of the name", produces = APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<StreamingResponseBody> search(@RequestParam(required = false) final String name,
-                                                        @RequestParam(required = false) final Boolean strict,
-                                                        @RequestParam(required = false) final String path) {
+            @RequestParam(required = false) final Boolean strict, @RequestParam(required = false) final String path) {
         try {
             final GenericCommand<InputStream> searchFolders = getCommand(SearchFolders.class, name, strict, path);
             return CommandHelper.toStreaming(searchFolders);
@@ -179,7 +179,7 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders/{id}/preparations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all preparations for a given id.", notes = "Returns the list of preparations for the given id the current user is allowed to see.")
     @Timed
-    public StreamingResponseBody listPreparationsByFolder(
+    public PreparationsByFolder listPreparationsByFolder(
             @PathVariable @ApiParam(name = "id", value = "The destination to search preparations from.") final String id, //
             @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "creationDate") final Sort sort, //
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "desc") final Order order) {
@@ -191,86 +191,34 @@ public class FolderAPI extends APIService {
 
         LOG.info("Listing preparations in folder {}", id);
 
-        return output -> {
-            try (final JsonGenerator generator = mapper.getFactory().createGenerator(output)) {
-                generator.writeStartObject();
-                // Folder list
-                final FolderChildrenList commandListFolders = getCommand(FolderChildrenList.class, id, sort, order);
-                final Flux<Folder> folders = Flux.from(toPublisher(Folder.class, mapper, commandListFolders));
-                writeFluxToJsonArray(folders, "folders", generator);
-                // Preparation list
-                final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
+        final FolderChildrenList commandListFolders = getCommand(FolderChildrenList.class, id, sort, order);
+        final Stream<Folder> folders = toStream(Folder.class, mapper, commandListFolders);
 
-                final Stream<PreparationListItemDTO> preparations = CommandHelper.toStream(PreparationDTO.class, mapper, listPreparations)
-                        .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+        final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
+        final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
 
-                generator.writeObjectField("preparations", preparations);
-                generator.writeEndObject();
-            } catch (EOFException e) {
-                LOG.debug("Output stream has been closed before finishing preparation writing.", e);
-            } catch (IOException e) {
-                throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDER_ENTRIES, e, build().put("destination", id));
-            }
-        };
+        return new PreparationsByFolder(folders, preparations);
     }
 
-    private static <T> void writeFluxToJsonArray(Flux<T> flux, String arrayElement, JsonGenerator generator) {
-        flux.subscribe(new WriteJsonArraySubscriber<>(generator, arrayElement));
-    }
+    public static class PreparationsByFolder {
 
-    private static class WriteJsonArraySubscriber<T> implements Subscriber<T> {
+        private final Stream<Folder> folders;
 
-        private final JsonGenerator generator;
+        private final Stream<PreparationListItemDTO> preparations;
 
-        private final String arrayElement;
-
-        private Subscription subscription;
-
-        public WriteJsonArraySubscriber(JsonGenerator generator, String arrayElement) {
-            this.generator = generator;
-            this.arrayElement = arrayElement;
+        public PreparationsByFolder(Stream<Folder> folders, Stream<PreparationListItemDTO> preparations) {
+            this.folders = folders;
+            this.preparations = preparations;
         }
 
-        @Override
-        public void onSubscribe(Subscription s) {
-            try {
-                generator.writeArrayFieldStart(arrayElement);
-            } catch (EOFException eofe) {
-                LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
-                subscription.cancel();
-            } catch (IOException e) {
-                LOG.error("Unable to write content.", e);
-            }
-            subscription = s;
-            s.request(Long.MAX_VALUE);
+        public Stream<Folder> getFolders() {
+            return folders;
         }
 
-        @Override
-        public void onNext(T aLong) {
-            try {
-                generator.writeObject(aLong);
-            } catch (EOFException eofe) {
-                LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
-                subscription.cancel();
-            } catch (IOException e) {
-                LOG.error("Unable to write content.", e);
-            }
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            onComplete();
-        }
-
-        @Override
-        public void onComplete() {
-            try {
-                generator.writeEndArray();
-            } catch (EOFException eofe) {
-                LOG.debug("JsonGenerator was closed before finish streaming.", eofe);
-            } catch (IOException e) {
-                LOG.error("Unable to write content.", e);
-            }
+        public Stream<PreparationListItemDTO> getPreparations() {
+            return preparations;
         }
     }
+
 }

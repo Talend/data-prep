@@ -89,8 +89,7 @@ public class FolderTreeNode implements Serializable {
             return false;
         }
         final FolderTreeNode node = (FolderTreeNode) o;
-        return Objects.equals(this.folder, node.folder)
-                && Objects.equals(children, node.children);
+        return Objects.equals(this.folder, node.folder) && Objects.equals(children, node.children);
     }
 
     /**

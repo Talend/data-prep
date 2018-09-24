@@ -106,7 +106,9 @@ describe('Playground Service', () => {
 					initialStep: { transformation: { stepId: 'INITIAL_STEP_ID' } },
 					current: { steps: [] }
 				},
-				filter: {},
+				filter: {
+					gridFilters: []
+				},
 				grid: {},
 				sampleType: 'HEAD',
 				data: {
@@ -172,25 +174,25 @@ describe('Playground Service', () => {
 	describe('update preparation', () => {
 		it('should set new name to the preparation name',
 			inject(($rootScope, PlaygroundService, PreparationService, TitleService, StateService) => {
-				// given
-				const name = 'My preparation';
-				const newName = 'My new preparation name';
+					// given
+					const name = 'My preparation';
+					const newName = 'My new preparation name';
 
-				PlaygroundService.preparationName = name;
-				stateMock.playground.dataset = { id: '123d120394ab0c53' };
-				stateMock.playground.preparation = { id: 'e85afAa78556d5425bc2' };
+					PlaygroundService.preparationName = name;
+					stateMock.playground.dataset = { id: '123d120394ab0c53' };
+					stateMock.playground.preparation = { id: 'e85afAa78556d5425bc2' };
 
-				// when
-				PlaygroundService.createOrUpdatePreparation(newName);
-				$rootScope.$digest();
+					// when
+					PlaygroundService.createOrUpdatePreparation(newName);
+					$rootScope.$digest();
 
-				// then
-				expect(PreparationService.create).not.toHaveBeenCalled();
-				expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
-				expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
-				expect(TitleService.setStrict).toHaveBeenCalledWith(preparations[0].name);
-			}
-		));
+					// then
+					expect(PreparationService.create).not.toHaveBeenCalled();
+					expect(PreparationService.setName).toHaveBeenCalledWith('e85afAa78556d5425bc2', newName);
+					expect(StateService.setPreparationName).toHaveBeenCalledWith(preparations[0].name);
+					expect(TitleService.setStrict).toHaveBeenCalledWith(preparations[0].name);
+				}
+			));
 
 		describe('history', () => {
 			let undo;
@@ -332,7 +334,10 @@ describe('Playground Service', () => {
 		};
 		const data = {
 			columns: [{ id: '0001' }],
-			records: [{ id: '0', firstname: 'toto' }, { id: '1', firstname: 'tata' }, { id: '2', firstname: 'titi' }],
+			records: [{ id: '0', firstname: 'toto' }, { id: '1', firstname: 'tata' }, {
+				id: '2',
+				firstname: 'titi'
+			}],
 		};
 		let assertDatasetLoadInitialized;
 		let assertDatasetLoadNotInitialized;
@@ -569,7 +574,7 @@ describe('Playground Service', () => {
 		const previousLastStepId = '3248fa65e45f588cb464';
 		const lastStep = { transformation: { stepId: lastStepId } };
 		const previousLastStep = { transformation: { stepId: previousLastStepId } };
-		const previousStep = { column: { id: '0003' } };
+		const previousStep = { column: { id: '0003' }, transformation: { stepId: '666' } };
 		beforeEach(inject(($rootScope, $q, PlaygroundService, PreparationService, StepUtilsService) => {
 			preparationHeadContent = {
 				records: [{
@@ -593,6 +598,9 @@ describe('Playground Service', () => {
 					nbCommands: '17',
 					lastname: 'Johnson',
 				},],
+				metadata: {
+					columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+				},
 			};
 
 			metadata = { id: 'e85afAa78556d5425bc2' };
@@ -727,6 +735,8 @@ describe('Playground Service', () => {
 			it('should refresh datagrid with head content', inject(($rootScope, PlaygroundService, PreparationService, DatagridService, PreviewService) => {
 				// given
 				stateMock.playground.preparation = { id: '15de46846f8a46' };
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
+
 				const parameters = {
 					param1: 'param1Value',
 					param2: 4,
@@ -741,7 +751,7 @@ describe('Playground Service', () => {
 				$rootScope.$digest();
 
 				// then
-				expect(PreparationService.getContent).toHaveBeenCalledWith('15de46846f8a46', 'head', 'HEAD');
+				expect(PreparationService.getContent).toHaveBeenCalledWith('15de46846f8a46', 'head', 'HEAD', false);
 				expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
 			}));
@@ -910,6 +920,7 @@ describe('Playground Service', () => {
 				// given
 				const preparation = { id: '456415ae348e6046dc' };
 				stateMock.playground.preparation = preparation;
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
 				const parameters = { value: 'tata', column_id: '0001' };
 
 				// when
@@ -917,7 +928,7 @@ describe('Playground Service', () => {
 				$rootScope.$digest();
 
 				// then
-				expect(PreparationService.getContent).toHaveBeenCalledWith(preparation.id, lastActiveStep.transformation.stepId, 'HEAD');
+				expect(PreparationService.getContent).toHaveBeenCalledWith(preparation.id, lastActiveStep.transformation.stepId, 'HEAD', false);
 				expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
 			}));
@@ -1121,11 +1132,12 @@ describe('Playground Service', () => {
 
 			it('should update datagrid', inject(($rootScope, PlaygroundService, PreparationService, DatagridService, PreviewService) => {
 				// when
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
 				PlaygroundService.updateStepOrder(previousPosition, nextPosition);
 				$rootScope.$digest();
 
 				// then
-				expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
+				expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD', false);
 				expect(DatagridService.focusedColumn).toBeFalsy();
 				expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
@@ -1179,12 +1191,15 @@ describe('Playground Service', () => {
 				}));
 
 				it('should refresh datagrid content on UNDO', inject(($rootScope, PreparationService, DatagridService, PreviewService) => {
+					//given
+					stateMock.playground.filter = { enabled: false, gridFilters: [] };
+
 					// when
 					undo();
 					$rootScope.$digest();
 
 					// then
-					expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
+					expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD', false);
 					expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
 					expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				}));
@@ -1242,13 +1257,14 @@ describe('Playground Service', () => {
 			it('should update datagrid', inject(($rootScope, PlaygroundService, PreparationService, DatagridService, PreviewService) => {
 				// given
 				stateMock.playground.preparation = { id: preparationId };
+				stateMock.playground.filter = { enabled: false, gridFilters: [] };
 
 				// when
 				PlaygroundService.removeStep(stepToDelete);
 				$rootScope.$digest();
 
 				// then
-				expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
+				expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD', false);
 				expect(DatagridService.focusedColumn).toBeFalsy();
 				expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
 				expect(PreviewService.reset).toHaveBeenCalledWith(false);
@@ -1303,12 +1319,15 @@ describe('Playground Service', () => {
 				}));
 
 				it('should refresh datagrid content on UNDO', inject(($rootScope, PreparationService, DatagridService, PreviewService) => {
+					//given
+					stateMock.playground.filter = { enabled: false, gridFilters: [] };
+
 					// when
 					undo();
 					$rootScope.$digest();
 
 					// then
-					expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD');
+					expect(PreparationService.getContent).toHaveBeenCalledWith(preparationId, 'head', 'HEAD', false);
 					expect(DatagridService.updateData).toHaveBeenCalledWith(preparationHeadContent);
 					expect(PreviewService.reset).toHaveBeenCalledWith(false);
 				}));
@@ -1316,16 +1335,9 @@ describe('Playground Service', () => {
 		});
 
 		describe('edit Cell', () => {
-			beforeEach(inject(($q, PlaygroundService, FilterAdapterService) => {
+			beforeEach(inject(($q, PlaygroundService, TqlFilterAdapterService) => {
 				spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
-				spyOn(FilterAdapterService, 'toTree').and.returnValue({
-					filter: {
-						eq: {
-							field: '0001',
-							value: 'john',
-						},
-					},
-				});
+				spyOn(TqlFilterAdapterService, 'toTQL').and.returnValue('0001 = john');
 			}));
 
 			it('should append step on cell scope', inject((PlaygroundService) => {
@@ -1412,12 +1424,7 @@ describe('Playground Service', () => {
 					row_id: 58,
 					column_id: '0001',
 					column_name: 'firstname',
-					filter: {
-						eq: {
-							field: '0001',
-							value: 'john',
-						},
-					},
+					filter: '0001 = john',
 				};
 
 				const actions = [{ action: 'replace_on_value', parameters: expectedParams }];
@@ -1426,16 +1433,9 @@ describe('Playground Service', () => {
 		});
 
 		describe('params completion and append Step', () => {
-			beforeEach(inject(($q, PlaygroundService, FilterAdapterService) => {
+			beforeEach(inject(($q, PlaygroundService, TqlFilterAdapterService) => {
 				spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when());
-				spyOn(FilterAdapterService, 'toTree').and.returnValue({
-					filter: {
-						eq: {
-							field: '0001',
-							value: 'john',
-						},
-					},
-				});
+				spyOn(TqlFilterAdapterService, 'toTQL').and.returnValue('0001 = john');
 			}));
 
 			it('should call appendStep with column', inject((PlaygroundService) => {
@@ -1523,12 +1523,7 @@ describe('Playground Service', () => {
 					column_id: '0001',
 					column_name: 'firstname',
 					row_id: undefined,
-					filter: {
-						eq: {
-							field: '0001',
-							value: 'john',
-						},
-					},
+					filter: '0001 = john',
 				};
 
 				const actions = [{ action: 'tolowercase', parameters: expectedParams }];
@@ -1919,6 +1914,8 @@ describe('Playground Service', () => {
 		it('should update datagrid', inject(($rootScope, PlaygroundService, PreparationService) => {
 			// given
 			stateMock.playground.preparation = { id: '79db821355a65cd96' };
+			stateMock.playground.filter = { enabled: false, gridFilters: [] };
+
 			expect(PreparationService.getContent).not.toHaveBeenCalled();
 
 			// when
@@ -1926,7 +1923,7 @@ describe('Playground Service', () => {
 			$rootScope.$digest();
 
 			// then
-			expect(PreparationService.getContent).toHaveBeenCalledWith('79db821355a65cd96', 'head', 'HEAD');
+			expect(PreparationService.getContent).toHaveBeenCalledWith('79db821355a65cd96', 'head', 'HEAD', false);
 		}));
 
 		it('should manage loader', inject(($rootScope, PlaygroundService) => {
@@ -2053,15 +2050,21 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
 				$rootScope.$apply();
@@ -2093,17 +2096,24 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
+
 				$rootScope.$apply();
 
 				expect(StateService.setIsFetchingStats.calls.count()).toBe(1);
@@ -2129,18 +2139,61 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [{ // stats already computed
-									value: 'toto',
-									frequency: 10,
-								}],
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [{
+										value: 'toto',
+										frequency: 10,
+									}],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
+					},
+				};
+				$rootScope.$apply();
+
+				// then
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+			})
+		);
+
+		it('should NOT fetch statistics when they are no rows',
+			inject(($q, $rootScope, PlaygroundService, PreparationService, StateService) => {
+				// given
+				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+				stateMock.playground.preparation = preparations[0];
+
+				// when
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				PlaygroundService.loadPreparation(preparations[0]);
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 0
 					},
 				};
 				$rootScope.$apply();
@@ -2218,16 +2271,21 @@ describe('Playground Service', () => {
 				PlaygroundService.loadDataset(datasets[0]);
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
-
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
 				$rootScope.$apply();
@@ -2259,16 +2317,21 @@ describe('Playground Service', () => {
 				PlaygroundService.loadDataset(datasets[0]);
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
-
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [],       // stats not computed
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
 					},
 				};
 				$rootScope.$apply();
@@ -2297,18 +2360,61 @@ describe('Playground Service', () => {
 				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
 				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
 
-				stateMock.playground.data = {
-					metadata: {
-						id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
-						name: 'customers_jso_light',
-						columns: [{
-							statistics: {
-								frequencyTable: [{ // stats already computed
-									value: 'toto',
-									frequency: 10,
-								}],
-							},
-						}],
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [{
+										value: 'toto',
+										frequency: 10,
+									}],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
+					},
+				};
+				$rootScope.$apply();
+
+				// then
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+			})
+		);
+		it('should NOT fetch statistics when they are no rows',
+			inject(($q, $rootScope, PlaygroundService, StateService) => {
+				// given
+				stateMock.playground.dataset = datasets[0];
+
+				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+
+				// when
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				PlaygroundService.loadDataset(datasets[0]);
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 0
 					},
 				};
 				$rootScope.$apply();

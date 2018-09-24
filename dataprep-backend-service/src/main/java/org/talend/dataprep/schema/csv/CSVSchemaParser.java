@@ -14,12 +14,13 @@
 package org.talend.dataprep.schema.csv;
 
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.HEADER_NB_LINES_PARAMETER;
 
 import java.io.*;
 import java.util.*;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ import org.talend.dataprep.schema.SchemaParser;
 public class CSVSchemaParser implements SchemaParser {
 
     /** A list of supported separators for a CSV content */
-    public static final List<Character> DEFAULT_VALID_SEPARATORS = Collections
-            .unmodifiableList(Arrays.asList(' ', '\t', ',', ';', '|'));
+    public static final List<Character> DEFAULT_VALID_SEPARATORS =
+            Collections.unmodifiableList(Arrays.asList(' ', '\t', ',', ';', '|'));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVSchemaParser.class);
 
@@ -83,8 +84,8 @@ public class CSVSchemaParser implements SchemaParser {
             final DataSetMetadata metadata = request.getMetadata();
             final Map<String, String> parameters = guess(request, metadata.getEncoding());
             metadata.getContent().setParameters(parameters);
+            metadata.getContent().setNbLinesInHeader(Integer.parseInt(parameters.get(HEADER_NB_LINES_PARAMETER)));
             List<String> header = csvFormatUtils.retrieveHeader(parameters);
-
             if (header == null || header.isEmpty()) {
                 throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT);
             }
@@ -93,16 +94,22 @@ public class CSVSchemaParser implements SchemaParser {
             LOGGER.debug("Setting default type for columns...");
             int i = 0;
             for (String column : header) {
-                sheetContents.stream().filter(sheetContent -> META_KEY.equals(sheetContent.getName())).findFirst() //
-                        .get().getColumnMetadatas() //
+                sheetContents
+                        .stream()
+                        .filter(sheetContent -> META_KEY.equals(sheetContent.getName()))
+                        .findFirst() //
+                        .get()
+                        .getColumnMetadatas() //
                         .add(column().id(i++).name(column).type(Type.STRING).build());
             }
         } catch (Exception e) {
             throw new TDPException(CommonErrorCodes.UNABLE_TO_READ_CONTENT, e);
         }
-        return Schema.Builder.parserResult() //
+        return Schema.Builder
+                .parserResult() //
                 .sheetContents(sheetContents) //
-                .draft(false).build();
+                .draft(false)
+                .build();
     }
 
     /**
@@ -164,7 +171,7 @@ public class CSVSchemaParser implements SchemaParser {
 
     /**
      * Process a line to update the separators with the current line
-     * 
+     *
      * @param line the current line
      * @param separatorMap the map of current candidates
      * @param validSeparators the list of valid separators
@@ -238,8 +245,10 @@ public class CSVSchemaParser implements SchemaParser {
         separators.forEach(separatorAnalyzer::accept); // analyse separators and set header info and score
 
         // sort separator and return the first
-        return separators.stream() //
-                .sorted(separatorAnalyzer::compare).findFirst() //
+        return separators
+                .stream() //
+                .sorted(separatorAnalyzer::compare)
+                .findFirst() //
                 .get();
     }
 
@@ -280,7 +289,7 @@ public class CSVSchemaParser implements SchemaParser {
 
         /**
          * Constructs an CSVReaderStream object.
-         * 
+         *
          * @param inputStream the specified base input stream
          * @param encoding the encoding of the file
          * @param sizeLimit maximum size that can be read from the file
@@ -291,13 +300,13 @@ public class CSVSchemaParser implements SchemaParser {
                 throws UnsupportedEncodingException {
             this.sizeLimit = sizeLimit;
             this.lineLimit = lineLimit;
-            this.reader = new LineNumberReader(
-                    encoding != null ? new InputStreamReader(inputStream, encoding) : new InputStreamReader(inputStream));
+            this.reader = new LineNumberReader(encoding != null ? new InputStreamReader(inputStream, encoding)
+                    : new InputStreamReader(inputStream));
         }
 
         /**
          * Returns the portion of a line that is not in quote as a string.
-         * 
+         *
          * @return he portion of a line that is not in quote as a string
          * @throws IOException
          */
@@ -317,7 +326,7 @@ public class CSVSchemaParser implements SchemaParser {
 
         /**
          * Processes a line and only returns the portion of a line that is not in quote as a string.
-         * 
+         *
          * @param line the line as read from the input stream
          * @return the portion of a line that is not in quote as a string
          */

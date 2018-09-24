@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.context.api.ContextSettings;
@@ -31,14 +32,11 @@ import org.talend.dataprep.security.Security;
 @Component
 public class ContextProvider implements AppSettingsProvider<ContextSettings> {
 
-    private final DatasetConfiguration datasetConfiguration;
+    @Autowired
+    protected ApplicationContext context;
 
     @Autowired
     private Security security;
-
-    public ContextProvider(DatasetConfiguration datasetConfiguration) {
-        this.datasetConfiguration = datasetConfiguration;
-    }
 
     @Override
     public List<ContextSettings> getSettings() {
@@ -62,7 +60,7 @@ public class ContextProvider implements AppSettingsProvider<ContextSettings> {
                 ContextSettings
                         .builder() //
                         .id("provider") //
-                        .value(datasetConfiguration.getProvider()) //
+                        .value(context.getBean(DatasetConfiguration.class).getProvider()) //
                         .build() //
         );
     }

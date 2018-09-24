@@ -18,7 +18,7 @@ import static org.talend.dataprep.exception.error.DataSetErrorCodes.UNABLE_TO_AN
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +76,7 @@ public class SchemaAnalysis implements SynchronousDataSetAnalyzer {
                 return;
             }
             // Schema analysis
-            try (Stream<DataSetRow> stream = store.stream(metadata, 100)) {
+            try (Stream<DataSetRow> stream = store.stream(metadata)) {
                 LOGGER.info("Analyzing schema in dataset #{}...", dataSetId);
                 // Configure analyzers
                 final List<ColumnMetadata> columns = metadata.getRowMetadata().getColumns();

@@ -34,7 +34,8 @@ public class TdpExceptionDto {
     public TdpExceptionDto() {
     }
 
-    public TdpExceptionDto(String code, TdpExceptionDto cause, String defaultMessage, String message, String messageTitle, Map<String, Object> context) {
+    public TdpExceptionDto(String code, TdpExceptionDto cause, String defaultMessage, String message,
+            String messageTitle, Map<String, Object> context) {
         this.code = code;
         this.cause = cause;
         this.defaultMessage = defaultMessage;

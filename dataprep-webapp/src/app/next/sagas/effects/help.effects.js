@@ -1,6 +1,11 @@
-import { actions } from '@talend/react-cmf';
-import { put } from 'redux-saga/effects';
+import { put, select } from 'redux-saga/effects';
+import Constants from '@talend/react-containers/lib/AboutDialog/AboutDialog.constant';
+
 
 export function* open() {
-	yield put(actions.components.mergeState('AboutModal', 'default', { show: true }));
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	yield put({
+		type: Constants.ABOUT_DIALOG_SHOW,
+		url: uris.get('apiVersion'),
+	});
 }

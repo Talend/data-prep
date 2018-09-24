@@ -14,6 +14,8 @@
 import d3 from 'd3';
 import d3Tip from 'd3-tip';
 
+const formatNumber = d3.format(',d');
+
 /**
  * @ngdoc directive
  * @name talend.widget.directive:verticalBarchart
@@ -276,7 +278,7 @@ export default function VerticalBarchart($timeout) {
 						.scale(yScale)
 						.orient('right')
 						.tickSize(width, 0, 0)
-						.tickFormat(d3.format(',d'))
+						.tickFormat(formatNumber)
 						.ticks(ticksNbre)
 					)
 					// place text
@@ -310,7 +312,12 @@ export default function VerticalBarchart($timeout) {
 					})
 					.on('click', (d) => {
 						// create a new reference as the data object could be modified outside the component
-						const interval = _.extend({}, getRangeInfos(d));
+						const selected = _.extend({}, getRangeInfos(d));
+						const interval = {
+							...selected,
+							excludeMax: selected.max < scope.primaryData[scope.primaryData.length - 1].data.max,
+						};
+
 						if (d3.event.ctrlKey || d3.event.metaKey) {
 							scope.onCtrlClick({ interval });
 							return;

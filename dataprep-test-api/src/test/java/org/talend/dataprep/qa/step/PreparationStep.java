@@ -6,14 +6,18 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
@@ -46,7 +50,8 @@ public class PreparationStep extends DataPrepStep {
         String suffixedPrepName = getSuffixedPrepName(prepFullName);
         String prepPath = util.extractPathFromFullName(prepFullName);
         Folder prepFolder = folderUtil.searchFolder(prepPath);
-        String suffixedDatasetName = suffixName(datasetName);
+        String suffixedDatasetName =
+                (context.getDatasetId(datasetName) == null) ? suffixName(datasetName) : datasetName;
 
         final String datasetId = context.getDatasetId(suffixedDatasetName);
         if (StringUtils.isBlank(datasetId)) {
@@ -64,8 +69,16 @@ public class PreparationStep extends DataPrepStep {
         context.storePreparationRef(preparationId, suffixedPrepName, prepFolder.getPath());
     }
 
+    /**
+     * Check if an existing preparation contains the same actions as the one given in parameters.
+     * Be careful ! If your preparation contains lookup actions, you'll need to load your dataset by restoring a Mongo
+     * dump, else the lookup_ds_id won't be the same in actions' parameter value.
+     * 
+     * @param dataTable step parameters.
+     * @throws IOException in case of exception.
+     */
     @Given("^A preparation with the following parameters exists :$")
-    public void checkPreparation(DataTable dataTable) {
+    public void checkPreparation(DataTable dataTable) throws IOException {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String suffixedPrepName = getSuffixedPrepName(params.get(PREPARATION_NAME));
         String prepPath = util.extractPathFromFullName(params.get(PREPARATION_NAME));
@@ -73,8 +86,41 @@ public class PreparationStep extends DataPrepStep {
 
         PreparationDetails prepDet = getPreparationDetails(prepId);
         Assert.assertNotNull(prepDet);
-        Assert.assertEquals(prepDet.dataSetId, context.getDatasetId(suffixName(params.get(DATASET_NAME))));
-        Assert.assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
+        assertEquals(prepDet.dataSetId, context.getDatasetId(suffixName(params.get(DATASET_NAME))));
+        assertEquals(Integer.toString(prepDet.steps.size() - 1), params.get(NB_STEPS));
+
+        if (params.get("actionsList") != null) {
+            List<Action> actionsList = prepDet.actions;
+            checkActionsListOfPrepa(actionsList, params.get("actionsList").toString());
+        }
+    }
+
+    private void checkActionsListOfPrepa(List<Action> actionsList, String expectedActionsListFile) throws IOException {
+        if (expectedActionsListFile == null) {
+            return;
+        }
+        InputStream expectedActionsListStream = DataPrepStep.class.getResourceAsStream(expectedActionsListFile);
+        List<Action> expectedActionsList =
+                objectMapper.readValue(expectedActionsListStream, PreparationDetails.class).actions;
+        assertEquals(expectedActionsList, actionsList);
+    }
+
+    @When("^I load the existing preparation called \"(.*)\"$")
+    public void registerExistingPreparation(String preparationFullname) throws IOException {
+        String preparationName = util.extractNameFromFullName(preparationFullname);
+        String prepPath = util.extractPathFromFullName(preparationFullname);
+        Folder prepFolder = folderUtil.searchFolder(prepPath);
+        FolderContent folderContent = folderUtil.listPreparation(prepPath);
+        if (folderContent != null) {
+            List<PreparationDetails> preparations = folderContent.preparations //
+                    .stream() //
+                    .filter(p -> p.name.equals(preparationName))
+                    .collect(Collectors.toList());
+            assertEquals("More than one preparation with \"" + preparationFullname + "\" name founded.",
+                    preparations.size(), 1);
+            PreparationDetails preparation = preparations.get(0);
+            context.storeExistingPreparationRef(preparation.id, preparation.name, prepFolder.getPath());
+        }
     }
 
     @Then("^I move the preparation \"(.*)\" to \"(.*)\"$")
@@ -155,7 +201,7 @@ public class PreparationStep extends DataPrepStep {
     public void loadPreparationMultipleTimes(Integer nbTime, String prepFullName) throws IOException {
         String prepId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {
-            Response response = api.getPreparationContent(prepId, "head", "HEAD");
+            Response response = api.getPreparationContent(prepId, "head", "HEAD", "");
             assertEquals(OK.value(), response.getStatusCode());
         }
     }
@@ -192,5 +238,15 @@ public class PreparationStep extends DataPrepStep {
     @NotNull
     protected String getSuffixedPrepName(@NotNull String prepFullName) {
         return suffixName(util.extractNameFromFullName(prepFullName));
+    }
+
+    @Then("^The preparation \"(.*)\" should contain the following columns:$")
+    public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
+            throws Exception {
+        Response response =
+                api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD", "");
+        response.then().statusCode(OK.value());
+
+        checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
     }
 }

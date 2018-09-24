@@ -1,4 +1,3 @@
-import api from '@talend/react-cmf';
 import { List } from 'immutable';
 import * as effects from '../notification.effects';
 

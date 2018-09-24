@@ -17,7 +17,7 @@ import static org.talend.dataprep.upgrade.model.UpgradeTask.target.VERSION;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +42,8 @@ public class AddSchemaInPreparations implements BaseUpgradeTaskTo_2_1_0_PE {
     @PostConstruct
     private void postInitialize() {
         try {
-            fileSystemPreparationRepository = (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository,
-                    "delegate", true);
+            fileSystemPreparationRepository =
+                    (FileSystemPreparationRepository) FieldUtils.readField(preparationRepository, "delegate", true);
         } catch (IllegalAccessException e) {
             LOGGER.error("Impossible to get access to the delegate preparation repository object");
         }

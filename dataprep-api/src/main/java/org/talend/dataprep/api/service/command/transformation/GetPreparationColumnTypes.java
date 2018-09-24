@@ -1,19 +1,19 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.springframework.context.annotation.Scope;
@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.pipeStream;
-
 
 /**
  * Return the available semantic types for a preparation / column.
@@ -56,9 +55,10 @@ public class GetPreparationColumnTypes extends GenericCommand<InputStream> {
      */
     private Supplier<HttpRequestBase> onExecute(String preparationId, String columnId, String stepId) {
         return () -> {
-            String uri = transformationServiceUrl + "/preparations/" + preparationId + "/columns/" + columnId + "/types";
+            String uri =
+                    transformationServiceUrl + "/preparations/" + preparationId + "/columns/" + columnId + "/types";
             if (StringUtils.isNotBlank(stepId)) {
-                uri += "?stepId="+stepId;
+                uri += "?stepId=" + stepId;
             }
             return new HttpGet(uri);
         };

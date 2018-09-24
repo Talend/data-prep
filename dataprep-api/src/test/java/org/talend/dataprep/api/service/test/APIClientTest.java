@@ -20,12 +20,14 @@ import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,7 +44,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,6 +66,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import com.jayway.restassured.specification.ResponseSpecification;
 
 /**
  * Test client for data-prep API.
@@ -84,7 +87,7 @@ public class APIClientTest {
         } else {
             result = when().get("/api/datasets?name={name}", name).asInputStream();
         }
-        CollectionType resultType =
+        CollectionType resultType = //
                 TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, UserDataSetMetadata.class);
         return mapper.readValue(result, resultType);
     }
@@ -149,7 +152,8 @@ public class APIClientTest {
      * @return the preparation id.
      * @throws IOException sh*i happens.
      */
-    public String createPreparationFromFile(final String file, final String name, final String folderId) throws IOException {
+    public String createPreparationFromFile(final String file, final String name, final String folderId)
+            throws IOException {
         final String dataSetId = createDataset(file, "testDataset-" + UUID.randomUUID());
         return createPreparationFromDataset(dataSetId, name, folderId);
     }
@@ -176,9 +180,9 @@ public class APIClientTest {
 
         final Response response = request //
                 .when() //
-                .expect()
-                .statusCode(200)
-                .log()
+                .expect() //
+                .statusCode(200) //
+                .log() //
                 .ifError() //
                 .post("/api/preparations");
 
@@ -203,6 +207,18 @@ public class APIClientTest {
         applyAction(preparationId, action);
     }
 
+    public void applyAction(final String preparationId, final ActionParameters action) throws IOException {
+        PreparationStep step = new PreparationStep();
+        step.setActions(Collections.singletonList(action));
+        given()
+                .contentType(JSON) //
+                .body(mapper.writeValueAsString(step)) //
+                .when() //
+                .post("/api/preparations/{id}/actions", preparationId) //
+                .then() //
+                .statusCode(is(200));
+    }
+
     /**
      * Add a step to a preparation.
      *
@@ -211,8 +227,13 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public void applyAction(final String preparationId, final String action) throws IOException {
-        given().contentType(JSON).body(action).when().post("/api/preparations/{id}/actions", preparationId).then().statusCode(
-                is(200));
+        given()
+                .contentType(JSON)
+                .body(action)
+                .when()
+                .post("/api/preparations/{id}/actions", preparationId)
+                .then()
+                .statusCode(is(200));
     }
 
     /**
@@ -230,12 +251,12 @@ public class APIClientTest {
         action.setName(actionName);
         action.setParameters(MixedContentMap.convert(parameters));
         actions.setActions(Collections.singletonList(action));
-        given()
-                .contentType(JSON.withCharset(UTF_8))
+        given() //
+                .contentType(JSON.withCharset(UTF_8)) //
                 .content(actions) //
-                .when()
+                .when() //
                 .post("/api/preparations/{id}/actions", preparationId) //
-                .then()
+                .then() //
                 .statusCode(is(200));
     }
 
@@ -249,9 +270,12 @@ public class APIClientTest {
     public Preparation getPreparationDetails(String preparationId) throws IOException {
         String json = //
                 expect() //
-                        .statusCode(200).log().ifValidationFails() //
+                        .statusCode(200)
+                        .log()
+                        .ifValidationFails() //
                         .when() //
-                        .get("/api/preparations/{id}/details", preparationId).asString();
+                        .get("/api/preparations/{id}/details", preparationId)
+                        .asString();
         return mapper.readerFor(Preparation.class).readValue(json);
     }
 
@@ -269,69 +293,99 @@ public class APIClientTest {
     }
 
     public Response getPreparation(String preparationId) throws IOException {
-        return getPreparation(preparationId, "head", "HEAD");
+        return getPreparation(preparationId, "head", "HEAD", "");
+    }
+
+    public Response getPreparationWithFilter(String preparationId, String filter) throws IOException {
+        return getPreparation(preparationId, "head", "HEAD", filter);
     }
 
     public Response getPreparation(String preparationId, String versionId) throws IOException {
-        return getPreparation(preparationId, versionId, "HEAD");
+        return getPreparation(preparationId, versionId, "HEAD", "");
     }
 
     /**
      * Method handling 202/200 status to get the transformation content
      *
-     * @param preparationId prepartionId
+     * @param preparationId is of the preparation
+     * @param version version of the preparation
+     * @param stepId like HEAD or FILTER, etc.
+     * @param filter TQL filter to filter the preparation content
      * @return the content of a preparation
      * @throws IOException
      */
-    public Response getPreparation(String preparationId, String version, String stepId) throws IOException {
+    public Response getPreparation(String preparationId, String version, String stepId, String filter)
+            throws IOException {
         // when
-        Response transformedResponse = given()
-                .when() //
-                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+        Response transformedResponse;
+        RequestSpecification initialRequest = given().when();
+        if (filter.isEmpty()) {
+            transformedResponse = initialRequest //
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version,
+                            stepId);
+        } else {
+            transformedResponse = initialRequest //
+                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
+                            preparationId, version, stepId, filter);
+        }
 
         if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinishWithSuccess(asyncMethodStatusUrl);
 
-            transformedResponse = given()
+            ResponseSpecification contentRequest = given() //
                     .when() //
-                    .expect()
-                    .statusCode(200)
-                    .log()
-                    .ifError() //
-                    .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId, version, stepId);
+                    .expect() //
+                    .statusCode(200) //
+                    .log() //
+                    .ifError();
+            if (filter.isEmpty()) {
+                transformedResponse = contentRequest //
+                        .get("/api/preparations/{prepId}/content?version={version}&from={stepId}", preparationId,
+                                version, stepId);
+            } else {
+                transformedResponse = contentRequest //
+                        .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
+                                preparationId, version, stepId, filter);
+            }
         }
 
         return transformedResponse;
+    }
+
+    public void waitForAsyncMethodToFinishWithSuccess(String asyncMethodStatusUrl) throws IOException {
+        AsyncExecution.Status asyncStatus = waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+        assertEquals(AsyncExecution.Status.DONE, asyncStatus);
     }
 
     /**
      * Ping (100 times max) async method status url in order to wait the end of the execution
      *
      * @param asyncMethodStatusUrl
+     * @return the status of the async execution (is likely DONE or FAILED)
      * @throws IOException
      */
-    public void waitForAsyncMethodTofinish(String asyncMethodStatusUrl) throws IOException {
+    public AsyncExecution.Status waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
         boolean isAsyncMethodRunning = true;
         int nbLoop = 0;
-
+        AsyncExecution.Status asyncStatus = null;
         while (isAsyncMethodRunning && nbLoop < 100) {
 
-            String statusAsyncMethod = given()
+            String statusAsyncMethod = given() //
                     .when() //
-                    .expect()
-                    .statusCode(200)
-                    .log()
+                    .expect() //
+                    .statusCode(200) //
+                    .log() //
                     .ifError() //
-                    .get(asyncMethodStatusUrl)
+                    .get(asyncMethodStatusUrl) //
                     .asString();
 
             AsyncExecutionMessage asyncExecutionMessage =
                     mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
 
-            AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
+            asyncStatus = asyncExecutionMessage.getStatus();
             isAsyncMethodRunning =
                     asyncStatus.equals(AsyncExecution.Status.RUNNING) || asyncStatus.equals(AsyncExecution.Status.NEW);
 
@@ -339,15 +393,40 @@ public class APIClientTest {
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {
                 LOGGER.error("cannot sleep", e);
-                Assert.fail();
+                fail();
             }
             nbLoop++;
         }
+        return asyncStatus;
+    }
+
+    public Response getFailedPreparationWithFilter(String preparationId, String malformedFilter) throws IOException {
+        Response transformedResponse = given() //
+                .when() //
+                .get("/api/preparations/{prepId}/content?version={version}&from={stepId}&filter={filter}",
+                        preparationId, "head", "HEAD", malformedFilter);
+
+        if (ACCEPTED.value() == transformedResponse.getStatusCode()) {
+            // first time we have a 202 with a Location to see asynchronous method status
+            final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
+
+            AsyncExecution.Status asyncStatus = waitForAsyncMethodToFinish(asyncMethodStatusUrl);
+            assertEquals(AsyncExecution.Status.FAILED, asyncStatus);
+
+            return given()
+                    .expect() //
+                    .statusCode(200) //
+                    .log()
+                    .ifError() //
+                    .when() //
+                    .get(asyncMethodStatusUrl);
+        }
+        return transformedResponse;
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter, String fileName)
             throws IOException, InterruptedException {
-        return export(preparationId, "", stepId, csvDelimiter, fileName);
+        return export(preparationId, null, stepId, csvDelimiter, fileName);
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter)
@@ -363,8 +442,8 @@ public class APIClientTest {
         return export("", datasetId, stepId, null, null);
     }
 
-    protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter, String fileName)
-            throws IOException, InterruptedException {
+    protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter,
+            String fileName) throws IOException, InterruptedException {
         // when
         Response export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, null);
 
@@ -372,7 +451,7 @@ public class APIClientTest {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = export.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinishWithSuccess(asyncMethodStatusUrl);
 
             export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, 200);
         }
@@ -384,11 +463,14 @@ public class APIClientTest {
             String fileName, Integer expectedStatus) {
         RequestSpecification exportRequest = given() //
                 .formParam("exportType", "CSV") //
-                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE,
+                .formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCLOSURE_MODE, //
                         CSVFormat.ParametersCSV.ENCLOSURE_ALL_FIELDS) //
                 .formParam("preparationId", preparationId) //
-                .formParam("stepId", stepId) //
-                .formParam("datasetId", datasetId); //
+                .formParam("stepId", stepId);
+
+        if (datasetId != null) {
+            exportRequest.formParam("datasetId", datasetId);
+        }
 
         if (StringUtils.isNotEmpty(csvDelimiter)) {
             exportRequest.formParam(ExportFormat.PREFIX + CSVFormat.ParametersCSV.FIELDS_DELIMITER, csvDelimiter);
@@ -399,7 +481,7 @@ public class APIClientTest {
         }
 
         if (expectedStatus != null) {
-            exportRequest
+            exportRequest //
                     .when() //
                     .expect() //
                     .statusCode(expectedStatus) //
@@ -421,17 +503,73 @@ public class APIClientTest {
             // first time we have a 202 with a Location to see asynchronous method status
             final String asyncMethodStatusUrl = transformedResponse.getHeader("Location");
 
-            waitForAsyncMethodTofinish(asyncMethodStatusUrl);
+            waitForAsyncMethodToFinishWithSuccess(asyncMethodStatusUrl);
 
-            Response response = given().when().expect().statusCode(200).log().ifError() //
+            Response response = given() //
+                    .when() //
+                    .expect() //
+                    .statusCode(200) //
+                    .log() //
+                    .ifError() //
                     .get("/api/preparations/{id}/metadata", preparationId);
-            metadata =  mapper.readValue(response.asInputStream(), DataSetMetadata.class);
+            metadata = mapper.readValue(response.asInputStream(), DataSetMetadata.class);
         } else if (OK.equals(responseStatus)) {
             metadata = mapper.readValue(transformedResponse.asInputStream(), DataSetMetadata.class);
         } else {
-            throw new RuntimeException("Could not get preparation metadata. Response was: " + transformedResponse.print());
+            throw new RuntimeException(
+                    "Could not get preparation metadata. Response was: " + transformedResponse.print());
         }
         return metadata;
+    }
+
+    public static class PreparationStep {
+
+        private List<ActionParameters> actions = new ArrayList<>(1);
+
+        public List<ActionParameters> getActions() {
+            return actions;
+        }
+
+        public void setActions(List<ActionParameters> actions) {
+            this.actions = actions;
+        }
+    }
+
+    public static class ActionParameters {
+
+        private String action;
+
+        private Map<String, String> parameters;
+
+        public static ActionParameters createAction(String name) {
+            ActionParameters actionParameters = new ActionParameters();
+            actionParameters.setAction(name);
+            return actionParameters;
+        }
+
+        public ActionParameters withParameter(String key, String value) {
+            if (parameters == null) {
+                parameters = new HashMap<>();
+            }
+            parameters.put(key, value);
+            return this;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public Map<String, String> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+        }
     }
 
 }

@@ -300,20 +300,45 @@ describe('Lookup controller', () => {
 			//then
 			expect(label).toBe('lookup_2');
 		}));
+
+		it('should return the action id', inject(function () {
+			//given
+			const ctrl = createController();
+
+			//when
+			const id = ctrl.getDsId(dsActions[0]);
+			//then
+			expect(id).toBe('lookup_dataset_id');
+		}));
 	});
 
 	describe('add datasets ', () => {
-		it('show modal on click', inject((LookupService) => {
+		it('show modal on click', inject(($q, LookupService) => {
 			//given
 			const ctrl = createController();
 			spyOn(LookupService, 'disableDatasetsUsedInRecipe').and.returnValue();
+			spyOn(LookupService, 'updateLookupDatasetsAndActions').and.returnValue($q.when());
 
 			//when
 			ctrl.openAddLookupDatasetModal();
 
 			//then
-			expect(LookupService.disableDatasetsUsedInRecipe).toHaveBeenCalled();
 			expect(ctrl.addLookupDatasetModal).toBe(true);
+		}));
+
+		it('show call updateLookupDatasetsAndActions when modal is opened', inject(($q, LookupService) => {
+			//given
+			const ctrl = createController();
+			spyOn(LookupService, 'disableDatasetsUsedInRecipe').and.returnValue();
+			spyOn(LookupService, 'updateLookupDatasetsAndActions').and.returnValue($q.when());
+
+			//when
+			ctrl.openAddLookupDatasetModal();
+			scope.$digest();
+
+			//then
+			expect(LookupService.updateLookupDatasetsAndActions).toHaveBeenCalled();
+			expect(LookupService.disableDatasetsUsedInRecipe).toHaveBeenCalled();
 		}));
 
 		it('should add datasets and close the modal', inject((LookupService) => {

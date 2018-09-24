@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.preparation.store.file;
 
-import static org.apache.commons.lang.StringUtils.startsWith;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,6 @@ import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.FilesHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 /**
  * File system implementation of preparation repository.
@@ -121,11 +120,12 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
             files = new File[0];
         }
         final Stream<File> stream = Arrays.stream(files);
-        return stream.filter(file -> startsWith(file.getName(), clazz.getSimpleName())) //
+        return stream
+                .filter(file -> startsWith(file.getName(), clazz.getSimpleName())) //
                 .map(file -> read(file.getName(), clazz)) // read all files
                 .filter(Objects::nonNull) // filter out null entries
                 .filter(entry -> clazz.isAssignableFrom(entry.getClass())) // filter out the unwanted objects (should not be
-                                                                           // necessary but you never know)
+                // necessary but you never know)
                 .onClose(stream::close);
     }
 
@@ -220,6 +220,7 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
         }
         return id;
     }
+
     /**
      * Return the root folder where the preparations are stored.
      *

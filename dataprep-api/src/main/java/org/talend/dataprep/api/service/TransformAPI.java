@@ -15,6 +15,7 @@ package org.talend.dataprep.api.service;
 import com.netflix.hystrix.HystrixCommand;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.service.api.DynamicParamsInput;
+import org.talend.dataprep.api.service.command.common.AsyncGet;
 import org.talend.dataprep.api.service.command.preparation.PreparationGetContent;
 import org.talend.dataprep.api.service.command.transformation.*;
 import org.talend.dataprep.command.CommandHelper;
@@ -34,13 +36,16 @@ import javax.validation.Valid;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 
 @RestController
 public class TransformAPI extends APIService {
+
+    @Autowired
+    private CommonAPI commonAPI;
 
     /**
      * Get all the possible actions for a given column.
@@ -50,10 +55,12 @@ public class TransformAPI extends APIService {
      *
      * @param body the column description (json encoded) in the request body.
      */
-    @RequestMapping(value = "/api/transform/actions/column", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/transform/actions/column", method = RequestMethod.POST,
+            produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all actions for a data set column.", notes = "Returns all actions for the given column.")
     @Timed
-    public Stream<ActionForm> columnActions(@ApiParam(value = "Optional column Metadata content as JSON") InputStream body) {
+    public Stream<ActionForm>
+            columnActions(@ApiParam(value = "Optional column Metadata content as JSON") InputStream body) {
         // Asks transformation service for all actions for column type and domain
         return toStream(ActionForm.class, mapper, getCommand(ColumnActions.class, body));
     }
@@ -66,10 +73,13 @@ public class TransformAPI extends APIService {
      *
      * @param body the column description (json encoded) in the request body.
      */
-    @RequestMapping(value = "/api/transform/suggest/column", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get suggested actions for a data set column.", notes = "Returns the suggested actions for the given column in decreasing order of likeness.")
+    @RequestMapping(value = "/api/transform/suggest/column", method = RequestMethod.POST,
+            produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get suggested actions for a data set column.",
+            notes = "Returns the suggested actions for the given column in decreasing order of likeness.")
     @Timed
-    public Stream<ActionForm> suggestColumnActions(@ApiParam(value = "Column Metadata content as JSON") InputStream body) {
+    public Stream<ActionForm>
+            suggestColumnActions(@ApiParam(value = "Column Metadata content as JSON") InputStream body) {
         // Asks transformation service for suggested actions for column type and domain
         return toStream(ActionForm.class, mapper, getCommand(SuggestColumnActions.class, body));
     }
@@ -112,20 +122,22 @@ public class TransformAPI extends APIService {
     @ApiOperation(value = "Get the transformation dynamic parameters", notes = "Returns the transformation parameters.")
     @Timed
     public ResponseEntity<StreamingResponseBody> suggestActionParams(
-            @ApiParam(value = "Transformation name.") @PathVariable("action") final String action,
-            @ApiParam(value = "Suggested dynamic transformation input (preparation id or dataset id") @Valid final DynamicParamsInput dynamicParamsInput) {
+            @ApiParam(value = "Transformation name.") @PathVariable("action") final String action, @ApiParam(
+                    value = "Suggested dynamic transformation input (preparation id or dataset id") @Valid final DynamicParamsInput dynamicParamsInput) {
         // get preparation/dataset content
         HystrixCommand<InputStream> inputData;
         final String preparationId = dynamicParamsInput.getPreparationId();
         if (isNotBlank(preparationId)) {
-            inputData = getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId());
+            inputData = new AsyncGet<>(
+                    () -> getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId()),
+                    commonAPI);
         } else {
             inputData = datasetClient.getDataSetGetCommand(dynamicParamsInput.getDatasetId(), false, false);
         }
 
         // get params, passing content in the body
-        final GenericCommand<InputStream> getActionDynamicParams = getCommand(SuggestActionParams.class, inputData, action,
-                dynamicParamsInput.getColumnId());
+        final GenericCommand<InputStream> getActionDynamicParams =
+                getCommand(SuggestActionParams.class, inputData, action, dynamicParamsInput.getColumnId());
         return CommandHelper.toStreaming(getActionDynamicParams);
     }
 
@@ -133,7 +145,8 @@ public class TransformAPI extends APIService {
      * Get the current dictionary (as serialized object).
      */
     @RequestMapping(value = "/api/transform/dictionary", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get current dictionary (as serialized object).", notes = "Returns a DQ dictionary serialized usin Java serialization and GZIP-ed.")
+    @ApiOperation(value = "Get current dictionary (as serialized object).",
+            notes = "Returns a DQ dictionary serialized usin Java serialization and GZIP-ed.")
     @Timed
     public StreamingResponseBody getDictionary() {
         // get preparation/dataset content

@@ -3,6 +3,7 @@ Feature: Perform scenarios with CreateNewColumn related action
 
   Scenario: Create a new column with generate sequence mode on dataset customers_dataset
     Given I upload the dataset "/data/customers.csv" with name "customers_dataset"
+    Then I wait for the dataset "customers_dataset" metadata to be computed
     Given I create a preparation with name "customers_prep", based on "customers_dataset" dataset
     Given I add a "create_new_column" step identified by "createNewColumn" on the preparation "customers_prep" with parameters :
       | column_id               | 0002              |

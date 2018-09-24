@@ -17,12 +17,13 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.TeeOutputStream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationDTO;
@@ -39,10 +40,9 @@ import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
- * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with {@link ExportParameters.SourceType HEAD} sample.
+ * A {@link BaseExportStrategy strategy} to export a preparation, using its default data set with
+ * {@link ExportParameters.SourceType HEAD} sample.
  */
 @Component
 public class PreparationExportStrategy extends BaseSampleExportStrategy {
@@ -59,7 +59,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
     private DatasetClient datasetClient;
 
     @Override
-    public boolean accept(final ExportParameters parameters) {
+    public boolean test(final ExportParameters parameters) {
         if (parameters == null) {
             return false;
         }
@@ -115,9 +115,10 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
             LOGGER.debug("Cache key: {}", key.getKey());
             LOGGER.debug("Cache key details: {}", key.toString());
 
-            try (final TeeOutputStream tee = new TeeOutputStream(outputStream,
-                    contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
-                final Configuration configuration = Configuration.builder() //
+            try (final TeeOutputStream tee =
+                    new TeeOutputStream(outputStream, contentCache.put(key, ContentCache.TimeToLive.DEFAULT))) {
+                final Configuration configuration = Configuration
+                        .builder() //
                         .args(parameters.getArguments()) //
                         .outFilter(rm -> filterService.build(parameters.getFilter(), rm)) //
                         .sourceType(parameters.getFrom())
@@ -135,7 +136,7 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                 contentCache.evict(key);
                 throw e;
             }
-        } catch (TDPException e) {
+        } catch (TalendRuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
@@ -144,9 +145,5 @@ public class PreparationExportStrategy extends BaseSampleExportStrategy {
                 securityProxy.releaseIdentity(); // Release identity in case of error.
             }
         }
-    }
-
-    void setMapper(ObjectMapper mapper) {
-        this.mapper = mapper;
     }
 }

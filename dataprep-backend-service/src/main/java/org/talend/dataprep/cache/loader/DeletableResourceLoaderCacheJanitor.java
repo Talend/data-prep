@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,8 @@ public class DeletableResourceLoaderCacheJanitor implements CacheJanitor {
         final AtomicLong totalCount = new AtomicLong();
         performCleanUp(deletedCount, totalCount);
 
-        LOGGER.debug("Janitor process end ({}/{} files successfully deleted).", System.currentTimeMillis(), deletedCount,
-                totalCount);
+        LOGGER.debug("Janitor process end ({}/{} files successfully deleted).", System.currentTimeMillis(),
+                deletedCount, totalCount);
     }
 
     private void performCleanUp(AtomicLong deletedCount, AtomicLong totalCount) {

@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -63,7 +63,8 @@ public class XlsxStreamRunnable implements Runnable {
      * @param limit A limit to indicate to serializer when to stop. Use -1 for "no limit".
      * @param factory The jackson factory to use for the serialization.
      */
-    public XlsxStreamRunnable(OutputStream jsonOutput, InputStream rawContent, DataSetMetadata metadata, long limit, JsonFactory factory) {
+    public XlsxStreamRunnable(OutputStream jsonOutput, InputStream rawContent, DataSetMetadata metadata, long limit,
+            JsonFactory factory) {
         this.jsonOutput = jsonOutput;
         this.rawContent = rawContent;
         this.metadata = metadata;
@@ -78,7 +79,8 @@ public class XlsxStreamRunnable implements Runnable {
     public void run() {
         try {
             JsonGenerator generator = jsonFactory.createGenerator(jsonOutput);
-            Workbook workbook = StreamingReader.builder() //
+            Workbook workbook = StreamingReader
+                    .builder() //
                     .bufferSize(4096) //
                     .rowCacheSize(1) //
                     .open(rawContent);

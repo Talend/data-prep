@@ -48,7 +48,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +81,7 @@ import org.talend.dataprep.api.preparation.StepDiff;
 import org.talend.dataprep.async.AsyncExecutionId;
 import org.talend.dataprep.async.AsyncOperation;
 import org.talend.dataprep.async.AsyncParameter;
+import org.talend.dataprep.async.conditional.ConditionalTest;
 import org.talend.dataprep.async.conditional.GetPrepContentAsyncCondition;
 import org.talend.dataprep.async.conditional.GetPrepMetadataAsyncCondition;
 import org.talend.dataprep.async.generator.ExportParametersExecutionIdGenerator;
@@ -221,24 +222,22 @@ public class TransformationService extends BaseTransformationService {
             resultUrlGenerator = PreparationGetContentUrlGenerator.class, //
             executionIdGeneratorClass = ExportParametersExecutionIdGenerator.class //
     )
-    public StreamingResponseBody execute(@ApiParam(
-            value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
-            throws IOException {
+    public StreamingResponseBody
+            execute(@ApiParam(
+                    value = "Preparation id to apply.") @RequestBody @Valid @AsyncParameter @AsyncExecutionId final ExportParameters parameters)
+                    throws IOException {
 
-        ExportParameters completeParameters = parameters;
-
-        if (StringUtils.isNotEmpty(completeParameters.getPreparationId())) {
-            // we deal with preparation transformation (not dataset)
-            completeParameters = exportParametersUtil.populateFromPreparationExportParameter(parameters);
-
-            ContentCacheKey cacheKey = cacheKeyGenerator.generateContentKey(completeParameters);
-
-            if (!contentCache.has(cacheKey)) {
-                preparationExportStrategy.performPreparation(completeParameters, new NullOutputStream());
-            }
+        // Async behavior
+        final ConditionalTest conditionalTest = applicationContext.getBean(GetPrepContentAsyncCondition.class);
+        if (conditionalTest.apply(parameters)) {
+            // write to cache
+            executeSampleExportStrategy(parameters).writeTo(new NullOutputStream());
+            return outputStream -> {
+            };
+        } else {
+            // sync behavior
+            return executeSampleExportStrategy(parameters);
         }
-
-        return executeSampleExportStrategy(completeParameters);
     }
 
     @RequestMapping(value = "/apply/preparation/{preparationId}/{stepId}/metadata", method = GET)
@@ -369,7 +368,8 @@ public class TransformationService extends BaseTransformationService {
 
         // apply the aggregation
         try (InputStream contentToAggregate = getContentToAggregate(parameters);
-                JsonParser parser = mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
+                JsonParser parser =
+                        mapper.getFactory().createParser(new InputStreamReader(contentToAggregate, UTF_8))) {
             final DataSet dataSet = mapper.readerFor(DataSet.class).readValue(parser);
             return aggregationService.aggregate(parameters, dataSet);
         } catch (IOException e) {
@@ -392,14 +392,7 @@ public class TransformationService extends BaseTransformationService {
                         final ExportParameters exportParameters = new ExportParameters();
                         exportParameters.setPreparationId(parameters.getPreparationId());
                         exportParameters.setDatasetId(parameters.getDatasetId());
-                        final String filter = parameters.getFilter();
-                        if (filter != null) {
-                            if (filter.isEmpty()) {
-                                throw new TDPException(CommonErrorCodes.UNABLE_TO_AGGREGATE,
-                                        new IllegalArgumentException("Source should not be empty"));
-                            }
-                            exportParameters.setFilter(mapper.readTree(filter));
-                        }
+                        exportParameters.setFilter(parameters.getFilter());
                         exportParameters.setExportType(JSON);
                         exportParameters.setStepId(parameters.getStepId());
 
@@ -705,16 +698,18 @@ public class TransformationService extends BaseTransformationService {
         }
 
         // look for all actions applicable to the column type
-        return actionRegistry.findAll() //
+        return actionRegistry
+                .findAll() //
                 .filter(am -> am.acceptScope(COLUMN) && am.acceptField(column)) //
                 .map(am -> suggestionEngine.score(am, column)) //
-                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not applicable)
+                .filter(s -> s.getScore() > 0) // Keep only strictly positive score (negative and 0 indicates not
+                // applicable)
                 .sorted((s1, s2) -> Integer.compare(s2.getScore(), s1.getScore()))
                 .limit(limit) //
                 .map(Suggestion::getAction) // Get the action for positive suggestions
                 .map(am -> am.adapt(column)) // Adapt default values (e.g. column name)
                 .map(ad -> ad.getActionForm(getLocale()));
-        }
+    }
 
     /**
      * Returns all {@link ActionDefinition actions} data prep may apply to a line.

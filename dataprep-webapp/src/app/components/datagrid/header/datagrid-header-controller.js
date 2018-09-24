@@ -10,12 +10,10 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
 import {
-	INVALID_RECORDS,
-	EMPTY_RECORDS,
-	INVALID_EMPTY_RECORDS,
-	VALID_RECORDS,
-} from '../../../services/filter/adapter/filter-adapter-service';
+	QUALITY,
+} from '../../../services/filter/adapter/tql-filter-adapter-service';
 
 /**
  * @ngdoc controller
@@ -28,7 +26,7 @@ import {
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.filter.service:FilterService
  */
-export default function DatagridHeaderCtrl($scope, state,
+export default function DatagridHeaderCtrl($q, $scope, state,
                                            TransformationService, ConverterService,
                                            PlaygroundService, FilterService,
                                            ColumnTypesService, FilterManagerService) {
@@ -44,10 +42,7 @@ export default function DatagridHeaderCtrl($scope, state,
 	vm.PlaygroundService = PlaygroundService;
 	vm.state = state;
 
-	vm.VALID_RECORDS = VALID_RECORDS;
-	vm.INVALID_RECORDS = INVALID_RECORDS;
-	vm.EMPTY_RECORDS = EMPTY_RECORDS;
-	vm.INVALID_EMPTY_RECORDS = INVALID_EMPTY_RECORDS;
+	vm.QUALITY = QUALITY;
 
 	/**
 	 * @ngdoc property
@@ -91,10 +86,16 @@ export default function DatagridHeaderCtrl($scope, state,
 					vm.initTransformationsInProgress = false;
 				});
 		}
-		ColumnTypesService.refreshSemanticDomains(vm.column.id);
-		ColumnTypesService.refreshTypes();
+		vm.fetchMatchingSemanticTypes();
 	};
 
+	vm.fetchMatchingSemanticTypes = () => {
+		vm.typeLoading = true;
+		$q.all([ColumnTypesService.refreshSemanticDomains(vm.column.id), ColumnTypesService.refreshTypes()])
+			.finally(() => {
+				vm.typeLoading = false;
+			});
+	};
 	/**
 	 * @ngdoc method
 	 * @name updateColumnName
@@ -159,8 +160,8 @@ export default function DatagridHeaderCtrl($scope, state,
 	 * @methodOf data-prep.datagrid-header.controller:DatagridHeaderCtrl
 	 * @description add filter
 	 */
-	vm.addFilter = (type) => {
-		vm.filterManagerService.addFilter(type, vm.column.id, vm.column.name);
+	vm.addFilter = (type, args) => {
+		vm.filterManagerService.addFilter(type, vm.column.id, vm.column.name, args);
 	};
 
 	/**

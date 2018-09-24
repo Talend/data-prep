@@ -29,7 +29,8 @@ export function StateService(RouteStateService, routeState,
                              HomeStateService, homeState,
                              ProgressStateService, progressState,
                              SearchStateService, searchState,
-                             MessageStateService, messageState) {
+                             MessageStateService, messageState,
+                             ConfirmStateService, confirmState) {
 	'ngInject';
 
 	state.route = routeState;
@@ -44,6 +45,7 @@ export function StateService(RouteStateService, routeState,
 	state.search = searchState;
 	state.progress = progressState;
 	state.message = messageState;
+	state.confirm = confirmState;
 
 	return {
 		// route
@@ -85,7 +87,10 @@ export function StateService(RouteStateService, routeState,
 		setSavingPreparationFolders: PlaygroundStateService.setSavingPreparationFolders,
 		setIsSavingPreparationFoldersLoading: PlaygroundStateService.setIsSavingPreparationFoldersLoading,
 		setTransformationInProgress: PlaygroundStateService.setTransformationInProgress,
-
+		setLastActiveStepId: PlaygroundStateService.setLastActiveStepId,
+		getLastActiveStepId: PlaygroundStateService.getLastActiveStepId,
+		resetLastActiveStepId: PlaygroundStateService.resetLastActiveStepId,
+		setPreviewIsLoading: PlaygroundStateService.setPreviewIsLoading,
 		// playground - dataset parameters
 		toggleDatasetParameters: PlaygroundStateService.toggleDatasetParameters,
 		hideDatasetParameters: PlaygroundStateService.hideDatasetParameters,
@@ -117,6 +122,8 @@ export function StateService(RouteStateService, routeState,
 		setLookupDataset: PlaygroundStateService.setLookupDataset,
 		setLookupSelectedColumn: PlaygroundStateService.setLookupSelectedColumn,
 		setLookupVisibility: PlaygroundStateService.setLookupVisibility,
+		setLookupLoading: PlaygroundStateService.setLookupLoading,
+		setLookupModalLoading: PlaygroundStateService.setLookupModalLoading,
 		updateLookupColumnsToAdd: PlaygroundStateService.updateLookupColumnsToAdd,
 		setLookupDatasetsSort: PlaygroundStateService.setLookupDatasetsSort,
 		setLookupDatasetsOrder: PlaygroundStateService.setLookupDatasetsOrder,
@@ -127,6 +134,7 @@ export function StateService(RouteStateService, routeState,
 		removeGridFilter: PlaygroundStateService.removeGridFilter,
 		removeAllGridFilters: PlaygroundStateService.removeAllGridFilters,
 		updateGridFilter: PlaygroundStateService.updateGridFilter,
+		updateColumnNameInFilters: PlaygroundStateService.updateColumnNameInFilters,
 		enableFilters: PlaygroundStateService.enableFilters,
 		disableFilters: PlaygroundStateService.disableFilters,
 
@@ -208,5 +216,9 @@ export function StateService(RouteStateService, routeState,
 		// message
 		pushMessage: MessageStateService.push,
 		popMessage: MessageStateService.pop,
+
+		// confirm
+		showConfirmationModal: ConfirmStateService.show,
+		hideConfirmationModal: ConfirmStateService.hide,
 	};
 }

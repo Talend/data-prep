@@ -41,6 +41,7 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
+import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
 import org.talend.dataprep.transformation.service.StepMetadataRepository;
@@ -83,38 +84,44 @@ public class PipelineTransformer implements Transformer {
 
     @Override
     public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
+
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
 
         // prepare the fallback row metadata
-        RowMetadata fallBackRowMetadata = transformationRowMetadataUtils.getMatchingEmptyRowMetadata(rowMetadata);
+        RowMetadataFallbackProvider rowMetadataFallbackProvider = new RowMetadataFallbackProvider(rowMetadata);
 
-        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(), configuration.output(),
-                configuration.getArguments());
+        final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(),
+                configuration.output(), configuration.getArguments());
         final ConfiguredCacheWriter metadataWriter = new ConfiguredCacheWriter(contentCache, DEFAULT);
-        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(configuration.getPreparationId(),
-                configuration.stepId(), configuration.getSourceType());
+        final TransformationMetadataCacheKey metadataKey = cacheKeyGenerator.generateMetadataKey(
+                configuration.getPreparationId(), configuration.stepId(), configuration.getSourceType());
         final PreparationDTO preparation = configuration.getPreparation();
         // function that from a step gives the rowMetadata associated to the previous/parent step
-        final Function<String, RowMetadata> stepRowMetadataSupplier = s -> Optional.ofNullable(s) //
+        final Function<String, RowMetadata> stepRowMetadataSupplier = s -> Optional
+                .ofNullable(s) //
                 .map(id -> stepMetadataRepository.get(id)) //
                 .orElse(null);
 
-        final Pipeline pipeline = Pipeline.Builder.builder() //
-                .withAnalyzerService(analyzerService) //
-                .withActionRegistry(actionRegistry) //
-                .withPreparation(preparation) //
-                .withActions(actionParser.parse(configuration.getActions())) //
-                .withInitialMetadata(rowMetadata, configuration.volume() == SMALL) //
-                .withMonitor(configuration.getMonitor()) //
-                .withFilter(configuration.getFilter()) //
-                .withLimit(configuration.getLimit()) //
-                .withFilterOut(configuration.getOutFilter()) //
-                .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey, fallBackRowMetadata)) //
-                .withStatisticsAdapter(adapter) //
-                .withStepMetadataSupplier(stepRowMetadataSupplier) //
-                .withGlobalStatistics(configuration.isGlobalStatistics()) //
-                .allowMetadataChange(configuration.isAllowMetadataChange()) //
-                .build();
+        final Pipeline pipeline =
+                Pipeline.Builder
+                        .builder() //
+                        .withRowMetadataFallbackProvider(rowMetadataFallbackProvider) //
+                        .withAnalyzerService(analyzerService) //
+                        .withActionRegistry(actionRegistry) //
+                        .withPreparation(preparation) //
+                        .withActions(actionParser.parse(configuration.getActions())) //
+                        .withInitialMetadata(rowMetadata, configuration.volume() == SMALL) //
+                        .withMonitor(configuration.getMonitor()) //
+                        .withFilter(configuration.getFilter()) //
+                        .withLimit(configuration.getLimit()) //
+                        .withFilterOut(configuration.getOutFilter()) //
+                        .withOutput(
+                                () -> new WriterNode(writer, metadataWriter, metadataKey, rowMetadataFallbackProvider)) //
+                        .withStatisticsAdapter(adapter) //
+                        .withStepMetadataSupplier(stepRowMetadataSupplier) //
+                        .withGlobalStatistics(configuration.isGlobalStatistics()) //
+                        .allowMetadataChange(configuration.isAllowMetadataChange()) //
+                        .build();
 
         // wrap this transformer into an executable transformer
         return new ExecutableTransformer() {

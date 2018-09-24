@@ -16,7 +16,7 @@ package org.talend.dataprep.schema.html;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -78,7 +78,7 @@ class SimpleValuesContentHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (withinLimit()) {
-            if("tr".equals(localName) && rowSize > 0 && getLastRow().size() < rowSize) {
+            if ("tr".equals(localName) && rowSize > 0 && getLastRow().size() < rowSize) {
                 // Discard row (does not match column number)
                 values.remove(values.size() - 1);
             } else if ("td".equals(localName)) {

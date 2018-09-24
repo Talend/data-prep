@@ -21,7 +21,7 @@ import java.io.PushbackInputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -71,14 +71,16 @@ public class XlsSchemaParser implements SchemaParser {
             if (!sheetContents.isEmpty()) {
                 // only one sheet
                 if (sheetContents.size() == 1) {
-                    result = Schema.Builder.parserResult() //
+                    result = Schema.Builder
+                            .parserResult() //
                             .sheetContents(sheetContents) //
                             .draft(false) //
                             .sheetName(sheetContents.get(0).getName()) //
                             .build();
                 } else {
                     // multiple sheet, set draft flag on
-                    result = Schema.Builder.parserResult() //
+                    result = Schema.Builder
+                            .parserResult() //
                             .sheetContents(sheetContents) //
                             .draft(true) //
                             .sheetName(sheetContents.get(0).getName()) //
@@ -121,7 +123,8 @@ public class XlsSchemaParser implements SchemaParser {
     }
 
     private List<Schema.SheetContent> parseAllSheetsStream(Request request) {
-        Workbook workbook = StreamingReader.builder() //
+        Workbook workbook = StreamingReader
+                .builder() //
                 .bufferSize(4096) //
                 .rowCacheSize(1) //
                 .open(request.getContent());
@@ -139,8 +142,9 @@ public class XlsSchemaParser implements SchemaParser {
                  * @see https://jira.talendforge.org/browse/TDP-3459
                  */
                 if (totalColumnsNumber > maxNumberOfColumns) {
-                    throw new TDPException(DataSetErrorCodes.DATASET_HAS_TOO_MANY_COLUMNS, ExceptionContext.build()
-                            .put("number-of-columns", totalColumnsNumber).put("max-allowed", maxNumberOfColumns));
+                    throw new TDPException(DataSetErrorCodes.DATASET_HAS_TOO_MANY_COLUMNS,
+                            ExceptionContext.build().put("number-of-columns", totalColumnsNumber).put("max-allowed",
+                                    maxNumberOfColumns));
                 }
 
                 String sheetName = sheet.getSheetName();
@@ -179,7 +183,8 @@ public class XlsSchemaParser implements SchemaParser {
         int numberOfColumnsAlreadyFound = columnsMetadata.size();
         if (numberOfColumnsAlreadyFound < maxColNumber) {
             int columnId = 0;
-            for (int appendedColumnId = numberOfColumnsAlreadyFound; appendedColumnId < maxColNumber; appendedColumnId++) {
+            for (int appendedColumnId =
+                    numberOfColumnsAlreadyFound; appendedColumnId < maxColNumber; appendedColumnId++) {
                 columnsMetadata.add(ColumnMetadata.Builder //
                         .column() //
                         .name("col_" + columnId++) //
@@ -281,7 +286,8 @@ public class XlsSchemaParser implements SchemaParser {
         LOGGER.debug(Markers.dataset(datasetId), "parsing sheet '{}'", sheet.getSheetName());
 
         // Map<ColId, Map<RowId, type>>
-        SortedMap<Integer, SortedMap<Integer, String>> cellsTypeMatrix = collectSheetTypeMatrix(sheet, formulaEvaluator);
+        SortedMap<Integer, SortedMap<Integer, String>> cellsTypeMatrix =
+                collectSheetTypeMatrix(sheet, formulaEvaluator);
         int averageHeaderSize = guessHeaderSize(cellsTypeMatrix);
 
         // here we have information regarding types for each rows/col (yup a Matrix!! :-) )
@@ -330,7 +336,9 @@ public class XlsSchemaParser implements SchemaParser {
 
         // calculate number per type
 
-        Map<String, Long> perTypeNumber = columnRows.tailMap(averageHeaderSize).values() //
+        Map<String, Long> perTypeNumber = columnRows
+                .tailMap(averageHeaderSize)
+                .values() //
                 .stream() //
                 .collect(Collectors.groupingBy(w -> w, Collectors.counting()));
 
@@ -470,7 +478,8 @@ public class XlsSchemaParser implements SchemaParser {
                 if (firstType == null) {
                     firstType = typePerRowEntry.getValue();
                 } else {
-                    if (!typePerRowEntry.getValue().equals(firstType) && !typePerRowEntry.getValue().equals(STRING.getName())) {
+                    if (!typePerRowEntry.getValue().equals(firstType)
+                            && !typePerRowEntry.getValue().equals(STRING.getName())) {
                         rowChange = typePerRowEntry.getKey();
                         break;
                     }

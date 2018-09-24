@@ -18,7 +18,7 @@ import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import java.util.Comparator;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;
@@ -33,6 +33,15 @@ public class CacheKeyGenerator {
 
     @Autowired
     private Security security;
+
+    /**
+     * Build a cache key for dataset-sample
+     * @param datasetId the id of the dataset
+     * @return the cache key of the dataset sample
+     */
+    public DataSetSampleCacheKey generateDatasetSampleKey(final String datasetId) {
+        return new DataSetSampleCacheKey(datasetId);
+    }
 
     /**
      * Build a cache key to identify the transformation result content

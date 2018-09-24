@@ -48,7 +48,7 @@ import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -404,17 +404,20 @@ public class FileSystemFolderRepository implements FolderRepository {
         if ("/".equals(path)) {
             return Optional.of(getHome());
         }
-        try {
-            final String queryForFileSearch;
-            if (path.startsWith("/")) {
-                queryForFileSearch = path.substring(1);
-            } else {
-                queryForFileSearch = path;
-            }
-            return Files.walk(pathsConverter.getRootFolder()) //
-                    .filter(p -> Files.isDirectory(p) && p.getFileName().toString().equals(queryForFileSearch)) //
+        final String queryForFileSearch;
+        if (path.startsWith("/")) {
+            queryForFileSearch = path.substring(1);
+        } else {
+            queryForFileSearch = path;
+        }
+        try (Stream<Path> matchingFolders = Files
+                .walk(pathsConverter.getRootFolder()) //
+                .filter(p -> Files.isDirectory(p) && p.getFileName().toString().equals(queryForFileSearch))) {
+
+            return matchingFolders //
                     .findFirst() //
                     .map(p -> toFolder(p, security.getUserId()));
+
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

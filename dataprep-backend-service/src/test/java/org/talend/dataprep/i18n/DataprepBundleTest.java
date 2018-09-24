@@ -35,9 +35,10 @@ public class DataprepBundleTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         messagesProperties = new Properties();
+        messagesProperties.load(
+                DataprepBundleTest.class.getResourceAsStream("/org/talend/dataprep/error_messages_fr.properties"));
         messagesProperties
-                .load(DataprepBundleTest.class.getResourceAsStream("/org/talend/dataprep/error_messages_fr.properties"));
-        messagesProperties.load(DataprepBundleTest.class.getResourceAsStream("/org/talend/dataprep/messages_fr.properties"));
+                .load(DataprepBundleTest.class.getResourceAsStream("/org/talend/dataprep/messages_fr.properties"));
 
     }
 

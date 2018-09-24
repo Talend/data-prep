@@ -1,6 +1,6 @@
 package org.talend.dataprep.i18n;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.daikon.exception.error.ErrorCode;
 
 class ErrorMessagesDelegate {
@@ -15,7 +15,8 @@ class ErrorMessagesDelegate {
      */
     private static final String TITLE_SUFFIX = ".TITLE";
 
-    private ErrorMessagesDelegate() {}
+    private ErrorMessagesDelegate() {
+    }
 
     public static String getErrorKey(ErrorCode errorCode) {
         return getMessagePrefix(errorCode) + MESSAGE_SUFFIX;

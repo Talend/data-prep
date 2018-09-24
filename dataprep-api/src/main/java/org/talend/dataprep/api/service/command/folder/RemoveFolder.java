@@ -31,6 +31,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_DELETE_FOLDER;
 
 @Component
@@ -46,7 +47,7 @@ public class RemoveFolder extends GenericCommand<ResponseEntity<String>> {
         super(GenericCommand.DATASET_GROUP);
         execute(() -> onExecute(id));
         onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER, e, ExceptionContext.build()));
-        on(OK).then((req, resp) -> Defaults.getResponseEntity(OK, resp));
+        on(OK).then((req, resp) -> Defaults.getResponseEntity(NO_CONTENT, resp));
         on(NOT_FOUND).then((req, resp) -> Defaults.getResponseEntity(NOT_FOUND, resp));
         on(CONFLICT).then((req, resp) -> Defaults.getResponseEntity(CONFLICT, resp));
     }

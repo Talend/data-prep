@@ -14,6 +14,7 @@
   "FOLDER_REMOVE_NOTIFICATION_MESSAGE": "Le dossier \"{{name}}\" a été supprimé.",
   "FOLDER_REMOVE_NOTIFICATION_TITLE": "Suppression de dossier",
   "FOLDERS": "Dossiers",
+  "FOLDER": "Dossier",
   "PREPARATION_COPY_NOTIFICATION_MESSAGE": "La préparation a été copiée.",
   "PREPARATION_COPY_NOTIFICATION_TITLE": "Préparation copiée",
   "PREPARATION_MOVE_NOTIFICATION_MESSAGE": "La préparation a été déplacée.",

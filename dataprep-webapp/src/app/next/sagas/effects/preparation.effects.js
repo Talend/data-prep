@@ -1,9 +1,7 @@
 import { all, call, put, select } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 import { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 
-import preparationWatcher from './../watchers/preparation.saga';
 import i18next from '../../../i18n';
 
 import http from './http';
@@ -135,52 +133,6 @@ export function* rename(payload) {
 	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
 	yield call(http.put, `${uris.get('apiPreparations')}/${payload.id}`, { name: payload.name });
 	yield call(refreshCurrentFolder);
-}
-
-export function* openRemoveFolderModal(payload) {
-	const message = i18next.t('tdp-app:REMOVE_FOLDER_MODAL_CONTENT', {
-		name: payload.name,
-	});
-	const state = new Map({
-		header: i18next.t('tdp-app:REMOVE_FOLDER_MODAL_HEADER', {
-			defaultValue: 'Remove a folder',
-		}),
-		show: true,
-		children: message,
-		validateAction: 'folder:remove',
-		cancelAction: 'folder:remove:close',
-		folderId: payload.id,
-		folderName: payload.name,
-	});
-	yield put(actions.components.mergeState('CMFContainer(ConfirmDialog)', 'ConfirmDialog', state));
-}
-
-export function* closeRemoveFolderModal() {
-	yield put(actions.components.mergeState('CMFContainer(ConfirmDialog)', 'ConfirmDialog', new Map({ show: false })));
-}
-
-export function* removeFolder() {
-	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
-	const folderId = yield select(state => state.cmf.components.getIn(['CMFContainer(ConfirmDialog)', 'ConfirmDialog', 'folderId']));
-	const { response } = yield call(http.delete, `${uris.get('apiFolders')}/${folderId}`);
-	if (response.ok) {
-		yield call(refreshCurrentFolder);
-		const folderName = yield select(state => state.cmf.components.getIn(['CMFContainer(ConfirmDialog)', 'ConfirmDialog', 'folderName']));
-		yield put(
-			creators.notification.success(null, {
-				title: i18next.t('tdp-app:FOLDER_REMOVE_NOTIFICATION_TITLE', {
-					defaultValue: 'Folder Remove',
-				}),
-				message: i18next.t('tdp-app:FOLDER_REMOVE_NOTIFICATION_MESSAGE', {
-					name: folderName,
-					defaultValue: `The folder ${folderName} has been removed.`,
-				}),
-			}),
-		);
-	}
-	yield call(closeRemoveFolderModal);
-	yield call(delay, 500); // necessary when multiple quick calls
-	yield call(preparationWatcher['preparation:folder:remove']);
 }
 
 export function* setTitleEditionMode(payload) {

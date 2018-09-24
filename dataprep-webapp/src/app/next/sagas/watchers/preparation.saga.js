@@ -23,25 +23,6 @@ function* rename() {
 	}
 }
 
-function* removeFolder() {
-	yield take(actions.REMOVE_FOLDER);
-	yield call(effects.removeFolder);
-}
-
-function* openRemoveFolderModal() {
-	while (true) {
-		const { payload } = yield take(actions.OPEN_REMOVE_FOLDER_MODAL);
-		yield call(effects.openRemoveFolderModal, payload);
-	}
-}
-
-function* closeRemoveFolderModal() {
-	while (true) {
-		yield take(actions.CLOSE_REMOVE_FOLDER_MODAL);
-		yield call(effects.closeRemoveFolderModal);
-	}
-}
-
 function* copy() {
 	while (true) {
 		const { payload } = yield take(actions.PREPARATION_COPY);
@@ -116,17 +97,14 @@ export default {
 	'preparation:copy': copy,
 	'preparation:move': move,
 	'preparation:fetch': fetch,
-	'preparation:closeRemoveFolderConfirmDialog': closeRemoveFolderModal,
-	'preparation:openRemoveFolderConfirmDialog': openRemoveFolderModal,
 	'preparation:folder:add': addFolder,
-	'preparation:folder:closeAddFolderConfirmDialog': closeAddFolderModal,
-	'preparation:folder:openAddFolderConfirmDialog': openAddFolderModal,
-	'preparation:folder:remove': removeFolder,
 	'preparation:rename:submit': rename,
-	'preparation:rename:cancel': cancelRename,
-	'preparation:rename': setTitleEditionMode,
 	'preparation:copy:open': openCopyModal,
 	'preparation:move:open': openMoveModal,
+	'preparation:rename:cancel': cancelRename,
+	'preparation:rename': setTitleEditionMode,
 	'preparation:copy:move:cancel': closeCopyMoveModal,
 	'preparation:creator:open': openPreparationCreatorModal,
+	'preparation:folder:closeAddFolderConfirmDialog': closeAddFolderModal,
+	'preparation:folder:openAddFolderConfirmDialog': openAddFolderModal,
 };

@@ -69,7 +69,14 @@
       {
         "path": "preparations(/:folderId)",
         "component": "HomeListView",
-        "componentId": "preparations"
+        "componentId": "preparations",
+        "childRoutes": [
+          {
+            "path": "delete",
+            "component": "DeleteResource",
+            "componentId": "folder"
+          }
+        ]
       },
       {
         "path": "*",

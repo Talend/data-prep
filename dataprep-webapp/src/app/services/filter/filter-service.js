@@ -83,25 +83,10 @@ export default class FilterService {
 	 * @description Adds a filter
 	 */
 	addFilter(type, colId, colName, args, removeFilterFn, keyName) {
-		const defaultSameColAndTypeFilterMatcher = find(this.state.playground.filter.gridFilters, {
+		const sameColAndTypeFilter = find(this.state.playground.filter.gridFilters, {
 			colId,
 			type,
 		});
-		let sameColAndTypeFilter = defaultSameColAndTypeFilterMatcher;
-		if (type === MATCHES) {
-			const specificSameColAndTypeFilterMatcher = find(this.state.playground.filter.gridFilters, {
-				colId,
-				type: MATCHES_WORDS,
-			});
-			sameColAndTypeFilter = defaultSameColAndTypeFilterMatcher || specificSameColAndTypeFilterMatcher;
-		}
-		else if (type === MATCHES_WORDS) {
-			const specificSameColAndTypeFilterMatcher = find(this.state.playground.filter.gridFilters, {
-				colId,
-				type: MATCHES,
-			});
-			sameColAndTypeFilter = defaultSameColAndTypeFilterMatcher || specificSameColAndTypeFilterMatcher;
-		}
 
 		let filterFn;
 		let createFilter;
@@ -293,6 +278,14 @@ export default class FilterService {
 					args.patterns = this.TqlFilterAdapterService.getEmptyRecordsValues()
 							.concat(args.patterns);
 				}
+			}
+
+			const sameColAndOtherTypeFilter = find(this.state.playground.filter.gridFilters, {
+				colId,
+				type: type === MATCHES ? MATCHES_WORDS : MATCHES,
+			});
+			if (sameColAndOtherTypeFilter) {
+				this.removeFilter(sameColAndOtherTypeFilter);
 			}
 
 			if (args.patterns.length === 1 && args.patterns[0].value === '') {

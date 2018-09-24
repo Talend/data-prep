@@ -61,13 +61,14 @@ function escapeRegex(value) {
  */
 function convertPatternToRegexp(pattern) {
 	let regexp = '';
+
 	for (let i = 0, len = pattern.length; i < len; i++) {
 		switch (pattern[i]) {
 		case 'A':
-			regexp += '[A-Z]';
+			regexp += '[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ]';
 			break;
 		case 'a':
-			regexp += '[a-z]';
+			regexp += '[a-zßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]';
 			break;
 		case '9':
 			regexp += '[0-9]';
@@ -151,7 +152,7 @@ function patternOccurrenceWorker(parameters) {
 		filteredRecords,
 	} = parameters;
 
-	_.forEach(patternFrequencyTable, (patternFrequency) => {
+	patternFrequencyTable.forEach((patternFrequency) => {
 		const pattern = patternFrequency.pattern;
 		const matchingFn = valueMatchPatternFn(pattern);
 
@@ -159,14 +160,14 @@ function patternOccurrenceWorker(parameters) {
 			patternFrequency.occurrences :
 			_.chain(filteredRecords)
 				.map(columnId)
-				.filter(matchingFn)
+				.filter(value => matchingFn(value))
 				.groupBy(value => value)
 				.mapValues('length')
 				.reduce((accu, value) => accu + value, 0)
 				.value();
 	});
 
-	_.forEach(wordPatternFrequencyTable, (patternFrequency) => {
+	wordPatternFrequencyTable.forEach((patternFrequency) => {
 		patternFrequency.filteredOccurrences = patternFrequency.occurrences;
 	});
 

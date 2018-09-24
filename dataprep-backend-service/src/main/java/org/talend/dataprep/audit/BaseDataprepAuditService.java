@@ -38,8 +38,11 @@ public interface BaseDataprepAuditService {
 
     void auditPreparationRename(String preparationId, String prepNewName);
 
-    void auditPreparationExport(String preparationId, String stepId, String exportType,
-            Map<String, String> exportOptions, boolean isFullRunExport);
+    void auditPreparationSampleExport(String preparationId, String stepId, String exportType,
+            Map<String, String> exportOptions);
+
+    void auditPreparationFullrunExport(String preparationId, String stepId, String exportType,
+            Map<String, String> exportOptions);
 
     void auditPreparationAddStep(String preparationId, Map<String, Map<String, String>> stepActionsAndParameters);
 

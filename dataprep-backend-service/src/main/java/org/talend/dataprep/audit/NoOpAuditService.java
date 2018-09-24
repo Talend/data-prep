@@ -56,8 +56,14 @@ public class NoOpAuditService implements BaseDataprepAuditService {
     }
 
     @Override
-    public void auditPreparationExport(String preparationId, String stepId, String exportType,
-            Map<String, String> exportOptions, boolean isFullRuneExport) {
+    public void auditPreparationSampleExport(String preparationId, String stepId, String exportType,
+            Map<String, String> exportOptions) {
+        // Do nothing
+    }
+
+    @Override
+    public void auditPreparationFullrunExport(String preparationId, String stepId, String exportType,
+            Map<String, String> exportOptions) {
         // Do nothing
     }
 

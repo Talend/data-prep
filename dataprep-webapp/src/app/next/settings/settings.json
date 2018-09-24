@@ -254,7 +254,7 @@
       "routerParamAttribute": "folderId",
       "resourceTypeLabel": {
         "i18n": {
-          "key": "tdp-app:FOLDER",
+          "key": "tdp-cmf:FOLDER",
           "options": {
             "defaultValue": "folder"
           }
@@ -264,7 +264,7 @@
       "redirectUrl": "/preparations",
       "header": {
         "i18n": {
-          "key": "tdp-app:REMOVE_FOLDER_MODAL_HEADER",
+          "key": "tdp-cmf:REMOVE_FOLDER_MODAL_HEADER",
           "options": {
             "defaultValue": "Remove folder"
           }

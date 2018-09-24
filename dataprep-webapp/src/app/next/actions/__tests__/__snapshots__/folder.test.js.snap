@@ -12,12 +12,6 @@ Object {
 }
 `;
 
-exports[`Folder action should create an closeRemoveFolderModal action 1`] = `
-Object {
-  "type": "TDP_CLOSE_REMOVE_FOLDER_MODAL",
-}
-`;
-
 exports[`Folder action should create an open action 1`] = `
 Object {
   "cmf": Object {
@@ -31,17 +25,5 @@ Object {
 exports[`Folder action should create an openAddFolderModal action 1`] = `
 Object {
   "type": "TDP_OPEN_ADD_FOLDER_MODAL",
-}
-`;
-
-exports[`Folder action should create an openRemoveFolderModal action 1`] = `
-Object {
-  "type": "TDP_OPEN_REMOVE_FOLDER_MODAL",
-}
-`;
-
-exports[`Folder action should create an remove action 1`] = `
-Object {
-  "type": "TDP_REMOVE_FOLDER",
 }
 `;

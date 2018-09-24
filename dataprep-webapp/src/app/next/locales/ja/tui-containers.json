@@ -2,5 +2,6 @@
   "DELETE_RESOURCE_MESSAGE": "Are you sure you want to remove the {{resourceLabel}}",
   "DELETE_RESOURCE_NO": "CANCEL",
   "DELETE_RESOURCE_QUESTION_MARK": "?",
-  "DELETE_RESOURCE_YES": "REMOVE"
+  "DELETE_RESOURCE_YES": "REMOVE",
+  "DELETE_RESOURCE_MESSAGE_female": "Êtes-vous sûr(e) de vouloir supprimer la {{resourceLabel}}"
 }

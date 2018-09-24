@@ -43,7 +43,7 @@ Object {
     "id": 42,
     "type": "folder",
   },
-  "type": "TDP_OPEN_REMOVE_FOLDER_MODAL",
+  "type": undefined,
 }
 `;
 

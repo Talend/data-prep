@@ -17,7 +17,7 @@ import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH
 
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.talend.dataprep.folder.store.FoldersRepositoriesConstants;
 

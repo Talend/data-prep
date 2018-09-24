@@ -129,6 +129,19 @@ describe('Lookup state service', () => {
 		}));
 	});
 
+	describe('modalLoading', () => {
+		it('should set modalLoading flag', inject((lookupState, LookupStateService) => {
+			//given
+			lookupState.modalLoading = false;
+
+			//when
+			LookupStateService.setModalLoading(true);
+
+			//then
+			expect(lookupState.modalLoading).toBe(true);
+		}));
+	});
+
 	describe('reset', () => {
 		it('should reset state', inject((lookupState, LookupStateService) => {
 			// given

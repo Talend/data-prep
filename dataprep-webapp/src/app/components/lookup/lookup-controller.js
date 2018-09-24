@@ -42,7 +42,7 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @name load
 	 * @description it loads the lookup params from the step or from the action
 	 * */
-	vm.load = function whereToLoadFrom(item) {
+	vm.load = (item) => {
 		if (state.playground.stepInEditionMode) {
 			const lookupDatasetId = item.parameters
 				.find(param => param.name === 'lookup_ds_id')
@@ -86,7 +86,7 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @methodOf data-prep.lookup.controller:LookupCtrl
 	 * @description trigger a preview mode on the main dataset to show the lookup action effet
 	 */
-	vm.hoverSubmitBtn = function hoverSubmitBtn() {
+	vm.hoverSubmitBtn = () => {
 		if (state.playground.stepInEditionMode) {
 			PreviewService.updatePreview(state.playground.stepInEditionMode, getParams());
 		}
@@ -104,8 +104,12 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @returns {String} the name of th dataset to be shown in the list
 	 * @description loops over the dataset lookup action parameters to collect the dataset name
 	 */
-	vm.getDsName = function getDsName(item) {
-		return _.find(item.parameters, { name: 'lookup_ds_name' }).default;
+	vm.getDsName = (item) => {
+		return item.parameters.find(param => param.name === 'lookup_ds_name').default;
+	};
+
+	vm.getDsId = (item) => {
+		return item.parameters.find(param => param.name === 'lookup_ds_id').default;
 	};
 
 	/**
@@ -145,7 +149,7 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @methodOf data-prep.lookup.controller:LookupCtrl
 	 * @description submits the lookup action
 	 */
-	vm.submit = function submit() {
+	vm.submit = () => {
 		StateService.setTransformationInProgress(true);
 		EarlyPreviewService.cancelPendingPreview();
 		let promise;
@@ -170,18 +174,18 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @methodOf data-prep.lookup.controller:LookupCtrl
 	 * @description Open the add lookup dataset modal
 	 */
-	vm.openAddLookupDatasetModal = function openAddLookupDatasetModal() {
-		LookupService.disableDatasetsUsedInRecipe();
+	vm.openAddLookupDatasetModal = () => {
 		vm.addLookupDatasetModal = true;
+		LookupService.updateLookupDatasetsAndActions()
+			.then(() => LookupService.disableDatasetsUsedInRecipe());
 	};
-
 	/**
 	 * @ngdoc method
 	 * @name addLookupDatasets
 	 * @methodOf data-prep.lookup.controller:LookupCtrl
 	 * @description Add datasets to the lookup
 	 */
-	vm.addLookupDatasets = function addLookupDatasets() {
+	vm.addLookupDatasets = () => {
 		LookupService.updateLookupDatasets();
 		vm.addLookupDatasetModal = false;
 
@@ -198,8 +202,8 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @description sort dataset by sortType by calling refreshDatasets from DatasetService
 	 * @param {object} sortType Criteria to sort
 	 */
-	vm.updateSortBy = function updateSortBy(sortType) {
-		$timeout(function () {
+	vm.updateSortBy = (sortType) => {
+		$timeout(() => {
 			StateService.setLookupDatasetsSort(sortType);
 			StorageService.setLookupDatasetsSort(sortType.id);
 		});
@@ -212,8 +216,8 @@ export default function LookupCtrl($timeout, state, StateService,
 	 * @description sort dataset in order (ASC or DESC) by calling refreshDatasets from DatasetService
 	 * @param {object} order Sort order ASC(ascending) or DESC(descending)
 	 */
-	vm.updateSortOrder = function updateSortOrder(order) {
-		$timeout(function () {
+	vm.updateSortOrder = (order) => {
+		$timeout(() => {
 			StateService.setLookupDatasetsOrder(order);
 			StorageService.setLookupDatasetsOrder(order.id);
 		});

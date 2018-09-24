@@ -13,21 +13,18 @@
 
 package org.talend.dataprep.api.service.settings.views.provider;
 
+import static java.util.Collections.singletonList;
+
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.settings.AppSettingsProvider;
 import org.talend.dataprep.api.service.settings.views.api.ViewSettings;
 
-import static java.util.Collections.singletonList;
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
-
 /**
  * Default views settings provider
  */
-@Component(SCOPE_PROTOTYPE)
-@ConditionalOnProperty(name = "dataset.service.provider", havingValue = "legacy", matchIfMissing = true)
+@Component
 public class DatasetViewsProvider implements AppSettingsProvider<ViewSettings> {
 
     @Override

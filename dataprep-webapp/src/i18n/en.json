@@ -336,6 +336,8 @@
   "STATS_TAB_VALUE": "Value",
   "STATS_TAB_PATTERN": "Pattern",
   "STATS_TAB_ADVANCED": "Advanced",
+  "CHARACTER_PATTERNS_TOGGLE": "Character based patterns",
+  "WORD_PATTERNS_TOGGLE": "Word based patterns",
 
   "_comment": "Dataset actions",
   "REPLACE_FILE_CONTENT": "Overwrite dataset with another file",

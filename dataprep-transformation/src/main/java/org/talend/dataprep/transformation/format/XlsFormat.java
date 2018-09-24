@@ -17,7 +17,7 @@ import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;

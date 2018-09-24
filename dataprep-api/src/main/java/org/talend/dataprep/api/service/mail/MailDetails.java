@@ -15,7 +15,7 @@ package org.talend.dataprep.api.service.mail;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class contains all the data needed to send feedback to Talend.

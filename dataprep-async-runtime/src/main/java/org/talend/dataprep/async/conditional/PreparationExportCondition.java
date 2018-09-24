@@ -12,7 +12,7 @@
 
 package org.talend.dataprep.async.conditional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.export.ExportParameters;

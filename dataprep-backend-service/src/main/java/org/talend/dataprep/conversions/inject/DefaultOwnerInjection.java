@@ -1,6 +1,6 @@
 package org.talend.dataprep.conversions.inject;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.DatasetDTO;
 import org.talend.dataprep.api.dataset.DatasetDetailsDTO;

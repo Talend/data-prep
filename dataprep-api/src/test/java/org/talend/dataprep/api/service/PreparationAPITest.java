@@ -81,7 +81,6 @@ import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.preparation.store.PersistentStep;
-import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
@@ -839,9 +838,6 @@ public class PreparationAPITest extends ApiServiceTestBase {
             assertTrue(expectedColumns.contains(column.getName()));
         }
     }
-
-    @Autowired
-    private AnalyzerService analyzerService;
 
     @Test
     public void testPreparationInitialMetadata_wordPatternStats() throws Exception {

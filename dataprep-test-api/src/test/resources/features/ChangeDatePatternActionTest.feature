@@ -37,7 +37,6 @@ Feature: Perform scenarios with ChangeDate related actions
     # Before update : ISO 8601 and French Standard should be exported
     When I export the preparation with parameters :
       | preparationName      | A-customers_100_with_pb_prep            |
-      | dataSetName          | A-customers_100_with_pb_dataset         |
       | exportType           | CSV                                     |
       | fileName             | A-customers_100_with_pb_prep_result.csv |
       | csv_escape_character | "                                       |
@@ -50,7 +49,6 @@ Feature: Perform scenarios with ChangeDate related actions
       # After update : the exported file should be the same
     When I export the preparation with parameters :
       | preparationName      | A-customers_100_with_pb_prep                    |
-      | dataSetName          | A-customers_100_with_pb_dataset                 |
       | exportType           | CSV                                             |
       | fileName             | A-customers_100_with_pb_prep_result_updated.csv |
       | csv_escape_character | "                                               |
@@ -89,7 +87,6 @@ Feature: Perform scenarios with ChangeDate related actions
   Scenario: Export previous preparation - "A-customers_100_with_pb_prep_newCol" - and check the exported file
     # Before update : ISO 8601 and French Standard should be exported
     When I export the preparation with parameters :
-      | dataSetName          | A-customers_100_with_pb_dataset                |
       | preparationName      | A-customers_100_with_pb_prep_newCol            |
       | exportType           | CSV                                            |
       | fileName             | A-customers_100_with_pb_prep_result_newCol.csv |
@@ -102,7 +99,6 @@ Feature: Perform scenarios with ChangeDate related actions
       | custom_date_pattern | dd.MM.yy HH:mm |
       # After update : German Standard with time and French Standard should be exported
     When I export the preparation with parameters :
-      | dataSetName          | A-customers_100_with_pb_dataset                        |
       | preparationName      | A-customers_100_with_pb_prep_newCol                    |
       | exportType           | CSV                                                    |
       | fileName             | A-customers_100_with_pb_prep_result_updated_newCol.csv |

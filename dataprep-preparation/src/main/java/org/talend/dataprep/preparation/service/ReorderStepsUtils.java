@@ -28,7 +28,7 @@ public class ReorderStepsUtils {
      * @return either <tt>true</tt> if the specified list of steps have a step that use a column before it is created by
      * a following step or deleted by a preceding step or <t>false</t> otherwise
      */
-    boolean isStepOrderValid(List<AppendStep> appendSteps) {
+    boolean isStepOrderInvalid(List<AppendStep> appendSteps) {
         // Add all the columns created by steps as not available at the beginning
         final Set<String> notYetAvailableColumnsIds = appendSteps
                 .stream()
@@ -38,21 +38,22 @@ public class ReorderStepsUtils {
         return !appendSteps.stream().anyMatch(step -> {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
-                final String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
+                final String[] columnIds = extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
 
                 // remove the created columns from not available columns
                 notYetAvailableColumnsIds.removeAll(step.getDiff().getCreatedColumns());
 
-                // if the columns is no
-                if (notYetAvailableColumnsIds.contains(columnId)) {
-                    return true;
-                }
+                for (String columnId : columnIds) {
+                    // if the columns is no
+                    if (notYetAvailableColumnsIds.contains(columnId)) {
+                        return true;
+                    }
 
-                // add removed columns to non available
-                if (StringUtils.equalsIgnoreCase(DeleteColumn.DELETE_COLUMN_ACTION_NAME, action.getName())) {
-                    notYetAvailableColumnsIds.add(columnId);
+                    // add removed columns to non available
+                    if (StringUtils.equalsIgnoreCase(DeleteColumn.DELETE_COLUMN_ACTION_NAME, action.getName())) {
+                        notYetAvailableColumnsIds.add(columnId);
+                    }
                 }
-
             }
             return false;
         });
@@ -107,4 +108,20 @@ public class ReorderStepsUtils {
             }
         });
     }
+
+    /**
+     * Little function to separate columnsId for multicolumns actions, won't do anything on old scopes.
+     *
+     * @param columnId
+     * @return
+     */
+    private String[] extractColumnsId(String columnId) {
+        String result[] = {columnId};
+        if (columnId.contains(",")) {
+            String tempString = columnId.replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+            result = tempString.split(",");
+        }
+        return result;
+    }
+
 }

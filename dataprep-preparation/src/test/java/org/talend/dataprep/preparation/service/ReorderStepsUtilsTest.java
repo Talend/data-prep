@@ -26,7 +26,7 @@ public class ReorderStepsUtilsTest {
         steps.add(createAppendStep("0002", asList("0003", "0004")));
         steps.add(createAppendStep("0003", emptyList()));
 
-        assertTrue(reorderStepsUtils.isStepOrderValid(steps));
+        assertTrue(reorderStepsUtils.isStepOrderInvalid(steps));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ReorderStepsUtilsTest {
         steps.add(createAppendStep("0003", emptyList()));
         steps.add(createAppendStep("0002", asList("0003", "0004")));
 
-        assertFalse(reorderStepsUtils.isStepOrderValid(steps));
+        assertFalse(reorderStepsUtils.isStepOrderInvalid(steps));
     }
 
     @Test

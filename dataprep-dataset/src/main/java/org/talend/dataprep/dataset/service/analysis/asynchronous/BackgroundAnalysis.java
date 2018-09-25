@@ -88,11 +88,11 @@ public class BackgroundAnalysis {
             } else {
                 // base analysis
                 try (final Stream<DataSetRow> stream = store.stream(metadata)) {
-                    try (Analyzer<Analyzers.Result> analyzer = analyzerService.schemaAnalysis(columns)) {
-                        computeStatistics(analyzer, columns, stream);
+                    try (Analyzer<Analyzers.Result> analyzerSchema = analyzerService.schemaAnalysis(columns)) {
+                        computeStatistics(analyzerSchema, columns, stream);
                         LOGGER.debug("Base statistics analysis done for {}", dataSetId);
                         // Save base analysis
-                        saveAnalyzerResults(dataSetId, analyzer);
+                        saveAnalyzerResults(dataSetId, analyzerSchema);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Base statistics analysis, dataset {} generates an error", dataSetId, e);
@@ -100,12 +100,12 @@ public class BackgroundAnalysis {
                 }
                 // advanced analysis
                 try (final Stream<DataSetRow> stream = store.stream(metadata)) {
-                    try (Analyzer<Analyzers.Result> analyzer = analyzerService.full(columns)) {
-                        computeStatistics(analyzer, columns, stream);
-                        updateNbRecords(metadata, analyzer.getResult());
+                    try (Analyzer<Analyzers.Result> analyzerFull = analyzerService.full(columns)) {
+                        computeStatistics(analyzerFull, columns, stream);
+                        updateNbRecords(metadata, analyzerFull.getResult());
                         LOGGER.debug("Advanced statistics analysis done for{}", dataSetId);
                         // Save advanced analysis
-                        saveAnalyzerResults(dataSetId, analyzer);
+                        saveAnalyzerResults(dataSetId, analyzerFull);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Advanced statistics analysis, dataset {} generates an error", dataSetId, e);
@@ -115,7 +115,7 @@ public class BackgroundAnalysis {
                 DistributedLock datasetLock = repository.createDatasetMetadataLock(metadata.getId());
                 try {
                     datasetLock.lock();
-                    metadata.getLifecycle().qualityAnalyzed(true);
+                    metadata.getLifecycle().setStatisticAnalyzed(true);
                     repository.save(metadata);
                 } finally {
                     datasetLock.unlock();

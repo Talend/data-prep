@@ -3,6 +3,7 @@ package org.talend.dataprep.qa.step;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
@@ -112,6 +113,22 @@ public class DatasetStep extends DataPrepStep {
         String datasetId = context.getDatasetId(suffixedDatasetName);
         Response response = api.updateDataset(fileName, suffixedDatasetName, datasetId);
         response.then().statusCode(OK.value());
+    }
+
+    @When("^I can delete the dataset called \"(.*)\"$") //
+    public void ICanDeleteTheDataset(String datasetName) {
+        deleteDatasetByName(datasetName).then().statusCode(OK.value());
+    }
+
+    private Response deleteDatasetByName(String datasetName) {
+        String suffixedDatasetName = suffixName(datasetName);
+        String datasetId = context.getDatasetId(suffixedDatasetName);
+        return api.deleteDataset(datasetId);
+    }
+
+    @When("^I can't delete the dataset called \"(.*)\"$") //
+    public void ICantDeleteTheDataset(String datasetName) {
+        deleteDatasetByName(datasetName).then().statusCode(NOT_FOUND.value());
     }
 
     @When("^I load the existing dataset called \"(.*)\"$")

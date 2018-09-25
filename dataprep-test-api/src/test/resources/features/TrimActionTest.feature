@@ -42,7 +42,6 @@ Feature: Perform scenarios with some Trim related action
   # escape and enclosure characters should be given because they can be empty
     When I export the preparation with parameters :
       | preparationName      | best_sad_songs_prep       |
-      | dataSetName          | best_sad_songs_dataset    |
       | exportType           | CSV                       |
       | fileName             | best_sad_songs_result.csv |
       | csv_escape_character | "                         |

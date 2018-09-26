@@ -251,7 +251,7 @@
     "DeleteResource#folder": {
       "resourceType": "folders",
       "collectionId": "preparations",
-      "routerParamAttribute": "folderId",
+      "routerParamAttribute": "deletionId",
       "resourceTypeLabel": {
         "i18n": {
           "key": "tdp-cmf:FOLDER",

@@ -141,4 +141,4 @@ Feature: Filter features
     Examples:
       | tql                                             | filtered_records                              | new_sample_quality                           | new_sample_records_count |
       | (* is empty)                                    | 12L5C_prep_rows_with_empty_value_records.json | 12L5C_prep_filtered_rows_sample_quality.json | 6                        |
-      | ((0002 between [1512082800000, 1512082800000])) | content_no_records.json                       | 12L5C_initial_quality.json                   | 12                       |
+      | ((0002 between [1512082800000, 1512082800000])) | content_no_records.json                       | 12L5C_initial_quality.json                   | 0                       |

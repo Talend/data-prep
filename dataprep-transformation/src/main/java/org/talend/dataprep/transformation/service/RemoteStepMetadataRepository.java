@@ -44,7 +44,7 @@ public class RemoteStepMetadataRepository implements StepMetadataRepository {
         }
         final RowMetadata linkedRowMetadata = context.getBean(GetStepRowMetadata.class, stepId).execute();
         if (linkedRowMetadata == null) {
-            LOGGER.warn("No step row metadata associated to step #{}", stepId);
+            LOGGER.debug("No step row metadata associated to step #{}", stepId);
         }
         return linkedRowMetadata;
     }

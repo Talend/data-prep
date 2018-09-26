@@ -17,6 +17,10 @@
 	height: 100%;
 	position: relative;
 
+    .tab-content {
+      display: none;
+    }
+
     .tc-tab-bar-actions {
       display: flex;
       overflow-x: hidden;

@@ -126,6 +126,7 @@
   "EMPTY_GRID_1": "フィルターに一致する行はありません。クリックすると、",
   "EMPTY_GRID_2": "すべてのフィルターを削除できます。",
   "HERE": "こちら",
+  "NO_ROWS": "データセットにはデータが含まれていません",
 
   "_comment": "オンボーディング",
   "ENTER_PREPARATION_NAME": "プレパレーションの名前を入力",
@@ -335,6 +336,8 @@
   "STATS_TAB_VALUE": "値",
   "STATS_TAB_PATTERN": "パターン",
   "STATS_TAB_ADVANCED": "詳細",
+  "CHARACTER_PATTERNS_TOGGLE": "文字ベースのパターン",
+  "WORD_PATTERNS_TOGGLE": "ワードベースのパターン",
 
   "_comment": "オンボーディング",
   "REPLACE_FILE_CONTENT": "別のファイルでデータセットを上書き",
@@ -436,7 +439,7 @@
   "LISTVIEW_NO_RESULT": "結果が見つかりません。",
   "LISTVIEW_EMPTY": "このリストは空です。",
   "LISTVIEW_HEADER_TITLE": "値",
-  "LISTVIEW_HEADER_SELECTED": "{{count}}/{{total}}選択済み",
+  "LISTVIEW_HEADER_SELECTED": "{{count}}\/{{total}}選択済み",
   "LISTVIEW_HEADERINPUT_SEARCH_PLACEHOLDER": "検索",
   "LISTVIEW_ITEMS_TOGGLE_ALL": "すべて切り替え",
   "LISTVIEW_WIDGET_SEARCH": "検索",

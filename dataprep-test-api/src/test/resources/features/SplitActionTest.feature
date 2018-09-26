@@ -21,7 +21,6 @@ Feature: Perform scenarios with SplitAction related action
   Scenario: Export Albums_Musique_prep and check the exported file Albums_Musique_prep_result.csv
     When I export the preparation with parameters :
       | preparationName      | Albums_Musique_prep            |
-      | dataSetName          | Albums_Musique_dataset         |
       | exportType           | CSV                            |
       | fileName             | Albums_Musique_prep_result.csv |
       | csv_escape_character | "                              |

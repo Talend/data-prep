@@ -15,7 +15,6 @@ Feature: Perform scenarios with SearchAndReplace related action
   Scenario: Export and check the exported file best_sad_songs_search_result - SearchAndReplace
     When I export the preparation with parameters :
       | preparationName      | best_sad_songs_of_all_time_prep    |
-      | dataSetName          | best_sad_songs_of_all_time_dataset |
       | exportType           | CSV                                |
       | fileName             | best_sad_songs_search_result.csv   |
       | csv_escape_character | "                                  |

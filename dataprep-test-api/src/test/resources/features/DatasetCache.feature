@@ -12,12 +12,12 @@ Feature: Dataset cache features
       | column_name | firstname |
       | column_id   | 0001      |
     And I update the dataset named "8L3C_dataset" with data "/data/12L5C.csv"
+    And I wait for the dataset "8L3C_dataset" metadata to be computed
     Then The preparation "8L3C_preparation" should contain the following columns:
       | id | firstname | date | phone | webdomain |
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 8L3C_preparation |
-      | dataSetName          | 8L3C_dataset     |
       | fileName             | 8L3C_result.csv  |
       | csv_escape_character | "                |
       | csv_enclosure_char   | "                |

@@ -16,7 +16,6 @@ Feature: Export Preparation from CSV
       | preparationName      | 6L3C_preparation |
       | csv_escape_character | "                |
       | csv_enclosure_char   | "                |
-      | dataSetName          | 6L3C_dataset     |
       | fileName             | 6L3C_result.csv  |
     Then I check that "6L3C_result.csv" temporary file equals "/data/6L3C_default_export_parameters.csv" file
 
@@ -24,7 +23,6 @@ Feature: Export Preparation from CSV
     When I export the preparation with parameters :
       | exportType           | CSV              |
       | preparationName      | 6L3C_preparation |
-      | dataSetName          | 6L3C_dataset     |
       | csv_escape_character | #                |
       | csv_enclosure_char   | "                |
       | fileName             | 6L3C_result.csv  |
@@ -40,6 +38,5 @@ Feature: Export Preparation from CSV
       | csv_charset          | ISO-8859-1                        |
       | csv_enclosure_char   | +                                 |
       | preparationName      | 6L3C_preparation                  |
-      | dataSetName          | 6L3C_dataset                      |
       | fileName             | 6L3C_result_with_custom_param.csv |
     Then I check that "6L3C_result_with_custom_param.csv" temporary file equals "/data/6L3C_exported_with_custom_param.csv" file

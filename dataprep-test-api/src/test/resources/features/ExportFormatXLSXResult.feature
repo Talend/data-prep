@@ -15,7 +15,6 @@ Feature: Exporting preparation on XLSX format
     When I export the preparation with parameters :
       | exportType           | XLSX                         |
       | preparationName      | phoneNumber_preparation      |
-      | dataSetName          | phoneNumber_dataset          |
       | fileName             | phoneNumber_result.xlsx      |
     Then I check that "phoneNumber_result.xlsx" temporary file equals "/data/phoneNumber_formatFrench.xlsx" file
 
@@ -32,7 +31,6 @@ Feature: Exporting preparation on XLSX format
     And I export the preparation with parameters :
       | exportType      | CSV                                   |
       | preparationName | phoneNumberScopeDataset_preparation   |
-      | dataSetName     | phoneNumberScopeDataset_dataset       |
       | fileName        | phoneNumberScopeDataset_result.csv    |
     Then I check that "phoneNumberScopeDataset_result.csv" temporary file equals "/data/phoneNumberScopeDataset_formatUs.csv" file
 

@@ -731,12 +731,12 @@ public class PreparationService {
 
     public void addPreparationAction(final String preparationId, final AppendStep step) {
         LOGGER.debug("Adding action to preparation...");
-        Preparation preparation = preparationRepository.get(preparationId, Preparation.class);
-        List<Action> actions = getVersionedAction(preparationId, "head");
+        PersistentPreparation preparation = preparationRepository.get(preparationId, PersistentPreparation.class);
+        List<Action> actions = getVersionedAction(preparation, "head");
         StepDiff actionCreatedColumns = stepDiffDelegate.computeCreatedColumns(preparation.getRowMetadata(),
                 buildActions(actions), buildActions(step.getActions()));
         step.setDiff(actionCreatedColumns);
-        appendSteps(preparationId, Collections.singletonList(step));
+        appendSteps(preparation, Collections.singletonList(step));
         LOGGER.debug("Added action to preparation.");
     }
 
@@ -759,12 +759,11 @@ public class PreparationService {
     /**
      * Append step(s) in a preparation.
      */
-    public void appendSteps(String preparationId, final List<AppendStep> stepsToAppend) {
+    public void appendSteps(PersistentPreparation preparation, final List<AppendStep> stepsToAppend) {
         stepsToAppend.forEach(this::checkActionStepConsistency);
 
+        final String preparationId = preparation.getId();
         LOGGER.debug("Adding actions to preparation #{}", preparationId);
-
-        final PersistentPreparation preparation = lockPreparation(preparationId);
         try {
             LOGGER.debug("Current head for preparation #{}: {}", preparationId, preparation.getHeadId());
 
@@ -889,16 +888,21 @@ public class PreparationService {
 
         final PersistentPreparation preparation = preparationRepository.get(id, PersistentPreparation.class);
         if (preparation != null) {
-            final String stepId = getStepId(version, preparation);
-            final PersistentStep step = getStep(stepId);
-            if (step == null) {
-                LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId,
-                        preparation.getId(), version);
-            }
-            return getActions(step);
+            return getVersionedAction(preparation, version);
         } else {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", id));
         }
+    }
+
+    public List<Action> getVersionedAction(final PersistentPreparation preparation, final String version) {
+        LOGGER.debug("Get list of actions of preparation #{} at version {}.", preparation.getId(), version);
+        final String stepId = getStepId(version, preparation);
+        final PersistentStep step = getStep(stepId);
+        if (step == null) {
+            LOGGER.warn("Step '{}' no longer exist for preparation #{} at version '{}'", stepId, preparation.getId(),
+                    version);
+        }
+        return getActions(step);
     }
 
     /**
@@ -1400,7 +1404,7 @@ public class PreparationService {
     public void updatePreparationStep(String stepId, RowMetadata rowMetadata) {
         final PersistentStep step = preparationRepository.get(stepId, PersistentStep.class);
 
-        invalidatePreparationStep(stepId);
+        invalidatePreparationStep(step);
 
         // ...and create new one for step
         final StepRowMetadata stepRowMetadata = new StepRowMetadata(rowMetadata);
@@ -1411,7 +1415,10 @@ public class PreparationService {
 
     public void invalidatePreparationStep(String stepId) {
         final PersistentStep step = preparationRepository.get(stepId, PersistentStep.class);
+        invalidatePreparationStep(step);
+    }
 
+    private void invalidatePreparationStep(PersistentStep step) {
         if (step.getRowMetadata() != null) {
             // Delete previous one...
             final StepRowMetadata previousStepRowMetadata = new StepRowMetadata();

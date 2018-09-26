@@ -1,9 +1,15 @@
 package org.talend.dataprep.qa.step;
 
-import com.jayway.restassured.response.Response;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +20,11 @@ import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.PreparationContent;
 import org.talend.dataprep.qa.dto.Statistics;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import com.jayway.restassured.response.Response;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 public class FilterStep extends DataPrepStep {
 
@@ -85,6 +87,7 @@ public class FilterStep extends DataPrepStep {
             }
             response = api.getDataset(datasetId, tql);
             response.then().statusCode(200);
+            tries++;
         } while (response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty()
                 && tries < 10);
 

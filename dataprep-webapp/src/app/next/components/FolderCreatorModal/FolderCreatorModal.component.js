@@ -4,6 +4,7 @@ import { translate } from 'react-i18next';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import PropTypes from 'prop-types';
 import { cmfConnect } from '@talend/react-cmf/lib/index';
+import TextService from '../../services/text.service';
 import I18N from '../../constants/i18n';
 
 class FolderCreatorModal extends React.Component {
@@ -16,12 +17,12 @@ class FolderCreatorModal extends React.Component {
 	onChange() {
 		const name = this.folderNameInput.value;
 		const validateAction = { ...this.props.state.validateAction };
-		validateAction.disabled = !name.trim();
+		validateAction.disabled = !TextService.sanitize(name);
 		this.props.setState({ name, error: '', validateAction });
 	}
 
 	onSubmit(event, data) {
-		if (this.folderNameInput.value.trim()) {
+		if (TextService.sanitize(this.folderNameInput.value)) {
 			this.props.state.validateAction.onClick(event, data);
 		}
 		event.preventDefault();

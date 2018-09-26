@@ -71,7 +71,8 @@ public class DataSetNameInjection
                     preparation.setDataSetName(dataSetName);
                     preparationRepository.add(preparation);
                 } else {
-                    LOGGER.warn("Unable to update data set name of preparation #{} (preparation does not exist).", dto.getId());
+                    LOGGER.warn("Unable to update data set name of preparation #{} (preparation does not exist).",
+                            dto.getId());
                 }
             } catch (Exception e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);

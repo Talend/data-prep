@@ -880,7 +880,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         String actualWordPatterns = columns
                 .stream()
-                .map(c -> c.getStatistics() //
+                .map(c -> c
+                        .getStatistics() //
                         .getWordPatternFrequencyTable() //
                         .iterator() //
                         .next() //

@@ -20,7 +20,8 @@ describe('Step Description controller', () => {
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
 			RECIPE_ITEM_ON_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on column <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
-			RECIPE_ITEM_ON_COLS: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on columns <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
+			ONLY_2_SELECTED_COLS: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div>',
+			MORE_THEN_2_SELECTED_COLS: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>, <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> and <span title="{{restOfCols}}">{{restOfColsNbr}}</span> other(s).',
 			RECIPE_ITEM_ON_CELL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on cell',
 			RECIPE_ITEM_ON_LINE: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> <span class="step-scope">#{{rowId}}</span>',
 			RECIPE_ITEM_ON_DATASET: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on table',
@@ -100,7 +101,7 @@ describe('Step Description controller', () => {
 			scope.$digest();
 
 			//then
-			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on columns <div class="step-scope" title="col1, col2">col1, col2</div>');
+			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on columns <div class="step-scope" title="col1">col1</div> and <div class="step-scope" title="col2">col2</div>');
 		});
 
 		it('should translate description on scope: cell', () => {

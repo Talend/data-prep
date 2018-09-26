@@ -64,11 +64,7 @@ class StepDescriptionCtrl {
 			}
 			break;
 		case 'multi_columns':
-			this.stepDescription = this.$translate.instant('RECIPE_ITEM_ON_COLS', {
-				index: (this.index + 1),
-				label: this.step.transformation.label,
-				columnName: this.step.column.name.join(', '),
-			});
+			this.stepDescription = this._getMultiColumnsDetails(this.step);
 			break;
 		}
 	}
@@ -106,6 +102,21 @@ class StepDescriptionCtrl {
 		return description;
 	}
 
+	_getMultiColumnsDetails(step) {
+		let description;
+
+		const multiColumnsDetails = this._getSelectedColumnsInMultiColumnsAction(step);
+		switch (multiColumnsDetails.initialColsNbr) {
+		case 2:
+			description = this.$translate.instant('ONLY_2_SELECTED_COLS', multiColumnsDetails);
+			break;
+		default:
+			description = this.$translate.instant('MORE_THEN_2_SELECTED_COLS', multiColumnsDetails);
+		}
+
+		return description;
+	}
+
 	/**
 	 * @ngdoc method
 	 * @name _getAddedColumnsInLookup
@@ -125,6 +136,17 @@ class StepDescriptionCtrl {
 		};
 	}
 
+	_getSelectedColumnsInMultiColumnsAction(step) {
+		const allSelectedColumns = step.column.name;
+		return {
+			index: (this.index + 1),
+			label: this.step.transformation.label,
+			initialColsNbr: allSelectedColumns.length,
+			firstCol: allSelectedColumns[0],
+			secondCol: allSelectedColumns[1],
+			restOfColsNbr: allSelectedColumns.length - 2,
+		};
+	}
 }
 
 export default StepDescriptionCtrl;

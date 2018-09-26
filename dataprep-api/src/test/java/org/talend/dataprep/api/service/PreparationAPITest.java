@@ -46,8 +46,19 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -199,9 +210,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
 
         // then
-        List<PreparationDTO> result = mapper
-                .readerFor(PreparationDTO.class)
-                .<PreparationDTO> readValues(shouldNotBeEmpty.asInputStream())
+        List<PreparationDTO> result = mapper //
+                .readerFor(PreparationDTO.class) //
+                .<PreparationDTO> readValues(shouldNotBeEmpty.asInputStream()) //
                 .readAll();
         assertThat(result.get(0).getId(), is(preparationId));
 
@@ -267,9 +278,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .queryParam("destination", destination.getId()) //
                 .queryParam("newName", newPreparationName) //
                 .when()//
-                .expect()
-                .statusCode(200)
-                .log()
+                .expect() //
+                .statusCode(200) //
+                .log() //
                 .ifError() //
                 .post("api/preparations/{id}/copy", preparationId);
 
@@ -300,10 +311,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // when
         final Response response = given() //
                 .queryParam("destination", "/destination") //
-                .when()//
-                .expect()
-                .statusCode(404)
-                .log()
+                .when() //
+                .expect() //
+                .statusCode(404) //
+                .log() //
                 .ifError() //
                 .post("api/preparations/{id}/copy", "preparation_not_found");
 
@@ -376,9 +387,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
-        InputStream inputStream = given()
-                .expect()
-                .statusCode(200)
+        InputStream inputStream = given() //
+                .expect() //
+                .statusCode(200) //
                 .get("/api/preparations/{preparation}/details", preparationId)
                 .asInputStream();
 
@@ -446,20 +457,20 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String list = when().get("/api/preparations").asString();
         assertThat(list.contains(preparationId), is(true));
 
-        final ContentCacheKey metadataKey = cacheKeyGenerator
-                .metadataBuilder()
-                .preparationId(preparationId)
-                .stepId("step1")
-                .sourceType(FILTER)
+        final ContentCacheKey metadataKey = cacheKeyGenerator //
+                .metadataBuilder() //
+                .preparationId(preparationId) //
+                .stepId("step1") //
+                .sourceType(FILTER) //
                 .build();
-        final ContentCacheKey contentKey = cacheKeyGenerator
-                .contentBuilder()
-                .datasetId("datasetId")
-                .preparationId(preparationId)
-                .stepId("step1")
-                .format(JSON)
-                .parameters(emptyMap())
-                .sourceType(FILTER)
+        final ContentCacheKey contentKey = cacheKeyGenerator //
+                .contentBuilder() //
+                .datasetId("datasetId") //
+                .preparationId(preparationId) //
+                .stepId("step1") //
+                .format(JSON) //
+                .parameters(emptyMap()) //
+                .sourceType(FILTER) //
                 .build();
         try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
             entry.write("metadata".getBytes());
@@ -530,7 +541,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", home.getId());
 
         // when
-        final Response request = given()
+        final Response request = given() //
                 .contentType(ContentType.JSON)//
                 .body(missingScopeAction)//
                 .when()//
@@ -814,8 +825,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         AsyncExecutionMessage asyncExecutionMessage =
                 mapper.readerFor(AsyncExecutionMessage.class).readValue(response.asString());
 
-        assertEquals(asyncExecutionMessage.getStatus(), AsyncExecution.Status.FAILED);
-        assertEquals(asyncExecutionMessage.getError().getCode(), BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name());
+        assertEquals(AsyncExecution.Status.FAILED, asyncExecutionMessage.getStatus());
+        assertEquals(BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name(), asyncExecutionMessage.getError().getCode());
     }
 
     @Test
@@ -869,7 +880,11 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         String actualWordPatterns = columns
                 .stream()
-                .map(c -> c.getStatistics().getWordPatternFrequencyTable().iterator().next().getPattern())
+                .map(c -> c.getStatistics() //
+                        .getWordPatternFrequencyTable() //
+                        .iterator() //
+                        .next() //
+                        .getPattern()) //
                 .collect(Collectors.joining("\n")) + "\n"; // because every file ends with a new line (can't fight autoformat)
 
         assertEquals(expectedWordPatterns, actualWordPatterns);

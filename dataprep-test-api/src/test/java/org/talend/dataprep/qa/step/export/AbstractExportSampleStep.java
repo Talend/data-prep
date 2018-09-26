@@ -6,7 +6,6 @@ import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.EXPORT_TYP
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILENAME;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.FILTER;
 import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.PREPARATION_ID;
-import static org.talend.dataprep.qa.util.export.ExportSampleParamCSV.STEP_ID;
 import static org.talend.dataprep.qa.util.export.MandatoryParameters.DATASET_NAME;
 
 import java.io.File;
@@ -15,6 +14,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +40,7 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
     private ExportUtil exportUtil;
 
     @Override
-    public void exportSample(Map<String, String> params) throws IOException {
-
+    public void exportSample(@NotNull Map<String, String> params) throws IOException {
         // File exported
         String filename = params.get(FILENAME.getName());
 
@@ -56,7 +55,7 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
     }
 
     @Override
-    public Map<String, String> extractParameters(Map<String, String> params) throws JsonProcessingException {
+    public Map<String, String> extractParameters(@NotNull Map<String, String> params) throws JsonProcessingException {
         Map<String, String> ret = new HashMap<>();
 
         // Preparation
@@ -65,29 +64,18 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
         String suffixedPrepName = suffixName(util.extractNameFromFullName(prepFullName));
         String preparationId = context.getPreparationId(suffixedPrepName, prepPath);
 
-        // Dataset
-        String suffixedDatasetName = suffixName(params.get(DATASET_NAME.getName()));
-        String datasetId = context.getDatasetId(suffixedDatasetName);
+        // Dataset Id should be provided only if preparationId is not set
+        String datasetName = params.get(DATASET_NAME.getName());
+        if (datasetName != null) {
+            String suffixedDatasetName = suffixName(datasetName);
+            String datasetId = context.getDatasetId(suffixedDatasetName);
+            exportUtil.feedExportParam(ret, DATASET_ID, datasetId);
+        }
 
         // File exported
         String filename = params.get(FILENAME.getName());
-
-        // TODO manage export from step ? (or from version)
-        // TODO this call should be in OSDataPrepAPIHelper
-        List<String> steps = api //
-                .getPreparationDetails(preparationId) //
-                .then()
-                .statusCode(200) //
-                .extract() //
-                .body() //
-                .jsonPath() //
-                .getJsonObject("steps");
-
-        exportUtil.feedExportParam(ret, PREPARATION_ID, preparationId);
-        exportUtil.feedExportParam(ret, STEP_ID, steps.get(steps.size() - 1));
-        exportUtil.feedExportParam(ret, DATASET_ID, datasetId);
         exportUtil.feedExportParam(ret, FILENAME, filename);
-
+        exportUtil.feedExportParam(ret, PREPARATION_ID, preparationId);
         exportUtil.feedExportParam(ret, EXPORT_TYPE, getExportTypeName());
         exportUtil.feedExportParam(ret, FILTER, params);
 

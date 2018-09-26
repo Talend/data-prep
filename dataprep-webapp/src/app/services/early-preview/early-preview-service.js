@@ -14,9 +14,9 @@
 import { map } from 'lodash';
 
 // actions scopes
-const COLUMN = 'column';
 const LINE = 'line';
 const DATASET = 'dataset';
+const MULTI_COLUMNS = 'multi_columns';
 
 // early preview delay
 const DELAY = 700;
@@ -70,6 +70,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 				const preparationId = state.playground.preparation ? state.playground.preparation.id : null;
 
 				let parameters;
+				console.log(scope);
 				switch (scope) {
 				case DATASET :
 					parameters = [
@@ -78,14 +79,6 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 							scope,
 						},
 					];
-					break;
-				case COLUMN :
-					parameters = map(columns, col => ({
-						...params,
-						scope,
-						column_id: col.id,
-						column_name: col.name,
-					}));
 					break;
 				case LINE :
 					parameters = [
@@ -97,10 +90,26 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 					];
 					break;
 				default:
-					parameters = [];
+					if (action.actionScope && action.actionScope.includes(MULTI_COLUMNS)) {
+						parameters = [
+							{
+								...params,
+								scope: MULTI_COLUMNS,
+								column_id: columns.map(col => col.id),
+								column_name: columns.map(col => col.name),
+							},
+						];
+					}
+					else {
+						parameters = map(columns, col => ({
+							...params,
+							scope,
+							column_id: col.id,
+							column_name: col.name,
+						}));
+					}
 					break;
 				}
-
 				PreviewService.getPreviewAddRecords(preparationId, state.playground.dataset.id, action.name, parameters)
 					.then(() => RecipeService.earlyPreview(action, parameters));
 			}, DELAY);

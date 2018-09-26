@@ -848,17 +848,15 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition.txt"),
                 UTF_8)).lines().collect(Collectors.joining(";"));
 
-        String datasetId = testClient.createDataset(
-                new ByteArrayInputStream(patternsAsCsvLine.getBytes(UTF_8)),
-                new MediaType("text", "csv", UTF_8),
-                "test-" + UUID.randomUUID());
+        String datasetId = testClient.createDataset(new ByteArrayInputStream(patternsAsCsvLine.getBytes(UTF_8)),
+                new MediaType("text", "csv", UTF_8), "test-" + UUID.randomUUID());
         DataSetMetadata dataSetMetadata = testClient.getDataSetMetadata(datasetId);
         dataSetMetadata.getContent().getParameters().put(CSVFormatFamily.SEPARATOR_PARAMETER, ";");
         testClient.setDataSetMetadata(dataSetMetadata);
 
         final String preparationId = testClient.createPreparationFromDataset(datasetId, preparationName, home.getId());
-        String expectedWordPatterns = IOUtils.toString(
-                PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition_result.txt"), UTF_8);
+        String expectedWordPatterns = IOUtils.toString(PreparationAPITest.class
+                .getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition_result.txt"), UTF_8);
 
         // when
         final DataSetMetadata actual = testClient.getPrepMetadata(preparationId);
@@ -869,7 +867,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         assertEquals(29, columns.size());
 
-        String actualWordPatterns = columns.stream()
+        String actualWordPatterns = columns
+                .stream()
                 .map(c -> c.getStatistics().getWordPatternFrequencyTable().iterator().next().getPattern())
                 .collect(Collectors.joining("\n")) + "\n"; // because every file ends with a new line (can't fight autoformat)
 

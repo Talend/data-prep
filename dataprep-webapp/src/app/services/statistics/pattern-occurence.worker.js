@@ -147,8 +147,8 @@ function valueMatchPatternFn(pattern) {
 function patternOccurrenceWorker(parameters) {
 	const {
 		columnId,
-		patternFrequencyTable,
-		wordPatternFrequencyTable,
+		patternFrequencyTable = [],
+		wordPatternFrequencyTable = [],
 		filteredRecords,
 	} = parameters;
 

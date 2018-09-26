@@ -122,7 +122,8 @@ public class APIClientTest {
         return createDataset(resourceAsStream, MediaType.TEXT_PLAIN, name);
     }
 
-    public String createDataset(final InputStream resourceAsStream, MediaType contentType, final String name) throws IOException {
+    public String createDataset(final InputStream resourceAsStream, MediaType contentType, final String name)
+            throws IOException {
         assertNotNull(resourceAsStream);
         final String datasetContent = IOUtils.toString(resourceAsStream, UTF_8);
         final Response post = given() //
@@ -145,14 +146,13 @@ public class APIClientTest {
     }
 
     public DataSetMetadata getDataSetMetadata(String dataSetId) throws IOException {
-        return mapper.readerFor(DataSetMetadata.class).readValue(get("/api/datasets/{id}/metadata", dataSetId).asInputStream());
+        return mapper.readerFor(DataSetMetadata.class).readValue(
+                get("/api/datasets/{id}/metadata", dataSetId).asInputStream());
     }
 
     public void setDataSetMetadata(DataSetMetadata dataSetMetadata) throws IOException {
         String metadataAsJsonString = mapper.writerFor(DataSetMetadata.class).writeValueAsString(dataSetMetadata);
-        given()
-                .body(metadataAsJsonString)
-                .put("/api/datasets/{id}/metadata", dataSetMetadata.getId());
+        given().body(metadataAsJsonString).put("/api/datasets/{id}/metadata", dataSetMetadata.getId());
     }
 
     /**

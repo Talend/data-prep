@@ -425,7 +425,8 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, newId);
         folderRepository.addFolderEntry(folderEntry, destination);
 
-        LOGGER.debug("Copy {} preparation to folder '{}' with '{}' as new copied name.", preparationId, destination, name);
+        LOGGER.debug("Copy {} preparation to folder '{}' with '{}' as new copied name.", preparationId, destination,
+                name);
         auditService.auditPreparationCopy(preparationId, destination, name, newId);
         return newId;
     }

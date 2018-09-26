@@ -1,5 +1,4 @@
 import { all, call } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 import { HTTPError } from '@talend/react-cmf/lib/sagas/http';
 import { Map } from 'immutable';
 import * as effects from '../../effects/preparation.effects';
@@ -12,7 +11,6 @@ import {
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
 import PreparationCopyMoveModal from '../../../components/PreparationCopyMoveModal';
-import preparationWatcher from '../../watchers/preparation.saga';
 
 describe('preparation', () => {
 	describe('cancelRename', () => {

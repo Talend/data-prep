@@ -37,16 +37,6 @@ Object {
 }
 `;
 
-exports[`Preparation action should create a folder remove action 1`] = `
-Object {
-  "payload": Object {
-    "id": 42,
-    "type": "folder",
-  },
-  "type": undefined,
-}
-`;
-
 exports[`Preparation action should create a preparation remove action 1`] = `
 Object {
   "payload": 42,

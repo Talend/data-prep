@@ -7,7 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.metrics.Timed;
@@ -18,6 +21,8 @@ import org.talend.dataprep.metrics.VolumeMetered;
  * {@link #put(ContentCacheKey, TimeToLive) puts}.
  */
 public class ZippedContentCache implements ContentCache {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZippedContentCache.class);
 
     private final ContentCache delegate;
 
@@ -38,6 +43,13 @@ public class ZippedContentCache implements ContentCache {
                 .map(entry -> {
                     try {
                         return new GZIPInputStream(entry);
+                    } catch (ZipException e) {
+                        try {
+                            entry.close();
+                        } catch (IOException closeException) {
+                            LOGGER.debug("Unable to close stream", e);
+                        }
+                        return delegate.get(key);
                     } catch (IOException e) {
                         throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
                     }

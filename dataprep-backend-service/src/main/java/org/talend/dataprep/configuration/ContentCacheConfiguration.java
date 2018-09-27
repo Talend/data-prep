@@ -13,7 +13,7 @@ public class ContentCacheConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "service.cache.zipped", havingValue = "true", matchIfMissing = true)
-    public Wrapper<ContentCache> contentCacheWrapper() {
+    public Wrapper<ContentCache> zippedContentCacheWrapper() {
         return new Wrapper<ContentCache>() {
 
             @Override

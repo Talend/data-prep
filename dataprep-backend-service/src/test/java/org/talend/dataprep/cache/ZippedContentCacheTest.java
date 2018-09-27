@@ -62,7 +62,8 @@ public class ZippedContentCacheTest {
     public void shouldReadNonZippedInputStream() throws IOException {
         // given
         final String content = "non-zipped content";
-        when(delegate.get(any())).then((Answer<InputStream>) invocation -> new ByteArrayInputStream(content.getBytes()));
+        when(delegate.get(any()))
+                .then((Answer<InputStream>) invocation -> new ByteArrayInputStream(content.getBytes()));
         ContentCache contentCache = new ZippedContentCache(delegate);
 
         // when

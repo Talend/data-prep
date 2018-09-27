@@ -19,7 +19,6 @@ export const confirmState = {
 
 export class ConfirmStateService {
 	show(texts, deletion = false) {
-		console.log('[NC] deletion: ', deletion);
 		confirmState.visible = true;
 		confirmState.deletion = deletion;
 		confirmState.texts = texts;

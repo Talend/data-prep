@@ -140,5 +140,9 @@ export default class DatagridExternalService {
 	init(newGrid) {
 		this.grid = newGrid;
 		this._attachGridScrollListener();
+	    this.lastSelectedTab = null;
+	    this.lastSelectedColumn = null;
+	    this.lastSelectedColumnsNumber = null;
+	    this.lastSelectedLine = null;
 	}
 }

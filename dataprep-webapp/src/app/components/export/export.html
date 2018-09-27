@@ -35,8 +35,7 @@
 </div>
 
 <talend-modal fullscreen="false"
-              state="exportCtrl.showModal"
-              close-button="true">
+              state="exportCtrl.showModal">
     <div class="modal-title">
         {{exportCtrl.selectedType.title}}
     </div>
@@ -47,7 +46,7 @@
         </div>
         <div class="modal-footer">
             <button type="button"
-                    class="btn btn-default talend-modal-close modal-secondary-button"
+                    class="btn btn-default btn-inverse talend-modal-close modal-secondary-button"
                     translate-once="CANCEL"></button>
             <input class="btn btn-primary talend-modal-close modal-primary-button"
                    data-feature="preparation.export.start"

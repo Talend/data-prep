@@ -15,11 +15,9 @@ package org.talend.dataprep.audit;
 
 import java.util.Map;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "audit.log.enabled", havingValue = "false", matchIfMissing = true)
 public class NoOpAuditService implements BaseDataprepAuditService {
 
     @Override

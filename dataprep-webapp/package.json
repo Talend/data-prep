@@ -192,5 +192,8 @@
   },
   "publishConfig": {
     "registry": "https://artifacts-zl.talend.com/nexus/content/repositories/talend-npm/"
+  },
+  "resolutions": {
+    "jquery": "2.1.4"
   }
 }

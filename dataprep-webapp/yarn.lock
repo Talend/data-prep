@@ -5899,13 +5899,13 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
-jquery-datetimepicker@2.5.4:
-  version "2.5.4"
-  resolved "https://registry.yarnpkg.com/jquery-datetimepicker/-/jquery-datetimepicker-2.5.4.tgz#01c3cd1e9c2b51fc030687ac86bdf407a50bec6f"
+jquery-datetimepicker@2.5.20:
+  version "2.5.20"
+  resolved "https://registry.yarnpkg.com/jquery-datetimepicker/-/jquery-datetimepicker-2.5.20.tgz#687d6204b90b03dc93f725f8df036e1d061f37ac"
   dependencies:
     jquery ">= 1.7.2"
     jquery-mousewheel ">= 3.1.13"
-    php-date-formatter ">= 1.3.3"
+    php-date-formatter "^1.3.4"
 
 "jquery-mousewheel@>= 3.1.13":
   version "3.1.13"
@@ -5915,9 +5915,9 @@ jquery-ui@1.12.1:
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"
 
-jquery@2.1.4, "jquery@>= 1.7.2":
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.1.4.tgz#228bde698a0c61431dc2630a6a154f15890d2317"
+jquery@2.2.4, "jquery@>= 1.7.2":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
 
 js-base64@^2.1.8:
   version "2.4.3"
@@ -7807,7 +7807,7 @@ phantomjs-prebuilt@^2.1.7:
     request-progress "~2.0.1"
     which "~1.2.10"
 
-"php-date-formatter@>= 1.3.3":
+php-date-formatter@^1.3.4:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/php-date-formatter/-/php-date-formatter-1.3.4.tgz#09a15ae0766ba0beb1900c27c1ec319ef2e4563e"
 

@@ -104,7 +104,7 @@
         </dependency>
         <dependency>
             <groupId>org.talend.dataprep</groupId>
-            <artifactId>dataprep-backend-common</artifactId>
+            <artifactId>dataprep-core</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

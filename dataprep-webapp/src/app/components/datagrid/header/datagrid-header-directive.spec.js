@@ -158,6 +158,16 @@ describe('Datagrid header directive', () => {
 		expect(element.find('.grid-header-type').text()).toBe('text');
 	});
 
+	it('should display loader when fetching transformations', () => {
+		//when
+		createElement();
+		ctrl.initTransformationsInProgress = true;
+		scope.$digest();
+
+		//then
+		expect(element.find('loader').length).toBe(1);
+	});
+
 	it('should close dropdown on get transform list error', inject(($timeout, $q, TransformationService) => {
 		//given
 		createElement();

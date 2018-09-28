@@ -1097,7 +1097,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // check non empty value for the new column
         assertEquals("new preview column should contains values according to calculate time since action", //
-                0, //
+                7, //
                 jsonPath.getList("records.0009").stream().map(String::valueOf).filter(StringUtils::isBlank).count());
 
     }

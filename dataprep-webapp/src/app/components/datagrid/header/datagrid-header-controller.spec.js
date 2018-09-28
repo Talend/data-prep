@@ -160,16 +160,16 @@ describe('Datagrid header controller', () => {
 		}));
 
 		it('should refresh domains and types',
-			inject((StateService, ColumnTypesService) => {
+			inject(() => {
 				// given
 				const ctrl = createController();
+				spyOn(ctrl, 'fetchMatchingSemanticTypes').and.returnValue();
 
 				// when
 				ctrl.initTransformations();
 
 				//then
-				expect(ColumnTypesService.refreshSemanticDomains).toHaveBeenCalledWith(ctrl.column.id);
-				expect(ColumnTypesService.refreshTypes).toHaveBeenCalled();
+				expect(ctrl.fetchMatchingSemanticTypes).toHaveBeenCalled();
 			})
 		);
 
@@ -240,6 +240,35 @@ describe('Datagrid header controller', () => {
 			expect(ctrl.transformationsRetrieveError).toBeTruthy();
 			expect(ctrl.initTransformationsInProgress).toBeFalsy();
 		}));
+
+		it('should set loading flag to true when fetching domains and types is in progress',
+			inject(() => {
+				// given
+				const ctrl = createController();
+
+				// when
+				ctrl.fetchMatchingSemanticTypes();
+
+				//then
+				expect(ctrl.typeLoading).toBe(true);
+			})
+		);
+
+		it('should set loading flag to false when fetching domains and types is done',
+			inject((ColumnTypesService) => {
+				// given
+				const ctrl = createController();
+
+				// when
+				ctrl.fetchMatchingSemanticTypes();
+				scope.$digest();
+
+				//then
+				expect(ColumnTypesService.refreshSemanticDomains).toHaveBeenCalledWith(ctrl.column.id);
+				expect(ColumnTypesService.refreshTypes).toHaveBeenCalled();
+				expect(ctrl.typeLoading).toBe(false);
+			})
+		);
 	});
 
 	describe('update column name', () => {
@@ -247,7 +276,7 @@ describe('Datagrid header controller', () => {
 			spyOn(PlaygroundService, 'appendStep').and.returnValue($q.when(true));
 		}));
 
-		it('should update column name', inject((PlaygroundService, FilterManagerService) => {
+		it('should update column name', inject((PlaygroundService) => {
 			//given
 			const ctrl = createController();
 			ctrl.newName = 'new name';

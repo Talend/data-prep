@@ -69,6 +69,7 @@ public class CachedExportStrategy extends BaseSampleExportStrategy {
         ExportUtils.setExportHeaders(parameters.getExportName(), //
                 parameters.getArguments().get(ExportFormat.PREFIX + CSVFormat.ParametersCSV.ENCODING), //
                 getFormat(parameters.getExportType()));
+        LOGGER.debug("Using '{}' content cache entry.", contentKey.getKey());
         return outputStream -> {
             try (InputStream cachedContent = contentCache.get(contentKey)) {
                 IOUtils.copy(cachedContent, outputStream);

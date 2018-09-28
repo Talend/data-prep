@@ -19,9 +19,9 @@ describe('navigationList directive', function () {
     var element;
 
     var list = [
-        { label: 'us-customers-500' },
-        { label: 'dates' },
-        { label: 'exponential' },
+        { label: 'us-customers-500', id: '0' },
+        { label: 'dates', id: '1' },
+        { label: 'exponential', id: '2' },
     ];
 
     beforeEach(angular.mock.module('talend.widget'));
@@ -33,6 +33,7 @@ describe('navigationList directive', function () {
                 'list="list"' +
                 'on-click="trigger(item)"' +
                 'selected-item="item"' +
+	            'get-id="getDsId(item)"' +
                 'get-label="getLabelCb(item)"' +
                 '></navigation-list>'
             );
@@ -41,6 +42,10 @@ describe('navigationList directive', function () {
             scope.getLabelCb = function (item) {
                 return item.label;
             };
+
+	        scope.getDsId = function (item) {
+		        return item.id;
+	        };
 
             $compile(element)(scope);
             scope.$digest();

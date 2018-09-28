@@ -55,7 +55,6 @@ Feature: Perform an OS Smoke Test
     When I export the preparation with parameters :
       | exportType           | CSV               |
       | preparationName      | 10L3C_preparation |
-      | dataSetName          | 10L3C_dataset     |
       | fileName             | acote.csv         |
       | csv_escape_character | "                 |
       | csv_enclosure_char   | "                 |
@@ -90,7 +89,6 @@ Feature: Perform an OS Smoke Test
     When I export the preparation with parameters :
       | exportType           | CSV                           |
       | preparationName      | /smoke/test/10L3C_preparation |
-      | dataSetName          | 10L3C_dataset                 |
       | fileName             | 10L3C_result.csv              |
       | csv_escape_character | "                             |
       | csv_enclosure_char   | "                             |
@@ -103,7 +101,6 @@ Feature: Perform an OS Smoke Test
     When I export the preparation with parameters :
       | exportType           | CSV                           |
       | preparationName      | /smoke/10L3C_preparation_Copy |
-      | dataSetName          | 10L3C_dataset                 |
       | fileName             | copied_10L3C_result.csv       |
       | csv_escape_character | "                             |
       | csv_enclosure_char   | "                             |

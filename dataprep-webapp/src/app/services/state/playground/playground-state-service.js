@@ -133,8 +133,11 @@ export function PlaygroundStateService($translate,
 		setStatisticsHistogram: StatisticsStateService.setHistogram,
 		setStatisticsFilteredHistogram: StatisticsStateService.setFilteredHistogram,
 		setStatisticsHistogramActiveLimits: StatisticsStateService.setHistogramActiveLimits,
+		setStatisticsPatternsType: StatisticsStateService.setPatternsType,
 		setStatisticsPatterns: StatisticsStateService.setPatterns,
+		setStatisticsWordPatterns: StatisticsStateService.setWordPatterns,
 		setStatisticsFilteredPatterns: StatisticsStateService.setFilteredPatterns,
+		setStatisticsFilteredWordPatterns: StatisticsStateService.setFilteredWordPatterns,
 		setStatisticsLoading: StatisticsStateService.setLoading,
 	};
 

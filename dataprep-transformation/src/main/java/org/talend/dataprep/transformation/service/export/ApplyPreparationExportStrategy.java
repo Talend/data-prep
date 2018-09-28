@@ -12,12 +12,10 @@
 
 package org.talend.dataprep.transformation.service.export;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.talend.dataprep.transformation.api.transformer.configuration.Configuration.Volume.SMALL;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Objects;
 
@@ -31,10 +29,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationDTO;
-import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
-import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.cache.TransformationCacheKey;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
@@ -44,8 +40,6 @@ import org.talend.dataprep.transformation.api.transformer.configuration.Configur
 import org.talend.dataprep.transformation.format.CSVFormat;
 import org.talend.dataprep.transformation.service.BaseExportStrategy;
 import org.talend.dataprep.transformation.service.ExportUtils;
-
-import com.fasterxml.jackson.core.JsonParser;
 
 /**
  * A {@link BaseExportStrategy strategy} to apply a preparation on a different dataset
@@ -93,7 +87,7 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
         final PreparationDTO preparation = getPreparation(preparationId);
         final String dataSetId = parameters.getDatasetId();
 
-        try (DataSet dataSet = getDataset(parameters, dataSetId, preparationId)) {
+        try (DataSet dataSet = getDataset(parameters, dataSetId)) {
 
             // head is not allowed as step id
             final String version = getCleanStepId(preparation, stepId);
@@ -116,8 +110,6 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
 
             executePipeline(parameters, outputStream, key, preparationId, version, dataSet);
 
-        } catch (IOException e1) {
-            LOGGER.error("Unable to recover dataset sample from {}", dataSetId);
         } finally {
             if (!technicianIdentityReleased) {
                 securityProxy.releaseIdentity();
@@ -178,36 +170,18 @@ public class ApplyPreparationExportStrategy extends BaseSampleExportStrategy {
      *
      * @param parameters the export parameters
      * @param dataSetId the id of the corresponding dataset
-     * @param preparationId the id of the corresponding preparation
-     *
      * @return the dataset sample either from cache if the key corresponding key exists either the full sample.
      */
-    private DataSet getDataset(ExportParameters parameters, String dataSetId, String preparationId) throws IOException {
-
-        final ContentCacheKey asyncSampleKey = cacheKeyGenerator.generateContentKey(//
-                dataSetId, //
-                preparationId, //
-                Step.ROOT_STEP.id(), //
-                JSON, //
-                parameters.getFrom(), //
-                parameters.getFilter() //
-        );
-        LOGGER.info("using {} as content input", asyncSampleKey.getKey());
-
-        if (contentCache.has(asyncSampleKey)) {
-            JsonParser parser =
-                    mapper.getFactory().createParser(new InputStreamReader(contentCache.get(asyncSampleKey), UTF_8));
-            return mapper.readerFor(DataSet.class).readValue(parser);
-        }
-
+    private DataSet getDataset(ExportParameters parameters, String dataSetId) {
         final boolean fullContent = parameters.getFrom() == ExportParameters.SourceType.FILTER;
         // dataset content must be retrieved as the technical user because it might not be shared
-        technicianIdentityReleased = false;
-        securityProxy.asTechnicalUserForDataSet();
-
-        DataSet dataSet = dataSetClient.getDataSet(dataSetId, fullContent, true);
-        securityProxy.releaseIdentity();
-        technicianIdentityReleased = true;
+        DataSet dataSet;
+        try {
+            securityProxy.asTechnicalUserForDataSet();
+            dataSet = dataSetClient.getDataSet(dataSetId, fullContent, true);
+        } finally {
+            securityProxy.releaseIdentity();
+        }
         return dataSet;
     }
 }

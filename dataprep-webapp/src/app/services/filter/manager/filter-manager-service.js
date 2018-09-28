@@ -118,13 +118,14 @@ export default function FilterManagerService($timeout, state, PlaygroundService,
 	 * @ngdoc method
 	 * @name updateFilter
 	 * @param {Object} oldFilter Previous filter to update
+	 * @param {string} newType The filter type to update
 	 * @param {object} newValue The filter update parameters
 	 * @param {string} keyName keyboard key
 	 * @methodOf data-prep.services.filter-manager.service:FilterManagerService
 	 * @description updates an existing filter and updates datagrid filters
 	 */
-	function updateFilter(oldFilter, newValue, keyName) {
-		FilterService.updateFilter(oldFilter, newValue, keyName);
+	function updateFilter(oldFilter, newType, newValue, keyName) {
+		FilterService.updateFilter(oldFilter, newType, newValue, keyName);
 		StatisticsService.updateFilteredStatistics();
 		PlaygroundService.updateDatagrid();
 		_saveFilters();

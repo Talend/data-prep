@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,7 +78,7 @@ import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -1822,7 +1821,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(column.getDomain(), is(""));
         final Statistics statistics = mapper.readerFor(Statistics.class).readValue(
                 this.getClass().getResourceAsStream("../date_time_pattern_expected.json"));
-        assertThat(column.getStatistics(), CoreMatchers.equalTo(statistics));
+        assertThat(column.getStatistics(), equalTo(statistics));
     }
 
     @Test

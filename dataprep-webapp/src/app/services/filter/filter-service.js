@@ -17,6 +17,7 @@ import {
 	EXACT,
 	INSIDE_RANGE,
 	MATCHES,
+	MATCHES_WORDS,
 	QUALITY,
 } from './adapter/tql-filter-adapter-service';
 
@@ -97,13 +98,14 @@ export default class FilterService {
 
 		switch (type) {
 		case CONTAINS: {
-			// If we want to select records and a empty filter is already applied to that column
-			// Then we need remove it before
+				// If we want to select records and a empty filter is already applied to that column
+				// Then we need remove it before
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
 			if (sameColEmptyFilter) {
 				this.removeFilter(sameColEmptyFilter);
 				if (keyName === CTRL_KEY_NAME) {
-					args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues().concat(args.phrase);
+					args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues()
+							.concat(args.phrase);
 				}
 			}
 
@@ -126,16 +128,16 @@ export default class FilterService {
 
 			filterExists = () => {
 				if (sameColAndTypeFilter &&
-					sameColAndTypeFilter.args &&
-					sameColAndTypeFilter.args.phrase) {
+						sameColAndTypeFilter.args &&
+						sameColAndTypeFilter.args.phrase) {
 					return isEqual(
-						sameColAndTypeFilter.args.phrase
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue)),
-						argsToDisplay.phrase
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue))
-					);
+							sameColAndTypeFilter.args.phrase
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+							argsToDisplay.phrase
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+						);
 				}
 
 				return false;
@@ -144,14 +146,15 @@ export default class FilterService {
 			break;
 		}
 		case EXACT: {
-			// If we want to select records and a empty filter is already applied to that column
-			// Then we need remove it before
+				// If we want to select records and a empty filter is already applied to that column
+				// Then we need remove it before
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
 
 			if (sameColEmptyFilter) {
 				this.removeFilter(sameColEmptyFilter);
 				if (keyName === CTRL_KEY_NAME) {
-					args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues().concat(args.phrase);
+					args.phrase = this.TqlFilterAdapterService.getEmptyRecordsValues()
+							.concat(args.phrase);
 				}
 			}
 
@@ -174,16 +177,16 @@ export default class FilterService {
 
 			filterExists = () => {
 				if (sameColAndTypeFilter &&
-					sameColAndTypeFilter.args &&
-					sameColAndTypeFilter.args.phrase) {
+						sameColAndTypeFilter.args &&
+						sameColAndTypeFilter.args.phrase) {
 					return isEqual(
-						sameColAndTypeFilter.args.phrase
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue)),
-						args.phrase
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue))
-					);
+							sameColAndTypeFilter.args.phrase
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+							args.phrase
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+						);
 				}
 
 				return false;
@@ -193,8 +196,8 @@ export default class FilterService {
 		}
 		case QUALITY: {
 			if (args && args.empty && !args.invalid) {
-				// If we want to select empty records and another filter is already applied to that column
-				// Then we need remove it before
+					// If we want to select empty records and another filter is already applied to that column
+					// Then we need remove it before
 				const sameColExactFilter = find(this.state.playground.filter.gridFilters, {
 					colId,
 					type: EXACT,
@@ -202,21 +205,24 @@ export default class FilterService {
 				const sameColMatchFilter = find(this.state.playground.filter.gridFilters, {
 					colId,
 					type: MATCHES,
+				}) || find(this.state.playground.filter.gridFilters, {
+					colId,
+					type: MATCHES_WORDS,
 				});
 				if (sameColExactFilter) {
 					hasEmptyRecordsExactFilter = (
-						sameColExactFilter.args
-						&& sameColExactFilter.args.phrase.length === 1
-						&& sameColExactFilter.args.phrase[0].value === ''
-					);
+							sameColExactFilter.args
+							&& sameColExactFilter.args.phrase.length === 1
+							&& sameColExactFilter.args.phrase[0].value === ''
+						);
 					this.removeFilter(sameColExactFilter);
 				}
 				else if (sameColMatchFilter) {
 					hasEmptyRecordsMatchFilter = (
-						sameColMatchFilter.args &&
-						sameColMatchFilter.args.patterns.length === 1 &&
-						sameColMatchFilter.args.patterns[0].value === ''
-					);
+							sameColMatchFilter.args &&
+							sameColMatchFilter.args.patterns.length === 1 &&
+							sameColMatchFilter.args.patterns[0].value === ''
+						);
 					this.removeFilter(sameColMatchFilter);
 				}
 			}
@@ -244,16 +250,16 @@ export default class FilterService {
 
 			filterExists = () => {
 				if (sameColAndTypeFilter &&
-					sameColAndTypeFilter.args &&
-					sameColAndTypeFilter.args.intervals) {
+						sameColAndTypeFilter.args &&
+						sameColAndTypeFilter.args.intervals) {
 					return isEqual(
-						sameColAndTypeFilter.args.intervals
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue)),
-						args.intervals
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue))
-					);
+							sameColAndTypeFilter.args.intervals
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+							args.intervals
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+						);
 				}
 
 				return false;
@@ -261,15 +267,25 @@ export default class FilterService {
 
 			break;
 		}
-		case MATCHES: {
-			// If we want to select records and a empty filter is already applied to that column
-			// Then we need remove it before
+		case MATCHES:
+		case MATCHES_WORDS: {
+				// If we want to select records and a empty filter is already applied to that column
+				// Then we need remove it before
 			const sameColEmptyFilter = this._getEmptyFilter(colId);
 			if (sameColEmptyFilter) {
 				this.removeFilter(sameColEmptyFilter);
 				if (keyName === CTRL_KEY_NAME) {
-					args.patterns = this.TqlFilterAdapterService.getEmptyRecordsValues().concat(args.patterns);
+					args.patterns = this.TqlFilterAdapterService.getEmptyRecordsValues()
+							.concat(args.patterns);
 				}
+			}
+
+			const sameColAndOtherTypeFilter = find(this.state.playground.filter.gridFilters, {
+				colId,
+				type: type === MATCHES ? MATCHES_WORDS : MATCHES,
+			});
+			if (sameColAndOtherTypeFilter) {
+				this.removeFilter(sameColAndOtherTypeFilter);
 			}
 
 			if (args.patterns.length === 1 && args.patterns[0].value === '') {
@@ -286,16 +302,16 @@ export default class FilterService {
 
 			filterExists = () => {
 				if (sameColAndTypeFilter &&
-					sameColAndTypeFilter.args &&
-					sameColAndTypeFilter.args.patterns) {
+						sameColAndTypeFilter.args &&
+						sameColAndTypeFilter.args.patterns) {
 					return isEqual(
-						sameColAndTypeFilter.args.patterns
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue)),
-						args.patterns
-							.map(criterion => (criterion.label || criterion.value))
-							.reduce((oldValue, newValue) => oldValue.concat(newValue))
-					);
+							sameColAndTypeFilter.args.patterns
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+							args.patterns
+								.map(criterion => (criterion.label || criterion.value))
+								.reduce((oldValue, newValue) => oldValue.concat(newValue)),
+						);
 				}
 			};
 
@@ -315,7 +331,7 @@ export default class FilterService {
 		}
 		else {
 			const filterValue = getFilterValue();
-			this.updateFilter(sameColAndTypeFilter, filterValue, keyName);
+			this.updateFilter(sameColAndTypeFilter, type, filterValue, keyName);
 		}
 	}
 
@@ -349,11 +365,12 @@ export default class FilterService {
 	 * @name updateFilter
 	 * @methodOf data-prep.services.filter.service:FilterService
 	 * @param {object} oldFilter The filter to update
+	 * @param {string} newType The new filter if different
 	 * @param {object} newValue The filter update parameters
 	 * @param {string} keyName keyboard key
 	 * @description Updates an existing filter
 	 */
-	updateFilter(oldFilter, newValue, keyName) {
+	updateFilter(oldFilter, newType, newValue, keyName) {
 		let newArgs;
 		let editableFilter;
 
@@ -396,7 +413,7 @@ export default class FilterService {
 			let newComputedArgs;
 			let newComputedRange;
 			if (addFromToCriteria) {
-				// Need to pass complete old filter there in order to stock its direction
+					// Need to pass complete old filter there in order to stock its direction
 				newComputedArgs = this._computeFromToRange(oldFilter, newValue);
 				newComputedRange = newComputedArgs.intervals;
 			}
@@ -420,7 +437,8 @@ export default class FilterService {
 			editableFilter = false;
 			break;
 		}
-		case MATCHES: {
+		case MATCHES:
+		case MATCHES_WORDS: {
 			let newComputedPattern;
 			if (addOrCriteria) {
 				newComputedPattern = this._computeOr(oldFilter.args.patterns, newValue);
@@ -437,7 +455,7 @@ export default class FilterService {
 		}
 		}
 
-		const newFilter = this.TqlFilterAdapterService.createFilter(oldFilter.type, oldFilter.colId, oldFilter.colName, editableFilter, newArgs, oldFilter.removeFilterFn);
+		const newFilter = this.TqlFilterAdapterService.createFilter(newType, oldFilter.colId, oldFilter.colName, editableFilter, newArgs, oldFilter.removeFilterFn);
 		this.StateService.updateGridFilter(oldFilter, newFilter);
 	}
 

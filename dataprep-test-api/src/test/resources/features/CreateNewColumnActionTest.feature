@@ -17,7 +17,6 @@ Feature: Perform scenarios with CreateNewColumn related action
   Scenario: Export customers_prep and check the exported file customers_prep_result.csv to test column creating with generate sequence
     When I export the preparation with parameters :
       | preparationName      | customers_prep            |
-      | dataSetName          | customers_dataset         |
       | exportType           | CSV                       |
       | fileName             | customers_prep_result.csv |
       | csv_escape_character | "                         |

@@ -141,15 +141,10 @@ public abstract class DataSetContentStore {
 
         dataSetRowStream = dataSetRowStream
                 .filter(r -> !r.isEmpty())
-                .map(r -> {
-                    final String[] values = r.order(columns).toArray(DataSetRow.SKIP_TDP_ID);
-                    analyzer.analyze(values);
-                    return r;
-                }) //
+                .peek(r -> analyzer.analyze(r.order(columns).toArray(DataSetRow.SKIP_TDP_ID))) //
                 .map(new InvalidMarker(columns, analyzer)) // Mark invalid columns as detected by provided analyzer.
-                .map(r -> { //
+                .peek(r -> { //
                     r.setTdpId(tdpId.getAndIncrement());
-                    return r;
                 })
                 .onClose(() -> { //
                     try {

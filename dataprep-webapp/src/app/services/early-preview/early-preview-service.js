@@ -70,7 +70,6 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 				const preparationId = state.playground.preparation ? state.playground.preparation.id : null;
 
 				let parameters;
-				console.log(scope);
 				switch (scope) {
 				case DATASET :
 					parameters = [

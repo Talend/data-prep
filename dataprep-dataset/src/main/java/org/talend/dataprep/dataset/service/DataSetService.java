@@ -145,7 +145,7 @@ public class DataSetService extends BaseDataSetService {
 
     private static final String CONTENT_TYPE = "Content-Type";
 
-    private static final String LIMIT = "limit";
+    private static final String STORAGE_LIMIT = "limit";
 
     /**
      * Format analyzer needed to update the schema.
@@ -411,7 +411,7 @@ public class DataSetService extends BaseDataSetService {
             return id;
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
             hypotheticalException =
-                    new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put(LIMIT, e.getMaxSize()));
+                    new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put(STORAGE_LIMIT, e.getMaxSize()));
         } catch (TDPException e) {
             hypotheticalException = e;
         } catch (Exception e) {
@@ -446,16 +446,16 @@ public class DataSetService extends BaseDataSetService {
             notes = "Get a data set content based on provided id. Id should be a UUID returned by the list operation. Not valid or non existing data set id returns empty content.")
     @Timed
     @ResponseBody
-    public Callable<DataSet>
-            get(@RequestParam(defaultValue = "true") @ApiParam(name = "metadata",
+    public Callable<DataSet> get(
+            @RequestParam(defaultValue = "true") @ApiParam(name = "metadata",
                     value = "Include metadata information in the response") boolean metadata, //
-                    @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent",
-                            value = "Include internal content in the response") boolean includeInternalContent, //
-                    @RequestParam(defaultValue = "-1") @ApiParam(name = LIMIT, value = LIMIT) long limit, //
-                    @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter",
-                            defaultValue = "") String filter,
-                    @PathVariable(value = "id") @ApiParam(name = "id",
-                            value = "Id of the requested data set") String dataSetId) {
+            @RequestParam(defaultValue = "false") @ApiParam(name = "includeInternalContent",
+                    value = "Include internal content in the response") boolean includeInternalContent, //
+            @RequestParam(defaultValue = "-1") @ApiParam(name = STORAGE_LIMIT, value = STORAGE_LIMIT) long limit, //
+            @ApiParam(value = "Filter for retrieved content.") @RequestParam(value = "filter",
+                    defaultValue = "") String filter,
+            @PathVariable(value = "id") @ApiParam(name = "id",
+                    value = "Id of the requested data set") String dataSetId) {
         return () -> {
             final Marker marker = Markers.dataset(dataSetId);
             LOG.debug(marker, "Get data set #{}", dataSetId);
@@ -614,7 +614,7 @@ public class DataSetService extends BaseDataSetService {
             // check that there's enough space
             final long maxDataSetSizeAllowed = getMaxDataSetSizeAllowed();
             if (maxDataSetSizeAllowed < original.getDataSetSize()) {
-                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, build().put(LIMIT, maxDataSetSizeAllowed));
+                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, build().put(STORAGE_LIMIT, maxDataSetSizeAllowed));
             }
 
             // Create copy (based on original data set metadata)
@@ -743,7 +743,7 @@ public class DataSetService extends BaseDataSetService {
 
             } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
                 LOG.warn("Dataset update {} cannot be done, new content is too big", currentDataSetMetadata.getId());
-                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put(LIMIT, e.getMaxSize()));
+                throw new TDPException(MAX_STORAGE_MAY_BE_EXCEEDED, e, build().put(STORAGE_LIMIT, e.getMaxSize()));
             } catch (IOException e) {
                 LOG.error("Error updating the dataset", e);
                 throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);

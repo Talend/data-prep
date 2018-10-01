@@ -88,11 +88,11 @@ public class BackgroundAnalysis {
             } else {
                 // base analysis
                 try (final Stream<DataSetRow> stream = store.stream(metadata)) {
-                    try (Analyzer<Analyzers.Result> analyzerSchema = analyzerService.schemaAnalysis(columns)) {
-                        computeStatistics(analyzerSchema, columns, stream);
+                    try (Analyzer<Analyzers.Result> schemaAnalyzer = analyzerService.schemaAnalysis(columns)) {
+                        computeStatistics(schemaAnalyzer, columns, stream);
                         LOGGER.debug("Base statistics analysis done for {}", dataSetId);
                         // Save base analysis
-                        saveAnalyzerResults(dataSetId, analyzerSchema);
+                        saveAnalyzerResults(dataSetId, schemaAnalyzer);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Base statistics analysis, dataset {} generates an error", dataSetId, e);

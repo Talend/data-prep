@@ -27,7 +27,7 @@
         <filter-search class="search"></filter-search>
         <filter-list class="list"
                      filters="filterBarCtrl.state.playground.filter.gridFilters"
-                     on-filter-change="filterBarCtrl.filterManagerService.updateFilter(filter, value)"
+                     on-filter-change="filterBarCtrl.filterManagerService.updateFilter(filter, filter.type, value)"
                      on-filter-remove="filterBarCtrl.filterManagerService.removeFilter(filter)"
                      enabled="filterBarCtrl.state.playground.filter.enabled"></filter-list>
 

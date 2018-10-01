@@ -87,10 +87,12 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
 
     private void performOptimizedTransform(ExportParameters parameters, OutputStream outputStream) throws IOException {
         // Initial check
+        LOGGER.debug("Prepare optimized transformation");
         final OptimizedPreparationInput optimizedPreparationInput = new OptimizedPreparationInput(parameters).invoke();
         if (optimizedPreparationInput == null) {
             throw new IllegalStateException("Unable to use this strategy (call accept() before calling this).");
         }
+        LOGGER.debug("End prepare optimized transformation.");
         final String preparationId = parameters.getPreparationId();
         final String dataSetId = optimizedPreparationInput.getDataSetId();
         final TransformationCacheKey transformationCacheKey = optimizedPreparationInput.getTransformationCacheKey();
@@ -100,6 +102,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
         final ExportFormat format = getFormat(parameters.getExportType());
 
         // Get content from previous step
+        LOGGER.debug("Before get cache content");
         try (JsonParser parser = mapper
                 .getFactory()
                 .createParser(new InputStreamReader(contentCache.get(transformationCacheKey), UTF_8));
@@ -266,6 +269,7 @@ public class OptimizedExportStrategy extends BaseSampleExportStrategy {
                 // Not applicable (need preparation to work on).
                 return null;
             }
+            // head is not allowed as step id
             version = stepId;
             previousVersion = Step.ROOT_STEP.getId();
             final List<String> steps = new ArrayList<>(preparation.getSteps());

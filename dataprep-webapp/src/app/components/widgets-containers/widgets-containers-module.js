@@ -13,8 +13,9 @@
 
 import angular from 'angular';
 
-import { ActionButton } from '@talend/react-components/lib/index';
 import AboutDialog from '@talend/react-components/lib/AboutDialog';
+import ActionButton from '@talend/react-components/lib/Actions/ActionButton';
+import ActionIconToggle from '@talend/react-components/lib/Actions/ActionIconToggle';
 import AppLoader from '@talend/react-components/lib/AppLoader';
 import AppHeaderBar from '@talend/react-components/lib/HeaderBar';
 import Breadcrumbs from '@talend/react-components/lib/Breadcrumbs';
@@ -93,6 +94,7 @@ angular.module(MODULE_NAME,
 		'tooltipLabel',
 		'type',
 	])])
+	.directive('actionIconToggle', ['reactDirective', reactDirective => reactDirective(ActionIconToggle)])
 	.directive('icon', ['reactDirective', reactDirective => reactDirective(Icon)])
 	.directive('httpError', ['reactDirective', reactDirective => reactDirective(HttpError)])
 	.directive('talendForm', ['reactDirective', reactDirective => reactDirective(

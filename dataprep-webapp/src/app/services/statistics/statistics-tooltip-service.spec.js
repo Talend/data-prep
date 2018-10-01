@@ -198,7 +198,7 @@ describe('Statistics Tooltip service', function () {
 			const tooltip = StatisticsTooltipService.getTooltip(keyLabel, key, primaryValue, undefined);
 
 			//then
-			expect(tooltip).toBe(`<strong>Occurrences ${i18n.TOOLTIP_MATCHING_FILTER}${i18n.COLON}</strong> <span style="color:yellow"> (0%)</span><br/><br/><strong>Occurrences ${i18n.TOOLTIP_MATCHING_FULL}:</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.VALUE}${i18n.COLON}</strong> <span style="color:yellow">2</span>`);
+			expect(tooltip).toBe(`<strong>Occurrences${i18n.COLON}</strong> <span style="color:yellow">10</span><br/><br/><strong>${i18n.VALUE}${i18n.COLON}</strong> <span style="color:yellow">2</span>`);
 		}));
 	});
 });

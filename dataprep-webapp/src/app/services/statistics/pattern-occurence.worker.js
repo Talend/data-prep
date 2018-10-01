@@ -61,16 +61,25 @@ function escapeRegex(value) {
  */
 function convertPatternToRegexp(pattern) {
 	let regexp = '';
+
 	for (let i = 0, len = pattern.length; i < len; i++) {
 		switch (pattern[i]) {
 		case 'A':
-			regexp += '[A-Z]';
+			regexp += '[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ]';
 			break;
 		case 'a':
-			regexp += '[a-z]';
+			regexp += '[a-zßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]';
 			break;
 		case '9':
 			regexp += '[0-9]';
+			break;
+		case 'h':
+		case 'H':
+		case 'k':
+		case 'K':
+		case 'C':
+		case 'G':
+			regexp += '.';
 			break;
 		default:
 			regexp += escapeRegex(pattern[i]);
@@ -89,8 +98,6 @@ function isDatePattern(pattern) {
 	return (pattern.indexOf('d') > -1 ||
 	pattern.indexOf('M') > -1 ||
 	pattern.indexOf('y') > -1 ||
-	pattern.indexOf('H') > -1 ||
-	pattern.indexOf('h') > -1 ||
 	pattern.indexOf('m') > -1 ||
 	pattern.indexOf('s') > -1);
 }
@@ -138,9 +145,14 @@ function valueMatchPatternFn(pattern) {
  * @param {object} parameters {columnId: The column id, patternFrequencyTable: The pattern frequencies to update, filteredRecords: The filtered records to process for the filtered occurrences number}
  */
 function patternOccurrenceWorker(parameters) {
-	const { columnId, patternFrequencyTable, filteredRecords } = parameters;
+	const {
+		columnId,
+		patternFrequencyTable = [],
+		wordPatternFrequencyTable = [],
+		filteredRecords,
+	} = parameters;
 
-	_.forEach(patternFrequencyTable, (patternFrequency) => {
+	patternFrequencyTable.forEach((patternFrequency) => {
 		const pattern = patternFrequency.pattern;
 		const matchingFn = valueMatchPatternFn(pattern);
 
@@ -148,14 +160,21 @@ function patternOccurrenceWorker(parameters) {
 			patternFrequency.occurrences :
 			_.chain(filteredRecords)
 				.map(columnId)
-				.filter(matchingFn)
+				.filter(value => matchingFn(value))
 				.groupBy(value => value)
 				.mapValues('length')
 				.reduce((accu, value) => accu + value, 0)
 				.value();
 	});
 
-	return patternFrequencyTable;
+	wordPatternFrequencyTable.forEach((patternFrequency) => {
+		patternFrequency.filteredOccurrences = patternFrequency.occurrences;
+	});
+
+	return {
+		patternFrequencyTable,
+		wordPatternFrequencyTable,
+	};
 }
 
 /* eslint-disable no-undef */

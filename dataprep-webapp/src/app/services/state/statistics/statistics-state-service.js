@@ -11,7 +11,11 @@
 
  ============================================================================*/
 
-export const statisticsState = {};
+import { PATTERNS_TYPE } from '../../statistics/statistics-service';
+
+export const statisticsState = {
+	patternsType: PATTERNS_TYPE.CHARACTER,
+};
 
 export function StatisticsStateService() {
 	return {
@@ -21,8 +25,11 @@ export function StatisticsStateService() {
 		setHistogram,
 		setFilteredHistogram,
 		setHistogramActiveLimits,
+		setPatternsType,
 		setPatterns,
+		setWordPatterns,
 		setFilteredPatterns,
+		setFilteredWordPatterns,
 		setLoading,
 
 		reset,
@@ -53,13 +60,26 @@ export function StatisticsStateService() {
 		statisticsState.activeLimits = activeLimits;
 	}
 
+	function setPatternsType(patternsType) {
+		statisticsState.patternsType = patternsType;
+	}
+
 	function setPatterns(patterns) {
 		statisticsState.patterns = patterns;
 		statisticsState.filteredPatterns = null;
 	}
 
+	function setWordPatterns(patterns) {
+		statisticsState.wordPatterns = patterns;
+		statisticsState.filteredWordPatterns = null;
+	}
+
 	function setFilteredPatterns(filteredPatterns) {
 		statisticsState.filteredPatterns = filteredPatterns;
+	}
+
+	function setFilteredWordPatterns(filteredWordPatterns) {
+		statisticsState.filteredWordPatterns = filteredWordPatterns;
 	}
 
 	function setLoading(loading) {
@@ -74,7 +94,9 @@ export function StatisticsStateService() {
 		statisticsState.filteredHistogram = null;
 		statisticsState.activeLimits = null;
 		statisticsState.patterns = null;
+		statisticsState.wordPatterns = null;
 		statisticsState.filteredPatterns = null;
+		statisticsState.filteredWordPatterns = null;
 		statisticsState.loading = false;
 	}
 }

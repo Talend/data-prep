@@ -703,7 +703,7 @@ describe('Filter service', () => {
 			}));
 		});
 
-		describe('with "match" type', () => {
+		describe('with "matches" type', () => {
 			it('should remove filter when it already exists', inject((FilterService, StateService) => {
 				//given
 				const oldFilter = {
@@ -770,6 +770,205 @@ describe('Filter service', () => {
 					},
 				]);
 			}));
+
+			it('should remove filter when it already exists with "word_matches" type', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[word]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'removeGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: 'Aa',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);
+			}));
+		});
+
+		describe('with "word_matches" type', () => {
+			it('should remove filter when it already exists', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'removeGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('word_matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[alnum]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);
+			}));
+
+			it('should update filter when it already exists with a different pattern', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'updateGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('word_matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[number]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.updateGridFilter).toHaveBeenCalled();
+				expect(StateService.updateGridFilter.calls.argsFor(0)[0]).toBe(oldFilter);
+				const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
+				expect(newFilter.type).toBe('word_matches');
+				expect(newFilter.colId).toBe('col1');
+				expect(newFilter.args.patterns).toEqual([
+					{
+						value: '[number]',
+					},
+				]);
+			}));
+
+			it('should remove filter when it already exists with "matches" type', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+							{
+								value: '[word]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'removeGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[Aa]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);
+			}));
+		});
+
+		describe('with "word_matches" type', () => {
+			it('should remove filter when it already exists', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'removeGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('word_matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[alnum]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.removeGridFilter).toHaveBeenCalledWith(oldFilter);
+			}));
+
+			it('should update filter when it already exists with a different pattern', inject((FilterService, StateService) => {
+				//given
+				const oldFilter = {
+					colId: 'col1',
+					args: {
+						patterns: [
+							{
+								value: '[alnum]',
+							},
+						],
+					},
+					type: 'word_matches',
+				};
+				stateMock.playground.filter.gridFilters = [oldFilter];
+				spyOn(StateService, 'updateGridFilter').and.returnValue();
+
+				//when
+				FilterService.addFilter('word_matches', 'col1', 'column name', {
+					patterns: [
+						{
+							value: '[number]',
+						},
+					],
+				}, null);
+
+				//then
+				expect(StateService.updateGridFilter).toHaveBeenCalled();
+				expect(StateService.updateGridFilter.calls.argsFor(0)[0]).toBe(oldFilter);
+				const newFilter = StateService.updateGridFilter.calls.argsFor(0)[1];
+				expect(newFilter.type).toBe('word_matches');
+				expect(newFilter.colId).toBe('col1');
+				expect(newFilter.args.patterns).toEqual([
+					{
+						value: '[number]',
+					},
+				]);
+			}));
 		});
 
 		it('should not throw exception on non existing column (that could be removed by a step) in exact filter', inject((FilterService, StateService) => {
@@ -777,10 +976,10 @@ describe('Filter service', () => {
 			expect(StateService.addGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.addFilter('exact', 'col_that_does_not_exist', 'column name', {
-				phrase: [
+			FilterService.addFilter('word_matches', 'col_that_does_not_exist', 'column name', {
+				patterns: [
 					{
-						value: 'toto',
+						value: '[IdeogramSeq]',
 					},
 				],
 			});
@@ -789,7 +988,7 @@ describe('Filter service', () => {
 			expect(StateService.addGridFilter).toHaveBeenCalled();
 
 			const filterInfo = StateService.addGridFilter.calls.argsFor(0)[0];
-			expect(filterInfo.type).toBe('exact');
+			expect(filterInfo.type).toBe('word_matches');
 		}));
 	});
 
@@ -877,7 +1076,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'contains', [
 				{
 					value: 'Tata\\n',
 				},
@@ -917,7 +1116,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'exact', [
 				{
 					value: 'Tata\\n',
 				},
@@ -964,7 +1163,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					value: [0, 22],
 					label: '[0 .. 22[',
@@ -1034,7 +1233,7 @@ describe('Filter service', () => {
 			expect(StateService.updateGridFilter).not.toHaveBeenCalled();
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					label: 'Mar 2015',
 					value: [
@@ -1161,7 +1360,7 @@ describe('Filter service', () => {
 			};
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'exact', [
 				{
 					value: 'Tata',
 				},
@@ -1211,7 +1410,7 @@ describe('Filter service', () => {
 			};
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					label: 'Feb 2014',
 					value: [
@@ -1280,7 +1479,7 @@ describe('Filter service', () => {
 			};
 
 			//when
-			FilterService.updateFilter(oldFilter, [
+			FilterService.updateFilter(oldFilter, 'inside_range', [
 				{
 					label: 'Apr 2014',
 					value: [

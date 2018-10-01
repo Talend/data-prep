@@ -24,6 +24,7 @@ export const VALID_RECORDS = 'valid_records';
 export const EMPTY_RECORDS = 'empty_records';
 export const INSIDE_RANGE = 'inside_range';
 export const MATCHES = 'matches';
+export const MATCHES_WORDS = 'word_matches';
 export const QUALITY = 'quality';
 export const WILDCARD = '*';
 
@@ -119,6 +120,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		case INSIDE_RANGE:
 			return this.args.intervals;
 		case MATCHES:
+		case MATCHES_WORDS:
 			return this.args.patterns;
 		case QUALITY:
 			if (this.args.invalid && this.args.empty) {
@@ -176,6 +178,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 			this.args.intervals = newValue;
 			break;
 		case MATCHES:
+		case MATCHES_WORDS:
 			this.args.patterns = newValue;
 		}
 	}
@@ -219,6 +222,18 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	}
 	function onCompliesFilter(ctx) {
 		const type = MATCHES;
+		const field = ctx.children[0].getText();
+		const args = {
+			patterns: [
+				{
+					value: ctx.children[2].getText().replace(/'/g, ''),
+				},
+			],
+		};
+		createFilterFromTQL(type, field, false, args);
+	}
+	function onWordCompliesFilter(ctx) {
+		const type = MATCHES_WORDS;
 		const field = ctx.children[0].getText();
 		const args = {
 			patterns: [
@@ -315,6 +330,9 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				const existingMatchFilter = find(filters, {
 					colId,
 					type: MATCHES,
+				}) || find(filters, {
+					colId,
+					type: MATCHES_WORDS,
 				});
 
 				if (existingExactFilter) {
@@ -344,6 +362,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				filterArgs.phrase = getEmptyRecordsValues().concat(args.phrase);
 				break;
 			case MATCHES:
+			case MATCHES_WORDS:
 				filterArgs.patterns = getEmptyRecordsValues().concat(args.patterns);
 				break;
 			}
@@ -364,6 +383,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 					sameColAndTypeFilter.args.intervals = sameColAndTypeFilter.args.intervals.concat(args.intervals);
 					break;
 				case MATCHES:
+				case MATCHES_WORDS:
 					sameColAndTypeFilter.args.patterns = sameColAndTypeFilter.args.patterns.concat(args.patterns);
 					break;
 				}
@@ -383,11 +403,13 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 				tql,
 				onExactFilter,
 				onContainsFilter,
+				onContainsFilter,
 				onCompliesFilter,
 				onBetweenFilter,
 				onEmptyFilter,
 				onValidFilter,
 				onInvalidFilter,
+				onWordCompliesFilter,
 			);
 		}
 		return filters;

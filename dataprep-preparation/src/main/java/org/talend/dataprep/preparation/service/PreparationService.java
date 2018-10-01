@@ -115,6 +115,8 @@ public class PreparationService {
 
     private static final String HEAD = "head";
 
+    private static final String NAME = "name";
+
     /**
      * Where preparation are stored.
      */
@@ -216,8 +218,8 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, id);
         folderRepository.addFolderEntry(folderEntry, folderId);
 
-        auditService.auditPreparationCreation(preparation.getName(), id, preparation.getDataSetName(), preparation.getDataSetId(),
-                folderId);
+        auditService.auditPreparationCreation(toCreate.getName(), id, toCreate.getDataSetName(),
+                toCreate.getDataSetId(), folderId);
         LOGGER.info("New preparation {} created and stored in {} ", preparation, folderId);
         return id;
     }
@@ -381,7 +383,7 @@ public class PreparationService {
         } else {
             regex = "^.*" + regexMainPart + ".*$";
         }
-        return match("name", regex);
+        return match(NAME, regex);
     }
 
     /**
@@ -393,13 +395,14 @@ public class PreparationService {
      */
     public String copy(String preparationId, String name, String destination) {
 
-        LOGGER.debug("copy prep {} to folder {} with {} as new name", preparationId, destination, name);
+        LOGGER.debug("Copy {} preparation to folder '{}' with '{}' as new name requested.", preparationId, destination,
+                name);
 
         Preparation original = preparationRepository.get(preparationId, Preparation.class);
 
         // if no preparation, there's nothing to copy
         if (original == null) {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put(ID, preparationId));
         }
 
         // use a default name if empty (original name + " Copy" )
@@ -432,7 +435,9 @@ public class PreparationService {
         FolderEntry folderEntry = new FolderEntry(PREPARATION, newId);
         folderRepository.addFolderEntry(folderEntry, destination);
 
-        LOGGER.debug("copy {} to folder {} with {} as new name", preparationId, destination, name);
+        LOGGER.debug("Copy {} preparation to folder '{}' with '{}' as new copied name.", preparationId, destination,
+                name);
+        auditService.auditPreparationCopy(preparationId, destination, name, newId);
         return newId;
     }
 
@@ -487,9 +492,9 @@ public class PreparationService {
                 Preparation preparation = preparationRepository.get(folderEntry.getContentId(), Preparation.class);
                 if (preparation != null && StringUtils.equals(name, preparation.getName())) {
                     final ExceptionContext context = build() //
-                            .put("id", folderEntry.getContentId()) //
+                            .put(ID, folderEntry.getContentId()) //
                             .put(FOLDER_ID, folderId) //
-                            .put("name", name);
+                            .put(NAME, name);
                     throw new TDPException(PREPARATION_NAME_ALREADY_USED, context);
                 }
             });
@@ -504,7 +509,8 @@ public class PreparationService {
      * @param newName The new preparation name.
      */
     public void move(String preparationId, String folder, String destination, String newName) {
-        LOGGER.debug("moving {} from {} to {} with the new name '{}'", preparationId, folder, destination, newName);
+        LOGGER.debug("Moving {} preparation from '{}' folder to '{}' folder with the new name '{}' requested",
+                preparationId, folder, destination, newName);
 
         // get and lock the preparation to move
         final PersistentPreparation original = lockPreparation(preparationId);
@@ -526,8 +532,9 @@ public class PreparationService {
             FolderEntry folderEntry = new FolderEntry(PREPARATION, preparationId);
             folderRepository.moveFolderEntry(folderEntry, folder, destination);
 
-            LOGGER.info("preparation {} moved from {} to {} with the new name {}", preparationId, folder, destination,
-                    targetName);
+            LOGGER.info("Preparation {} moved from '{}' folder to '{}' folder with the new name '{}'", preparationId,
+                    folder, destination, targetName);
+            auditService.auditPreparationMove(preparationId, folder, destination, targetName);
         } finally {
             unlockPreparation(preparationId);
         }
@@ -550,6 +557,7 @@ public class PreparationService {
             try (final Stream<FolderEntry> entries = folderRepository.findFolderEntries(preparationId, PREPARATION)) {
                 entries.forEach(e -> folderRepository.removeFolderEntry(e.getFolderId(), preparationId, PREPARATION));
                 LOGGER.info("Deletion of preparation #{} done.", preparationId);
+                auditService.auditPreparationDeletion(preparationId);
             }
         } finally {
             // Just in case remove failed
@@ -582,6 +590,7 @@ public class PreparationService {
             preparationRepository.add(updated);
 
             LOGGER.info("Preparation {} updated -> {}", preparationId, updated);
+            auditService.auditPreparationRename(preparationId, updated.getName());
 
             return updated.id();
         } finally {
@@ -624,6 +633,7 @@ public class PreparationService {
         preparationRepository.add(preparationToUpdate);
 
         LOGGER.info("clone steps from {} to {} done --> {}", from, id, preparationToUpdate);
+        auditService.auditPreparationCopySteps(from, referencePreparation.getName(), id, preparationToUpdate.getName());
     }
 
     /**
@@ -736,16 +746,17 @@ public class PreparationService {
     }
 
     public void addPreparationAction(final String preparationId, final AppendStep step) {
-        long startTime = System.currentTimeMillis();
-        LOGGER.info("+++++++++++Adding action to preparation...");
         PersistentPreparation preparation = preparationRepository.get(preparationId, PersistentPreparation.class);
         List<Action> actions = getVersionedAction(preparation, HEAD);
         StepDiff actionCreatedColumns = stepDiffDelegate.computeCreatedColumns(preparation.getRowMetadata(),
                 buildActions(actions), buildActions(step.getActions()));
         step.setDiff(actionCreatedColumns);
         appendSteps(preparation, Collections.singletonList(step));
-        long endTime = System.currentTimeMillis();
-        LOGGER.info("++++++++++++Added action to preparation."+(endTime - startTime)/1000);
+        LOGGER.debug("Added action to preparation.");
+        if (auditService.isActive()) {
+            auditService.auditPreparationAddStep(preparationId,
+                    step.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
+        }
     }
 
     /**
@@ -813,13 +824,13 @@ public class PreparationService {
             final PersistentStep stm = getStep(stepToModifyId);
             final List<String> originalCreatedColumns = stm.getDiff().getCreatedColumns();
             final List<String> updatedCreatedColumns = newStep.getDiff().getCreatedColumns();
-            final List<String> deletedColumns = originalCreatedColumns.stream() // columns that the step was creating but not
-                                                                                // anymore
-                    .filter(id -> !updatedCreatedColumns.contains(id)).collect(toList());
+            final List<String> deletedColumns = originalCreatedColumns //
+                    .stream() // columns that the step was creating but not anymore
+                    .filter(id -> !updatedCreatedColumns.contains(id)) //
+                    .collect(toList());
             final int columnsDiffNumber = updatedCreatedColumns.size() - originalCreatedColumns.size();
-            final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty()
-                    ? originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt()
-                    : MAX_VALUE;
+            final int maxCreatedColumnIdBeforeUpdate = !originalCreatedColumns.isEmpty() ? //
+                    originalCreatedColumns.stream().mapToInt(Integer::parseInt).max().getAsInt() : MAX_VALUE;
 
             // Build list of actions from modified one to the head
             final List<AppendStep> actionsSteps = getStepsWithShiftedColumnIds(steps, stepToModifyId, deletedColumns,
@@ -830,6 +841,13 @@ public class PreparationService {
             final PersistentStep stepToModify = getStep(stepToModifyId);
             replaceHistory(preparation, stepToModify.getParentId(), actionsSteps);
             LOGGER.debug("Modified head of preparation #{}: head is now {}", preparationId, preparation.getHeadId());
+            if (auditService.isActive()) {
+                auditService //
+                        .auditPreparationUpdateStep(preparationId, stepToModifyId, newStep //
+                        .getActions() //
+                        .stream() //
+                        .collect(Collectors.toMap(Action::getName, Action::getParameters)));
+            }
         } finally {
             unlockPreparation(preparationId);
         }
@@ -862,6 +880,7 @@ public class PreparationService {
         final PersistentPreparation preparation = lockPreparation(id);
         try {
             deleteAction(preparation, stepToDeleteId);
+            auditService.auditPreparationDeleteStep(preparation.getId(), preparation.getName(), stepToDeleteId);
         } finally {
             unlockPreparation(id);
         }
@@ -957,6 +976,7 @@ public class PreparationService {
         final PersistentPreparation preparation = lockPreparation(preparationId);
         try {
             reorderSteps(preparation, stepId, parentStepId);
+            auditService.auditPreparationMoveStep(preparationId, preparation.getName(), stepId, parentStepId);
         } finally {
             unlockPreparation(preparationId);
         }
@@ -967,7 +987,7 @@ public class PreparationService {
     // ------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Get the actual step id by converting HEAD and "origin" to the hash
+     * Get the actual step id by converting "head" and "origin" to the hash
      *
      * @param version The version to convert to step id
      * @param preparation The preparation
@@ -1107,7 +1127,7 @@ public class PreparationService {
     // ------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Test if the stepId is the preparation head. Null, HEAD, "origin" and the actual step id are considered to be
+     * Test if the stepId is the preparation head. Null, "head", "origin" and the actual step id are considered to be
      * the head
      *
      * @param preparation The preparation to test

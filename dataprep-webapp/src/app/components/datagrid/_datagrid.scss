@@ -309,6 +309,11 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 				right: 0;
 				left: auto;
 			}
+
+			&:only-child .checkboxContainer {
+				left: 0;
+				right: auto;
+			}
 		}
 
 		.highlight {

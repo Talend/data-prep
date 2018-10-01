@@ -237,14 +237,15 @@ describe('Filter Manager Service', () => {
 		it('should call updateFilter method of filter service', inject((FilterManagerService, FilterService) => {
 			// given
 			const arg1 = {};
-			const arg2 = 'newValue';
-			const arg3 = 'keyName';
+			const arg2 = 'exact';
+			const arg3 = 'newValue';
+			const arg4 = 'keyName';
 
 			// when
-			FilterManagerService.updateFilter(arg1, arg2, arg3);
+			FilterManagerService.updateFilter(arg1, arg2, arg3, arg4);
 
 			// then
-			expect(FilterService.updateFilter).toHaveBeenCalledWith(arg1, arg2, arg3);
+			expect(FilterService.updateFilter).toHaveBeenCalledWith(arg1, arg2, arg3, arg4);
 		}));
 
 		it('should update filtered statistics', inject((FilterManagerService, StatisticsService) => {

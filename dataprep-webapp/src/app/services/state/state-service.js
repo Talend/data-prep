@@ -151,8 +151,11 @@ export function StateService(RouteStateService, routeState,
 		setStatisticsHistogram: PlaygroundStateService.setStatisticsHistogram,
 		setStatisticsFilteredHistogram: PlaygroundStateService.setStatisticsFilteredHistogram,
 		setStatisticsHistogramActiveLimits: PlaygroundStateService.setStatisticsHistogramActiveLimits,
+		setStatisticsPatternsType: PlaygroundStateService.setStatisticsPatternsType,
 		setStatisticsPatterns: PlaygroundStateService.setStatisticsPatterns,
+		setStatisticsWordPatterns: PlaygroundStateService.setStatisticsWordPatterns,
 		setStatisticsFilteredPatterns: PlaygroundStateService.setStatisticsFilteredPatterns,
+		setStatisticsFilteredWordPatterns: PlaygroundStateService.setStatisticsFilteredWordPatterns,
 		setStatisticsLoading: PlaygroundStateService.setStatisticsLoading,
 
 		// dataset

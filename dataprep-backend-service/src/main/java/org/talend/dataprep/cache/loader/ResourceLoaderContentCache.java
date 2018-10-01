@@ -93,7 +93,7 @@ public class ResourceLoaderContentCache implements ContentCache {
                         return false;
                     }
                     final String suffix = StringUtils.substringAfterLast(r.getFilename(), ".");
-                    if (NumberUtils.isNumber(suffix)) {
+                    if (NumberUtils.isCreatable(suffix)) {
                         final long time = parseLong(suffix);
                         return time > System.currentTimeMillis();
                     } else {

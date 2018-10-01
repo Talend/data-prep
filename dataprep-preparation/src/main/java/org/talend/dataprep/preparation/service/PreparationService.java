@@ -105,7 +105,7 @@ public class PreparationService {
 
     private static final String STEP_ID = "stepId";
 
-    private static final String DATASET_ID = "datasetId";
+    private static final String DATASET_ID = "dataSetId";
 
     private static final String ID = "id";
 

@@ -256,6 +256,7 @@
     "folder:add:open": {
       "id": "folder:add:open",
       "icon": "talend-folder",
+      "bsStyle": "inverse btn-info",
       "label": {
         "i18n": {
           "key": "tdp-cmf:FOLDER_ADD",

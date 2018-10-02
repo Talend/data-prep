@@ -67,11 +67,10 @@ public class DatasetStep extends DataPrepStep {
         assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
-    @Given("^It doesn't exist any dataset with the following parameters :$") //
-    public void notExistDataset(DataTable dataTable) throws IOException {
-        Map<String, String> params = dataTable.asMap(String.class, String.class);
+    @Given("^It doesn't exist any dataset with the following name \"(.*)\"$") //
+    public void notExistDataset(String name) throws IOException {
         List<ContentMetadata> datasetMetas = listDatasetMeta();
-        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
+        assertEquals(0, countFilteredDatasetList(datasetMetas, name));
     }
 
     /**
@@ -88,6 +87,21 @@ public class DatasetStep extends DataPrepStep {
                 .stream() //
                 .filter(d -> (suffixName(datasetName).equals(d.name)) //
                         && nbRows.equals(d.records)) //
+                .count();
+    }
+
+    /**
+     * Count how many {@link ContentMetadata} corresponding to the specified name & row number exists in the given
+     * {@link List}.
+     *
+     * @param datasetMetas the {@link List} of {@link ContentMetadata} to filter.
+     * @param datasetName the searched dataset name.
+     * @return the number of corresponding {@link ContentMetadata}.
+     */
+    private long countFilteredDatasetList(List<ContentMetadata> datasetMetas, String datasetName) {
+        return datasetMetas //
+                .stream() //
+                .filter(d -> (suffixName(datasetName).equals(d.name))) //
                 .count();
     }
 

@@ -105,8 +105,13 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
                 }
                 // ... all quality is now analyzed, mark it so.
                 metadata.getLifecycle().qualityAnalyzed(true);
-                repository.save(metadata);
-                LOGGER.debug("Analyzed quality of dataset #{}.", dataSetId);
+                final DataSetMetadata savedDataSetMetadata = repository.get(metadata.getId());
+                // in order to check that the dataset was not deleted during analyse
+                if (savedDataSetMetadata != null) {
+                    repository.save(metadata);
+                    LOGGER.debug("Analyzed quality of dataset #{}.", dataSetId);
+                }
+
             } catch (Exception e) {
                 LOGGER.warn("dataset '{}' generate an error, message: {} ", dataSetId, e.getMessage());
                 throw new TDPException(DataSetErrorCodes.UNABLE_TO_ANALYZE_DATASET_QUALITY, e);

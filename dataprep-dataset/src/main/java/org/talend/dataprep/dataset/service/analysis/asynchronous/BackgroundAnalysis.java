@@ -92,7 +92,7 @@ public class BackgroundAnalysis {
                         computeStatistics(schemaAnalyzer, columns, stream);
                         LOGGER.debug("Base statistics analysis done for {}", dataSetId);
                         // Save base analysis
-                        saveAnalyzerResults(dataSetId, schemaAnalyzer);
+                        saveAnalyzerResults(schemaAnalyzer, metadata);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Base statistics analysis, dataset {} generates an error", dataSetId, e);
@@ -105,20 +105,11 @@ public class BackgroundAnalysis {
                         updateNbRecords(metadata, analyzerFull.getResult());
                         LOGGER.debug("Advanced statistics analysis done for{}", dataSetId);
                         // Save advanced analysis
-                        saveAnalyzerResults(dataSetId, analyzerFull);
+                        saveAnalyzerResults(analyzerFull, metadata);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Advanced statistics analysis, dataset {} generates an error", dataSetId, e);
                     throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
-                }
-                // Tag data set quality: now analyzed
-                DistributedLock datasetLock = repository.createDatasetMetadataLock(metadata.getId());
-                try {
-                    datasetLock.lock();
-                    metadata.getLifecycle().setStatisticAnalyzed(true);
-                    repository.save(metadata);
-                } finally {
-                    datasetLock.unlock();
                 }
                 LOGGER.info("Statistics analysis done for {}", dataSetId);
             }
@@ -127,14 +118,14 @@ public class BackgroundAnalysis {
         }
     }
 
-    private void saveAnalyzerResults(String id, Analyzer<Analyzers.Result> analyzer) {
-        DistributedLock datasetLock = repository.createDatasetMetadataLock(id);
+    private void saveAnalyzerResults(Analyzer<Analyzers.Result> analyzer, DataSetMetadata metadata) {
+        DistributedLock datasetLock = repository.createDatasetMetadataLock(metadata.getId());
         try {
             datasetLock.lock();
-            final DataSetMetadata dataSetMetadata = repository.get(id);
-            if (dataSetMetadata != null) {
-                adapter.adapt(dataSetMetadata.getRowMetadata().getColumns(), analyzer.getResult());
-                repository.save(dataSetMetadata);
+            final DataSetMetadata savedDataSetMetadata = repository.get(metadata.getId());
+            if (savedDataSetMetadata != null) {
+                adapter.adapt(metadata.getRowMetadata().getColumns(), analyzer.getResult());
+                repository.save(metadata);
             }
         } finally {
             datasetLock.unlock();

@@ -558,7 +558,7 @@ public class DataSetService extends BaseDataSetService {
         try {
             lock.lock();
             // you can't delete a Dataset that is not completely updated
-            if (metadata != null && metadata.getLifecycle().isStatisticAnalyzed()) {
+            if (metadata != null) {
                 // first remove the metadata as there may be additional check
                 dataSetMetadataRepository.remove(dataSetId);
                 contentStore.delete(metadata);

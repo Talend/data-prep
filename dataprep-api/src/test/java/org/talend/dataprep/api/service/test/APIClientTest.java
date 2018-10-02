@@ -20,22 +20,14 @@ import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
@@ -55,6 +47,8 @@ import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.format.CSVFormat;
 
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -302,6 +296,42 @@ public class APIClientTest {
         return expect() //
                 .when() //
                 .get("/api/preparations/{id}/versions/{versionId}/details", preparationId, versionId);
+    }
+
+    public PreparationExport getPreparationAsObject(String preparationId) throws IOException {
+        return getPreparationAsObject(preparationId, "head", "HEAD", "");
+    }
+
+    public PreparationExport getPreparationWithFilterAsObject(String preparationId, String filter) throws IOException {
+        return getPreparationAsObject(preparationId, "head", "HEAD", filter);
+    }
+
+    public PreparationExport getPreparationAsObject(String preparationId, String versionId) throws IOException {
+        return getPreparationAsObject(preparationId, versionId, "HEAD", "");
+    }
+
+    /**
+     * Method handling 202/200 status to get the transformation content
+     *
+     * @param preparationId is of the preparation
+     * @param version version of the preparation
+     * @param stepId like HEAD or FILTER, etc.
+     * @param filter TQL filter to filter the preparation content
+     * @return the content of a preparation
+     * @throws IOException
+     */
+    public PreparationExport getPreparationAsObject(String preparationId, String version, String stepId, String filter)
+            throws IOException {
+        return mapper.readValue(getPreparation(preparationId, version, stepId, filter).asInputStream(),
+                PreparationExport.class);
+    }
+
+    public static class PreparationExport {
+
+        public DataSetMetadata metadata;
+
+        public List<Map<String, String>> records;
+
     }
 
     public Response getPreparation(String preparationId) throws IOException {
@@ -565,6 +595,18 @@ public class APIClientTest {
             }
             parameters.put(key, value);
             return this;
+        }
+
+        public ActionParameters withColumnId(String columnId) {
+            return withParameter(ImplicitParameters.COLUMN_ID.getKey(), columnId);
+        }
+
+        public ActionParameters withRowId(String rowId) {
+            return withParameter(ImplicitParameters.ROW_ID.getKey(), rowId);
+        }
+
+        public ActionParameters withScope(ScopeCategory scope) {
+            return withParameter(ImplicitParameters.SCOPE.getKey(), scope == null ? null : scope.name());
         }
 
         public String getAction() {

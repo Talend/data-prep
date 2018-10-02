@@ -14,15 +14,14 @@ package org.talend.dataprep.api.service;
 
 import static com.jayway.restassured.RestAssured.given;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.talend.dataprep.api.export.ExportParameters.SourceType.HEAD;
 import static org.talend.dataprep.api.service.test.APIClientTest.ActionParameters.createAction;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.InputStream;
@@ -33,7 +32,6 @@ import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.store.Directory;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -145,6 +143,31 @@ public class TransformAPITest extends ApiServiceTestBase {
         final InputStream expectedContent =
                 this.getClass().getResourceAsStream("dataset/expected_dataset_firstname_uppercase.json");
         assertThat(transformed, sameJSONAsFile(expectedContent));
+    }
+
+    @Test
+    public void testTransform_datasetWithNoWordPatternAnalysisShouldBeExportedWithThem() throws Exception {
+        // given
+        String dataset_4404 = testClient.createDataset("dataset/dataset.csv", "dataset_4404");
+
+        DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataset_4404);
+        assert dataSetMetadata != null;
+        dataSetMetadata
+                .getRowMetadata()
+                .getColumns()
+                .forEach(c -> c.getStatistics().setWordPatternFrequencyTable(null));
+        dataSetMetadataRepository.save(dataSetMetadata);
+
+        final String preparationId = testClient.createPreparationFromDataset(dataset_4404, "testPrep", home.getId());
+        testClient.applyAction(preparationId, createAction("uppercase").withColumnId("0001").withScope(COLUMN));
+
+        // when
+        final APIClientTest.PreparationExport transformed = testClient.getPreparationAsObject(preparationId);
+
+        // then
+        for (ColumnMetadata c : transformed.metadata.getRowMetadata().getColumns()) {
+            assertThat(c.getStatistics().getWordPatternFrequencyTable(), is(not(empty())));
+        }
     }
 
     @Test

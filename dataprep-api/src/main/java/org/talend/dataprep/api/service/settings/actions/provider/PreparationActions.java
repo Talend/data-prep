@@ -69,6 +69,7 @@ public interface PreparationActions {
     ActionSettings PREPARATION_FOLDER_CREATE = builder()
             .id("preparation:folder:create")
             .name("preparation.folder.create")
+            .bsStyle("inverse btn-info")
             .icon("talend-folder")
             .type("@@preparation/CREATE")
             .payload(PAYLOAD_METHOD_KEY, "toggleFolderCreator")

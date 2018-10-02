@@ -78,7 +78,7 @@ describe('Filter service', () => {
 						value: 'Toto',
 					},
 				],
-			}, null, '');
+			}, null, '', false);
 		}));
 	});
 
@@ -753,7 +753,7 @@ describe('Filter service', () => {
 				FilterService.addFilter('matches', 'col1', 'column name', {
 					patterns: [
 						{
-							value: 'Aa9',
+							value: 'A\'a9',
 						},
 					],
 				}, null);
@@ -766,7 +766,8 @@ describe('Filter service', () => {
 				expect(newFilter.colId).toBe('col1');
 				expect(newFilter.args.patterns).toEqual([
 					{
-						value: 'Aa9',
+						label: 'A\'a9',
+						value: 'A\\\'a9',
 					},
 				]);
 			}));
@@ -851,7 +852,7 @@ describe('Filter service', () => {
 				FilterService.addFilter('word_matches', 'col1', 'column name', {
 					patterns: [
 						{
-							value: '[number]',
+							value: '\'[number]',
 						},
 					],
 				}, null);
@@ -864,7 +865,8 @@ describe('Filter service', () => {
 				expect(newFilter.colId).toBe('col1');
 				expect(newFilter.args.patterns).toEqual([
 					{
-						value: '[number]',
+						label: '\'[number]',
+						value: '\\\'[number]',
 					},
 				]);
 			}));
@@ -965,6 +967,7 @@ describe('Filter service', () => {
 				expect(newFilter.colId).toBe('col1');
 				expect(newFilter.args.patterns).toEqual([
 					{
+						label: '[number]',
 						value: '[number]',
 					},
 				]);

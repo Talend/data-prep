@@ -35,5 +35,7 @@
   .ac-container {
     color: $dark-gray;
     position: fixed !important;
+    width: auto !important;
+    min-width: 261px;
   }
 }

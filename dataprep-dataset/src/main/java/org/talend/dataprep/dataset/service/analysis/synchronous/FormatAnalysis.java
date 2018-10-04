@@ -173,7 +173,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
         try {
             datasetLock.lock();
             final DataSetMetadata savedDataSetMetadata = repository.get(updatedMetadata.getId());
-            // in order to check that the dataset was not deleted during analyse
+            // in order to check that the dataset was not deleted during analysis
             if (savedDataSetMetadata != null) {
                 repository.save(updatedMetadata);
             }

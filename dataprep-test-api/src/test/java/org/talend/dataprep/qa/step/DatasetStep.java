@@ -3,7 +3,6 @@ package org.talend.dataprep.qa.step;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
@@ -67,6 +66,13 @@ public class DatasetStep extends DataPrepStep {
         assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
+    @Given("^It doesn't exist any dataset with the following parameters :$") //
+    public void notExistDataset(DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
+        List<ContentMetadata> datasetMetas = listDatasetMeta();
+        assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
+    }
+
     @Given("^It doesn't exist any dataset with the following name \"(.*)\"$") //
     public void notExistDataset(String name) throws IOException {
         List<ContentMetadata> datasetMetas = listDatasetMeta();
@@ -91,7 +97,7 @@ public class DatasetStep extends DataPrepStep {
     }
 
     /**
-     * Count how many {@link ContentMetadata} corresponding to the specified name & row number exists in the given
+     * Count how many {@link ContentMetadata} corresponding to the specified name exists in the given
      * {@link List}.
      *
      * @param datasetMetas the {@link List} of {@link ContentMetadata} to filter.
@@ -130,7 +136,7 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @When("^I can delete the dataset called \"(.*)\"$") //
-    public void ICanDeleteTheDataset(String datasetName) {
+    public void iCanDeleteTheDataset(String datasetName) {
         deleteDatasetByName(datasetName).then().statusCode(OK.value());
     }
 
@@ -138,11 +144,6 @@ public class DatasetStep extends DataPrepStep {
         String suffixedDatasetName = suffixName(datasetName);
         String datasetId = context.getDatasetId(suffixedDatasetName);
         return api.deleteDataset(datasetId);
-    }
-
-    @When("^I can't delete the dataset called \"(.*)\"$") //
-    public void ICantDeleteTheDataset(String datasetName) {
-        deleteDatasetByName(datasetName).then().statusCode(NOT_FOUND.value());
     }
 
     @When("^I load the existing dataset called \"(.*)\"$")

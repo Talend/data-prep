@@ -77,7 +77,7 @@ public class ContentAnalysis implements SynchronousDataSetAnalyzer {
                 metadata.getLifecycle().contentIndexed(true);
 
                 DataSetMetadata savedDataSetMetadata = repository.get(dataSetId);
-                // in order to check that the dataset was not deleted during analyse
+                // in order to check that the dataset was not deleted during analysis
                 if (savedDataSetMetadata != null) {
                     repository.save(metadata);
                 }

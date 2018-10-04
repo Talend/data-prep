@@ -14,13 +14,15 @@
 export default class PreparationCreatorFormCtrl {
 	constructor($translate) {
 		'ngInject';
+
 		this.processingLabel = $translate.instant('UPLOAD_PROCESSING');
 	}
 
 	/**
 	 * @ngdoc method
 	 * @name getProgressionLabel
-	 * @description returns the label to display as progressbar tooltip
+	 * @methodOf data-prep.dataset-upload-status:PreparationCreatorFormCtrl
+	 * @returns {string} label to display as progressbar tooltip
 	 */
 	getProgressionLabel() {
 		if (this.dataset.progress === 100) {

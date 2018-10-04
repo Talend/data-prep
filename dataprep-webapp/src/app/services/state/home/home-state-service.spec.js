@@ -120,6 +120,16 @@ describe('home state', () => {
 		}));
 	});
 
+	describe('setPreparationCreatorVisibility', () => {
+		it('should set preparation creator visiblity', inject((homeState, HomeStateService) => {
+			//when
+			HomeStateService.setPreparationCreatorVisibility(true);
+
+			//then
+			expect(homeState.preparations.creator.isVisible).toBeTruthy();
+		}));
+	});
+
 	describe('toggleFolderCreator', () => {
 		it('should toggle folder creator', inject((homeState, HomeStateService) => {
 			//given

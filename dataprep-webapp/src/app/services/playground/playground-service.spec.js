@@ -22,7 +22,7 @@ import {
 
 describe('Playground Service', () => {
 	const datasetColumnsWithoutStatistics = {
-		columns: [{ id: '0001', statistics: { frequencyTable: [] } }],
+		columns: [{ id: '0001', statistics: { frequencyTable: [], wordPatternFrequencyTable: [] } }],
 		records: [],
 		data: [],
 	};
@@ -35,25 +35,25 @@ describe('Playground Service', () => {
 			nbLinesHeader: 1,
 			nbLinesFooter: 0,
 			created: '03-30-2015 08:06',
-			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 		},
 		records: [],
 		data: [],
 	};
 	const datasetMetadata = {
 		records: 19,
-		columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+		columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 	};
 
 	const preparationMetadata = {
 		metadata: {
-			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 		},
 		records: [{}],
 	};
 	const preparationMetadataWithoutStatistics = {
 		metadata: {
-			columns: [{ id: '0001', statistics: { frequencyTable: [] } }],
+			columns: [{ id: '0001', statistics: { frequencyTable: [], wordPatternFrequencyTable: [] } }],
 		},
 		records: [],
 	};
@@ -113,7 +113,7 @@ describe('Playground Service', () => {
 				sampleType: 'HEAD',
 				data: {
 					metadata: {
-						columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+						columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 					},
 				},
 			},
@@ -599,7 +599,7 @@ describe('Playground Service', () => {
 					lastname: 'Johnson',
 				},],
 				metadata: {
-					columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+					columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 				},
 			};
 
@@ -1937,6 +1937,10 @@ describe('Playground Service', () => {
 								value: 'toto',
 								frequency: 10,
 							}],
+							wordPatternFrequencyTable: [{
+								value: '[word]',
+								frequency: 10,
+							}],
 						},
 					}],
 				},
@@ -2034,6 +2038,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2080,6 +2085,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2126,6 +2132,10 @@ describe('Playground Service', () => {
 										value: 'toto',
 										frequency: 10,
 									}],
+									wordPatternFrequencyTable: [{
+										value: '[word]',
+										frequency: 1,
+									}],
 								},
 							}],
 						},
@@ -2163,6 +2173,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2198,6 +2209,10 @@ describe('Playground Service', () => {
 						statistics: {
 							frequencyTable: [{ // stats already computed
 								value: 'toto',
+								frequency: 10,
+							}],
+							wordPatternFrequencyTable: [{
+								value: '[word]',
 								frequency: 10,
 							}],
 						},
@@ -2255,6 +2270,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2301,6 +2317,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2347,6 +2364,10 @@ describe('Playground Service', () => {
 										value: 'toto',
 										frequency: 10,
 									}],
+									wordPatternFrequencyTable: [{
+										value: '[word]',
+										frequency: 10
+									}],
 								},
 							}],
 						},
@@ -2384,6 +2405,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},

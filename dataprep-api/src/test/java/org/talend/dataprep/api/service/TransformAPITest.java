@@ -30,6 +30,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -156,10 +157,8 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataset_4404);
         assert dataSetMetadata != null;
-        dataSetMetadata
-                .getRowMetadata()
-                .getColumns()
-                .forEach(c -> c.getStatistics().setWordPatternFrequencyTable(null));
+        dataSetMetadata.getRowMetadata().getColumns().forEach(
+                c -> c.getStatistics().setWordPatternFrequencyTable(new LinkedList<>()));
         dataSetMetadataRepository.save(dataSetMetadata);
 
         final String preparationId = testClient.createPreparationFromDataset(dataset_4404, "testPrep", home.getId());

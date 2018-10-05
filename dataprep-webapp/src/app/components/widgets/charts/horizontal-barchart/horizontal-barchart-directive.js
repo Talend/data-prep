@@ -208,6 +208,9 @@ export default function HorizontalBarchart($timeout, $translate) {
 			}
 
 			function adaptToMinHeight(realWidth) {
+				if (realWidth < 0) {
+					return 0;
+				}
 				return realWidth > 0 && realWidth < BAR_MIN_WIDTH ? BAR_MIN_WIDTH : realWidth;
 			}
 

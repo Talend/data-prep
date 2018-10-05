@@ -66,7 +66,7 @@ export default class FilterService {
 	initFilters(entityId) {
 		const filters = this.StorageService.getFilter(entityId);
 		filters.forEach((filter) => {
-			this.addFilter(filter.type, filter.colId, filter.colName, filter.args, null, '');
+			this.addFilter(filter.type, filter.colId, filter.colName, filter.args, null, '', false);
 		});
 	}
 
@@ -82,7 +82,7 @@ export default class FilterService {
 	 * @param {string} keyName keyboard key
 	 * @description Adds a filter
 	 */
-	addFilter(type, colId, colName, args, removeFilterFn, keyName) {
+	addFilter(type, colId, colName, args, removeFilterFn, keyName, shouldEscape) {
 		const sameColAndTypeFilter = find(this.state.playground.filter.gridFilters, {
 			colId,
 			type,
@@ -114,7 +114,7 @@ export default class FilterService {
 			}
 
 			argsToDisplay = {
-				phrase: this._getValuesToDisplay(args.phrase),
+				phrase: this._getValuesToDisplay(args.phrase, shouldEscape),
 				caseSensitive: args.caseSensitive,
 			};
 
@@ -163,7 +163,7 @@ export default class FilterService {
 			}
 
 			argsToDisplay = {
-				phrase: this._getValuesToDisplay(args.phrase),
+				phrase: this._getValuesToDisplay(args.phrase, shouldEscape),
 				caseSensitive: args.caseSensitive,
 			};
 
@@ -292,12 +292,17 @@ export default class FilterService {
 				args.patterns = this.TqlFilterAdapterService.getEmptyRecordsValues();
 			}
 
+			argsToDisplay = {
+				patterns: this._getValuesToDisplay(args.patterns, shouldEscape),
+				caseSensitive: args.caseSensitive,
+			};
+
 			createFilter = () => {
-				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, args, removeFilterFn);
+				return this.TqlFilterAdapterService.createFilter(type, colId, colName, false, argsToDisplay, removeFilterFn);
 			};
 
 			getFilterValue = () => {
-				return args.patterns;
+				return argsToDisplay.patterns;
 			};
 
 			filterExists = () => {
@@ -609,15 +614,18 @@ export default class FilterService {
 	 * @ngdoc method
 	 * @name _getValuesToDisplay
 	 * @param {Array} filterValues The filter values to convert
+	 * @param {boolean} shouldEscape if value should be escaped
 	 * @description Replace new line character
 	 * @private
 	 */
-	_getValuesToDisplay(filterValues) {
+	_getValuesToDisplay(filterValues, shouldEscape = true) {
 		const regexp = new RegExp('\n', 'g');  // eslint-disable-line no-control-regex
+		const regexpQuote = new RegExp('\'', 'g');  // eslint-disable-line no-control-regex
 		return filterValues
 			.map((filterValue) => {
-				if (!filterValue.isEmpty) {
+				if (!filterValue.isEmpty && shouldEscape) {
 					filterValue.label = filterValue.value.replace(regexp, '\\n');
+					filterValue.value = filterValue.value.replace(regexpQuote, '\\\'');
 				}
 
 				return filterValue;

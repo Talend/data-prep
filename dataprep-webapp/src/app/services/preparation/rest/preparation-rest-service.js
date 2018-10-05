@@ -18,7 +18,7 @@
  * <b style="color: red;">WARNING : do NOT use this service directly.
  * {@link data-prep.services.preparation.service:PreparationService PreparationService} must be the only entry point for preparations</b>
  */
-export default function PreparationRestService($http, RestURLs) {
+export default function PreparationRestService($http, RestURLs, UrlUtils) {
 	'ngInject';
 
 	return {
@@ -64,11 +64,18 @@ export default function PreparationRestService($http, RestURLs) {
      * @returns {promise} The GET promise
      */
 	function getContent(preparationId, stepId, sampleType, tql) {
-		let url = `${RestURLs.preparationUrl}/${preparationId}/content?version=${stepId}&from=${sampleType}`;
+		const params = {
+			version: stepId,
+			from: sampleType,
+		};
+
 		if (tql) {
-			url += '&filter=' + encodeURIComponent(tql);
+			params.filter = tql;
 		}
-		return $http.get(url).then(res => res.data);
+
+		return $http.get(
+			UrlUtils.build(`${RestURLs.preparationUrl}/${preparationId}/copy`, params)
+		).then(res => res.data);
 	}
 
 	/**
@@ -97,8 +104,9 @@ export default function PreparationRestService($http, RestURLs) {
 	 * @returns {promise} The GET promise
 	 */
 	function getMetadata(preparationId, stepId) {
-		const url = `${RestURLs.preparationUrl}/${preparationId}/metadata?version=${stepId}`;
-		return $http.get(url).then(res => res.data);
+		return $http.get(
+			UrlUtils.build(`${RestURLs.preparationUrl}/${preparationId}/metadata`, { version: stepId })
+		).then(res => res.data);
 	}
 
     /**
@@ -141,7 +149,7 @@ export default function PreparationRestService($http, RestURLs) {
 	function create(datasetId, name, folderId = '') {
 		const request = {
 			method: 'POST',
-			url: `${RestURLs.preparationUrl}?folder=${folderId}`,
+			url: UrlUtils.build(RestURLs.preparationUrl, { folder: folderId }),
 			data: {
 				name,
 				dataSetId: datasetId,
@@ -161,11 +169,18 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Copy the preparation
      * @returns {promise} The POST promise
      */
-	function copy(preparationId, folderId, name) {
+	function copy(preparationId, folderId, name = '') {
 		const request = {
 			method: 'POST',
-			url: `${RestURLs.preparationUrl}/${preparationId}/copy?destination=${encodeURIComponent(folderId)}&newName=${encodeURIComponent(name)}`,
+			url: UrlUtils.build(
+				`${RestURLs.preparationUrl}/${preparationId}/copy`,
+				{
+					destination: folderId,
+					newName: name,
+				},
+			),
 		};
+
 		return $http(request).then(resp => resp.data);
 	}
 
@@ -180,14 +195,22 @@ export default function PreparationRestService($http, RestURLs) {
      * @description Move the preparation
      * @returns {promise} The PUT promise
      */
-	function move(preparationId, fromFolderId, toFolderId, name) {
+	function move(preparationId, fromFolderId, toFolderId, name = '') {
 		const origin = encodeURIComponent(fromFolderId);
 		const destination = encodeURIComponent(toFolderId);
-		const newName = encodeURIComponent(name);
+		const newName = encodeURIComponent(name.normalize());
 		const request = {
 			method: 'PUT',
-			url: `${RestURLs.preparationUrl}/${preparationId}/move?folder=${origin}&destination=${destination}&newName=${newName}`,
+			url: UrlUtils.build(
+				`${RestURLs.preparationUrl}/${preparationId}/move`,
+				{
+					folder: origin,
+					destination,
+					newName,
+				},
+			),
 		};
+
 		return $http(request).then(resp => resp.data);
 	}
 
@@ -345,8 +368,12 @@ export default function PreparationRestService($http, RestURLs) {
      * @returns {promise} The PUT promise
      */
 	function copySteps(preparationId, referenceId) {
-		const url = `${RestURLs.preparationUrl}/${preparationId}/steps/copy?from=${referenceId}`;
-		return $http.put(url);
+		return $http.put(UrlUtils.build(
+			`${RestURLs.preparationUrl}/${preparationId}/steps/copy`,
+			{
+				from: referenceId,
+			},
+		));
 	}
 
     //---------------------------------------------------------------------------------

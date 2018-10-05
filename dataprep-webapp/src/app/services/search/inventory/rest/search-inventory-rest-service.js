@@ -30,9 +30,9 @@ export default function InventoryRestService($http, RestURLs) {
      * @param {String} searchString The string to search
      * @param {Promise} deferredAbort abort request when resolved
      */
-	function search(searchString, deferredAbort) {
+	function search(searchString = '', deferredAbort) {
 		return $http({
-			url: `${RestURLs.searchUrl}?path=/&name=${encodeURIComponent(searchString)}`,
+			url: `${RestURLs.searchUrl}?path=/&name=${encodeURIComponent(searchString.normalize())}`,
 			method: 'GET',
 			timeout: deferredAbort.promise,
 			failSilently: true,

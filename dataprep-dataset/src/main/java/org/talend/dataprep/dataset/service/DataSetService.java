@@ -513,8 +513,10 @@ public class DataSetService extends BaseDataSetService {
     }
 
     private Stream<DataSetRow> insertWordPatternAnalysis(DataSetMetadata dataSetMetadata, Stream<DataSetRow> records) {
-        Analyzer<Analyzers.Result> wordPatternAnalyzer = analyzerService
-                .build(dataSetMetadata.getRowMetadata().getColumns(), AnalyzerService.Analysis.WORD_PATTERNS);
+        // recompute both patterns because TDQ has change char pattern detection precision at the same time they added word pattern
+        Analyzer<Analyzers.Result> wordPatternAnalyzer =
+                analyzerService.build(dataSetMetadata.getRowMetadata().getColumns(),
+                        AnalyzerService.Analysis.WORD_PATTERNS, AnalyzerService.Analysis.PATTERNS);
 
         final AtomicInteger analyzerCount = new AtomicInteger(0);
         String datasetId = dataSetMetadata.getId();

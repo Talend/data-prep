@@ -75,23 +75,27 @@ public class BackgroundAnalysis {
 
         DataSetMetadata metadata = repository.get(dataSetId);
         if (metadata != null) {
+
             final List<ColumnMetadata> columns = metadata.getRowMetadata().getColumns();
             if (columns.isEmpty()) {
                 LOGGER.debug("Skip statistics of {} (no column information).", metadata.getId());
+            } else if (!metadata.getLifecycle().schemaAnalyzed()) {
+                LOGGER.debug(
+                        "Dataset {}, schema information must be computed before quality analysis can be performed, ignoring message",
+                        metadata.getId());
+                return; // no acknowledge to allow re-poll.
             } else {
-                if (!metadata.getLifecycle().schemaAnalyzed()) {
-                    // base analysis
-                    try (final Stream<DataSetRow> stream = store.stream(metadata)) {
-                        try (Analyzer<Analyzers.Result> schemaAnalyzer = analyzerService.schemaAnalysis(columns)) {
-                            computeStatistics(schemaAnalyzer, columns, stream);
-                            LOGGER.debug("Base statistics analysis done for {}", dataSetId);
-                            // Save base analysis
-                            saveAnalyzerResults(schemaAnalyzer, metadata);
-                        }
-                    } catch (Exception e) {
-                        LOGGER.warn("Base statistics analysis, dataset {} generates an error", dataSetId, e);
-                        throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
+                // base analysis
+                try (final Stream<DataSetRow> stream = store.stream(metadata)) {
+                    try (Analyzer<Analyzers.Result> analyzer = analyzerService.schemaAnalysis(columns)) {
+                        computeStatistics(analyzer, columns, stream);
+                        LOGGER.debug("Base statistics analysis done for {}", dataSetId);
+                        // Save base analysis
+                        saveAnalyzerResults(analyzer, metadata);
                     }
+                } catch (Exception e) {
+                    LOGGER.warn("Base statistics analysis, dataset {} generates an error", dataSetId, e);
+                    throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
                 }
                 // advanced analysis
                 try (final Stream<DataSetRow> stream = store.stream(metadata)) {

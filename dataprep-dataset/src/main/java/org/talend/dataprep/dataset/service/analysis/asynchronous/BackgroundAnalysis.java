@@ -95,12 +95,12 @@ public class BackgroundAnalysis {
                 }
                 // advanced analysis
                 try (final Stream<DataSetRow> stream = store.stream(metadata)) {
-                    try (Analyzer<Analyzers.Result> analyzerFull = analyzerService.full(columns)) {
-                        computeStatistics(analyzerFull, columns, stream);
-                        updateNbRecords(metadata, analyzerFull.getResult());
+                    try (Analyzer<Analyzers.Result> analyzerAdvanced = analyzerService.advancedAnalysis(columns)) {
+                        computeStatistics(analyzerAdvanced, columns, stream);
+                        updateNbRecords(metadata, analyzerAdvanced.getResult());
                         LOGGER.debug("Advanced statistics analysis done for{}", dataSetId);
                         // Save advanced analysis
-                        saveAnalyzerResults(analyzerFull, metadata);
+                        saveAnalyzerResults(analyzerAdvanced, metadata);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Advanced statistics analysis, dataset {} generates an error", dataSetId, e);

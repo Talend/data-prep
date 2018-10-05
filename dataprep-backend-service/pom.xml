@@ -285,19 +285,29 @@
             <artifactId>javax.el</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20171018</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>
             <resource>
                 <!-- This enable maven defined variables in banner.txt as ${project.version} -->
                 <directory>src/main/resources</directory>
-                <includes><include>banner.txt</include></includes>
+                <includes>
+                    <include>banner.txt</include>
+                </includes>
                 <filtering>true</filtering>
             </resource>
             <resource>
                 <!-- This enable maven defined variables in banner.txt as ${project.version} -->
                 <directory>src/main/resources</directory>
-                <includes><include>**/*</include></includes>
+                <includes>
+                    <include>**/*</include>
+                </includes>
                 <filtering>false</filtering>
             </resource>
         </resources>

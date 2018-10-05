@@ -18,7 +18,7 @@
  * <b style="color: red;">WARNING : do NOT use this service directly.
  * {@link data-prep.services.preparation.service:PreparationService PreparationService} must be the only entry point for preparations</b>
  */
-export default function PreparationRestService($http, RestURLs, UrlUtils) {
+export default function PreparationRestService($http, RestURLs, UrlService) {
 	'ngInject';
 
 	return {
@@ -72,9 +72,8 @@ export default function PreparationRestService($http, RestURLs, UrlUtils) {
 		if (tql) {
 			params.filter = tql;
 		}
-
 		return $http.get(
-			UrlUtils.build(`${RestURLs.preparationUrl}/${preparationId}/copy`, params)
+			UrlService.build(`${RestURLs.preparationUrl}/${preparationId}/content`, params)
 		).then(res => res.data);
 	}
 
@@ -105,7 +104,7 @@ export default function PreparationRestService($http, RestURLs, UrlUtils) {
 	 */
 	function getMetadata(preparationId, stepId) {
 		return $http.get(
-			UrlUtils.build(`${RestURLs.preparationUrl}/${preparationId}/metadata`, { version: stepId })
+			UrlService.build(`${RestURLs.preparationUrl}/${preparationId}/metadata`, { version: stepId })
 		).then(res => res.data);
 	}
 
@@ -149,7 +148,7 @@ export default function PreparationRestService($http, RestURLs, UrlUtils) {
 	function create(datasetId, name, folderId = '') {
 		const request = {
 			method: 'POST',
-			url: UrlUtils.build(RestURLs.preparationUrl, { folder: folderId }),
+			url: UrlService.build(RestURLs.preparationUrl, { folder: folderId }),
 			data: {
 				name,
 				dataSetId: datasetId,
@@ -172,7 +171,7 @@ export default function PreparationRestService($http, RestURLs, UrlUtils) {
 	function copy(preparationId, folderId, name = '') {
 		const request = {
 			method: 'POST',
-			url: UrlUtils.build(
+			url: UrlService.build(
 				`${RestURLs.preparationUrl}/${preparationId}/copy`,
 				{
 					destination: folderId,
@@ -201,7 +200,7 @@ export default function PreparationRestService($http, RestURLs, UrlUtils) {
 		const newName = encodeURIComponent(name.normalize());
 		const request = {
 			method: 'PUT',
-			url: UrlUtils.build(
+			url: UrlService.build(
 				`${RestURLs.preparationUrl}/${preparationId}/move`,
 				{
 					folder: origin,
@@ -368,7 +367,7 @@ export default function PreparationRestService($http, RestURLs, UrlUtils) {
      * @returns {promise} The PUT promise
      */
 	function copySteps(preparationId, referenceId) {
-		return $http.put(UrlUtils.build(
+		return $http.put(UrlService.build(
 			`${RestURLs.preparationUrl}/${preparationId}/steps/copy`,
 			{
 				from: referenceId,

@@ -103,12 +103,12 @@ public class BackgroundAnalysis {
         }
         // advanced analysis
         try (final Stream<DataSetRow> stream = store.stream(metadata);
-             Analyzer<Analyzers.Result> analyzerAdvanced = analyzerService.advancedAnalysis(columns)) {
-                computeStatistics(analyzerAdvanced, columns, stream);
-                updateNbRecords(metadata, analyzerAdvanced.getResult());
-                LOGGER.debug("Advanced statistics analysis done for {}", dataSetId);
-                // Save advanced analysis
-                saveAnalyzerResults(analyzerAdvanced, metadata);
+                Analyzer<Analyzers.Result> analyzerAdvanced = analyzerService.advancedAnalysis(columns)) {
+            computeStatistics(analyzerAdvanced, columns, stream);
+            updateNbRecords(metadata, analyzerAdvanced.getResult());
+            LOGGER.debug("Advanced statistics analysis done for {}", dataSetId);
+            // Save advanced analysis
+            saveAnalyzerResults(analyzerAdvanced, metadata);
         } catch (Exception e) {
             LOGGER.warn("Advanced statistics analysis, dataset {} generates an error", dataSetId, e);
             throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);

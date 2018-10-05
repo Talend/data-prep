@@ -65,6 +65,7 @@ export function StateService(RouteStateService, routeState,
 		toggleCopyMovePreparation: HomeStateService.toggleCopyMovePreparation,
 		toggleFolderCreator: HomeStateService.toggleFolderCreator,
 		togglePreparationCreator: HomeStateService.togglePreparationCreator,
+		setPreparationCreatorVisibility: HomeStateService.setPreparationCreatorVisibility,
 		toggleAbout: HomeStateService.toggleAbout,
 
 		// playground

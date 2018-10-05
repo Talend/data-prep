@@ -49,6 +49,8 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -106,6 +108,7 @@ import org.talend.dataprep.dataset.service.analysis.synchronous.SchemaAnalysis;
 import org.talend.dataprep.dataset.service.api.UpdateColumnParameters;
 import org.talend.dataprep.dataset.service.cache.UpdateDataSetCacheKey;
 import org.talend.dataprep.dataset.store.QuotaService;
+import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
 import org.talend.dataprep.dataset.store.content.StrictlyBoundedInputStream;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
@@ -221,6 +224,9 @@ public class DataSetService extends BaseDataSetService {
 
     @Autowired
     private DatasetInjection datasetInjection;
+
+    @Autowired
+    private DataSetContentLimit dataSetContentLimit;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
     @ApiOperation(value = "List all data sets and filters on certified, or favorite or a limited number when asked",
@@ -469,6 +475,13 @@ public class DataSetService extends BaseDataSetService {
                     dataSet.setMetadata(conversionService.convert(dataSetMetadata, UserDataSetMetadata.class));
                 }
                 stream = contentStore.stream(dataSetMetadata, limit); // Disable line limit
+
+                // on-demand analyzer for dataset (See TDP-4404, migration problems)
+                if (dataSetMetadata.getRowMetadata().getColumns().stream().anyMatch(
+                        c -> c.getStatistics().getWordPatternFrequencyTable().isEmpty())) {
+                    stream = insertWordPatternAnalysis(dataSetMetadata, stream);
+                }
+
                 if (!includeInternalContent) {
                     LOG.debug("Skip internal content when serving data set #{} content.", dataSetId);
                     stream = stream.map(r -> {
@@ -499,6 +512,32 @@ public class DataSetService extends BaseDataSetService {
                 LOG.debug(marker, "Get done.");
             }
         };
+    }
+
+    private Stream<DataSetRow> insertWordPatternAnalysis(DataSetMetadata dataSetMetadata, Stream<DataSetRow> records) {
+        // recompute both patterns because TDQ has change char pattern detection precision at the same time they added word pattern
+        Analyzer<Analyzers.Result> wordPatternAnalyzer =
+                analyzerService.build(dataSetMetadata.getRowMetadata().getColumns(),
+                        AnalyzerService.Analysis.WORD_PATTERNS, AnalyzerService.Analysis.PATTERNS);
+
+        final AtomicInteger analyzerCount = new AtomicInteger(0);
+        String datasetId = dataSetMetadata.getId();
+        Long limit = dataSetContentLimit.getLimit();
+        Predicate<Integer> limitPredicate = limit == null ? i -> true : i -> i < limit;
+
+        return records.peek(r -> {
+            if (limitPredicate.test(analyzerCount.get())) {
+                wordPatternAnalyzer.analyze(r.toArray());
+                analyzerCount.incrementAndGet();
+            }
+        }).onClose(() -> {
+            wordPatternAnalyzer.end();
+            final List<Analyzers.Result> analyzerResult = wordPatternAnalyzer.getResult();
+            DataSetMetadata dataSetMetadataInner = dataSetMetadataRepository.get(datasetId);
+            final StatisticsAdapter statisticsAdapter = new StatisticsAdapter(40);
+            statisticsAdapter.adapt(dataSetMetadataInner.getRowMetadata().getColumns(), analyzerResult);
+            dataSetMetadataRepository.save(dataSetMetadataInner);
+        });
     }
 
     /**

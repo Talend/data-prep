@@ -135,8 +135,8 @@ public class DatasetStep extends DataPrepStep {
         response.then().statusCode(OK.value());
     }
 
-    @When("^I can delete the dataset called \"(.*)\"$") //
-    public void iCanDeleteTheDataset(String datasetName) {
+    @When("^I delete the dataset called \"(.*)\"$") //
+    public void iDeleteTheDataset(String datasetName) {
         deleteDatasetByName(datasetName).then().statusCode(OK.value());
     }
 

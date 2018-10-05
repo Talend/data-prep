@@ -82,7 +82,8 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
                 return;
             }
             if (!metadata.getLifecycle().schemaAnalyzed()) {
-                LOGGER.debug("Schema information must be computed before quality analysis can be performed, ignoring message");
+                LOGGER.debug(
+                        "Schema information must be computed before quality analysis can be performed, ignoring message");
                 return; // no acknowledge to allow re-poll.
             }
 

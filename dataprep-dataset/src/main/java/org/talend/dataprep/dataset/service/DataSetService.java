@@ -515,7 +515,7 @@ public class DataSetService extends BaseDataSetService {
     private Stream<DataSetRow> insertWordPatternAnalysis(DataSetMetadata dataSetMetadata, Stream<DataSetRow> records) {
         Analyzer<Analyzers.Result> wordPatternAnalyzer = analyzerService
                 .build(dataSetMetadata.getRowMetadata().getColumns(), AnalyzerService.Analysis.WORD_PATTERNS);
-        wordPatternAnalyzer.init();
+
         final AtomicInteger analyzerCount = new AtomicInteger(0);
         String datasetId = dataSetMetadata.getId();
         Long limit = dataSetContentLimit.getLimit();

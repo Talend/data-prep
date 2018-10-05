@@ -749,17 +749,20 @@ public class PreparationService {
         return preparationUtils.listStepsIds(step.id(), preparationRepository);
     }
 
-    public void addPreparationAction(final String preparationId, final AppendStep step) {
+    public void addPreparationAction(final String preparationId, final AppendStep appendStep) {
         PersistentPreparation preparation = preparationRepository.get(preparationId, PersistentPreparation.class);
         List<Action> actions = getVersionedAction(preparation, HEAD);
         StepDiff actionCreatedColumns = stepDiffDelegate.computeCreatedColumns(preparation.getRowMetadata(),
-                buildActions(actions), buildActions(step.getActions()));
-        step.setDiff(actionCreatedColumns);
-        appendSteps(preparation, Collections.singletonList(step));
+                buildActions(actions), buildActions(appendStep.getActions()));
+        appendStep.setDiff(actionCreatedColumns);
+
+        checkActionStepConsistency(appendStep);
+        appendStepToHead(preparation, appendStep);
+
         LOGGER.debug("Added action to preparation.");
         if (auditService.isActive()) {
             auditService.auditPreparationAddStep(preparationId,
-                    step.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
+                    appendStep.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
         }
     }
 

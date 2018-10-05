@@ -106,7 +106,8 @@ public class PreparationServiceTestMock {
 
         when(preparationRepositoryMock.get("prepId", PersistentPreparation.class)).thenReturn(persistentPrep);
         when(preparationRepositoryMock.get("stepId", PersistentStep.class)).thenReturn(persitentStep);
-        when(preparationRepositoryMock.get(persitentStep.getContent(), PreparationActions.class)).thenReturn(prepActions);
+        when(preparationRepositoryMock.get(persitentStep.getContent(), PreparationActions.class))
+                .thenReturn(prepActions);
         when(auditServiceMock.isActive()).thenReturn(false);
         when(actionRegistry.get("uppercase")).thenReturn(UpperCase.class.newInstance());
         when(actionRegistry.get("lowercase")).thenReturn(LowerCase.class.newInstance());

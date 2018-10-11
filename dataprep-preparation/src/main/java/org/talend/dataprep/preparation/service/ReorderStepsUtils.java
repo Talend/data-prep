@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.transformation.actions.column.DeleteColumn;
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
 @Component
@@ -38,7 +39,7 @@ public class ReorderStepsUtils {
         return !appendSteps.stream().anyMatch(step -> {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
-                final String[] columnIds = extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
+                final String[] columnIds = ActionsUtils.extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
 
                 // remove the created columns from not available columns
                 notYetAvailableColumnsIds.removeAll(step.getDiff().getCreatedColumns());
@@ -107,21 +108,6 @@ public class ReorderStepsUtils {
                 }
             }
         });
-    }
-
-    /**
-     * Little function to separate columnsId for multicolumns actions, won't do anything on old scopes.
-     *
-     * @param columnId
-     * @return
-     */
-    private String[] extractColumnsId(String columnId) {
-        String result[] = {columnId};
-        if (columnId.contains(",")) {
-            String tempString = columnId.replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
-            result = tempString.split(",");
-        }
-        return result;
     }
 
 }

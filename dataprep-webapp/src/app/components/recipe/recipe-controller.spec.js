@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { StateService } from '../../services/state/state-service';
+
 describe('Recipe controller', () => {
 	let createController;
 	let scope;
@@ -38,7 +40,18 @@ describe('Recipe controller', () => {
 				},
 				grid: { nbLines: 1000 },
 				lookup: { visibility: false },
-				data: { metadata: {} },
+				data: { metadata: {
+						columns: [{
+							id: '0000',
+							name: 'id',
+						}, {
+							id: '0001',
+							name: 'firstName',
+						}, {
+							id: '0002',
+							name: 'lastName',
+						},],
+					} },
 				recipe: {
 					current: {
 						steps,
@@ -152,6 +165,35 @@ describe('Recipe controller', () => {
 
 			// then
 			expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step, parameters);
+		}));
+
+		it('should update step multi_column', inject((PlaygroundService) => {
+			// given
+			const ctrl = createController();
+			const step = {
+				column: { id: 'state' },
+				transformation: {
+					stepId: 'a598bc83fc894578a8b823',
+					name: 'cut',
+				},
+				actionParameters: {
+					action: 'cut',
+					parameters: {
+						pattern: '.',
+						column_name: '["state1","state2"]',
+						column_id: '["0000","0001"]',
+						scope: 'multi_columns',
+					},
+				},
+			};
+			const parameters = { column_id: '["0000","0001","0003"]', column_name: '["state1","state2","state3"]'}
+
+			// when
+			ctrl.updateStep(step, parameters);
+
+			// then
+			expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step,parameters);
+
 		}));
 
 		it('should return true if recipe has steps', inject((PlaygroundService) => {
@@ -472,10 +514,24 @@ describe('Recipe controller', () => {
 			transformation: { label: 'Cluster ...', name: 'cluster', stepId: '0003', cluster: {} },
 			actionParameters: { parameters: { column_name: 'firstname' } },
 		};
+		const multiColumnsStep = {
+			transformation: {
+				label: 'Concat columns ...',
+				name: 'concat_columns',
+				stepId: '0003'
+			},
+			actionParameters: {
+				parameters: {
+					column_id: ['0001','0002'],
+					scope: 'multi_columns'
+				}
+			},
+		};
 
 		beforeEach(inject(($q, StateService, LookupService) => {
 			spyOn(LookupService, 'loadFromStep').and.returnValue($q.when());
 			spyOn(StateService, 'setLookupVisibility').and.returnValue();
+			spyOn(StateService, 'setGridSelection').and.returnValue();
 		}));
 
 		it('should close lookup if it is opened', inject((StateService) => {
@@ -531,6 +587,18 @@ describe('Recipe controller', () => {
 			// then
 			expect(ctrl.showModal[clusterStep.transformation.stepId]).toBe(true);
 		});
+
+		it('should update selected columns', inject((StateService) => {
+			// given
+			const ctrl = createController();
+
+			// when
+			ctrl.select(multiColumnsStep);
+			scope.$digest();
+
+			// then
+			expect(StateService.setGridSelection).toHaveBeenCalled();
+		}));
 	});
 
 	describe('update step filter', () => {

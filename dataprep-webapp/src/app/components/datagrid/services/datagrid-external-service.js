@@ -47,7 +47,6 @@ export default class DatagridExternalService {
 		this.LookupService = LookupService;
 		this.StorageService = StorageService;
 		this.TransformationCacheService = TransformationCacheService;
-
 	}
 
     /**
@@ -140,9 +139,9 @@ export default class DatagridExternalService {
 	init(newGrid) {
 		this.grid = newGrid;
 		this._attachGridScrollListener();
-	    this.lastSelectedTab = null;
-	    this.lastSelectedColumn = null;
-	    this.lastSelectedColumnsNumber = null;
-	    this.lastSelectedLine = null;
+		this.lastSelectedTab = null;
+		this.lastSelectedColumn = null;
+		this.lastSelectedColumnsNumber = null;
+		this.lastSelectedLine = null;
 	}
 }

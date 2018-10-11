@@ -11,6 +11,9 @@
 
  ============================================================================*/
 const CLUSTER_TYPE = 'CLUSTER';
+const COLUMN = 'column';
+const MULTI_COLUMNS = 'multi_columns';
+
 
 /**
  * @ngdoc controller
@@ -354,10 +357,21 @@ export default class RecipeCtrl {
 	 * @description Update a step parameters in the loaded preparation
 	 */
 	updateStep(step, newParams) {
+		if (step.actionParameters.parameters.scope === MULTI_COLUMNS) {
+			newParams = this._updateSelectedColumns(newParams);
+		}
 		return this.PlaygroundService.updateStep(step, newParams)
 			.then(() => {
 				this.showModal = {};
 			});
+	}
+
+	_updateSelectedColumns(newParams) {
+		if (this.state.playground.grid.selectedColumns !== undefined) {
+			newParams.column_id = this.state.playground.grid.selectedColumns.map(col => col.id);
+			newParams.column_name = this.state.playground.grid.selectedColumns.map(col => col.name);
+		}
+		return newParams;
 	}
 
 	/**
@@ -422,6 +436,13 @@ export default class RecipeCtrl {
 	select(step) {
 		this._toggleDynamicParams(step);
 		this._toggleSpecificParams(step);
+
+		if (step.actionParameters.parameters.scope === MULTI_COLUMNS) {
+			this._selectMultiColumnsAction(step);
+		}
+		else if (step.actionParameters.parameters.scope === COLUMN) {
+			this._selectColumnAction(step);
+		}
 	}
 
 	_toggleDynamicParams(step) {
@@ -437,6 +458,29 @@ export default class RecipeCtrl {
 			this.StateService.setStepInEditionMode(step);
 			this.StateService.setLookupVisibility(true);
 			this.LookupService.loadFromStep(step);
+		}
+	}
+
+	_selectMultiColumnsAction(step) {
+		const columns = this.state.playground.data.metadata.columns;
+		const stepColumns = step.actionParameters.parameters.column_id;
+		const selectedColumns = [];
+		stepColumns.forEach(function (colId) {
+			const tmpSelectedColumn = columns.find(col => col.id === colId);
+			if (tmpSelectedColumn !== undefined) {
+				selectedColumns.push(tmpSelectedColumn);
+			}
+		});
+		this.StateService.setGridSelection(selectedColumns);
+	}
+
+	_selectColumnAction(step) {
+		const selectedColumn = this.state.playground
+			.data
+			.metadata
+			.columns.find(col => col.id === step.actionParameters.parameters.column_id);
+		if (selectedColumn !== undefined) {
+			this.StateService.setGridSelection([selectedColumn]);
 		}
 	}
 

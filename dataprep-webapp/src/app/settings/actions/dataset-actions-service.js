@@ -108,7 +108,8 @@ export default class DatasetActionsService {
 			this.ConfirmService
 				.confirm(
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-					{ type: this.i18n.DATASET, name: dataset.name }
+					{ type: this.i18n.DATASET, name: dataset.name },
+					true
 				)
 				.then(() => this.DatasetService.delete(dataset))
 				.then(() => this.MessageService.success(

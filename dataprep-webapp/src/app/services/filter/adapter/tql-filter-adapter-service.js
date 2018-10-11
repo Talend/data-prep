@@ -195,6 +195,9 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 	// ---------------------------------------------------CONVERTION-------------------------------------------------
 	// -------------------------------------------------TQL ==> FILTER----------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
+	function prettify(text) {
+		return text.substr(1, text.length - 2).replace(/\\\'/g, '\'');
+	}
 	// Initialize filter listeners which convert TQL to filter models
 	function onExactFilter(ctx) {
 		const type = EXACT;
@@ -202,7 +205,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		const args = {
 			phrase: [
 				{
-					value: ctx.children[2].getText().replace(/'/g, ''),
+					value: prettify(ctx.children[2].getText()),
 				},
 			],
 		};
@@ -214,7 +217,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		const args = {
 			phrase: [
 				{
-					value: ctx.children[2].getText().replace(/'/g, ''),
+					value: prettify(ctx.children[2].getText()),
 				},
 			],
 		};
@@ -226,7 +229,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		const args = {
 			patterns: [
 				{
-					value: ctx.children[2].getText().replace(/'/g, ''),
+					value: prettify(ctx.children[2].getText()),
 				},
 			],
 		};
@@ -238,7 +241,7 @@ export default function TqlFilterAdapterService($translate, FilterUtilsService) 
 		const args = {
 			patterns: [
 				{
-					value: ctx.children[2].getText().replace(/'/g, ''),
+					value: prettify(ctx.children[2].getText()),
 				},
 			],
 		};

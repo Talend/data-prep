@@ -155,7 +155,7 @@ public class FeatureContext {
     }
 
     public static String getSuffix() {
-        return USE_SUFFIX ? TI_SUFFIX_UID : "";
+        return USE_SUFFIX ? TI_SUFFIX_UID : StringUtils.EMPTY;
     }
 
     public static boolean isUseSuffix() {

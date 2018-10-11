@@ -1,0 +1,21 @@
+.tc-tab-bar {
+  $tc-tab-bar-padding: 1rem;
+
+  display: flex;
+  overflow-x: hidden;
+
+  > li:first-child > * {
+    padding-left: $tc-tab-bar-padding;
+  }
+
+  > li > * {
+    padding: {
+      left: $tc-tab-bar-padding;
+      right: $tc-tab-bar-padding;
+    }
+  }
+
+  + .tab-content {
+    display: none;
+  }
+}

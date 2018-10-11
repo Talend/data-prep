@@ -1082,7 +1082,8 @@ export default function PlaygroundService(
 		return (
 			!columns ||
 			!columns.length || // no columns
-			!columns[0].statistics.frequencyTable.length // no frequency table implies no async stats computed
+			!columns[0].statistics.frequencyTable.length || // no frequency table implies no async stats computed
+			!columns[0].statistics.wordPatternFrequencyTable.length // no word pattern frequency table implies 4404 migration not done
 		) && state.playground.grid.nbLines;
 	}
 

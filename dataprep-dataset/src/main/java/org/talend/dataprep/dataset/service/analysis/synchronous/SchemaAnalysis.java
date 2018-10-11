@@ -88,7 +88,14 @@ public class SchemaAnalysis implements SynchronousDataSetAnalyzer {
                     adapter.adapt(columns, analyzer.getResult());
                     LOGGER.info("Analyzed schema in dataset #{}.", dataSetId);
                     metadata.getLifecycle().schemaAnalyzed(true);
-                    repository.save(metadata);
+
+                    DataSetMetadata savedDataSetMetadata = repository.get(dataSetId);
+                    // in order to check that the dataset was not deleted during analysis
+                    if (savedDataSetMetadata != null) {
+                        repository.save(metadata);
+                    } else {
+                        LOGGER.info("Data set #{} no longer exists.", dataSetId); //$NON-NLS-1$
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.error("Unable to analyse schema for dataset " + dataSetId + ".", e);

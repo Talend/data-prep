@@ -17,25 +17,7 @@
 	height: 100%;
 	position: relative;
 
-    .tab-content {
-      display: none;
-    }
 
-    .tc-tab-bar-actions {
-      display: flex;
-      overflow-x: hidden;
-
-      > li:first-child > * {
-        padding-left: 15px;
-      }
-
-      > li > * {
-        padding: {
-          left: 10px;
-          right: 10px;
-        }
-      }
-    }
 
     .stats-container {
         flex-grow: 1;
@@ -72,6 +54,7 @@
 
       + .stat-detail-tab-items {
         top: 4rem;
+        height: auto;
       }
     }
 

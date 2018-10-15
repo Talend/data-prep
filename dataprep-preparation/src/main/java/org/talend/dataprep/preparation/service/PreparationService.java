@@ -1349,10 +1349,11 @@ public class PreparationService {
         preparationRepository.add(newContent);
 
         // Update preparation head step
+        // TODO improve that too much request to the repo
         setPreparationHead(preparation, newHead);
     }
 
-    /**
+    /**reparationServiceTestUnit.j
      * Deletes the step of specified id of the specified preparation
      *
      * @param preparation the specified preparation

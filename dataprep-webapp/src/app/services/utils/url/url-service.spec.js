@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-fdescribe('URL service', () => {
+describe('URL service', () => {
 	beforeEach(angular.mock.module('data-prep.services.utils'));
 
 	describe('build', () => {

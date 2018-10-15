@@ -195,17 +195,14 @@ export default function PreparationRestService($http, RestURLs, UrlService) {
      * @returns {promise} The PUT promise
      */
 	function move(preparationId, fromFolderId, toFolderId, name = '') {
-		const origin = encodeURIComponent(fromFolderId);
-		const destination = encodeURIComponent(toFolderId);
-		const newName = encodeURIComponent(name.normalize());
 		const request = {
 			method: 'PUT',
 			url: UrlService.build(
 				`${RestURLs.preparationUrl}/${preparationId}/move`,
 				{
-					folder: origin,
-					destination,
-					newName,
+					folder: fromFolderId,
+					destination: toFolderId,
+					newName: name,
 				},
 			),
 		};

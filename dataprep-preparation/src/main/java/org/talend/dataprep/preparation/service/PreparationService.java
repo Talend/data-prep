@@ -117,6 +117,8 @@ public class PreparationService {
 
     private static final String NAME = "name";
 
+    private static final String FIRST_COLUMN_INDEX = "0000";
+
     /**
      * Where preparation are stored.
      */
@@ -1231,7 +1233,7 @@ public class PreparationService {
      */
     private Function<AppendStep, AppendStep> shiftCreatedColumns(final int shiftColumnAfterId, final int shiftNumber) {
 
-        final DecimalFormat format = new DecimalFormat("0000"); //$NON-NLS-1$
+        final DecimalFormat format = new DecimalFormat(FIRST_COLUMN_INDEX); //$NON-NLS-1$
         return step -> {
             final List<String> stepCreatedCols = step.getDiff().getCreatedColumns();
             final List<String> shiftedStepCreatedCols = stepCreatedCols.stream().map(colIdStr -> {
@@ -1255,7 +1257,7 @@ public class PreparationService {
      * @return The same step but modified
      */
     private Function<AppendStep, AppendStep> shiftStepParameter(final int shiftColumnAfterId, final int shiftNumber) {
-        final DecimalFormat format = new DecimalFormat("0000"); //$NON-NLS-1$
+        final DecimalFormat format = new DecimalFormat(FIRST_COLUMN_INDEX); //$NON-NLS-1$
         return step -> {
             final Action firstAction = step.getActions().get(0);
             final Map<String, String> parameters = firstAction.getParameters();

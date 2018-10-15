@@ -39,7 +39,8 @@ public class ReorderStepsUtils {
         return !appendSteps.stream().anyMatch(step -> {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
-                final String[] columnIds = ActionsUtils.extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
+                final String[] columnIds =
+                        ActionsUtils.extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
 
                 // remove the created columns from not available columns
                 notYetAvailableColumnsIds.removeAll(step.getDiff().getCreatedColumns());

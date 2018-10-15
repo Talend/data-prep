@@ -1347,12 +1347,14 @@ public class PreparationService {
         newHead.setContent(newContent.id());
         newHead.setDiff(appendStep.getDiff());
         preparation.getSteps().add(newHead.id());
-        preparationRepository.add(newHead);
-        preparationRepository.add(newContent);
 
         // Update preparation head step
-        // TODO improve that too much request to the repo
-        setPreparationHead(preparation, newHead);
+        preparation.setHeadId(newHead.id());
+        preparation.setLastModificationDate(System.currentTimeMillis());
+
+        preparationRepository.add(newContent);
+        preparationRepository.add(newHead);
+        preparationRepository.add(preparation);
     }
 
     /**reparationServiceTestUnit.j

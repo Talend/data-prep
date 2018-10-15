@@ -1357,7 +1357,7 @@ public class PreparationService {
         preparationRepository.add(preparation);
     }
 
-    /**reparationServiceTestUnit.j
+    /**
      * Deletes the step of specified id of the specified preparation
      *
      * @param preparation the specified preparation

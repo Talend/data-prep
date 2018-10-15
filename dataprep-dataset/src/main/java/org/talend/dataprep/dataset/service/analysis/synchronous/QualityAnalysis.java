@@ -43,9 +43,6 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QualityAnalysis.class);
 
-    @Value("#{'${max_records:2000}'}")
-    private final int maxRecord = 2000;
-
     @Autowired
     DataSetMetadataRepository repository;
 
@@ -57,6 +54,9 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
 
     @Autowired
     AnalyzerService analyzerService;
+
+    @Value("#{'${max_records:2000}'}")
+    private final int maxRecord = 2000;
 
     /**
      * Analyse the dataset metadata quality.
@@ -81,12 +81,14 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
                 LOGGER.debug("No need to recompute quality of data set #{} (statistics are completed).", dataSetId);
                 return;
             }
+            if (!metadata.getLifecycle().schemaAnalyzed()) {
+                LOGGER.debug(
+                        "Schema information must be computed before quality analysis can be performed, ignoring message");
+                return; // no acknowledge to allow re-poll.
+            }
+
             try (Stream<DataSetRow> stream = store.stream(metadata)) {
-                if (!metadata.getLifecycle().schemaAnalyzed()) {
-                    LOGGER.debug(
-                            "Schema information must be computed before quality analysis can be performed, ignoring message");
-                    return; // no acknowledge to allow re-poll.
-                }
+
                 LOGGER.debug("Analyzing quality of dataset #{}...", metadata.getId());
                 // New data set, or reached the max limit of records for synchronous analysis, trigger a full scan (but
                 // async).
@@ -105,8 +107,13 @@ public class QualityAnalysis implements SynchronousDataSetAnalyzer {
                 }
                 // ... all quality is now analyzed, mark it so.
                 metadata.getLifecycle().qualityAnalyzed(true);
-                repository.save(metadata);
-                LOGGER.debug("Analyzed quality of dataset #{}.", dataSetId);
+                final DataSetMetadata savedDataSetMetadata = repository.get(metadata.getId());
+                // in order to check that the dataset was not deleted during analysis
+                if (savedDataSetMetadata != null) {
+                    repository.save(metadata);
+                    LOGGER.debug("Analyzed quality of dataset #{}.", dataSetId);
+                }
+
             } catch (Exception e) {
                 LOGGER.warn("dataset '{}' generate an error, message: {} ", dataSetId, e.getMessage());
                 throw new TDPException(DataSetErrorCodes.UNABLE_TO_ANALYZE_DATASET_QUALITY, e);

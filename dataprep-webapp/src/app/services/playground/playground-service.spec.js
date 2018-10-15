@@ -22,7 +22,7 @@ import {
 
 describe('Playground Service', () => {
 	const datasetColumnsWithoutStatistics = {
-		columns: [{ id: '0001', statistics: { frequencyTable: [] } }],
+		columns: [{ id: '0001', statistics: { frequencyTable: [], wordPatternFrequencyTable: [] } }],
 		records: [],
 		data: [],
 	};
@@ -35,25 +35,25 @@ describe('Playground Service', () => {
 			nbLinesHeader: 1,
 			nbLinesFooter: 0,
 			created: '03-30-2015 08:06',
-			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 		},
 		records: [],
 		data: [],
 	};
 	const datasetMetadata = {
 		records: 19,
-		columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+		columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 	};
 
 	const preparationMetadata = {
 		metadata: {
-			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+			columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 		},
 		records: [{}],
 	};
 	const preparationMetadataWithoutStatistics = {
 		metadata: {
-			columns: [{ id: '0001', statistics: { frequencyTable: [] } }],
+			columns: [{ id: '0001', statistics: { frequencyTable: [], wordPatternFrequencyTable: [] } }],
 		},
 		records: [],
 	};
@@ -113,7 +113,7 @@ describe('Playground Service', () => {
 				sampleType: 'HEAD',
 				data: {
 					metadata: {
-						columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+						columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 					},
 				},
 			},
@@ -599,7 +599,7 @@ describe('Playground Service', () => {
 					lastname: 'Johnson',
 				},],
 				metadata: {
-					columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }] } }],
+					columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 				},
 			};
 
@@ -1937,6 +1937,10 @@ describe('Playground Service', () => {
 								value: 'toto',
 								frequency: 10,
 							}],
+							wordPatternFrequencyTable: [{
+								value: '[word]',
+								frequency: 10,
+							}],
 						},
 					}],
 				},
@@ -2014,7 +2018,7 @@ describe('Playground Service', () => {
 			expect(PlaygroundService.loadPreparation).not.toHaveBeenCalled();
 		}));
 
-		it('should fetch statistics when they are not computed yet',
+		it('should fetch statistics if frequencyTable is  not computed yet',
 			inject(($q, $rootScope, PreparationService, PlaygroundService, StateService) => {
 				// given
 				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
@@ -2034,6 +2038,45 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [{ aaa: 1}],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
+					},
+				};
+				$rootScope.$apply();
+
+				// then
+				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(true);
+				expect(PlaygroundService.updateStatistics).toHaveBeenCalled();
+				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(false);
+			})
+		);
+
+		it('should fetch statistics if wordPatternFrequencyTable is  not computed yet',
+			inject(($q, $rootScope, PreparationService, PlaygroundService, StateService) => {
+				// given
+				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+				stateMock.playground.preparation = preparations[0];
+
+				// when
+				PlaygroundService.loadPreparation(preparations[0]);
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [{ aaa: 1}],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2080,6 +2123,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2126,6 +2170,10 @@ describe('Playground Service', () => {
 										value: 'toto',
 										frequency: 10,
 									}],
+									wordPatternFrequencyTable: [{
+										value: '[word]',
+										frequency: 1,
+									}],
 								},
 							}],
 						},
@@ -2163,6 +2211,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2200,6 +2249,10 @@ describe('Playground Service', () => {
 								value: 'toto',
 								frequency: 10,
 							}],
+							wordPatternFrequencyTable: [{
+								value: '[word]',
+								frequency: 10,
+							}],
 						},
 					}],
 				},
@@ -2235,7 +2288,7 @@ describe('Playground Service', () => {
 			expect(PlaygroundService.loadDataset).toHaveBeenCalledWith(datasetId);
 		}));
 
-		it('should fetch statistics when they are not computed yet',
+		it('should fetch statistics if frequencyTable is not computed yet',
 			inject(($q, $rootScope, PlaygroundService, StateService) => {
 				// given
 				stateMock.playground.dataset = datasets[0];
@@ -2255,6 +2308,45 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [{ aaa: 1}],
+								},
+							}],
+						},
+					},
+					grid: {
+						nbLines: 10000
+					},
+				};
+				$rootScope.$apply();
+
+				// then
+				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(true);
+				expect(PlaygroundService.updateStatistics).toHaveBeenCalled();
+				expect(StateService.setIsFetchingStats).toHaveBeenCalledWith(false);
+			})
+		);
+
+		it('should fetch statistics if wordPatternFrequencyTable is not computed yet',
+			inject(($q, $rootScope, PlaygroundService, StateService) => {
+				// given
+				stateMock.playground.dataset = datasets[0];
+
+				spyOn(PlaygroundService, 'updateStatistics').and.returnValue($q.when());
+
+				// when
+				PlaygroundService.loadDataset(datasets[0]);
+				expect(StateService.setIsFetchingStats).not.toHaveBeenCalled();
+				expect(PlaygroundService.updateStatistics).not.toHaveBeenCalled();
+				stateMock.playground = {
+					...stateMock.playground,
+					data: {
+						metadata: {
+							id: 'de3cc32a-b624-484e-b8e7-dab9061a009c',
+							name: 'customers_jso_light',
+							columns: [{
+								statistics: {
+									frequencyTable: [{ aaa: 1}],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2301,6 +2393,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},
@@ -2347,6 +2440,10 @@ describe('Playground Service', () => {
 										value: 'toto',
 										frequency: 10,
 									}],
+									wordPatternFrequencyTable: [{
+										value: '[word]',
+										frequency: 10
+									}],
 								},
 							}],
 						},
@@ -2384,6 +2481,7 @@ describe('Playground Service', () => {
 							columns: [{
 								statistics: {
 									frequencyTable: [],
+									wordPatternFrequencyTable: [],
 								},
 							}],
 						},

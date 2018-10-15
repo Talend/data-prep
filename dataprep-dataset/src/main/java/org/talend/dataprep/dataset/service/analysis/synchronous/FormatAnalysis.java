@@ -155,21 +155,31 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
     /**
      * Update the given dataset metadata with the specified format.
      *
-     * @param metadata the dataset metadata to update.
+     * @param updatedMetadata the dataset metadata to update.
      * @param format the specified format used to update the dataset metadata
      */
-    private void internalUpdateMetadata(DataSetMetadata metadata, Format format) {
+    private void internalUpdateMetadata(DataSetMetadata updatedMetadata, Format format) {
         FormatFamily formatFamily = format.getFormatFamily();
-        DataSetContent dataSetContent = metadata.getContent();
+        DataSetContent dataSetContent = updatedMetadata.getContent();
 
-        final String mediaType = metadata.getLocation().toMediaType(format.getFormatFamily());
+        final String mediaType = updatedMetadata.getLocation().toMediaType(format.getFormatFamily());
         dataSetContent.setFormatFamilyId(formatFamily.getBeanId());
         dataSetContent.setMediaType(mediaType);
-        metadata.setEncoding(format.getEncoding());
+        updatedMetadata.setEncoding(format.getEncoding());
 
-        parseColumnNameInformation(metadata.getId(), metadata, format);
+        parseColumnNameInformation(updatedMetadata.getId(), updatedMetadata, format);
 
-        repository.save(metadata);
+        DistributedLock datasetLock = repository.createDatasetMetadataLock(updatedMetadata.getId());
+        try {
+            datasetLock.lock();
+            final DataSetMetadata savedDataSetMetadata = repository.get(updatedMetadata.getId());
+            // in order to check that the dataset was not deleted during analysis
+            if (savedDataSetMetadata != null) {
+                repository.save(updatedMetadata);
+            }
+        } finally {
+            datasetLock.unlock();
+        }
     }
 
     /**

@@ -15,7 +15,20 @@
 
 package org.talend.dataprep.dataset.adapter;
 
-import com.google.common.base.Throwables;
+import static java.lang.Boolean.TRUE;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.talend.daikon.exception.ExceptionContext.build;
+import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
+import static org.talend.dataprep.util.SortAndOrderHelper.Order;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -43,19 +56,7 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.util.ConverterBasedPropertyEditor;
 import org.talend.dataprep.util.avro.AvroUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
-import static java.lang.Boolean.TRUE;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.talend.daikon.exception.ExceptionContext.build;
-import static org.talend.dataprep.dataset.adapter.Dataset.CertificationState.CERTIFIED;
-import static org.talend.dataprep.util.SortAndOrderHelper.Order;
-import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import com.google.common.base.Throwables;
 
 @RestController
 @RequestMapping("/api/v1/datasets")
@@ -161,6 +162,8 @@ public class DataSetController {
             result = new ByteArrayInputStream(outputStream.toByteArray());
         } catch (IOException e) {
             throw new TalendRuntimeException(BaseErrorCodes.UNEXPECTED_EXCEPTION, e);
+        } finally {
+            records.close();
         }
         return new InputStreamResource(result);
     }

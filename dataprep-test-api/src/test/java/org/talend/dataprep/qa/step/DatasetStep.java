@@ -73,6 +73,12 @@ public class DatasetStep extends DataPrepStep {
         assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
+    @Given("^It doesn't exist any dataset with the following name \"(.*)\"$") //
+    public void notExistDataset(String name) throws IOException {
+        List<ContentMetadata> datasetMetas = listDatasetMeta();
+        assertEquals(0, countFilteredDatasetList(datasetMetas, name));
+    }
+
     /**
      * Count how many {@link ContentMetadata} corresponding to the specified name & row number exists in the given
      * {@link List}.
@@ -87,6 +93,21 @@ public class DatasetStep extends DataPrepStep {
                 .stream() //
                 .filter(d -> (suffixName(datasetName).equals(d.name)) //
                         && nbRows.equals(d.records)) //
+                .count();
+    }
+
+    /**
+     * Count how many {@link ContentMetadata} corresponding to the specified name exists in the given
+     * {@link List}.
+     *
+     * @param datasetMetas the {@link List} of {@link ContentMetadata} to filter.
+     * @param datasetName the searched dataset name.
+     * @return the number of corresponding {@link ContentMetadata}.
+     */
+    private long countFilteredDatasetList(List<ContentMetadata> datasetMetas, String datasetName) {
+        return datasetMetas //
+                .stream() //
+                .filter(d -> (suffixName(datasetName).equals(d.name))) //
                 .count();
     }
 
@@ -112,6 +133,17 @@ public class DatasetStep extends DataPrepStep {
         String datasetId = context.getDatasetId(suffixedDatasetName);
         Response response = api.updateDataset(fileName, suffixedDatasetName, datasetId);
         response.then().statusCode(OK.value());
+    }
+
+    @When("^I delete the dataset called \"(.*)\"$") //
+    public void iDeleteTheDataset(String datasetName) {
+        deleteDatasetByName(datasetName).then().statusCode(OK.value());
+    }
+
+    private Response deleteDatasetByName(String datasetName) {
+        String suffixedDatasetName = suffixName(datasetName);
+        String datasetId = context.getDatasetId(suffixedDatasetName);
+        return api.deleteDataset(datasetId);
     }
 
     @When("^I load the existing dataset called \"(.*)\"$")

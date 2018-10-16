@@ -53,15 +53,14 @@
     hoist-non-react-statics "^1.2.0"
     mock-socket "^7.0.0"
 
-"@talend/react-cmf-webpack-plugin@0.202.0":
-  version "0.202.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf-webpack-plugin/-/react-cmf-webpack-plugin-0.202.0.tgz#79bccc3b3f78248a2b8741b0a1f3e717a36d8d6a"
-  integrity sha512-Ru6MF5HKCaNi53jQUYgIgK3Hn4zAOFktN0aLnxC23gdylZsXh3ihlYuilutKlCIIepZ+NZ81dcI5k1PVaMDJoA==
+"@talend/react-cmf-webpack-plugin@^0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf-webpack-plugin/-/react-cmf-webpack-plugin-0.166.0.tgz#18dfcd060fdbd44c048a04e7ae3b7dddaf514c25"
+  integrity sha512-yp1wS8jboev8wQ8ClBHR8qmBphMiGJ9tkbc/QdJ+zOhbmrbAQtEnWQtQXPMHD+i80+1UkE+LEIiDDZlTvY2f8A==
   dependencies:
-    "@talend/react-cmf" "^0.202.0"
+    "@talend/react-cmf" "^0.166.0"
     chokidar "^2.0.2"
-    deepmerge "^1.5.1"
-    lodash "^4.17.4"
+    deepmerge "1.5.1"
     mkdirp "^0.5.1"
 
 "@talend/react-cmf@1.2.1":
@@ -96,37 +95,15 @@
     redux-storage-engine-localstorage "^1.1.4"
     redux-thunk "^2.2.0"
 
-"@talend/react-cmf@^0.202.0":
-  version "0.202.0"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.202.0.tgz#5b8379b7fd924bd42dcd0f55bcda8a3fba8a7285"
-  integrity sha512-8ltghS4rrXRtzzDaTahhUCgB7rlp9hnEyp/ongRozqkzISiHEfTNOWc11IRjNNpPEunyVcbNUpfJ32tsTYGe0g==
+"@talend/react-cmf@^0.166.0":
+  version "0.166.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.166.0.tgz#493c24d2c176f7ce7fe028f194920e0aa5daa3c1"
+  integrity sha512-5NdLR/w+kqV3J2qd7OSQmcKpf3UvyXN2aIGRYdqpv70wpP2qomHNH8TcV5kiQoIntv3dOe/PiXNfxFh5r3jn8g==
   dependencies:
-    ajv "^6.2.1"
-    babel-polyfill "^6.26.0"
-    bson-objectid "^1.1.5"
-    classnames "^2.2.5"
-    deepmerge "^1.5.1"
+    babel-polyfill "6.26.0"
+    deepmerge "1.5.1"
     hoist-non-react-statics "^1.2.0"
-    immutable "^3.8.1"
-    invariant "^2.2.2"
-    jsonpath "^1.0.0"
-    lodash "^4.17.4"
-    mkdirp "^0.5.1"
-    path-to-regexp "^2.0.0"
-    prop-types "^15.5.10"
-    react-immutable-proptypes "^2.1.0"
-    react-redux "^5.0.7"
-    react-router "^3.2.0"
-    react-router-redux "^4.0.8"
-    redux "^3.7.2"
-    redux-batched-actions "^0.2.0"
-    redux-batched-subscribe "^0.1.6"
-    redux-saga "^0.15.4"
-    redux-storage "^4.1.2"
-    redux-storage-decorator-filter "^1.1.8"
-    redux-storage-decorator-immutablejs "^1.0.4"
-    redux-storage-engine-localstorage "^1.1.4"
-    redux-thunk "^2.2.0"
+    react-immutable-proptypes "2.1.0"
 
 "@talend/react-components@1.2.1":
   version "1.2.1"
@@ -1535,7 +1512,7 @@ babel-polyfill@6.23.0:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
 
-babel-polyfill@^6.26.0:
+babel-polyfill@6.26.0, babel-polyfill@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.26.0.tgz#379937abc67d7895970adc621f284cd966cf2153"
   integrity sha1-N5k3q8Z9eJWXCtxiHyhM2WbPIVM=
@@ -3432,6 +3409,11 @@ deep-is@~0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
   integrity sha1-s2nW+128E+7PUk+RsHD+7cNXzzQ=
+
+deepmerge@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-1.5.1.tgz#c053bf06fd7276f1994f70c09a0760cb61a56237"
+  integrity sha512-Ndl8eeOHB9dQkmT1HWCgY3t0odl4bmWKFzjQZBYAxVTNs2B3nn5b6orimRYHKZ4FI8psvZkA1INRCW6l7vc9lQ==
 
 deepmerge@^1.5.1:
   version "1.5.2"

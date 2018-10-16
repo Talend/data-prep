@@ -11,8 +11,10 @@
 
   ============================================================================*/
 import { CTRL_KEY_NAME } from '../../../services/filter/filter-service.js';
+import { PATTERNS_TYPE } from '../../../services/statistics/statistics-service.js';
 import {
 	MATCHES,
+	MATCHES_WORDS,
 	QUALITY,
 } from '../../../services/filter/adapter/tql-filter-adapter-service';
 
@@ -25,14 +27,21 @@ import {
  * @requires data-prep.services.statisticsService.service:StatisticsService
  * @requires data-prep.services.statisticsService.service:StatisticsTooltipService
  */
-export default function StatsDetailsCtrl(state, $translate, FilterManagerService, StatisticsService, StatisticsTooltipService) {
+export default function StatsDetailsCtrl(state, $translate, FilterManagerService, StateService, StatisticsService, StatisticsTooltipService) {
 	'ngInject';
 
 	const vm = this;
+
 	vm.state = state;
 	vm.statisticsService = StatisticsService;
 	vm.statisticsTooltipService = StatisticsTooltipService;
+	vm.StateService = StateService;
+
 	vm.addPatternFilter = addPatternFilter;
+	vm.onCharacterPatternSelect = onCharacterPatternSelect;
+	vm.onWordPatternSelect = onWordPatternSelect;
+
+	vm.PATTERNS = PATTERNS_TYPE;
 
 	vm.tabs = [
 		{
@@ -62,13 +71,13 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 		vm.selectedTab = item.key;
 	};
 
-    /**
-     * @ngdoc method
-     * @name addPatternFilter
-     * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
-     * @param {object} item Pattern object (ex : {'pattern':'aaa','occurrences':8})
-     * @description Add a pattern filter from selected pattern item
-     */
+	/**
+	 * @ngdoc method
+	 * @name addPatternFilter
+	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
+	 * @param {object} item Pattern object (ex : {'pattern':'aaa','occurrences':8})
+	 * @description Add a pattern filter from selected pattern item
+	 */
 	function addPatternFilter(item, keyName = null) {
 		const column = state.playground.grid.selectedColumns[0];
 		const args = {
@@ -78,8 +87,29 @@ export default function StatsDetailsCtrl(state, $translate, FilterManagerService
 				},
 			],
 		};
+		const isWordPatternType = vm.state.playground.statistics.patternsType === PATTERNS_TYPE.WORD;
 		return item.pattern || keyName === CTRL_KEY_NAME ?
-			FilterManagerService.addFilterAndDigest(MATCHES, column.id, column.name, args, null, keyName) :
+			FilterManagerService.addFilterAndDigest(isWordPatternType ? MATCHES_WORDS : MATCHES, column.id, column.name, args, null, keyName) :
 			FilterManagerService.addFilterAndDigest(QUALITY, column.id, column.name, { empty: true, invalid: false }, null, keyName);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onCharacterPatternSelect
+	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
+	 * @description Select character based patterns
+	 */
+	function onCharacterPatternSelect() {
+		vm.StateService.setStatisticsPatternsType(PATTERNS_TYPE.CHARACTER);
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name onWordPatternSelect
+	 * @methodOf data-prep.stats-details.controller:StatsDetailsCtrl
+	 * @description Select word based patterns
+	 */
+	function onWordPatternSelect() {
+		vm.StateService.setStatisticsPatternsType(PATTERNS_TYPE.WORD);
 	}
 }

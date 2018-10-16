@@ -348,7 +348,8 @@ describe('Preparation actions service', () => {
 			// then
 			expect(ConfirmService.confirm).toHaveBeenCalledWith(
 				['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-				{ type: 'Preparation', name: preparation.name }
+				{ type: 'Preparation', name: preparation.name },
+				true
 			);
 		}));
 

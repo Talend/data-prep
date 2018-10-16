@@ -12,12 +12,53 @@
 
 package org.talend.dataprep.dataset.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
+import static com.jayway.restassured.http.ContentType.JSON;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.Instant.now;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
+import static org.talend.dataprep.util.SortAndOrderHelper.Sort.LAST_MODIFICATION_DATE;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,50 +89,9 @@ import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.schema.csv.CSVFormatFamily;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static com.jayway.restassured.RestAssured.expect;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static com.jayway.restassured.http.ContentType.JSON;
-import static com.jayway.restassured.path.json.JsonPath.from;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.Instant.now;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
-import static org.talend.dataprep.util.SortAndOrderHelper.Sort.LAST_MODIFICATION_DATE;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.restassured.response.Response;
 
 public class DataSetServiceTest extends DataSetBaseTest {
 
@@ -680,6 +680,49 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(ids.size(), is(1));
         int statusCode = when().get("/datasets/{id}/content", expectedId).getStatusCode();
         assertEquals("statusCode is:" + statusCode, statusCode, OK.value());
+    }
+
+    @Test
+    public void get_recomputeWordPatternStats() throws Exception {
+        // Given
+        final String dataSetId =
+                createCSVDataSet(this.getClass().getResourceAsStream("../avengers.csv"), "dataset with filter");
+
+        // first check => word pattern stats should be present
+        DataSet datasetMetadataBeforeGet = mapper
+                .readerFor(DataSet.class)
+                .readValue(when().get("/datasets/{id}/metadata", dataSetId).asInputStream());
+        assertTrue(datasetMetadataBeforeGet.getMetadata().getRowMetadata().getColumns().stream().noneMatch(
+                c -> c.getStatistics().getWordPatternFrequencyTable().isEmpty()
+                        && c.getStatistics().getPatternFrequencies().isEmpty()));
+
+        // manually clear word pattern stats
+        DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
+        dataSetMetadata.getRowMetadata().getColumns().forEach(c -> {
+            c.getStatistics().getWordPatternFrequencyTable().clear();
+            c.getStatistics().getPatternFrequencies().clear();
+        });
+        dataSetMetadataRepository.save(dataSetMetadata);
+
+        // recheck => word pattern stats should be removed
+        DataSet datasetMetadataJustBeforeGet = mapper
+                .readerFor(DataSet.class)
+                .readValue(when().get("/datasets/{id}/metadata", dataSetId).asInputStream());
+        assertTrue(datasetMetadataJustBeforeGet.getMetadata().getRowMetadata().getColumns().stream().allMatch(
+                c -> c.getStatistics().getWordPatternFrequencyTable().isEmpty()
+                        && c.getStatistics().getPatternFrequencies().isEmpty()));
+
+        // When fetching dataset
+        given().queryParam("metadata", "true").get("/datasets/{id}/content", dataSetId);
+
+        // Then
+        // final check => word pattern stats should be here again
+        DataSet datasetMetadataAfterGet = mapper
+                .readerFor(DataSet.class)
+                .readValue(when().get("/datasets/{id}/metadata", dataSetId).asInputStream());
+        assertTrue(datasetMetadataAfterGet.getMetadata().getRowMetadata().getColumns().stream().noneMatch(
+                c -> c.getStatistics().getWordPatternFrequencyTable().isEmpty()
+                        && c.getStatistics().getPatternFrequencies().isEmpty()));
     }
 
     @Test
@@ -1822,7 +1865,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
         assertThat(column.getDomain(), is(""));
         final Statistics statistics = mapper.readerFor(Statistics.class).readValue(
                 this.getClass().getResourceAsStream("../date_time_pattern_expected.json"));
-        assertThat(column.getStatistics(), CoreMatchers.equalTo(statistics));
+        assertThat(column.getStatistics(), equalTo(statistics));
     }
 
     @Test

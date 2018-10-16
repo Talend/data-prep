@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -45,7 +46,7 @@ public class FileStep extends DataPrepStep {
             throws IOException {
         LOG.debug("I check that {} temporary file equals {} file", temporaryFilename, expectedFilename);
 
-        Path tempFile = context.getTempFile(temporaryFilename).toPath();
+        Path tempFile = Objects.requireNonNull(context.getTempFile(temporaryFilename)).toPath();
 
         try (InputStream tempFileStream = Files.newInputStream(tempFile);
                 InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {

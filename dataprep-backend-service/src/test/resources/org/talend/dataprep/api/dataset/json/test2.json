@@ -29,7 +29,7 @@
         "quality": {
           "empty": 0,
           "invalid": 10,
-          "valid": 50,
+          "valid": 50
         },
         "statistics": {},
         "domain": ""

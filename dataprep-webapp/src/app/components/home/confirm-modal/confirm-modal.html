@@ -1,5 +1,4 @@
 <talend-modal fullscreen="false"
-              close-button="true"
               class="confirm-modal"
               state="$ctrl.state.confirm.visible"
               ng-if="$ctrl.state.confirm.visible">
@@ -10,14 +9,20 @@
 
     <div class="modal-buttons">
         <button
-            class="btn talend-modal-close btn-default modal-secondary-button"
+            class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
             ng-click="$ctrl.ConfirmService.reject()">
-            <span translate-once="NO"></span>
+            <span>
+                {{ ($ctrl.state.confirm.deletion ? 'CANCEL' : 'NO') | translate }}
+            </span>
         </button>
         <button
-            class="btn talend-modal-close btn-primary modal-primary-button"
-            ng-click="$ctrl.ConfirmService.resolve()">
-            <span translate-once="YES"></span>
+            class="btn modal-primary-button"
+            ng-class="{ 'btn-danger': $ctrl.state.confirm.deletion, 'btn-primary': !$ctrl.state.confirm.deletion }"
+            ng-click="$ctrl.ConfirmService.resolve()"
+            type="submit">
+            <span>
+                {{ ($ctrl.state.confirm.deletion ? 'DELETE' : 'YES') | translate }}
+            </span>
         </button>
     </div>
 </talend-modal>

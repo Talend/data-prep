@@ -336,6 +336,8 @@
   "STATS_TAB_VALUE": "Valeur",
   "STATS_TAB_PATTERN": "Modèle",
   "STATS_TAB_ADVANCED": "Avancé",
+  "CHARACTER_PATTERNS_TOGGLE": "Modèle par caractère",
+  "WORD_PATTERNS_TOGGLE": "Modèle par mot",
 
   "_comment": "Dataset actions",
   "REPLACE_FILE_CONTENT": "Écraser le jeu de données par un autre fichier",

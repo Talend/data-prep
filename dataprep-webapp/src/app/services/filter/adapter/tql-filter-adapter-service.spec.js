@@ -12,11 +12,12 @@
   ============================================================================*/
 
 import {
-    CONTAINS,
-    EXACT,
-    INSIDE_RANGE,
-    MATCHES,
-    QUALITY,
+	CONTAINS,
+	EXACT,
+	INSIDE_RANGE,
+	MATCHES,
+	MATCHES_WORDS,
+	QUALITY,
 } from './tql-filter-adapter-service';
 
 import i18n from './../../../../i18n/en.json';
@@ -155,6 +156,23 @@ describe('TQL Filter Adapter Service', () => {
                 //then
                 expect(filter.value).toEqual([{ value: 'Aa9' }]);
             }));
+
+            it('should return value on MATCHES_WORDS filter', inject((TqlFilterAdapterService) => {
+                //given
+                const args = {
+                    patterns: [
+                        {
+                            value: '[alnum]',
+                        },
+                    ],
+                };
+
+                //when
+                const filter = TqlFilterAdapterService.createFilter(MATCHES_WORDS, null, null, null, args, null);
+
+                //then
+                expect(filter.value).toEqual([{ value: '[alnum]' }]);
+            }));
         });
     });
 
@@ -245,6 +263,23 @@ describe('TQL Filter Adapter Service', () => {
 			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 complies 'Aa9'))");
 		}));
 
+		it('should return tql for MATCHES_WORDS filter', inject((TqlFilterAdapterService) => {
+			//given
+			const args = {
+				patterns: [
+					{
+						value: '[alnum]',
+					},
+				],
+			};
+
+			//when
+			const filter = TqlFilterAdapterService.createFilter(MATCHES_WORDS, '0000', 'id', null, args, null);
+
+			//then
+			expect(TqlFilterAdapterService.toTQL([filter])).toEqual("((0000 wordComplies '[alnum]'))");
+		}));
+
 		it('should return tql for OR filter', inject((TqlFilterAdapterService) => {
 			//given
 			const args = {
@@ -293,11 +328,11 @@ describe('TQL Filter Adapter Service', () => {
 
 		it('should return EXACT filter', inject((TqlFilterAdapterService) => {
 			// when
-			const filter = TqlFilterAdapterService.fromTQL("((0000 = 'Charles'))", columns)[0];
+			const filter = TqlFilterAdapterService.fromTQL("((0000 = 'Ch\\\'arles'))", columns)[0];
 			// then
 			expect(filter.type).toEqual(EXACT);
 			expect(filter.colId).toEqual('0000');
-			expect(filter.args.phrase[0].value).toEqual('Charles');
+			expect(filter.args.phrase[0].value).toEqual('Ch\'arles');
 		}));
 
 		it('should return INVALID_RECORDS QUALITY filter', inject((TqlFilterAdapterService) => {
@@ -365,11 +400,20 @@ describe('TQL Filter Adapter Service', () => {
 
 		it('should return MATCHES filter', inject((TqlFilterAdapterService) => {
 			// when
-			const filter = TqlFilterAdapterService.fromTQL("((0000 complies 'Aa9'))", columns)[0];
+			const filter = TqlFilterAdapterService.fromTQL("((0000 complies 'Aa9\\\''))", columns)[0];
 			// then
 			expect(filter.type).toEqual(MATCHES);
 			expect(filter.colId).toEqual('0000');
-			expect(filter.args.patterns[0].value).toEqual('Aa9');
+			expect(filter.args.patterns[0].value).toEqual('Aa9\'');
+		}));
+
+		it('should return MATCHES_WORDS filter', inject((TqlFilterAdapterService) => {
+			// when
+			const filter = TqlFilterAdapterService.fromTQL("((0000 wordComplies '\\\'[alnum]\\\''))", columns)[0];
+			// then
+			expect(filter.type).toEqual(MATCHES_WORDS);
+			expect(filter.colId).toEqual('0000');
+			expect(filter.args.patterns[0].value).toEqual('\'[alnum]\'');
 		}));
 
 		it('should return OR filter', inject((TqlFilterAdapterService) => {

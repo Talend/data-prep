@@ -13,10 +13,6 @@
 
     <artifactId>dataprep-avro-message</artifactId>
 
-    <properties>
-        <org.talend.daikon.version>0.26.0-SNAPSHOT</org.talend.daikon.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>

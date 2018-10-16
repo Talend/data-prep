@@ -65,6 +65,7 @@ export function StateService(RouteStateService, routeState,
 		toggleCopyMovePreparation: HomeStateService.toggleCopyMovePreparation,
 		toggleFolderCreator: HomeStateService.toggleFolderCreator,
 		togglePreparationCreator: HomeStateService.togglePreparationCreator,
+		setPreparationCreatorVisibility: HomeStateService.setPreparationCreatorVisibility,
 		toggleAbout: HomeStateService.toggleAbout,
 
 		// playground
@@ -151,8 +152,11 @@ export function StateService(RouteStateService, routeState,
 		setStatisticsHistogram: PlaygroundStateService.setStatisticsHistogram,
 		setStatisticsFilteredHistogram: PlaygroundStateService.setStatisticsFilteredHistogram,
 		setStatisticsHistogramActiveLimits: PlaygroundStateService.setStatisticsHistogramActiveLimits,
+		setStatisticsPatternsType: PlaygroundStateService.setStatisticsPatternsType,
 		setStatisticsPatterns: PlaygroundStateService.setStatisticsPatterns,
+		setStatisticsWordPatterns: PlaygroundStateService.setStatisticsWordPatterns,
 		setStatisticsFilteredPatterns: PlaygroundStateService.setStatisticsFilteredPatterns,
+		setStatisticsFilteredWordPatterns: PlaygroundStateService.setStatisticsFilteredWordPatterns,
 		setStatisticsLoading: PlaygroundStateService.setStatisticsLoading,
 
 		// dataset

@@ -116,11 +116,13 @@ export default class DatasetImportCtrl {
 	 */
 	_getDatastoreFormActions(properties) {
 		if (!this.datastoreFormActions) {
-			this.datastoreFormActions = [{
-				style: `info ${properties && !properties.tdp_isTestConnectionEnabled && 'sr-only'}`,
-				type: 'submit',
-				label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
-			}];
+			this.datastoreFormActions = [
+				{
+					style: `info ${properties && !properties.tdp_isTestConnectionEnabled && 'sr-only'}`,
+					type: 'submit',
+					label: this.$translate.instant('DATASTORE_TEST_CONNECTION'),
+				},
+			];
 		}
 	}
 
@@ -133,12 +135,6 @@ export default class DatasetImportCtrl {
 	_getDatasetFormActions() {
 		if (!this.datasetFormActions) {
 			this.datasetFormActions = [
-				{
-					style: 'default',
-					type: 'button',
-					onClick: this._reset,
-					label: this.$translate.instant('CANCEL'),
-				},
 				{
 					style: 'success',
 					type: 'submit',

@@ -24,9 +24,10 @@ const MULTI_COLUMNS = 'multi_columns';
  * {@link data-prep.services.transformation.service:TransformationService TransformationService} must be the only entry point for transformation</b>
  */
 export default class TransformationRestService {
-	constructor($http, RestURLs) {
+	constructor($http, $q, RestURLs) {
 		'ngInject';
 		this.$http = $http;
+		this.$q = $q;
 		this.RestURLs = RestURLs;
 	}
 
@@ -52,16 +53,22 @@ export default class TransformationRestService {
      * @returns {Promise} The promise
      */
 	getTransformations(scope, entity) {
+		const queries = [];
+
 		switch (scope) {
-		case LINE:
 		case MULTI_COLUMNS:
+			queries.push(this.$http.get(`${this.RestURLs.transformUrl}/actions/${MULTI_COLUMNS}`));
+			queries.push(this.$http.post(`${this.RestURLs.transformUrl}/actions/${COLUMN}`, entity));
+			break;
 		case DATASET:
-			return this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`)
-                .then(response => response.data);
+		case LINE:
+			queries.push(this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`));
+			break;
 		case COLUMN:
-			return this.$http.post(`${this.RestURLs.transformUrl}/actions/${scope}`, entity)
-                .then(response => response.data);
+			queries.push(this.$http.post(`${this.RestURLs.transformUrl}/actions/${scope}`, entity));
 		}
+
+		return this.$q.all(queries).then(response => [].concat(...response.map(r => r.data)));
 	}
 
     /**

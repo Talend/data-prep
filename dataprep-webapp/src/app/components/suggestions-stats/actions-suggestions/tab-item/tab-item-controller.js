@@ -15,6 +15,12 @@ import { find } from 'lodash';
 
 const SUGGESTIONS = 'suggestions';
 const FILTERED_COLUMN = 'column_filtered';
+const SCOPES = {
+	COLUMN: 'column',
+	MULTI_COLUMNS: 'multi_columns',
+	DATASET: 'dataset',
+	LINE: 'line',
+};
 
 /**
  * @ngdoc controller
@@ -42,6 +48,12 @@ export default function TabItemCtrl(state, TransformationService) {
 		}
 		return state.playground.grid.selectedColumns.length === 1;
 	}
+
+	function getSelectedColumnsCount() {
+		const { selectedColumns } = state.playground.grid;
+		return (selectedColumns && selectedColumns.length) || 0;
+	}
+
 
 	/**
 	 * @ngdoc method
@@ -85,12 +97,11 @@ export default function TabItemCtrl(state, TransformationService) {
 	 */
 	vm.shouldRender = function () {
 		switch (vm.scope) {
-		case 'dataset':
+		case SCOPES.DATASET:
 			return true;
-		case 'column':
-			return vm.state.playground.grid.selectedColumns &&
-				vm.state.playground.grid.selectedColumns.length > 0;
-		case 'line':
+		case SCOPES.COLUMN:
+			return !!getSelectedColumnsCount();
+		case SCOPES.LINE:
 			return !!vm.state.playground.grid.selectedLine;
 		}
 	};
@@ -103,7 +114,14 @@ export default function TabItemCtrl(state, TransformationService) {
 	 * @returns {Object} The appropriated state
 	 */
 	vm.getSuggestionsState = function () {
-		return vm.state.playground.suggestions[vm.scope];
+		let scope = vm.scope;
+		if (scope === SCOPES.COLUMN) {
+			if (getSelectedColumnsCount() > 1) {
+				scope = SCOPES.MULTI_COLUMNS;
+			}
+		}
+
+		return vm.state.playground.suggestions[scope];
 	};
 
 	/**

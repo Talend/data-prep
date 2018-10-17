@@ -492,6 +492,9 @@
   "VALID_RECORDS_LABEL": "rows with valid values",
   "INVALID_EMPTY_RECORDS_LABEL": "rows with invalid or empty values",
 
+  "LIST_FILTER_REMOVE": "Remove filter",
+  "LIST_FILTER_TOGGLE": "Toggle filter",
+  "LIST_SELECT_ALL": "Select All",
   "LIST_SELECT_DISPLAY_MODE_TABLE": "Table",
   "LIST_SELECT_DISPLAY_MODE_LARGE": "Expanded",
   "LIST_TOOLBAR_DISPLAY": "Display",

@@ -492,6 +492,9 @@
   "VALID_RECORDS_LABEL": "値が有効な行",
   "INVALID_EMPTY_RECORDS_LABEL": "値が無効または空の行",
 
+  "LIST_FILTER_REMOVE": "フィルターの削除",
+  "LIST_FILTER_TOGGLE": "フィルターの切り替え",
+  "LIST_SELECT_ALL": "すべて選択",
   "LIST_SELECT_DISPLAY_MODE_TABLE": "テーブル",
   "LIST_SELECT_DISPLAY_MODE_LARGE": "拡張",
   "LIST_TOOLBAR_DISPLAY": "ディスプレイ",

@@ -73,7 +73,7 @@ public class PreparationStep extends DataPrepStep {
      * Check if an existing preparation contains the same actions as the one given in parameters.
      * Be careful ! If your preparation contains lookup actions, you'll need to load your dataset by restoring a Mongo
      * dump, else the lookup_ds_id won't be the same in actions' parameter value.
-     * 
+     *
      * @param dataTable step parameters.
      * @throws IOException in case of exception.
      */
@@ -243,10 +243,20 @@ public class PreparationStep extends DataPrepStep {
     @Then("^The preparation \"(.*)\" should contain the following columns:$")
     public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
             throws Exception {
-        Response response =
-                api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD", "");
+        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head",
+                "HEAD", StringUtils.EMPTY);
         response.then().statusCode(OK.value());
 
         checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
+    }
+
+    @Then("^The preparation \"(.*)\" should contain the following types:$")
+    public void thePreparationShouldContainTheFollowingTypes(String preparationName, List<String> columns)
+            throws Exception {
+        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head",
+                "HEAD", StringUtils.EMPTY);
+        response.then().statusCode(OK.value());
+
+        checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.type", String.class));
     }
 }

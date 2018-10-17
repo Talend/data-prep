@@ -439,7 +439,7 @@
   "LISTVIEW_NO_RESULT": "未找到结果。",
   "LISTVIEW_EMPTY": "此列表为空。",
   "LISTVIEW_HEADER_TITLE": "值",
-  "LISTVIEW_HEADER_SELECTED": "已选定 {{count}}/{{total}}",
+  "LISTVIEW_HEADER_SELECTED": "已选定 {{count}}\/{{total}}",
   "LISTVIEW_HEADERINPUT_SEARCH_PLACEHOLDER": "搜索",
   "LISTVIEW_ITEMS_TOGGLE_ALL": "全部切换",
   "LISTVIEW_WIDGET_SEARCH": "搜索特定值",

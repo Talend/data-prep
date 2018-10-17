@@ -492,6 +492,7 @@
   "VALID_RECORDS_LABEL": "rows with valid values",
   "INVALID_EMPTY_RECORDS_LABEL": "rows with invalid or empty values",
 
+  "ACTION_BAR_COUNT_SELECTED": "{{selected}} selected",
   "LIST_FILTER_REMOVE": "Remove filter",
   "LIST_FILTER_TOGGLE": "Toggle filter",
   "LIST_SELECT_ALL": "Select All",
@@ -501,5 +502,21 @@
   "LIST_TOOLBAR_SORT_BY": "Sort by",
   "LIST_SELECT_SORT_BY_ORDER_DESC": "Descending",
   "LIST_SELECT_SORT_BY_ORDER_ASC": "Ascending",
-  "LIST_OPEN_ACTION_MENU": "Open menu"
+  "LIST_OPEN_ACTION_MENU": "Open menu",
+
+  "ARRAY_ITEM_MOVE_DOWN": "Move down",
+  "ARRAY_ITEM_MOVE_UP": "Move up",
+  "ENUMERATION_WIDGET_ABORT": "Abort",
+  "ENUMERATION_WIDGET_ADD_FROM_FILE": "Add values from a file",
+  "ENUMERATION_WIDGET_ADD_ITEM": "Add item",
+  "ENUMERATION_WIDGET_DUPLICATION_ERROR": "This term is already in the list",
+  "ENUMERATION_WIDGET_EDIT": "Edit",
+  "ENUMERATION_WIDGET_IMPORT_FROM_FILE": "Import values from a file",
+  "ENUMERATION_WIDGET_LOADING": "Loading",
+  "ENUMERATION_WIDGET_OVERWRITE_VALUES": "Overwrite existing values",
+  "ENUMERATION_WIDGET_REMOVE_SELECTED_VALUES": "Remove selected values",
+  "ENUMERATION_WIDGET_REMOVE_VALUE": "Remove value",
+  "ENUMERATION_WIDGET_SEARCH_VALUES": "Search for specific values",
+  "ENUMERATION_WIDGET_VALIDATE": "Validate",
+  "ENUMERATION_WIDGET_VALIDATE_AND_ADD": "Validate and Add"
 }

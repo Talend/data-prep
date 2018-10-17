@@ -279,7 +279,7 @@ public class PreparationService {
             if (preparationRepository.exist(PersistentPreparation.class, isEmpty(FOLDER_ID))) {
                 // filter on folder id (DEPRECATED VERSION - only applies if migration isn't completed yet)
                 try (Stream<FolderEntry> folders =
-                             folderRepository.entries(searchCriterion.getFolderId(), PREPARATION)) {
+                        folderRepository.entries(searchCriterion.getFolderId(), PREPARATION)) {
                     final Set<String> entries = folders
                             .map(FolderEntry::getContentId) //
                             .collect(Collectors.toSet());
@@ -358,7 +358,7 @@ public class PreparationService {
      * @param order      Order for sort key (desc or asc).
      */
     public Stream<PreparationDTO> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
-                                                     String path, Sort sort, Order order) {
+            String path, Sort sort, Order order) {
         return listAll( //
                 filterPreparation() //
                         .byDataSetId(dataSetId) //
@@ -651,8 +651,7 @@ public class PreparationService {
         final PersistentPreparation preparation = preparationRepository.get(id, PersistentPreparation.class);
 
         if (preparation == null) {
-            throw new TDPException(PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST,
-                    build().put(ID, id));
+            throw new TDPException(PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST, build().put(ID, id));
         }
 
         ensurePreparationConsistency(preparation);
@@ -1180,7 +1179,7 @@ public class PreparationService {
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
-                                                          final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
+            final List<String> deletedColumns, final int shiftColumnAfterId, final int shiftNumber) {
         Stream<AppendStep> stream = extractActionsAfterStep(stepsIds, afterStepId).stream();
 
         // rule 1 : remove all steps that modify one of the created columns
@@ -1288,7 +1287,7 @@ public class PreparationService {
      * @param actionsSteps The actions to perform
      */
     private void replaceHistory(final PersistentPreparation preparation, final String startStepId,
-                                final List<AppendStep> actionsSteps) {
+            final List<AppendStep> actionsSteps) {
         // move preparation head to the starting step
         if (!isPreparationHead(preparation, startStepId)) {
             final PersistentStep startingStep = getStep(startStepId);

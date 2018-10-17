@@ -492,7 +492,7 @@
   "VALID_RECORDS_LABEL": "含有效值的行",
   "INVALID_EMPTY_RECORDS_LABEL": "含无效值或空值的行",
 
-  "ACTION_BAR_COUNT_SELECTED": "",
+  "ACTION_BAR_COUNT_SELECTED": "{{selected}}个已选择",
   "LIST_FILTER_REMOVE": "移除筛选器",
   "LIST_FILTER_TOGGLE": "切换筛选器",
   "LIST_SELECT_ALL": "全选",

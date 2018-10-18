@@ -52,11 +52,11 @@ public class MetadataChangesOnActionsGenerator {
 
         updatedMetadata.diff(reference);
 
-        List<String> createdColumnIds = updatedMetadata
-                .getColumns()
-                .stream()
-                .filter(c -> Flag.NEW.getValue().equals(c.getDiffFlagValue()))
-                .map(ColumnMetadata::getId)
+        List<String> createdColumnIds = updatedMetadata //
+                .getColumns() //
+                .stream() //
+                .filter(c -> Flag.NEW.getValue().equals(c.getDiffFlagValue())) //
+                .map(ColumnMetadata::getId) //
                 .collect(toList());
 
         StepDiff stepDiff = new StepDiff();

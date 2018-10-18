@@ -37,5 +37,12 @@
     position: fixed !important;
     width: auto !important;
     min-width: 261px;
+    max-width: 500px;
+
+    a {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
   }
 }

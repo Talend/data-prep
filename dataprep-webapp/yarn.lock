@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@talend/bootstrap-theme@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-1.2.1.tgz#56495676e989d3459234c765bd987bf8bf60614d"
-  integrity sha512-1v77Ik1zEG/N6SPcgzIRa4Y4+wdv8HPUAjHYD2tH5hutmwKxyouWhfrNi6Ka6rqKiKcFP3tBDAH4VbNDdbgEvQ==
+"@talend/bootstrap-theme@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-1.2.2.tgz#e7ab319f9da2e96dea470db3d12829d17d3c1b56"
+  integrity sha512-tf880Bfrr8XhXz7LWJAZhOUMgSmFY8alDiftbpFFfOM4SoFRP/NcCMphavZ4RJQ+OGjqhXQBz9Xf0daxI+PFDg==
   dependencies:
     bootstrap-sass "3.3.7"
 
@@ -31,10 +31,10 @@
   resolved "https://registry.yarnpkg.com/@talend/html-webpack-plugin/-/html-webpack-plugin-0.0.3.tgz#461c7d0877e497ca7c8f63ccbf7ef8603edf64f5"
   integrity sha512-06Eg+qVqE74ZWU8Qz1KaPlp/OaRBHJEzke7o7AAau8lZjgzRb3Aed07RjHdoHlgGVTHUNBw/GeZlgTQFPVrpWA==
 
-"@talend/icons@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-1.2.1.tgz#f33c47c66510441a4427e4f77b2d5707b3371941"
-  integrity sha512-jtFui0TXi9bBNm6BwdUCxYawsKUOgYY5IDK/rhTpLzArfUTufBy9cbAHWTmtZgisNopU7dyFc3wBrddPzrxEkA==
+"@talend/icons@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-1.2.2.tgz#0733a856680f3e7da00d31bbaa30a597fb0927a3"
+  integrity sha512-z4sGaeZ1pRlaYJbZ9gp/aQAkVoQmDwGh02s74s8oBlmiyQu+6pb1LPjWrSRFowyTK2l3y6Nia3FAWOSfUHgPCg==
 
 "@talend/json-schema-form-core@1.0.0-alpha.4":
   version "1.0.0-alpha.4"
@@ -44,10 +44,10 @@
     objectpath "^1.2.1"
     tv4 "^1.3.0"
 
-"@talend/react-cmf-cqrs@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-1.2.1.tgz#2d7384d4478829ea3c32a2c95b181c013f6e4ec6"
-  integrity sha512-O5PtPx0JUeVvHxBfuRBkPqJl6wDxFg6pD9xZ9cx2TRp7K8+ngY59HTPFhh0d51fLcD4OWF79wySfGG4gQpzegw==
+"@talend/react-cmf-cqrs@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-1.2.2.tgz#373f43d46b6442db00c0b98d7c192d492817384b"
+  integrity sha512-KekA1gYIV0Oe/1hb9se+FLkjkbjTZI/91ktOtJ8+ywabcGyIYsJsolzAv6k5FQggdWs4odYxyvOGLsY3HBtxFw==
   dependencies:
     babel-polyfill "^6.26.0"
     hoist-non-react-statics "^1.2.0"
@@ -63,10 +63,10 @@
     deepmerge "1.5.1"
     mkdirp "^0.5.1"
 
-"@talend/react-cmf@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-1.2.1.tgz#fc666942ea6c5a73fd40ad9496210c389102d17b"
-  integrity sha512-FW7WGy0aQYhcm+SbV5RVNTfwAvm/iB97wS9b/l89kNgPA1IeE6rxKCeDzXmHKSK/RS3iGUpiiG4G3DoLBWbItA==
+"@talend/react-cmf@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-1.2.2.tgz#a203e9fc901c7d0f1f0af0b6f7c504ee9ca3a180"
+  integrity sha512-lkWanDkgQ0etNAg9upHqaoSb0AJ23eGnYHBvEwdox7iXE3Mo8kJbzWugtBlgctkdq7cg5AipyiWMWWBik4PvsQ==
   dependencies:
     ajv "^6.2.1"
     babel-polyfill "^6.26.0"
@@ -105,10 +105,10 @@
     hoist-non-react-statics "^1.2.0"
     react-immutable-proptypes "2.1.0"
 
-"@talend/react-components@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-1.2.1.tgz#52744a473f12dd3319d7b3310d6dfd8e842dd108"
-  integrity sha512-/9zXCoXdu/bo3SdXRgbZiJ3R9c9PwYq2kiKf+vdqf+c//bYklYTbb0DVUmKOu/NBEsK2AD5Rk5Ee6Wr2+N+RCQ==
+"@talend/react-components@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-1.2.2.tgz#5ccea8f2c902594102f220e8d2606a1781302433"
+  integrity sha512-4c2dalyirMRQAvumwEEE30j/6tAj4Sorgci9o/5ugcNm2md+mq6JqN5Vm7MMWSs91QvVO7BMcwgbT0/15xEjNQ==
   dependencies:
     ally.js "^1.4.1"
     date-fns "^1.27.2"
@@ -124,18 +124,18 @@
     react-virtualized "9.19.1"
     simulant "^0.2.2"
 
-"@talend/react-containers@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-1.2.1.tgz#28f7e1811bfad69b7517428c3f40bac591b6dd3e"
-  integrity sha512-F3zMWnZDpwywKgtJQpfX5QJ0b1HF1ClCcOdcnBvyeFlKHLvJ3Ns/64A8tdR2303Y/Ta3ZBqYhoSs6Ma6Z5NJyQ==
+"@talend/react-containers@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-1.2.2.tgz#61717a7eaf1dc959d8a24d5cb04c72360c488d3e"
+  integrity sha512-x3vtyHMZaam5m/bnXWuepI9M+nVhdOpwMl9e6ze1ZOq3shks34oaAg5SB7ULLd5Q1ufntpeabl7EjrFf3QSKtA==
   dependencies:
     memoize-one "^4.0.0"
     react-immutable-proptypes "^2.1.0"
 
-"@talend/react-forms@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-1.2.1.tgz#99b4ef2f07d8864cb81041bc3e2e52154ff41467"
-  integrity sha512-xPBP2gcJODMeBmK+AxOqkz6JoH7PUiDs+psjc/5ITUesfTWG/tigoSLWGaK3pLQ7tMrzPpnzdQXAc0jonN7jHg==
+"@talend/react-forms@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-1.2.2.tgz#c1ac2a54355bb73d2c3998a05db1776d2d9ad564"
+  integrity sha512-1haCQjfYhUu2MGLiAdBVpmIW7R+Vz6S4TYpZxpABx4o/an1uItfzo3lB6p5HCeF9grXDZV+DnXSKa6AC3whJ2w==
   dependencies:
     "@talend/json-schema-form-core" "1.0.0-alpha.4"
     ajv "^6.2.1"

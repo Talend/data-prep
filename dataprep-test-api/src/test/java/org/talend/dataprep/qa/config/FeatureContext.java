@@ -189,12 +189,9 @@ public class FeatureContext {
      * 
      * @param datasetName the dataset name.
      */
-    public void removeDatastRef(@NotNull String datasetName) {
-        String datasetId = datasetIdByName.get(datasetName);
-        if(datasetId!=null){
-            datasetIdByName.remove(datasetId);
-            datasetIdByNameToDelete.remove(datasetName);
-        }
+    public void removeDatasetRef(@NotNull String datasetName) {
+        datasetIdByName.remove(datasetName);
+        datasetIdByNameToDelete.remove(datasetName);
     }
 
     /**

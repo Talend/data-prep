@@ -101,6 +101,7 @@ public class FeatureContext {
     /**
      * Add suffix to a filename. This suffix is added before the filename extensions. For example "/tmp/file.csv" become
      * "/tmp/file_654321.csv".
+     * 
      * @param fileName The filename.
      *
      * @return The suffixed filename.
@@ -116,6 +117,7 @@ public class FeatureContext {
 
     /**
      * Remove the suffix from the filename.
+     * 
      * @param fileName The suffixed filename.
      *
      * @return The filename without suffix.
@@ -180,6 +182,16 @@ public class FeatureContext {
     public void storeDatasetRef(@NotNull String id, @NotNull String name) {
         storeExistingDatasetRef(id, name);
         datasetIdByNameToDelete.put(name, id);
+    }
+
+    /**
+     * Remove a dataset reference from the context.
+     * 
+     * @param datasetName the dataset name.
+     */
+    public void removeDatasetRef(@NotNull String datasetName) {
+        datasetIdByName.remove(datasetName);
+        datasetIdByNameToDelete.remove(datasetName);
     }
 
     /**

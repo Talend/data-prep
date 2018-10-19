@@ -137,13 +137,10 @@ public class DatasetStep extends DataPrepStep {
 
     @When("^I delete the dataset called \"(.*)\"$") //
     public void iDeleteTheDataset(String datasetName) {
-        deleteDatasetByName(datasetName).then().statusCode(OK.value());
-    }
-
-    private Response deleteDatasetByName(String datasetName) {
         String suffixedDatasetName = suffixName(datasetName);
         String datasetId = context.getDatasetId(suffixedDatasetName);
-        return api.deleteDataset(datasetId);
+        api.deleteDataset(datasetId).then().statusCode(OK.value());
+        context.removeDatasetRef(suffixedDatasetName);
     }
 
     @When("^I load the existing dataset called \"(.*)\"$")

@@ -26,6 +26,7 @@ import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARAT
 import static org.talend.dataprep.folder.store.FoldersRepositoriesConstants.PATH_SEPARATOR;
 import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.preparation.service.PreparationSearchCriterion.filterPreparation;
+import static org.talend.dataprep.transformation.actions.common.ActionsUtils.CREATE_NEW_COLUMN;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 import static org.talend.tql.api.TqlBuilder.and;
 import static org.talend.tql.api.TqlBuilder.eq;
@@ -36,9 +37,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
+import org.talend.dataprep.api.action.ActionForm;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
@@ -84,12 +88,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -684,12 +691,105 @@ public class PreparationService {
      * @return the preparation details.
      */
     public PreparationDetailsDTO getPreparationDetailsFull(String id, String stepId) {
-
         final PreparationDTO prep = getPreparationDetails(id, stepId);
-
-        final PreparationDetailsDTO details = beanConversionService.convert(prep, PreparationDetailsDTO.class);
+        final PreparationDetailsDTO details =
+                injectActionsForms(beanConversionService.convert(prep, PreparationDetailsDTO.class));
         LOGGER.debug("returning details for {} -> {}", id, details);
         return details;
+    }
+
+    private PreparationDetailsDTO injectActionsForms(PreparationDetailsDTO details) {
+        // Append actions and action forms
+        Iterator<String> stepsIterator = details.getSteps().iterator();
+        final AtomicBoolean allowDistributedRun = new AtomicBoolean();
+        final List<ActionForm> metadata = details
+                .getActions()
+                .stream()
+                .map(action -> {
+                    String stepBeforeAction = stepsIterator.next();
+                    return adaptActionDefinition(details, action, stepBeforeAction);
+                })
+                .peek(a -> {
+                    if (allowDistributedRun.get()) {
+                        allowDistributedRun.set(a.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+                    }
+                }) //
+                .map(a -> a.getActionForm(LocaleContextHolder.getLocale(), Locale.US)) //
+                .map(PreparationService::disallowColumnCreationChange) //
+                .collect(Collectors.toList());
+
+        details.setMetadata(metadata);
+
+        // Flag for allow distributed run (based on metadata).
+        details.setAllowDistributedRun(allowDistributedRun.get());
+
+        return details;
+    }
+
+    /**
+     * Adapt the ActionDefinition to column it was applied to. Important to have the dependent parameters in the step
+     * list in playground.
+     */
+    private ActionDefinition adaptActionDefinition(PreparationDetailsDTO details, Action action,
+            String stepBeforeAction) {
+        actionRegistry.get(action.getName());
+        Step step = preparationRepository.get(stepBeforeAction, Step.class);
+        ActionDefinition actionDefinition = actionRegistry.get(action.getName());
+
+        // Adapt to column as some actions won't have parameters if not adapted first (sigh*)
+        String columnIdAsString = action.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
+        if (columnIdAsString != null) {
+            int columnId;
+            try {
+                columnId = Integer.parseInt(columnIdAsString);
+            } catch (NumberFormatException e) {
+                return actionDefinition;
+            }
+
+            List<ColumnMetadata> columns;
+            if (Step.ROOT_STEP.equals(step)) {
+                // we need to fetch row metadata in dataset
+                RowMetadata dataSetRowMetadata = datasetClient.getDataSetRowMetadata(details.getDataSetId());
+                if (dataSetRowMetadata != null) {
+                    columns = dataSetRowMetadata.getColumns();
+                } else {
+                    columns = null;
+                }
+            } else {
+                String rowMetadataId = step.getRowMetadata();
+                StepRowMetadata stepRowMetadata = preparationRepository.get(rowMetadataId, StepRowMetadata.class);
+                if (stepRowMetadata == null) {
+                    columns = null;
+                } else {
+                    columns = stepRowMetadata.getRowMetadata().getColumns();
+                }
+            }
+
+            if (columns != null) {
+                ColumnMetadata column = columns.get(columnId);
+                if (column != null) {
+                    return actionDefinition.adapt(column);
+                }
+            }
+        }
+        return actionDefinition;
+    }
+
+    /**
+     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in
+     * TDP-4531 to
+     * avoid removing columns used by other actions.
+     * <p>
+     * Such method is not ideal as the system should be able to handle such removal in a much more generic way.
+     * </p>
+     */
+    private static ActionForm disallowColumnCreationChange(ActionForm form) {
+        form
+                .getParameters() //
+                .stream() //
+                .filter(p -> CREATE_NEW_COLUMN.equals(p.getName())) //
+                .forEach(p -> p.setReadonly(true));
+        return form;
     }
 
     /**

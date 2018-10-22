@@ -413,7 +413,10 @@ public class DataSetService extends BaseDataSetService {
 
             LOG.debug(marker, "Created!");
 
-            publisher.publishEvent(new DatasetImportedEvent(id));
+            // TDP-6141 : Do not send `DataSteImportedEvent` synchronously because it will do the same analyse as before
+            // a second time and can reach timeout
+            asyncPublisher.multicastEvent(new DatasetImportedEvent(id));
+
             return id;
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {
             hypotheticalException =
@@ -515,7 +518,8 @@ public class DataSetService extends BaseDataSetService {
     }
 
     private Stream<DataSetRow> insertWordPatternAnalysis(DataSetMetadata dataSetMetadata, Stream<DataSetRow> records) {
-        // recompute both patterns because TDQ has change char pattern detection precision at the same time they added word pattern
+        // recompute both patterns because TDQ has change char pattern detection precision at the same time they added
+        // word pattern
         Analyzer<Analyzers.Result> wordPatternAnalyzer =
                 analyzerService.build(dataSetMetadata.getRowMetadata().getColumns(),
                         AnalyzerService.Analysis.WORD_PATTERNS, AnalyzerService.Analysis.PATTERNS);
@@ -758,14 +762,16 @@ public class DataSetService extends BaseDataSetService {
                     IOUtils.copy(sizeCalculator, cacheEntry);
                 }
 
-                // once fully copied to the cache, we know for sure that the content store has enough space, so let's copy
+                // once fully copied to the cache, we know for sure that the content store has enough space, so let's
+                // copy
                 // from the cache to the content store
                 PipedInputStream toContentStore = new PipedInputStream();
                 PipedOutputStream fromCache = new PipedOutputStream(toContentStore);
                 Runnable r = () -> {
                     try (final InputStream input = cacheManager.get(cacheKey)) {
                         IOUtils.copy(input, fromCache);
-                        fromCache.close(); // it's important to close this stream, otherwise the piped stream will never close
+                        fromCache.close(); // it's important to close this stream, otherwise the piped stream will never
+                                           // close
                     } catch (IOException e) {
                         throw new TDPException(UNABLE_TO_CREATE_OR_UPDATE_DATASET, e);
                     }

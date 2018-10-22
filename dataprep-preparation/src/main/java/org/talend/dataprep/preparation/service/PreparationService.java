@@ -730,25 +730,28 @@ public class PreparationService {
      * Adapt the ActionDefinition to column it was applied to. Important to have the dependent parameters in the step
      * list in playground.
      */
+    // Adapt to column as some actions won't have parameters if not adapted first (sigh*)
     private ActionDefinition adaptActionDefinition(PreparationDetailsDTO details, Action action,
             String stepBeforeAction) {
         actionRegistry.get(action.getName());
         Step step = preparationRepository.get(stepBeforeAction, Step.class);
         ActionDefinition actionDefinition = actionRegistry.get(action.getName());
 
-        // Adapt to column as some actions won't have parameters if not adapted first (sigh*)
+        // first: fetches the column id parameter int the applied action
         String columnIdAsString = action.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
         if (columnIdAsString != null) {
             int columnId;
             try {
                 columnId = Integer.parseInt(columnIdAsString);
             } catch (NumberFormatException e) {
+                LOGGER.debug("Invalid COLUMN_ID parameter in preparation repository saved action.");
                 return actionDefinition;
             }
 
+            // Then fetches the column metadata for the id in parameter
             List<ColumnMetadata> columns;
             if (Step.ROOT_STEP.equals(step)) {
-                // we need to fetch row metadata in dataset
+                // If the parent step is root step we need to fetch row metadata in dataset
                 RowMetadata dataSetRowMetadata = datasetClient.getDataSetRowMetadata(details.getDataSetId());
                 if (dataSetRowMetadata != null) {
                     columns = dataSetRowMetadata.getColumns();
@@ -756,6 +759,7 @@ public class PreparationService {
                     columns = null;
                 }
             } else {
+                // if not, the step metadata should be cached in the repository
                 String rowMetadataId = step.getRowMetadata();
                 StepRowMetadata stepRowMetadata = preparationRepository.get(rowMetadataId, StepRowMetadata.class);
                 if (stepRowMetadata == null) {

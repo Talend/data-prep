@@ -357,6 +357,8 @@ export default class RecipeCtrl {
 	 * @description Update a step parameters in the loaded preparation
 	 */
 	updateStep(step, newParams) {
+		// update selected columns if the scope is multi_columns because this scope allow to update
+		// selected columns in step edition
 		if (step.actionParameters.parameters.scope === MULTI_COLUMNS) {
 			newParams = this._updateSelectedColumns(newParams);
 		}
@@ -436,12 +438,16 @@ export default class RecipeCtrl {
 	select(step) {
 		this._toggleDynamicParams(step);
 		this._toggleSpecificParams(step);
-
-		if (step.actionParameters.parameters.scope === MULTI_COLUMNS) {
+		const { scope } = step.actionParameters.parameters;
+		switch (scope) {
+		case MULTI_COLUMNS:
 			this._selectMultiColumnsAction(step);
-		}
-		else if (step.actionParameters.parameters.scope === COLUMN) {
+			break;
+		case COLUMN:
 			this._selectColumnAction(step);
+			break;
+		default:
+			// no default comportment
 		}
 	}
 
@@ -465,12 +471,10 @@ export default class RecipeCtrl {
 		const columns = this.state.playground.data.metadata.columns;
 		const stepColumns = step.actionParameters.parameters.column_id;
 		const selectedColumns = [];
-		stepColumns.forEach(function (colId) {
-			const tmpSelectedColumn = columns.find(col => col.id === colId);
-			if (tmpSelectedColumn !== undefined) {
-				selectedColumns.push(tmpSelectedColumn);
-			}
-		});
+		const tmpSelectedColumn = columns.filter(col => stepColumns.contain(col.id));
+		if (tmpSelectedColumn != null) {
+			selectedColumns.push(tmpSelectedColumn);
+		}
 		this.StateService.setGridSelection(selectedColumns);
 	}
 
@@ -479,7 +483,7 @@ export default class RecipeCtrl {
 			.data
 			.metadata
 			.columns.find(col => col.id === step.actionParameters.parameters.column_id);
-		if (selectedColumn !== undefined) {
+		if (selectedColumn != null) {
 			this.StateService.setGridSelection([selectedColumn]);
 		}
 	}

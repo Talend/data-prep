@@ -109,6 +109,7 @@ class StepDescriptionCtrl {
 		switch (multiColumnsDetails.initialColsNbr) {
 		case 1:
 			description = this.$translate.instant('RECIPE_ITEM_ON_COL', multiColumnsDetails);
+			break;
 		case 2:
 			description = this.$translate.instant('ONLY_2_SELECTED_COLS', multiColumnsDetails);
 			break;

@@ -50,6 +50,7 @@ describe('folder', () => {
 			expect(gen.next().value).toEqual(take(actions.CLOSE_ADD_FOLDER_MODAL));
 		});
 	});
+
 	describe('openAddFolderModal', () => {
 		it('should wait for OPEN_ADD_FOLDER_MODAL action and call openAddFolderModal', () => {
 			const gen = sagas['folder:openAddFolderConfirmDialog']();

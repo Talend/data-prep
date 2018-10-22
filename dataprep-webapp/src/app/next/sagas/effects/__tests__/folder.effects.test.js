@@ -124,9 +124,9 @@ describe('folder', () => {
 			expect(effect.componentName).toEqual('CMFContainer(ConfirmDialog)');
 			expect(effect.componentState).toEqual(
 				new Map({
-					header: 'Remove a folder',
-					show: true,
+					header: 'REMOVE_FOLDER_MODAL_HEADER',
 					children: 'REMOVE_FOLDER_MODAL_CONTENT',
+					show: true,
 					validateAction: 'folder:remove',
 					cancelAction: 'folder:remove:close',
 					folderId: 'folderId',

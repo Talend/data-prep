@@ -97,15 +97,12 @@ export function* addFolder() {
 }
 
 export function* openRemoveFolderModal(payload) {
-	const message = i18next.t('tdp-app:REMOVE_FOLDER_MODAL_CONTENT', {
-		name: payload.name,
-	});
 	const state = new Map({
-		header: i18next.t('tdp-app:REMOVE_FOLDER_MODAL_HEADER', {
-			defaultValue: 'Remove a folder',
+		header: i18next.t('tdp-app:REMOVE_FOLDER_MODAL_HEADER'),
+		children: i18next.t('tdp-app:REMOVE_FOLDER_MODAL_CONTENT', {
+			name: payload.name,
 		}),
 		show: true,
-		children: message,
 		validateAction: 'folder:remove',
 		cancelAction: 'folder:remove:close',
 		folderId: payload.id,
@@ -137,12 +134,9 @@ export function* removeFolder() {
 		);
 		yield put(
 			creators.notification.success(null, {
-				title: i18next.t('tdp-app:FOLDER_REMOVE_NOTIFICATION_TITLE', {
-					defaultValue: 'Folder Remove',
-				}),
+				title: i18next.t('tdp-app:FOLDER_REMOVE_NOTIFICATION_TITLE'),
 				message: i18next.t('tdp-app:FOLDER_REMOVE_NOTIFICATION_MESSAGE', {
 					name: folderName,
-					defaultValue: `The folder ${folderName} has been removed.`,
 				}),
 			}),
 		);

@@ -740,37 +740,24 @@ public class PreparationService {
         // first: fetches the column id parameter int the applied action
         String columnIdAsString = action.getParameters().get(ImplicitParameters.COLUMN_ID.getKey());
         if (columnIdAsString != null) {
-            int columnId;
-            try {
-                columnId = Integer.parseInt(columnIdAsString);
-            } catch (NumberFormatException e) {
-                LOGGER.debug("Invalid COLUMN_ID parameter in preparation repository saved action.");
-                return actionDefinition;
-            }
-
             // Then fetches the column metadata for the id in parameter
-            List<ColumnMetadata> columns;
+            RowMetadata dataSetRowMetadata;
             if (Step.ROOT_STEP.equals(step)) {
                 // If the parent step is root step we need to fetch row metadata in dataset
-                RowMetadata dataSetRowMetadata = datasetClient.getDataSetRowMetadata(details.getDataSetId());
-                if (dataSetRowMetadata != null) {
-                    columns = dataSetRowMetadata.getColumns();
-                } else {
-                    columns = null;
-                }
+                dataSetRowMetadata = datasetClient.getDataSetRowMetadata(details.getDataSetId());
             } else {
                 // if not, the step metadata should be cached in the repository
                 String rowMetadataId = step.getRowMetadata();
                 StepRowMetadata stepRowMetadata = preparationRepository.get(rowMetadataId, StepRowMetadata.class);
                 if (stepRowMetadata == null) {
-                    columns = null;
+                    dataSetRowMetadata = null;
                 } else {
-                    columns = stepRowMetadata.getRowMetadata().getColumns();
+                    dataSetRowMetadata = stepRowMetadata.getRowMetadata();
                 }
             }
 
-            if (columns != null) {
-                ColumnMetadata column = columns.get(columnId);
+            if (dataSetRowMetadata != null) {
+                ColumnMetadata column = dataSetRowMetadata.getById(columnIdAsString);
                 if (column != null) {
                     return actionDefinition.adapt(column);
                 }

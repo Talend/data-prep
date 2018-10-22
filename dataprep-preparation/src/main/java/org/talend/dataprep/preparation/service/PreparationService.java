@@ -15,6 +15,8 @@ package org.talend.dataprep.preparation.service;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
@@ -100,7 +102,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -289,7 +290,7 @@ public class PreparationService {
                         folderRepository.entries(searchCriterion.getFolderId(), PREPARATION)) {
                     final Set<String> entries = folders
                             .map(FolderEntry::getContentId) //
-                            .collect(Collectors.toSet());
+                            .collect(toSet());
                     deprecatedFolderIdFilter = p -> entries.contains(p.id());
                 }
             } else {
@@ -321,7 +322,7 @@ public class PreparationService {
                         .entries(f.getId(), PREPARATION) //
                         .map(FolderEntry::getContentId)) {
                     folderEntries.addAll(preparationIds //
-                            .collect(Collectors.toSet()));
+                            .collect(toSet()));
                 }
             });
             preparationStream = preparationStream.filter(p -> folderEntries.contains(p.id()));
@@ -480,7 +481,7 @@ public class PreparationService {
                     previousSteps.push(createdStep);
                     return createdStep;
                 }) //
-                .collect(Collectors.toList()));
+                .collect(toList()));
         targetPrep.setSteps(copyListSteps);
         targetPrep.setHeadId(previousSteps.pop().id());
 
@@ -716,7 +717,7 @@ public class PreparationService {
                 }) //
                 .map(a -> a.getActionForm(LocaleContextHolder.getLocale(), Locale.US)) //
                 .map(PreparationService::disallowColumnCreationChange) //
-                .collect(Collectors.toList());
+                .collect(toList());
 
         details.setMetadata(metadata);
 
@@ -853,7 +854,7 @@ public class PreparationService {
         LOGGER.debug("Added action to preparation.");
         if (auditService.isActive()) {
             auditService.auditPreparationAddStep(preparationId,
-                    appendStep.getActions().stream().collect(Collectors.toMap(Action::getName, Action::getParameters)));
+                    appendStep.getActions().stream().collect(toMap(Action::getName, Action::getParameters)));
         }
     }
 
@@ -926,7 +927,7 @@ public class PreparationService {
                                 newStep //
                                         .getActions() //
                                         .stream() //
-                                        .collect(Collectors.toMap(Action::getName, Action::getParameters)));
+                                        .collect(toMap(Action::getName, Action::getParameters)));
             }
         } finally {
             unlockPreparation(preparationId);

@@ -19,19 +19,19 @@ describe('folder', () => {
 			expect(effect.componentName).toEqual('FolderCreatorModal');
 			expect(effect.componentState).toEqual(
 				new Map({
-					header: 'Add a folder',
+					header: 'ADD_FOLDER_HEADER',
 					show: true,
 					name: '',
 					error: '',
 					validateAction: {
-						label: 'Add',
+						label: 'ADD',
 						id: 'folder:add',
 						disabled: true,
 						bsStyle: 'primary',
 						actionCreator: 'folder:add',
 					},
 					cancelAction: {
-						label: 'Cancel',
+						label: 'CANCEL',
 						id: 'folder:add:close',
 						bsStyle: 'default btn-inverse',
 						actionCreator: 'folder:add:close',
@@ -74,7 +74,7 @@ describe('folder', () => {
 			expect(effectError.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effectError.key).toEqual('add_folder_modal');
 			expect(effectError.componentName).toEqual('FolderCreatorModal');
-			expect(effectError.componentState).toEqual({ error: 'Folder exists already' });
+			expect(effectError.componentState).toEqual({ error: 'FOLDER_EXIST_MESSAGE' });
 		});
 
 		it('should not add folder when new name is empty', () => {
@@ -85,7 +85,7 @@ describe('folder', () => {
 			expect(effectError.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
 			expect(effectError.key).toEqual('add_folder_modal');
 			expect(effectError.componentName).toEqual('FolderCreatorModal');
-			expect(effectError.componentState).toEqual({ error: 'Folder name is empty' });
+			expect(effectError.componentState).toEqual({ error: 'FOLDER_EMPTY_MESSAGE' });
 		});
 
 		it('should add folder with success', () => {

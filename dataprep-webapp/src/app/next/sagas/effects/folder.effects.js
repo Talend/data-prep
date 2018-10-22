@@ -9,25 +9,19 @@ import TextService from '../../services/text.service';
 
 export function* openAddFolderModal() {
 	const state = new Map({
-		header: i18next.t('tdp-app:ADD_FOLDER_HEADER', {
-			defaultValue: 'Add a folder',
-		}),
+		header: i18next.t('tdp-app:ADD_FOLDER_HEADER'),
 		show: true,
 		name: '',
 		error: '',
 		validateAction: {
-			label: i18next.t('tdp-app:ADD', {
-				defaultValue: 'Add',
-			}),
+			label: i18next.t('tdp-app:ADD'),
 			id: 'folder:add',
 			disabled: true,
 			bsStyle: 'primary',
 			actionCreator: 'folder:add',
 		},
 		cancelAction: {
-			label: i18next.t('tdp-app:CANCEL', {
-				defaultValue: 'Cancel',
-			}),
+			label: i18next.t('tdp-app:CANCEL'),
 			id: 'folder:add:close',
 			bsStyle: 'default btn-inverse',
 			actionCreator: 'folder:add:close',
@@ -52,9 +46,7 @@ export function* addFolder() {
 	);
 	newFolderName = TextService.sanitize(newFolderName);
 	if (!newFolderName.length) {
-		const error = i18next.t('tdp-app:FOLDER_EMPTY_MESSAGE', {
-			defaultValue: 'Folder name is empty',
-		});
+		const error = i18next.t('tdp-app:FOLDER_EMPTY_MESSAGE');
 		yield put(actions.components.mergeState('FolderCreatorModal', 'add_folder_modal', { error }));
 	}
 	else {
@@ -68,7 +60,6 @@ export function* addFolder() {
 		if (existingFolder) {
 			const error = i18next.t('tdp-app:FOLDER_EXIST_MESSAGE', {
 				name: newFolderName,
-				defaultValue: 'Folder exists already',
 			});
 			yield put(actions.components.mergeState('FolderCreatorModal', 'add_folder_modal', { error }));
 		}
@@ -81,11 +72,8 @@ export function* addFolder() {
 				yield call(refreshCurrentFolder);
 				yield put(
 					creators.notification.success(null, {
-						title: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_TITLE', {
-							defaultValue: 'Folder Added',
-						}),
+						title: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_TITLE'),
 						message: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_MESSAGE', {
-							defaultValue: `The folder "${newFolderName}" has been added.`,
 							name: newFolderName,
 						}),
 					}),

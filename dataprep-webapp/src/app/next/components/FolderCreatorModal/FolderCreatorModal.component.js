@@ -28,9 +28,7 @@ class FolderCreatorModal extends React.Component {
 		event.preventDefault();
 	}
 	render() {
-		const addFolderLabel = this.props.t('tdp-app:ADD_FOLDER_NAME_LABEL', {
-			defaultValue: 'Enter folder name',
-		});
+		const addFolderLabel = this.props.t('tdp-app:ADD_FOLDER_NAME_LABEL');
 		return (
 			<ConfirmDialog {...this.props.state}>
 				<form onSubmit={this.onSubmit}>

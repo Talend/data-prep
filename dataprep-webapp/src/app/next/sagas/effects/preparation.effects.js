@@ -60,12 +60,8 @@ export function* copy({ id, folderId, destination, title }) {
 		yield call(closeCopyMoveModal);
 		yield put(
 			creators.notification.success(null, {
-				title: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_TITLE', {
-					defaultValue: 'Preparation copied',
-				}),
-				message: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_MESSAGE', {
-					defaultValue: 'The preparation has been copied.',
-				}),
+				title: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_TITLE'),
+				message: i18next.t('tdp-app:PREPARATION_COPY_NOTIFICATION_MESSAGE'),
 			}),
 		);
 	}
@@ -92,12 +88,8 @@ export function* move({ id, folderId, destination, title }) {
 		yield call(closeCopyMoveModal);
 		yield put(
 			creators.notification.success(null, {
-				title: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_TITLE', {
-					defaultValue: 'Preparation moved',
-				}),
-				message: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_MESSAGE', {
-					defaultValue: 'The preparation has been moved.',
-				}),
+				title: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_TITLE'),
+				message: i18next.t('tdp-app:PREPARATION_MOVE_NOTIFICATION_MESSAGE'),
 			}),
 		);
 	}

@@ -15,7 +15,7 @@ describe('folder', () => {
 			const gen = effects.openAddFolderModal();
 			const effect = gen.next().value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('add_folder_modal');
+			expect(effect.key).toEqual('add:folder:modal');
 			expect(effect.componentName).toEqual('FolderCreatorModal');
 			expect(effect.componentState).toEqual(
 				new Map({
@@ -46,7 +46,7 @@ describe('folder', () => {
 			const gen = effects.closeAddFolderModal();
 			const effect = gen.next().value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('add_folder_modal');
+			expect(effect.key).toEqual('add:folder:modal');
 			expect(effect.componentName).toEqual('FolderCreatorModal');
 			expect(effect.componentState).toEqual(new Map({ show: false }));
 
@@ -72,7 +72,7 @@ describe('folder', () => {
 			};
 			const effectError = gen.next(response).value.PUT.action;
 			expect(effectError.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effectError.key).toEqual('add_folder_modal');
+			expect(effectError.key).toEqual('add:folder:modal');
 			expect(effectError.componentName).toEqual('FolderCreatorModal');
 			expect(effectError.componentState).toEqual({ error: 'FOLDER_EXIST_MESSAGE' });
 		});
@@ -83,7 +83,7 @@ describe('folder', () => {
 
 			const effectError = gen.next('').value.PUT.action;
 			expect(effectError.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effectError.key).toEqual('add_folder_modal');
+			expect(effectError.key).toEqual('add:folder:modal');
 			expect(effectError.componentName).toEqual('FolderCreatorModal');
 			expect(effectError.componentState).toEqual({ error: 'FOLDER_EMPTY_MESSAGE' });
 		});
@@ -152,13 +152,28 @@ describe('folder', () => {
 			const gen = effects.removeFolder();
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value.SELECT).toBeDefined();
-			const effect = gen.next('folderId').value.CALL;
+
+			let effect = gen.next('folderId').value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('ConfirmDialog');
+			expect(effect.componentName).toEqual('CMFContainer(ConfirmDialog)');
+			expect(effect.componentState).toEqual(new Map({ loading: true }));
+
+			effect = gen.next().value.CALL;
 			expect(effect.fn).toEqual(http.delete);
 			expect(effect.args[0]).toEqual('/api/folders/folderId');
 			expect(gen.next(API_RESPONSE).value).toEqual(call(refreshCurrentFolder));
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
 			expect(gen.next().value).toEqual(call(effects.closeRemoveFolderModal));
+
+			effect = gen.next().value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('ConfirmDialog');
+			expect(effect.componentName).toEqual('CMFContainer(ConfirmDialog)');
+			expect(effect.componentState).toEqual(new Map({ loading: false }));
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 });

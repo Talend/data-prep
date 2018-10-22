@@ -100,6 +100,7 @@
   "TC_LISTVIEW_DESELECT": "Deselect {{ value }}",
   "TC_LISTVIEW_EXPAND": "Expand {{ value }}",
   "TC_LISTVIEW_SELECT": "Select {{ value }}",
+  "TC_OBJECT_VIEWER_NB_CHILDREN": "Contains {{count}} children",
   "VERSION": "Version",
   "VIRTUALIZEDLIST_NO_RESULT": "No result found",
   "DATE_FNS_ABOUT_HOUR_plural": "about {{count}} hours",

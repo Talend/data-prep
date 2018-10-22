@@ -27,14 +27,14 @@ export function* openAddFolderModal() {
 			actionCreator: 'folder:add:close',
 		},
 	});
-	yield put(actions.components.mergeState('FolderCreatorModal', 'add_folder_modal', state));
+	yield put(actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', state));
 }
 
 export function* closeAddFolderModal() {
 	yield put(
 		actions.components.mergeState(
 			'FolderCreatorModal',
-			'add_folder_modal',
+			'add:folder:modal',
 			new Map({ show: false }),
 		),
 	);
@@ -42,12 +42,12 @@ export function* closeAddFolderModal() {
 
 export function* addFolder() {
 	let newFolderName = yield select(state =>
-		state.cmf.components.getIn(['FolderCreatorModal', 'add_folder_modal', 'name']),
+		state.cmf.components.getIn(['FolderCreatorModal', 'add:folder:modal', 'name']),
 	);
 	newFolderName = TextService.sanitize(newFolderName);
 	if (!newFolderName.length) {
 		const error = i18next.t('tdp-app:FOLDER_EMPTY_MESSAGE');
-		yield put(actions.components.mergeState('FolderCreatorModal', 'add_folder_modal', { error }));
+		yield put(actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', { error }));
 	}
 	else {
 		const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
@@ -61,7 +61,7 @@ export function* addFolder() {
 			const error = i18next.t('tdp-app:FOLDER_EXIST_MESSAGE', {
 				name: newFolderName,
 			});
-			yield put(actions.components.mergeState('FolderCreatorModal', 'add_folder_modal', { error }));
+			yield put(actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', { error }));
 		}
 		else {
 			const { response } = yield call(
@@ -114,6 +114,13 @@ export function* removeFolder() {
 	const folderId = yield select(state =>
 		state.cmf.components.getIn(['CMFContainer(ConfirmDialog)', 'ConfirmDialog', 'folderId']),
 	);
+	yield put(
+		actions.components.mergeState(
+			'CMFContainer(ConfirmDialog)',
+			'ConfirmDialog',
+			new Map({ loading: true }),
+		),
+	);
 	const { response } = yield call(http.delete, `${uris.get('apiFolders')}/${folderId}`);
 	if (response.ok) {
 		yield call(refreshCurrentFolder);
@@ -130,4 +137,11 @@ export function* removeFolder() {
 		);
 	}
 	yield call(closeRemoveFolderModal);
+	yield put(
+		actions.components.mergeState(
+			'CMFContainer(ConfirmDialog)',
+			'ConfirmDialog',
+			new Map({ loading: false }),
+		),
+	);
 }

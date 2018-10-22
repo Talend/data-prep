@@ -11,10 +11,8 @@ function* removeFolder() {
 }
 
 function* openRemoveFolderModal() {
-	console.log('[NC] YEAH');
 	while (true) {
 		const { payload } = yield take(actions.OPEN_REMOVE_FOLDER_MODAL);
-		console.log('[NC] TOOK !', payload);
 		yield call(effects.openRemoveFolderModal, payload);
 	}
 }

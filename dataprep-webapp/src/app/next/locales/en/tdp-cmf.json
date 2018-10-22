@@ -10,7 +10,6 @@
   "ERROR_404_MESSAGE": "We didn't find the requested page",
   "ERROR_404_TITLE": "Oops",
   "FEEDBACK": "Feedback",
-  "FOLDER": "folder",
   "FOLDER_ADD": "Add folder",
   "GOTO_HOME": "Go to home page",
   "GUIDED_TOUR": "Guided tour",
@@ -26,7 +25,6 @@
   "PREPARATION_MOVE": "Move preparation",
   "PREPARATION_RENAME": "Rename",
   "REMOVE": "Remove",
-  "REMOVE_FOLDER_MODAL_HEADER": "Remove a folder",
   "SEARCH_TOGGLE": "Toggle search input",
   "STEPS": "Steps"
 }

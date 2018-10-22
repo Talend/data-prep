@@ -181,21 +181,9 @@
       },
       "actionCreator": "preparation:rename"
     },
-    "preparation:remove": {
-      "id": "preparation:remove",
-      "icon": "talend-trash",
-      "label": {
-        "i18n": {
-          "key": "tdp-cmf:REMOVE",
-          "options": {
-            "defaultValue": "Remove"
-          }
-        }
-      },
-      "actionCreator": "preparation:remove"
-    },
     "folder:remove": {
       "id": "folder:remove",
+      "bsStyle": "danger",
       "label": {
         "i18n": {
           "key": "tdp-cmf:REMOVE",
@@ -204,8 +192,33 @@
           }
         }
       },
+      "actionCreator": "folder:remove"
+    },
+    "folder:remove:close": {
+      "id": "folder:remove:close",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:CANCEL",
+          "options": {
+            "defaultValue": "Cancel"
+          }
+        }
+      },
+      "bsStyle": "default btn-inverse",
+      "actionCreator": "folder:remove:close"
+    },
+    "folder:remove:open": {
+      "id": "folder:remove:open",
       "icon": "talend-trash",
-      "actionCreator": "deleteResource:open"
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:REMOVE",
+          "options": {
+            "defaultValue": "Remove"
+          }
+        }
+      },
+      "actionCreator": "folder:remove:open"
     },
     "preparation:duplicate": {
       "id": "preparation:duplicate",
@@ -249,29 +262,6 @@
       "hasCollections": ["settings"]
     },
     "Breadcrumbs#default": {},
-    "DeleteResource#folder": {
-      "resourceType": "folders",
-      "collectionId": "preparations",
-      "routerParamAttribute": "deletionId",
-      "resourceTypeLabel": {
-        "i18n": {
-          "key": "tdp-cmf:FOLDER",
-          "options": {
-            "defaultValue": "folder"
-          }
-        }
-      },
-      "uri": "/api",
-      "redirectUrl": "/preparations",
-      "header": {
-        "i18n": {
-          "key": "tdp-cmf:REMOVE_FOLDER_MODAL_HEADER",
-          "options": {
-            "defaultValue": "Remove folder"
-          }
-        }
-      }
-    },
     "AboutDialog#default": {
       "icon": "talend-tdp-colored"
     },
@@ -467,7 +457,7 @@
           ],
           "items": [
             "preparation:rename",
-            "folder:remove",
+            "folder:remove:open",
             "preparation:copy:open",
             "preparation:move:open"
           ],

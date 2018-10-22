@@ -65,27 +65,6 @@ function* closeCopyMoveModal() {
 	}
 }
 
-function* openAddFolderModal() {
-	while (true) {
-		yield take(actions.OPEN_ADD_FOLDER_MODAL);
-		yield call(effects.openAddFolderModal);
-	}
-}
-
-function* closeAddFolderModal() {
-	while (true) {
-		yield take(actions.CLOSE_ADD_FOLDER_MODAL);
-		yield call(effects.closeAddFolderModal);
-	}
-}
-
-function* addFolder() {
-	while (true) {
-		yield take(actions.ADD_FOLDER);
-		yield call(effects.addFolder);
-	}
-}
-
 function* openPreparationCreatorModal() {
 	while (true) {
 		yield take(actions.OPEN_PREPARATION_CREATOR);
@@ -97,7 +76,6 @@ export default {
 	'preparation:copy': copy,
 	'preparation:move': move,
 	'preparation:fetch': fetch,
-	'preparation:folder:add': addFolder,
 	'preparation:rename:submit': rename,
 	'preparation:copy:open': openCopyModal,
 	'preparation:move:open': openMoveModal,
@@ -105,6 +83,4 @@ export default {
 	'preparation:rename': setTitleEditionMode,
 	'preparation:copy:move:cancel': closeCopyMoveModal,
 	'preparation:creator:open': openPreparationCreatorModal,
-	'preparation:folder:closeAddFolderConfirmDialog': closeAddFolderModal,
-	'preparation:folder:openAddFolderConfirmDialog': openAddFolderModal,
 };

@@ -54,6 +54,7 @@ export default function initialize(additionalConfiguration = {}) {
 		...sagas.http,
 		...sagas.search,
 		...sagas.preparation,
+		...sagas.folder,
 		...sagas.redirect,
 		...sagas.notification,
 	};
@@ -153,6 +154,9 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('folder:add', actions.folder.add);
 		registerActionCreator('folder:add:open', actions.folder.openAddFolderModal);
 		registerActionCreator('folder:add:close', actions.folder.closeAddFolderModal);
+		registerActionCreator('folder:remove', actions.folder.remove);
+		registerActionCreator('folder:remove:open', actions.folder.openRemoveFolderModal);
+		registerActionCreator('folder:remove:close', actions.folder.closeRemoveFolderModal);
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
 		registerActionCreator('preparation:copy', actions.preparation.copy);
 		registerActionCreator('preparation:move', actions.preparation.move);

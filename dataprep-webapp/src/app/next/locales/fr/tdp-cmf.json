@@ -10,7 +10,6 @@
   "ERROR_404_MESSAGE": "La page que vous cherchez est introuvable",
   "ERROR_404_TITLE": "Oups",
   "FEEDBACK": "Donnez-nous votre avis",
-  "FOLDER": "dossier",
   "FOLDER_ADD": "Ajouter un dossier",
   "GOTO_HOME": "Aller à la page d'accueil",
   "GUIDED_TOUR": "Visite guidée",
@@ -26,7 +25,6 @@
   "PREPARATION_MOVE": "Déplacer la préparation",
   "PREPARATION_RENAME": "Renommer la préparation",
   "REMOVE": "Supprimer",
-  "REMOVE_FOLDER_MODAL_HEADER": "Suppression de dossier",
   "SEARCH_TOGGLE": "Afficher/masquer la barre de recherche",
   "STEPS": "Étapes"
 }

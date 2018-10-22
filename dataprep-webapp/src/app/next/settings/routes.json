@@ -66,32 +66,11 @@
         "component": "HttpErrorView",
         "componentId": "403"
       },
-
       {
-        "path": "preparations",
+        "path": "preparations(/:folderId)",
         "component": "HomeListView",
-        "componentId": "preparations",
-        "childRoutes": [
-          {
-            "path": ":deletionId/delete",
-            "component": "DeleteResource",
-            "componentId": "folder"
-          },
-
-          {
-            "path": ":folderId",
-            "childRoutes": [
-              {
-                "path": ":deletionId/delete",
-                "component": "DeleteResource",
-                "componentId": "folder"
-              }
-            ]
-          }
-
-        ]
+        "componentId": "preparations"
       },
-
       {
         "path": "*",
         "component": "Redirect",

@@ -26,4 +26,21 @@ describe('Folder action', () => {
 		const action = actions.closeAddFolderModal();
 		expect(action).toMatchSnapshot();
 	});
+
+	it('should create an remove action', () => {
+		const action = actions.remove();
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create an openRemoveFolderModal action', () => {
+		const action = actions.openRemoveFolderModal(null, {
+			model: { name: 'test' },
+		});
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create an closeRemoveFolderModal action', () => {
+		const action = actions.closeRemoveFolderModal();
+		expect(action).toMatchSnapshot();
+	});
 });

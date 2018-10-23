@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
@@ -45,6 +46,9 @@ public abstract class BaseDataSetService {
 
     @Autowired
     protected ApplicationEventPublisher publisher;
+
+    @Autowired
+    protected ApplicationEventMulticaster asyncPublisher;
 
     /** DataSet metadata builder. */
     @Autowired

@@ -286,9 +286,7 @@ public class PreparationAPI extends APIService {
         }
 
         try {
-            final PreparationDetailsDTO preparationDetails =
-                    getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
-            return injectorUtil.injectPreparationDetails(preparationDetails.getActions(), preparationDetails);
+            return getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
         } catch (Exception e) {
             LOG.error("Unable to get preparation {}", preparationId, e);
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);

@@ -113,7 +113,8 @@ public class PreparationServiceTestUnit {
 
         // test that there is nothing else root step and root action before to add the action
         PersistentPreparation beforeAddAction = repository.get("prepId", PersistentPreparation.class);
-        assert (beforeAddAction.getSteps().isEmpty());
+        assert (beforeAddAction.getSteps().size() == 1);
+        assert (beforeAddAction.getSteps().iterator().next().equals(Step.ROOT_STEP.getId()));
         assertEquals(1, repository.list(PersistentStep.class).count());
         assertEquals(1, repository.list(PreparationActions.class).count());
 

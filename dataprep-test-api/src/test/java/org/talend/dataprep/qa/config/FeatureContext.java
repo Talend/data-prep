@@ -311,6 +311,11 @@ public class FeatureContext {
         return datasetIdByName.get(datasetName);
     }
 
+    @NotNull
+    public List<String> getDatasetNames() {
+        return new ArrayList<>(datasetIdByName.keySet());
+    }
+
     /**
      * Get the id of a stored preparation.
      *

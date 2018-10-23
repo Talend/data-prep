@@ -13,26 +13,11 @@
 
 package org.talend.dataprep.helper;
 
-import static com.jayway.restassured.http.ContentType.JSON;
-import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
-import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
-import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
-import static org.talend.dataprep.helper.VerboseMode.NONE;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Base64;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.MediaType;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -50,11 +35,24 @@ import org.talend.dataprep.helper.api.ActionRequest;
 import org.talend.dataprep.helper.api.Aggregate;
 import org.talend.dataprep.helper.api.PreparationRequest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Header;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Base64;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static com.jayway.restassured.http.ContentType.JSON;
+import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
+import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
+import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
+import static org.talend.dataprep.helper.VerboseMode.NONE;
 
 /**
  * Utility class to allow dataprep-api integration tests.
@@ -238,9 +236,22 @@ public class OSDataPrepAPIHelper {
      * @throws java.io.IOException if creation isn't possible
      */
     public Response uploadBinaryDataset(String filename, String datasetName) throws java.io.IOException {
+        return uploadBinaryDataset(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename)),
+                datasetName);
+    }
+
+    /**
+     * Upload a binary dataset into dataprep.
+     *
+     * @param bytes the file to upload
+     * @param datasetName the dataset basename
+     * @return the response
+     * @throws java.io.IOException if creation isn't possible
+     */
+    public Response uploadBinaryDataset(byte[] bytes, String datasetName) throws java.io.IOException {
         return given() //
                 .header(new Header(HttpHeaders.CONTENT_TYPE, HTTP.PLAIN_TEXT_TYPE)) //
-                .body(IOUtils.toByteArray(OSDataPrepAPIHelper.class.getResourceAsStream(filename))) //
+                .body(bytes) //
                 .when() //
                 .queryParam(NAME, datasetName) //
                 .post("/api/datasets");

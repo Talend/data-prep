@@ -52,6 +52,15 @@ export function* addFolder() {
 	else {
 		const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
 		const currentFolderId = yield select(state => state.cmf.collections.get('currentFolderId'));
+
+		let action = yield select(state =>
+			state.cmf.components.getIn(['FolderCreatorModal', 'add:folder:modal', 'validateAction']),
+		);
+		yield put(
+			actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', {
+				validateAction: { ...action.toJS(), inProgress: true },
+			}),
+		);
 		const { data } = yield call(
 			http.get,
 			`${uris.get('apiFolders')}/${currentFolderId}/preparations`,
@@ -81,6 +90,15 @@ export function* addFolder() {
 			}
 			yield call(closeAddFolderModal);
 		}
+
+		action = yield select(state =>
+			state.cmf.components.getIn(['FolderCreatorModal', 'add:folder:modal', 'validateAction']),
+		);
+		yield put(
+			actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', {
+				validateAction: { ...action.toJS(), inProgress: false },
+			}),
+		);
 	}
 }
 

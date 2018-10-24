@@ -79,4 +79,9 @@ public class NoOpSecurity implements Security {
     public Analytics getAnalytics() {
         return null;
     }
+
+    @Override
+    public Set<String> getApplications() {
+        return emptySet();
+    }
 }

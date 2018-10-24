@@ -29,6 +29,6 @@ FolderCreatorContainer.propTypes = {
 };
 
 export default cmfConnect({
-	componentId: 'add_folder_modal',
+	componentId: 'add:folder:modal',
 	defaultState: new Map({ show: false }),
 })(FolderCreatorContainer);

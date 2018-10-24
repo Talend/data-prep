@@ -181,10 +181,10 @@ describe('CollapsiblePanel container', () => {
 				createElement();
 
 				// then
-				const panelHeader = element.find('.panel-heading > div');
+				const panelHeader = element.find('.panel-heading .panel-title > div');
 				expect(panelHeader.length).toBe(1);
-				expect(panelHeader.eq(0).find('span').eq(0).text().trim()).toBe(simpleItem.label);
-				expect(panelHeader.eq(0).find('span').eq(1).text().trim()).toBe(badgeItem.label);
+				expect(panelHeader.eq(0).find('div').eq(0).text().trim()).toBe(simpleItem.label);
+				expect(panelHeader.eq(0).find('span').eq(0).text().trim()).toBe(badgeItem.label);
 			});
 		});
 

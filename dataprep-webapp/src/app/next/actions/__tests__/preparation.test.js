@@ -99,7 +99,7 @@ describe('Preparation action', () => {
 		const payload = {
 			model: {
 				id: 42,
-				type: 'preparation'
+				type: 'preparation',
 			},
 		};
 		const action = actions.remove(event, payload);

@@ -14,7 +14,6 @@ package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
@@ -122,7 +121,7 @@ public class FolderAPI extends APIService {
     /**
      * no javadoc here so see description in @ApiOperation notes.
      */
-    @RequestMapping(value = "/api/folders/{id}", method = DELETE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/folders/{id}", method = DELETE)
     @ApiOperation(value = "Remove a Folder")
     @Timed
     public ResponseEntity<String> removeFolder(@PathVariable final String id, final OutputStream output) {

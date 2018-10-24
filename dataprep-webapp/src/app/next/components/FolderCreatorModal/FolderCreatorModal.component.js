@@ -4,6 +4,7 @@ import { translate } from 'react-i18next';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import PropTypes from 'prop-types';
 import { cmfConnect } from '@talend/react-cmf/lib/index';
+import TextService from '../../services/text.service';
 import I18N from '../../constants/i18n';
 
 class FolderCreatorModal extends React.Component {
@@ -16,18 +17,19 @@ class FolderCreatorModal extends React.Component {
 	onChange() {
 		const name = this.folderNameInput.value;
 		const validateAction = { ...this.props.state.validateAction };
-		validateAction.disabled = !name;
+		validateAction.disabled = !TextService.sanitize(name);
 		this.props.setState({ name, error: '', validateAction });
 	}
 
 	onSubmit(event, data) {
-		this.props.state.validateAction.onClick(event, data);
+		if (TextService.sanitize(this.folderNameInput.value)) {
+			this.props.state.validateAction.onClick(event, data);
+		}
 		event.preventDefault();
 	}
+
 	render() {
-		const addFolderLabel = this.props.t('tdp-app:ADD_FOLDER_NAME_LABEL', {
-			defaultValue: 'Enter folder name',
-		});
+		const addFolderLabel = this.props.t('tdp-app:ADD_FOLDER_NAME_LABEL');
 		return (
 			<ConfirmDialog {...this.props.state}>
 				<form onSubmit={this.onSubmit}>

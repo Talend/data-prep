@@ -8,11 +8,12 @@ $standard-color: $black;
 .inventory-tile-list {
 	display: flex;
 	flex-wrap: wrap;
-	overflow-y: auto;
-	height: 60vh;
+	height: 100%;
+	overflow: auto;
 
 	> * {
 		flex-basis: 300px;
+		cursor: pointer;
 	}
 }
 

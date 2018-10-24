@@ -1,9 +1,8 @@
 import React from 'react';
-import { ConfirmDialog } from '@talend/react-components';
 import { translate } from 'react-i18next';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import PropTypes from 'prop-types';
-import { cmfConnect } from '@talend/react-cmf/lib/index';
+import { cmfConnect, Inject } from '@talend/react-cmf';
 import TextService from '../../services/text.service';
 import I18N from '../../constants/i18n';
 
@@ -11,28 +10,67 @@ class FolderCreatorModal extends React.Component {
 	constructor(props) {
 		super(props);
 		this.onChange = this.onChange.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
+		this.submit = this.submit.bind(this);
 	}
 
 	onChange() {
-		const name = this.folderNameInput.value;
-		const validateAction = { ...this.props.state.validateAction };
-		validateAction.disabled = !TextService.sanitize(name);
-		this.props.setState({ name, error: '', validateAction });
+		const name = TextService.sanitize(this.input.value);
+		this.props.setState({ name, error: '', disabled: !name.length });
 	}
 
-	onSubmit(event, data) {
-		if (TextService.sanitize(this.folderNameInput.value)) {
-			this.props.state.validateAction.onClick(event, data);
-		}
+	submit(event) {
+		const { state } = this.props;
+		const name = state.get('name', '');
+
+		this.props.dispatchActionCreator(
+			'folder:add',
+			event,
+			name,
+		);
+
 		event.preventDefault();
 	}
 
 	render() {
-		const addFolderLabel = this.props.t('tdp-app:ADD_FOLDER_NAME_LABEL');
+		const { state, t } = this.props;
+
+		const show = state.get('show', false);
+		const error = state.get('error', null);
+		const disabled = state.get('disabled', true);
+		const inProgress = state.get('inProgress', false);
+
+		const bar = {
+			actions: {
+				left: [
+					{
+						label: t('tdp-cmf:CANCEL'),
+						bsStyle: 'default btn-inverse',
+						onClick: () => this.props.setState({ show: false }),
+					},
+				],
+				right: [
+					{
+						label: t('tdp-app:ADD'),
+						bsStyle: 'primary',
+						onClick: this.submit,
+						disabled,
+						inProgress,
+					},
+				],
+			},
+		};
+
+		const addFolderLabel = t('tdp-app:ADD_FOLDER_NAME_LABEL');
 		return (
-			<ConfirmDialog {...this.props.state}>
-				<form onSubmit={this.onSubmit}>
+			<Inject
+				component="Dialog"
+				header={t('tdp-app:ADD_FOLDER_HEADER')}
+				error={error}
+				actionbar={bar}
+				show={show}
+				closeButton={false}
+			>
+				<form onSubmit={this.submit}>
 					<div className="form-group field field-string">
 						<input
 							className="form-control"
@@ -41,16 +79,16 @@ class FolderCreatorModal extends React.Component {
 							autoFocus
 							value={this.props.state.name}
 							ref={(input) => {
-								this.folderNameInput = input;
+								this.input = input;
 							}}
 							onChange={this.onChange}
 						/>
 						<label className="control-label" htmlFor="add-folder-input">
-							{ addFolderLabel }
+							{addFolderLabel}
 						</label>
 					</div>
 				</form>
-			</ConfirmDialog>
+			</Inject>
 		);
 	}
 }

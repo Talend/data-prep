@@ -1,5 +1,6 @@
 import { call, put, select } from 'redux-saga/effects';
 import { actions } from '@talend/react-cmf';
+import { ConfirmDialog } from '@talend/react-containers';
 import { Map } from 'immutable';
 import { refreshCurrentFolder } from './preparation.effects';
 import i18next from '../../../i18n';
@@ -9,7 +10,6 @@ import TextService from '../../services/text.service';
 
 export function* openAddFolderModal() {
 	const state = new Map({
-		header: i18next.t('tdp-app:ADD_FOLDER_HEADER'),
 		show: true,
 		name: '',
 		error: '',
@@ -20,21 +20,15 @@ export function* openAddFolderModal() {
 			bsStyle: 'primary',
 			actionCreator: 'folder:add',
 		},
-		cancelAction: {
-			label: i18next.t('tdp-app:CANCEL'),
-			id: 'folder:add:close',
-			bsStyle: 'default btn-inverse',
-			actionCreator: 'folder:add:close',
-		},
 	});
-	yield put(actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', state));
+	yield put(actions.components.mergeState('Translate(FolderCreatorModal)', 'default', state));
 }
 
 export function* closeAddFolderModal() {
 	yield put(
 		actions.components.mergeState(
-			'FolderCreatorModal',
-			'add:folder:modal',
+			'Translate(FolderCreatorModal)',
+			'default',
 			new Map({ show: false }),
 		),
 	);
@@ -42,64 +36,58 @@ export function* closeAddFolderModal() {
 
 export function* addFolder() {
 	let newFolderName = yield select(state =>
-		state.cmf.components.getIn(['FolderCreatorModal', 'add:folder:modal', 'name']),
+		state.cmf.components.getIn(['Translate(FolderCreatorModal)', 'default', 'name']),
 	);
 	newFolderName = TextService.sanitize(newFolderName);
-	if (!newFolderName.length) {
-		const error = i18next.t('tdp-app:FOLDER_EMPTY_MESSAGE');
-		yield put(actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', { error }));
+	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
+	const currentFolderId = yield select(state => state.cmf.collections.get('currentFolderId'));
+
+	// let action = yield select(state =>
+	// 	state.cmf.components.getIn(['Translate(FolderCreatorModal)', 'default', 'validateAction']),
+	// );
+	// yield put(
+	// 	actions.components.mergeState('Translate(FolderCreatorModal)', 'default', {
+	// 		validateAction: { ...action.toJS(), inProgress: true },
+	// 	}),
+	// );
+	const { data } = yield call(
+		http.get,
+		`${uris.get('apiFolders')}/${currentFolderId}/preparations`,
+	);
+	const existingFolder = data.folders.filter(folder => folder.name === newFolderName).length;
+	if (existingFolder) {
+		const error = i18next.t('tdp-app:FOLDER_EXIST_MESSAGE', {
+			name: newFolderName,
+		});
+		yield put(actions.components.mergeState('Translate(FolderCreatorModal)', 'default', { error }));
 	}
 	else {
-		const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
-		const currentFolderId = yield select(state => state.cmf.collections.get('currentFolderId'));
-
-		let action = yield select(state =>
-			state.cmf.components.getIn(['FolderCreatorModal', 'add:folder:modal', 'validateAction']),
+		const { response } = yield call(
+			http.put,
+			`${uris.get('apiFolders')}?parentId=${currentFolderId}&path=${newFolderName}`,
 		);
-		yield put(
-			actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', {
-				validateAction: { ...action.toJS(), inProgress: true },
-			}),
-		);
-		const { data } = yield call(
-			http.get,
-			`${uris.get('apiFolders')}/${currentFolderId}/preparations`,
-		);
-		const existingFolder = data.folders.filter(folder => folder.name === newFolderName).length;
-		if (existingFolder) {
-			const error = i18next.t('tdp-app:FOLDER_EXIST_MESSAGE', {
-				name: newFolderName,
-			});
-			yield put(actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', { error }));
-		}
-		else {
-			const { response } = yield call(
-				http.put,
-				`${uris.get('apiFolders')}?parentId=${currentFolderId}&path=${newFolderName}`,
-			);
-			if (response.ok) {
-				yield call(refreshCurrentFolder);
-				yield put(
-					creators.notification.success(null, {
-						title: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_TITLE'),
-						message: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_MESSAGE', {
-							name: newFolderName,
-						}),
+		if (response.ok) {
+			yield call(refreshCurrentFolder);
+			yield put(
+				creators.notification.success(null, {
+					title: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_TITLE'),
+					message: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_MESSAGE', {
+						name: newFolderName,
 					}),
-				);
-			}
-			yield call(closeAddFolderModal);
+				}),
+			);
 		}
-
-		action = yield select(state =>
-			state.cmf.components.getIn(['FolderCreatorModal', 'add:folder:modal', 'validateAction']),
-		);
-		yield put(
-			actions.components.mergeState('FolderCreatorModal', 'add:folder:modal', {
-				validateAction: { ...action.toJS(), inProgress: false },
-			}),
-		);
+		yield call(closeAddFolderModal);
 	}
+
+	// const action = yield select(state =>
+	// 	state.cmf.components.getIn(['Translate(FolderCreatorModal)', 'default', 'validateAction']),
+	// );
+	// yield put(
+	// 	actions.components.mergeState('Translate(FolderCreatorModal)', 'default', {
+	// 		validateAction: { ...action.toJS(), inProgress: false },
+	// 	}),
+	// );
 }
 
 export function* openRemoveFolderModal(payload) {
@@ -132,13 +120,16 @@ export function* removeFolder() {
 	const folderId = yield select(state =>
 		state.cmf.components.getIn(['CMFContainer(ConfirmDialog)', 'ConfirmDialog', 'folderId']),
 	);
-	yield put(
-		actions.components.mergeState(
-			'CMFContainer(ConfirmDialog)',
-			'ConfirmDialog',
-			new Map({ loading: true }),
-		),
-	);
+
+	yield select(state => ConfirmDialog.setDialogLoadingMode(state, true));
+
+	// yield put(
+	// 	actions.components.mergeState(
+	// 		'CMFContainer(ConfirmDialog)',
+	// 		'ConfirmDialog',
+	// 		new Map({ loading: true }),
+	// 	),
+	// );
 	const { response } = yield call(http.delete, `${uris.get('apiFolders')}/${folderId}`);
 	if (response.ok) {
 		yield call(refreshCurrentFolder);

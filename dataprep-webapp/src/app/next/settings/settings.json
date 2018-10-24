@@ -368,6 +368,9 @@
     "SidePanel#default": {
       "actionIds": ["menu:preparations", "menu:datasets", "menu:datastores"]
     },
+    "FolderCreatorModal#default": {
+
+    },
     "HomeListView#datastores": {
       "hasTheme": true
     },

@@ -30,7 +30,7 @@
                                 <artifactItem>
                                     <groupId>org.talend.daikon</groupId>
                                     <artifactId>messages-model</artifactId>
-                                    <version>${org.talend.daikon.version}</version>
+                                    <version>${daikon.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/target/messages-model</outputDirectory>
                                 </artifactItem>

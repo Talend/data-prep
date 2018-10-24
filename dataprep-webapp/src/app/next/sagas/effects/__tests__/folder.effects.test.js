@@ -109,7 +109,7 @@ describe('folder', () => {
 			expect(effectError.componentState).toEqual({ error: 'FOLDER_EMPTY_MESSAGE' });
 		});
 
-		it.only('should add folder with success', () => {
+		it('should add folder with success', () => {
 			const gen = effects.addFolder();
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next('folderName').value.SELECT).toBeDefined();

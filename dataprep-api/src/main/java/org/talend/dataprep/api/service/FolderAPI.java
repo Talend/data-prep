@@ -47,7 +47,6 @@ import org.talend.dataprep.api.service.command.folder.SearchFolders;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationListByFolder;
-import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
@@ -61,9 +60,6 @@ import io.swagger.annotations.ApiParam;
 
 @RestController
 public class FolderAPI extends APIService {
-
-    @Autowired
-    private DataSetNameInjection dataSetNameInjection;
 
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
@@ -196,7 +192,8 @@ public class FolderAPI extends APIService {
 
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
         final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
-                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
+                        APIService::adaptPrepListItem));
 
         return new PreparationsByFolder(folders, preparations);
     }

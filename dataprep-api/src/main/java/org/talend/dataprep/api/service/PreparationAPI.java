@@ -85,7 +85,6 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
-import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -110,9 +109,6 @@ public class PreparationAPI extends APIService {
 
     @Autowired
     private DatasetClient datasetClient;
-
-    @Autowired
-    private DataSetNameInjection dataSetNameInjection;
 
     @Autowired
     private ActionRegistry registry;
@@ -141,10 +137,12 @@ public class PreparationAPI extends APIService {
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
         if ("summary".equalsIgnoreCase(format)) {
             return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
+                            APIService::adaptPrepListItem));
         } else {
             return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
+                            APIService::adaptPrepListItem));
         }
     }
 

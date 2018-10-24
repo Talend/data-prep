@@ -266,7 +266,6 @@ public class PreparationService {
                         PATH_SEPARATOR, path, PATH_SEPARATOR, name);
             }
         }
-
         return listAll(filterPreparation().byName(name).withNameExactMatch(true).byFolderPath(folderPath), sort, order);
     }
 

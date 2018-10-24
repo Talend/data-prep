@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.test;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
@@ -183,10 +184,8 @@ public class APIClientTest {
      * @param name the preparation name.
      * @param folderId where to create the preparation.
      * @return the preparation id.
-     * @throws IOException sh*t happens.
      */
-    public String createPreparationFromDataset(final String dataSetId, final String name, final String folderId)
-            throws IOException {
+    public String createPreparationFromDataset(final String dataSetId, final String name, final String folderId) {
 
         RequestSpecification request = given() //
                 .contentType(JSON) //
@@ -211,6 +210,11 @@ public class APIClientTest {
         assertThat(preparationId, not(""));
 
         return preparationId;
+    }
+
+    public boolean deletePreparation(String preparationId) {
+        Response response = delete("/api/preparations/{id}", preparationId);
+        return response.statusCode() == HttpStatus.OK.value();
     }
 
     /**
@@ -242,9 +246,8 @@ public class APIClientTest {
      *
      * @param preparationId the preparation id.
      * @param action the content of the step to add.
-     * @throws IOException sh*t happens.
      */
-    public void applyAction(final String preparationId, final String action) throws IOException {
+    public void applyAction(final String preparationId, final String action) {
         given()
                 .contentType(JSON)
                 .body(action)
@@ -260,10 +263,8 @@ public class APIClientTest {
      * @param preparationId the preparation id.
      * @param actionName action name
      * @param parameters action parameters
-     * @throws IOException sh*t happens.
      */
-    public void applyAction(final String preparationId, final String actionName, Map<String, String> parameters)
-            throws IOException {
+    public void applyAction(final String preparationId, final String actionName, Map<String, String> parameters) {
         org.talend.dataprep.api.preparation.Actions actions = new org.talend.dataprep.api.preparation.Actions();
         Action action = new Action();
         action.setName(actionName);
@@ -276,6 +277,16 @@ public class APIClientTest {
                 .post("/api/preparations/{id}/actions", preparationId) //
                 .then() //
                 .statusCode(is(200));
+    }
+
+    /**
+     * List all preparations.
+     *
+     * @return list of preparations
+     */
+    public List<Preparation> listPreparations() throws IOException {
+        InputStream inputStream = when().get("/api/preparations").asInputStream();
+        return mapper.readerFor(Preparation.class).<Preparation>readValues(inputStream).readAll();
     }
 
     /**
@@ -479,25 +490,25 @@ public class APIClientTest {
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter, String fileName)
-            throws IOException, InterruptedException {
+            throws IOException {
         return export(preparationId, null, stepId, csvDelimiter, fileName);
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter)
-            throws IOException, InterruptedException {
+            throws IOException {
         return export(preparationId, "", stepId, csvDelimiter, null);
     }
 
-    public Response exportPreparation(String preparationId, String stepId) throws IOException, InterruptedException {
+    public Response exportPreparation(String preparationId, String stepId) throws IOException {
         return export(preparationId, "", stepId, null, null);
     }
 
-    public Response exportDataset(String datasetId, String stepId) throws IOException, InterruptedException {
+    public Response exportDataset(String datasetId, String stepId) throws IOException {
         return export("", datasetId, stepId, null, null);
     }
 
     protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter,
-            String fileName) throws IOException, InterruptedException {
+            String fileName) throws IOException {
         // when
         Response export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, null);
 

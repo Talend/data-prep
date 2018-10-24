@@ -20,7 +20,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Identifiable;
 import org.talend.dataprep.preparation.store.ObjectPreparationRepository;
-import org.talend.dataprep.preparation.store.PreparationRepository;
 
 /**
  * In memory Preparation repository.
@@ -34,15 +33,13 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
      */
     private final Map<String, Identifiable> store = new HashMap<>();
 
-    /**
-     * @see PreparationRepository#add(Identifiable)
-     */
     @Override
     public void add(Identifiable object) {
         store.put(object.id(), object);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends Identifiable> Stream<T> source(Class<T> clazz) {
         return new HashMap<>(store)
                 .entrySet()
@@ -51,10 +48,8 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
                 .map(entry -> (T) entry.getValue());
     }
 
-    /**
-     * @see PreparationRepository#get(String, Class)
-     */
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends Identifiable> T get(String id, Class<T> clazz) {
         if (id == null) {
             return null;
@@ -72,17 +67,11 @@ public class InMemoryPreparationRepository extends ObjectPreparationRepository {
         }
     }
 
-    /**
-     * @see PreparationRepository#clear()
-     */
     @Override
     public void clear() {
         store.clear();
     }
 
-    /**
-     * @see PreparationRepository#remove
-     */
     @Override
     public void remove(Identifiable object) {
         if (object == null) {

@@ -331,7 +331,8 @@ public class GenericCommandTest extends ServiceBaseTest {
             return null;
         }
 
-        @Override public Set<String> getApplications() {
+        @Override
+        public Set<String> getApplications() {
             return emptySet();
         }
 

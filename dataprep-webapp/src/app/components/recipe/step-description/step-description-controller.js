@@ -108,13 +108,13 @@ class StepDescriptionCtrl {
 		const multiColumnsDetails = this._getSelectedColumnsInMultiColumnsAction(step);
 		switch (multiColumnsDetails.initialColsNbr) {
 		case 1:
-			description = this.$translate.instant('RECIPE_ITEM_ON_COL', multiColumnsDetails);
+			description = this.$translate.instant('ONLY_1_SELECTED_COLS', multiColumnsDetails);
 			break;
 		case 2:
 			description = this.$translate.instant('ONLY_2_SELECTED_COLS', multiColumnsDetails);
 			break;
 		default:
-			description = this.$translate.instant('MORE_THEN_2_SELECTED_COLS', multiColumnsDetails);
+			description = this.$translate.instant('MORE_THAN_2_SELECTED_COLS', multiColumnsDetails);
 		}
 
 		return description;
@@ -140,7 +140,7 @@ class StepDescriptionCtrl {
 	}
 
 	_getSelectedColumnsInMultiColumnsAction(step) {
-		const allSelectedColumns = step.column.name;
+		const allSelectedColumns = step.actionParameters.parameters.column_names;
 		return {
 			index: (this.index + 1),
 			label: this.step.transformation.label,

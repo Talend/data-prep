@@ -1574,8 +1574,8 @@ describe('Playground Service', () => {
 				// then
 				const expectedParams = {
 					scope: 'multi_columns',
-					column_id: ['0001', '0002'],
-					column_name: ['firstname', 'lastname'],
+					column_ids: ['0001', '0002'],
+					column_names: ['firstname', 'lastname'],
 				};
 				const actions = [{ action: 'tolowercase', parameters: expectedParams }];
 				expect(PlaygroundService.appendStep).toHaveBeenCalledWith(actions);

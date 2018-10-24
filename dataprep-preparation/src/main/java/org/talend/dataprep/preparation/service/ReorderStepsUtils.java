@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.transformation.actions.category.ActionScope;
 import org.talend.dataprep.transformation.actions.column.DeleteColumn;
 
 import org.talend.dataprep.transformation.actions.common.ActionsUtils;
@@ -37,11 +38,15 @@ public class ReorderStepsUtils {
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
                 .collect(Collectors.toSet());
 
-        return !appendSteps.stream().anyMatch(step -> {
+        return appendSteps.stream().noneMatch(step -> {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
-                final String[] columnIds =
-                        ActionsUtils.extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
+                final String[] columnIds;
+                if (action.getParameters().get(ImplicitParameters.SCOPE.getKey()).equals(ActionScope.MULTI_COLUMNS.getDisplayName())) {
+                    columnIds = ActionsUtils.extractColumnsId(parameters.get("column_ids"));
+                } else {
+                    columnIds = ActionsUtils.extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
+                }
 
                 // remove the created columns from not available columns
                 notYetAvailableColumnsIds.removeAll(step.getDiff().getCreatedColumns());

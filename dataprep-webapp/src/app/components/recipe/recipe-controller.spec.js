@@ -180,8 +180,8 @@ describe('Recipe controller', () => {
 					action: 'cut',
 					parameters: {
 						pattern: '.',
-						column_name: '["state1","state2"]',
-						column_id: '["0000","0001"]',
+						column_names: '["state1","state2"]',
+						column_ids: '["0000","0001"]',
 						scope: 'multi_columns',
 					},
 				},
@@ -522,7 +522,7 @@ describe('Recipe controller', () => {
 			},
 			actionParameters: {
 				parameters: {
-					column_id: ['0001','0002'],
+					column_ids: ['0001','0002'],
 					scope: 'multi_columns'
 				}
 			},

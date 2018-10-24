@@ -30,7 +30,6 @@ import org.talend.dataprep.api.service.command.transformation.*;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.metrics.Timed;
-import org.talend.dataprep.transformation.actions.common.MultiColumnsAction;
 
 import javax.validation.Valid;
 import java.io.InputStream;

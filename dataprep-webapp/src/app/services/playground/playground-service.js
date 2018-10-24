@@ -825,9 +825,8 @@ export default function PlaygroundService(
 				if (action.actionScope && action.actionScope.includes(MULTI_COLUMNS)) {
 					let parameters = { ...params };
 					parameters.scope = MULTI_COLUMNS;
-					parameters.column_id = state.playground.grid.selectedColumns.map(col => col.id);
-					parameters.column_name = state.playground.grid.selectedColumns.map(col => col.name);
-
+					parameters.column_names = state.playground.grid.selectedColumns.map(col => col.name);
+					parameters.column_ids = state.playground.grid.selectedColumns.map(col => col.id);
 					if (
 						state.playground.filter
 							.applyTransformationOnFilters

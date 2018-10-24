@@ -370,8 +370,8 @@ export default class RecipeCtrl {
 
 	_updateSelectedColumns(newParams) {
 		if (this.state.playground.grid.selectedColumns !== undefined) {
-			newParams.column_id = this.state.playground.grid.selectedColumns.map(col => col.id);
-			newParams.column_name = this.state.playground.grid.selectedColumns.map(col => col.name);
+			newParams.column_ids = this.state.playground.grid.selectedColumns.map(col => col.id);
+			newParams.column_names = this.state.playground.grid.selectedColumns.map(col => col.name);
 		}
 		return newParams;
 	}
@@ -469,9 +469,9 @@ export default class RecipeCtrl {
 
 	_selectMultiColumnsAction(step) {
 		const columns = this.state.playground.data.metadata.columns;
-		const stepColumns = step.actionParameters.parameters.column_id;
+		const stepColumns = step.actionParameters.parameters.column_ids;
 		const selectedColumns = [];
-		const tmpSelectedColumn = columns.filter(col => stepColumns.contain(col.id));
+		const tmpSelectedColumn = columns.filter(col => stepColumns.includes(col.id));
 		if (tmpSelectedColumn != null) {
 			selectedColumns.push(tmpSelectedColumn);
 		}

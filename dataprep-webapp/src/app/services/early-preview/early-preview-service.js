@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import { map } from 'lodash';
-
 // actions scopes
 const LINE = 'line';
 const DATASET = 'dataset';
@@ -94,13 +92,13 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 							{
 								...params,
 								scope: MULTI_COLUMNS,
-								column_id: columns.map(col => col.id),
-								column_name: columns.map(col => col.name),
+								column_ids: columns.map(col => col.id),
+								column_names: columns.map(col => col.name),
 							},
 						];
 					}
 					else {
-						parameters = map(columns, col => ({
+						parameters = columns.map(col => ({
 							...params,
 							scope,
 							column_id: col.id,

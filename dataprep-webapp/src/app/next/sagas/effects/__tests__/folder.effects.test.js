@@ -58,9 +58,19 @@ describe('folder', () => {
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next('folderName').value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value.SELECT).toBeDefined();
-			const effect = gen.next('folderId').value.CALL;
+
+			expect(gen.next('folderId').value.SELECT).toBeDefined();
+
+			let effect = gen.next(new Map({ inProgress: false })).value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('add:folder:modal');
+			expect(effect.componentName).toEqual('FolderCreatorModal');
+			expect(effect.componentState).toEqual({ validateAction: { inProgress: true } });
+
+			effect = gen.next('folderId').value.CALL;
 			expect(effect.fn).toEqual(http.get);
 			expect(effect.args[0]).toEqual('/api/folders/folderId/preparations');
+
 			const response = {
 				data: {
 					folders: [
@@ -75,6 +85,17 @@ describe('folder', () => {
 			expect(effectError.key).toEqual('add:folder:modal');
 			expect(effectError.componentName).toEqual('FolderCreatorModal');
 			expect(effectError.componentState).toEqual({ error: 'FOLDER_EXIST_MESSAGE' });
+
+			expect(gen.next('folderId').value.SELECT).toBeDefined();
+
+			effect = gen.next(new Map({ inProgress: true })).value.PUT.action;
+
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('add:folder:modal');
+			expect(effect.componentName).toEqual('FolderCreatorModal');
+			expect(effect.componentState).toEqual({ validateAction: { inProgress: false } });
+
+			expect(gen.next().done).toBeTruthy();
 		});
 
 		it('should not add folder when new name is empty', () => {
@@ -88,12 +109,21 @@ describe('folder', () => {
 			expect(effectError.componentState).toEqual({ error: 'FOLDER_EMPTY_MESSAGE' });
 		});
 
-		it('should add folder with success', () => {
+		it.only('should add folder with success', () => {
 			const gen = effects.addFolder();
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next('folderName').value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value.SELECT).toBeDefined();
-			const effect = gen.next('folderId').value.CALL;
+
+			expect(gen.next('folderId').value.SELECT).toBeDefined();
+
+			let effect = gen.next(new Map({ inProgress: false })).value.PUT.action;
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('add:folder:modal');
+			expect(effect.componentName).toEqual('FolderCreatorModal');
+			expect(effect.componentState).toEqual({ validateAction: { inProgress: true } });
+
+			effect = gen.next('folderId').value.CALL;
 			expect(effect.fn).toEqual(http.get);
 			expect(effect.args[0]).toEqual('/api/folders/folderId/preparations');
 			const response = {
@@ -111,6 +141,17 @@ describe('folder', () => {
 			expect(gen.next(API_RESPONSE).value).toEqual(call(refreshCurrentFolder));
 			expect(gen.next().value.PUT.action.type).toBe('TDP_SUCCESS_NOTIFICATION');
 			expect(gen.next().value).toEqual(call(effects.closeAddFolderModal));
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			effect = gen.next(new Map({ inProgress: true })).value.PUT.action;
+
+			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
+			expect(effect.key).toEqual('add:folder:modal');
+			expect(effect.componentName).toEqual('FolderCreatorModal');
+			expect(effect.componentState).toEqual({ validateAction: { inProgress: false } });
+
+			expect(gen.next().done).toBeTruthy();
 		});
 	});
 

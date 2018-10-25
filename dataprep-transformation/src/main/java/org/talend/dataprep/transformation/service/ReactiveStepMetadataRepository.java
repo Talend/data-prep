@@ -37,20 +37,20 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
         invalidateFlux.subscribe(invalidateMessage -> {
             LOGGER.debug("Delayed invalidate of step #{}.", invalidateMessage.stepId);
             try {
-                proxy.asTechnicalUser();
                 TenancyContextHolder.setContext(invalidateMessage.context);
-                invalidate(invalidateMessage.stepId);
+                proxy.asTechnicalUser();
+                delegate.invalidate(invalidateMessage.stepId);
             } finally {
-                TenancyContextHolder.clearContext();
                 proxy.releaseIdentity();
+                TenancyContextHolder.clearContext();
             }
             LOGGER.debug("Delayed invalidate of step #{} done.", invalidateMessage.stepId);
         });
         updateFlux.subscribe(updateMessage -> {
             LOGGER.debug("Delayed update of step #{}.", updateMessage.stepId);
             try {
-                proxy.asTechnicalUser();
                 TenancyContextHolder.setContext(updateMessage.context);
+                proxy.asTechnicalUser();
                 delegate.update(updateMessage.stepId, updateMessage.rowMetadata);
             } catch (Exception e) {
                 if (LOGGER.isDebugEnabled()) {
@@ -59,8 +59,8 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
                     LOGGER.error("Unable to update step metadata for step #{}.", updateMessage.stepId);
                 }
             } finally {
-                TenancyContextHolder.clearContext();
                 proxy.releaseIdentity();
+                TenancyContextHolder.clearContext();
             }
             LOGGER.debug("Delayed update of step #{} done.", updateMessage.stepId);
         });

@@ -25,24 +25,26 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
 
     private final StepMetadataRepository delegate;
 
-    private final BlockingSink<String> invalidates;
+    private final BlockingSink<InvalidateMessage> invalidates;
 
     private final BlockingSink<UpdateMessage> updates;
 
     public ReactiveStepMetadataRepository(StepMetadataRepository delegate, SecurityProxy proxy) {
         this.delegate = delegate;
 
-        final TopicProcessor<String> invalidateFlux = TopicProcessor.create();
+        final TopicProcessor<InvalidateMessage> invalidateFlux = TopicProcessor.create();
         final TopicProcessor<UpdateMessage> updateFlux = TopicProcessor.create();
-        invalidateFlux.subscribe(stepId -> {
-            LOGGER.debug("Delayed invalidate of step #{}.", stepId);
+        invalidateFlux.subscribe(invalidateMessage -> {
+            LOGGER.debug("Delayed invalidate of step #{}.", invalidateMessage.stepId);
             try {
                 proxy.asTechnicalUser();
-                invalidate(stepId);
+                TenancyContextHolder.setContext(invalidateMessage.context);
+                invalidate(invalidateMessage.stepId);
             } finally {
+                TenancyContextHolder.clearContext();
                 proxy.releaseIdentity();
             }
-            LOGGER.debug("Delayed invalidate of step #{} done.", stepId);
+            LOGGER.debug("Delayed invalidate of step #{} done.", invalidateMessage.stepId);
         });
         updateFlux.subscribe(updateMessage -> {
             LOGGER.debug("Delayed update of step #{}.", updateMessage.stepId);
@@ -81,7 +83,7 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
 
     @Override
     public void invalidate(String stepId) {
-        invalidates.emit(stepId);
+        invalidates.emit(new InvalidateMessage(stepId, TenancyContextHolder.getContext()));
     }
 
     private static class UpdateMessage {
@@ -95,6 +97,18 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
         private UpdateMessage(String stepId, RowMetadata rowMetadata, TenancyContext context) {
             this.stepId = stepId;
             this.rowMetadata = rowMetadata;
+            this.context = context;
+        }
+    }
+
+    private static class InvalidateMessage {
+
+        private final String stepId;
+
+        private final TenancyContext context;
+
+        public InvalidateMessage(String stepId, TenancyContext context) {
+            this.stepId = stepId;
             this.context = context;
         }
     }

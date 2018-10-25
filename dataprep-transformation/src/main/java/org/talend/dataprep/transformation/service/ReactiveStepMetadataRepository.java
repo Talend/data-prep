@@ -2,6 +2,8 @@ package org.talend.dataprep.transformation.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.daikon.multitenant.context.TenancyContext;
+import org.talend.daikon.multitenant.context.TenancyContextHolder;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.security.SecurityProxy;
 
@@ -46,6 +48,7 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
             LOGGER.debug("Delayed update of step #{}.", updateMessage.stepId);
             try {
                 proxy.asTechnicalUser();
+                TenancyContextHolder.setContext(updateMessage.context);
                 delegate.update(updateMessage.stepId, updateMessage.rowMetadata);
             } catch (Exception e) {
                 if (LOGGER.isDebugEnabled()) {
@@ -54,6 +57,7 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
                     LOGGER.error("Unable to update step metadata for step #{}.", updateMessage.stepId);
                 }
             } finally {
+                TenancyContextHolder.clearContext();
                 proxy.releaseIdentity();
             }
             LOGGER.debug("Delayed update of step #{} done.", updateMessage.stepId);
@@ -72,7 +76,7 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
 
     @Override
     public void update(String stepId, RowMetadata rowMetadata) {
-        updates.emit(new UpdateMessage(stepId, rowMetadata));
+        updates.emit(new UpdateMessage(stepId, rowMetadata, TenancyContextHolder.getContext()));
     }
 
     @Override
@@ -86,9 +90,12 @@ public class ReactiveStepMetadataRepository implements StepMetadataRepository {
 
         private final RowMetadata rowMetadata;
 
-        private UpdateMessage(String stepId, RowMetadata rowMetadata) {
+        private final TenancyContext context;
+
+        private UpdateMessage(String stepId, RowMetadata rowMetadata, TenancyContext context) {
             this.stepId = stepId;
             this.rowMetadata = rowMetadata;
+            this.context = context;
         }
     }
 }

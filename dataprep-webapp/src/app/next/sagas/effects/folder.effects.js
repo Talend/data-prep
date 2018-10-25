@@ -1,38 +1,14 @@
 import { call, put, select } from 'redux-saga/effects';
-import { actions } from '@talend/react-cmf';
+import { actions, sagas } from '@talend/react-cmf';
 import { ConfirmDialog } from '@talend/react-containers';
 import { Map } from 'immutable';
 import { refreshCurrentFolder } from './preparation.effects';
 import i18next from '../../../i18n';
 import http from './http';
 import creators from '../../actions';
+import { hide } from '../../components/FolderCreatorModal/actions';
 import TextService from '../../services/text.service';
 
-export function* openAddFolderModal() {
-	const state = new Map({
-		show: true,
-		name: '',
-		error: '',
-		validateAction: {
-			label: i18next.t('tdp-app:ADD'),
-			id: 'folder:add',
-			disabled: true,
-			bsStyle: 'primary',
-			actionCreator: 'folder:add',
-		},
-	});
-	yield put(actions.components.mergeState('Translate(FolderCreatorModal)', 'default', state));
-}
-
-export function* closeAddFolderModal() {
-	yield put(
-		actions.components.mergeState(
-			'Translate(FolderCreatorModal)',
-			'default',
-			new Map({ show: false }),
-		),
-	);
-}
 
 export function* addFolder() {
 	let newFolderName = yield select(state =>
@@ -42,14 +18,6 @@ export function* addFolder() {
 	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
 	const currentFolderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 
-	// let action = yield select(state =>
-	// 	state.cmf.components.getIn(['Translate(FolderCreatorModal)', 'default', 'validateAction']),
-	// );
-	// yield put(
-	// 	actions.components.mergeState('Translate(FolderCreatorModal)', 'default', {
-	// 		validateAction: { ...action.toJS(), inProgress: true },
-	// 	}),
-	// );
 	const { data } = yield call(
 		http.get,
 		`${uris.get('apiFolders')}/${currentFolderId}/preparations`,
@@ -77,17 +45,8 @@ export function* addFolder() {
 				}),
 			);
 		}
-		yield call(closeAddFolderModal);
+		yield sagas.putActionCreator('FolderCreatorModal#hide');
 	}
-
-	// const action = yield select(state =>
-	// 	state.cmf.components.getIn(['Translate(FolderCreatorModal)', 'default', 'validateAction']),
-	// );
-	// yield put(
-	// 	actions.components.mergeState('Translate(FolderCreatorModal)', 'default', {
-	// 		validateAction: { ...action.toJS(), inProgress: false },
-	// 	}),
-	// );
 }
 
 export function* openRemoveFolderModal(payload) {

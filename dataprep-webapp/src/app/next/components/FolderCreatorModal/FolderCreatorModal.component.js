@@ -1,5 +1,6 @@
 import React from 'react';
 import { translate } from 'react-i18next';
+import { Map } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import PropTypes from 'prop-types';
 import { cmfConnect, Inject } from '@talend/react-cmf';
@@ -10,23 +11,25 @@ class FolderCreatorModal extends React.Component {
 	constructor(props) {
 		super(props);
 		this.onChange = this.onChange.bind(this);
-		this.submit = this.submit.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	}
 
 	onChange() {
 		const name = TextService.sanitize(this.input.value);
-		this.props.setState({ name, error: '', disabled: !name.length });
+		this.props.setState({ name, error: '', disabled: !name.length, inProgress: false });
 	}
 
-	submit(event) {
+	onSubmit(event) {
 		const { state } = this.props;
 		const name = state.get('name', '');
 
-		this.props.dispatchActionCreator(
-			'folder:add',
-			event,
-			name,
-		);
+		this.props.setState({
+			inProgress: true,
+			error: '',
+			disabled: false,
+		});
+
+		this.props.dispatchActionCreator('folder:add', event, name);
 
 		event.preventDefault();
 	}
@@ -35,7 +38,7 @@ class FolderCreatorModal extends React.Component {
 		const { state, t } = this.props;
 
 		const show = state.get('show', false);
-		const error = state.get('error', null);
+		const error = state.get('error', '');
 		const disabled = state.get('disabled', true);
 		const inProgress = state.get('inProgress', false);
 
@@ -52,9 +55,9 @@ class FolderCreatorModal extends React.Component {
 					{
 						label: t('tdp-app:ADD'),
 						bsStyle: 'primary',
-						onClick: this.submit,
-						disabled,
-						inProgress,
+						onClick: this.onSubmit,
+						disabled: disabled || error.length,
+						inProgress: inProgress && !error.length,
 					},
 				],
 			},
@@ -70,7 +73,7 @@ class FolderCreatorModal extends React.Component {
 				show={show}
 				closeButton={false}
 			>
-				<form onSubmit={this.submit}>
+				<form onSubmit={this.onSubmit}>
 					<div className="form-group field field-string">
 						<input
 							className="form-control"
@@ -78,7 +81,7 @@ class FolderCreatorModal extends React.Component {
 							type="text"
 							autoFocus
 							value={this.props.state.name}
-							ref={(input) => {
+							ref={input => {
 								this.input = input;
 							}}
 							onChange={this.onChange}
@@ -100,5 +103,12 @@ FolderCreatorModal.propTypes = {
 	t: PropTypes.func,
 	...cmfConnect.propTypes,
 };
+
+export const DEFAULT_STATE = new Map({
+	error: '',
+	show: false,
+	disabled: false,
+	inProgress: false,
+});
 
 export default translate(I18N.TDP_APP_NAMESPACE)(FolderCreatorModal);

@@ -11,48 +11,6 @@ import http from '../http';
 
 describe('folder', () => {
 	describe('add', () => {
-		it('should open add folder modal', () => {
-			const gen = effects.openAddFolderModal();
-			const effect = gen.next().value.PUT.action;
-			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('add:folder:modal');
-			expect(effect.componentName).toEqual('FolderCreatorModal');
-			expect(effect.componentState).toEqual(
-				new Map({
-					header: 'ADD_FOLDER_HEADER',
-					show: true,
-					name: '',
-					error: '',
-					validateAction: {
-						label: 'ADD',
-						id: 'folder:add',
-						disabled: true,
-						bsStyle: 'primary',
-						actionCreator: 'folder:add',
-					},
-					cancelAction: {
-						label: 'CANCEL',
-						id: 'folder:add:close',
-						bsStyle: 'default btn-inverse',
-						actionCreator: 'folder:add:close',
-					},
-				}),
-			);
-
-			expect(gen.next().done).toBeTruthy();
-		});
-
-		it('should close add folder modal', () => {
-			const gen = effects.closeAddFolderModal();
-			const effect = gen.next().value.PUT.action;
-			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('add:folder:modal');
-			expect(effect.componentName).toEqual('FolderCreatorModal');
-			expect(effect.componentState).toEqual(new Map({ show: false }));
-
-			expect(gen.next().done).toBeTruthy();
-		});
-
 		it('should not add folder when it already exists', () => {
 			const gen = effects.addFolder();
 			expect(gen.next().value.SELECT).toBeDefined();

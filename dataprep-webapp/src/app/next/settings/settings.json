@@ -257,7 +257,7 @@
           }
         }
       },
-      "actionCreator": "folder:add:open"
+      "actionCreator": "FolderCreatorModal#show"
     }
   },
   "props": {

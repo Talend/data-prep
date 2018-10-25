@@ -165,15 +165,15 @@ public abstract class DataPrepStep {
         return waitResponse(message, TIME_OUT);
     }
 
-    protected ConditionFactory waitResponse(String message, int timeOut) {
+    protected ConditionFactory waitResponse(String message, long timeOut) {
         return waitResponse(message, timeOut, POLL_DELAY, POLL_INTERVAL);
     }
 
-    protected ConditionFactory waitResponse(String message, int timeOut, int pollInterval) {
+    protected ConditionFactory waitResponse(String message, long timeOut, long pollInterval) {
         return waitResponse(message, timeOut, POLL_DELAY, pollInterval);
     }
 
-    protected ConditionFactory waitResponse(String message, int timeOut, int pollDelay, int pollInterval) {
+    protected ConditionFactory waitResponse(String message, long timeOut, long pollDelay, long pollInterval) {
         return with() //
                 .pollInterval(pollInterval, TimeUnit.SECONDS) //
                 .and() //

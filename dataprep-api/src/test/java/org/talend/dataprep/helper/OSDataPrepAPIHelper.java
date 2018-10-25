@@ -14,9 +14,11 @@
 package org.talend.dataprep.helper;
 
 import static com.jayway.restassured.http.ContentType.JSON;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.isOneOf;
+import static org.talend.dataprep.async.AsyncExecution.Status.DONE;
 import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
-import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
-import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 import static org.talend.dataprep.helper.VerboseMode.NONE;
 
 import java.io.File;
@@ -28,8 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.MediaType;
 
@@ -37,6 +37,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.protocol.HTTP;
+import org.awaitility.Duration;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -599,47 +600,26 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Ping async method status url in order to wait the end of the execution
+     * Ping async method status url in order to wait the end of the execution.
+     *
      *
      * @param asyncMethodStatusUrl the asynchronous method to ping.
-     * @throws IOException
      */
-    protected AsyncExecutionMessage waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
-        boolean isAsyncMethodRunning = true;
-        int nbLoop = 0;
+    protected void waitForAsyncMethodToFinish(String asyncMethodStatusUrl) {
+        AsyncExecution.Status status =
+                await().await("Waiting the end of the execution of " + asyncMethodStatusUrl) //
+                        .atMost(1, MINUTES) //
+                        .pollInterval(Duration.ONE_SECOND) //
+                        .until(() -> given()//
+                                .when() //
+                                .expect().statusCode(200).log().ifError() //
+                                .get(asyncMethodStatusUrl) //
+                                .as(AsyncExecutionMessage.class) //
+                                .getStatus(), isOneOf(DONE, FAILED));
 
-        AsyncExecutionMessage asyncExecutionMessage = null;
-
-        while (isAsyncMethodRunning && nbLoop < 1000) {
-
-            String statusAsyncMethod = given()
-                    .when() //
-                    .expect()
-                    .statusCode(200)
-                    .log()
-                    .ifError() //
-                    .get(asyncMethodStatusUrl)
-                    .asString();
-
-            asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
-
-            AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
-            isAsyncMethodRunning = asyncStatus == RUNNING || asyncStatus == NEW;
-
-            if (asyncStatus == FAILED) {
-                LOGGER.error("AsyncExecution failed");
-                Assert.fail("AsyncExecution failed");
-            }
-            try {
-                TimeUnit.MILLISECONDS.sleep(1000);
-            } catch (InterruptedException e) {
-                LOGGER.error("Cannot Sleep", e);
-                Assert.fail();
-            }
-            nbLoop++;
+        if (status == FAILED) {
+            Assert.fail("Async Execution failed for " + asyncMethodStatusUrl);
         }
-
-        return asyncExecutionMessage;
     }
 
     public OSDataPrepAPIHelper setRestAssuredDebug(VerboseMode restAssuredDebug) {

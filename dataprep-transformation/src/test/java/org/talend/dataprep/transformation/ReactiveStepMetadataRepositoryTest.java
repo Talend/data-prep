@@ -1,6 +1,6 @@
 package org.talend.dataprep.transformation;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
 import java.util.concurrent.CountDownLatch;
@@ -32,11 +32,11 @@ public class ReactiveStepMetadataRepositoryTest {
     @Test
     public void testEmitUpdateMessage() throws InterruptedException {
         // given
-        CountDownLatch delegateInvalidateLatch = new CountDownLatch(1);
+        CountDownLatch delegateUpdateLatch = new CountDownLatch(1);
         RowMetadata rowMetadata = new RowMetadata();
         String stepId = "10";
         Mockito.doAnswer(invocation -> {
-            delegateInvalidateLatch.countDown();
+            delegateUpdateLatch.countDown();
             return null;
         }).when(delegate).update(stepId, rowMetadata);
 
@@ -50,10 +50,7 @@ public class ReactiveStepMetadataRepositoryTest {
         reactiveStepMetadataRepository.update(stepId, rowMetadata);
 
         // then
-        boolean awaitSuccess = delegateInvalidateLatch.await(1, TimeUnit.SECONDS);
-        if (!awaitSuccess) {
-            fail("Delegate was never called");
-        }
+        assertTrue("Delegate was never called", delegateUpdateLatch.await(3, TimeUnit.SECONDS));
         verify(proxy).asTechnicalUser();
         verify(delegate).update(stepId, rowMetadata); // not really needed as the future verify that
         proxyReleaseLatch.await(1, TimeUnit.SECONDS); // To be sure the method has been called
@@ -80,10 +77,7 @@ public class ReactiveStepMetadataRepositoryTest {
         reactiveStepMetadataRepository.invalidate(stepId);
 
         // then
-        boolean awaitSuccess = delegateInvalidateLatch.await(1, TimeUnit.SECONDS);
-        if (!awaitSuccess) {
-            fail("Delegate was never called");
-        }
+        assertTrue("Delegate was never called", delegateInvalidateLatch.await(3, TimeUnit.SECONDS));
         verify(proxy).asTechnicalUser();
         verify(delegate).invalidate(stepId); // not really needed as the future verify that
         proxyReleaseLatch.await(1, TimeUnit.SECONDS); // To be sure the method has been called

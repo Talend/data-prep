@@ -82,13 +82,13 @@ export function* removeFolder() {
 
 	yield select(state => ConfirmDialog.setDialogLoadingMode(state, true));
 
-	// yield put(
-	// 	actions.components.mergeState(
-	// 		'CMFContainer(ConfirmDialog)',
-	// 		'ConfirmDialog',
-	// 		new Map({ loading: true }),
-	// 	),
-	// );
+	yield put(
+		actions.components.mergeState(
+			'CMFContainer(ConfirmDialog)',
+			'ConfirmDialog',
+			new Map({ loading: true }),
+		),
+	);
 	const { response } = yield call(http.delete, `${uris.get('apiFolders')}/${folderId}`);
 	if (response.ok) {
 		yield call(refreshCurrentFolder);

@@ -17,7 +17,14 @@ export function hide() {
 	});
 }
 
+export function setError(event, error) {
+	return actions.components.mergeState('Translate(FolderCreatorModal)', 'default', {
+		error,
+	});
+}
+
 export default {
 	'FolderCreatorModal#show': show,
 	'FolderCreatorModal#hide': hide,
+	'FolderCreatorModal#setError': setError,
 };

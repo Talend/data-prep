@@ -6,15 +6,18 @@ import { refreshCurrentFolder } from './preparation.effects';
 import i18next from '../../../i18n';
 import http from './http';
 import creators from '../../actions';
-import { hide } from '../../components/FolderCreatorModal/actions';
 import TextService from '../../services/text.service';
+import {
+	hide as hideFolderAddModal,
+	setError as setFolderAddModalError,
+} from '../../components/FolderCreatorModal/actions';
 
 
 export function* addFolder() {
-	let newFolderName = yield select(state =>
+	let name = yield select(state =>
 		state.cmf.components.getIn(['Translate(FolderCreatorModal)', 'default', 'name']),
 	);
-	newFolderName = TextService.sanitize(newFolderName);
+	name = TextService.sanitize(name);
 	const uris = yield select(state => state.cmf.collections.getIn(['settings', 'uris']));
 	const currentFolderId = yield select(state => state.cmf.collections.get('currentFolderId'));
 
@@ -22,30 +25,28 @@ export function* addFolder() {
 		http.get,
 		`${uris.get('apiFolders')}/${currentFolderId}/preparations`,
 	);
-	const existingFolder = data.folders.filter(folder => folder.name === newFolderName).length;
-	if (existingFolder) {
-		const error = i18next.t('tdp-app:FOLDER_EXIST_MESSAGE', {
-			name: newFolderName,
-		});
-		yield put(actions.components.mergeState('Translate(FolderCreatorModal)', 'default', { error }));
+
+	if (data.folders.find(folder => folder.name === name)) {
+		yield put(setFolderAddModalError(
+			null,
+			i18next.t('tdp-app:FOLDER_EXIST_MESSAGE', { name }),
+		));
 	}
 	else {
 		const { response } = yield call(
 			http.put,
-			`${uris.get('apiFolders')}?parentId=${currentFolderId}&path=${newFolderName}`,
+			`${uris.get('apiFolders')}?parentId=${currentFolderId}&path=${name}`,
 		);
 		if (response.ok) {
 			yield call(refreshCurrentFolder);
 			yield put(
 				creators.notification.success(null, {
 					title: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_TITLE'),
-					message: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_MESSAGE', {
-						name: newFolderName,
-					}),
+					message: i18next.t('tdp-app:FOLDER_ADD_NOTIFICATION_MESSAGE', { name }),
 				}),
 			);
 		}
-		yield sagas.putActionCreator('FolderCreatorModal#hide');
+		yield put(hideFolderAddModal());
 	}
 }
 
@@ -79,8 +80,6 @@ export function* removeFolder() {
 	const folderId = yield select(state =>
 		state.cmf.components.getIn(['CMFContainer(ConfirmDialog)', 'ConfirmDialog', 'folderId']),
 	);
-
-	yield select(state => ConfirmDialog.setDialogLoadingMode(state, true));
 
 	yield put(
 		actions.components.mergeState(

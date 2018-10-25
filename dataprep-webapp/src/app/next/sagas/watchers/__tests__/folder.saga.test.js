@@ -39,26 +39,4 @@ describe('folder', () => {
 			expect(gen.next().value).toEqual(take(actions.ADD_FOLDER));
 		});
 	});
-
-	describe('closeAddFolderModal', () => {
-		it('should wait for CLOSE_ADD_FOLDER_MODAL action and call closeAddFolderModal', () => {
-			const gen = sagas['folder:closeAddFolderConfirmDialog']();
-
-			expect(gen.next().value).toEqual(take(actions.CLOSE_ADD_FOLDER_MODAL));
-			expect(gen.next().value).toEqual(call(effects.closeAddFolderModal));
-
-			expect(gen.next().value).toEqual(take(actions.CLOSE_ADD_FOLDER_MODAL));
-		});
-	});
-
-	describe('openAddFolderModal', () => {
-		it('should wait for OPEN_ADD_FOLDER_MODAL action and call openAddFolderModal', () => {
-			const gen = sagas['folder:openAddFolderConfirmDialog']();
-
-			expect(gen.next().value).toEqual(take(actions.OPEN_ADD_FOLDER_MODAL));
-			expect(gen.next().value).toEqual(call(effects.openAddFolderModal));
-
-			expect(gen.next().value).toEqual(take(actions.OPEN_ADD_FOLDER_MODAL));
-		});
-	});
 });

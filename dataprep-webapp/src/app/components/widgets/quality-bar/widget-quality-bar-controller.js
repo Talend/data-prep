@@ -21,17 +21,18 @@ const MIN_QUALITY_WIDTH = 10;
  * @description Quality bar controller
  */
 export default class QualityBarCtrl {
+
 	constructor() {
 		this.hashQuality = this.hashQuality.bind(this);
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name getMinimalPercent
-	 * @methodOf talend.widget.controller:QualityBarCtrl
-	 * @param {string} type The bar type
-	 * @description [PRIVATE] Return the adapted width to have a min value if the real value is greater than 0
-	 */
+    /**
+     * @ngdoc method
+     * @name getMinimalPercent
+     * @methodOf talend.widget.controller:QualityBarCtrl
+     * @param {string} type The bar type
+     * @description [PRIVATE] Return the adapted width to have a min value if the real value is greater than 0
+     */
 	getMinimalPercent(type) {
 		if (this.quality[type] <= 0) {
 			return 0;
@@ -45,39 +46,37 @@ export default class QualityBarCtrl {
 		return percent;
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name reduce
-	 * @methodOf talend.widget.controller:QualityBarCtrl
-	 * @param {object} widthObject Object containing the 3 bars width
-	 * @description [PRIVATE] Return the modifiable object keys sorted by object value desc.
-	 * An entry is modifiable if the value is greater than the minimum width
-	 */
+    /**
+     * @ngdoc method
+     * @name reduce
+     * @methodOf talend.widget.controller:QualityBarCtrl
+     * @param {object} widthObject Object containing the 3 bars width
+     * @description [PRIVATE] Return the modifiable object keys sorted by object value desc.
+     * An entry is modifiable if the value is greater than the minimum width
+     */
 	getOrderedModifiableKeys(widthObject) {
-		return (
-			chain(Object.keys(widthObject))
-				// filter : only keep values > min width.
-				// those with min width are not reducable
-				.filter(function (key) {
-					return widthObject[key] > MIN_QUALITY_WIDTH;
-				})
-				// sort by width value in reverse order
-				.sortBy(function (key) {
-					return widthObject[key];
-				})
-				.reverse()
-				.value()
-		);
+		return chain(Object.keys(widthObject))
+            // filter : only keep values > min width.
+            // those with min width are not reducable
+            .filter(function (key) {
+	return widthObject[key] > MIN_QUALITY_WIDTH;
+})
+            // sort by width value in reverse order
+            .sortBy(function (key) {
+	return widthObject[key];
+})
+            .reverse()
+            .value();
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name reduce
-	 * @methodOf talend.widget.controller:QualityBarCtrl
-	 * @param {object} widthObject Object containing the 3 bars width
-	 * @param {number} amount The amount to remove from the bars
-	 * @description [PRIVATE] Reduce the bars width to fit 100%. The amount value is removed.
-	 */
+    /**
+     * @ngdoc method
+     * @name reduce
+     * @methodOf talend.widget.controller:QualityBarCtrl
+     * @param {object} widthObject Object containing the 3 bars width
+     * @param {number} amount The amount to remove from the bars
+     * @description [PRIVATE] Reduce the bars width to fit 100%. The amount value is removed.
+     */
 	reduce(widthObject, amount) {
 		if (amount <= 0) {
 			return;
@@ -97,13 +96,13 @@ export default class QualityBarCtrl {
 		this.reduce(widthObject, amount - 3);
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name computeWidth
-	 * @methodOf talend.widget.controller:QualityBarCtrl
-	 * @description [PRIVATE] Compute quality bars width
-	 * WARNING : the percentages must be computed before this function call
-	 */
+    /**
+     * @ngdoc method
+     * @name computeWidth
+     * @methodOf talend.widget.controller:QualityBarCtrl
+     * @description [PRIVATE] Compute quality bars width
+     * WARNING : the percentages must be computed before this function call
+     */
 	computeQualityWidth() {
 		const widthObject = {
 			invalid: this.getMinimalPercent('invalid'),
@@ -111,9 +110,9 @@ export default class QualityBarCtrl {
 			valid: this.getMinimalPercent('valid'),
 		};
 
-		widthObject.isVariableInvalid = widthObject.invalid > MIN_QUALITY_WIDTH;
-		widthObject.isVariableEmpty = widthObject.empty > MIN_QUALITY_WIDTH;
-		widthObject.isVariableValid = widthObject.valid > MIN_QUALITY_WIDTH;
+		widthObject.isVariableInvalid = (widthObject.invalid > MIN_QUALITY_WIDTH);
+		widthObject.isVariableEmpty = (widthObject.empty > MIN_QUALITY_WIDTH);
+		widthObject.isVariableValid = (widthObject.valid > MIN_QUALITY_WIDTH);
 
 		const diff = (widthObject.invalid + widthObject.empty + widthObject.valid) - 100;
 		if (diff > 0) {
@@ -123,12 +122,12 @@ export default class QualityBarCtrl {
 		this.width = widthObject;
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name computePercent
-	 * @methodOf talend.widget.controller:QualityBarCtrl
-	 * @description [PRIVATE] Compute quality bars percentage
-	 */
+    /**
+     * @ngdoc method
+     * @name computePercent
+     * @methodOf talend.widget.controller:QualityBarCtrl
+     * @description [PRIVATE] Compute quality bars percentage
+     */
 	computePercent() {
 		const total = this.quality.empty + this.quality.invalid + this.quality.valid;
 
@@ -139,12 +138,12 @@ export default class QualityBarCtrl {
 		};
 	}
 
-	/**
-	 * @ngdoc method
-	 * @name hashQuality
-	 * @methodOf talend.widget.controller:QualityBarCtrl
-	 * @description [PRIVATE] Calculate a simple hash from concatenating values
-	 */
+    /**
+     * @ngdoc method
+     * @name hashQuality
+     * @methodOf talend.widget.controller:QualityBarCtrl
+     * @description [PRIVATE] Calculate a simple hash from concatenating values
+     */
 	hashQuality() {
 		return this.quality.empty + '' + this.quality.invalid + '' + this.quality.valid;
 	}

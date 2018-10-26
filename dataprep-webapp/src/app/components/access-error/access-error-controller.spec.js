@@ -11,7 +11,6 @@
 
  ============================================================================*/
 
-import i18n from './../../../i18n/en.json';
 
 describe('AccessError controller', () => {
 	'use strict';
@@ -19,42 +18,31 @@ describe('AccessError controller', () => {
 	let createController;
 	let scope;
 
-	let filter;
-	let editable;
-	let onEditFn;
-	let removable;
-	let onRemoveFn;
-
-	beforeEach(angular.mock.module('data-prep.filter-item'));
-	beforeEach(angular.mock.module('pascalprecht.translate', $translateProvider => {
-		$translateProvider.translations('fr', {
+	beforeEach(angular.mock.module('data-prep.access-error'));
+	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
+		$translateProvider.translations('en', {
 			ERROR_666_TITLE: 'Accès refusé',
 			ERROR_666_MESSAGE: 'Vous n\'êtes pas autorisé à accéder à cette page',
 		});
-		$translateProvider.preferredLanguage('fr');
+		$translateProvider.preferredLanguage('en');
 	}));
 
-	beforeEach(inject(($rootScope, $componentController) => {
+	beforeEach(inject(($q, $rootScope, $componentController) => {
 		scope = $rootScope.$new();
-
-		createController = () => {
-			const ctrl = $componentController('filterItem', {
-				$scope: scope,
-			}, {
-				status: 666,
-			});
-			ctrl.$onInit();
-			return ctrl;
-		};
+		createController = () => $componentController(
+			'accessError',
+			{ $scope: scope },
+			{ status: 666 },
+		);
 	}));
 
 	it('should return the translated title', () => {
 		const ctrl = createController();
-		expect(ctrl.title).toEqual(i18n.ERROR_666_TITLE);
+		expect(ctrl.title).toEqual('Accès refusé');
 	});
 
 	it('should return the translated message', () => {
 		const ctrl = createController();
-		expect(ctrl.message).toEqual(i18n.ERROR_666_MESSAGE);
+		expect(ctrl.message).toEqual('Vous n\'êtes pas autorisé à accéder à cette page');
 	});
 });

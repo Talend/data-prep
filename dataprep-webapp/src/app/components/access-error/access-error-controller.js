@@ -11,15 +11,22 @@
 
  ============================================================================*/
 
-import template from './access-error.html';
-import AccessErrorCtrl from './access-error-controller';
+/**
+ * @ngdoc controller
+ * @name data-prep.access-error.controller:AccessErrorCtrl
+ * @description AccessError controller.
+ */
+export default class AccessErrorCtrl {
+	constructor($translate) {
+		'ngInject';
+		this.$translate = $translate;
+	}
 
-const AccessError = {
-	templateUrl: template,
-	bindings: {
-		status: '<',
-	},
-	controller: AccessErrorCtrl,
-};
+	get title() {
+		return this.$translate.instant(`ERROR_${this.status}_TITLE`);
+	}
 
-export default AccessError;
+	get message() {
+		return this.$translate.instant(`ERROR_${this.status}_MESSAGE`);
+	}
+}

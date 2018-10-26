@@ -45,31 +45,12 @@ describe('Http Error component', () => {
 
 	describe('render', () => {
 		it('should not render if no status', () => {
-			// given
 			createElement();
 
-			// when
 			scope.$digest();
 
-			// then
 			const component = element.find('http-error');
 			expect(component.length).toBe(0);
-		});
-
-		it('should render 404 error', () => {
-			// given
-			scope.status = 404;
-			createElement();
-
-			// when
-			scope.$digest();
-
-			// then
-			const component = element.find('http-error');
-			expect(component.length).toBe(1);
-			expect(component.attr('status')).toEqual('404');
-			expect(component.attr('title')).toEqual(`'${i18n.ERROR_404_TITLE}'`);
-			expect(component.attr('message')).toEqual(`'${i18n.ERROR_404_MESSAGE}'`);
 		});
 	});
 });

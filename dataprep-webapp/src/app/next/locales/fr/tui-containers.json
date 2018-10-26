@@ -1,6 +1,7 @@
 {
-  "DELETE_RESOURCE_MESSAGE": "Voulez-vous vraiment supprimer {{resourceLabel}} ",
+  "DELETE_RESOURCE_MESSAGE": "Êtes-vous sûr(e) de vouloir supprimer le {{resourceLabel}}",
   "DELETE_RESOURCE_NO": "ANNULER",
   "DELETE_RESOURCE_QUESTION_MARK": "?",
-  "DELETE_RESOURCE_YES": "SUPPRIMER"
+  "DELETE_RESOURCE_YES": "SUPPRIMER",
+  "DELETE_RESOURCE_MESSAGE_female": "Êtes-vous sûr(e) de vouloir supprimer la {{resourceLabel}}"
 }

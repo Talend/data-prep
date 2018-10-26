@@ -25,10 +25,6 @@ const initialAddFolderState = new Map({
 	show: false,
 });
 
-const initialConfirmDialogState = new Map({
-	show: false,
-});
-
 export default function App(props) {
 	return (
 		<I18nextProvider i18n={i18n}>
@@ -40,7 +36,7 @@ export default function App(props) {
 						<ShortcutManager />
 						<Notification initialState={initialNotificationsState} />
 						<AboutDialog />
-						<ConfirmDialog initialState={initialConfirmDialogState} />
+						<ConfirmDialog />
 						<components.PreparationCreatorModal />
 						<components.PreparationCopyMoveModal />
 						<components.FolderCreatorModal initialState={initialAddFolderState} />

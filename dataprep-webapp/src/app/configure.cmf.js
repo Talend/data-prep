@@ -54,6 +54,7 @@ export default function initialize(additionalConfiguration = {}) {
 		...sagas.http,
 		...sagas.search,
 		...sagas.preparation,
+		...sagas.folder,
 		...sagas.redirect,
 		...sagas.notification,
 	};

@@ -17,21 +17,6 @@ describe('Folder action', () => {
 		expect(action).toMatchSnapshot();
 	});
 
-	it('should create an remove action', () => {
-		const action = actions.remove();
-		expect(action).toMatchSnapshot();
-	});
-
-	it('should create an openRemoveFolderModal action', () => {
-		const action = actions.openRemoveFolderModal();
-		expect(action).toMatchSnapshot();
-	});
-
-	it('should create an closeRemoveFolderModal action', () => {
-		const action = actions.closeRemoveFolderModal();
-		expect(action).toMatchSnapshot();
-	});
-
 	it('should create an openAddFolderModal action', () => {
 		const action = actions.openAddFolderModal();
 		expect(action).toMatchSnapshot();
@@ -39,6 +24,23 @@ describe('Folder action', () => {
 
 	it('should create an closeAddFolderModal action', () => {
 		const action = actions.closeAddFolderModal();
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create an remove action', () => {
+		const action = actions.remove();
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create an openRemoveFolderModal action', () => {
+		const action = actions.openRemoveFolderModal(null, {
+			model: { name: 'test' },
+		});
+		expect(action).toMatchSnapshot();
+	});
+
+	it('should create an closeRemoveFolderModal action', () => {
+		const action = actions.closeRemoveFolderModal();
 		expect(action).toMatchSnapshot();
 	});
 });

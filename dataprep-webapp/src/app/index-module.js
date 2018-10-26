@@ -158,9 +158,9 @@ window.bootstrapAngular = function bootstrapAngular(appSettings) {
 
 getAppConfiguration().then((appSettings) => {
 	// appSettings.context.provider = 'catalog';
-	appSettings.context.country = 'FR';
-	appSettings.context.language = 'fr';
-	appSettings.context.locale = 'fr-FR';
+	// appSettings.context.country = 'FR';
+	// appSettings.context.language = 'fr';
+	// appSettings.context.locale = 'fr-FR';
 	const { provider = 'legacy' } = appSettings.context;
 
 	store.set('settings', appSettings);

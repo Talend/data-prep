@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@talend/bootstrap-theme@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-1.2.2.tgz#e7ab319f9da2e96dea470db3d12829d17d3c1b56"
+"@talend/bootstrap-theme@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-1.3.0.tgz#913582f0e59d997b0a593baedf688ad93e2bad42"
   dependencies:
     bootstrap-sass "3.3.7"
 
@@ -16,20 +16,23 @@
     hoist-non-react-statics "^1.2.0"
     mock-socket "^7.0.0"
 
-"@talend/dataset@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@talend/dataset/-/dataset-2.2.0.tgz#7a6f867959ff8ce2e454b5904f59112ade8b250e"
+"@talend/dataset@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/dataset/-/dataset-5.3.0.tgz#cb343a8c4caaaf025b8fa44af8966e721ca3bf07"
   dependencies:
-    prop-types "15.5.10"
-    react-immutable-proptypes "2.1.0"
+    "@talend/rating" "^1.3.0"
+    prop-types "^15.5.10"
+    react-dropzone "^6.2.2"
+    react-immutable-proptypes "^2.1.0"
+    react-virtualized "9.19.1"
 
 "@talend/html-webpack-plugin@0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@talend/html-webpack-plugin/-/html-webpack-plugin-0.0.3.tgz#461c7d0877e497ca7c8f63ccbf7ef8603edf64f5"
 
-"@talend/icons@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-1.2.2.tgz#0733a856680f3e7da00d31bbaa30a597fb0927a3"
+"@talend/icons@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-1.3.0.tgz#7be2b467401858e1a1e30e82657aaa586a99ad65"
 
 "@talend/json-schema-form-core@1.0.0-alpha.4":
   version "1.0.0-alpha.4"
@@ -38,9 +41,15 @@
     objectpath "^1.2.1"
     tv4 "^1.3.0"
 
-"@talend/react-cmf-cqrs@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-1.2.2.tgz#373f43d46b6442db00c0b98d7c192d492817384b"
+"@talend/rating@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/rating/-/rating-1.3.0.tgz#eb2b36aa439d00046ccc11a3f8b16df3997f5b4b"
+  dependencies:
+    prop-types "15.5.10"
+
+"@talend/react-cmf-cqrs@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-1.3.0.tgz#7ec4a080d63af49c92a3628eecbcf5cc4dbe791f"
   dependencies:
     babel-polyfill "^6.26.0"
     hoist-non-react-statics "^1.2.0"
@@ -55,9 +64,9 @@
     deepmerge "1.5.1"
     mkdirp "^0.5.1"
 
-"@talend/react-cmf@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-1.2.2.tgz#a203e9fc901c7d0f1f0af0b6f7c504ee9ca3a180"
+"@talend/react-cmf@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-1.3.0.tgz#ba63276f7a923298a81ee501a12ab3b2ff8ce8a1"
   dependencies:
     ajv "^6.2.1"
     babel-polyfill "^6.26.0"
@@ -95,9 +104,9 @@
     hoist-non-react-statics "^1.2.0"
     react-immutable-proptypes "2.1.0"
 
-"@talend/react-components@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-1.2.2.tgz#5ccea8f2c902594102f220e8d2606a1781302433"
+"@talend/react-components@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-1.3.0.tgz#c654b2d14e193bb40523e170dff0eb832ab2d61a"
   dependencies:
     ally.js "^1.4.1"
     date-fns "^1.27.2"
@@ -113,16 +122,24 @@
     react-virtualized "9.19.1"
     simulant "^0.2.2"
 
-"@talend/react-containers@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-1.2.2.tgz#61717a7eaf1dc959d8a24d5cb04c72360c488d3e"
+"@talend/react-containers@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-1.3.0.tgz#3cf9eec3df23800c1dba677063773504ca30fc45"
   dependencies:
     memoize-one "^4.0.0"
     react-immutable-proptypes "^2.1.0"
 
-"@talend/react-forms@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-1.2.2.tgz#c1ac2a54355bb73d2c3998a05db1776d2d9ad564"
+"@talend/react-datagrid@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-datagrid/-/react-datagrid-1.3.0.tgz#cba9d175cc90ba66d5d8ac2cc16e339b34f71a75"
+  dependencies:
+    ag-grid "^17.0.0"
+    ag-grid-react "^17.0.0"
+    react-dom-factories "^1.0.2"
+
+"@talend/react-forms@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-1.3.0.tgz#5c683336ecb46a3aa101d5b03c1fe7ee838f6f50"
   dependencies:
     "@talend/json-schema-form-core" "1.0.0-alpha.4"
     ajv "^6.2.1"
@@ -230,6 +247,16 @@ add-dom-event-listener@1.x:
 after@0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/after/-/after-0.8.2.tgz#fedb394f9f0e02aa9768e702bda23b505fae7e1f"
+
+ag-grid-react@^17.0.0:
+  version "17.1.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-17.1.0.tgz#8c9cee63e32183787bafb2a2b85e1e966ad0be39"
+  dependencies:
+    prop-types "15.6.0"
+
+ag-grid@^17.0.0:
+  version "17.1.1"
+  resolved "https://registry.yarnpkg.com/ag-grid/-/ag-grid-17.1.1.tgz#6c7010a65d6e8b6373e2fe97643c9eecf5417026"
 
 ajv-keywords@^1.0.0:
   version "1.5.0"
@@ -653,6 +680,12 @@ atob@^2.0.0:
 atob@~1.1.0:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/atob/-/atob-1.1.3.tgz#95f13629b12c3a51a5d215abdce2aa9f32f80773"
+
+attr-accept@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-1.1.3.tgz#48230c79f93790ef2775fcec4f0db0f5db41ca52"
+  dependencies:
+    core-js "^2.5.0"
 
 autoprefixer@^6.3.1:
   version "6.6.1"
@@ -2864,6 +2897,16 @@ custom-event@~1.0.0:
 cyclist@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
+
+d3-path@1:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/d3-path/-/d3-path-1.0.7.tgz#8de7cd693a75ac0b5480d3abaccd94793e58aae8"
+
+d3-shape@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/d3-shape/-/d3-shape-1.2.0.tgz#45d01538f064bafd05ea3d6d2cb748fd8c41f777"
+  dependencies:
+    d3-path "1"
 
 d3-tip@^0.6.7:
   version "0.6.8"
@@ -8217,7 +8260,7 @@ prop-types@15.5.10, prop-types@^15.5.8:
     fbjs "^0.8.9"
     loose-envify "^1.3.1"
 
-prop-types@15.x, prop-types@^15, prop-types@^15.5.10:
+prop-types@15.6.0, prop-types@15.x, prop-types@^15, prop-types@^15.5.10:
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.0.tgz#ceaf083022fc46b4a35f69e13ef75aed0d639856"
   dependencies:
@@ -8568,6 +8611,10 @@ react-dnd@^2.5.4:
     lodash "^4.2.0"
     prop-types "^15.5.10"
 
+react-dom-factories@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-dom-factories/-/react-dom-factories-1.0.2.tgz#eb7705c4db36fb501b3aa38ff759616aa0ff96e0"
+
 react-dom@^16.0.0:
   version "16.4.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.4.2.tgz#4afed569689f2c561d2b8da0b819669c38a0bda4"
@@ -8576,6 +8623,13 @@ react-dom@^16.0.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.0"
+
+react-dropzone@^6.2.2:
+  version "6.2.4"
+  resolved "https://registry.yarnpkg.com/react-dropzone/-/react-dropzone-6.2.4.tgz#6a63f7eb5fdd0ed5d85b0c8c3b8ecc3d3bb661fe"
+  dependencies:
+    attr-accept "^1.1.3"
+    prop-types "^15.6.2"
 
 react-helmet@^5.2.0:
   version "5.2.0"

@@ -10,7 +10,7 @@
   "FOLDER_ADD_NOTIFICATION_MESSAGE": "The folder \"{{name}}\" has been added.",
   "FOLDER_ADD_NOTIFICATION_TITLE": "Folder Added",
   "FOLDER_EMPTY_MESSAGE": "Folder name is empty",
-  "FOLDER_EXIST_MESSAGE": "The folder \"{{name}}\" exists already",
+  "FOLDER_EXIST_MESSAGE": "The folder \"{{name}}\" already exists",
   "FOLDER_HOME": "Home",
   "FOLDER_REMOVE_NOTIFICATION_MESSAGE": "The folder \"{{name}}\" has been removed.",
   "FOLDER_REMOVE_NOTIFICATION_TITLE": "Folder Remove",

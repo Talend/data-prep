@@ -494,8 +494,7 @@ public class APIClientTest {
         return export(preparationId, null, stepId, csvDelimiter, fileName);
     }
 
-    public Response exportPreparation(String preparationId, String stepId, String csvDelimiter)
-            throws IOException {
+    public Response exportPreparation(String preparationId, String stepId, String csvDelimiter) throws IOException {
         return export(preparationId, "", stepId, csvDelimiter, null);
     }
 

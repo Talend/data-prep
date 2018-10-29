@@ -67,6 +67,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 		 */
 		response(response) {
 			const { headers, config, status } = response;
+
 			if (status === ACCEPTED_CODE && ALLOWED_METHODS.includes(config.method) && !config.async) {
 				return loop(`${RestURLs.context}${headers('Location')}`, config.statusCallback)
 					.then((data) => {

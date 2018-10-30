@@ -194,6 +194,9 @@ public class PreparationService {
     @Autowired
     private BaseDataprepAuditService auditService;
 
+    @Autowired
+    private DataSetNameInjection dataSetNameInjection;
+
     /**
      * Create a preparation from the http request body.
      *
@@ -305,6 +308,10 @@ public class PreparationService {
         } else {
             preparationStream = preparationRepository.list(PersistentPreparation.class);
         }
+        // migration for preparation after the change from dataset ID to dataset name
+        // see TDP-6195 and TDP-5696
+        preparationStream = preparationStream.map(dataSetNameInjection::injectDatasetNameBasedOnId);
+
         if (deprecatedFolderIdFilter != null) {
             // filter on folder id (DEPRECATED VERSION - only applies if migration isn't completed yet)
             preparationStream = preparationStream //

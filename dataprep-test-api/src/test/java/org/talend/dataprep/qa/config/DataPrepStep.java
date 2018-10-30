@@ -18,6 +18,7 @@ import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
@@ -136,7 +137,7 @@ public abstract class DataPrepStep {
     protected Predicate<Folder> folderDeletionIsNotOK() {
         return folder -> {
             try {
-                return folderUtil.deleteFolder(folder).getStatusCode() != OK.value();
+                return folderUtil.deleteFolder(folder).getStatusCode() != NO_CONTENT.value();
             } catch (Exception ex) {
                 LOGGER.debug("Error on folder's suppression  {}.", folder.getPath());
                 return true;

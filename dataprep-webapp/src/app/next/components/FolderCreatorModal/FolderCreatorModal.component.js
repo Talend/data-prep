@@ -11,12 +11,17 @@ class FolderCreatorModal extends React.Component {
 	constructor(props) {
 		super(props);
 		this.onChange = this.onChange.bind(this);
+		this.onHide = this.onHide.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 	}
 
 	onChange() {
 		const name = TextService.sanitize(this.input.value);
 		this.props.setState({ name, error: '', disabled: !name.length, inProgress: false });
+	}
+
+	onHide() {
+		this.props.dispatchActionCreator('FolderCreatorModal#hide');
 	}
 
 	onSubmit(event) {
@@ -48,7 +53,7 @@ class FolderCreatorModal extends React.Component {
 					{
 						label: t('tdp-cmf:CANCEL'),
 						bsStyle: 'default btn-inverse',
-						onClick: () => this.props.setState({ show: false }),
+						onClick: this.onHide,
 					},
 				],
 				right: [
@@ -72,6 +77,7 @@ class FolderCreatorModal extends React.Component {
 				actionbar={bar}
 				show={show}
 				closeButton={false}
+				onHide={this.onHide}
 			>
 				<form onSubmit={this.onSubmit}>
 					<div className="form-group field field-string">

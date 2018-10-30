@@ -138,9 +138,6 @@ public class PreparationService {
     @Autowired
     protected Security security;
 
-    @Autowired
-    private org.springframework.context.ApplicationContext springContext;
-
     private final ActionFactory factory = new ActionFactory();
 
     /**

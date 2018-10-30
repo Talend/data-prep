@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,6 +188,7 @@ public class PreparationServiceTest extends BasePreparationTest {
     }
 
     private void init() throws IOException {
+        HystrixCommandProperties.Setter().withCircuitBreakerEnabled(false);
         createFolder(home.getId(), "foo");
         final Folder foo = getFolder(home.getId(), "foo");
 

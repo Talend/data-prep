@@ -18,6 +18,10 @@ import org.talend.dataprep.security.SecurityProxy;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+/**
+ * Inject dataset name into preparations to gain time in preparation listing.
+ * This also migrate preparation in database to avoid listing again.
+ */
 @Component
 public class DataSetNameInjection {
 

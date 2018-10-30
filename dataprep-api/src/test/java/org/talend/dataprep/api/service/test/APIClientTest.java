@@ -286,7 +286,7 @@ public class APIClientTest {
      */
     public List<Preparation> listPreparations() throws IOException {
         InputStream inputStream = when().get("/api/preparations").asInputStream();
-        return mapper.readerFor(Preparation.class).<Preparation>readValues(inputStream).readAll();
+        return mapper.readerFor(Preparation.class).<Preparation> readValues(inputStream).readAll();
     }
 
     /**

@@ -25,7 +25,7 @@ import org.talend.dataprep.preparation.store.ObjectPreparationRepository;
  * In memory Preparation repository.
  */
 @Component
-@ConditionalOnProperty(name = "preparation.store", havingValue = "in-memory")
+@ConditionalOnProperty(name = "preparation.store", havingValue = "in-memory", matchIfMissing = true)
 public class InMemoryPreparationRepository extends ObjectPreparationRepository {
 
     /**

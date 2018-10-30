@@ -52,33 +52,35 @@ public class DataSetNameInjection {
                 final String tenantId = security.getTenantId();
                 final Cache<String, String> tenantCache = cache.get(tenantId, this::createTenantCache);
                 assert tenantCache != null; // initTenant() cannot return a null value
-                dataSetName = tenantCache.get(preparation.getDataSetId(), id -> {
-                    securityProxy.asTechnicalUserForDataSet();
-                    try {
-                        Dataset metadata = dataCatalogClient.getMetadata(preparation.getDataSetId());
-                        return metadata == null ? null : metadata.getLabel();
-                    } catch (TDPException e) {
-                        // I so love exception-driven programming...
-                        // happen when there is no matching dataset AND there is no dataset name.
-                        // dunno how we are matching this preparation with a dataset now
-                        LOGGER.warn(
-                                "Unable to find data set name of id #{} for legacy preparation import (dataset does not exist).",
-                                preparation.getDataSetId());
-                        return null;
-                    } catch (Exception e) {
-                        // Failsafe when, for instance, Hystrix circuit breaker is OPEN
-                        LOGGER.warn("Unable to find data set name of id #" + preparation.getDataSetId()
-                                + " for legacy preparation import. An unexpected exception occurred", e);
-                        return null;
-                    } finally {
-                        securityProxy.releaseIdentity();
-                    }
-                });
-
-                // save change
-                preparationRepository.add(preparation);
+                String dataSetId = preparation.getDataSetId();
+                if (dataSetId != null) {
+                    dataSetName = tenantCache.get(dataSetId, id -> {
+                        securityProxy.asTechnicalUserForDataSet();
+                        try {
+                            Dataset metadata = dataCatalogClient.getMetadata(dataSetId);
+                            return metadata == null ? null : metadata.getLabel();
+                        } catch (TDPException e) {
+                            // I so love exception-driven programming...
+                            // happen when there is no matching dataset AND there is no dataset name.
+                            // dunno how we are matching this preparation with a dataset now
+                            LOGGER.warn(
+                                    "Unable to find data set name of id #{} for legacy preparation import (dataset does not exist).",
+                                    dataSetId);
+                            return null;
+                        } catch (Exception e) {
+                            // Failsafe when, for instance, Hystrix circuit breaker is OPEN
+                            LOGGER.warn("Unable to find data set name of id #" + dataSetId
+                                    + " for legacy preparation import. An unexpected exception occurred", e);
+                            return null;
+                        } finally {
+                            securityProxy.releaseIdentity();
+                        }
+                    });
+                }
 
                 preparation.setDataSetName(dataSetName);
+                // save change
+                preparationRepository.add(preparation);
             } catch (Exception e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }

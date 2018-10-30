@@ -53,6 +53,9 @@ public class GlobalStepTest {
     private Response respOK;
 
     @Mock
+    private Response respOKEmpty;
+
+    @Mock
     private Response respNotFound;
 
     private Folder folderOK1 = new Folder().setId("A_OK");
@@ -69,6 +72,7 @@ public class GlobalStepTest {
     @Before
     public void setUp() throws Exception {
         when(respOK.getStatusCode()).thenReturn(200);
+        when(respOKEmpty.getStatusCode()).thenReturn(204);
         when(respNotFound.getStatusCode()).thenReturn(404);
 
         when(api.deletePreparation(endsWith("_OK"))).thenReturn(respOK);
@@ -77,9 +81,9 @@ public class GlobalStepTest {
         when(api.deleteDataset(endsWith("_OK"))).thenReturn(respOK);
         when(api.deleteDataset(endsWith("_NotFound"))).thenReturn(respNotFound);
 
-        when(folderUtil.deleteFolder(folderOK1)).thenReturn(respOK);
-        when(folderUtil.deleteFolder(folderOK2)).thenReturn(respOK);
-        when(folderUtil.deleteFolder(folderOK3)).thenReturn(respOK);
+        when(folderUtil.deleteFolder(folderOK1)).thenReturn(respOKEmpty);
+        when(folderUtil.deleteFolder(folderOK2)).thenReturn(respOKEmpty);
+        when(folderUtil.deleteFolder(folderOK3)).thenReturn(respOKEmpty);
         when(folderUtil.deleteFolder(folderNotFound)).thenReturn(respNotFound);
     }
 

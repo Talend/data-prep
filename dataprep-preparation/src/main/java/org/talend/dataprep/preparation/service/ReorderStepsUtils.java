@@ -42,9 +42,7 @@ public class ReorderStepsUtils {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
                 final String[] columnIds;
-                if (ActionScope.MULTI_COLUMNS
-                        .getDisplayName()
-                        .equals(action.getParameters().get(ImplicitParameters.SCOPE.getKey()))) {
+                if (action.getParameters().get(ImplicitParameters.SCOPE.getKey()).equals(ActionScope.MULTI_COLUMNS.getDisplayName())) {
                     columnIds = ActionsUtils.extractColumnsId(parameters.get("column_ids"));
                 } else {
                     columnIds = ActionsUtils.extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));

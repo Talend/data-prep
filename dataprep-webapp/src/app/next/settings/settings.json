@@ -257,7 +257,7 @@
           }
         }
       },
-      "actionCreator": "folder:add:open"
+      "actionCreator": "FolderCreatorModal#show"
     }
   },
   "props": {
@@ -367,6 +367,9 @@
     },
     "SidePanel#default": {
       "actionIds": ["menu:preparations", "menu:datasets", "menu:datastores"]
+    },
+    "FolderCreatorModal#default": {
+
     },
     "HomeListView#datastores": {
       "hasTheme": true

@@ -14,10 +14,9 @@
 package org.talend.dataprep.helper;
 
 import static com.jayway.restassured.http.ContentType.JSON;
-import static org.awaitility.Awaitility.with;
-import static org.hamcrest.Matchers.isOneOf;
-import static org.talend.dataprep.async.AsyncExecution.Status.DONE;
 import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
+import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
+import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
 import static org.talend.dataprep.helper.VerboseMode.NONE;
 
 import java.io.File;
@@ -38,7 +37,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.protocol.HTTP;
-import org.awaitility.core.ConditionFactory;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,12 +83,6 @@ public class OSDataPrepAPIHelper {
     private static final String NAME = "name";
 
     private static final String PATH = "path";
-
-    private static final int TIME_OUT = 20;
-
-    private static final int POLL_DELAY = 1;
-
-    private static final int POLL_INTERVAL = 1;
 
     private VerboseMode restAssuredDebug = NONE;
 
@@ -499,7 +491,7 @@ public class OSDataPrepAPIHelper {
                 .urlEncodingEnabled(false) //
                 .queryParam(FOLDER, folderSrc) //
                 .queryParam(DESTINATION, folderDest) //
-                .queryParam(NEW_NAME, prepName) //
+                .queryParam(NEW_NAME, prepName)
                 .when() //
                 .put("/api/preparations/{prepId}/move", prepId);
     }
@@ -607,31 +599,52 @@ public class OSDataPrepAPIHelper {
     }
 
     /**
-     * Ping async method status url in order to wait the end of the execution.
-     *
+     * Ping async method status url in order to wait the end of the execution
      *
      * @param asyncMethodStatusUrl the asynchronous method to ping.
+     * @throws IOException
      */
-    protected void waitForAsyncMethodToFinish(String asyncMethodStatusUrl) {
-        AsyncExecution.Status status =
-                waitResponse("Waiting the end of the execution of " + asyncMethodStatusUrl, 60L, 1L, 1L) //
-                        .until(() -> given()//
-                                .when() //
-                                .expect() //
-                                .statusCode(200) //
-                                .log() //
-                                .ifError() //
-                                .get(asyncMethodStatusUrl) //
-                                .as(AsyncExecutionMessage.class) //
-                                .getStatus(), isOneOf(DONE, FAILED));
+    protected AsyncExecutionMessage waitForAsyncMethodToFinish(String asyncMethodStatusUrl) throws IOException {
+        boolean isAsyncMethodRunning = true;
+        int nbLoop = 0;
 
-        if (status != DONE) {
-            Assert.fail("Async execution not done for " + asyncMethodStatusUrl + "status is " + status);
+        AsyncExecutionMessage asyncExecutionMessage = null;
+
+        while (isAsyncMethodRunning && nbLoop < 1000) {
+
+            String statusAsyncMethod = given()
+                    .when() //
+                    .expect()
+                    .statusCode(200)
+                    .log()
+                    .ifError() //
+                    .get(asyncMethodStatusUrl)
+                    .asString();
+
+            asyncExecutionMessage = mapper.readerFor(AsyncExecutionMessage.class).readValue(statusAsyncMethod);
+
+            AsyncExecution.Status asyncStatus = asyncExecutionMessage.getStatus();
+            isAsyncMethodRunning = asyncStatus == RUNNING || asyncStatus == NEW;
+
+            if (asyncStatus == FAILED) {
+                LOGGER.error("AsyncExecution failed");
+                Assert.fail("AsyncExecution failed");
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                LOGGER.error("Cannot Sleep", e);
+                Assert.fail();
+            }
+            nbLoop++;
         }
+
+        return asyncExecutionMessage;
     }
 
-    public void setRestAssuredDebug(VerboseMode restAssuredDebug) {
+    public OSDataPrepAPIHelper setRestAssuredDebug(VerboseMode restAssuredDebug) {
         this.restAssuredDebug = restAssuredDebug;
+        return this;
     }
 
     public Response applyAggragate(Aggregate aggregate) throws Exception {
@@ -651,29 +664,7 @@ public class OSDataPrepAPIHelper {
      * Cloud context.
      */
     public enum ITExecutionContext {
-        ON_PREMISE, //
+        ON_PREMISE,
         CLOUD
-    }
-
-    public ConditionFactory waitResponse(String message) {
-        return waitResponse(message, TIME_OUT);
-    }
-
-    public ConditionFactory waitResponse(String message, long timeOut) {
-        return waitResponse(message, timeOut, POLL_DELAY, POLL_INTERVAL);
-    }
-
-    public ConditionFactory waitResponse(String message, long timeOut, long pollInterval) {
-        return waitResponse(message, timeOut, POLL_DELAY, pollInterval);
-    }
-
-    public ConditionFactory waitResponse(String message, long timeOut, long pollDelay, long pollInterval) {
-        return with() //
-                .pollInterval(pollInterval, TimeUnit.SECONDS) //
-                .and() //
-                .with() //
-                .pollDelay(pollDelay, TimeUnit.SECONDS) //
-                .await(message) //
-                .atMost(timeOut, TimeUnit.SECONDS);
     }
 }

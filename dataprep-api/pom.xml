@@ -49,11 +49,6 @@
 
         <!-- UNIT TEST DEPENDENCIES -->
         <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility-proxy</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-dataset</artifactId>
             <classifier>lib</classifier>

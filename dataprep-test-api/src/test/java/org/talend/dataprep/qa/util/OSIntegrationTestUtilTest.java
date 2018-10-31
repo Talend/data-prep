@@ -55,22 +55,22 @@ public class OSIntegrationTestUtilTest {
 
     @Test
     public void getFilenameExtensionEmpty() {
-        assertEquals(util.getFilenameExtension("myFile"), "myFile");
+        assertEquals("myFile", util.getFilenameExtension("myFile"));
     }
 
     @Test
     public void getFilenameExtensionCsv1() {
-        assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
+        assertEquals("csv", util.getFilenameExtension("myFile.csv"));
     }
 
     @Test
     public void getFilenameExtensionCsv2() {
-        assertEquals(util.getFilenameExtension("my.file.csv"), "csv");
+        assertEquals("csv", util.getFilenameExtension("my.file.csv"));
     }
 
     @Test
     public void getFilenameExtensionXlsx() {
-        assertEquals(util.getFilenameExtension("myFile.csv"), "csv");
+        assertEquals("csv", util.getFilenameExtension("myFile.csv"));
     }
 
     @Test

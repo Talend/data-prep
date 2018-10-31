@@ -65,12 +65,6 @@ public abstract class DataPrepStep {
 
     protected static final String DATASET_ID_KEY = "dataSetId";
 
-    private static final int TIME_OUT = 20;
-
-    private static final int POLL_DELAY = 1;
-
-    private static final int POLL_INTERVAL = 1;
-
     /**
      * This class' logger.
      */
@@ -162,25 +156,4 @@ public abstract class DataPrepStep {
                 actual.containsAll(expectedColumnNames));
     }
 
-    protected ConditionFactory waitResponse(String message) {
-        return waitResponse(message, TIME_OUT);
-    }
-
-    protected ConditionFactory waitResponse(String message, long timeOut) {
-        return waitResponse(message, timeOut, POLL_DELAY, POLL_INTERVAL);
-    }
-
-    protected ConditionFactory waitResponse(String message, long timeOut, long pollInterval) {
-        return waitResponse(message, timeOut, POLL_DELAY, pollInterval);
-    }
-
-    protected ConditionFactory waitResponse(String message, long timeOut, long pollDelay, long pollInterval) {
-        return with() //
-                .pollInterval(pollInterval, TimeUnit.SECONDS) //
-                .and() //
-                .with() //
-                .pollDelay(pollDelay, TimeUnit.SECONDS) //
-                .await(message) //
-                .atMost(timeOut, TimeUnit.SECONDS);
-    }
 }

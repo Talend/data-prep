@@ -82,20 +82,17 @@ public class FilterStep extends DataPrepStep {
     private DatasetContent getDatasetContent(String datasetId, String tql) throws Exception {
         AtomicReference<DatasetContent> datasetContentReference = new AtomicReference<>();
         // TODO I guess this wait is useless since we use {DataPrepStep#checkDatasetMetadataStatus} before
-        waitResponse("Waiting frequency table from dataset metadata of " + datasetId)
-                .until(() -> {
-                    Response response = api.getDataset(datasetId, tql);
-                    response.then().statusCode(200);
+        api.waitResponse("Waiting frequency table from dataset metadata of " + datasetId).until(() -> {
+            Response response = api.getDataset(datasetId, tql);
+            response.then().statusCode(200);
 
-                    DatasetContent datasetContent = response.as(DatasetContent.class);
-                    datasetContentReference.set(datasetContent);
-                    return datasetContent
-                            .metadata
-                            .columns.stream()
-                            .findFirst()
-                            .orElse(new ContentMetadataColumn())
-                            .statistics.frequencyTable;
-                }, is(not(empty())));
+            DatasetContent datasetContent = response.as(DatasetContent.class);
+            datasetContentReference.set(datasetContent);
+            return datasetContent.metadata.columns
+                    .stream()
+                    .findFirst()
+                    .orElse(new ContentMetadataColumn()).statistics.frequencyTable;
+        }, is(not(empty())));
 
         return datasetContentReference.get();
     }

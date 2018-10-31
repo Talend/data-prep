@@ -14,8 +14,7 @@
 package org.talend.dataprep.helper;
 
 import static com.jayway.restassured.http.ContentType.JSON;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.with;
 import static org.hamcrest.Matchers.isOneOf;
 import static org.talend.dataprep.async.AsyncExecution.Status.DONE;
 import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
@@ -30,6 +29,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.MediaType;
 
@@ -37,7 +38,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.protocol.HTTP;
-import org.awaitility.Duration;
+import org.awaitility.core.ConditionFactory;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,12 @@ public class OSDataPrepAPIHelper {
     private static final String NAME = "name";
 
     private static final String PATH = "path";
+
+    private static final int TIME_OUT = 20;
+
+    private static final int POLL_DELAY = 1;
+
+    private static final int POLL_INTERVAL = 1;
 
     private VerboseMode restAssuredDebug = NONE;
 
@@ -607,24 +614,24 @@ public class OSDataPrepAPIHelper {
      */
     protected void waitForAsyncMethodToFinish(String asyncMethodStatusUrl) {
         AsyncExecution.Status status =
-                await().await("Waiting the end of the execution of " + asyncMethodStatusUrl) //
-                        .atMost(1, MINUTES) //
-                        .pollInterval(Duration.ONE_SECOND) //
+                waitResponse("Waiting the end of the execution of " + asyncMethodStatusUrl, 60L, 1L, 1L) //
                         .until(() -> given()//
                                 .when() //
-                                .expect().statusCode(200).log().ifError() //
+                                .expect() //
+                                .statusCode(200) //
+                                .log() //
+                                .ifError() //
                                 .get(asyncMethodStatusUrl) //
                                 .as(AsyncExecutionMessage.class) //
                                 .getStatus(), isOneOf(DONE, FAILED));
 
-        if (status == FAILED) {
-            Assert.fail("Async Execution failed for " + asyncMethodStatusUrl);
+        if (status != DONE) {
+            Assert.fail("Async execution not done for " + asyncMethodStatusUrl + "status is " + status);
         }
     }
 
-    public OSDataPrepAPIHelper setRestAssuredDebug(VerboseMode restAssuredDebug) {
+    public void setRestAssuredDebug(VerboseMode restAssuredDebug) {
         this.restAssuredDebug = restAssuredDebug;
-        return this;
     }
 
     public Response applyAggragate(Aggregate aggregate) throws Exception {
@@ -646,5 +653,27 @@ public class OSDataPrepAPIHelper {
     public enum ITExecutionContext {
         ON_PREMISE,
         CLOUD
+    }
+
+    public ConditionFactory waitResponse(String message) {
+        return waitResponse(message, TIME_OUT);
+    }
+
+    public ConditionFactory waitResponse(String message, long timeOut) {
+        return waitResponse(message, timeOut, POLL_DELAY, POLL_INTERVAL);
+    }
+
+    public ConditionFactory waitResponse(String message, long timeOut, long pollInterval) {
+        return waitResponse(message, timeOut, POLL_DELAY, pollInterval);
+    }
+
+    public ConditionFactory waitResponse(String message, long timeOut, long pollDelay, long pollInterval) {
+        return with() //
+                .pollInterval(pollInterval, TimeUnit.SECONDS) //
+                .and() //
+                .with() //
+                .pollDelay(pollDelay, TimeUnit.SECONDS) //
+                .await(message) //
+                .atMost(timeOut, TimeUnit.SECONDS);
     }
 }

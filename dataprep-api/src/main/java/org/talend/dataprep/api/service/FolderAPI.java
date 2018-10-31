@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -192,7 +191,7 @@ public class FolderAPI extends APIService {
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
         final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
                 .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
-                        APIService::adaptPrepListItem));
+                        APIService::injectDataSetName));
 
         return new PreparationsByFolder(folders, preparations);
     }

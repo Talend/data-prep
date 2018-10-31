@@ -20,7 +20,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 /**
  * Inject dataset name into preparations to gain time in preparation listing.
- * This also migrate preparation in database to avoid listing again.
+ * This also migrates preparation in database to minimize database access (denormalization).
  */
 @Component
 public class DataSetNameInjection {
@@ -53,34 +53,11 @@ public class DataSetNameInjection {
                 final Cache<String, String> tenantCache = cache.get(tenantId, this::createTenantCache);
                 assert tenantCache != null; // initTenant() cannot return a null value
                 String dataSetId = preparation.getDataSetId();
-                if (dataSetId != null) {
-                    dataSetName = tenantCache.get(dataSetId, id -> {
-                        securityProxy.asTechnicalUserForDataSet();
-                        try {
-                            Dataset metadata = dataCatalogClient.getMetadata(dataSetId);
-                            return metadata == null ? null : metadata.getLabel();
-                        } catch (TDPException e) {
-                            // I so love exception-driven programming...
-                            // happen when there is no matching dataset AND there is no dataset name.
-                            // dunno how we are matching this preparation with a dataset now
-                            LOGGER.warn(
-                                    "Unable to find data set name of id #{} for legacy preparation import (dataset does not exist).",
-                                    dataSetId);
-                            return null;
-                        } catch (Exception e) {
-                            // Failsafe when, for instance, Hystrix circuit breaker is OPEN
-                            LOGGER.warn("Unable to find data set name of id #" + dataSetId
-                                    + " for legacy preparation import. An unexpected exception occurred", e);
-                            return null;
-                        } finally {
-                            securityProxy.releaseIdentity();
-                        }
-                    });
+                dataSetName = tenantCache.get(dataSetId, this::getDatasetLabel);
+                if (dataSetName != null) {
+                    preparation.setDataSetName(dataSetName);
+                    preparationRepository.add(preparation);
                 }
-
-                preparation.setDataSetName(dataSetName);
-                // save change
-                preparationRepository.add(preparation);
             } catch (Exception e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
@@ -95,5 +72,28 @@ public class DataSetNameInjection {
                 .maximumSize(100) //
                 .expireAfterAccess(1, TimeUnit.MINUTES) //
                 .build();
+    }
+
+    private String getDatasetLabel(String dataSetId) {
+        securityProxy.asTechnicalUserForDataSet();
+        try {
+            Dataset metadata = dataCatalogClient.getMetadata(dataSetId);
+            return metadata == null ? null : metadata.getLabel();
+        } catch (TDPException e) {
+            // I so love exception-driven programming...
+            // happen when there is no matching dataset AND there is no dataset name.
+            // dunno how we are matching this preparation with a dataset now
+            LOGGER.warn(
+                    "Unable to find data set name of id #{} for legacy preparation import (dataset does not exist).",
+                    dataSetId);
+            return null;
+        } catch (Exception e) {
+            // Failsafe when, for instance, Hystrix circuit breaker is OPEN
+            LOGGER.warn("Unable to find data set name of id #" + dataSetId
+                    + " for legacy preparation import. An unexpected exception occurred", e);
+            return null;
+        } finally {
+            securityProxy.releaseIdentity();
+        }
     }
 }

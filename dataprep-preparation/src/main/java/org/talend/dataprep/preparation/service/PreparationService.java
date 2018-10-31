@@ -62,7 +62,7 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
-import org.talend.dataprep.conversions.inject.SharedInjection;
+import org.talend.dataprep.preparation.configuration.SharedInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;

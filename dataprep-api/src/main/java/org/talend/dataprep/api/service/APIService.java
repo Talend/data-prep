@@ -52,8 +52,14 @@ public class APIService {
     @Autowired
     protected DatasetClient datasetClient;
 
-    // needed for on-the-fly migration
-    protected static PreparationListItemDTO adaptPrepListItem(PreparationDTO dto, PreparationListItemDTO item) {
+    /**
+     * Complement to PreparationDTO to PreparationListItemDTO bean conversion.
+     *
+     * @param dto the input DTO from preparation service
+     * @param item the DTO sent to frontend
+     * @return the input PreparationListItemDTO but with its dataset name filled
+     */
+    protected static PreparationListItemDTO injectDataSetName(PreparationDTO dto, PreparationListItemDTO item) {
         item.getDataSet().setDataSetName(dto.getDataSetName());
         return item;
     }

@@ -1,4 +1,4 @@
-package org.talend.dataprep.conversions.inject;
+package org.talend.dataprep.preparation.configuration;
 
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.preparation.store.PersistentPreparation;

@@ -123,7 +123,6 @@ public class PreparationAPI extends APIService {
     public Stream<PreparationListItemDTO> listPreparations(
             @ApiParam(name = "name",
                     value = "Filter preparations by name.") @RequestParam(required = false) String name,
-            @RequestParam(name = "format", required = false) String format,
             @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(
                     required = false, name = "folder_path") String folderPath,
             @ApiParam(name = "path",
@@ -133,17 +132,10 @@ public class PreparationAPI extends APIService {
                     defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
                     defaultValue = "desc") Order order) {
-
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
-        if ("summary".equalsIgnoreCase(format)) {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
-                            APIService::adaptPrepListItem));
-        } else {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
-                            APIService::adaptPrepListItem));
-        }
+        return toStream(PreparationDTO.class, mapper, command)//
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
+                        APIService::injectDataSetName));
     }
 
     //@formatter:off

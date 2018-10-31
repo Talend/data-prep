@@ -107,9 +107,6 @@ class StepDescriptionCtrl {
 
 		const multiColumnsDetails = this._getSelectedColumnsInMultiColumnsAction(step);
 		switch (multiColumnsDetails.initialColsNbr) {
-		case 1:
-			description = this.$translate.instant('ONLY_1_SELECTED_COLS', multiColumnsDetails);
-			break;
 		case 2:
 			description = this.$translate.instant('ONLY_2_SELECTED_COLS', multiColumnsDetails);
 			break;

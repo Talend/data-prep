@@ -11,8 +11,6 @@
 
  ============================================================================*/
 
-import { StateService } from '../../services/state/state-service';
-
 describe('Recipe controller', () => {
 	let createController;
 	let scope;
@@ -38,7 +36,17 @@ describe('Recipe controller', () => {
 						name: 'lastName',
 					},],
 				},
-				grid: { nbLines: 1000 },
+				grid: {
+					nbLines: 1000,
+					selectedColumns:
+					[{
+						id: '0000',
+						name: 'id',
+					}, {
+						id: '0001',
+						name: 'firstName',
+					},],
+				},
 				lookup: { visibility: false },
 				data: { metadata: {
 						columns: [{
@@ -167,7 +175,7 @@ describe('Recipe controller', () => {
 			expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step, parameters);
 		}));
 
-		it('should update step multi_column', inject((PlaygroundService) => {
+		it('should update step multi_columns', inject((PlaygroundService) => {
 			// given
 			const ctrl = createController();
 			const step = {
@@ -180,13 +188,13 @@ describe('Recipe controller', () => {
 					action: 'cut',
 					parameters: {
 						pattern: '.',
-						column_names: '["state1","state2"]',
-						column_ids: '["0000","0001"]',
+						column_names: ["state1","state2"],
+						column_ids: ["0000","0001"],
 						scope: 'multi_columns',
 					},
 				},
 			};
-			const parameters = { column_id: '["0000","0001","0003"]', column_name: '["state1","state2","state3"]'}
+			const parameters = { column_ids: ["0000","0001","0003"], column_names: ["state1","state2","state3"] };
 
 			// when
 			ctrl.updateStep(step, parameters);

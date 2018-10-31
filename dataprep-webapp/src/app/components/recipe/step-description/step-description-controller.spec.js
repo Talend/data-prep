@@ -73,39 +73,6 @@ describe('Step Description controller', () => {
 			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on column <div class="step-scope" title="col1">col1</div>');
 		});
 
-		it('should translate description on scope: multi_columns with 1 columns selected', () => {
-			//given
-			const ctrl = createController();
-			ctrl.index = 5;
-			ctrl.step = {
-				column: { id: ['0'], name: ['col1'] },
-				transformation: {
-					stepId: '13a24e8765ef4',
-					name: 'split',
-					label: 'Split',
-					category: 'split',
-					parameters: [{ name: 'pattern', type: 'string' }],
-					items: [],
-				},
-				actionParameters: {
-					action: 'split',
-					parameters: {
-						scope: 'multi_columns',
-						column_ids: ['0'],
-						column_names: ['col1'],
-						pattern: '/',
-					},
-				},
-			};
-
-			//when
-			ctrl.$onChanges();
-			scope.$digest();
-
-			//then
-			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on column <div class="step-scope" title="col1">col1</div>');
-		});
-
 		it('should translate description on scope: multi_columns with 2 columns selected', () => {
 			//given
 			const ctrl = createController();

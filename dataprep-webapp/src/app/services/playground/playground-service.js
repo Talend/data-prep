@@ -573,6 +573,11 @@ export default function PlaygroundService(
 			return $q.when();
 		}
 
+		const { selectedColumns } = state.playground.grid;
+		if (step.actionParameters.parameters.scope === MULTI_COLUMNS &&
+			(selectedColumns == null || selectedColumns.length < 2)) {
+			return Promise.reject();
+		}
 		startLoader();
 
 		// save the head before transformation for undo
@@ -824,19 +829,24 @@ export default function PlaygroundService(
 			default:
 				if (action.actionScope && action.actionScope.includes(MULTI_COLUMNS)) {
 					let parameters = { ...params };
-					parameters.scope = MULTI_COLUMNS;
-					parameters.column_names = state.playground.grid.selectedColumns.map(col => col.name);
 					parameters.column_ids = state.playground.grid.selectedColumns.map(col => col.id);
-					if (
-						state.playground.filter
-							.applyTransformationOnFilters
-					) {
-						const stepFilters = TqlFilterAdapterService.toTQL(
-							state.playground.filter.gridFilters,
-						);
-						parameters = { ...parameters, filter: stepFilters };
+					if (parameters.column_ids.length < 2) {
+						MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 					}
-					actions = [{ action: action.name, parameters }];
+					else {
+						parameters.column_names = state.playground.grid.selectedColumns.map(col => col.name);
+						parameters.scope = MULTI_COLUMNS;
+						if (
+							state.playground.filter
+								.applyTransformationOnFilters
+						) {
+							const stepFilters = TqlFilterAdapterService.toTQL(
+								state.playground.filter.gridFilters,
+							);
+							parameters = { ...parameters, filter: stepFilters };
+						}
+						actions = [{ action: action.name, parameters }];
+					}
 				}
 				else {
 					actions = map(

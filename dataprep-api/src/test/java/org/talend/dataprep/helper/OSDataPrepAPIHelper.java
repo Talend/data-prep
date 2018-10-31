@@ -499,7 +499,7 @@ public class OSDataPrepAPIHelper {
                 .urlEncodingEnabled(false) //
                 .queryParam(FOLDER, folderSrc) //
                 .queryParam(DESTINATION, folderDest) //
-                .queryParam(NEW_NAME, prepName)
+                .queryParam(NEW_NAME, prepName) //
                 .when() //
                 .put("/api/preparations/{prepId}/move", prepId);
     }
@@ -651,7 +651,7 @@ public class OSDataPrepAPIHelper {
      * Cloud context.
      */
     public enum ITExecutionContext {
-        ON_PREMISE,
+        ON_PREMISE, //
         CLOUD
     }
 

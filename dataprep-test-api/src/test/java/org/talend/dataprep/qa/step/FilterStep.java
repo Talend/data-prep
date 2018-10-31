@@ -88,9 +88,9 @@ public class FilterStep extends DataPrepStep {
 
             DatasetContent datasetContent = response.as(DatasetContent.class);
             datasetContentReference.set(datasetContent);
-            return datasetContent.metadata.columns
-                    .stream()
-                    .findFirst()
+            return datasetContent.metadata.columns //
+                    .stream() //
+                    .findFirst() //
                     .orElse(new ContentMetadataColumn()).statistics.frequencyTable;
         }, is(not(empty())));
 
@@ -182,7 +182,7 @@ public class FilterStep extends DataPrepStep {
         checkContent(preparationContent, dataTable);
     }
 
-    public void checkContent(PreparationContent preparation, DataTable dataTable) throws Exception {
+    protected void checkContent(PreparationContent preparation, DataTable dataTable) throws Exception {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
         checkRecords(preparation.records, expected.get("records"));
         checkQualityPerColumn(preparation.metadata.columns, expected.get("quality"));

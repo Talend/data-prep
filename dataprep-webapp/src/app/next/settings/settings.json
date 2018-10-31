@@ -263,7 +263,7 @@
   "props": {
     "AppLoader#default": {
       "saga": "bootstrap",
-      "hasCollections": ["settings"]
+      "hasCollections": ["settings", "datastore-types", "datastores", "datasets"]
     },
     "Breadcrumbs#default": {},
     "AboutDialog#default": {

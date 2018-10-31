@@ -1,4 +1,9 @@
-import api, { store as cmfstore, sagaRouter, actions as cmfActions } from '@talend/react-cmf';
+import api, {
+	store as cmfStore,
+	sagaRouter,
+	actions as cmfActions,
+	sagas as cmfSagas,
+} from '@talend/react-cmf';
 import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
 import dataset from '@talend/dataset';
@@ -81,6 +86,10 @@ export default function initialize(additionalConfiguration = {}) {
 	}
 
 	function appFactory(storage = {}) {
+		cmfSagas.http.setDefaultConfig({
+			headers: {},
+		});
+
 		const { initialState, engine } = storage;
 
 		const preReducers = [dataset.preReducers.notificationReducer, ...dataset.hors];
@@ -88,12 +97,12 @@ export default function initialize(additionalConfiguration = {}) {
 		if (additionalPreReducers) {
 			preReducers.push(...additionalPreReducers);
 		}
-		cmfstore.addPreReducer(preReducers);
+		cmfStore.addPreReducer(preReducers);
 
 		/**
 		 * Register react-router-redux router reducer (see https://github.com/reactjs/react-router-redux)
 		 */
-		cmfstore.setRouterMiddleware(routerMiddleware(browserHistory));
+		cmfStore.setRouterMiddleware(routerMiddleware(browserHistory));
 
 		/**
 		 * Register your app reducers
@@ -107,7 +116,7 @@ export default function initialize(additionalConfiguration = {}) {
 		}
 
 		const sagaMiddleware = createSagaMiddleware();
-		const store = cmfstore.initialize(reducers, initialState, undefined, [sagaMiddleware]);
+		const store = cmfStore.initialize(reducers, initialState, undefined, [sagaMiddleware]);
 		sagaMiddleware.run(rootSaga);
 
 		api.registerInternals();
@@ -133,6 +142,7 @@ export default function initialize(additionalConfiguration = {}) {
 		if (additionalExpressions) {
 			registerExpressions(additionalExpressions);
 		}
+		registerExpressions(api.expressions);
 
 		/**
 		 * Register components in CMF Components dictionary

@@ -12,6 +12,7 @@
 
 package org.talend.dataprep.command;
 
+import static java.util.Collections.emptySet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -307,7 +308,7 @@ public class GenericCommandTest extends ServiceBaseTest {
 
         @Override
         public Set<UserGroup> getGroups() {
-            return Collections.emptySet();
+            return emptySet();
         }
 
         @Override
@@ -328,6 +329,11 @@ public class GenericCommandTest extends ServiceBaseTest {
         @Override
         public Analytics getAnalytics() {
             return null;
+        }
+
+        @Override
+        public Set<String> getApplications() {
+            return emptySet();
         }
 
         @Override

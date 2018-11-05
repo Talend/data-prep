@@ -1,6 +1,19 @@
 {
   "contentTypes": {},
   "actions": {
+    "dataset:open": {
+      "id": "dataset:open",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:OPEN_DATASET",
+          "options": {
+            "defaultValue": "Open dataset"
+          }
+        }
+      },
+      "icon": "talend-tdp-positive",
+      "actionCreator": "dataset:view"
+    },
     "divider": {
       "divider": true
     },

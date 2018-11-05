@@ -1,7 +1,11 @@
 package org.talend.dataprep.conversions.inject;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DatasetDTO;
 import org.talend.dataprep.api.dataset.DatasetDetailsDTO;
 import org.talend.dataprep.api.preparation.PreparationDTO;
@@ -16,6 +20,8 @@ import java.util.function.BiFunction;
 /**
  * A default implementation of {@link OwnerInjection} dedicated to environments with no security enabled.
  */
+@Component
+@Scope(SCOPE_PROTOTYPE)
 public class DefaultOwnerInjection implements OwnerInjection {
 
     @Autowired

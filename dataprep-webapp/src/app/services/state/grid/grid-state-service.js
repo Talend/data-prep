@@ -177,8 +177,21 @@ export function GridStateService() {
 	 */
 	function updateSelectedColumn(data) {
 		// if there is already a selected column, we update the column metadata to reference one of the new columns
-		if (gridState.selectedColumns.length === 1) {
-			gridState.selectedColumns = [_.find(data.metadata.columns, { id: gridState.selectedColumns[0].id }) || data.metadata.columns[0]];
+		if (gridState.selectedColumns.length === 1 && gridState.selectedColumns[0]) {
+			const columns = data.metadata.columns;
+			const ordered = gridState.columns.map(c => c.id);
+			const actual = gridState.selectedColumns[0].id;
+
+			let selectedIndex = columns.findIndex(c => c.id === actual);
+			if (selectedIndex === -1) {
+				for (let i = ordered.length - 1; i > 0; i--) {
+					if (ordered[i] === actual) {
+						selectedIndex = i - 1;
+					}
+				}
+			}
+
+			gridState.selectedColumns = [columns[selectedIndex] || columns[0]];
 		}
 		else if (gridState.selectedColumns.length > 1) {
 			gridState.selectedColumns = gridState.selectedColumns.map(col =>

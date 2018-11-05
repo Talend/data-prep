@@ -27,6 +27,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -91,6 +92,7 @@ import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TdpExceptionDto;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import org.talend.dataprep.security.Security;
@@ -1476,6 +1478,30 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertArrayEquals(headers, resultHeaders);
         String[] resultRecord1 = resultFileReader.readNext();
         assertArrayEquals(record1, resultRecord1);
+    }
+
+    @Test
+    public void testOnTheFlyPreparationMigrationDatasetName_TDP_6195() throws IOException {
+        String datasetName = "my dataset - " + UUID.randomUUID().toString();
+        String datasetId = testClient
+                .createDataset("/org/talend/dataprep/api/service/preparations/5L4Ccity_TDP-3858.csv", datasetName);
+        String preparationId =
+                testClient.createPreparationFromDataset(datasetId, "5L4C city Preparation", home.getId());
+        PersistentPreparation persistentPreparation =
+                preparationRepository.get(preparationId, PersistentPreparation.class);
+        persistentPreparation.setDataSetName(null);
+        preparationRepository.add(persistentPreparation);
+
+        // Our preparation do not have a dataset name
+        PreparationDTO preparationDetails = testClient.getPreparationSummary(preparationId);
+        assertNull(preparationDetails.getDataSetName());
+
+        // listing should trigger migration
+        testClient.listPreparations();
+
+        // then we have the dataset name set in the preparation
+        PreparationDTO preparationDetailsAfterList = testClient.getPreparationSummary(preparationId);
+        assertEquals(datasetName, preparationDetailsAfterList.getDataSetName());
     }
 
     private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {

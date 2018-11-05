@@ -47,6 +47,7 @@ public class InjectorUtil {
                         allowDistributedRun.set(a.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
                     }
                 }) //
+                // action must be adapted before usage. See problems with masking action
                 .map(a -> a.getActionForm(LocaleContextHolder.getLocale(), Locale.US)) //
                 .map(InjectorUtil::disallowColumnCreationChange) //
                 .collect(Collectors.toList());

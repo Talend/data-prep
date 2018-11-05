@@ -35,7 +35,7 @@ describe('Dataset upload tile directive', function () {
 		};
 	}));
 
-	it('should render progressing upload dataset', function () {
+	it('should render progress bar while uploading new dataset file', function () {
 		// given
 		scope.dataset = {
 			name: 'Customers (50 lines)',
@@ -51,25 +51,8 @@ describe('Dataset upload tile directive', function () {
 
 		// then
 		expect(name.text()).toBe('Customers (50 lines)');
-		expect(progress.text().trim()).toBe('10 %');
+		expect(progress.find('pure-progress')).toBeDefined();
 		expect(progress.hasClass('error')).toBe(false);
-	});
-
-	it('should show profiling data message once the upload reaches the 100%', function () {
-		//given
-		scope.dataset = {
-			name: 'Customers (50 lines)',
-			progress: 100,
-			error: false,
-			type: 'file',
-		};
-
-		//when
-		var element = createElement(scope);
-		var progress = element.find('.inventory-progress').first();
-
-		//then
-		expect(progress.text().trim()).toBe(translations.UPLOAD_PROCESSING);
 	});
 
 	it('should render progressing remote dataset import', function () {

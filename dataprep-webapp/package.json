@@ -1,6 +1,6 @@
 {
   "name": "data-prep",
-  "version": "2.8.0-SNAPSHOT",
+  "version": "3.0.0-SNAPSHOT",
   "authors": [
     "Talend SA"
   ],
@@ -38,17 +38,17 @@
     "setupTestFrameworkScriptFile": "<rootDir>/test-setup.js"
   },
   "dependencies": {
-    "@talend/bootstrap-theme": "0.207.1",
-    "@talend/daikon-tql-client": "1.0.1",
+    "@talend/bootstrap-theme": "1.4.1",
+    "@talend/daikon-tql-client": "1.1.0",
     "@talend/dataset": "2.2.0",
     "@talend/html-webpack-plugin": "0.0.3",
-    "@talend/icons": "0.207.1",
-    "@talend/react-cmf": "0.207.1",
-    "@talend/react-cmf-cqrs": "0.207.1",
-    "@talend/react-components": "0.207.1",
-    "@talend/react-containers": "0.207.1",
-    "@talend/react-forms": "0.207.1",
-    "@talend/tql": "1.0.1",
+    "@talend/icons": "1.4.1",
+    "@talend/react-cmf": "1.4.1",
+    "@talend/react-cmf-cqrs": "1.4.1",
+    "@talend/react-components": "1.4.1",
+    "@talend/react-containers": "1.4.1",
+    "@talend/react-forms": "1.4.1",
+    "@talend/tql": "1.1.0",
     "X-SlickGrid": "git+https://github.com/ddomingues/X-SlickGrid#2e7784a39c2625c3800ebfeb62e4b239e2eafacf",
     "ally.js": "^1.4.1",
     "angular": "1.5.9",
@@ -73,8 +73,8 @@
     "immutable": "^3.8.1",
     "intro.js": "^1.1.1",
     "invariant": "^2.2.2",
-    "jquery": "2.1.4",
-    "jquery-datetimepicker": "2.5.4",
+    "jquery": "2.2.4",
+    "jquery-datetimepicker": "2.5.20",
     "jquery-ui": "1.12.1",
     "lodash": "^4.17.4",
     "modernizr": "^3.3.1",
@@ -192,5 +192,8 @@
   },
   "publishConfig": {
     "registry": "https://artifacts-zl.talend.com/nexus/content/repositories/talend-npm/"
+  },
+  "resolutions": {
+    "jquery": "2.2.4"
   }
 }

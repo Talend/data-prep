@@ -18,10 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +28,18 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.preparation.BasePreparationTest;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Unit/integration tests for the PreparationService
  */
 public class PreparationServiceTest extends BasePreparationTest {
 
-    /** Where the folders are stored. */
+    /**
+     * Where the folders are stored.
+     */
     @Autowired
     private PreparationService preparationService;
 
@@ -164,12 +167,12 @@ public class PreparationServiceTest extends BasePreparationTest {
         }
 
         prep = clientTest.getPreparation(prep.getId());
+
         List<String> originalStepIds = prep.getSteps();
 
         updateHeadAndCheckResult(prep, originalStepIds, 0);
         updateHeadAndCheckResult(prep, originalStepIds, 3);
         updateHeadAndCheckResult(prep, originalStepIds, 2);
-
     }
 
     private void updateHeadAndCheckResult(PreparationDTO prep, List<String> originalStepIds, Integer indexOfStep) {
@@ -185,6 +188,7 @@ public class PreparationServiceTest extends BasePreparationTest {
     }
 
     private void init() throws IOException {
+        HystrixCommandProperties.Setter().withCircuitBreakerEnabled(false);
         createFolder(home.getId(), "foo");
         final Folder foo = getFolder(home.getId(), "foo");
 

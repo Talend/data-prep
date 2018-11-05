@@ -11,106 +11,178 @@
 
   ============================================================================*/
 
-describe('Statistics state service', function () {
-    'use strict';
+import { PATTERNS_TYPE } from '../../statistics/statistics-service';
 
-    beforeEach(angular.mock.module('data-prep.services.state'));
+describe('Statistics state service', function() {
+	'use strict';
 
-    it('should set histogram', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        expect(statisticsState.histogram).toBeFalsy();
-        var histogram = { data: [] };
+	beforeEach(angular.mock.module('data-prep.services.state'));
 
-        //when
-        StatisticsStateService.setHistogram(histogram);
+	it(
+		'should set histogram',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.histogram).toBeFalsy();
+			const histogram = { data: [] };
 
-        //then
-        expect(statisticsState.histogram).toBe(histogram);
-    }));
+			//when
+			StatisticsStateService.setHistogram(histogram);
 
-    it('should set filtered histogram', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        expect(statisticsState.filteredHistogram).toBeFalsy();
-        var filteredHistogram = { data: [] };
+			//then
+			expect(statisticsState.histogram).toBe(histogram);
+		}),
+	);
 
-        //when
-        StatisticsStateService.setFilteredHistogram(filteredHistogram);
+	it(
+		'should set filtered histogram',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.filteredHistogram).toBeFalsy();
+			const filteredHistogram = { data: [] };
 
-        //then
-        expect(statisticsState.filteredHistogram).toBe(filteredHistogram);
-    }));
+			//when
+			StatisticsStateService.setFilteredHistogram(filteredHistogram);
 
-    it('should set active limits', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        expect(statisticsState.activeLimits).toBeFalsy();
-        var activeLimits = [15, 25];
+			//then
+			expect(statisticsState.filteredHistogram).toBe(filteredHistogram);
+		}),
+	);
 
-        //when
-        StatisticsStateService.setHistogramActiveLimits(activeLimits);
+	it(
+		'should set active limits',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.activeLimits).toBeFalsy();
+			const activeLimits = [15, 25];
 
-        //then
-        expect(statisticsState.activeLimits).toBe(activeLimits);
-    }));
+			//when
+			StatisticsStateService.setHistogramActiveLimits(activeLimits);
 
-    it('should set patterns', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        expect(statisticsState.patterns).toBeFalsy();
-        var patterns = { data: [] };
+			//then
+			expect(statisticsState.activeLimits).toBe(activeLimits);
+		}),
+	);
 
-        //when
-        StatisticsStateService.setPatterns(patterns);
+	it(
+		'should set patterns type',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.patternsType).toBe(PATTERNS_TYPE.CHARACTER);
+			const patternsType = PATTERNS_TYPE.WORD;
 
-        //then
-        expect(statisticsState.patterns).toBe(patterns);
-    }));
+			//when
+			StatisticsStateService.setPatternsType(patternsType);
 
-    it('should set filtered patterns', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        expect(statisticsState.filteredPatterns).toBeFalsy();
-        var filteredPatterns = { data: [] };
+			//then
+			expect(statisticsState.patternsType).toBe(patternsType);
+		}),
+	);
 
-        //when
-        StatisticsStateService.setFilteredPatterns(filteredPatterns);
+	it(
+		'should set patterns',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.patterns).toBeFalsy();
+			const patterns = { data: [] };
 
-        //then
-        expect(statisticsState.filteredPatterns).toBe(filteredPatterns);
-    }));
+			//when
+			StatisticsStateService.setPatterns(patterns);
 
-    it('should set loading flag', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        expect(statisticsState.loading).toBeFalsy();
+			//then
+			expect(statisticsState.patterns).toBe(patterns);
+		}),
+	);
 
-        //when
-        StatisticsStateService.setLoading(true);
+	it(
+		'should set word patterns',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.wordPatterns).toBeFalsy();
+			const wordPatterns = { data: [] };
 
-        //then
-        expect(statisticsState.loading).toBe(true);
-    }));
+			//when
+			StatisticsStateService.setWordPatterns(wordPatterns);
 
-    it('should reset all statistics', inject(function (statisticsState, StatisticsStateService) {
-        //given
-        statisticsState.histogram = {};
-        statisticsState.filteredHistogram = {};
-        statisticsState.patterns = {};
-        statisticsState.filteredPatterns = {};
-        statisticsState.activeLimits = {};
-        statisticsState.boxPlot = {};
-        statisticsState.rangeLimits = {};
-        statisticsState.details = {};
-        statisticsState.loading = true;
+			//then
+			expect(statisticsState.wordPatterns).toBe(wordPatterns);
+		}),
+	);
 
-        //when
-        StatisticsStateService.reset();
+	it(
+		'should set filtered patterns',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.filteredPatterns).toBeFalsy();
+			const filteredPatterns = { data: [] };
 
-        //then
-        expect(statisticsState.histogram).toBe(null);
-        expect(statisticsState.filteredHistogram).toBe(null);
-        expect(statisticsState.patterns).toBe(null);
-        expect(statisticsState.filteredPatterns).toBe(null);
-        expect(statisticsState.activeLimits).toBe(null);
-        expect(statisticsState.boxPlot).toBe(null);
-        expect(statisticsState.rangeLimits).toBe(null);
-        expect(statisticsState.details).toBe(null);
-        expect(statisticsState.loading).toBe(false);
-    }));
+			//when
+			StatisticsStateService.setFilteredPatterns(filteredPatterns);
+
+			//then
+			expect(statisticsState.filteredPatterns).toBe(filteredPatterns);
+		}),
+	);
+
+	it(
+		'should set filtered word patterns',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.filteredWordPatterns).toBeFalsy();
+			const filteredWordPatterns = { data: [] };
+
+			//when
+			StatisticsStateService.setFilteredWordPatterns(filteredWordPatterns);
+
+			//then
+			expect(statisticsState.filteredWordPatterns).toBe(filteredWordPatterns);
+		}),
+	);
+
+	it(
+		'should set loading flag',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			expect(statisticsState.loading).toBeFalsy();
+
+			//when
+			StatisticsStateService.setLoading(true);
+
+			//then
+			expect(statisticsState.loading).toBe(true);
+		}),
+	);
+
+	it(
+		'should reset all statistics',
+		inject(function(statisticsState, StatisticsStateService) {
+			//given
+			statisticsState.histogram = {};
+			statisticsState.filteredHistogram = {};
+			statisticsState.patterns = {};
+			statisticsState.wordPatterns = {};
+			statisticsState.filteredPatterns = {};
+			statisticsState.filteredWordPatterns = {};
+			statisticsState.activeLimits = {};
+			statisticsState.boxPlot = {};
+			statisticsState.rangeLimits = {};
+			statisticsState.details = {};
+			statisticsState.loading = true;
+
+			//when
+			StatisticsStateService.reset();
+
+			//then
+			expect(statisticsState.histogram).toBe(null);
+			expect(statisticsState.filteredHistogram).toBe(null);
+			expect(statisticsState.patterns).toBe(null);
+			expect(statisticsState.wordPatterns).toBe(null);
+			expect(statisticsState.filteredPatterns).toBe(null);
+			expect(statisticsState.filteredWordPatterns).toBe(null);
+			expect(statisticsState.activeLimits).toBe(null);
+			expect(statisticsState.boxPlot).toBe(null);
+			expect(statisticsState.rangeLimits).toBe(null);
+			expect(statisticsState.details).toBe(null);
+			expect(statisticsState.loading).toBe(false);
+		}),
+	);
 });

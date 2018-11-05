@@ -233,11 +233,8 @@ export default function DatagridService(state, StateService, ConverterService, T
 		}
 
 		const regexp = new RegExp(TextFormatService.escapeRegexpExceptStar(phrase));
-		const canBeNumeric = !isNaN(phrase.replace(/\*/g, ''));
-		const canBeBoolean = 'true'.match(regexp) || 'false'.match(regexp);
-
 		const data = state.playground.data.records;
-		let potentialColumns = getColumns(!canBeNumeric, !canBeBoolean);
+		let potentialColumns = getColumns();
 
 		// we loop over data while there is data and potential columns that can contains the searched term
 		// if a col value for a row contains the term, we add it to result

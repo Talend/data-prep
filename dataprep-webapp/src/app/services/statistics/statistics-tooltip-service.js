@@ -121,14 +121,24 @@ export default function StatisticsTooltipService($translate, state) {
 			}
 			else {
 				const percentage = getPercentage(secondaryValue, primaryValue);
-				return tooltipFilteredTemplate({
-					label: keyLabel,
-					title,
-					percentage,
-					key: keyString,
-					primaryValue,
-					secondaryValue,
-				});
+				if (secondaryValue) {
+					return tooltipFilteredTemplate({
+						label: keyLabel,
+						title,
+						percentage,
+						key: keyString,
+						primaryValue,
+						secondaryValue,
+					});
+				}
+				else {
+					return tooltipTemplate({
+						label: keyLabel,
+						title,
+						key: keyString,
+						primaryValue,
+					});
+				}
 			}
 		}
 		else {

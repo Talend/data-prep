@@ -99,6 +99,34 @@ public class FeatureContext {
     }
 
     /**
+     * Add suffix to a filename. This suffix is added before the filename extensions. For example "/tmp/file.csv" become
+     * "/tmp/file_654321.csv".
+     * 
+     * @param fileName The filename.
+     *
+     * @return The suffixed filename.
+     */
+    public static String suffixFileName(String fileName) {
+        if (fileName.lastIndexOf('.') < 0
+                || (fileName.lastIndexOf('/') >= 0 && fileName.lastIndexOf('.') < fileName.lastIndexOf('/'))) {
+            return suffixName(fileName);
+        }
+        return fileName.substring(0, fileName.lastIndexOf('.')) + TI_SUFFIX_UID
+                + fileName.substring(fileName.lastIndexOf('.'));
+    }
+
+    /**
+     * Remove the suffix from the filename.
+     * 
+     * @param fileName The suffixed filename.
+     *
+     * @return The filename without suffix.
+     */
+    public static String removeSuffixFileName(String fileName) {
+        return fileName.replaceAll(TI_SUFFIX_UID, "");
+    }
+
+    /**
      * Add a suffix to a name depending of the execution instance.
      *
      * @param folderPath to suffix.
@@ -129,7 +157,7 @@ public class FeatureContext {
     }
 
     public static String getSuffix() {
-        return USE_SUFFIX ? TI_SUFFIX_UID : "";
+        return USE_SUFFIX ? TI_SUFFIX_UID : StringUtils.EMPTY;
     }
 
     public static boolean isUseSuffix() {
@@ -154,6 +182,16 @@ public class FeatureContext {
     public void storeDatasetRef(@NotNull String id, @NotNull String name) {
         storeExistingDatasetRef(id, name);
         datasetIdByNameToDelete.put(name, id);
+    }
+
+    /**
+     * Remove a dataset reference from the context.
+     * 
+     * @param datasetName the dataset name.
+     */
+    public void removeDatasetRef(@NotNull String datasetName) {
+        datasetIdByName.remove(datasetName);
+        datasetIdByNameToDelete.remove(datasetName);
     }
 
     /**

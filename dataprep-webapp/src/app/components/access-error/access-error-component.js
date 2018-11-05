@@ -12,12 +12,14 @@
  ============================================================================*/
 
 import template from './access-error.html';
+import AccessErrorCtrl from './access-error-controller';
 
 const AccessError = {
 	templateUrl: template,
 	bindings: {
 		status: '<',
 	},
+	controller: AccessErrorCtrl,
 };
 
 export default AccessError;

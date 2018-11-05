@@ -85,7 +85,6 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
-import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -112,9 +111,6 @@ public class PreparationAPI extends APIService {
     private DatasetClient datasetClient;
 
     @Autowired
-    private DataSetNameInjection dataSetNameInjection;
-
-    @Autowired
     private ActionRegistry registry;
 
     @Autowired
@@ -127,7 +123,6 @@ public class PreparationAPI extends APIService {
     public Stream<PreparationListItemDTO> listPreparations(
             @ApiParam(name = "name",
                     value = "Filter preparations by name.") @RequestParam(required = false) String name,
-            @RequestParam(name = "format", required = false) String format,
             @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(
                     required = false, name = "folder_path") String folderPath,
             @ApiParam(name = "path",
@@ -137,15 +132,10 @@ public class PreparationAPI extends APIService {
                     defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
                     defaultValue = "desc") Order order) {
-
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
-        if ("summary".equalsIgnoreCase(format)) {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-        } else {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-        }
+        return toStream(PreparationDTO.class, mapper, command)//
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
+                        APIService::injectDataSetName));
     }
 
     //@formatter:off
@@ -286,9 +276,7 @@ public class PreparationAPI extends APIService {
         }
 
         try {
-            final PreparationDetailsDTO preparationDetails =
-                    getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
-            return injectorUtil.injectPreparationDetails(preparationDetails.getActions(), preparationDetails);
+            return getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
         } catch (Exception e) {
             LOG.error("Unable to get preparation {}", preparationId, e);
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);

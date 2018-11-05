@@ -46,10 +46,11 @@ export default function UpdateWorkflowService(state, StateService, MessageServic
 			})
 			.then(() => {
 				MessageService.success('DATASET_UPDATE_SUCCESS_TITLE', 'DATASET_UPDATE_SUCCESS', { dataset: dataset.name });
-
 				// Force the update currentMetadata of the dataset
 				StateService.resetPlayground();
-				DatasetService.getDatasetById(dataset.id).then(UploadWorkflowService.openDataset);
+				DatasetService.getDatasetById(dataset.id)
+					.then(StateService.setPreparationCreatorVisibility(false))
+					.then(UploadWorkflowService.openDataset);
 			})
 			.catch(() => {
 				dataset.error = true;

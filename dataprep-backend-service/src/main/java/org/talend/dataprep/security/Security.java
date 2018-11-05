@@ -69,4 +69,10 @@ public interface Security {
      * @return {@link Analytics} information
      */
     Analytics getAnalytics();
+
+    /**
+     *
+     * @return the available applications for a user
+     */
+    Set<String> getApplications();
 }

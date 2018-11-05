@@ -14,26 +14,22 @@
   -->
 
 <div class="dataset-upload-status inventory-list">
-	<div class="inventory-item" ng-if="uploadStatusCtrl.dataset">
+	<div class="inventory-item" ng-if="ctrl.dataset">
 		<div class="inventory-icon">
 			<icon name="'talend-file-o'"/>
 		</div>
-		<div class="inventory-text" ng-switch="uploadStatusCtrl.dataset.error">
-			<div class="inventory-title">{{uploadStatusCtrl.dataset.name}}</div>
+		<div class="inventory-text" ng-switch="ctrl.dataset.error">
+			<div class="inventory-title">{{ctrl.dataset.name}}</div>
 
-			<div class="inventory-progress" ng-switch-when="false" ng-switch="uploadStatusCtrl.dataset.type">
-				<div class="progress-bar" ng-switch-when="file">
-				<span class="meter" ng-style="{width: uploadStatusCtrl.dataset.progress + '%'}" ng-switch="uploadStatusCtrl.dataset.progress">
-					<p ng-switch-when="100"><span translate-once="UPLOAD_PROCESSING"></span></p>
-					<p ng-switch-default="">{{ uploadStatusCtrl.dataset.progress }} %</p>
-				</span>
-				</div>
-				<div class="progress-bar" ng-switch-when="remote">
-				<span class="meter" style="width: 100%">
-					<p translate-once="PROCESSING_REMOTE_DATASET"></p>
-				</span>
-				</div>
+			<div class="inventory-progress" ng-switch-when="false">
+				<pure-progress
+					contained="'true'"
+					infinite="ctrl.dataset.progress === 100"
+					percent="ctrl.dataset.progress"
+					tooltip="ctrl.getProgressionLabel()"
+				/>
 			</div>
+
 			<div class="inventory-progress error"
 				 ng-switch-when="true"
 				 translate-once="UPLOAD_ERROR"></div>

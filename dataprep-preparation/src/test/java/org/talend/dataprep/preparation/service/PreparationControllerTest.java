@@ -146,12 +146,12 @@ public class PreparationControllerTest extends BasePreparationTest {
                                 "{\"id\":\"#548425458\"," +
                                 "\"dataSetId\":\"1234\"," +
                                 "\"creationDate\":0," +
-                                "\"lastModificationDate\":12345," +
+                                "\"lastModificationDate\":12345" +
                                 "}," +
                                 "{\"id\":\"#1438725\"," +
                                 "\"dataSetId\":\"5678\"," +
                                 "\"creationDate\":500," +
-                                "\"lastModificationDate\":456789," +
+                                "\"lastModificationDate\":456789" +
                                 "}" +
                                 "]")
                         .allowingExtraUnexpectedFields()

@@ -18,6 +18,7 @@ import ACTIONS_SUGGESTIONS_MODULE from '../suggestions-stats/actions-suggestions
 import STATS_COLUMN_PROFILE from '../suggestions-stats/column-profile/column-profile-module';
 import STATS_DETAILS_MODULE from '../suggestions-stats/stats-details/stats-details-module';
 import TALEND_WIDGET_MODULE from '../widgets/widget-module';
+import TALEND_CONTAINERS_WIDGET_MODULE from '../widgets-containers/widgets-containers-module';
 
 const MODULE_NAME = 'data-prep.suggestions-stats';
 
@@ -29,6 +30,7 @@ angular.module(MODULE_NAME,
 		STATS_COLUMN_PROFILE,
 		STATS_DETAILS_MODULE,
 		TALEND_WIDGET_MODULE,
+		TALEND_CONTAINERS_WIDGET_MODULE,
 	]);
 
 export default MODULE_NAME;

@@ -11,6 +11,15 @@
 
  ============================================================================*/
 
+/* eslint-disable */
+
+// https://github.com/jquery/jquery/issues/2432#issuecomment-403761229
+jQuery.ajaxPrefilter(function (s) {
+	if (s.crossDomain) {
+		s.contents.script = false;
+	}
+});
+
 // animate.css https://github.com/daneden/animate.css
 import 'animate.css';
 
@@ -89,3 +98,4 @@ import 'focus-visible';
 // slickgrid-column-data-autosize https://github.com/naresh-n/slickgrid-column-data-autosize
 import './lib/slick.autocolumnsize';
 
+/* eslint-enable */

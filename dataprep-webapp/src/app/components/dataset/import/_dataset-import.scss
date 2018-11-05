@@ -37,15 +37,8 @@
 
 	.form-actions {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-end;
 		margin: auto;
 		width: 75%;
 	}
-
-	.datastore {
-		.form-actions {
-			justify-content: flex-end;
-		}
-	}
 }
-

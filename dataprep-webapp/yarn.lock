@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@talend/bootstrap-theme@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-0.207.1.tgz#3490b563f3f7a29c9c5e7588759c6575dc7a3e59"
+"@talend/bootstrap-theme@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@talend/bootstrap-theme/-/bootstrap-theme-1.4.1.tgz#5fe960601eb647d1044366570403686f7c515f5c"
   dependencies:
     bootstrap-sass "3.3.7"
 
-"@talend/daikon-tql-client@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@talend/daikon-tql-client/-/daikon-tql-client-1.0.1.tgz#b5ab6900f541253e1352917b146f924b384de89d"
+"@talend/daikon-tql-client@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@talend/daikon-tql-client/-/daikon-tql-client-1.1.0.tgz#9c991acbdf130251670ce117648078b13c85d66f"
   dependencies:
     babel-polyfill "^6.26.0"
     hoist-non-react-statics "^1.2.0"
@@ -27,9 +27,9 @@
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@talend/html-webpack-plugin/-/html-webpack-plugin-0.0.3.tgz#461c7d0877e497ca7c8f63ccbf7ef8603edf64f5"
 
-"@talend/icons@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-0.207.1.tgz#8335ba5519bd3ea4f6edb79aa2c1ebdd0ad69d27"
+"@talend/icons@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@talend/icons/-/icons-1.4.1.tgz#8505f9544bdd3e761d44ac461d2a5f98e9d9ffc4"
 
 "@talend/json-schema-form-core@1.0.0-alpha.4":
   version "1.0.0-alpha.4"
@@ -38,9 +38,9 @@
     objectpath "^1.2.1"
     tv4 "^1.3.0"
 
-"@talend/react-cmf-cqrs@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-0.207.1.tgz#7694fca9f48e843d394cbd29129ed505c794580f"
+"@talend/react-cmf-cqrs@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf-cqrs/-/react-cmf-cqrs-1.4.1.tgz#b48b57617b0c8876914b3aa335c82ad6108fdab7"
   dependencies:
     babel-polyfill "^6.26.0"
     hoist-non-react-statics "^1.2.0"
@@ -55,9 +55,9 @@
     deepmerge "1.5.1"
     mkdirp "^0.5.1"
 
-"@talend/react-cmf@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-0.207.1.tgz#91080020b29f360575d93144f6dcb5ed39cab82e"
+"@talend/react-cmf@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@talend/react-cmf/-/react-cmf-1.4.1.tgz#2eab6a6d4fd9ce4445a2b4c46c3f62ba03ba4633"
   dependencies:
     ajv "^6.2.1"
     babel-polyfill "^6.26.0"
@@ -95,9 +95,9 @@
     hoist-non-react-statics "^1.2.0"
     react-immutable-proptypes "2.1.0"
 
-"@talend/react-components@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-0.207.1.tgz#69ae979374f918fff1b3760c4a73bca232ed4a0b"
+"@talend/react-components@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@talend/react-components/-/react-components-1.4.1.tgz#a62a5132a484b9b6895f28c83678c7c7721ed6e1"
   dependencies:
     ally.js "^1.4.1"
     date-fns "^1.27.2"
@@ -113,30 +113,32 @@
     react-virtualized "9.19.1"
     simulant "^0.2.2"
 
-"@talend/react-containers@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-0.207.1.tgz#f9112e660e3d820a6320cf637c6371917ed060c0"
+"@talend/react-containers@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@talend/react-containers/-/react-containers-1.4.1.tgz#b3c275110d37b73514a2a596e69213cd80352609"
   dependencies:
     memoize-one "^4.0.0"
     react-immutable-proptypes "^2.1.0"
 
-"@talend/react-forms@0.207.1":
-  version "0.207.1"
-  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-0.207.1.tgz#0858f8d7540b6dc95d824f0e4a32215d71990d31"
+"@talend/react-forms@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@talend/react-forms/-/react-forms-1.4.1.tgz#728d9d372f0829b2db61f1da4c893ed729b34eed"
   dependencies:
     "@talend/json-schema-form-core" "1.0.0-alpha.4"
     ajv "^6.2.1"
     classnames "^2.2.5"
+    json-logic-js "^1.2.2"
     keycode "^2.2.0"
     lodash "^4.17.4"
     prop-types "^15.5.10"
     react-autowhatever "10.1.2"
     react-jsonschema-form "0.51.0"
     tv4 "^1.3.0"
+    uuid "^3.0.1"
 
-"@talend/tql@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@talend/tql/-/tql-1.0.1.tgz#31de6f5dc9b76d3f2ea5f8d0593732c82f34ef78"
+"@talend/tql@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@talend/tql/-/tql-1.1.0.tgz#b3160a649d695597b4c612915fb3b7f223bc9a36"
   dependencies:
     antlr4 "^4.7.0"
 
@@ -5897,13 +5899,13 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
-jquery-datetimepicker@2.5.4:
-  version "2.5.4"
-  resolved "https://registry.yarnpkg.com/jquery-datetimepicker/-/jquery-datetimepicker-2.5.4.tgz#01c3cd1e9c2b51fc030687ac86bdf407a50bec6f"
+jquery-datetimepicker@2.5.20:
+  version "2.5.20"
+  resolved "https://registry.yarnpkg.com/jquery-datetimepicker/-/jquery-datetimepicker-2.5.20.tgz#687d6204b90b03dc93f725f8df036e1d061f37ac"
   dependencies:
     jquery ">= 1.7.2"
     jquery-mousewheel ">= 3.1.13"
-    php-date-formatter ">= 1.3.3"
+    php-date-formatter "^1.3.4"
 
 "jquery-mousewheel@>= 3.1.13":
   version "3.1.13"
@@ -5913,9 +5915,9 @@ jquery-ui@1.12.1:
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"
 
-jquery@2.1.4, "jquery@>= 1.7.2":
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.1.4.tgz#228bde698a0c61431dc2630a6a154f15890d2317"
+jquery@2.2.4, "jquery@>= 1.7.2":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
 
 js-base64@^2.1.8:
   version "2.4.3"
@@ -6008,6 +6010,10 @@ jsesc@^1.3.0:
 json-loader@^0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/json-loader/-/json-loader-0.5.4.tgz#8baa1365a632f58a3c46d20175fc6002c96e37de"
+
+json-logic-js@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/json-logic-js/-/json-logic-js-1.2.2.tgz#e5c382aa6df25df485edead339869396c533afe8"
 
 json-parse-better-errors@^1.0.1:
   version "1.0.2"
@@ -7801,7 +7807,7 @@ phantomjs-prebuilt@^2.1.7:
     request-progress "~2.0.1"
     which "~1.2.10"
 
-"php-date-formatter@>= 1.3.3":
+php-date-formatter@^1.3.4:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/php-date-formatter/-/php-date-formatter-1.3.4.tgz#09a15ae0766ba0beb1900c27c1ec319ef2e4563e"
 

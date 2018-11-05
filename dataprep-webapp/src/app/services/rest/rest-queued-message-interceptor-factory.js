@@ -77,7 +77,7 @@ export default function RestQueuedMessageHandler($q, $injector, $timeout, RestUR
 						case FAILED_STATUS:
 							MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
 						case CANCELLED_STATUS:
-							return $q.reject();
+							return $q.reject({});
 						default:
 							return data.result.downloadUrl ? $http({
 								method: config.method === METHODS.HEAD ? METHODS.HEAD : METHODS.GET,

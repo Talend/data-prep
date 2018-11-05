@@ -12,6 +12,9 @@
 
 package org.talend;
 
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.talend.ServiceBaseTest.TEST_LOCALE;
+
 import java.util.Locale;
 
 import org.junit.Before;
@@ -37,9 +40,6 @@ import org.talend.dataprep.test.LocalizationRule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.talend.ServiceBaseTest.TEST_LOCALE;
-
 @RunWith(SpringRunner.class)
 @Import({ LocalContentServiceConfiguration.class, DataPrepComponentScanConfiguration.class })
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = ServiceBaseTest.DatasetClientTestConfiguration.class,
@@ -48,6 +48,9 @@ import static org.talend.ServiceBaseTest.TEST_LOCALE;
 public abstract class ServiceBaseTest {
 
     public static final String TEST_LOCALE = "en-US";
+
+    @Rule
+    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     @LocalServerPort
     protected int port;
@@ -60,9 +63,6 @@ public abstract class ServiceBaseTest {
 
     @Autowired
     protected ObjectMapper mapper;
-
-    @Rule
-    public LocalizationRule rule = new LocalizationRule(Locale.US);
 
     private boolean environmentSet = false;
 
@@ -86,6 +86,11 @@ public abstract class ServiceBaseTest {
         }
     }
 
+    @Test
+    public void contextLoads() {
+        // this is needed for tests suites, so that they have only one context load
+    }
+
     @SpringBootConfiguration
     @EnableAutoConfiguration
     @Import(org.talend.dataprep.configuration.HttpClient.class)
@@ -96,11 +101,6 @@ public abstract class ServiceBaseTest {
             return new MockDatasetServer();
         }
 
-    }
-
-    @Test
-    public void contextLoads() {
-        // this is needed for tests suites, so that they have only one context load
     }
 
 }

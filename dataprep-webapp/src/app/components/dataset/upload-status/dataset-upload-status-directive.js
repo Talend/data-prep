@@ -30,8 +30,7 @@ export default function DatasetUploadStatus() {
 			dataset: '=',
 		},
 		bindToController: true,
-		controllerAs: 'uploadStatusCtrl',
-		controller: () => {
-		},
+		controllerAs: 'ctrl',
+		controller: 'DatasetUploadStatusCtrl',
 	};
 }

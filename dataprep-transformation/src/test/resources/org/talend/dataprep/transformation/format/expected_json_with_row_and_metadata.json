@@ -25,6 +25,7 @@
           "distinctCount": 0,
           "frequencyTable": [],
           "patternFrequencyTable": [],
+          "wordPatternFrequencyTable": [],
           "quantiles": {
             "median": "NaN",
             "lowerQuantile": "NaN",
@@ -66,6 +67,7 @@
           "distinctCount": 0,
           "frequencyTable": [],
           "patternFrequencyTable": [],
+          "wordPatternFrequencyTable": [],
           "quantiles": {
             "median": "NaN",
             "lowerQuantile": "NaN",

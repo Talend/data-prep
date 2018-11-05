@@ -143,9 +143,9 @@ export default class ColumnProfileOptionsCtrl {
 			};
 
 			this.$translate('AGGREGATION_DETAILS', currentOptions)
-                .then((desc) => {
-	this.description = desc;
-});
+				.then((desc) => {
+					this.description = desc;
+				});
 		}
 	}
 
@@ -158,9 +158,9 @@ export default class ColumnProfileOptionsCtrl {
 	_updateCurrentShortDescription() {
 		if (this.aggregation) {
 			this.$translate(this.aggregation)
-                .then((aggreg) => {
-	this.shortDescription = `${aggreg} ${this.column.name}`;
-});
+				.then((aggreg) => {
+					this.shortDescription = `${aggreg} ${this.column.name}`;
+				});
 		}
 		else {
 			this.shortDescription = this.$translate.instant(LINE_COUNT);

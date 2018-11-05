@@ -36,6 +36,9 @@ Object {
 
 exports[`Folder action should create an openRemoveFolderModal action 1`] = `
 Object {
+  "payload": Object {
+    "name": "test",
+  },
   "type": "TDP_OPEN_REMOVE_FOLDER_MODAL",
 }
 `;

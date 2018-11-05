@@ -86,6 +86,7 @@ class PreparationCopyMoveModal extends React.Component {
 				onHide={this.close}
 				actionbar={bar}
 				show={show}
+				closeButton={false}
 			>
 				<EditableText
 					componentId={PreparationCopyMoveModal.EDITABLE_TEXT_ID}

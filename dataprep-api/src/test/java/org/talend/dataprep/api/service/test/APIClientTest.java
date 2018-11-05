@@ -13,12 +13,13 @@
 
 package org.talend.dataprep.api.service.test;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.http.ContentType.JSON;
-import static com.jayway.restassured.http.ContentType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.not;
@@ -47,17 +48,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.MixedContentMap;
 import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationDetailsDTO;
 import org.talend.dataprep.api.service.PreparationAPITest;
 import org.talend.dataprep.async.AsyncExecution;
 import org.talend.dataprep.async.AsyncExecutionMessage;
 import org.talend.dataprep.dataset.service.UserDataSetMetadata;
 import org.talend.dataprep.format.export.ExportFormat;
+import org.talend.dataprep.transformation.actions.category.ScopeCategory;
+import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 import org.talend.dataprep.transformation.format.CSVFormat;
 
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -122,10 +128,15 @@ public class APIClientTest {
      * @throws IOException sh*t happens.
      */
     public String createDataset(final InputStream resourceAsStream, final String name) throws IOException {
+        return createDataset(resourceAsStream, MediaType.TEXT_PLAIN, name);
+    }
+
+    public String createDataset(final InputStream resourceAsStream, MediaType contentType, final String name)
+            throws IOException {
         assertNotNull(resourceAsStream);
         final String datasetContent = IOUtils.toString(resourceAsStream, UTF_8);
         final Response post = given() //
-                .contentType(TEXT) //
+                .contentType(contentType.toString()) //
                 .body(datasetContent) //
                 .queryParam("name", name) //
                 .when() //
@@ -141,6 +152,16 @@ public class APIClientTest {
         assertThat(dataSetId, not(""));
 
         return dataSetId;
+    }
+
+    public DataSetMetadata getDataSetMetadata(String dataSetId) throws IOException {
+        return mapper.readerFor(DataSetMetadata.class).readValue(
+                get("/api/datasets/{id}/metadata", dataSetId).asInputStream());
+    }
+
+    public void setDataSetMetadata(DataSetMetadata dataSetMetadata) throws IOException {
+        String metadataAsJsonString = mapper.writerFor(DataSetMetadata.class).writeValueAsString(dataSetMetadata);
+        given().body(metadataAsJsonString).put("/api/datasets/{id}/metadata", dataSetMetadata.getId());
     }
 
     /**
@@ -165,10 +186,8 @@ public class APIClientTest {
      * @param name the preparation name.
      * @param folderId where to create the preparation.
      * @return the preparation id.
-     * @throws IOException sh*t happens.
      */
-    public String createPreparationFromDataset(final String dataSetId, final String name, final String folderId)
-            throws IOException {
+    public String createPreparationFromDataset(final String dataSetId, final String name, final String folderId) {
 
         RequestSpecification request = given() //
                 .contentType(JSON) //
@@ -193,6 +212,11 @@ public class APIClientTest {
         assertThat(preparationId, not(""));
 
         return preparationId;
+    }
+
+    public boolean deletePreparation(String preparationId) {
+        Response response = delete("/api/preparations/{id}", preparationId);
+        return response.statusCode() == HttpStatus.OK.value();
     }
 
     /**
@@ -224,9 +248,8 @@ public class APIClientTest {
      *
      * @param preparationId the preparation id.
      * @param action the content of the step to add.
-     * @throws IOException sh*t happens.
      */
-    public void applyAction(final String preparationId, final String action) throws IOException {
+    public void applyAction(final String preparationId, final String action) {
         given()
                 .contentType(JSON)
                 .body(action)
@@ -242,10 +265,8 @@ public class APIClientTest {
      * @param preparationId the preparation id.
      * @param actionName action name
      * @param parameters action parameters
-     * @throws IOException sh*t happens.
      */
-    public void applyAction(final String preparationId, final String actionName, Map<String, String> parameters)
-            throws IOException {
+    public void applyAction(final String preparationId, final String actionName, Map<String, String> parameters) {
         org.talend.dataprep.api.preparation.Actions actions = new org.talend.dataprep.api.preparation.Actions();
         Action action = new Action();
         action.setName(actionName);
@@ -261,13 +282,23 @@ public class APIClientTest {
     }
 
     /**
+     * List all preparations.
+     *
+     * @return list of preparations
+     */
+    public List<Preparation> listPreparations() throws IOException {
+        InputStream inputStream = when().get("/api/preparations").asInputStream();
+        return mapper.readerFor(Preparation.class).<Preparation> readValues(inputStream).readAll();
+    }
+
+    /**
      * Fetch the preparation metadata.
      *
      * @param preparationId id of the preparation to fetch
      * @return the preparation details
      * @throws IOException if a connexion or parsing error happen
      */
-    public Preparation getPreparationDetails(String preparationId) throws IOException {
+    public PreparationDetailsDTO getPreparationDetails(String preparationId) throws IOException {
         String json = //
                 expect() //
                         .statusCode(200)
@@ -276,7 +307,26 @@ public class APIClientTest {
                         .when() //
                         .get("/api/preparations/{id}/details", preparationId)
                         .asString();
-        return mapper.readerFor(Preparation.class).readValue(json);
+        return mapper.readerFor(PreparationDetailsDTO.class).readValue(json);
+    }
+
+    /**
+     * Fetch the preparation metadata.
+     *
+     * @param preparationId id of the preparation to fetch
+     * @return the preparation details
+     * @throws IOException if a connexion or parsing error happen
+     */
+    public PreparationDTO getPreparationSummary(String preparationId) throws IOException {
+        String json = //
+                expect() //
+                        .statusCode(200)
+                        .log()
+                        .ifValidationFails() //
+                        .when() //
+                        .get("/api/preparations/{id}/summary", preparationId)
+                        .asString();
+        return mapper.readerFor(PreparationDTO.class).readValue(json);
     }
 
     /**
@@ -290,6 +340,42 @@ public class APIClientTest {
         return expect() //
                 .when() //
                 .get("/api/preparations/{id}/versions/{versionId}/details", preparationId, versionId);
+    }
+
+    public PreparationExport getPreparationAsObject(String preparationId) throws IOException {
+        return getPreparationAsObject(preparationId, "head", "HEAD", "");
+    }
+
+    public PreparationExport getPreparationWithFilterAsObject(String preparationId, String filter) throws IOException {
+        return getPreparationAsObject(preparationId, "head", "HEAD", filter);
+    }
+
+    public PreparationExport getPreparationAsObject(String preparationId, String versionId) throws IOException {
+        return getPreparationAsObject(preparationId, versionId, "HEAD", "");
+    }
+
+    /**
+     * Method handling 202/200 status to get the transformation content
+     *
+     * @param preparationId is of the preparation
+     * @param version version of the preparation
+     * @param stepId like HEAD or FILTER, etc.
+     * @param filter TQL filter to filter the preparation content
+     * @return the content of a preparation
+     * @throws IOException
+     */
+    public PreparationExport getPreparationAsObject(String preparationId, String version, String stepId, String filter)
+            throws IOException {
+        return mapper.readValue(getPreparation(preparationId, version, stepId, filter).asInputStream(),
+                PreparationExport.class);
+    }
+
+    public static class PreparationExport {
+
+        public DataSetMetadata metadata;
+
+        public List<Map<String, String>> records;
+
     }
 
     public Response getPreparation(String preparationId) throws IOException {
@@ -425,25 +511,24 @@ public class APIClientTest {
     }
 
     public Response exportPreparation(String preparationId, String stepId, String csvDelimiter, String fileName)
-            throws IOException, InterruptedException {
+            throws IOException {
         return export(preparationId, null, stepId, csvDelimiter, fileName);
     }
 
-    public Response exportPreparation(String preparationId, String stepId, String csvDelimiter)
-            throws IOException, InterruptedException {
+    public Response exportPreparation(String preparationId, String stepId, String csvDelimiter) throws IOException {
         return export(preparationId, "", stepId, csvDelimiter, null);
     }
 
-    public Response exportPreparation(String preparationId, String stepId) throws IOException, InterruptedException {
+    public Response exportPreparation(String preparationId, String stepId) throws IOException {
         return export(preparationId, "", stepId, null, null);
     }
 
-    public Response exportDataset(String datasetId, String stepId) throws IOException, InterruptedException {
+    public Response exportDataset(String datasetId, String stepId) throws IOException {
         return export("", datasetId, stepId, null, null);
     }
 
     protected Response export(String preparationId, String datasetId, String stepId, String csvDelimiter,
-            String fileName) throws IOException, InterruptedException {
+            String fileName) throws IOException {
         // when
         Response export = getExportResponse(preparationId, datasetId, stepId, csvDelimiter, fileName, null);
 
@@ -553,6 +638,18 @@ public class APIClientTest {
             }
             parameters.put(key, value);
             return this;
+        }
+
+        public ActionParameters withColumnId(String columnId) {
+            return withParameter(ImplicitParameters.COLUMN_ID.getKey(), columnId);
+        }
+
+        public ActionParameters withRowId(String rowId) {
+            return withParameter(ImplicitParameters.ROW_ID.getKey(), rowId);
+        }
+
+        public ActionParameters withScope(ScopeCategory scope) {
+            return withParameter(ImplicitParameters.SCOPE.getKey(), scope == null ? null : scope.name());
         }
 
         public String getAction() {

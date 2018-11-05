@@ -48,6 +48,7 @@ export function HomeStateService($translate) {
 		setBuilds,
 		setCopyMoveTree,
 		setCopyMoveTreeLoading,
+		setPreparationCreatorVisibility,
 		setSidePanelDock,
 		setContentLoading,
 		setAboutVisibility,
@@ -93,6 +94,10 @@ export function HomeStateService($translate) {
 
 	function togglePreparationCreator() {
 		homeState.preparations.creator.isVisible = !homeState.preparations.creator.isVisible;
+	}
+
+	function setPreparationCreatorVisibility(visibility) {
+		homeState.preparations.creator.isVisible = visibility;
 	}
 
 	function toggleAbout() {

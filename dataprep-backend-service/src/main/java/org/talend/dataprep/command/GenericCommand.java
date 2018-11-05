@@ -21,6 +21,11 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -82,6 +87,9 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     /** Hystrix group used for async related commands */
     public static final HystrixCommandGroupKey ASYNC_GROUP = HystrixCommandGroupKey.Factory.asKey("async");
+
+    /** Hystrix group used for user related commands */
+    public static final HystrixCommandGroupKey USER_GROUP = HystrixCommandGroupKey.Factory.asKey("user");
 
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);

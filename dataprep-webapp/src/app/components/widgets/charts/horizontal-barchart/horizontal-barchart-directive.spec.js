@@ -272,6 +272,7 @@ describe('Horizontal Barchart directive', function () {
                 { data: 'Johnson', occurrences: 90000000 },
                 { data: 'Hoover', occurrences: 0 },
                 { data: 'Roosevelt', occurrences: 1 },
+	            { data: 'Charles', occurrences: -1 },
             ];
             scope.$digest();
             $timeout.flush(100);
@@ -281,6 +282,7 @@ describe('Horizontal Barchart directive', function () {
             expect(element.find('.primaryBar > rect').eq(0).attr('width')).toBe('220');
             expect(element.find('.primaryBar > rect').eq(1).attr('width')).toBe('0');
             expect(element.find('.primaryBar > rect').eq(2).attr('width')).toBe('3');
+	        expect(element.find('.primaryBar > rect').eq(3).attr('width')).toBe('0');
         }));
     });
 

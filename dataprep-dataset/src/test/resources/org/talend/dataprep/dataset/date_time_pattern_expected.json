@@ -65,6 +65,12 @@
       "occurrences": 2
     }
   ],
+  "wordPatternFrequencyTable": [
+    {
+      "pattern": "[number]/[number]/[number] [number]:[number]:[number]",
+      "occurrences": 5
+    }
+  ],
   "quantiles": {
     "median": "NaN",
     "lowerQuantile": "NaN",

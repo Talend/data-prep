@@ -181,19 +181,6 @@
       },
       "actionCreator": "preparation:rename"
     },
-    "preparation:remove": {
-      "id": "preparation:remove",
-      "icon": "talend-trash",
-      "label": {
-        "i18n": {
-          "key": "tdp-cmf:REMOVE",
-          "options": {
-            "defaultValue": "Remove"
-          }
-        }
-      },
-      "actionCreator": "preparation:remove"
-    },
     "folder:remove": {
       "id": "folder:remove",
       "bsStyle": "danger",
@@ -205,7 +192,11 @@
           }
         }
       },
-      "actionCreator": "folder:remove"
+      "actionCreator": "folder:remove",
+      "inProgressExpression": {
+        "id": "cmf.components.get",
+        "args": ["CMFContainer(ConfirmDialog).ConfirmDialog.loading", false]
+      }
     },
     "folder:remove:close": {
       "id": "folder:remove:close",
@@ -222,6 +213,7 @@
     },
     "folder:remove:open": {
       "id": "folder:remove:open",
+      "icon": "talend-trash",
       "label": {
         "i18n": {
           "key": "tdp-cmf:REMOVE",
@@ -256,6 +248,7 @@
     "folder:add:open": {
       "id": "folder:add:open",
       "icon": "talend-folder",
+      "bsStyle": "inverse btn-info",
       "label": {
         "i18n": {
           "key": "tdp-cmf:FOLDER_ADD",
@@ -264,7 +257,7 @@
           }
         }
       },
-      "actionCreator": "folder:add:open"
+      "actionCreator": "FolderCreatorModal#show"
     }
   },
   "props": {
@@ -375,6 +368,9 @@
     "SidePanel#default": {
       "actionIds": ["menu:preparations", "menu:datasets", "menu:datastores"]
     },
+    "FolderCreatorModal#default": {
+
+    },
     "HomeListView#datastores": {
       "hasTheme": true
     },
@@ -468,7 +464,7 @@
           ],
           "items": [
             "preparation:rename",
-            "preparation:remove",
+            "folder:remove:open",
             "preparation:copy:open",
             "preparation:move:open"
           ],

@@ -14,7 +14,6 @@ package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
@@ -25,7 +24,6 @@ import java.io.OutputStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +45,6 @@ import org.talend.dataprep.api.service.command.folder.SearchFolders;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.command.preparation.PreparationListByFolder;
-import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.metrics.Timed;
@@ -61,9 +58,6 @@ import io.swagger.annotations.ApiParam;
 
 @RestController
 public class FolderAPI extends APIService {
-
-    @Autowired
-    private DataSetNameInjection dataSetNameInjection;
 
     @RequestMapping(value = "/api/folders", method = GET)
     @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
@@ -122,7 +116,7 @@ public class FolderAPI extends APIService {
     /**
      * no javadoc here so see description in @ApiOperation notes.
      */
-    @RequestMapping(value = "/api/folders/{id}", method = DELETE, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/api/folders/{id}", method = DELETE)
     @ApiOperation(value = "Remove a Folder")
     @Timed
     public ResponseEntity<String> removeFolder(@PathVariable final String id, final OutputStream output) {
@@ -196,7 +190,8 @@ public class FolderAPI extends APIService {
 
         final PreparationListByFolder listPreparations = getCommand(PreparationListByFolder.class, id, sort, order);
         final Stream<PreparationListItemDTO> preparations = toStream(PreparationDTO.class, mapper, listPreparations) //
-                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
+                        APIService::injectDataSetName));
 
         return new PreparationsByFolder(folders, preparations);
     }

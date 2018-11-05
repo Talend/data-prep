@@ -11,6 +11,8 @@
 
  ============================================================================*/
 
+import { PATTERNS_TYPE } from '../../../services/statistics/statistics-service.js';
+
 describe('Stats-details controller', () => {
 	'use strict';
 
@@ -22,6 +24,7 @@ describe('Stats-details controller', () => {
 		stateMock = {
 			playground: {
 				grid: {},
+				statistics: {},
 			},
 		};
 		$provide.constant('state', stateMock);
@@ -44,6 +47,7 @@ describe('Stats-details controller', () => {
 		const ctrl = createController();
 		const obj = { data: 'Ulysse', occurrences: 5, pattern: 'Aa9' };
 
+		stateMock.playground.statistics.patternsType = PATTERNS_TYPE.CHARACTER;
 		stateMock.playground.grid.selectedColumns = [{
 			id: '0001',
 			name: 'firstname',
@@ -78,4 +82,56 @@ describe('Stats-details controller', () => {
 		//then
 		expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('quality', '0001', 'firstname', { empty: true, invalid: false }, null, null);
 	}));
+
+	it('should add a new word based pattern filter', inject((FilterManagerService) => {
+		//given
+		const ctrl = createController();
+		const obj = { data: 'Ulysse', occurrences: 5, pattern: '[word]' };
+
+		stateMock.playground.statistics.patternsType = PATTERNS_TYPE.WORD;
+		stateMock.playground.grid.selectedColumns = [{
+			id: '0001',
+			name: 'firstname',
+		}];
+
+		//when
+		ctrl.addPatternFilter(obj);
+
+		//then
+		expect(FilterManagerService.addFilterAndDigest).toHaveBeenCalledWith('word_matches', '0001', 'firstname', {
+			patterns: [
+				{
+					value: '[word]',
+				},
+			],
+		}, null, null);
+	}));
+
+	describe('Pattern switcher', () => {
+		beforeEach(inject((StateService) => {
+			spyOn(StateService, 'setStatisticsPatternsType');
+		}));
+
+		it('should select character based patterns', inject((StateService) => {
+			//given
+			const ctrl = createController();
+
+			//when
+			ctrl.onCharacterPatternSelect();
+
+			//then
+			expect(StateService.setStatisticsPatternsType).toHaveBeenCalledWith(PATTERNS_TYPE.CHARACTER);
+		}));
+
+		it('should select word based patterns', inject((StateService) => {
+			//given
+			const ctrl = createController();
+
+			//when
+			ctrl.onWordPatternSelect();
+
+			//then
+			expect(StateService.setStatisticsPatternsType).toHaveBeenCalledWith(PATTERNS_TYPE.WORD);
+		}));
+	});
 });

@@ -74,67 +74,56 @@ public class BackgroundAnalysis {
         LOGGER.debug("Statistics analysis starts for {}", dataSetId);
 
         DataSetMetadata metadata = repository.get(dataSetId);
-        if (metadata != null) {
-            if (!metadata.getLifecycle().schemaAnalyzed()) {
-                LOGGER.debug(
-                        "Dataset {}, schema information must be computed before quality analysis can be performed, ignoring message",
-                        metadata.getId());
-                return; // no acknowledge to allow re-poll.
-            }
-
-            final List<ColumnMetadata> columns = metadata.getRowMetadata().getColumns();
-            if (columns.isEmpty()) {
-                LOGGER.debug("Skip statistics of {} (no column information).", metadata.getId());
-            } else {
-                // base analysis
-                try (final Stream<DataSetRow> stream = store.stream(metadata)) {
-                    try (Analyzer<Analyzers.Result> analyzer = analyzerService.schemaAnalysis(columns)) {
-                        computeStatistics(analyzer, columns, stream);
-                        LOGGER.debug("Base statistics analysis done for {}", dataSetId);
-                        // Save base analysis
-                        saveAnalyzerResults(dataSetId, analyzer);
-                    }
-                } catch (Exception e) {
-                    LOGGER.warn("Base statistics analysis, dataset {} generates an error", dataSetId, e);
-                    throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
-                }
-                // advanced analysis
-                try (final Stream<DataSetRow> stream = store.stream(metadata)) {
-                    try (Analyzer<Analyzers.Result> analyzer = analyzerService.full(columns)) {
-                        computeStatistics(analyzer, columns, stream);
-                        updateNbRecords(metadata, analyzer.getResult());
-                        LOGGER.debug("Advanced statistics analysis done for{}", dataSetId);
-                        // Save advanced analysis
-                        saveAnalyzerResults(dataSetId, analyzer);
-                    }
-                } catch (Exception e) {
-                    LOGGER.warn("Advanced statistics analysis, dataset {} generates an error", dataSetId, e);
-                    throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
-                }
-                // Tag data set quality: now analyzed
-                DistributedLock datasetLock = repository.createDatasetMetadataLock(metadata.getId());
-                try {
-                    datasetLock.lock();
-                    metadata.getLifecycle().qualityAnalyzed(true);
-                    repository.save(metadata);
-                } finally {
-                    datasetLock.unlock();
-                }
-                LOGGER.info("Statistics analysis done for {}", dataSetId);
-            }
-        } else {
+        if (metadata == null) {
             LOGGER.info("Unable to analyze quality of data set #{}: seems to be removed.", dataSetId);
+            return;
         }
+        final List<ColumnMetadata> columns = metadata.getRowMetadata().getColumns();
+        if (columns.isEmpty()) {
+            LOGGER.debug("Skip statistics of {} (no column information).", metadata.getId());
+            return;
+        }
+        if (!metadata.getLifecycle().schemaAnalyzed()) {
+            LOGGER.debug(
+                    "Dataset {}, schema information must be computed before quality analysis can be performed, ignoring message",
+                    metadata.getId());
+            return; // no acknowledge to allow re-poll.
+        }
+        // base analysis
+        try (final Stream<DataSetRow> stream = store.stream(metadata)) {
+            try (Analyzer<Analyzers.Result> analyzer = analyzerService.schemaAnalysis(columns)) {
+                computeStatistics(analyzer, columns, stream);
+                LOGGER.debug("Base statistics analysis done for {}", dataSetId);
+                // Save base analysis
+                saveAnalyzerResults(analyzer, metadata);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Base statistics analysis, dataset {} generates an error", dataSetId, e);
+            throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
+        }
+        // advanced analysis
+        try (final Stream<DataSetRow> stream = store.stream(metadata);
+                Analyzer<Analyzers.Result> analyzerAdvanced = analyzerService.advancedAnalysis(columns)) {
+            computeStatistics(analyzerAdvanced, columns, stream);
+            updateNbRecords(metadata, analyzerAdvanced.getResult());
+            LOGGER.debug("Advanced statistics analysis done for {}", dataSetId);
+            // Save advanced analysis
+            saveAnalyzerResults(analyzerAdvanced, metadata);
+        } catch (Exception e) {
+            LOGGER.warn("Advanced statistics analysis, dataset {} generates an error", dataSetId, e);
+            throw new TDPException(UNABLE_TO_ANALYZE_DATASET_QUALITY, e);
+        }
+        LOGGER.info("Statistics analysis done for {}", dataSetId);
     }
 
-    private void saveAnalyzerResults(String id, Analyzer<Analyzers.Result> analyzer) {
-        DistributedLock datasetLock = repository.createDatasetMetadataLock(id);
+    private void saveAnalyzerResults(Analyzer<Analyzers.Result> analyzer, DataSetMetadata metadata) {
+        DistributedLock datasetLock = repository.createDatasetMetadataLock(metadata.getId());
         try {
             datasetLock.lock();
-            final DataSetMetadata dataSetMetadata = repository.get(id);
-            if (dataSetMetadata != null) {
-                adapter.adapt(dataSetMetadata.getRowMetadata().getColumns(), analyzer.getResult());
-                repository.save(dataSetMetadata);
+            final DataSetMetadata savedDataSetMetadata = repository.get(metadata.getId());
+            if (savedDataSetMetadata != null) {
+                adapter.adapt(metadata.getRowMetadata().getColumns(), analyzer.getResult());
+                repository.save(metadata);
             }
         } finally {
             datasetLock.unlock();

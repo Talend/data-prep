@@ -1,5 +1,4 @@
 <talend-modal fullscreen="false"
-              close-button="true"
               state="$ctrl.ImportService.datasetNameModal"
               ng-if="$ctrl.ImportService.datasetNameModal">
     <span translate-once="ENTER_DATASET_NAME"></span>
@@ -12,7 +11,7 @@
                ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>
 
         <div class="modal-buttons">
-            <button class="btn talend-modal-close btn-default modal-secondary-button"
+            <button class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
                     type="button"
                     translate-once="CANCEL"></button>
             <button class="btn talend-modal-close btn-primary modal-primary-button"

@@ -13,7 +13,9 @@
 package org.talend.dataprep.schema.csv;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.talend.dataprep.schema.csv.CSVFormatFamily.*;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.ESCAPE_CHAR;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.SEPARATOR_PARAMETER;
+import static org.talend.dataprep.schema.csv.CSVFormatFamily.TEXT_ENCLOSURE_CHAR;
 import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 
 import java.io.IOException;
@@ -135,7 +137,7 @@ public class CSVSerializerTest {
      * Please, have a look at <a href="https://jira.talendforge.org/browse/TDP-2366">TDP-2366</a>
      */
     @Test
-    public void shouldManageSpecificTextEnclosureChar() throws IOException {
+    public void shouldManageSpecificTextEnclosureChar() throws Exception {
         // given (text enclosing separator is ¤ so that " in original CSV are ignored)
         InputStream inputStream = this.getClass().getResourceAsStream("with_quote_in_text.csv");
         DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code", "Description");
@@ -155,7 +157,7 @@ public class CSVSerializerTest {
      * Please, have a look at <a href="https://jira.talendforge.org/browse/TDP-2366">TDP-2366</a>
      */
     @Test
-    public void shouldManageSpecificEscapeChar() throws IOException {
+    public void shouldManageSpecificEscapeChar() throws Exception {
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("with_another_escape_char.csv");
         DataSetMetadata datasetMetadata = getSimpleDataSetMetadata("City", "code", "Description");
@@ -174,7 +176,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4602
     @Test
-    public void should_use_custom_import_parameters_double_quote_escape() throws IOException {
+    public void should_use_custom_import_parameters_double_quote_escape() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
@@ -196,7 +198,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4602
     @Test
-    public void should_use_custom_import_parameters_backslash_escape() throws IOException {
+    public void should_use_custom_import_parameters_backslash_escape() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
@@ -217,7 +219,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4602
     @Test
-    public void should_use_custom_import_parameters_default_empty_escape() throws IOException {
+    public void should_use_custom_import_parameters_default_empty_escape() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
@@ -237,7 +239,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4602
     @Test
-    public void should_use_custom_import_parameters_empty_escape() throws IOException {
+    public void should_use_custom_import_parameters_empty_escape() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
@@ -258,7 +260,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4602
     @Test
-    public void should_use_custom_import_parameters() throws IOException {
+    public void should_use_custom_import_parameters() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
@@ -279,7 +281,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4602
     @Test
-    public void should_use_custom_import_parameters_empty_enclosure() throws IOException {
+    public void should_use_custom_import_parameters_empty_enclosure() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("tdp-4602_custom_param_csv_import.csv");
@@ -300,7 +302,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4579
     @Test
-    public void should_use_custom_import_parameters_double_quote() throws IOException {
+    public void should_use_custom_import_parameters_double_quote() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("test_4579_doublequote_import.csv");
@@ -321,7 +323,7 @@ public class CSVSerializerTest {
 
     // https://jira.talendforge.org/browse/TDP-4579
     @Test
-    public void should_use_custom_import_parameters_pb_double_quote() throws IOException {
+    public void should_use_custom_import_parameters_pb_double_quote() throws Exception {
 
         // given (text escape char is |)
         InputStream inputStream = this.getClass().getResourceAsStream("test_4579_doublequote_import.csv");

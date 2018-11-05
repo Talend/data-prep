@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,12 @@ public class ResourceLoaderContentCache implements ContentCache {
 
     private DeletableResource getResource(ContentCacheKey key) {
         try {
-            final DeletableResource[] resources = resolver.getResources("/cache/" + key.getKey() + "*");
+            final DeletableResource[] patternMatches = resolver.getResources("/cache/" + key.getKey() + "*");
+            final DeletableResource[] directMatches = resolver.getResources("/cache/" + key.getKey());
+            final DeletableResource[] resources = new DeletableResource[patternMatches.length + directMatches.length];
+            System.arraycopy(patternMatches, 0, resources, 0, patternMatches.length);
+            System.arraycopy(directMatches, 0, resources, patternMatches.length, directMatches.length);
+
             if (resources.length <= 0) {
                 return null;
             } else { // resources.length > 0
@@ -83,12 +89,14 @@ public class ResourceLoaderContentCache implements ContentCache {
                     return Long.compare(i1, i2);
                 }));
                 return reduce.filter(r -> {
+                    if (!r.exists()) {
+                        return false;
+                    }
                     final String suffix = StringUtils.substringAfterLast(r.getFilename(), ".");
-                    try {
+                    if (NumberUtils.isCreatable(suffix)) {
                         final long time = parseLong(suffix);
                         return time > System.currentTimeMillis();
-                    } catch (NumberFormatException e) {
-                        // Ignored
+                    } else {
                         return true;
                     }
                 }).orElse(null);
@@ -101,13 +109,16 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public boolean has(ContentCacheKey key) {
-        return ofNullable(getResource(key)).isPresent();
+        final boolean present = ofNullable(getResource(key)).isPresent();
+        LOGGER.debug("Has '{}': {}", key.getKey(), present);
+        return present;
     }
 
     @Timed
     @VolumeMetered
     @Override
     public InputStream get(ContentCacheKey key) {
+        LOGGER.debug("Get '{}'", key.getKey());
         return ofNullable(getResource(key)).map(r -> {
             try {
                 return r.getInputStream();
@@ -121,6 +132,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @VolumeMetered
     @Override
     public OutputStream put(ContentCacheKey key, TimeToLive timeToLive) {
+        LOGGER.debug("Put '{}' (TTL: {})", key.getKey(), timeToLive);
         try {
             return getOrCreateResource(key, timeToLive).getOutputStream();
         } catch (IOException e) {
@@ -131,6 +143,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void evict(ContentCacheKey key) {
+        LOGGER.debug("Evict '{}'", key.getKey());
         ofNullable(getResource(key)).ifPresent(r -> {
             try {
                 r.delete();
@@ -143,11 +156,13 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void evictMatch(ContentCacheKey key) {
+        LOGGER.debug("Evict match '{}'", key.getKey());
         try {
             final DeletableResource[] resources = resolver.getResources("/cache/" + key.getPrefix() + "**");
             final Predicate<String> matcher = key.getMatcher();
             stream(resources).filter(r -> matcher.test(r.getFilename())).forEach(r -> {
                 try {
+                    LOGGER.debug("Delete file '{}'.", r.getFilename());
                     r.delete();
                 } catch (IOException e) {
                     throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
@@ -161,10 +176,23 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void move(ContentCacheKey from, ContentCacheKey to, TimeToLive toTimeToLive) {
+        LOGGER.debug("Move '{}' -> '{}' (TTL: {})", from.getKey(), to.getKey(), toTimeToLive);
         final DeletableResource resource = getResource(from);
         if (resource != null) {
+            final String destination = getLocation(to, toTimeToLive);
+            if (!resource.exists()) {
+                LOGGER.debug("Source file no longer exists.");
+                if (resolver.getResource(destination).exists()) {
+                    LOGGER.debug("No need to move file (destination already exists).");
+                    return;
+                } else {
+                    LOGGER.error("Source file '{}' no longer exists, neither does destination '{}'", from.getKey(),
+                            destination);
+                    throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION);
+                }
+            }
             try {
-                resource.move(getLocation(to, toTimeToLive));
+                resource.move(destination);
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
@@ -174,6 +202,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     @Timed
     @Override
     public void clear() {
+        LOGGER.debug("Clear all");
         try {
             resolver.clear("/cache/**");
         } catch (IOException e) {

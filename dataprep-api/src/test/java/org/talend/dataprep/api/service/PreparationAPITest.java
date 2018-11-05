@@ -17,6 +17,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
@@ -26,6 +27,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -45,6 +47,8 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.format.JsonFormat.JSON;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,6 +68,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.talend.dataprep.BaseErrorCodes;
 import org.talend.dataprep.StandalonePreparation;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
@@ -86,7 +92,9 @@ import org.talend.dataprep.cache.CacheKeyGenerator;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCacheKey;
 import org.talend.dataprep.exception.TdpExceptionDto;
+import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PersistentStep;
+import org.talend.dataprep.schema.csv.CSVFormatFamily;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.transformation.actions.date.ComputeTimeSince;
 import org.talend.dataprep.transformation.actions.text.Trim;
@@ -204,9 +212,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final Response shouldNotBeEmpty = when().get("/api/preparations/?format=short&folder_path={folder_path}", "/");
 
         // then
-        List<PreparationDTO> result = mapper
-                .readerFor(PreparationDTO.class)
-                .<PreparationDTO> readValues(shouldNotBeEmpty.asInputStream())
+        List<PreparationDTO> result = mapper //
+                .readerFor(PreparationDTO.class) //
+                .<PreparationDTO> readValues(shouldNotBeEmpty.asInputStream()) //
                 .readAll();
         assertThat(result.get(0).getId(), is(preparationId));
 
@@ -272,9 +280,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 .queryParam("destination", destination.getId()) //
                 .queryParam("newName", newPreparationName) //
                 .when()//
-                .expect()
-                .statusCode(200)
-                .log()
+                .expect() //
+                .statusCode(200) //
+                .log() //
                 .ifError() //
                 .post("api/preparations/{id}/copy", preparationId);
 
@@ -295,7 +303,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
     private List<FolderEntry> getEntries(String folderId) {
         try (final Stream<FolderEntry> entriesStream = folderRepository.entries(folderId, PREPARATION)) {
-            return entriesStream.collect(Collectors.toList());
+            return entriesStream.collect(toList());
         }
     }
 
@@ -305,10 +313,10 @@ public class PreparationAPITest extends ApiServiceTestBase {
         // when
         final Response response = given() //
                 .queryParam("destination", "/destination") //
-                .when()//
-                .expect()
-                .statusCode(404)
-                .log()
+                .when() //
+                .expect() //
+                .statusCode(404) //
+                .log() //
                 .ifError() //
                 .post("api/preparations/{id}/copy", "preparation_not_found");
 
@@ -381,9 +389,9 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // when
         testClient.applyActionFromFile(preparationId, "transformation/upper_case_firstname.json");
-        InputStream inputStream = given()
-                .expect()
-                .statusCode(200)
+        InputStream inputStream = given() //
+                .expect() //
+                .statusCode(200) //
                 .get("/api/preparations/{preparation}/details", preparationId)
                 .asInputStream();
 
@@ -451,20 +459,20 @@ public class PreparationAPITest extends ApiServiceTestBase {
         final String list = when().get("/api/preparations").asString();
         assertThat(list.contains(preparationId), is(true));
 
-        final ContentCacheKey metadataKey = cacheKeyGenerator
-                .metadataBuilder()
-                .preparationId(preparationId)
-                .stepId("step1")
-                .sourceType(FILTER)
+        final ContentCacheKey metadataKey = cacheKeyGenerator //
+                .metadataBuilder() //
+                .preparationId(preparationId) //
+                .stepId("step1") //
+                .sourceType(FILTER) //
                 .build();
-        final ContentCacheKey contentKey = cacheKeyGenerator
-                .contentBuilder()
-                .datasetId("datasetId")
-                .preparationId(preparationId)
-                .stepId("step1")
-                .format(JSON)
-                .parameters(emptyMap())
-                .sourceType(FILTER)
+        final ContentCacheKey contentKey = cacheKeyGenerator //
+                .contentBuilder() //
+                .datasetId("datasetId") //
+                .preparationId(preparationId) //
+                .stepId("step1") //
+                .format(JSON) //
+                .parameters(emptyMap()) //
+                .sourceType(FILTER) //
                 .build();
         try (final OutputStream entry = contentCache.put(metadataKey, PERMANENT)) {
             entry.write("metadata".getBytes());
@@ -535,7 +543,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 testClient.createPreparationFromFile("dataset/dataset.csv", "testPreparation", home.getId());
 
         // when
-        final Response request = given()
+        final Response request = given() //
                 .contentType(ContentType.JSON)//
                 .body(missingScopeAction)//
                 .when()//
@@ -819,8 +827,8 @@ public class PreparationAPITest extends ApiServiceTestBase {
         AsyncExecutionMessage asyncExecutionMessage =
                 mapper.readerFor(AsyncExecutionMessage.class).readValue(response.asString());
 
-        assertEquals(asyncExecutionMessage.getStatus(), AsyncExecution.Status.FAILED);
-        assertEquals(asyncExecutionMessage.getError().getCode(), BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name());
+        assertEquals(AsyncExecution.Status.FAILED, asyncExecutionMessage.getStatus());
+        assertEquals(BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name(), asyncExecutionMessage.getError().getCode());
     }
 
     @Test
@@ -842,6 +850,47 @@ public class PreparationAPITest extends ApiServiceTestBase {
         for (ColumnMetadata column : columns) {
             assertTrue(expectedColumns.contains(column.getName()));
         }
+    }
+
+    @Test
+    public void testPreparationInitialMetadata_wordPatternStats() throws Exception {
+        // given
+        final String preparationName = "testPreparationContentGet";
+
+        String patternsAsCsvLine = new BufferedReader(new InputStreamReader(
+                PreparationAPITest.class.getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition.txt"),
+                UTF_8)).lines().collect(Collectors.joining(";"));
+
+        String datasetId = testClient.createDataset(new ByteArrayInputStream(patternsAsCsvLine.getBytes(UTF_8)),
+                new MediaType("text", "csv", UTF_8), "test-" + UUID.randomUUID());
+        DataSetMetadata dataSetMetadata = testClient.getDataSetMetadata(datasetId);
+        dataSetMetadata.getContent().getParameters().put(CSVFormatFamily.SEPARATOR_PARAMETER, ";");
+        testClient.setDataSetMetadata(dataSetMetadata);
+
+        final String preparationId = testClient.createPreparationFromDataset(datasetId, preparationName, home.getId());
+        String expectedWordPatterns = IOUtils.toString(PreparationAPITest.class
+                .getResourceAsStream("dataset/TDP-4404_data_for_word_pattern_recognition_result.txt"), UTF_8);
+
+        // when
+        final DataSetMetadata actual = testClient.getPrepMetadata(preparationId);
+
+        // then
+        assertNotNull(actual);
+        final List<ColumnMetadata> columns = actual.getRowMetadata().getColumns();
+
+        assertEquals(29, columns.size());
+
+        String actualWordPatterns = columns
+                .stream()
+                .map(c -> c
+                        .getStatistics() //
+                        .getWordPatternFrequencyTable() //
+                        .iterator() //
+                        .next() //
+                        .getPattern()) //
+                .collect(Collectors.joining("\n")) + "\n"; // because every file ends with a new line (can't fight autoformat)
+
+        assertEquals(expectedWordPatterns, actualWordPatterns);
     }
 
     @Test
@@ -1097,7 +1146,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // check non empty value for the new column
         assertEquals("new preview column should contains values according to calculate time since action", //
-                0, //
+                7, //
                 jsonPath.getList("records.0009").stream().map(String::valueOf).filter(StringUtils::isBlank).count());
 
     }
@@ -1429,6 +1478,30 @@ public class PreparationAPITest extends ApiServiceTestBase {
         assertArrayEquals(headers, resultHeaders);
         String[] resultRecord1 = resultFileReader.readNext();
         assertArrayEquals(record1, resultRecord1);
+    }
+
+    @Test
+    public void testOnTheFlyPreparationMigrationDatasetName_TDP_6195() throws IOException {
+        String datasetName = "my dataset - " + UUID.randomUUID().toString();
+        String datasetId = testClient
+                .createDataset("/org/talend/dataprep/api/service/preparations/5L4Ccity_TDP-3858.csv", datasetName);
+        String preparationId =
+                testClient.createPreparationFromDataset(datasetId, "5L4C city Preparation", home.getId());
+        PersistentPreparation persistentPreparation =
+                preparationRepository.get(preparationId, PersistentPreparation.class);
+        persistentPreparation.setDataSetName(null);
+        preparationRepository.add(persistentPreparation);
+
+        // Our preparation do not have a dataset name
+        PreparationDTO preparationDetails = testClient.getPreparationSummary(preparationId);
+        assertNull(preparationDetails.getDataSetName());
+
+        // listing should trigger migration
+        testClient.listPreparations();
+
+        // then we have the dataset name set in the preparation
+        PreparationDTO preparationDetailsAfterList = testClient.getPreparationSummary(preparationId);
+        assertEquals(datasetName, preparationDetailsAfterList.getDataSetName());
     }
 
     private ColumnMetadata getColumnByName(RowMetadata preparationContent, String columnName) {

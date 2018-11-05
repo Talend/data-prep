@@ -21,6 +21,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -43,6 +46,7 @@ import org.talend.dataprep.test.SpringLocalizationRule;
 import org.talend.dataprep.transformation.TransformationBaseTest;
 import org.talend.dataprep.transformation.test.TransformationServiceUrlRuntimeUpdater;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
@@ -167,11 +171,19 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
 
     protected String createEmptyPreparationFromDataset(final String folderId, final String dataSetId, final String name)
             throws IOException {
+        final DataSetMetadata dataSetMetadata = dataSetMetadataRepository.get(dataSetId);
+        final StringWriter columnsAsString = new StringWriter();
+        if (dataSetMetadata != null) {
+            mapper.writerFor(new TypeReference<List<ColumnMetadata>>() {
+            }).writeValue(columnsAsString, dataSetMetadata.getRowMetadata().getColumns());
+        } else {
+            columnsAsString.write("[]");
+        }
         final Response post = given() //
                 .contentType(ContentType.JSON)//
                 .accept(ContentType.ANY) //
                 .body("{ \"name\": \"" + name + "\", \"dataSetId\": \"" + dataSetId
-                        + "\", \"rowMetadata\":{\"columns\":[]}}")//
+                        + "\", \"rowMetadata\":{\"columns\":" + columnsAsString + "}}")//
                 .when()//
                 .post("/preparations?folderId=" + folderId);
 

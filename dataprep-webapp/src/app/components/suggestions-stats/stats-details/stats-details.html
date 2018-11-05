@@ -21,15 +21,15 @@
     </div>
 
     <div
-        class="stats-details-part"
-        ng-if="ctrl.state.playground.grid.selectedColumns.length && !ctrl.state.playground.statistics.loading"
-        ng-switch="ctrl.selectedTab"
+            class="stats-details-part"
+            ng-if="ctrl.state.playground.grid.selectedColumns.length && !ctrl.state.playground.statistics.loading"
+            ng-switch="ctrl.selectedTab"
     >
         <pure-tab-bar
-            items="ctrl.tabs"
-            id="'stats-tab-bar'"
-            on-select="ctrl.selectTab"
-            selected-key="ctrl.selectedTab"
+                items="ctrl.tabs"
+                id="'stats-tab-bar'"
+                on-select="ctrl.selectTab"
+                selected-key="ctrl.selectedTab"
         ></pure-tab-bar>
 
         <div class="stats-container" ng-switch-when="stats-tab-chart">
@@ -65,28 +65,78 @@
             <div class="empty-panel-msg"
                  ng-if="ctrl.state.playground.grid.selectedColumns.length > 1"
                  translate-once="NO_PATTERN"></div>
-            <horizontal-barchart ng-if="ctrl.state.playground.grid.selectedColumns.length === 1"
-                                 class="stat-detail-tab-items"
-                                 id="patternBarChart"
-                                 width="300"
-                                 height="400"
-                                 feature="preparation.filter.pattern"
-                                 on-click="ctrl.addPatternFilter(item)"
-                                 on-ctrl-click="ctrl.addPatternFilter(item, 'ctrl')"
-                                 on-shift-click="ctrl.addPatternFilter(item, 'shift')"
+            <div ng-if="ctrl.state.playground.grid.selectedColumns.length === 1">
+                <div class="stat-detail-tab-switcher">
+                    <ul>
+                        <li>
+                            <action-icon-toggle
+                                    icon="'talend-word'"
+                                    id="'word-patterns-toggle'"
+                                    active="ctrl.state.playground.statistics.patternsType === ctrl.PATTERNS.WORD"
+                                    label="'{{ ::'WORD_PATTERNS_TOGGLE' | translate }}'"
+                                    data-feature="'preparation.pattern.word'"
+                                    on-click="ctrl.onWordPatternSelect"
+                            />
+                        </li>
+                        <li>
+                            <action-icon-toggle
+                                    icon="'talend-character'"
+                                    id="'character-patterns-toggle'"
+                                    active="ctrl.state.playground.statistics.patternsType === ctrl.PATTERNS.CHARACTER"
+                                    label="'{{ ::'CHARACTER_PATTERNS_TOGGLE' | translate }}'"
+                                    data-feature="'preparation.pattern.character'"
+                                    on-click="ctrl.onCharacterPatternSelect"
+                            />
+                        </li>
+                    </ul>
+                </div>
+                <div class="stat-detail-tab-items">
+                    <horizontal-barchart
+                            ng-if="ctrl.state.playground.statistics.patternsType === ctrl.PATTERNS.WORD"
+                            id="wordPatternBarChart"
+                            width="300"
+                            height="400"
+                            feature="preparation.filter.pattern.word"
+                            on-click="ctrl.addPatternFilter(item)"
+                            on-ctrl-click="ctrl.addPatternFilter(item, 'ctrl')"
+                            on-shift-click="ctrl.addPatternFilter(item, 'shift')"
 
-                                 key-field="formattedPattern"
-                                 key-label="{{ ::'OCCURRENCES' | translate }}"
+                            key-field="formattedPattern"
+                            key-label="{{ ::'OCCURRENCES' | translate }}"
 
-                                 primary-data="ctrl.state.playground.statistics.patterns"
-                                 primary-value-field="occurrences"
+                            primary-data="ctrl.state.playground.statistics.wordPatterns"
+                            primary-value-field="occurrences"
 
-                                 secondary-data="ctrl.state.playground.statistics.filteredPatterns"
-                                 secondary-value-field="filteredOccurrences"
-                                 secondary-bar-class="brownBar"
+                            secondary-data="ctrl.state.playground.statistics.filteredWordPatterns"
+                            secondary-value-field="filteredOccurrences"
+                            secondary-bar-class="brownBar"
 
-                                 tooltip-content="ctrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)">
-            </horizontal-barchart>
+                            tooltip-content="ctrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue)">
+                    </horizontal-barchart>
+                    <horizontal-barchart
+                            ng-if="ctrl.state.playground.statistics.patternsType === ctrl.PATTERNS.CHARACTER"
+                            id="patternBarChart"
+                            width="300"
+                            height="400"
+                            feature="preparation.filter.pattern"
+                            on-click="ctrl.addPatternFilter(item)"
+                            on-ctrl-click="ctrl.addPatternFilter(item, 'ctrl')"
+                            on-shift-click="ctrl.addPatternFilter(item, 'shift')"
+
+                            key-field="formattedPattern"
+                            key-label="{{ ::'OCCURRENCES' | translate }}"
+
+                            primary-data="ctrl.state.playground.statistics.patterns"
+                            primary-value-field="occurrences"
+
+                            secondary-data="ctrl.state.playground.statistics.filteredPatterns"
+                            secondary-value-field="filteredOccurrences"
+                            secondary-bar-class="brownBar"
+
+                            tooltip-content="ctrl.statisticsTooltipService.getTooltip(keyLabel, key, primaryValue, secondaryValue)">
+                    </horizontal-barchart>
+                </div>
+            </div>
         </div>
 
         <div class="stats-container" ng-switch-when="stats-tab-advanced">

@@ -96,8 +96,7 @@
         class="preparation-modal preparation-save-discard-modal"
         fullscreen="false"
         ng-if="playgroundCtrl.state.playground.isNameValidationVisible"
-        state="playgroundCtrl.state.playground.isNameValidationVisible"
-        close-button="true">
+        state="playgroundCtrl.state.playground.isNameValidationVisible">
     <div class="modal-title" translate-once="SAVE_CHANGE"></div>
     <br/>
 
@@ -129,7 +128,7 @@
         <div class="modal-buttons">
             <button ng-click="playgroundCtrl.discardSaveOnClose()"
                     type="button"
-                    class="btn modal-secondary-button btn-link"
+                    class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
                     translate-once="NO_THANKS">
             </button>
 

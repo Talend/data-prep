@@ -95,7 +95,8 @@ export default class PreparationActionsService {
 			this.ConfirmService
 				.confirm(
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
-					{ type: this.i18n.PREPARATION, name: preparation.name }
+					{ type: this.i18n.PREPARATION, name: preparation.name },
+					true
 				)
 				.then(() => this.PreparationService.delete(preparation))
 				.then(() => this.FolderService.refreshCurrentFolder())

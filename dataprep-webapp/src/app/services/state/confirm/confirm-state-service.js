@@ -13,12 +13,14 @@
 
 export const confirmState = {
 	visible: false,
+	deletion: false,
 	texts: [],
 };
 
 export class ConfirmStateService {
-	show(texts) {
+	show(texts, deletion = false) {
 		confirmState.visible = true;
+		confirmState.deletion = deletion;
 		confirmState.texts = texts;
 	}
 
@@ -29,6 +31,7 @@ export class ConfirmStateService {
 
 	reset() {
 		confirmState.visible = false;
+		confirmState.deletion = false;
 		confirmState.texts = [];
 	}
 }

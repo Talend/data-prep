@@ -145,15 +145,11 @@ public class BeanConversionService implements ConversionService {
      * @return The converted bean (typed as <code>T</code>).
      */
     public <U, T> T convert(U source, Class<T> aClass, BiFunction<U, T, T>... onTheFlyConvert) {
-        try {
-            T current = convert(source, aClass);
-            for (BiFunction<U, T, T> function : onTheFlyConvert) {
-                current = function.apply(source, current);
-            }
-            return current;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        T current = convert(source, aClass);
+        for (BiFunction<U, T, T> function : onTheFlyConvert) {
+            current = function.apply(source, current);
         }
+        return current;
     }
 
     @Override

@@ -17,21 +17,7 @@
 	height: 100%;
 	position: relative;
 
-    .tc-tab-bar-actions {
-      display: flex;
-      overflow-x: hidden;
 
-      > li:first-child > * {
-        padding-left: 15px;
-      }
-
-      > li > * {
-        padding: {
-          left: 10px;
-          right: 10px;
-        }
-      }
-    }
 
     .stats-container {
         flex-grow: 1;
@@ -46,6 +32,30 @@
             position: absolute;
             width: 100%;
         }
+    }
+
+    .stat-detail-tab-switcher {
+      padding: 1rem;
+      text-align: right;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+          display: inline-block;
+
+          + li {
+            padding-right: 0.5rem;
+          }
+        }
+      }
+
+      + .stat-detail-tab-items {
+        top: 4rem;
+        height: auto;
+      }
     }
 
     .stat-detail-tab-items {

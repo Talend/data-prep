@@ -104,7 +104,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         final Response response = removeFolder(beer.getId());
 
         //then
-        assertThat(response.getStatusCode(), is(200));
+        assertThat(response.getStatusCode(), is(204));
         final List<Folder> folders = getFolderChildren(home.getId());
         assertThat(folders, is(empty()));
     }

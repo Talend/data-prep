@@ -38,14 +38,13 @@ import org.talend.dataprep.transformation.api.transformer.ExecutableTransformer;
 import org.talend.dataprep.transformation.api.transformer.Transformer;
 import org.talend.dataprep.transformation.api.transformer.TransformerWriter;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
+import org.talend.dataprep.transformation.format.JsonFormat;
 import org.talend.dataprep.transformation.format.WriterRegistrationService;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.transformation.pipeline.Pipeline;
-import org.talend.dataprep.transformation.pipeline.RowMetadataFallbackProvider;
 import org.talend.dataprep.transformation.pipeline.Signal;
 import org.talend.dataprep.transformation.pipeline.model.WriterNode;
 import org.talend.dataprep.transformation.service.StepMetadataRepository;
-import org.talend.dataprep.transformation.service.TransformationRowMetadataUtils;
 
 @Component
 public class PipelineTransformer implements Transformer {
@@ -53,28 +52,25 @@ public class PipelineTransformer implements Transformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(PipelineTransformer.class);
 
     @Autowired
-    ActionParser actionParser;
+    private ActionParser actionParser;
 
     @Autowired
-    ActionRegistry actionRegistry;
+    private ActionRegistry actionRegistry;
 
     @Autowired
-    AnalyzerService analyzerService;
+    private AnalyzerService analyzerService;
 
     @Autowired
-    WriterRegistrationService writerRegistrationService;
+    private WriterRegistrationService writerRegistrationService;
 
     @Autowired
-    StatisticsAdapter adapter;
+    private StatisticsAdapter adapter;
 
     @Autowired
-    ContentCache contentCache;
+    private ContentCache contentCache;
 
     @Autowired
-    CacheKeyGenerator cacheKeyGenerator;
-
-    @Autowired
-    private TransformationRowMetadataUtils transformationRowMetadataUtils;
+    private CacheKeyGenerator cacheKeyGenerator;
 
     @Autowired
     private StepMetadataRepository stepMetadataRepository;
@@ -86,9 +82,6 @@ public class PipelineTransformer implements Transformer {
     public ExecutableTransformer buildExecutable(DataSet input, Configuration configuration) {
 
         final RowMetadata rowMetadata = input.getMetadata().getRowMetadata();
-
-        // prepare the fallback row metadata
-        RowMetadataFallbackProvider rowMetadataFallbackProvider = new RowMetadataFallbackProvider(rowMetadata);
 
         final TransformerWriter writer = writerRegistrationService.getWriter(configuration.formatId(),
                 configuration.output(), configuration.getArguments());
@@ -102,26 +95,23 @@ public class PipelineTransformer implements Transformer {
                 .map(id -> stepMetadataRepository.get(id)) //
                 .orElse(null);
 
-        final Pipeline pipeline =
-                Pipeline.Builder
-                        .builder() //
-                        .withRowMetadataFallbackProvider(rowMetadataFallbackProvider) //
-                        .withAnalyzerService(analyzerService) //
-                        .withActionRegistry(actionRegistry) //
-                        .withPreparation(preparation) //
-                        .withActions(actionParser.parse(configuration.getActions())) //
-                        .withInitialMetadata(rowMetadata, configuration.volume() == SMALL) //
-                        .withMonitor(configuration.getMonitor()) //
-                        .withFilter(configuration.getFilter()) //
-                        .withLimit(configuration.getLimit()) //
-                        .withFilterOut(configuration.getOutFilter()) //
-                        .withOutput(
-                                () -> new WriterNode(writer, metadataWriter, metadataKey, rowMetadataFallbackProvider)) //
-                        .withStatisticsAdapter(adapter) //
-                        .withStepMetadataSupplier(stepRowMetadataSupplier) //
-                        .withGlobalStatistics(configuration.isGlobalStatistics()) //
-                        .allowMetadataChange(configuration.isAllowMetadataChange()) //
-                        .build();
+        final Pipeline pipeline = Pipeline.Builder
+                .builder() //
+                .withAnalyzerService(analyzerService) //
+                .withActionRegistry(actionRegistry) //
+                .withPreparation(preparation) //
+                .withActions(actionParser.parse(configuration.getActions())) //
+                .withInitialMetadata(rowMetadata, configuration.volume() == SMALL) //
+                .withMonitor(configuration.getMonitor()) //
+                .withFilter(configuration.getFilter()) //
+                .withLimit(configuration.getLimit()) //
+                .withFilterOut(configuration.getOutFilter()) //
+                .withOutput(() -> new WriterNode(writer, metadataWriter, metadataKey)) //
+                .withStatisticsAdapter(adapter) //
+                .withStepMetadataSupplier(stepRowMetadataSupplier) //
+                .withGlobalStatistics(configuration.isGlobalStatistics()) //
+                .allowMetadataChange(configuration.isAllowMetadataChange()) //
+                .build();
 
         // wrap this transformer into an executable transformer
         return new ExecutableTransformer() {
@@ -135,16 +125,19 @@ public class PipelineTransformer implements Transformer {
                     return pipelineSpan;
                 });
                 try {
-                    LOGGER.debug("Before transformation: {}", pipeline);
+                    LOGGER.debug("Before execution: {}", pipeline);
                     pipeline.execute(input);
-                } finally {
-                    LOGGER.debug("After transformation: {}", pipeline);
-                    span.ifPresent(s -> tracer.ifPresent(t -> t.close(s)));
-                }
 
-                if (preparation != null) {
-                    final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
-                    pipeline.accept(visitor);
+                    if (preparation != null && JsonFormat.JSON.equals(configuration.formatId())) {
+                        final UpdatedStepVisitor visitor = new UpdatedStepVisitor(stepMetadataRepository);
+                        pipeline.accept(visitor);
+                    }
+                } finally {
+                    LOGGER.debug("After execution: {}", pipeline);
+                    span.ifPresent(s -> {
+                        s.tag("execution", pipeline.toString());
+                        tracer.ifPresent(t -> t.close(s));
+                    });
                 }
             }
 

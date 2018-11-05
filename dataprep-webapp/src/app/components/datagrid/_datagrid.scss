@@ -286,28 +286,18 @@ $datagrid-column-preview-cells-background: #FCFFDE;
 
 				input[type="checkbox"] {
 					margin-right: 10px;
-					width: 12px;
 					position: relative;
-
-					&:after {
-						width: 12px;
-						height: 12px;
-						border-width: 1px;
-					}
-					&:checked {
-						&:before {
-							top: 0;
-							left: 4px;
-							width: 5px;
-							height: 10px;
-						}
-					}
 				}
 			}
 
 			&:last-child .checkboxContainer {
 				right: 0;
 				left: auto;
+			}
+
+			&:only-child .checkboxContainer {
+				left: 0;
+				right: auto;
 			}
 		}
 

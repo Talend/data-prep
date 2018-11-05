@@ -261,13 +261,6 @@ export default function TalendModal($timeout) {
 								input.focus();
 								input.select();
 							}
-							else {
-								// or focus on first primary button
-								const btns = innerElement.find('.btn-primary');
-								if (btns.length) {
-									btns.focus();
-								}
-							}
 						}
 						else if (oldValue) {
 							ctrl.onClose();

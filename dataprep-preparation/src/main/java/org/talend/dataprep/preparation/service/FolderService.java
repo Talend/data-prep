@@ -176,7 +176,7 @@ public class FolderService {
         }
         Folder folderCreated = folderRepository.addFolder(parentId, path);
 
-        auditService.auditFolderCreation(folderCreated.getId(), folderCreated.getName());
+        auditService.auditFolderCreation(folderCreated.getId(), folderCreated.getName(), parentId);
 
         return folderCreated;
     }
@@ -194,6 +194,7 @@ public class FolderService {
             HttpResponseContext.status(HttpStatus.NOT_FOUND);
         } else {
             folderRepository.removeFolder(id);
+            auditService.auditFolderDeletion(id);
         }
     }
 

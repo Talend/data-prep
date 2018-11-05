@@ -159,7 +159,7 @@ public class PreparationUtils {
      * @return The list of step ids from starting (limit) to step
      */
     public List<String> listStepsIds(final String stepId, final String limit, final PreparationRepository repository) {
-        return listSteps(repository.get(stepId, Step.class), limit, repository)
+        return listSteps(repository.get(stepId, Step.class), limit, repository) //
                 .stream() //
                 .map(Step::id) //
                 .collect(toList());

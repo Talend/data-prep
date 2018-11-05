@@ -70,20 +70,6 @@ export default function TalendDatetimePicker($timeout) {
 				style,
 				lazyInit: true,
 				onSelectDate,
-				onShow() {
-					const $this = $(this);
-					const $thisHeight = $this.outerHeight();
-					const $inputHeight = $input.outerHeight();
-					const $inputOffset = $input.offset();
-					const $thisNewTop = $inputHeight + $thisHeight;
-					// datetimepicker could be on top of input
-					if ($inputOffset && $inputOffset.top >= $thisNewTop) {
-						$this.css('margin-top', `-${$thisNewTop}px`);
-					}
-					else {
-						$this.css('margin-top', 0);
-					}
-				},
 			});
 
 			$input.bind('keydown', (event) => {

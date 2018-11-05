@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
@@ -58,7 +59,7 @@ public class PreparationGetActions extends GenericCommand<List<Action>> {
         super(PREPARATION_GROUP);
         execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + preparationId + "/actions/" + stepId));
         on(HttpStatus.NOT_FOUND).then((req, resp) -> {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST);
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST, ExceptionContext.withBuilder().put("id", preparationId).build());
         });
         onError(e -> new TDPException(UNABLE_TO_GET_PREPARATION_DETAILS, e));
     }

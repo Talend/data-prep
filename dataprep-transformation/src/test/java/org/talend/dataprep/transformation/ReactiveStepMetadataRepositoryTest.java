@@ -50,7 +50,7 @@ public class ReactiveStepMetadataRepositoryTest {
         reactiveStepMetadataRepository.update(stepId, rowMetadata);
 
         // then
-        assertTrue("Delegate was never called", delegateUpdateLatch.await(3, TimeUnit.SECONDS));
+        assertTrue("Delegate was never called", delegateUpdateLatch.await(20, TimeUnit.SECONDS));
         verify(proxy).asTechnicalUser();
         verify(delegate).update(stepId, rowMetadata); // not really needed as the future verify that
         proxyReleaseLatch.await(1, TimeUnit.SECONDS); // To be sure the method has been called
@@ -77,7 +77,7 @@ public class ReactiveStepMetadataRepositoryTest {
         reactiveStepMetadataRepository.invalidate(stepId);
 
         // then
-        assertTrue("Delegate was never called", delegateInvalidateLatch.await(3, TimeUnit.SECONDS));
+        assertTrue("Delegate was never called", delegateInvalidateLatch.await(20, TimeUnit.SECONDS));
         verify(proxy).asTechnicalUser();
         verify(delegate).invalidate(stepId); // not really needed as the future verify that
         proxyReleaseLatch.await(1, TimeUnit.SECONDS); // To be sure the method has been called

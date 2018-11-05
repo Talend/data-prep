@@ -20,6 +20,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.api.preparation.PreparationDTO;
+import org.talend.dataprep.api.preparation.PreparationListItemDTO;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
@@ -49,6 +51,18 @@ public class APIService {
 
     @Autowired
     protected DatasetClient datasetClient;
+
+    /**
+     * Complement to PreparationDTO to PreparationListItemDTO bean conversion.
+     *
+     * @param dto the input DTO from preparation service
+     * @param item the DTO sent to frontend
+     * @return the input PreparationListItemDTO but with its dataset name filled
+     */
+    protected static PreparationListItemDTO injectDataSetName(PreparationDTO dto, PreparationListItemDTO item) {
+        item.getDataSet().setDataSetName(dto.getDataSetName());
+        return item;
+    }
 
     protected <T extends HystrixCommand> T getCommand(Class<T> clazz, Object... args) {
         try {

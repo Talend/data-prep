@@ -62,7 +62,7 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
-import org.talend.dataprep.conversions.inject.SharedInjection;
+import org.talend.dataprep.preparation.configuration.SharedInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
@@ -138,9 +138,6 @@ public class PreparationService {
     @Autowired
     protected Security security;
 
-    @Autowired
-    private org.springframework.context.ApplicationContext springContext;
-
     private final ActionFactory factory = new ActionFactory();
 
     /**
@@ -193,6 +190,9 @@ public class PreparationService {
 
     @Autowired
     private BaseDataprepAuditService auditService;
+
+    @Autowired
+    private DataSetNameInjection dataSetNameInjection;
 
     /**
      * Create a preparation from the http request body.
@@ -266,7 +266,6 @@ public class PreparationService {
                         PATH_SEPARATOR, path, PATH_SEPARATOR, name);
             }
         }
-
         return listAll(filterPreparation().byName(name).withNameExactMatch(true).byFolderPath(folderPath), sort, order);
     }
 
@@ -306,6 +305,10 @@ public class PreparationService {
         } else {
             preparationStream = preparationRepository.list(PersistentPreparation.class);
         }
+        // migration for preparation after the change from dataset ID to dataset name
+        // see TDP-6195 and TDP-5696
+        preparationStream = preparationStream.map(dataSetNameInjection::injectDatasetNameBasedOnId);
+
         if (deprecatedFolderIdFilter != null) {
             // filter on folder id (DEPRECATED VERSION - only applies if migration isn't completed yet)
             preparationStream = preparationStream //

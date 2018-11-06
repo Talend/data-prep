@@ -1,6 +1,7 @@
 import { REDIRECT_WINDOW } from '../constants/actions';
 
-function open(event, { id }) {
+function open(event, payload) {
+	const id = payload.id || payload.model.id;
 	return {
 		type: REDIRECT_WINDOW,
 		payload: {

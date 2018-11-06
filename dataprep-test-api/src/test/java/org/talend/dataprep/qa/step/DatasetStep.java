@@ -240,7 +240,8 @@ public class DatasetStep extends DataPrepStep {
 
     @And("^I wait for the dataset \"(.*)\" metadata to be computed$")
     public void iWaitForTheDatasetMetadataToBeComputed(String datasetName) throws Throwable {
-        waitResponse("Dataset metadata", metadataTimeout, metadataTimeToWait) //
+        api
+                .waitResponse("Dataset metadata", metadataTimeout, metadataTimeToWait) //
                 .until(checkDatasetMetadataStatus(datasetName));
     }
 

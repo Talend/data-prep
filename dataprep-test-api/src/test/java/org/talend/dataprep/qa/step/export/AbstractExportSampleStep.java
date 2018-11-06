@@ -25,6 +25,7 @@ import org.talend.dataprep.qa.util.export.ExportUtil;
 import org.talend.dataprep.qa.util.export.MandatoryParameters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jayway.restassured.response.Response;
 
 /**
  * CSV Exporter.
@@ -46,7 +47,10 @@ public abstract class AbstractExportSampleStep extends DataPrepStep implements E
 
         Map<String, String> exportParams = extractParameters(params);
 
-        final InputStream csv = api.executeExport(exportParams).asInputStream();
+        Response response = api.executeExport(exportParams);
+        response.then().statusCode(200);
+
+        final InputStream csv = response.asInputStream();
 
         // store the body content in a temporary File
         File tempFile = api.storeInputStreamAsTempFile(filename, csv);

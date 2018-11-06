@@ -65,13 +65,9 @@ public abstract class DataPrepStep {
 
     protected static final String DATASET_ID_KEY = "dataSetId";
 
-    private static final int TIME_OUT = 20;
-
-    private static final int POLL_DELAY = 1;
-
-    private static final int POLL_INTERVAL = 1;
-
-    /** This class' logger. */
+    /**
+     * This class' logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(DataPrepStep.class);
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
@@ -143,6 +139,13 @@ public abstract class DataPrepStep {
         };
     }
 
+    protected class CleanAfterException extends RuntimeException {
+
+        CleanAfterException(String s) {
+            super(s);
+        }
+    }
+
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
         assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
@@ -153,32 +156,4 @@ public abstract class DataPrepStep {
                 actual.containsAll(expectedColumnNames));
     }
 
-    protected ConditionFactory waitResponse(String message) {
-        return waitResponse(message, TIME_OUT);
-    }
-
-    protected ConditionFactory waitResponse(String message, int timeOut) {
-        return waitResponse(message, timeOut, POLL_DELAY, POLL_INTERVAL);
-    }
-
-    protected ConditionFactory waitResponse(String message, int timeOut, int pollInterval) {
-        return waitResponse(message, timeOut, POLL_DELAY, pollInterval);
-    }
-
-    protected ConditionFactory waitResponse(String message, int timeOut, int pollDelay, int pollInterval) {
-        return with() //
-                .pollInterval(pollInterval, TimeUnit.SECONDS) //
-                .and() //
-                .with() //
-                .pollDelay(pollDelay, TimeUnit.SECONDS) //
-                .await(message) //
-                .atMost(timeOut, TimeUnit.SECONDS);
-    }
-
-    protected class CleanAfterException extends RuntimeException {
-
-        CleanAfterException(String s) {
-            super(s);
-        }
-    }
 }

@@ -116,8 +116,8 @@ public class PreparationStep extends DataPrepStep {
                     .stream() //
                     .filter(p -> p.name.equals(preparationName))
                     .collect(Collectors.toList());
-            assertEquals("More than one preparation with \"" + preparationFullname + "\" name founded.",
-                    preparations.size(), 1);
+            assertEquals("More than one preparation with \"" + preparationFullname + "\" name founded.", 1,
+                    preparations.size());
             PreparationDetails preparation = preparations.get(0);
             context.storeExistingPreparationRef(preparation.id, preparation.name, prepFolder.getPath());
         }

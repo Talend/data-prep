@@ -1,5 +1,8 @@
 package org.talend.dataprep.qa.step;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
@@ -8,7 +11,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -77,21 +80,21 @@ public class FilterStep extends DataPrepStep {
      * @return the up-to-date dataset content
      */
     private DatasetContent getDatasetContent(String datasetId, String tql) throws Exception {
-        Response response;
-        int tries = 0;
-        do {
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                LOGGER.error("Thread interrupted");
-            }
-            response = api.getDataset(datasetId, tql);
+        AtomicReference<DatasetContent> datasetContentReference = new AtomicReference<>();
+        // TODO I guess this wait is useless since we use {DataPrepStep#checkDatasetMetadataStatus} before
+        api.waitResponse("Waiting frequency table from dataset metadata of " + datasetId).until(() -> {
+            Response response = api.getDataset(datasetId, tql);
             response.then().statusCode(200);
-            tries++;
-        } while (response.body().jsonPath().getList("metadata.columns[0].statistics.frequencyTable").isEmpty()
-                && tries < 10);
 
-        return response.as(DatasetContent.class);
+            DatasetContent datasetContent = response.as(DatasetContent.class);
+            datasetContentReference.set(datasetContent);
+            return datasetContent.metadata.columns //
+                    .stream() //
+                    .findFirst() //
+                    .orElse(new ContentMetadataColumn()).statistics.frequencyTable;
+        }, is(not(empty())));
+
+        return datasetContentReference.get();
     }
 
     private void checkRecords(List<Object> actualRecords, String expectedRecordsFilename) throws Exception {
@@ -179,7 +182,7 @@ public class FilterStep extends DataPrepStep {
         checkContent(preparationContent, dataTable);
     }
 
-    public void checkContent(PreparationContent preparation, DataTable dataTable) throws Exception {
+    protected void checkContent(PreparationContent preparation, DataTable dataTable) throws Exception {
         Map<String, String> expected = dataTable.asMap(String.class, String.class);
         checkRecords(preparation.records, expected.get("records"));
         checkQualityPerColumn(preparation.metadata.columns, expected.get("quality"));

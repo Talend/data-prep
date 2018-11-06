@@ -1,5 +1,4 @@
 import { actions } from '@talend/react-cmf';
-import { Map } from 'immutable';
 import { DEFAULT_STATE } from './FolderCreatorModal.component';
 
 

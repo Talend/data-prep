@@ -1,6 +1,5 @@
 import { call, put, select } from 'redux-saga/effects';
-import { actions, sagas } from '@talend/react-cmf';
-import { ConfirmDialog } from '@talend/react-containers';
+import { actions } from '@talend/react-cmf';
 import { Map } from 'immutable';
 import { refreshCurrentFolder } from './preparation.effects';
 import i18next from '../../../i18n';

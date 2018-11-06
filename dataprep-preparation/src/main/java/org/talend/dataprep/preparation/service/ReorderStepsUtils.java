@@ -21,6 +21,8 @@ import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 @Component
 public class ReorderStepsUtils {
 
+    protected static final String COLUMN_IDS = "column_ids";
+
     /**
      * Checks if the reordering implied by the specified list of steps is legal.
      * <p>
@@ -41,13 +43,11 @@ public class ReorderStepsUtils {
         return appendSteps.stream().noneMatch(step -> {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
-                final String[] columnIds;
+                String[] columnIds = { parameters.get(ImplicitParameters.COLUMN_ID.getKey()) };
                 if (ActionScope.MULTI_COLUMNS
                         .getDisplayName()
                         .equals(action.getParameters().get(ImplicitParameters.SCOPE.getKey()))) {
-                    columnIds = ActionsUtils.extractColumnsId(parameters.get("column_ids"));
-                } else {
-                    columnIds = ActionsUtils.extractColumnsId(parameters.get(ImplicitParameters.COLUMN_ID.getKey()));
+                    columnIds = ActionsUtils.extractColumnsId(parameters.get(COLUMN_IDS));
                 }
 
                 // remove the created columns from not available columns

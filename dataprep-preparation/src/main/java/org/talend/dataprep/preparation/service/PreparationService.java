@@ -35,6 +35,28 @@ import static org.talend.tql.api.TqlBuilder.eq;
 import static org.talend.tql.api.TqlBuilder.isEmpty;
 import static org.talend.tql.api.TqlBuilder.match;
 
+import java.text.DecimalFormat;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +84,13 @@ import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
-import org.talend.dataprep.preparation.configuration.SharedInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.folder.store.FolderRepository;
 import org.talend.dataprep.lock.store.LockedResourceRepository;
+import org.talend.dataprep.preparation.configuration.SharedInjection;
 import org.talend.dataprep.preparation.store.PersistentPreparation;
 import org.talend.dataprep.preparation.store.PersistentStep;
 import org.talend.dataprep.preparation.store.PreparationRepository;
@@ -82,28 +104,6 @@ import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
 import org.talend.tql.model.Expression;
-
-import java.text.DecimalFormat;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 public class PreparationService {
@@ -126,6 +126,8 @@ public class PreparationService {
 
     private static final String FIRST_COLUMN_INDEX = "0000";
 
+    private final ActionFactory factory = new ActionFactory();
+
     /**
      * Where preparation are stored.
      */
@@ -137,8 +139,6 @@ public class PreparationService {
      */
     @Autowired
     protected Security security;
-
-    private final ActionFactory factory = new ActionFactory();
 
     /**
      * Where the folders are stored.
@@ -195,10 +195,27 @@ public class PreparationService {
     private DataSetNameInjection dataSetNameInjection;
 
     /**
+     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in
+     * TDP-4531 to
+     * avoid removing columns used by other actions.
+     * <p>
+     * Such method is not ideal as the system should be able to handle such removal in a much more generic way.
+     * </p>
+     */
+    private static ActionForm disallowColumnCreationChange(ActionForm form) {
+        form
+                .getParameters() //
+                .stream() //
+                .filter(p -> CREATE_NEW_COLUMN.equals(p.getName())) //
+                .forEach(p -> p.setReadonly(true));
+        return form;
+    }
+
+    /**
      * Create a preparation from the http request body.
      *
      * @param preparation the preparation to create.
-     * @param folderId    where to store the preparation.
+     * @param folderId where to store the preparation.
      * @return the created preparation id.
      */
     public String create(final Preparation preparation, String folderId) {
@@ -236,12 +253,12 @@ public class PreparationService {
     /**
      * List all preparation details.
      *
-     * @param name       of the preparation.
+     * @param name of the preparation.
      * @param folderPath filter on the preparation path.
-     * @param path       preparation full path in the form folder_path/preparation_name. Overrides folderPath and name if
-     *                   present.
-     * @param sort       how to sort the preparations.
-     * @param order      how to order the sort.
+     * @param path preparation full path in the form folder_path/preparation_name. Overrides folderPath and name if
+     * present.
+     * @param sort how to sort the preparations.
+     * @param order how to order the sort.
      * @return the preparation details.
      */
     public Stream<PreparationDTO> listAll(String name, String folderPath, String path, Sort sort, Order order) {
@@ -331,7 +348,14 @@ public class PreparationService {
             preparationStream = preparationStream.filter(p -> folderEntries.contains(p.id()));
         }
 
-        return preparationStream
+        return preparationStream.map(preparation -> {
+            if (StringUtils.isEmpty(preparation.getName())) {
+                preparation.setName((preparation.getDataSetName() != null ? preparation.getDataSetName() + " " : "")
+                        + message("preparation.create.suffix"));
+                preparationRepository.add(preparation);
+            }
+            return preparation;
+        })
                 .map(p -> beanConversionService.convert(p, PreparationDTO.class, ownerInjection.injectIntoPreparation(),
                         sharedInjection)) //
                 .sorted(getPreparationComparator(sort, order));
@@ -360,13 +384,13 @@ public class PreparationService {
      * </ul>
      * </p>
      *
-     * @param dataSetId  to search all preparations based on this dataset id.
-     * @param folderId   to search all preparations located in this folderId.
-     * @param name       to search all preparations that match this name.
+     * @param dataSetId to search all preparations based on this dataset id.
+     * @param folderId to search all preparations located in this folderId.
+     * @param name to search all preparations that match this name.
      * @param exactMatch if true, the name matching must be exact.
      * @param path
-     * @param sort       Sort key (by name, creation date or modification date).
-     * @param order      Order for sort key (desc or asc).
+     * @param sort Sort key (by name, creation date or modification date).
+     * @param order Order for sort key (desc or asc).
      */
     public Stream<PreparationDTO> searchPreparations(String dataSetId, String folderId, String name, boolean exactMatch,
             String path, Sort sort, Order order) {
@@ -383,7 +407,7 @@ public class PreparationService {
     /**
      * List all the preparations that matches the given name.
      *
-     * @param name       the wanted preparation name.
+     * @param name the wanted preparation name.
      * @param exactMatch true if the name must match exactly.
      * @return all the preparations that matches the given name.
      */
@@ -403,7 +427,7 @@ public class PreparationService {
     /**
      * Copy the given preparation to the given name / folder ans returns the new if in the response.
      *
-     * @param name        the name of the copied preparation, if empty, the name is "orginal-preparation-name Copy"
+     * @param name the name of the copied preparation, if empty, the name is "orginal-preparation-name Copy"
      * @param destination the folder path where to copy the preparation, if empty, the copy is in the same folder.
      * @return The new preparation id.
      */
@@ -459,7 +483,7 @@ public class PreparationService {
      * Duplicate the list of steps and set it to the new preparation
      *
      * @param originalPrep the original preparation.
-     * @param targetPrep   the created preparation.
+     * @param targetPrep the created preparation.
      */
     private void cloneStepsListBetweenPreparations(Preparation originalPrep, Preparation targetPrep) {
 
@@ -494,9 +518,9 @@ public class PreparationService {
      * Check if the name is available in the given folderId.
      *
      * @param folderId where to look for the name.
-     * @param name     the wanted preparation name.
+     * @param name the wanted preparation name.
      * @throws TDPException Preparation name already used (409) if there's already a preparation with this name in the
-     *                      folderId.
+     * folderId.
      */
     private void checkIfPreparationNameIsAvailable(String folderId, String name) {
 
@@ -518,9 +542,9 @@ public class PreparationService {
     /**
      * Move a preparation to an other folder.
      *
-     * @param folder      The original folder of the preparation.
+     * @param folder The original folder of the preparation.
      * @param destination The new folder of the preparation.
-     * @param newName     The new preparation name.
+     * @param newName The new preparation name.
      */
     public void move(String preparationId, String folder, String destination, String newName) {
         LOGGER.debug("Moving {} preparation from '{}' folder to '{}' folder with the new name '{}' requested",
@@ -583,7 +607,7 @@ public class PreparationService {
      * Update a preparation.
      *
      * @param preparationId the preparation id to update.
-     * @param preparation   the updated preparation.
+     * @param preparation the updated preparation.
      * @return the updated preparation id.
      */
     public String update(String preparationId, final PreparationDTO preparation) {
@@ -617,7 +641,7 @@ public class PreparationService {
      * <p>
      * This is only allowed if this preparation has no steps.
      *
-     * @param id   the preparation id to update.
+     * @param id the preparation id to update.
      * @param from the preparation id to copy the steps from.
      */
     public void copyStepsFrom(String id, String from) {
@@ -653,7 +677,7 @@ public class PreparationService {
     /**
      * Return a preparation details.
      *
-     * @param id     the wanted preparation id.
+     * @param id the wanted preparation id.
      * @param stepId the optional step id.
      * @return the preparation details.
      */
@@ -690,7 +714,7 @@ public class PreparationService {
     /**
      * Return a preparation details.
      *
-     * @param id     the wanted preparation id.
+     * @param id the wanted preparation id.
      * @param stepId the optional step id.
      * @return the preparation details.
      */
@@ -706,18 +730,14 @@ public class PreparationService {
         // Append actions and action forms
         Iterator<String> stepsIterator = details.getSteps().iterator();
         final AtomicBoolean allowDistributedRun = new AtomicBoolean();
-        final List<ActionForm> metadata = details
-                .getActions()
-                .stream()
-                .map(action -> {
-                    String stepBeforeAction = stepsIterator.next();
-                    return adaptActionDefinition(details, action, stepBeforeAction);
-                })
-                .peek(a -> {
-                    if (allowDistributedRun.get()) {
-                        allowDistributedRun.set(a.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
-                    }
-                }) //
+        final List<ActionForm> metadata = details.getActions().stream().map(action -> {
+            String stepBeforeAction = stepsIterator.next();
+            return adaptActionDefinition(details, action, stepBeforeAction);
+        }).peek(a -> {
+            if (allowDistributedRun.get()) {
+                allowDistributedRun.set(a.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+            }
+        }) //
                 .map(a -> a.getActionForm(LocaleContextHolder.getLocale(), Locale.US)) //
                 .map(PreparationService::disallowColumnCreationChange) //
                 .collect(toList());
@@ -768,23 +788,6 @@ public class PreparationService {
             }
         }
         return actionDefinition;
-    }
-
-    /**
-     * For a given action form, it will disallow edition on all column creation check. It is a safety specified in
-     * TDP-4531 to
-     * avoid removing columns used by other actions.
-     * <p>
-     * Such method is not ideal as the system should be able to handle such removal in a much more generic way.
-     * </p>
-     */
-    private static ActionForm disallowColumnCreationChange(ActionForm form) {
-        form
-                .getParameters() //
-                .stream() //
-                .filter(p -> CREATE_NEW_COLUMN.equals(p.getName())) //
-                .forEach(p -> p.setReadonly(true));
-        return form;
     }
 
     /**
@@ -926,11 +929,10 @@ public class PreparationService {
             LOGGER.debug("Modified head of preparation #{}: head is now {}", preparationId, preparation.getHeadId());
             if (auditService.isActive()) {
                 auditService //
-                        .auditPreparationUpdateStep(preparationId, stepToModifyId,
-                                newStep //
-                                        .getActions() //
-                                        .stream() //
-                                        .collect(toMap(Action::getName, Action::getParameters)));
+                        .auditPreparationUpdateStep(preparationId, stepToModifyId, newStep //
+                                .getActions() //
+                                .stream() //
+                                .collect(toMap(Action::getName, Action::getParameters)));
             }
         } finally {
             unlockPreparation(preparationId);
@@ -953,7 +955,7 @@ public class PreparationService {
      * <li>4. Append each action after the new preparation head</li>
      * </ul>
      *
-     * @param id             the preparation id.
+     * @param id the preparation id.
      * @param stepToDeleteId the step id to delete.
      */
     public void deleteAction(final String id, final String stepToDeleteId) {
@@ -989,7 +991,7 @@ public class PreparationService {
     /**
      * Get all the actions of a preparation at given version.
      *
-     * @param id      the wanted preparation id.
+     * @param id the wanted preparation id.
      * @param version the wanted preparation version.
      * @return the list of actions.
      */
@@ -1056,8 +1058,8 @@ public class PreparationService {
      * preparation.
      *
      * @param preparationId the id of the preparation containing the step to move
-     * @param stepId        the id of the step to move
-     * @param parentStepId  the id of the step which wanted as the parent of the step to move
+     * @param stepId the id of the step to move
+     * @param parentStepId the id of the step which wanted as the parent of the step to move
      */
     public void moveStep(final String preparationId, String stepId, String parentStepId) {
         LOGGER.debug("Moving step {} after step {}, within preparation {}", stepId, parentStepId, preparationId);
@@ -1077,7 +1079,7 @@ public class PreparationService {
     /**
      * Get the actual step id by converting "head" and "origin" to the hash
      *
-     * @param version     The version to convert to step id
+     * @param version The version to convert to step id
      * @param preparation The preparation
      * @return The converted step Id
      */
@@ -1140,7 +1142,7 @@ public class PreparationService {
     /**
      * Extract all actions after a provided step
      *
-     * @param stepsIds  The steps list
+     * @param stepsIds The steps list
      * @param afterStep The (excluded) step id where to start the extraction
      * @return The actions after 'afterStep' to the end of the list
      */
@@ -1176,7 +1178,7 @@ public class PreparationService {
      * preparation
      *
      * @param preparation The preparation
-     * @param fromStepId  The starting step id
+     * @param fromStepId The starting step id
      * @return The steps ids from 'fromStepId' to the head
      * @throws TDPException If 'fromStepId' is not a step of the provided preparation
      */
@@ -1221,7 +1223,7 @@ public class PreparationService {
      * the head
      *
      * @param preparation The preparation to test
-     * @param stepId      The step id to test
+     * @param stepId The step id to test
      * @return True if 'stepId' is considered as the preparation head
      */
     private boolean isPreparationHead(final PersistentPreparation preparation, final String stepId) {
@@ -1266,11 +1268,11 @@ public class PreparationService {
      * as rule 2. (New_created_column_id = created_column_id + columnShiftNumber, only if created_column_id >
      * 'shiftColumnAfterId')
      *
-     * @param stepsIds           The steps ids
-     * @param afterStepId        The (EXCLUDED) step where the extraction starts
-     * @param deletedColumns     The column ids that will be removed
+     * @param stepsIds The steps ids
+     * @param afterStepId The (EXCLUDED) step where the extraction starts
+     * @param deletedColumns The column ids that will be removed
      * @param shiftColumnAfterId The (EXCLUDED) column id where we start the shift
-     * @param shiftNumber        The shift number. new_column_id = old_columns_id + columnShiftNumber
+     * @param shiftNumber The shift number. new_column_id = old_columns_id + columnShiftNumber
      * @return The adapted steps
      */
     private List<AppendStep> getStepsWithShiftedColumnIds(final List<String> stepsIds, final String afterStepId,
@@ -1304,12 +1306,12 @@ public class PreparationService {
      * negative)
      *
      * @param shiftColumnAfterId The shift is performed if created column id > shiftColumnAfterId
-     * @param shiftNumber        The number to shift (can be negative)
+     * @param shiftNumber The number to shift (can be negative)
      * @return The same step but modified
      */
     private Function<AppendStep, AppendStep> shiftCreatedColumns(final int shiftColumnAfterId, final int shiftNumber) {
 
-        final DecimalFormat format = new DecimalFormat(FIRST_COLUMN_INDEX); //$NON-NLS-1$
+        final DecimalFormat format = new DecimalFormat(FIRST_COLUMN_INDEX); // $NON-NLS-1$
         return step -> {
             final List<String> stepCreatedCols = step.getDiff().getCreatedColumns();
             final List<String> shiftedStepCreatedCols = stepCreatedCols.stream().map(colIdStr -> {
@@ -1329,11 +1331,11 @@ public class PreparationService {
      * negative)
      *
      * @param shiftColumnAfterId The shift is performed if column id > shiftColumnAfterId
-     * @param shiftNumber        The number to shift (can be negative)
+     * @param shiftNumber The number to shift (can be negative)
      * @return The same step but modified
      */
     private Function<AppendStep, AppendStep> shiftStepParameter(final int shiftColumnAfterId, final int shiftNumber) {
-        final DecimalFormat format = new DecimalFormat(FIRST_COLUMN_INDEX); //$NON-NLS-1$
+        final DecimalFormat format = new DecimalFormat(FIRST_COLUMN_INDEX); // $NON-NLS-1$
         return step -> {
             final Action firstAction = step.getActions().get(0);
             final Map<String, String> parameters = firstAction.getParameters();
@@ -1365,7 +1367,7 @@ public class PreparationService {
      * Update the head step of a preparation
      *
      * @param preparation The preparation to update
-     * @param head        The head step
+     * @param head The head step
      */
     private void setPreparationHead(final PersistentPreparation preparation, final PersistentStep head) {
         preparation.setHeadId(head.id());
@@ -1377,8 +1379,8 @@ public class PreparationService {
     /**
      * Rewrite the preparation history from a specific step, with the provided actions
      *
-     * @param preparation  The preparation
-     * @param startStepId  The step id to start the (re)write. The following steps will be erased
+     * @param preparation The preparation
+     * @param startStepId The step id to start the (re)write. The following steps will be erased
      * @param actionsSteps The actions to perform
      */
     private void replaceHistory(final PersistentPreparation preparation, final String startStepId,
@@ -1398,7 +1400,7 @@ public class PreparationService {
      * Append a single appendStep after the preparation head
      *
      * @param preparation The preparation.
-     * @param appendStep  The appendStep to apply.
+     * @param appendStep The appendStep to apply.
      */
     private void appendStepToHead(final PersistentPreparation preparation, final AppendStep appendStep) {
         // Add new actions after head
@@ -1436,7 +1438,7 @@ public class PreparationService {
     /**
      * Deletes the step of specified id of the specified preparation
      *
-     * @param preparation    the specified preparation
+     * @param preparation the specified preparation
      * @param stepToDeleteId the specified step id to delete
      */
     private void deleteAction(PersistentPreparation preparation, String stepToDeleteId) {
@@ -1464,8 +1466,8 @@ public class PreparationService {
      * Moves the step with specified <i>stepId</i> just after the step with <i>parentStepId</i> as identifier within the
      * specified preparation.
      *
-     * @param preparation  the preparation containing the step to move
-     * @param stepId       the id of the step to move
+     * @param preparation the preparation containing the step to move
+     * @param stepId the id of the step to move
      * @param parentStepId the id of the step which wanted as the parent of the step to move
      */
     private void reorderSteps(final PersistentPreparation preparation, final String stepId, final String parentStepId) {

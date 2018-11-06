@@ -348,14 +348,16 @@ public class PreparationService {
             preparationStream = preparationStream.filter(p -> folderEntries.contains(p.id()));
         }
 
-        return preparationStream.map(preparation -> {
-            if (StringUtils.isEmpty(preparation.getName())) {
-                preparation.setName((preparation.getDataSetName() != null ? preparation.getDataSetName() + " " : "")
-                        + message("preparation.create.suffix"));
-                preparationRepository.add(preparation);
-            }
-            return preparation;
-        })
+        return preparationStream
+                .map(preparation -> {
+                    if (StringUtils.isEmpty(preparation.getName())) {
+                        preparation.setName(
+                                (preparation.getDataSetName() != null ? preparation.getDataSetName() + " " : "")
+                                        + message("preparation.create.suffix"));
+                        preparationRepository.add(preparation);
+                    }
+                    return preparation;
+                })
                 .map(p -> beanConversionService.convert(p, PreparationDTO.class, ownerInjection.injectIntoPreparation(),
                         sharedInjection)) //
                 .sorted(getPreparationComparator(sort, order));
@@ -730,14 +732,18 @@ public class PreparationService {
         // Append actions and action forms
         Iterator<String> stepsIterator = details.getSteps().iterator();
         final AtomicBoolean allowDistributedRun = new AtomicBoolean();
-        final List<ActionForm> metadata = details.getActions().stream().map(action -> {
-            String stepBeforeAction = stepsIterator.next();
-            return adaptActionDefinition(details, action, stepBeforeAction);
-        }).peek(a -> {
-            if (allowDistributedRun.get()) {
-                allowDistributedRun.set(a.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
-            }
-        }) //
+        final List<ActionForm> metadata = details
+                .getActions()
+                .stream()
+                .map(action -> {
+                    String stepBeforeAction = stepsIterator.next();
+                    return adaptActionDefinition(details, action, stepBeforeAction);
+                })
+                .peek(a -> {
+                    if (allowDistributedRun.get()) {
+                        allowDistributedRun.set(a.getBehavior().contains(ActionDefinition.Behavior.FORBID_DISTRIBUTED));
+                    }
+                }) //
                 .map(a -> a.getActionForm(LocaleContextHolder.getLocale(), Locale.US)) //
                 .map(PreparationService::disallowColumnCreationChange) //
                 .collect(toList());
@@ -929,10 +935,11 @@ public class PreparationService {
             LOGGER.debug("Modified head of preparation #{}: head is now {}", preparationId, preparation.getHeadId());
             if (auditService.isActive()) {
                 auditService //
-                        .auditPreparationUpdateStep(preparationId, stepToModifyId, newStep //
-                                .getActions() //
-                                .stream() //
-                                .collect(toMap(Action::getName, Action::getParameters)));
+                        .auditPreparationUpdateStep(preparationId, stepToModifyId,
+                                newStep //
+                                        .getActions() //
+                                        .stream() //
+                                        .collect(toMap(Action::getName, Action::getParameters)));
             }
         } finally {
             unlockPreparation(preparationId);

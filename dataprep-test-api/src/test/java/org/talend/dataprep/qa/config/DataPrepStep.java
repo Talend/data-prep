@@ -18,17 +18,15 @@ import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+
 import javax.annotation.PostConstruct;
 
 import org.awaitility.core.ConditionFactory;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +71,7 @@ public abstract class DataPrepStep {
 
     private static final int POLL_INTERVAL = 1;
 
-    /**
-     * This class' logger.
-     */
+    /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(DataPrepStep.class);
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
@@ -147,13 +143,6 @@ public abstract class DataPrepStep {
         };
     }
 
-    protected class CleanAfterException extends RuntimeException {
-
-        CleanAfterException(String s) {
-            super(s);
-        }
-    }
-
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
         assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
@@ -184,5 +173,12 @@ public abstract class DataPrepStep {
                 .pollDelay(pollDelay, TimeUnit.SECONDS) //
                 .await(message) //
                 .atMost(timeOut, TimeUnit.SECONDS);
+    }
+
+    protected class CleanAfterException extends RuntimeException {
+
+        CleanAfterException(String s) {
+            super(s);
+        }
     }
 }

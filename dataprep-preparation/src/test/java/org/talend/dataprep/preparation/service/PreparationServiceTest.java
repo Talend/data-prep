@@ -58,7 +58,8 @@ public class PreparationServiceTest extends BasePreparationTest {
     public void testUnnamedPreparation() throws Exception {
         init();
         // then : path should override other props
-        List<PreparationDTO> preparations = preparationService.listAll(null, "unnamedPreparation", null, null, null) //
+        List<PreparationDTO> preparations = preparationService
+                .listAll(null, "unnamedPreparation", null, null, null) //
                 .collect(Collectors.toList());
         assertThat(preparations.size(), is(1));
         assertThat(preparations.get(0).getName(), is("Preparation"));

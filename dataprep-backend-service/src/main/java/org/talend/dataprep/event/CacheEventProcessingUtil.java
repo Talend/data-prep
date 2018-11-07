@@ -44,7 +44,7 @@ public class CacheEventProcessingUtil {
             } else {
                 cache.evict(cacheKey);
             }
-            LOGGER.debug("Deleting content cache key {} because receiving CleanCacheEvent", cacheKey);
+            LOGGER.info("Deleting content cache key {} because receiving CleanCacheEvent", cacheKey.getKey());
         } else {
             LOGGER.debug("Deleting all cache because we don't have key");
             cache.clear();

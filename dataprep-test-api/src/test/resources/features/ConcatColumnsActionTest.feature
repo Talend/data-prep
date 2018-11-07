@@ -1,4 +1,4 @@
-# would fail while ConcatColumns action is desable
+# would fail while ConcatColumns action is disable
 @EnvOnPremise @EnvCloud
 Feature: Export all data from a preparation
 

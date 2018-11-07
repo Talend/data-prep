@@ -72,6 +72,35 @@ describe('preparation', () => {
 
 			expect(gen.next().done).toBeTruthy();
 		});
+
+		it('should open preparation with custom folder id', () => {
+			const CUSTOM_FOLDER_ID = 'FAKE_CUSTOM_FOLDER_ID';
+			const payload = {
+				id: 'DATASET_ID',
+				folderId: CUSTOM_FOLDER_ID,
+			};
+			const gen = effects.create(payload);
+
+			const effectPUT = gen.next().value.PUT.action;
+			expect(effectPUT.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effectPUT.collectionId).toBe('currentFolderId');
+			expect(effectPUT.data).toBe(CUSTOM_FOLDER_ID);
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effectCALL = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effectCALL.fn).toEqual(http.post);
+			expect(effectCALL.args[0]).toEqual(
+				`/api/preparations?folder=${CUSTOM_FOLDER_ID}`,
+			);
+
+			const PREPARATION_ID = 'PREPARATION_ID';
+			const effectPUT2 = gen.next({ data: PREPARATION_ID }).value.PUT.action;
+			expect(effectPUT2.type).toBe(REDIRECT_WINDOW);
+			expect(effectPUT2.payload).toEqual({ url: `/#/playground/preparation?prepid=${PREPARATION_ID}` });
+
+			expect(gen.next().done).toBeTruthy();
+		});
 	});
 
 	describe('fetch', () => {

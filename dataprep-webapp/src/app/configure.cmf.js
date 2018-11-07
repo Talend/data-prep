@@ -188,6 +188,7 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('folder:remove:open', actions.folder.openRemoveFolderModal);
 		registerActionCreator('folder:remove:close', actions.folder.closeRemoveFolderModal);
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
+		registerActionCreator('preparation:create', actions.preparation.create);
 		registerActionCreator('preparation:copy', actions.preparation.copy);
 		registerActionCreator('preparation:move', actions.preparation.move);
 		registerActionCreator('preparation:remove', actions.preparation.remove);

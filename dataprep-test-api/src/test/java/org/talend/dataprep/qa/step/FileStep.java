@@ -62,7 +62,7 @@ public class FileStep extends DataPrepStep {
             } else if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
 
                 fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename
-                        + ":\n" + String.join("\n", Files.readAllLines(tempFile, StandardCharsets.ISO_8859_1)));
+                        + ":\n" + String.join("\n", Files.readAllLines(tempFile)));
             }
         }
     }

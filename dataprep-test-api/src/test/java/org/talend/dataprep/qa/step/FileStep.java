@@ -17,6 +17,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,8 +60,9 @@ public class FileStep extends DataPrepStep {
                             + expectedFilename);
                 }
             } else if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
+
                 fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename
-                        + ":\n" + String.join("\n", Files.readAllLines(tempFile)));
+                        + ":\n" + String.join("\n", Files.readAllLines(tempFile, StandardCharsets.ISO_8859_1)));
             }
         }
     }

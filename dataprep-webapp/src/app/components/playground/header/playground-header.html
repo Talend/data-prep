@@ -21,6 +21,19 @@
                     search-focused-section-index="$ctrl.state.search.focusedSectionIndex"
                     search-focused-item-index="$ctrl.state.search.focusedItemIndex" />
 </header>
+
+<pure-sub-header-bar
+    ng-attr-title="$ctrl.title"
+    sub-title="$ctrl.subtitle"
+    editable="!$ctrl.isReadonly"
+    on-go-back="$ctrl.onClose"
+    on-edit="$ctrl.toggleNameEditMode"
+    on-submit="$ctrl.editName"
+    loading="$ctrl.loading"
+    edit-mode="$ctrl.state.playground.nameEditionMode"
+    right="$ctrl.PlaygroundService.getSubheaderActions()">
+</pure-sub-header-bar>
+
 <nav class="playground-sub-header navbar">
     <ul class="playground-sub-header-left nav navbar-nav">
         <li ng-switch="!!$ctrl.isReadonly">

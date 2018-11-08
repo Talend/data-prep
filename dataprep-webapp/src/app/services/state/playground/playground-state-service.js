@@ -251,6 +251,7 @@ export function PlaygroundStateService($translate,
 	// -------------------------------------------------PARAMETERS---------------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
 	function toggleDatasetParameters() {
+		console.log('[NC] toggle: ', parametersState.visible);
 		if (parametersState.visible) {
 			ParametersStateService.hide();
 		}

@@ -44,6 +44,9 @@ const DATASET = 'dataset';
 export const EVENT_LOADING_START = 'talend.loading.start';
 export const EVENT_LOADING_STOP = 'talend.loading.stop';
 
+const TYPE_ICON_TOGGLE = 'iconToggle';
+
+
 export default function PlaygroundService(
 	$state,
 	$rootScope,
@@ -71,6 +74,7 @@ export default function PlaygroundService(
 	OnboardingService,
 	MessageService,
 	TitleService,
+	LookupService,
 ) {
 	'ngInject';
 
@@ -119,8 +123,68 @@ export default function PlaygroundService(
 
 		// parameters
 		changeDatasetParameters,
+
+		// subheader
+		getSubheaderActions,
 	};
 	return service;
+
+	function getSubheaderActions() {
+		return [
+			{
+				label: 'parameters',
+				icon: 'talend-cog',
+				displayMode: TYPE_ICON_TOGGLE,
+				active: state.playground.parameters.visible,
+				onClick: () => $timeout(StateService.toggleDatasetParameters),
+				inProgress: state.playground.lookup.loading,
+			},
+			{
+				label: 'lookup',
+				icon: 'talend-chain',
+				displayMode: TYPE_ICON_TOGGLE,
+				active: state.playground.lookup.visibility,
+				onClick: () => $timeout(toggleLookupPane),
+			},
+			{
+				icon: 'talend-undo',
+				hideLabel: true,
+				bsStyle: 'link',
+				disabled: !HistoryService.canUndo(),
+				onClick: () => $timeout(HistoryService.undo),
+			},
+			{
+				icon: 'talend-redo',
+				hideLabel: true,
+				bsStyle: 'link',
+				disabled: !HistoryService.canRedo(),
+				onClick: () => $timeout(HistoryService.redo),
+			},
+			{
+				label: 'Manage version',
+				bsStyle: 'default btn-inverse',
+				onClick: () => console.log('[NC] test click'),
+			},
+			{
+				label: 'Export',
+				icon: 'talend-download',
+				bsStyle: 'info',
+				onClick: () => console.log('[NC] test click'),
+			},
+		];
+	}
+
+
+	function toggleLookupPane() {
+		if (state.playground.lookup.visibility) {
+			StateService.setLookupVisibility(false);
+			StateService.setStepInEditionMode(null);
+		}
+		else {
+			StateService.setLookupVisibility(true);
+			LookupService.initLookups();
+		}
+	}
 
 	/**
 	 * Helper to emit start loader event

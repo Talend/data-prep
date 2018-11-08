@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import template from './playground-header.html';
+import PlaygroundHeaderCtrl from './playground-header-controller';
 
 /**
  * @ngdoc directive
@@ -21,12 +22,8 @@ import template from './playground-header.html';
  * @usage
  <playground-header
          enable-export="true"
-         lookup-visible="lookupInProgress"
          on-close="close()"
-         on-lookup="toggleLookup()"
-         on-parameters="toggleParameters()"
          on-preparation-picker="onPreparationPicker()"
-         parameters-visible="hasParametersVisible"
          preparation-picker="true"
          preview="previewInProgress"
  ></playground-header>
@@ -44,26 +41,16 @@ const PlaygroundHeader = {
 	templateUrl: template,
 	bindings: {
 		enableExport: '<',
-		lookupVisible: '<',
-		lookupLoading: '<',
 		onClose: '&',
-		onLookup: '&',
-		onParameters: '&',
 		onPreparationPicker: '&',
-		parametersVisible: '<',
 		preparationPicker: '<',
 		preview: '<',
 		previewLoading: '<',
 		isReadonly: '<',
 		preparationName: '<',
-		nameEditionMode: '<',
-		confirmNameEdition: '=',
+		datasetName: '<',
 	},
-	controller(state, HelpService) {
-		'ngInject';
-		this.state = state;
-		this.HelpService = HelpService;
-	},
+	controller: PlaygroundHeaderCtrl,
 };
 
 export default PlaygroundHeader;

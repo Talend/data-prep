@@ -7,23 +7,20 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
-import org.talend.dataprep.qa.dto.ContentMetadata;
 import org.talend.dataprep.qa.dto.ContentMetadataColumn;
 import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.Folder;
@@ -131,12 +128,14 @@ public class PreparationStep extends DataPrepStep {
         Folder originFolder = folderUtil.searchFolder(suffixedPrepOriginPath);
         Folder destFolder = folderUtil.searchFolder(prepDestPath);
 
-        Response response = api.movePreparation( //
-                suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
+        Response response = api
+                .movePreparation( //
+                        suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
         response.then().statusCode(OK.value());
 
-        context.storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
-                suffixedPrepDestName, destFolder.path);
+        context
+                .storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
+                        suffixedPrepDestName, destFolder.path);
     }
 
     @Then("^I copy the preparation \"(.*)\" to \"(.*)\"$")
@@ -198,7 +197,7 @@ public class PreparationStep extends DataPrepStep {
     public void loadPreparationMultipleTimes(Integer nbTime, String prepFullName) throws IOException {
         String prepId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {
-            Response response = api.getPreparationContent(prepId, "head", "HEAD", "");
+            Response response = api.getPreparationContent(prepId, "head", "HEAD", StringUtils.EMPTY);
             assertEquals(OK.value(), response.getStatusCode());
         }
     }
@@ -217,18 +216,20 @@ public class PreparationStep extends DataPrepStep {
     @Then("^The preparation \"(.*)\" should contain the following columns:$")
     public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
             throws Exception {
-        Response response =
-                api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD", "");
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD",
+                        StringUtils.EMPTY);
         response.then().statusCode(OK.value());
 
         checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
     }
 
     @Then("^The preparation \"(.*)\" should have the following quality bar characteristics on the column number \"(.*)\":$")
-    public void thePreparationShouldHaveThefollowingQualityBar(String preparationName, String columnNumber, DataTable dataTable)
-            throws Exception {
-        Response response =
-                api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD", "");
+    public void thePreparationShouldHaveThefollowingQualityBar(String preparationName, String columnNumber,
+            DataTable dataTable) throws Exception {
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD",
+                        StringUtils.EMPTY);
         response.then().statusCode(OK.value());
 
         DatasetContent datasetContent = response.as(DatasetContent.class);
@@ -244,6 +245,23 @@ public class PreparationStep extends DataPrepStep {
         assertEquals(emptyExpected, columnMetadata.quality.get("empty"));
     }
 
+    @Then("^The preparation \"(.*)\" should have the following invalid characteristics on the row number \"(.*)\":$")
+    public void thePreparationShouldHaveThefollowingInvalidCells(String preparationName, String columnNumber,
+            DataTable dataTable) throws Exception {
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD",
+                        StringUtils.EMPTY);
+        response.then().statusCode(OK.value());
+
+        DatasetContent datasetContent = response.as(DatasetContent.class);
+
+        final Map<String, String> parameters = dataTable.asMap(String.class, String.class);
+        String invalidCells = parameters.get("invalidCells");
+
+        HashMap values = (LinkedHashMap<String, String>) datasetContent.records.get(Integer.parseInt(columnNumber));
+
+        assertEquals(invalidCells, values.get("__tdpInvalid"));
+    }
 
     /**
      * Check if a preparation of a given name exist in a specified folder.

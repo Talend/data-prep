@@ -16,8 +16,6 @@
 <div class="playground-container" tabindex="0">
     <pure-app-loader ng-if="playgroundCtrl.state.playground.isLoading"></pure-app-loader>
     <playground-header ng-if="!playgroundCtrl.state.playground.isLoading"
-                       preview="playgroundCtrl.previewInProgress()"
-                       preview-loading="playgroundCtrl.state.playground.isPreviewLoading"
                        feedback-visible="!playgroundCtrl.state.ee"
                        preparation-picker="playgroundCtrl.$stateParams.datasetid"
                        enable-export="playgroundCtrl.state.export.exportTypes.length"
@@ -26,7 +24,6 @@
                        on-feedback="playgroundCtrl.openFeedbackForm()"
                        on-close="playgroundCtrl.beforeClose()"
                        on-preparation-picker="playgroundCtrl.showPreparationPicker()"
-                       is-readonly="playgroundCtrl.state.playground.isReadOnly"
     ></playground-header>
     <div class="playground"
          ng-if="!playgroundCtrl.state.playground.isLoading">

@@ -19,15 +19,14 @@
  * @requires data-prep.services.state.service:StateService
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.preparation.service:PreparationService
- * @requires data-prep.services.playground.service:PreviewService
  * @requires data-prep.services.onboarding.service:OnboardingService
  * @requires data-prep.services.lookup.service:LookupService
  * @requires data-prep.services.utils.service:MessageService
  */
 export default function PlaygroundCtrl($state, $stateParams, state, StateService,
                                        PlaygroundService, DatasetService, PreparationService,
-                                       PreviewService, FilterManagerService,
-                                       OnboardingService, LookupService, FolderService) {
+                                       FilterManagerService, OnboardingService, LookupService,
+                                       FolderService) {
 	'ngInject';
 
 	const vm = this;
@@ -36,7 +35,6 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	vm.destinationFolder = this.state.inventory.homeFolder;
 
 	vm.openFeedbackForm = () => StateService.showFeedback();
-	vm.previewInProgress = () => PreviewService.previewInProgress();
 	vm.startOnBoarding = tourId => OnboardingService.startTour(tourId);
 	vm.fetchCompatiblePreparations = datasetId => DatasetService.getCompatiblePreparations(datasetId);
 	vm.removeAllFilters = () => FilterManagerService.removeAllFilters();

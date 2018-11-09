@@ -126,8 +126,20 @@ export default function PlaygroundService(
 
 		// subheader
 		getSubheaderActions,
+		getSubheaderStatus,
 	};
 	return service;
+
+
+	function getSubheaderStatus() {
+		return PreviewService.previewInProgress() && [{
+			label: 'Preview',
+			inProgress: state.playground.isPreviewLoading,
+			disbaled: true,
+			icon: 'talend-eye',
+			bsStyle: 'link',
+		}];
+	}
 
 	function getSubheaderActions() {
 		return [
@@ -160,20 +172,8 @@ export default function PlaygroundService(
 				disabled: !HistoryService.canRedo(),
 				onClick: () => $timeout(HistoryService.redo),
 			},
-			{
-				label: 'Manage version',
-				bsStyle: 'default btn-inverse',
-				onClick: () => console.log('[NC] test click'),
-			},
-			{
-				label: 'Export',
-				icon: 'talend-download',
-				bsStyle: 'info',
-				onClick: () => console.log('[NC] test click'),
-			},
 		];
 	}
-
 
 	function toggleLookupPane() {
 		if (state.playground.lookup.visibility) {

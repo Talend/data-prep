@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud @Action @Test
+@EnvOS @EnvOnPremise @EnvCloud @Action
 Feature: Check some features of Negate Boolean Action
 
   //@CleanAfter

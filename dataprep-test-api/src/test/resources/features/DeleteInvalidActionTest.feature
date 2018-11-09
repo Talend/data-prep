@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud
+@EnvOS @EnvOnPremise @EnvCloud @Action
 Feature: Check some features of Delete Invalid Action
 
   @CleanAfter

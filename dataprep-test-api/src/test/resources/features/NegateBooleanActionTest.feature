@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud @Delete
+@EnvOS @EnvOnPremise @EnvCloud @Action
 Feature: Check some features of Negate Boolean Action
 
   @CleanAfter
@@ -12,10 +12,12 @@ Feature: Check some features of Negate Boolean Action
     Then I check that a step like "negate_boolean" exists in the preparation "NegateBooleanAction_prep"
     Then The preparation "NegateBooleanAction_prep" should contain the following columns:
       | boolean | boolean_negate |
-    # check the types TODO
+    Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0000"
+    Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0001"
     And I add a "concat" step identified by "concat_string" on the preparation "NegateBooleanAction_prep" with parameters :
-      | column_id | 00001         |
+      | column_id | 0001         |
       | mode      | constant_mode |
       | prefix    | aaaa          |
-      | sufix     | bbbb          |
-    # check the types
+      | suffix     | bbbb          |
+    Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0000"
+    Then The preparation "NegateBooleanAction_prep" should have the following type "string" on the following column "0001"

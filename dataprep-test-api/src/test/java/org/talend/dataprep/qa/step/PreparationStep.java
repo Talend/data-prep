@@ -263,6 +263,20 @@ public class PreparationStep extends DataPrepStep {
         assertEquals(invalidCells, values.get("__tdpInvalid"));
     }
 
+    @Then("^The preparation \"(.*)\" should have the following type \"(.*)\" on the following column \"(.*)\"$")
+    public void thePreparationShouldHaveThefollowingTypeOnThefollowingColumn(String preparationName, String columnType, String columnNumber
+                                                                ) throws Exception {
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD",
+                        StringUtils.EMPTY);
+        response.then().statusCode(OK.value());
+
+        DatasetContent datasetContent = response.as(DatasetContent.class);
+
+        ContentMetadataColumn columnMetadata = datasetContent.metadata.columns.get(Integer.parseInt(columnNumber));
+        assertEquals(columnType, columnMetadata.type);
+    }
+
     /**
      * Check if a preparation of a given name exist in a specified folder.
      *

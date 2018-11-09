@@ -1,5 +1,6 @@
 package org.talend.dataprep.qa.step;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.OK;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.Folder;
@@ -73,7 +75,7 @@ public class PreparationStep extends DataPrepStep {
      * Check if an existing preparation contains the same actions as the one given in parameters.
      * Be careful ! If your preparation contains lookup actions, you'll need to load your dataset by restoring a Mongo
      * dump, else the lookup_ds_id won't be the same in actions' parameter value.
-     * 
+     *
      * @param dataTable step parameters.
      * @throws IOException in case of exception.
      */
@@ -116,8 +118,8 @@ public class PreparationStep extends DataPrepStep {
                     .stream() //
                     .filter(p -> p.name.equals(preparationName))
                     .collect(Collectors.toList());
-            assertEquals("More than one preparation with \"" + preparationFullname + "\" name founded.",
-                    preparations.size(), 1);
+            assertEquals("More than one preparation with \"" + preparationFullname + "\" name founded.", 1,
+                    preparations.size());
             PreparationDetails preparation = preparations.get(0);
             context.storeExistingPreparationRef(preparation.id, preparation.name, prepFolder.getPath());
         }
@@ -199,10 +201,16 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^I check that I can load \"(.*)\" times the preparation with name \"(.*)\"$")
     public void loadPreparationMultipleTimes(Integer nbTime, String prepFullName) throws IOException {
-        String prepId = context.getPreparationId(suffixName(prepFullName));
+        String preparationId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {
-            Response response = api.getPreparationContent(prepId, "head", "HEAD", "");
-            assertEquals(OK.value(), response.getStatusCode());
+            api
+                    .waitResponse("Preparation #" + preparationId + " is ready", 10, 0, 1) //
+                    .until(() -> {
+                        int statusCode = api.getPreparationContent(preparationId, "head", "HEAD", "").getStatusCode();
+                        LOGGER.info("Ask for preparation #{} and I received status code #{}", preparationId,
+                                statusCode);
+                        return statusCode;
+                    }, is(HttpStatus.OK.value()));
         }
     }
 

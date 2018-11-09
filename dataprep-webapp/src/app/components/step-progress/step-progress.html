@@ -1,36 +1,36 @@
-<talend-modal   id="step-progress-modal"
-                close-button="false"
-                ng-if="$ctrl.state.progress.steps.length > 0 && !$ctrl.state.home.preparations.creator.isVisible"
-                state="$ctrl.state.progress.steps.length > 0 && !$ctrl.state.home.preparations.creator.isVisible"
-                disable-close-on-background-click="true">
-
-        <h1>{{ $ctrl.state.progress.title | translate }}</h1>
-
-    	<div class="progress">
+<talend-modal id="step-progress-modal"
+              close-button="false"
+              ng-if="$ctrl.state.progress.steps.length > 0 && !$ctrl.state.home.preparations.creator.isVisible"
+              state="$ctrl.state.progress.steps.length > 0 && !$ctrl.state.home.preparations.creator.isVisible"
+              disable-close-on-background-click="true"
+              modal-title="($ctrl.state.progress.title | translate)">
+    <div class="modal-body">
+        <div class="progress">
             <div
-                class="progression"
-                ng-style="{width: $ctrl.state.progress.progressionGetter() + '%'}"
-                ng-class="{'infinite': $ctrl.StateService.getCurrentProgressStep().type === $ctrl.state.progress.types.infinite}"
+                    class="progression"
+                    ng-style="{width: $ctrl.state.progress.progressionGetter() + '%'}"
+                    ng-class="{'infinite': $ctrl.StateService.getCurrentProgressStep().type === $ctrl.state.progress.types.infinite}"
             >
             </div>
-    	</div>
+        </div>
 
         <ol class="steps-list">
             <li
-                ng-repeat="step in $ctrl.state.progress.steps track by $index"
-                ng-if="step.label"
-                class="step"
-                ng-class="$ctrl.getStepClass(step.state)">
+                    ng-repeat="step in $ctrl.state.progress.steps track by $index"
+                    ng-if="step.label"
+                    class="step"
+                    ng-class="$ctrl.getStepClass(step.state)">
                 <span>{{ step.label | translate }}</span>
                 <pure-circular-progress
-                    ng-if="step.state === $ctrl.state.progress.states.inProgress"
-                    class="'step-icon progress-icon'"
+                        ng-if="step.state === $ctrl.state.progress.states.inProgress"
+                        class="'step-icon progress-icon'"
                 ></pure-circular-progress>
                 <icon
-                    ng-if="step.state === $ctrl.state.progress.states.complete"
-                    class="step-icon complete-icon"
-                    name="'talend-check'"
+                        ng-if="step.state === $ctrl.state.progress.states.complete"
+                        class="step-icon complete-icon"
+                        name="'talend-check'"
                 />
             </li>
-    	</ol>
+        </ol>
+    </div>
 </talend-modal>

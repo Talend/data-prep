@@ -14,7 +14,6 @@
 const PREFIX = 'org.talend.dataprep.';
 const DATASETS_SORT_KEY = 'org.talend.dataprep.datasets.sort';
 const EXPORT_PARAMS_KEY = 'org.talend.dataprep.export.params';
-const FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
 const LOOKUP_DATASETS_KEY = 'org.talend.dataprep.lookup_datasets';
 const LOOKUP_DATASETS_SORT_KEY = 'org.talend.dataprep.lookup_datasets_sort';
 const LOOKUP_DATASETS_ORDER_KEY = 'org.talend.dataprep.lookup_datasets_order';
@@ -115,33 +114,6 @@ export default class StorageService {
      */
 	removeFilter(entityId) {
 		return this.removeItem(PREFIX_FILTER + entityId);
-	}
-
-    // --------------------------------------------------------------------------------------------
-    // -------------------------------------------Feedback-----------------------------------------
-    // --------------------------------------------------------------------------------------------
-    /**
-     * @ngdoc method
-     * @name saveFeedbackUserMail
-     * @methodOf data-prep.services.utils.service:StorageService
-     * @param {any} value The value to save
-     * @description Save the value with the provided key in localStorage.
-     * The value us stringified to get back the same type.
-     */
-	saveFeedbackUserMail(value) {
-		this.setItem(FEEDBACK_USER_MAIL_KEY, value);
-	}
-
-    /**
-     * @ngdoc method
-     * @name getFeedbackUserMail
-     * @methodOf data-prep.services.utils.service:StorageService
-     * @description Get the value associated to the provided key.
-     * The result have the same type as the saved value.
-     * @returns {string} The value associated to the provided key.
-     */
-	getFeedbackUserMail() {
-		return this.getItem(FEEDBACK_USER_MAIL_KEY, '');
 	}
 
     // --------------------------------------------------------------------------------------------

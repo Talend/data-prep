@@ -39,12 +39,14 @@ export default class ConfirmService {
 	 * @description Show the confirm modal element and return a promise that will be resolve on button click or modal dismiss
 	 * Example : ConfirmService.confirm(['First text', 'Second text'], {translateArg: 'value'})
 	 */
-	confirm(textIds, textArgs, deletion) {
-		this.$translate(textIds, textArgs)
+	confirm(title, textIds, textArgs, deletion) {
+		this.$translate(title).then((translation) => {
+			this.$translate(textIds, textArgs)
 			.then(translations => textIds.map(id => translations[id]))
 			.then((texts) => {
-				this.StateService.showConfirmationModal(texts, deletion);
+				this.StateService.showConfirmationModal(translation, texts, deletion);
 			});
+		});
 
 		return new Promise((res, rej) => {
 			this.resolve = res;

@@ -13,34 +13,31 @@
   ~ ============================================================================
   -->
 
-<div class="transformation-form">
-    <form ng-submit="formCtrl.paramForm.$valid && formCtrl.transformWithParam()"
-          name="formCtrl.paramForm">
+<form ng-submit="formCtrl.paramForm.$valid && formCtrl.transformWithParam()"
+      name="formCtrl.paramForm">
+    <transform-params parameters="formCtrl.transformation.parameters"
+                      is-readonly="formCtrl.isReadonly">
+    </transform-params>
 
-        <transform-params parameters="formCtrl.transformation.parameters"
-                          is-readonly="formCtrl.isReadonly">
-        </transform-params>
+    <transform-cluster-params
+            ng-if="formCtrl.transformation.cluster"
+            details="formCtrl.transformation.cluster"
+            is-readonly="formCtrl.isReadonly">
+    </transform-cluster-params>
 
-        <transform-cluster-params
-                ng-if="formCtrl.transformation.cluster"
-                details="formCtrl.transformation.cluster"
-                is-readonly="formCtrl.isReadonly">
-        </transform-cluster-params>
+    <div class="modal-buttons">
+        <button ng-if="!formCtrl.isReadonly"
+                type="submit"
+                class="btn btn-primary"
+                ng-disabled="formCtrl.paramForm.$invalid || formCtrl.isTransformationInProgress"
+                ng-mouseleave="formCtrl.submitHoverOff()"
+                ng-mouseenter="formCtrl.submitHoverOn()"
+                translate-once="SUBMIT"
+                data-feature="{{ ::formCtrl.feature }}.submit"></button>
 
-        <div class="param-buttons">
-            <button ng-if="!formCtrl.isReadonly"
-                    type="submit"
-                    class="btn btn-primary"
-                    ng-disabled="formCtrl.paramForm.$invalid || formCtrl.isTransformationInProgress"
-                    ng-mouseleave="formCtrl.submitHoverOff()"
-                    ng-mouseenter="formCtrl.submitHoverOn()"
-                    translate-once="SUBMIT"
-                    data-feature="{{ ::formCtrl.feature }}.submit"></button>
-
-            <a ng-if="formCtrl.transformation.docUrl"
-               href="{{::formCtrl.transformation.docUrl}}"
-               translate-once="ACTION_HELP"
-               target="_blank"></a>
-        </div>
-    </form>
-</div>
+        <a ng-if="formCtrl.transformation.docUrl"
+           href="{{::formCtrl.transformation.docUrl}}"
+           translate-once="ACTION_HELP"
+           target="_blank"></a>
+    </div>
+</form>

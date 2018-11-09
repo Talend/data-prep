@@ -13,22 +13,36 @@
   ~ ============================================================================
   -->
 
-<div class="modal" ng-class="::{fullscreen:talendModalCtrl.fullscreen}">
+<div class="modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="tc-dialog-header"
+     tabindex="-1"
+     ng-class="::{fullscreen: talendModalCtrl.fullscreen, 'modal-large': talendModalCtrl.large}">
     <input type="checkbox"
            class="modal-state"
            aria-hidden="true"
-           ng-model="talendModalCtrl.state"/>
+           ng-model="talendModalCtrl.state" />
 
-    <div class=" modal-dialog modal-window" role="document">
-
-        <div class="modal-content modal-inner" tabindex="-1">
-            <button type="button"
-                    class="btn btn-link talend-modal-close"
-                    aria-label="{{ 'CLOSE' | translate }}"
-                    ng-class="::{'modal-header-close':talendModalCtrl.fullscreen, 'modal-close': !talendModalCtrl.fullscreen}"
-                    ng-show="::(talendModalCtrl.closeButton)"
-            ></button>
-
+    <div class=" modal-dialog modal-window">
+        <div class="modal-content modal-inner" role="document">
+            <div class="modal-header">
+                <button type="button"
+                        class="talend-modal-close close"
+                        ng-show="::(talendModalCtrl.closeButton)"
+                >
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">{{ 'CLOSE' | translate }}</span>
+                </button>
+                <h4 id="tc-dialog-header"
+                    class="modal-title">
+                    {{ talendModalCtrl.modalTitle }}
+                </h4>
+                <h3 class="modal-subtitle"
+                    ng-if="talendModalCtrl.modalSubtitle">
+                    {{ talendModalCtrl.modalSubtitle }}
+                </h3>
+            </div>
             <ng-transclude></ng-transclude>
         </div>
     </div>

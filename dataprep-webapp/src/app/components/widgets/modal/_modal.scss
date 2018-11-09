@@ -12,365 +12,188 @@
   ============================================================================*/
 
 .modal {
-	///////////////////////////////////////////////////////////////////////////////////
-	$base-border-color: gainsboro !default;
-	$base-border-radius: 3px !default;
-	$base-background-color: white !default;
-	$base-line-height: 1.5em !default;
-	$base-accent-color: #477DCA !default;
-	$dark-gray: #333 !default;
-	$light-gray: #DDD !default;
-	$medium-screen: 640em !default;
-	$large-screen: 860em !default;
-	$x-large-screen: 1824em !default;
-	$base-font-color: $dark-gray !default;
-	$background-transparent: rgba(0, 0, 0, 0.70);
+  ///////////////////////////////////////////////////////////////////////////////////
+  $medium-screen: 65rem !default;
+  $large-screen: 90rem !default;
+  $x-large-screen: 1824em !default;
+  $background-transparent: rgba(0, 0, 0, 0.70);
 
-	$navigation-background-top: rgba(85, 89, 100, 0.8);
-	$navigation-background-bottom: rgb(85, 89, 100);
-	$navigation-border: #333;
-	$navigation-border-height: 1px;
-	$navigation-color: white;
-	$navigation-height: 51px;
-	$navigation-item-space: 10px;
+  $navigation-background-top: rgba(85, 89, 100, 0.8);
+  $navigation-background-bottom: rgb(85, 89, 100);
+  $navigation-border: #333;
+  $navigation-border-height: 1px;
+  $navigation-color: white;
+  $navigation-height: 51px;
+  $navigation-item-space: 10px;
+  //////////////////////////////////////////////////////////////////////////////////
 
-	p {
-		line-height: $base-line-height;
-	}
-	//////////////////////////////////////////////////////////////////////////////////
+  $modal-trigger-image-width: 300px;
 
-	$modal-padding: 4em;
-	$modal-padding-top: 3em;
-	$modal-background: $base-background-color;
-	$modal-close-color: $light-gray;
-	$modal-image-height: 135px;
-	$modal-image-width: $modal-image-height;
-	$modal-trigger-image-width: 300px;
+  label {
+    cursor: pointer;
+    margin-bottom: 0;
+  }
 
-	color: $base-font-color;
+  label img {
+    border-radius: $modal-trigger-image-width / 2;
+    display: block;
+    max-width: $modal-trigger-image-width;
+  }
 
-	label {
-		cursor: pointer;
-		margin-bottom: 0;
-	}
+  .modal-state {
+    display: none;
+  }
 
-	label img {
-		border-radius: $modal-trigger-image-width / 2;
-		display: block;
-		max-width: $modal-trigger-image-width;
-	}
+  .modal-window { // overlay
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    min-height: 100vh;
+    background: $background-transparent;
+    opacity: 0;
+    text-align: left;
+    visibility: hidden;
+    z-index: 30;
 
-	.modal-state {
-		display: none;
-	}
+    @media(max-width: $medium-screen) {
+      padding-top: 2em;
+    }
 
-	.modal-window { // overlay
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-		min-height: 100vh;
-		background: $background-transparent;
-		opacity: 0;
-		text-align: left;
-		visibility: hidden;
-		z-index: 30;
+    @media(max-width: $large-screen) {
+      padding-top: 4em;
+    }
 
-		@media(max-width: $medium-screen) {
-			padding-top: 2em;
-		}
+    @media(max-width: $x-large-screen) {
+      padding-top: 6em;
+    }
 
-		@media(max-width: $large-screen) {
-			padding-top: 4em;
-		}
+    .modal-bg {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      cursor: pointer;
+    }
+  }
 
-		@media(max-width: $x-large-screen) {
-			padding-top: 6em;
-		}
+  .modal-dialog {
+    display: block;
+    max-height: none;
 
-		.modal-bg {
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			cursor: pointer;
-		}
-	}
+    &:before,
+    &:after {
+      content: none;
+    }
+  }
 
-	.modal-close {
-		position: absolute;
-		top: ($modal-padding-top /2);
-		right: ($modal-padding /2);
-		width: 2em;
-		height: 2em;
-		background: $modal-background;
-		cursor: pointer;
-		z-index: 1;
+  .modal-inner {
+    margin: auto;
+    overflow: hidden;
+    position: relative;
+    width: $medium-screen;
 
-		&:after,
-		&:before {
-			position: absolute;
-			top: 3px;
-			right: 3px;
-			bottom: 0;
-			left: 50%;
-			transform: rotate(45deg);
-			width: 0.15em;
-			height: 2em;
-			background: $modal-close-color;
-			content: '';
-			display: block;
-			margin: -3px 0 0 -1px;
-		}
+    @media(max-width: $medium-screen) {
+      width: 80%;
+    }
 
-		&:hover:after,
-		&:hover:before {
-			background: darken($modal-close-color, 10%);
-		}
+    @media(max-width: $large-screen) {
+      width: 900px;
+    }
 
-		&:before {
-			transform: rotate(-45deg);
-		}
-	}
+    .modal-content {
+      @media(max-width: $medium-screen) {
+        columns: 2 8em;
+      }
+    }
 
-	.modal-dialog {
-		display: block;
-		max-height: none;
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
 
-		&:before,
-		&:after {
-			content: none;
-		}
-	}
+      .btn-default {
+        margin-right: auto;
+      }
+    }
 
-	.modal-inner {
-		background: $modal-background;
-		border-radius: $base-border-radius;
-		margin: auto;
-		overflow: hidden;
-		padding: $modal-padding / 2;
-		padding-top: $modal-padding-top;
-		position: relative;
-		width: 95%;
+    .modal-form-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
 
-		@media(max-width: $medium-screen) {
-			width: 80%;
-		}
+      .param-name {
+        flex-basis: 150px;
+        flex-grow: 1;
+      }
 
-		@media(max-width: $large-screen) {
-			width: 900px;
-		}
+      .param-input {
+        flex-basis: 250px;
+        flex-grow: 2;
+        margin: 0;
+      }
+    }
+  }
 
-		h1 {
-			color: $base-font-color;
-			margin-bottom: 0.6em;
-			text-align: left;
-			text-transform: capitalize;
-		}
+  &.modal-large {
+    .modal-inner {
+      width: $large-screen;
+    }
+  }
 
-		.modal-title {
-			padding: 5px 5px 0;
-			margin-top: $modal-padding / 2 - $modal-padding-top;
-			border-bottom: 1px solid $medium-gray;
-			font-weight: 300;
-			font-size: 1.7em;
-			text-transform: uppercase;
+  .modal-state:checked + .modal-window {
+    visibility: visible;
+    opacity: 1;
+    animation: fadeIn 0.25s;
+  }
 
-			height: 45px;
-			overflow: hidden;
-		}
+  .modal-state:checked + .modal-window .modal-inner {
+    top: 0.5em;
+  }
 
-		.modal-subtitle {
-			color: $dark-gray;
-			margin-bottom: 0.6em;
-			padding: 5px 10px 0;
-			font-style: italic;
-		}
+  &.fullscreen {
+    .modal-window {
+      padding: 0;
 
-		.modal-intro {
-			font-weight: 800;
-		}
+      .modal-inner {
+        overflow: auto;
 
-		.modal-content {
-			color: $base-font-color;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
 
-			@media(max-width: $medium-screen) {
-				columns: 2 8em;
-			}
-		}
+        padding: 0;
+        top: 0 !important;
+        left: 0;
+      }
 
-		.modal-buttons {
-			display: flex;
-			justify-content: space-between;
-			padding-top: 10px;
-			border-top: 1px solid $light-gray;
-		}
+      .modal-body {
+        height: calc(100% - #{$navigation-height});
+        width: 100%;
 
-		.modal-form-row {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			align-items: center;
-			margin-bottom: 10px;
-
-			.param-name {
-				flex-basis: 150px;
-				flex-grow: 1;
-			}
-
-			.param-input {
-				flex-basis: 250px;
-				flex-grow: 2;
-				margin: 0;
-			}
-		}
-
-		a.cta {
-			color: white;
-			display: inline-block;
-			margin-right: 0.5em;
-			margin-top: 1em;
-
-			&:last-child {
-				padding: 0 2em;
-			}
-		}
-
-	}
-
-	.modal-state:checked + .modal-window {
-		visibility: visible;
-		opacity: 1;
-		animation: fadeIn 0.25s;
-	}
-
-	.modal-state:checked + .modal-window .modal-inner {
-		top: 0.5em;
-	}
-
-	&.fullscreen {
-		.modal-window {
-			padding: 0;
-
-			.modal-inner {
-				overflow: auto;
-
-				width: 100%;
-				height: 100%;
-				max-height: 100%;
-
-				padding: 0;
-				top: 0 !important;
-				left: 0;
-			}
-
-			.modal-header-close {
-				width: $navigation-height;
-				height: $navigation-height;
-				line-height: $navigation-height - 1px;
-				cursor: pointer;
-
-				position: absolute;
-				right: 0;
-				top: 0;
-
-				&:after,
-				&:before {
-					position: absolute;
-					top: $navigation-height/4;
-					right: 0;
-					bottom: 0;
-					left: $navigation-height/2-2px;
-					transform: rotate(45deg);
-					width: 0.15em;
-					height: 1.5em;
-					background: $modal-close-color;
-					content: '';
-					display: block;
-				}
-
-				&:hover:after,
-				&:hover:before {
-					background: darken($modal-close-color, 10%);
-				}
-
-				&:before {
-					transform: rotate(-45deg);
-				}
-			}
-
-			.modal-header {
-				display: table;
-				height: $navigation-height;
-				min-height: $navigation-height;
-				width: 100%;
-
-				background: linear-gradient($navigation-background-top, $navigation-background-bottom) left repeat;
-				border-bottom: 1px solid darken($navigation-border, 10);
-
-				color: $navigation-color;
-
-				> ul {
-					> * {
-						display: table-cell;
-						line-height: $navigation-height - $navigation-border-height;
-						padding-left: $navigation-item-space;
-						padding-right: $navigation-item-space;
-						vertical-align: middle;
-						border-right: 1px solid grey;
-
-						.title {
-							font-weight: bold;
-						}
-
-						input[type=search] {
-							box-sizing: border-box;
-							border-radius: $base-border-radius;
-							border: $dark-gray;
-							color: $black;
-							font-size: 0.9em;
-							font-style: italic;
-							margin: 0;
-							padding: 0.5em 0.8em;
-							width: 100%;
-						}
-
-						input {
-							display: inline-block;
-							margin: 0;
-							width: auto;
-						}
-					}
-				}
-			}
-
-			.modal-body {
-				height: calc(100% - #{$navigation-height});
-				width: 100%;
-
-				background: white;
-				margin-left: auto;
-				margin-right: auto;
-			}
-		}
-	}
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  }
 }
 
 .modal-open {
-	.modal {
-		display: block;
+  .modal {
+    display: block;
 
-		&-window {
-			margin: 0;
-			padding: 0;
-			width: auto;
-			overflow: hidden;
-		}
+    &-window {
+      margin: 0;
+      padding: 0;
+      width: auto;
+      overflow: hidden;
+    }
 
-		&-content {
-			flex-basis: auto;
-			margin: 1rem auto auto;
-		}
-	}
+    &-content {
+      flex-basis: auto;
+      margin: 1rem auto auto;
+    }
+  }
 }

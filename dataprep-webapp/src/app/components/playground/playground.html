@@ -21,13 +21,11 @@
                        lookup-visible="playgroundCtrl.state.playground.lookup.visibility"
                        lookup-loading="playgroundCtrl.state.playground.lookup.loading"
                        parameters-visible="playgroundCtrl.state.playground.parameters.visible"
-                       feedback-visible="!playgroundCtrl.state.ee"
                        preparation-picker="playgroundCtrl.$stateParams.datasetid"
                        enable-export="playgroundCtrl.state.export.exportTypes.length"
                        on-parameters="playgroundCtrl.toggleParameters()"
                        on-lookup="playgroundCtrl.toggleLookup()"
                        on-onboarding="playgroundCtrl.startOnBoarding('playground')"
-                       on-feedback="playgroundCtrl.openFeedbackForm()"
                        on-close="playgroundCtrl.beforeClose()"
                        on-preparation-picker="playgroundCtrl.showPreparationPicker()"
                        is-readonly="playgroundCtrl.state.playground.isReadOnly"
@@ -96,36 +94,37 @@
         class="preparation-modal preparation-save-discard-modal"
         fullscreen="false"
         ng-if="playgroundCtrl.state.playground.isNameValidationVisible"
-        state="playgroundCtrl.state.playground.isNameValidationVisible">
-    <div class="modal-title" translate-once="SAVE_CHANGE"></div>
-    <br/>
-
-    <div translate-once="SAVE_CHANGE_DESCRITION_1"></div>
-    <div translate-once="SAVE_CHANGE_DESCRITION_2"></div>
+        state="playgroundCtrl.state.playground.isNameValidationVisible"
+        modal-title="SAVE_CHANGE">
 
     <form id="playground-save-form"
           name="playgroundCtrl.savePreparationForm"
           ng-submit="playgroundCtrl.savePreparationForm.$valid && playgroundCtrl.confirmSaveOnClose()">
 
-        <folder-selection
-                ng-model="playgroundCtrl.destinationFolder"
-                is-loading="playgroundCtrl.state.playground.isSavingPreparationFoldersLoading"
-                tree="playgroundCtrl.state.playground.savingPreparationFolders"
-        >
-        </folder-selection>
+        <div class="modal-body">
+            <div translate-once="SAVE_CHANGE_DESCRITION_1"></div>
+            <div translate-once="SAVE_CHANGE_DESCRITION_2"></div>
 
-        <div class="modal-form-row">
-            <label class="param-name" translate-once="PREPARATION_NAME"></label>
-            <input id="playground-save-name-input"
-                   type="text"
-                   class="form-control param-input"
-                   translate-once-placeholder="ENTER_PREPARATION_NAME"
-                   ng-model="playgroundCtrl.state.playground.preparationName"
-                   ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
-                   can-be-blank="false"/>
+            <folder-selection
+                    ng-model="playgroundCtrl.destinationFolder"
+                    is-loading="playgroundCtrl.state.playground.isSavingPreparationFoldersLoading"
+                    tree="playgroundCtrl.state.playground.savingPreparationFolders"
+            >
+            </folder-selection>
+
+            <div class="modal-form-row">
+                <label class="param-name" translate-once="PREPARATION_NAME"></label>
+                <input id="playground-save-name-input"
+                       type="text"
+                       class="form-control param-input"
+                       translate-once-placeholder="ENTER_PREPARATION_NAME"
+                       ng-model="playgroundCtrl.state.playground.preparationName"
+                       ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
+                       can-be-blank="false" />
+            </div>
         </div>
 
-        <div class="modal-buttons">
+        <div class="modal-footer">
             <button ng-click="playgroundCtrl.discardSaveOnClose()"
                     type="button"
                     class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
@@ -148,9 +147,8 @@
         fullscreen="false"
         state="playgroundCtrl.state.playground.isPreprationPickerVisible"
         close-button="true"
-        ng-if="playgroundCtrl.state.playground.isPreprationPickerVisible">
-    <div class="modal-title" translate-once="CHOOSE_PREPARATION_TO_APPLY"></div>
-
+        ng-if="playgroundCtrl.state.playground.isPreprationPickerVisible"
+        modal-title="('CHOOSE_PREPARATION_TO_APPLY' | translate)">
     <preparation-picker
             dataset="playgroundCtrl.state.playground.dataset"
             fetch-preparations="playgroundCtrl.fetchCompatiblePreparations(datasetId)"

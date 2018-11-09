@@ -14,98 +14,115 @@
   -->
 
 
-<div class="modal-title" translate-once="ADD_PREPARATION_MODAL_TITLE"></div>
-
-<dataset-upload-status class="base-dataset-upload"
-					 id="upload-base-dataset"
-					 dataset="$ctrl.state.dataset.uploadingDataset">
-</dataset-upload-status>
-
-<div class="preparation-creator-header">
-	<span class="filters-list-title" translate-once="EXISTING_DATASETS"></span>
-	<input id="filtered-datasets-search"
-			type="search"
-			class="form-control action-search no-focus"
-			translate-once-placeholder="FIND_DATASETS"
-			ng-model="$ctrl.enteredFilterText"
-			ng-model-options="{debounce: { default: 300, blur: 0 }}"
-			ng-change="$ctrl.applyNameFilter()"
-			ng-disabled="$ctrl.importDisabled"
-			talend-search-input/>
-</div>
-
-<div class="panels">
-	<div class="filters-left-panel"
-		 ng-class="{'disabled-import': $ctrl.importDisabled}">
-		<theme-filters
-				filters="::$ctrl.datasetService.filters"
-				selected-filter="$ctrl.selectedFilter"
-				disable-selection="$ctrl.importDisabled"
-				on-select="$ctrl.loadDatasets(filter)"></theme-filters>
-
-		<input type="file"
-				id="localFileImport"
-				name="datasetFile"
-				class="ng-hide"
-				ng-file-select
-				accept="*.csv,*.xlsx,*.xls"
-				ng-model="$ctrl.datasetFile"
-				ng-file-change="$ctrl.import()"/>
-
-		<div class="import-button-panel"
-			 title="{{ $ctrl.getImportTitle() | translate }}"
-			 ng-class="{ 'disabled-import' : $ctrl.alreadyExistingName || $ctrl.importDisabled }"
-			 ng-click="$ctrl.importFile()">
-			<div class="import-icon">
-				<div><img ng-src="assets/images/folder/folder_open_small-icon.png"/></div>
-			</div>
-
-			<div class="import-text">
-				<span class="import-title" translate-once="IMPORT_FILE"></span>
-				<div class="import-description" translate-once="IMPORT_FILE_DESCRIPTION"></div>
-			</div>
-		</div>
-	</div>
-
-	<div class="inventory-list" ng-class="{'disabled-import': $ctrl.importDisabled}">
-        <loader ng-if="$ctrl.isFetchingDatasets"></loader>
-		<div ng-if="!$ctrl.isFetchingDatasets"
-			 class="inventory-item-row"
-			 ng-repeat="dataset in $ctrl.filteredDatasets track by dataset.id"
-			 ng-click="$ctrl.importDisabled ? angular.noop(): $ctrl.selectBaseDataset(dataset)"
-			 ng-class="{'selected-dataset': dataset.id === $ctrl.baseDataset.id}">
-			<inventory-item
-					type="dataset"
-					item="dataset"
-					details="DATASET_DETAILS">
-			</inventory-item>
-		</div>
-		<div class="empty-message"
-			 ng-if="!$ctrl.isFetchingDatasets && $ctrl.filteredDatasets.length === 0"
-			 translate-once="NO_DATASET">
-		</div>
-	</div>
-</div>
-
 <form name="$ctrl.addPreparationForm" class="preparation-creator-form">
-	<span translate-once="NEW_PREPARATION_NAME" class="preparation-name-input"></span>
-	<span class="name-error" translate-once="NAME_ALREADY_EXISTS" ng-if="$ctrl.alreadyExistingName"></span>
-	<input type="text"
-			class="form-control"
-			ng-model="$ctrl.enteredName"
-			ng-disabled="$ctrl.importDisabled"
-			ng-change="$ctrl.checkExistingPrepName('user')"
-			required/>
-</form>
+    <div class="modal-body">
+        <dataset-upload-status class="base-dataset-upload"
+                               id="upload-base-dataset"
+                               dataset="$ctrl.state.dataset.uploadingDataset">
+        </dataset-upload-status>
 
-<div class="modal-buttons">
-	<button type="button"
-			class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
-			ng-disabled="$ctrl.importDisabled"
-			translate-once="CANCEL"></button>
-	<button class="btn btn-primary modal-primary-button"
-			data-feature="preparation.create"
-			translate-once="CONFIRM"
-			ng-click="$ctrl.createPreparation()"
-			ng-disabled="$ctrl.importDisabled || $ctrl.anyMissingEntries()"></button>
-</div>
+        <div class="preparation-creator-header">
+            <span class="filters-list-title" translate-once="EXISTING_DATASETS"></span>
+            <input id="filtered-datasets-search"
+                   type="search"
+                   class="form-control action-search no-focus"
+                   translate-once-placeholder="FIND_DATASETS"
+                   ng-model="$ctrl.enteredFilterText"
+                   ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                   ng-change="$ctrl.applyNameFilter()"
+                   ng-disabled="$ctrl.importDisabled"
+                   talend-search-input />
+        </div>
+
+        <div class="panels">
+            <div class="filters-left-panel"
+                 ng-class="{'disabled-import': $ctrl.importDisabled}">
+                <theme-filters
+                        filters="::$ctrl.datasetService.filters"
+                        selected-filter="$ctrl.selectedFilter"
+                        disable-selection="$ctrl.importDisabled"
+                        on-select="$ctrl.loadDatasets(filter)"></theme-filters>
+
+                <input type="file"
+                       id="localFileImport"
+                       name="datasetFile"
+                       class="ng-hide"
+                       ng-file-select
+                       accept="*.csv,*.xlsx,*.xls"
+                       ng-model="$ctrl.datasetFile"
+                       ng-file-change="$ctrl.import()" />
+
+                <div class="import-button-panel"
+                     title="{{ $ctrl.getImportTitle() | translate }}"
+                     ng-class="{ 'disabled-import' : $ctrl.alreadyExistingName || $ctrl.importDisabled }"
+                     ng-click="$ctrl.importFile()">
+                    <div class="import-icon">
+                        <div><img ng-src="assets/images/folder/folder_open_small-icon.png" /></div>
+                    </div>
+
+                    <div class="import-text">
+                        <span class="import-title" translate-once="IMPORT_FILE"></span>
+                        <div class="import-description" translate-once="IMPORT_FILE_DESCRIPTION"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="inventory-list" ng-class="{'disabled-import': $ctrl.importDisabled}">
+                <loader ng-if="$ctrl.isFetchingDatasets"></loader>
+                <div ng-if="!$ctrl.isFetchingDatasets"
+                     class="inventory-item-row"
+                     ng-repeat="dataset in $ctrl.filteredDatasets track by dataset.id"
+                     ng-click="$ctrl.importDisabled ? angular.noop(): $ctrl.selectBaseDataset(dataset)"
+                     ng-class="{'selected-dataset': dataset.id === $ctrl.baseDataset.id}">
+                    <inventory-item
+                            type="dataset"
+                            item="dataset"
+                            details="DATASET_DETAILS">
+                    </inventory-item>
+                </div>
+                <div class="empty-message"
+                     ng-if="!$ctrl.isFetchingDatasets && $ctrl.filteredDatasets.length === 0"
+                     translate-once="NO_DATASET">
+                </div>
+            </div>
+        </div>
+
+        <div class="">
+            <div
+                    class="form-group"
+                    ng-class="{'has-error': $ctrl.alreadyExistingName}"
+            >
+                <input
+                        id="preparation-name"
+                        type="text"
+                        class="form-control"
+                        ng-model="$ctrl.enteredName"
+                        ng-disabled="$ctrl.importDisabled"
+                        ng-change="$ctrl.checkExistingPrepName('user')"
+                        required />
+                <label
+                        for="preparation-name"
+                        class="control-label preparation-name-input"
+                        translate-once="NEW_PREPARATION_NAME"
+                ></label>
+                <p
+                        ng-if="$ctrl.alreadyExistingName"
+                        class="name-error"
+                        translate-once="NAME_ALREADY_EXISTS"
+                />
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button"
+                class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
+                ng-disabled="$ctrl.importDisabled"
+                translate-once="CANCEL"></button>
+        <button class="btn btn-primary modal-primary-button"
+                data-feature="preparation.create"
+                translate-once="ADD_PREPARATION"
+                ng-click="$ctrl.createPreparation()"
+                ng-disabled="$ctrl.importDisabled || $ctrl.anyMissingEntries()"></button>
+    </div>
+</form>

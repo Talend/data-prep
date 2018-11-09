@@ -1,16 +1,19 @@
 <talend-modal fullscreen="false"
               state="$ctrl.ImportService.datasetNameModal"
-              ng-if="$ctrl.ImportService.datasetNameModal">
-    <span translate-once="ENTER_DATASET_NAME"></span>
+              ng-if="$ctrl.ImportService.datasetNameModal"
+              modal-title="('ENTER_DATASET_NAME' | translate)">
     <form name="$ctrl.ImportService.datasetNameForm"
           ng-submit="$ctrl.ImportService.datasetNameForm.$valid && $ctrl.ImportService.onImportNameValidation()">
-        <input type="text"
-               class="form-control"
-               ng-model="$ctrl.ImportService.datasetName"
-               required
-               ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>
 
-        <div class="modal-buttons">
+        <div class="modal-body">
+            <input type="text"
+                   class="form-control"
+                   ng-model="$ctrl.ImportService.datasetName"
+                   required
+                   ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}" />
+        </div>
+
+        <div class="modal-footer">
             <button class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
                     type="button"
                     translate-once="CANCEL"></button>

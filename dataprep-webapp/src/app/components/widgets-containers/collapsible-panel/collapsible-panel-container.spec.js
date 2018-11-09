@@ -27,7 +27,7 @@ const statusItemWithActions = {
 	status: 'inProgress',
 	label: 'in progress',
 	icon: 'fa fa-check',
-	actions: ['user:logout', 'modal:feedback'],
+	actions: ['user:logout'],
 };
 
 const actionItem = {

@@ -33,15 +33,14 @@
 <talend-modal fullscreen="false"
               state="menuCtrl.showModal"
               close-button="true"
-              ng-if="menuCtrl.showModal">
-
-    <div class="modal-title">{{ menuCtrl.selectedMenu.label }}</div>
-    <div class="modal-subtitle">{{ menuCtrl.selectedMenu.description }}</div>
-
-    <loader ng-if="menuCtrl.selectedMenu.dynamic && menuCtrl.dynamicFetchInProgress"></loader>
+              ng-if="menuCtrl.showModal"
+              modal-title="menuCtrl.selectedMenu.label"
+              modal-subtitle="menuCtrl.selectedMenu.description">
+    <div class="modal-body" ng-if="menuCtrl.selectedMenu.dynamic && menuCtrl.dynamicFetchInProgress">
+        <loader></loader>
+    </div>
 
     <transform-form transformation="menuCtrl.selectedMenu"
                     on-submit="menuCtrl.appendClosure(menuCtrl.selectedMenu, menuCtrl.selectedScope)(params)"
                     is-transformation-in-progress="menuCtrl.transformationInProgress"></transform-form>
-
 </talend-modal>

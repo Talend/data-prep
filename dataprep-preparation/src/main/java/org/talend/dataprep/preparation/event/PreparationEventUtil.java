@@ -53,14 +53,14 @@ public class PreparationEventUtil {
     private SecurityProxy securityProxy;
 
     public void performUpdateEvent(String datasetId) {
-        LOGGER.debug("Performing update event for dataset {}", datasetId);
+        LOGGER.info("Performing update event for dataset {}", datasetId);
         cleanTransformationCache(datasetId);
         cleanTransformationMetadataCache(datasetId);
         updatesFromDataSetMetadata(datasetId);
     }
 
     private void cleanTransformationCache(String datasetId) {
-        LOGGER.debug("Evicting transformation cache entry for dataset #{}", datasetId);
+        LOGGER.info("Evicting transformation cache entry for dataset #{}", datasetId);
         TransformationCacheKey transformationCacheKey =
                 cacheKeyGenerator.generateContentKey(datasetId, null, null, null, null, null);
         cacheEventProcessingUtil.processCleanCacheEvent(transformationCacheKey, Boolean.TRUE);
@@ -68,7 +68,7 @@ public class PreparationEventUtil {
     }
 
     private void cleanTransformationMetadataCache(String datasetId) {
-        LOGGER.debug("Evicting transformation metadata cache entry for dataset #{}", datasetId);
+        LOGGER.info("Evicting transformation metadata cache entry for dataset #{}", datasetId);
         try {
             securityProxy.asTechnicalUser();
             preparationRepository
@@ -97,6 +97,7 @@ public class PreparationEventUtil {
      * <code>dataSetId</code>).
      */
     private void updatesFromDataSetMetadata(String dataSetId) {
+        LOGGER.info("Updating metadata for dataset #{}", dataSetId);
         DataSetMetadata dataSetMetadata;
         try {
             securityProxy.asTechnicalUserForDataSet();
@@ -133,5 +134,6 @@ public class PreparationEventUtil {
         } finally {
             securityProxy.releaseIdentity();
         }
+        LOGGER.debug("Updating metadata for dataset #{} done", dataSetId);
     }
 }

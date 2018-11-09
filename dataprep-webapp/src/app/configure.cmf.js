@@ -1,8 +1,9 @@
 import api, {
-	store as cmfStore,
-	sagaRouter,
 	actions as cmfActions,
+	httpMiddleware,
+	sagaRouter,
 	sagas as cmfSagas,
+	store as cmfStore,
 } from '@talend/react-cmf';
 import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
@@ -105,6 +106,18 @@ export default function initialize(additionalConfiguration = {}) {
 		cmfStore.setRouterMiddleware(routerMiddleware(browserHistory));
 
 		/**
+		 * Register http middleware
+		 */
+		cmfStore.setHttpMiddleware(
+			httpMiddleware({
+				security: {
+					CSRFTokenCookieKey: 'XSRF-TOKEN',
+					CSRFTokenHeaderKey: 'X-XSRF-TOKEN',
+				},
+			}),
+		);
+
+		/**
 		 * Register your app reducers
 		 */
 		let reducers = {};
@@ -116,7 +129,14 @@ export default function initialize(additionalConfiguration = {}) {
 		}
 
 		const sagaMiddleware = createSagaMiddleware();
-		const store = cmfStore.initialize(reducers, initialState, undefined, [sagaMiddleware]);
+		const middlewares = [sagaMiddleware];
+		const additionalMiddlewares = additionalConfiguration.middlewares;
+		if (additionalMiddlewares) {
+			middlewares.concat(additionalMiddlewares);
+		}
+
+		const store = cmfStore.initialize(reducers, initialState, undefined, middlewares);
+
 		sagaMiddleware.run(rootSaga);
 
 		api.registerInternals();
@@ -168,6 +188,7 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('folder:remove:open', actions.folder.openRemoveFolderModal);
 		registerActionCreator('folder:remove:close', actions.folder.closeRemoveFolderModal);
 		registerActionCreator('preparation:fetch', actions.preparation.fetch);
+		registerActionCreator('preparation:create', actions.preparation.create);
 		registerActionCreator('preparation:copy', actions.preparation.copy);
 		registerActionCreator('preparation:move', actions.preparation.move);
 		registerActionCreator('preparation:remove', actions.preparation.remove);

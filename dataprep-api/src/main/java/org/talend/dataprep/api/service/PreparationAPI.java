@@ -23,6 +23,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_HEAD_STEP_USING_DELETED_DATASET;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order;
 import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -153,6 +154,10 @@ public class PreparationAPI extends APIService {
 
         try {
             final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+            if (StringUtils.isEmpty(preparation.getName())) {
+                preparation.setName((dataSetMetadata.getName() != null ? dataSetMetadata.getName() + " " : "")
+                        + message("preparation.create.suffix"));
+            }
             final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
             preparation.setRowMetadata(rowMetadata);
         } catch (TDPException e) {

@@ -13,11 +13,11 @@
 
 package org.talend.dataprep.qa.step;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.ExcelComparator;
+import org.talend.dataprep.qa.util.FileComparator;
 
 import cucumber.api.java.en.Then;
 
@@ -51,8 +52,7 @@ public class FileStep extends DataPrepStep {
         try (InputStream tempFileStream = Files.newInputStream(tempFile);
                 InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {
 
-            if (FileSystems.getDefault().getPathMatcher("glob:*.xlsx").matches(tempFile.getFileName())) {
-
+            if (tempFile.getFileName().endsWith(".xlsx")) {
                 if (!ExcelComparator.compareTwoFile(new XSSFWorkbook(tempFileStream),
                         new XSSFWorkbook(expectedFileStream))) {
                     fail("Temporary file " + temporaryFilename + " isn't the same as the expected file "
@@ -63,6 +63,20 @@ public class FileStep extends DataPrepStep {
                 fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename
                         + ":\n" + String.join("\n", Files.readAllLines(tempFile)));
             }
+        }
+    }
+
+    @Then("^I check that \"(.*)\" temporary file contains the same lines as \"(.*)\" file$")
+    public void thenICheckThatFilesContainSameLines(String temporaryFilename, String expectedFilename)
+            throws IOException {
+        LOG.debug("I check that {} temporary file contains the same lines as {} file", temporaryFilename,
+                expectedFilename);
+
+        Path tempFile = context.getTempFile(temporaryFilename).toPath();
+        try (InputStream tempFileStream = Files.newInputStream(tempFile);
+                InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {
+
+            assertTrue(FileComparator.doesFilesContainSameLines(expectedFileStream, tempFileStream));
         }
     }
 }

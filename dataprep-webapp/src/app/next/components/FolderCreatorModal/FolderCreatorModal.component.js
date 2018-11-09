@@ -87,7 +87,7 @@ class FolderCreatorModal extends React.Component {
 							type="text"
 							autoFocus
 							value={this.props.state.name}
-							ref={input => {
+							ref={(input) => {
 								this.input = input;
 							}}
 							onChange={this.onChange}

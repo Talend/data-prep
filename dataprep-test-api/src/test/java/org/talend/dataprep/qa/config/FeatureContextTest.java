@@ -9,6 +9,7 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import static org.talend.dataprep.qa.config.UnitTestsUtil.injectFieldInClass;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +27,7 @@ public class FeatureContextTest {
 
     @Test
     public void testGetSuffix() {
-        assertEquals(getSuffix(), "_123456789");
+        assertEquals("_123456789", getSuffix());
     }
 
     @Test
@@ -36,23 +37,23 @@ public class FeatureContextTest {
 
     @Test
     public void testSuffixName() {
-        assertEquals(suffixName(""), "_123456789");
-        assertEquals(suffixName("toto"), "toto_123456789");
+        assertEquals("_123456789", suffixName(""));
+        assertEquals("toto_123456789", suffixName("toto"));
     }
 
     @Test
     public void testSuffixNameDeactivated() {
         setUseSuffix(false);
-        assertEquals(suffixName(""), "");
-        assertEquals(suffixName("toto"), "toto");
+        assertEquals(StringUtils.EMPTY, suffixName(""));
+        assertEquals("toto", suffixName("toto"));
         setUseSuffix(true);
-        assertEquals(suffixName(""), "_123456789");
-        assertEquals(suffixName("toto"), "toto_123456789");
+        assertEquals("_123456789", suffixName(""));
+        assertEquals("toto_123456789", suffixName("toto"));
     }
 
     @Test
     public void testSuffixFolderName() {
-        assertEquals("", suffixFolderName(""));
+        assertEquals(StringUtils.EMPTY, suffixFolderName(StringUtils.EMPTY));
         assertEquals("/", suffixFolderName("/"));
         assertEquals("/folderA_123456789", suffixFolderName("/folderA"));
         assertEquals("/folderA_123456789/", suffixFolderName("/folderA/"));
@@ -63,7 +64,7 @@ public class FeatureContextTest {
     @Test
     public void testSuffixFolderNameDeactivated() {
         setUseSuffix(false);
-        assertEquals("", suffixFolderName(""));
+        assertEquals(StringUtils.EMPTY, suffixFolderName(StringUtils.EMPTY));
         assertEquals("/", suffixFolderName("/"));
         assertEquals("/folderA", suffixFolderName("/folderA"));
         assertEquals("/folderA/", suffixFolderName("/folderA/"));

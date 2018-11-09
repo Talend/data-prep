@@ -211,11 +211,18 @@ public class PreparationUtils {
     public static List<String> getPreparationIdForStepRowMetadata(final List<String> stepRowMetadataUpdated,
             final PreparationRepository repository) {
 
+        if (stepRowMetadataUpdated == null || stepRowMetadataUpdated.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         // we get all step from SRMD Id
         List<String> stepsId = repository //
-                .list(PersistentStep.class, in("rowMetadata", stepRowMetadataUpdated.toArray(new String[] {}))) //
+                .list(PersistentStep.class, in("rowMetadata", stepRowMetadataUpdated.toArray(new String[0]))) //
                 .map(PersistentStep::getId) //
                 .collect(Collectors.toList());
+
+        // we remove root step if present
+        stepsId.remove(Step.ROOT_STEP.getId());
 
         // we get all prep from previous step
         return repository //

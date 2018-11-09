@@ -16,6 +16,13 @@ function* fetch() {
 	}
 }
 
+function* create() {
+	while (true) {
+		const { payload } = yield take(actions.CREATE_PREPARATIONS);
+		yield call(effects.create, payload);
+	}
+}
+
 function* rename() {
 	while (true) {
 		const { payload } = yield take(actions.RENAME_PREPARATION);
@@ -75,6 +82,7 @@ function* openPreparationCreatorModal() {
 export default {
 	'preparation:copy': copy,
 	'preparation:move': move,
+	'preparation:create': create,
 	'preparation:fetch': fetch,
 	'preparation:rename:submit': rename,
 	'preparation:copy:open': openCopyModal,

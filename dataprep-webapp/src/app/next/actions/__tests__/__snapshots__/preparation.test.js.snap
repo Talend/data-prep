@@ -28,6 +28,15 @@ Object {
 }
 `;
 
+exports[`Preparation action should create a create preparation action 1`] = `
+Object {
+  "payload": Object {
+    "id": 42,
+  },
+  "type": "TDP_CREATE_PREPARATIONS",
+}
+`;
+
 exports[`Preparation action should create a fetch action 1`] = `
 Object {
   "payload": Object {

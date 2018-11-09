@@ -24,6 +24,7 @@
     },
     "sources": [
       "node_modules/@talend/dataset/lib/settings",
+      "node_modules/@talend/dataset/lib/settings-enhanced/",
       "src/app/next/settings"
     ],
     "destination": "build/settings.json"

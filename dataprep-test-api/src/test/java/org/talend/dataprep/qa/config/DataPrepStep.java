@@ -14,19 +14,16 @@
 package org.talend.dataprep.qa.config;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 
-import org.awaitility.core.ConditionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,13 +136,6 @@ public abstract class DataPrepStep {
         };
     }
 
-    protected class CleanAfterException extends RuntimeException {
-
-        CleanAfterException(String s) {
-            super(s);
-        }
-    }
-
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
         assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
@@ -154,6 +144,13 @@ public abstract class DataPrepStep {
                 expectedColumnNames.size(), actual.size());
         assertTrue("\"" + datasetOrPreparationName + "\" doesn't contain all expected columns.",
                 actual.containsAll(expectedColumnNames));
+    }
+
+    protected class CleanAfterException extends RuntimeException {
+
+        CleanAfterException(String s) {
+            super(s);
+        }
     }
 
 }

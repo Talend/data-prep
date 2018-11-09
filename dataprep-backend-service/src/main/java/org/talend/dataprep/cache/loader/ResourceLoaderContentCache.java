@@ -47,6 +47,8 @@ public class ResourceLoaderContentCache implements ContentCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceLoaderContentCache.class);
 
+    private static final String CACHE_PREFIX = "/cache/";
+
     @Autowired
     private ResourceResolver resolver;
 
@@ -60,16 +62,16 @@ public class ResourceLoaderContentCache implements ContentCache {
 
     private String getLocation(ContentCacheKey key, TimeToLive ttl) {
         if (ttl.getTime() > 0) {
-            return "/cache/" + key.getKey() + "." + (System.currentTimeMillis() + ttl.getTime());
+            return CACHE_PREFIX + key.getKey() + "." + (System.currentTimeMillis() + ttl.getTime());
         } else {
-            return "/cache/" + key.getKey();
+            return CACHE_PREFIX + key.getKey();
         }
     }
 
     private DeletableResource getResource(ContentCacheKey key) {
         try {
-            final DeletableResource[] patternMatches = resolver.getResources("/cache/" + key.getKey() + "*");
-            final DeletableResource[] directMatches = resolver.getResources("/cache/" + key.getKey());
+            final DeletableResource[] patternMatches = resolver.getResources(CACHE_PREFIX + key.getKey() + "*");
+            final DeletableResource[] directMatches = resolver.getResources(CACHE_PREFIX + key.getKey());
             final DeletableResource[] resources = new DeletableResource[patternMatches.length + directMatches.length];
             System.arraycopy(patternMatches, 0, resources, 0, patternMatches.length);
             System.arraycopy(directMatches, 0, resources, patternMatches.length, directMatches.length);
@@ -158,9 +160,15 @@ public class ResourceLoaderContentCache implements ContentCache {
     public void evictMatch(ContentCacheKey key) {
         LOGGER.debug("Evict match '{}'", key.getKey());
         try {
-            final DeletableResource[] resources = resolver.getResources("/cache/" + key.getPrefix() + "**");
+            final DeletableResource[] resources = resolver.getResources(CACHE_PREFIX + key.getPrefix() + "**");
             final Predicate<String> matcher = key.getMatcher();
-            stream(resources).filter(r -> matcher.test(r.getFilename())).forEach(r -> {
+            stream(resources).filter(r -> {
+                String fileName = r.getFilename();
+                if (fileName.contains(CACHE_PREFIX)) {
+                    fileName = fileName.substring(fileName.indexOf(CACHE_PREFIX) + CACHE_PREFIX.length());
+                }
+                return matcher.test(fileName);
+            }).forEach(r -> {
                 try {
                     LOGGER.debug("Delete file '{}'.", r.getFilename());
                     r.delete();
@@ -204,7 +212,7 @@ public class ResourceLoaderContentCache implements ContentCache {
     public void clear() {
         LOGGER.debug("Clear all");
         try {
-            resolver.clear("/cache/**");
+            resolver.clear(CACHE_PREFIX + "**");
         } catch (IOException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

@@ -12,8 +12,6 @@
 
 package org.talend.dataprep.cache;
 
-import org.talend.dataprep.cache.ContentCacheKey;
-
 /**
  *
  */

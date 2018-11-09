@@ -44,7 +44,7 @@ public class CacheEventProcessingUtil {
             } else {
                 cache.evict(cacheKey);
             }
-            LOGGER.debug("Deleting content cache key {} with partial match {}", cacheKey.getKey(), isPartialKey);
+            LOGGER.info("Deleting content cache key {} with partial match {}", cacheKey.getKey(), isPartialKey);
         } else {
             LOGGER.warn("Deleting all cache because we don't have key");
             cache.clear();

@@ -1,5 +1,5 @@
 @EnvOS @EnvOnPremise @EnvCloud @Action
-Feature: Check some features of Negate Boolean Action See
+Feature: Check some features of Negate Boolean Action
 
   # @see <a href="https://jira.talendforge.org/browse/TDP-6276">TDP-6276</a>
   # The Negate Boolean action should transform non-Boolean values in empty cells

@@ -11,6 +11,7 @@ import {
 import http from '../http';
 import PreparationService from '../../../services/preparation.service';
 import PreparationCopyMoveModal from '../../../components/PreparationCopyMoveModal';
+import { REDIRECT_WINDOW } from '../../../constants/actions';
 
 
 describe('preparation', () => {
@@ -44,6 +45,92 @@ describe('preparation', () => {
 		});
 	});
 
+	describe('create', () => {
+		it('should open preparation with default folder id', () => {
+			const payload = {
+				id: 'DATASET_ID',
+			};
+			const gen = effects.create(payload);
+
+			const effectPUT = gen.next().value.PUT.action;
+			expect(effectPUT.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effectPUT.collectionId).toBe('currentFolderId');
+			expect(effectPUT.data).toBe(effects.DEFAULT_FOLDER_ID);
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effectCALL = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effectCALL.fn).toEqual(http.post);
+			expect(effectCALL.args[0]).toEqual(
+				`/api/preparations?folder=${effects.DEFAULT_FOLDER_ID}`,
+			);
+
+			const PREPARATION_ID = 'PREPARATION_ID';
+			const effectPUT2 = gen.next({ data: PREPARATION_ID }).value.PUT.action;
+			expect(effectPUT2.type).toBe(REDIRECT_WINDOW);
+			expect(effectPUT2.payload).toEqual({ url: `/#/playground/preparation?prepid=${PREPARATION_ID}` });
+
+			expect(gen.next().done).toBeTruthy();
+		});
+
+		it('should open preparation with custom folder id', () => {
+			const CUSTOM_FOLDER_ID = 'FAKE_CUSTOM_FOLDER_ID';
+			const payload = {
+				id: 'DATASET_ID',
+				folderId: CUSTOM_FOLDER_ID,
+			};
+			const gen = effects.create(payload);
+
+			const effectPUT = gen.next().value.PUT.action;
+			expect(effectPUT.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effectPUT.collectionId).toBe('currentFolderId');
+			expect(effectPUT.data).toBe(CUSTOM_FOLDER_ID);
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effectCALL = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effectCALL.fn).toEqual(http.post);
+			expect(effectCALL.args[0]).toEqual(
+				`/api/preparations?folder=${CUSTOM_FOLDER_ID}`,
+			);
+
+			const PREPARATION_ID = 'PREPARATION_ID';
+			const effectPUT2 = gen.next({ data: PREPARATION_ID }).value.PUT.action;
+			expect(effectPUT2.type).toBe(REDIRECT_WINDOW);
+			expect(effectPUT2.payload).toEqual({ url: `/#/playground/preparation?prepid=${PREPARATION_ID}` });
+
+			expect(gen.next().done).toBeTruthy();
+		});
+
+		it('should not trying to open preparation if error', () => {
+			const error = new HTTPError({
+				data: { message: 'err message' },
+				response: { statusText: 'err' },
+			});
+			const CUSTOM_FOLDER_ID = 'FAKE_CUSTOM_FOLDER_ID';
+			const payload = {
+				id: 'DATASET_ID',
+				folderId: CUSTOM_FOLDER_ID,
+			};
+			const gen = effects.create(payload);
+
+			const effectPUT = gen.next().value.PUT.action;
+			expect(effectPUT.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
+			expect(effectPUT.collectionId).toBe('currentFolderId');
+			expect(effectPUT.data).toBe(CUSTOM_FOLDER_ID);
+
+			expect(gen.next().value.SELECT).toBeDefined();
+
+			const effectCALL = gen.next(IMMUTABLE_SETTINGS).value.CALL;
+			expect(effectCALL.fn).toEqual(http.post);
+			expect(effectCALL.args[0]).toEqual(
+				`/api/preparations?folder=${CUSTOM_FOLDER_ID}`,
+			);
+
+			expect(gen.next(error).done).toBeTruthy();
+		});
+	});
+
 	describe('fetch', () => {
 		beforeEach(() => {
 			PreparationService.transform = jest.fn(() => 'rofl');
@@ -56,11 +143,11 @@ describe('preparation', () => {
 			const effect = gen.next().value.PUT.action;
 			expect(effect.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
 			expect(effect.collectionId).toBe('currentFolderId');
-			expect(effect.data).toBe('Lw==');
+			expect(effect.data).toBe(effects.DEFAULT_FOLDER_ID);
 
 			expect(gen.next().value.SELECT).toBeDefined();
 			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(
-				call(http.get, '/api/folders/Lw==/preparations'),
+				call(http.get, `/api/folders/${effects.DEFAULT_FOLDER_ID}/preparations`),
 			);
 
 			const effectPUT = gen.next(API_RESPONSE).value.PUT.action;
@@ -105,7 +192,7 @@ describe('preparation', () => {
 			const payload = {};
 			const gen = effects.fetchFolder(payload);
 			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folders/Lw=='));
+			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, `/api/folders/${effects.DEFAULT_FOLDER_ID}`));
 
 			const effect = gen.next(API_RESPONSE).value.PUT.action;
 			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');

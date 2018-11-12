@@ -14,16 +14,33 @@
 package org.talend.dataprep.qa.config;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.awaitility.Awaitility.with;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 
+import cucumber.api.DataTable;
+import cucumber.api.java.en.Then;
+import org.awaitility.core.ConditionFactory;
+import org.hamcrest.Matchers;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +51,12 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.helper.VerboseMode;
 import org.talend.dataprep.qa.SpringContextConfiguration;
+import org.talend.dataprep.qa.dto.ContentMetadataColumn;
+import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.Folder;
+import org.talend.dataprep.qa.dto.PreparationContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
+import org.talend.dataprep.qa.dto.Statistics;
 import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
@@ -146,11 +167,99 @@ public abstract class DataPrepStep {
                 actual.containsAll(expectedColumnNames));
     }
 
-    protected class CleanAfterException extends RuntimeException {
+    /**
+     * Returns the dataset content, once all DQ analysis are done and so all fields are up-to-date.
+     *
+     * @param datasetId the id of the dataset
+     * @param tql       the TQL filter to apply to the dataset
+     * @return the up-to-date dataset content
+     */
+    protected DatasetContent getDatasetContent(String datasetId, String tql) throws Exception {
+        AtomicReference<DatasetContent> datasetContentReference = new AtomicReference<>();
+        // TODO I guess this wait is useless since we use {DataPrepStep#checkDatasetMetadataStatus} before
+        api.waitResponse("Waiting frequency table from dataset metadata of " + datasetId).until(() -> {
+            Response response = api.getDataset(datasetId, tql);
+            response.then().statusCode(200);
 
-        CleanAfterException(String s) {
-            super(s);
+            DatasetContent datasetContent = response.as(DatasetContent.class);
+            datasetContentReference.set(datasetContent);
+            return datasetContent.metadata.columns //
+                    .stream() //
+                    .findFirst() //
+                    .orElse(new ContentMetadataColumn()).statistics.frequencyTable;
+        }, is(not(empty())));
+
+        return datasetContentReference.get();
+    }
+
+    // FixMe : same thing as the other one because DatasetContent seems to be the same thing as PreparationContent
+    protected PreparationContent getPreparationContent(String preparationName, String tql) throws IOException {
+        String preparationId = context.getPreparationId(suffixName(preparationName));
+        Response response = api.getPreparationContent(preparationId, "head", "HEAD", tql);
+        response.then().statusCode(200);
+
+        return response.as(PreparationContent.class);
+    }
+
+    protected void checkSampleRecordsCount(String actualRecordsCount, String expectedRecordsCount) {
+        if (expectedRecordsCount == null) {
+            return;
         }
+        Assert.assertEquals(expectedRecordsCount, actualRecordsCount);
+    }
+
+    protected void checkRecords(List<Object> actualRecords, String expectedRecordsFilename) throws Exception {
+        if (expectedRecordsFilename == null) {
+            return;
+        }
+        InputStream expectedRecordsFileStream = DataPrepStep.class.getResourceAsStream(expectedRecordsFilename);
+        List<Object> expectedRecords = objectMapper.readValue(expectedRecordsFileStream, DatasetContent.class).records;
+
+        Assert.assertEquals(expectedRecords.size(), actualRecords.size());
+        Assert.assertTrue(actualRecords.containsAll(expectedRecords));
+    }
+
+    protected void checkQualityPerColumn(List<ContentMetadataColumn> columns, String expectedQualityFilename)
+            throws Exception {
+        if (expectedQualityFilename == null) {
+            return;
+        }
+        InputStream expectedQualityFileStream = DataPrepStep.class.getResourceAsStream(expectedQualityFilename);
+        List<ContentMetadataColumn> expectedQualityPerColumn =
+                objectMapper.readValue(expectedQualityFileStream, DatasetContent.class).metadata.columns;
+
+        Assert.assertEquals(expectedQualityPerColumn.size(), columns.size());
+        Collections.sort(columns);
+        Collections.sort(expectedQualityPerColumn);
+        for (int i = 0; i < expectedQualityPerColumn.size(); i++) {
+            ContentMetadataColumn expectedColumn = expectedQualityPerColumn.get(i);
+            ContentMetadataColumn column = columns.get(i);
+            Assert.assertEquals(expectedColumn.id, column.id);
+            Assert.assertEquals(expectedColumn.name, column.name);
+            Assert.assertEquals(expectedColumn.type, column.type);
+            Assert.assertEquals(expectedColumn.domain, column.domain);
+            Map<String, Integer> expectedQuality = expectedColumn.quality;
+            Statistics expectedStatistics = expectedColumn.statistics;
+
+            Map<String, Integer> quality = column.quality;
+            Assert.assertEquals(expectedQuality.get("valid"), quality.get("valid"));
+            Assert.assertEquals(expectedQuality.get("empty"), quality.get("empty"));
+            Assert.assertEquals(expectedQuality.get("invalid"), quality.get("invalid"));
+
+            Statistics statistics = column.statistics;
+            if (expectedStatistics != null && statistics != null) {
+                Assert.assertTrue(
+                        expectedStatistics.patternFrequencyTable.containsAll(statistics.patternFrequencyTable));
+                Assert.assertTrue(expectedStatistics.frequencyTable.containsAll(statistics.frequencyTable));
+            }
+        }
+    }
+
+    public void checkContent(PreparationContent preparation, DataTable dataTable) throws Exception {
+        Map<String, String> expected = dataTable.asMap(String.class, String.class);
+        checkRecords(preparation.records, expected.get("records"));
+        checkQualityPerColumn(preparation.metadata.columns, expected.get("quality"));
+        checkSampleRecordsCount(preparation.metadata.records, expected.get("sample_records_count"));
     }
 
 }

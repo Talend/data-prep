@@ -18,7 +18,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import com.netflix.hystrix.HystrixCommandProperties;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +31,7 @@ import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.PreparationDTO;
 import org.talend.dataprep.preparation.BasePreparationTest;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.netflix.hystrix.HystrixCommandProperties;
 
 /**
  * Unit/integration tests for the PreparationService
@@ -51,6 +52,17 @@ public class PreparationServiceTest extends BasePreparationTest {
                 .listAll("dont_exist", "wrong_folder_path", "/foo/prep_name_foo", null, null) //
                 .collect(Collectors.toList())
                 .size(), is(1));
+    }
+
+    @Test
+    public void testUnnamedPreparation() throws Exception {
+        init();
+        // then : path should override other props
+        List<PreparationDTO> preparations = preparationService
+                .listAll(null, "unnamedPreparation", null, null, null) //
+                .collect(Collectors.toList());
+        assertThat(preparations.size(), is(1));
+        assertThat(preparations.get(0).getName(), is("Preparation"));
     }
 
     @Test
@@ -190,7 +202,9 @@ public class PreparationServiceTest extends BasePreparationTest {
     private void init() throws IOException {
         HystrixCommandProperties.Setter().withCircuitBreakerEnabled(false);
         createFolder(home.getId(), "foo");
+        createFolder(home.getId(), "unnamedPreparation");
         final Folder foo = getFolder(home.getId(), "foo");
+        final Folder unnamedPreparation = getFolder(home.getId(), "unnamedPreparation");
 
         createFolder(home.getId(), "Folder Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv");
         final Folder specialChar =
@@ -210,5 +224,8 @@ public class PreparationServiceTest extends BasePreparationTest {
 
         preparation.setName("Cr((eate Email A!ddressrrrbb[zzzz (copie-é'(-è_çà)+&.csv");
         clientTest.createPreparation(preparation, specialChar.getId());
+
+        preparation.setName(null);
+        clientTest.createPreparation(preparation, unnamedPreparation.getId());
     }
 }

@@ -44,6 +44,16 @@ describe('Preparation action', () => {
 		});
 	});
 
+	it('should create a create preparation action', () => {
+		const event = {};
+		const payload = {
+			id: 42,
+		};
+		const action = actions.create(event, payload);
+
+		expect(action).toMatchSnapshot();
+	});
+
 	it('should create a fetch action', () => {
 		const payload = {
 			folderId: 42,

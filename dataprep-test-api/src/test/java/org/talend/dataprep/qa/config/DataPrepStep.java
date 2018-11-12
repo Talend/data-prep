@@ -14,7 +14,6 @@
 package org.talend.dataprep.qa.config;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.awaitility.Awaitility.with;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -29,17 +28,11 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import org.awaitility.core.ConditionFactory;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +55,8 @@ import org.talend.dataprep.qa.util.folder.FolderUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.response.Response;
+
+import cucumber.api.DataTable;
 
 /**
  * Base class for all DataPrep step classes.

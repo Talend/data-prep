@@ -63,8 +63,7 @@ public class DataSetDelete extends GenericCommand<ResponseEntity<String>> {
         // if the dataset is used by preparation(s), the deletion is forbidden
         if (isDatasetUsed) {
             LOG.debug("DataSet {} is used by {} preparation(s) and cannot be deleted", dataSetId);
-            final ExceptionContext context = ExceptionContext.build()
-                    .put("dataSetId", dataSetId);
+            final ExceptionContext context = ExceptionContext.build().put("dataSetId", dataSetId);
             throw new TDPException(DATASET_STILL_IN_USE, context);
         }
         return new HttpDelete(datasetServiceUrl + "/datasets/" + dataSetId);

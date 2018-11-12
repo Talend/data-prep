@@ -59,7 +59,8 @@ public class PreparationGetActions extends GenericCommand<List<Action>> {
         super(PREPARATION_GROUP);
         execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + preparationId + "/actions/" + stepId));
         on(HttpStatus.NOT_FOUND).then((req, resp) -> {
-            throw new TDPException(PREPARATION_DOES_NOT_EXIST, ExceptionContext.withBuilder().put("id", preparationId).build());
+            throw new TDPException(PREPARATION_DOES_NOT_EXIST,
+                    ExceptionContext.withBuilder().put("id", preparationId).build());
         });
         onError(e -> new TDPException(UNABLE_TO_GET_PREPARATION_DETAILS, e));
     }

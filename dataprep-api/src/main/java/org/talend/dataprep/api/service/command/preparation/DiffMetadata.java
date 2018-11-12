@@ -89,7 +89,8 @@ public class DiffMetadata extends ChainedCommand<InputStream, List<Action>> {
                         null, //
                         HEAD);
             } catch (IOException e) {
-                throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).put("version", "head").build());
+                throw new TDPException(UNABLE_TO_READ_PREPARATION, e,
+                        withBuilder().put("id", preparationId).put("version", "head").build());
             }
         }).collect(toList());
 

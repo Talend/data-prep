@@ -67,14 +67,14 @@ public class CloseableResourceWatch {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CloseableResourceWatch.class);
 
-    private Level logLevel = Level.INFO;
+    private Level logLevel;
 
     private Duration minimumClosableAgeToBeLogged;
 
     private final Set<CloseableHandler> entries = Collections.newSetFromMap(new WeakHashMap<>());
 
     public CloseableResourceWatch(@Value("${dataprep.io.watch.min-age-milli:0}") long minimumClosableAgeToBeLoggedMilli,
-            @Value("${dataprep.io.watch.level:}") String confDefinedLevel) {
+            @Value("${dataprep.io.watch.level:INFO}") String confDefinedLevel) {
         for (Level l : Level.values()) {
             if (l.name().equals(confDefinedLevel)) {
                 logLevel = l;
@@ -138,7 +138,9 @@ public class CloseableResourceWatch {
             CloseableHandler[] oldCloseableHandlers;
             synchronized (entries) {
                 LocalDateTime ageLimit = now().minus(minimumClosableAgeToBeLogged);
-                oldCloseableHandlers = this.entries.stream().filter(e -> e.getCreation().isBefore(ageLimit))
+                oldCloseableHandlers = this.entries
+                        .stream()
+                        .filter(e -> e.getCreation().isBefore(ageLimit))
                         .toArray(CloseableHandler[]::new);
             }
             int numberOfEntries = oldCloseableHandlers.length;
@@ -157,6 +159,7 @@ public class CloseableResourceWatch {
     }
 
     public static class CloseableResourceWatchCondition implements Condition {
+
         @Override
         public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
             return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE)

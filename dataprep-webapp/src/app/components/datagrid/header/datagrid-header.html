@@ -76,7 +76,7 @@
                ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"/>
         </form>
     </div>
-    <div class="grid-header-type">{{ ctrl.getTypeLabel() }}</div>
+    <div class="grid-header-type">{{ ::ctrl.getTypeLabel() }}</div>
 </div>
 <quality-bar enter-animation="true"
              quality="ctrl.column.quality"

@@ -36,6 +36,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Condition;
@@ -46,6 +47,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.talend.daikon.content.DeletableResource;
+import org.talend.dataprep.util.VariableLevelLog;
 
 /**
  * This class configures an aspect around methods that <b>return</b> a {@link Closeable closeable} implementation.
@@ -60,15 +62,26 @@ import org.talend.daikon.content.DeletableResource;
 @Configuration
 @Aspect
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Conditional(CloseableResourceWatch.class)
-public class CloseableResourceWatch implements Condition {
+@Conditional(CloseableResourceWatch.CloseableResourceWatchCondition.class)
+public class CloseableResourceWatch {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CloseableResourceWatch.class);
 
-    @Value("${dataprep.io.watch.min-age-milli:0}")
-    private long minimumClosableAgeToBeLoggedMilli;
+    private Level logLevel = Level.INFO;
+
+    private Duration minimumClosableAgeToBeLogged;
 
     private final Set<CloseableHandler> entries = Collections.newSetFromMap(new WeakHashMap<>());
+
+    public CloseableResourceWatch(@Value("${dataprep.io.watch.min-age-milli:0}") long minimumClosableAgeToBeLoggedMilli,
+            @Value("${dataprep.io.watch.level:}") String confDefinedLevel) {
+        for (Level l : Level.values()) {
+            if (l.name().equals(confDefinedLevel)) {
+                logLevel = l;
+            }
+        }
+        minimumClosableAgeToBeLogged = Duration.ofMillis(minimumClosableAgeToBeLoggedMilli);
+    }
 
     @Around("within(org.talend..*) && (execution(public java.io.Closeable+ *(..)) || execution(public org.talend.daikon.content.DeletableResource+ *(..)))")
     public Object closeableWatch(ProceedingJoinPoint pjp) throws Throwable {
@@ -121,10 +134,10 @@ public class CloseableResourceWatch implements Condition {
      */
     @Scheduled(fixedDelay = 30000)
     public void log() {
-        if (LOGGER.isWarnEnabled()) {
+        if (VariableLevelLog.isEnabledFor(LOGGER, logLevel)) {
             CloseableHandler[] oldCloseableHandlers;
             synchronized (entries) {
-                LocalDateTime ageLimit = now().minus(Duration.ofMillis(minimumClosableAgeToBeLoggedMilli));
+                LocalDateTime ageLimit = now().minus(minimumClosableAgeToBeLogged);
                 oldCloseableHandlers = this.entries.stream().filter(e -> e.getCreation().isBefore(ageLimit))
                         .toArray(CloseableHandler[]::new);
             }
@@ -138,15 +151,18 @@ public class CloseableResourceWatch implements Condition {
                 Object[] args = new Object[numberOfEntries + 1];
                 args[0] = numberOfEntries;
                 arraycopy(oldCloseableHandlers, 0, args, 1, numberOfEntries);
-                LOGGER.warn(logMessage.toString(), args);
+                VariableLevelLog.log(LOGGER, logLevel, logMessage.toString(), args);
             }
         }
     }
 
-    @Override
-    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE)
-                || LOGGER.isDebugEnabled();
+    public static class CloseableResourceWatchCondition implements Condition {
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE)
+                    || LOGGER.isDebugEnabled();
+        }
+
     }
 
     private class ClosableMethodInterceptor implements MethodInterceptor {

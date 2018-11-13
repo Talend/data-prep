@@ -1,21 +1,21 @@
 package org.talend.dataprep.qa.step;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,11 +23,13 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.ContentMetadata;
 import org.talend.dataprep.qa.dto.Statistics;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ResponseBody;
 
+import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -58,13 +60,15 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Given("^A dataset with the following parameters exists :$") //
-    public void existDataset(Map<String, String> params) throws IOException {
+    public void existDataset(DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<ContentMetadata> datasetMetas = listDatasetMeta();
         assertEquals(1, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
 
     @Given("^It doesn't exist any dataset with the following parameters :$") //
-    public void notExistDataset(Map<String, String> params) throws IOException {
+    public void notExistDataset(DataTable dataTable) throws IOException {
+        Map<String, String> params = dataTable.asMap(String.class, String.class);
         List<ContentMetadata> datasetMetas = listDatasetMeta();
         assertEquals(0, countFilteredDatasetList(datasetMetas, params.get(DATASET_NAME_KEY), params.get(NB_ROW)));
     }
@@ -81,20 +85,15 @@ public class DatasetStep extends DataPrepStep {
      *
      * @param datasetMetas the {@link List} of {@link ContentMetadata} to filter.
      * @param datasetName the searched dataset name.
-     * @param nbRows the searched number of row [optional].
+     * @param nbRows the searched number of row.
      * @return the number of corresponding {@link ContentMetadata}.
      */
     private long countFilteredDatasetList(List<ContentMetadata> datasetMetas, String datasetName, String nbRows) {
-        Stream<ContentMetadata> stream = datasetMetas
+        return datasetMetas //
                 .stream() //
-                .filter(d -> suffixName(datasetName).equals(d.name));
-
-        // nbRows not provided in catalog mode
-        if (isNotEmpty(nbRows)) {
-            stream = stream.filter(contentMetadata -> nbRows.equals(contentMetadata.records));
-        }
-
-        return stream.count();
+                .filter(d -> (suffixName(datasetName).equals(d.name)) //
+                        && nbRows.equals(d.records)) //
+                .count();
     }
 
     /**
@@ -121,7 +120,10 @@ public class DatasetStep extends DataPrepStep {
     private List<ContentMetadata> listDatasetMeta() throws IOException {
         Response response = api.listDatasetDetails();
         response.then().statusCode(OK.value());
-        return Arrays.asList(response.as(ContentMetadata[].class));
+        final String content = IOUtils.toString(response.getBody().asInputStream(), StandardCharsets.UTF_8);
+        return objectMapper.readValue(content, new TypeReference<List<ContentMetadata>>() {
+
+        });
     }
 
     @When("^I update the dataset named \"(.*)\" with data \"(.*)\"$") //
@@ -182,7 +184,9 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Given("^I have a dataset with parameters:$")
-    public void iHaveADatasetWithParameters(Map<String, String> parameters) throws Throwable {
+    public void iHaveADatasetWithParameters(DataTable dataTable) throws Throwable {
+        Map<String, String> parameters = new HashMap<>(dataTable.asMap(String.class, String.class));
+
         // in case of only name parameter, we should use a suffixed dataSet name
         if (parameters.containsKey(DATASET_NAME_KEY) && parameters.size() == 1) {
             parameters.put(DATASET_NAME_KEY, suffixName(parameters.get(DATASET_NAME_KEY)));

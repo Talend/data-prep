@@ -87,10 +87,6 @@ export default function initialize(additionalConfiguration = {}) {
 	}
 
 	function appFactory(storage = {}) {
-		cmfSagas.http.setDefaultConfig({
-			headers: {},
-		});
-
 		const { initialState, engine } = storage;
 
 		const preReducers = [dataset.preReducers.notificationReducer, ...dataset.hors];
@@ -108,14 +104,14 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register http middleware
 		 */
-		cmfStore.setHttpMiddleware(
-			httpMiddleware({
-				security: {
-					CSRFTokenCookieKey: 'XSRF-TOKEN',
-					CSRFTokenHeaderKey: 'X-XSRF-TOKEN',
-				},
-			}),
-		);
+		const httpMiddleWareConfig = {
+			security: {
+				CSRFTokenCookieKey: 'XSRF-TOKEN',
+				CSRFTokenHeaderKey: 'X-XSRF-TOKEN',
+			},
+		};
+		cmfSagas.http.setDefaultConfig(httpMiddleWareConfig);
+		cmfStore.setHttpMiddleware(httpMiddleware(httpMiddleWareConfig));
 
 		/**
 		 * Register your app reducers

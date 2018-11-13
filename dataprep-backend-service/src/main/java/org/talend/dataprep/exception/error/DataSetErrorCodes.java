@@ -92,7 +92,7 @@ public enum DataSetErrorCodes implements ErrorCode {
     /**
      * This dataset name is already used
      */
-    DATASET_NAME_ALREADY_USED(CONFLICT, "id", "name", "folder"),
+    DATASET_NAME_ALREADY_USED(CONFLICT, "name"),
     /**
      * Error return when the uploaded content is not supported by any
      * {@link org.talend.dataprep.schema.CompositeFormatDetector guesser}.

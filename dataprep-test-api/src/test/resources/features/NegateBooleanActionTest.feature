@@ -1,7 +1,11 @@
 @EnvOS @EnvOnPremise @EnvCloud @Action
 Feature: Check some features of Negate Boolean Action
 
-  //@CleanAfter
+  # @see <a href="https://jira.talendforge.org/browse/TDP-6276">TDP-6276</a>
+  # The Negate Boolean action should transform non-Boolean values in empty cells
+  # @see <a href="https://jira.talendforge.org/browse/TDP-6272">TDP-6272</a>
+  # The Negate Boolean action should not fix the column type
+  @CleanAfter
   Scenario: I negate a column anc check that type change is applied
     Given I upload the dataset "/data/NegateBooleanAction.txt" with name "NegateBooleanAction_dataset"
     Then I wait for the dataset "NegateBooleanAction_dataset" metadata to be computed

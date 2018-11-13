@@ -46,6 +46,7 @@ public class PreparationGet extends GenericCommand<InputStream> {
             throw new TDPException(PREPARATION_DOES_NOT_EXIST, build().put("id", preparationId));
         });
         on(HttpStatus.OK).then(pipeStream());
-        onError(e -> new TDPException(UNABLE_TO_READ_PREPARATION, e, build().put("id", preparationId)));
+        onError(e -> new TDPException(UNABLE_TO_READ_PREPARATION, e,
+                build().put("id", preparationId).put("version", "head")));
     }
 }

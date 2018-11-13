@@ -1,0 +1,8 @@
+boolean
+A
+true
+true
+true
+false
+false
+

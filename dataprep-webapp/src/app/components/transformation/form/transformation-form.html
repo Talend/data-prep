@@ -13,7 +13,8 @@
   ~ ============================================================================
   -->
 
-<form ng-submit="formCtrl.paramForm.$valid && formCtrl.transformWithParam()"
+<form class="transformation-form"
+      ng-submit="formCtrl.paramForm.$valid && formCtrl.transformWithParam()"
       name="formCtrl.paramForm">
     <transform-params parameters="formCtrl.transformation.parameters"
                       is-readonly="formCtrl.isReadonly">

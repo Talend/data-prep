@@ -2,6 +2,7 @@ package org.talend.dataprep.qa.step;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
@@ -266,8 +267,12 @@ public class PreparationStep extends DataPrepStep {
         String invalidCells = parameters.get("invalidCells");
 
         HashMap values = (LinkedHashMap<String, String>) datasetContent.records.get(Integer.parseInt(columnNumber));
-
-        assertEquals(invalidCells, values.get("__tdpInvalid"));
+        if (!invalidCells.equals(StringUtils.EMPTY)) {
+            assertEquals(invalidCells, values.get("__tdpInvalid"));
+        } else {
+            // there is no invalid cell
+            assertNull(values.get("__tdpInvalid"));
+        }
     }
 
     @Then("^The preparation \"(.*)\" should have the following type \"(.*)\" on the following column \"(.*)\"$")

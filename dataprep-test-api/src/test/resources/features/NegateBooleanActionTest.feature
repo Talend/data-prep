@@ -10,6 +10,10 @@ Feature: Check some features of Negate Boolean Action
     Given I upload the dataset "/data/NegateBooleanAction.txt" with name "NegateBooleanAction_dataset"
     Then I wait for the dataset "NegateBooleanAction_dataset" metadata to be computed
     Given I create a preparation with name "NegateBooleanAction_prep", based on "NegateBooleanAction_dataset" dataset
+    Then The preparation "NegateBooleanAction_prep" should have the following quality bar characteristics on the column number "0":
+      | valid   | 5 |
+      | invalid | 1 |
+      | empty   | 0 |
     And I add a "negate" step identified by "negate_boolean" on the preparation "NegateBooleanAction_prep" with parameters :
       | column_id         | 0000 |
       | create_new_column | true |

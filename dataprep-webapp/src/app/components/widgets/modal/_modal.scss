@@ -102,6 +102,12 @@
       width: 900px;
     }
 
+    .modal-header {
+      button > span {
+        pointer-events: none;
+      }
+    }
+
     .modal-content {
       @media(max-width: $medium-screen) {
         columns: 2 8em;

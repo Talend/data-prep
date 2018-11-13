@@ -112,8 +112,7 @@
             >
             </folder-selection>
 
-            <div class="modal-form-row">
-                <label class="param-name" translate-once="PREPARATION_NAME"></label>
+            <div class="modal-form-row form-group">
                 <input id="playground-save-name-input"
                        type="text"
                        class="form-control param-input"
@@ -121,6 +120,9 @@
                        ng-model="playgroundCtrl.state.playground.preparationName"
                        ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                        can-be-blank="false" />
+                <label for="playground-save-name-input"
+                       class="control-label"
+                       translate-once="PREPARATION_NAME"></label>
             </div>
         </div>
 

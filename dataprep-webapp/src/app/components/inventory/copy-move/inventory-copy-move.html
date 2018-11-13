@@ -21,12 +21,17 @@
                 is-loading="$ctrl.isLoading"
                 tree="$ctrl.tree">
         </folder-selection>
-        <span translate-once="NAME"></span>
-        <input id="copy-move-name-input"
-               class="form-control"
-               type="text"
-               ng-model="$ctrl.newName"
-               required />
+
+        <div class="form-group">
+            <label for="copy-move-name-input"
+                   class="control-label"
+                   translate-once="NAME"></label>
+            <input id="copy-move-name-input"
+                   class="form-control"
+                   type="text"
+                   ng-model="$ctrl.newName"
+                   required />
+        </div>
     </div>
     <div class="modal-footer">
         <button id="copy-move-cancel-btn"
@@ -37,22 +42,22 @@
         </button>
 
         <action-button
-                id="'copy-move-move-btn'"
-                bs-style="'primary'"
-                disabled="$ctrl.isActionDisabled()"
-                in-progress="$ctrl.isMoving"
-                on-click="$ctrl.move"
-                label="'{{ 'MOVE_HERE_ACTION' | translate }}'"
-                tooltip-label="'{{($ctrl.isActionDisabled() && 'WAITING_FOLDERS_TITLE') | translate}}'">
-        </action-button>
-
-        <action-button
                 id="'copy-move-copy-btn'"
-                bs-style="'primary'"
+                bs-style="'info btn-inverse'"
                 disabled="$ctrl.isActionDisabled()"
                 in-progress="$ctrl.isCopying"
                 on-click="$ctrl.copy"
                 label="'{{ 'COPY_HERE_ACTION' | translate }}'"
+                tooltip-label="'{{($ctrl.isActionDisabled() && 'WAITING_FOLDERS_TITLE') | translate}}'">
+        </action-button>
+
+        <action-button
+                id="'copy-move-move-btn'"
+                bs-style="'primary separated-button'"
+                disabled="$ctrl.isActionDisabled()"
+                in-progress="$ctrl.isMoving"
+                on-click="$ctrl.move"
+                label="'{{ 'MOVE_HERE_ACTION' | translate }}'"
                 tooltip-label="'{{($ctrl.isActionDisabled() && 'WAITING_FOLDERS_TITLE') | translate}}'">
         </action-button>
     </div>

@@ -17,6 +17,7 @@
   "MOVE": "Move",
   "NAME": "Name",
   "PREPARATIONS": "Preparations",
+  "PREPARATIONS_CREATE": "Create a preparation",
   "PREPARATION_ADD": "Add preparation",
   "PREPARATION_COPY": "Copy preparation",
   "PREPARATION_DUPLICATE": "Duplicate",

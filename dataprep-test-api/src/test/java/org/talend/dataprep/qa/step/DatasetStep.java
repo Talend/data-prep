@@ -85,7 +85,8 @@ public class DatasetStep extends DataPrepStep {
      * @return the number of corresponding {@link ContentMetadata}.
      */
     private long countFilteredDatasetList(List<ContentMetadata> datasetMetas, String datasetName, String nbRows) {
-        Stream<ContentMetadata> stream = datasetMetas.stream() //
+        Stream<ContentMetadata> stream = datasetMetas
+                .stream() //
                 .filter(d -> suffixName(datasetName).equals(d.name));
 
         // nbRows not provided in catalog mode

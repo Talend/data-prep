@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ ============================================================================
   ~ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
@@ -12,24 +13,19 @@
   ~ ============================================================================
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-parent</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>dataprep-backend</artifactId>
     <packaging>pom</packaging>
-    <name>dataprep-backend</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.inceptionYear>2015</project.inceptionYear>
-        <project.organization>Talend</project.organization>
-        <start-class>fill.this.value.in.service.module</start-class>
-    </properties>
+    <name>dataprep-backend</name>
 
     <modules>
         <module>../dataprep-backend-service</module>
@@ -46,6 +42,24 @@
         <module>../dataprep-upgrade-common</module>
         <module>../dataprep-upgrade</module>
     </modules>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>talend_nexus_deployment</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>talend_nexus_deployment</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.inceptionYear>2015</project.inceptionYear>
+        <project.organization>Talend</project.organization>
+        <start-class>fill.this.value.in.service.module</start-class>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -106,15 +120,15 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-api</artifactId>
-                <type>test-jar</type>
                 <version>${project.version}</version>
+                <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-backend-service</artifactId>
-                <type>test-jar</type>
                 <version>${project.version}</version>
+                <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -127,42 +141,27 @@
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-transformation</artifactId>
-                <type>test-jar</type>
                 <version>${project.version}</version>
+                <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-preparation</artifactId>
-                <type>test-jar</type>
                 <version>${project.version}</version>
+                <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.talend.dataprep</groupId>
                 <artifactId>dataprep-dataset</artifactId>
-                <type>test-jar</type>
                 <version>${project.version}</version>
+                <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <repositories>
         <repository>
             <id>snapshots</id>
@@ -209,14 +208,20 @@
             </snapshots>
         </repository>
     </repositories>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>talend_nexus_deployment</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>talend_nexus_deployment</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
-        </repository>
-    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

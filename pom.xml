@@ -27,16 +27,8 @@
     <artifactId>dataprep-parent</artifactId>
     <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <description>dataprep parent pom</description>
 
-    <modules>
-        <module>dataprep-backend</module>
-        <module>dataprep-webapp</module>
-    </modules>
-    <scm>
-        <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
-        <url>https://github.com/Talend/data-prep.git</url>
-    </scm>
+    <description>dataprep parent pom</description>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -45,6 +37,25 @@
         </license>
     </licenses>
 
+    <modules>
+        <module>dataprep-backend</module>
+        <module>dataprep-webapp</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
+        <url>https://github.com/Talend/data-prep.git</url>
+    </scm>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>talend_nexus_deployment</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>talend_nexus_deployment</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 
     <repositories>
         <repository>
@@ -116,16 +127,4 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>talend_nexus_deployment</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>talend_nexus_deployment</id>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases/</url>
-        </repository>
-    </distributionManagement>
-
 </project>

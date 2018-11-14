@@ -69,26 +69,24 @@ export default function DatagridHeaderCtrl($q, $scope, state,
 	 * @description Get transformations from REST call
 	 */
 	vm.initTransformations = () => {
-		if (vm.column) {
-			if (!state.playground.isReadOnly && !vm.transformations && !vm.initTransformationsInProgress) {
-				vm.transformationsRetrieveError = false;
-				vm.initTransformationsInProgress = true;
+		if (!state.playground.isReadOnly && !vm.transformations && !vm.initTransformationsInProgress) {
+			vm.transformationsRetrieveError = false;
+			vm.initTransformationsInProgress = true;
 
-				TransformationService.getTransformations('column', vm.column)
-					.then((columnTransformations) => {
-						vm.transformations = columnTransformations
-							.allTransformations
-							.filter(menu => menu.actionScope.indexOf(ACTION_SCOPE) !== -1);
-					})
-					.catch(() => {
-						vm.transformationsRetrieveError = true;
-					})
-					.finally(() => {
-						vm.initTransformationsInProgress = false;
-					});
-			}
-			vm.fetchMatchingSemanticTypes();
+			TransformationService.getTransformations('column', vm.column)
+				.then((columnTransformations) => {
+					vm.transformations = columnTransformations
+						.allTransformations
+						.filter(menu => menu.actionScope.indexOf(ACTION_SCOPE) !== -1);
+				})
+				.catch(() => {
+					vm.transformationsRetrieveError = true;
+				})
+				.finally(() => {
+					vm.initTransformationsInProgress = false;
+				});
 		}
+		vm.fetchMatchingSemanticTypes();
 	};
 
 	vm.fetchMatchingSemanticTypes = () => {
@@ -173,9 +171,6 @@ export default function DatagridHeaderCtrl($q, $scope, state,
 	 * @description returns the type label
 	 */
 	vm.getTypeLabel = () => {
-		if (!vm.column) {
-			return '';
-		}
 		return vm.column.domainLabel || vm.converterService.simplifyTypeLabel(vm.column.type);
 	};
 

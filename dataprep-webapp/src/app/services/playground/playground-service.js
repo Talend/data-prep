@@ -133,7 +133,7 @@ export default function PlaygroundService(
 
 	function getSubheaderStatus() {
 		return PreviewService.previewInProgress() && [{
-			label: 'Preview',
+			label: $translate.instant('PREVIEW'),
 			inProgress: state.playground.isPreviewLoading,
 			disbaled: true,
 			icon: 'talend-eye',
@@ -144,7 +144,7 @@ export default function PlaygroundService(
 	function getSubheaderActions() {
 		return [
 			{
-				label: 'parameters',
+				label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 				icon: 'talend-cog',
 				displayMode: TYPE_ICON_TOGGLE,
 				active: state.playground.parameters.visible,
@@ -152,7 +152,7 @@ export default function PlaygroundService(
 				inProgress: state.playground.lookup.loading,
 			},
 			{
-				label: 'lookup',
+				label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
 				icon: 'talend-chain',
 				displayMode: TYPE_ICON_TOGGLE,
 				active: state.playground.lookup.visibility,
@@ -160,6 +160,7 @@ export default function PlaygroundService(
 			},
 			{
 				icon: 'talend-undo',
+				tooltipLabel: $translate.instant('UNDO_ICON_TOOLTIP'),
 				hideLabel: true,
 				bsStyle: 'link',
 				disabled: !HistoryService.canUndo(),
@@ -167,6 +168,7 @@ export default function PlaygroundService(
 			},
 			{
 				icon: 'talend-redo',
+				tooltipLabel: $translate.instant('REDO_ICON_TOOLTIP'),
 				hideLabel: true,
 				bsStyle: 'link',
 				disabled: !HistoryService.canRedo(),

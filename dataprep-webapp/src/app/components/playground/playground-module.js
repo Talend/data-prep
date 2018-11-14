@@ -18,7 +18,6 @@ import DATAGRID_MODULE from '../datagrid/datagrid-module';
 import DATASET_PARAMETERS_MODULE from '../dataset/parameters/dataset-parameters-module';
 import EXPORT_MODULE from '../export/export-module';
 import FILTER_BAR from '../filter/bar/filter-bar-module';
-import HISTORY_CONTROL from '../history-control/history-control-module';
 import LOOKUP_MODULE from '../lookup/lookup-module';
 import PREPARATION_PICKER_MODULE from '../preparation/picker/preparation-picker-module';
 import RECIPE_MODULE from '../recipe/recipe-module';
@@ -49,7 +48,6 @@ const MODULE_NAME = 'data-prep.playground';
  * @requires data-prep.dataset-parameters
  * @requires data-prep.export
  * @requires data-prep.filter-bar
- * @requires data-prep.history-control
  * @requires data-prep.lookup
  * @requires data-prep.preparation-picker
  * @requires data-prep.recipe
@@ -67,7 +65,6 @@ angular.module(MODULE_NAME,
 		DATASET_PARAMETERS_MODULE,
 		EXPORT_MODULE,
 		FILTER_BAR,
-		HISTORY_CONTROL,
 		LOOKUP_MODULE,
 		PREPARATION_PICKER_MODULE,
 		RECIPE_MODULE,

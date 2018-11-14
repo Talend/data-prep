@@ -252,14 +252,6 @@ describe('Playground header component', () => {
 			expect(element.find('export').length).toBe(0);
 		});
 
-		it('should render history control', () => {
-			// when
-			createElement();
-
-			// then
-			expect(element.find('history-control').length).toBe(1);
-		});
-
 		it('should NOT render preview badge', () => {
 			// given
 			scope.preview = false;

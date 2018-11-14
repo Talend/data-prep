@@ -507,6 +507,20 @@ describe('Playground controller', () => {
 		});
 	});
 
+	describe('feedback', () => {
+		it('should open feedback modal', inject((StateService) => {
+			// given
+			spyOn(StateService, 'showFeedback').and.returnValue();
+			const ctrl = createController();
+
+			// when
+			ctrl.openFeedbackForm();
+
+			// then
+			expect(StateService.showFeedback).toHaveBeenCalled();
+		}));
+	});
+
 	describe('onboarding', () => {
 		it('should start onboarding tour', inject((OnboardingService) => {
 			// given

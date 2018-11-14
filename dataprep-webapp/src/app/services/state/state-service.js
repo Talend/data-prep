@@ -23,6 +23,7 @@ export function StateService(RouteStateService, routeState,
                              DatasetStateService, datasetState,
                              EasterEggsStateService, easterEggsState,
                              InventoryStateService, inventoryState,
+                             FeedbackStateService, feedbackState,
                              ImportStateService, importState,
                              ExportStateService, exportState,
                              HomeStateService, homeState,
@@ -37,6 +38,7 @@ export function StateService(RouteStateService, routeState,
 	state.dataset = datasetState;
 	state.easterEggsState = easterEggsState;
 	state.inventory = inventoryState;
+	state.feedback = feedbackState;
 	state.import = importState;
 	state.export = exportState;
 	state.home = homeState;
@@ -184,6 +186,10 @@ export function StateService(RouteStateService, routeState,
 
 		setFetchingInventoryDatasets: InventoryStateService.setFetchingDatasets,
 		setFetchingInventoryPreparations: InventoryStateService.setFetchingPreparations,
+
+		// feedback
+		showFeedback: FeedbackStateService.show,
+		hideFeedback: FeedbackStateService.hide,
 
 		// import
 		showImport: ImportStateService.showImport,

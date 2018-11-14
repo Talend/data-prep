@@ -15,6 +15,7 @@ import angular from 'angular';
 
 import { datasetState, DatasetStateService } from './dataset/dataset-state-service';
 import { easterEggsState, EasterEggsStateService } from './easter-eggs/easter-eggs-state-service';
+import { feedbackState, FeedbackStateService } from './feedback/feedback-state-service';
 import { filterState, FilterStateService } from './filter/filter-state-service';
 import { gridState, GridStateService } from './grid/grid-state-service';
 import { inventoryState, InventoryStateService } from './inventory/inventory-state-service';
@@ -49,6 +50,9 @@ angular.module(MODULE_NAME, [SERVICES_UTILS_MODULE])
 
 	.service('EasterEggsStateService', EasterEggsStateService)
 	.constant('easterEggsState', easterEggsState)
+
+	.service('FeedbackStateService', FeedbackStateService)
+	.constant('feedbackState', feedbackState)
 
 	.service('FilterStateService', FilterStateService)
 	.constant('filterState', filterState)

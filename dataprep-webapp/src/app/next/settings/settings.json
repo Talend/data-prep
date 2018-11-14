@@ -92,6 +92,18 @@
       "id": "help:about:toggle",
       "bsStyle": "default btn-inverse"
     },
+    "help:feedback:open": {
+      "id": "help:feedback:open",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:FEEDBACK",
+          "options": {
+            "defaultValue": "Feedback"
+          }
+        }
+      },
+      "actionCreator": "help:feedback:open"
+    },
     "preparation:add:open": {
       "id": "preparation:add:open",
       "bsStyle": "info",
@@ -361,7 +373,8 @@
           "help:about:open",
           "help:tour",
           "divider",
-          "help:community"
+          "help:community",
+          "help:feedback:open"
         ]
       }
     },

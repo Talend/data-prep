@@ -36,6 +36,7 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	vm.state = state;
 	vm.destinationFolder = this.state.inventory.homeFolder;
 
+	vm.openFeedbackForm = () => StateService.showFeedback();
 	vm.toggleParameters = () => StateService.toggleDatasetParameters();
 	vm.previewInProgress = () => PreviewService.previewInProgress();
 	vm.startOnBoarding = tourId => OnboardingService.startTour(tourId);

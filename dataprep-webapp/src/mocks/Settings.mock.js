@@ -256,6 +256,15 @@ const settingsMock = {
 				],
 			},
 		},
+		'modal:feedback': {
+			id: 'modal:feedback',
+			name: 'Send feedback to Talend',
+			icon: 'talend-bubbles',
+			type: '@@modal/SHOW',
+			payload: {
+				method: 'showFeedback',
+			},
+		},
 		'external:help': {
 			id: 'external:help',
 			name: 'Open Online Help',

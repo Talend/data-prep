@@ -19,6 +19,30 @@ describe('Storage service', () => {
 		$window.localStorage.clear();
 	}));
 
+	describe('feedback', () => {
+		const FEEDBACK_USER_MAIL_KEY = 'org.talend.dataprep.feedback_user_mail';
+
+		it('should return feedback user mail in local storage', inject(($window, StorageService) => {
+			// given
+			expect(StorageService.getFeedbackUserMail()).toEqual('');
+			$window.localStorage.setItem(FEEDBACK_USER_MAIL_KEY, '"abc@d.fr"');
+
+			// when
+			const email = StorageService.getFeedbackUserMail();
+
+			// then
+			expect(email).toEqual('abc@d.fr');
+		}));
+
+		it('should save feedback user mail in local storage', inject(($window, StorageService) => {
+			// when
+			StorageService.saveFeedbackUserMail('abc@d.fr');
+
+			// then
+			expect($window.localStorage.getItem(FEEDBACK_USER_MAIL_KEY)).toEqual('"abc@d.fr"');
+		}));
+	});
+
 	describe('filter', () => {
 		const PREFIX_FILTER = 'org.talend.dataprep.filter_';
 
@@ -58,6 +82,7 @@ describe('Storage service', () => {
 
 		it('should return the export params in local storage', inject(($window, StorageService) => {
 			// given
+			expect(StorageService.getFeedbackUserMail()).toEqual('');
 			$window.localStorage.setItem(EXPORT_KEY, '{"exportType":"XLSX"}');
 
 			// when

@@ -16,7 +16,7 @@ import { PLAYGROUND_PREPARATION_ROUTE } from '../../../index-route';
 
 export default class PlaygroundHeaderCtrl {
 	constructor(
-		state, $state,
+		state, $state, $stateParams,
 		StateService, HelpService, PlaygroundService,
 		HistoryService, LookupService, PreviewService
 	) {
@@ -30,9 +30,11 @@ export default class PlaygroundHeaderCtrl {
 		this.LookupService = LookupService;
 		this.PreviewService = PreviewService;
 		this.$state = $state;
+		this.$stateParams = $stateParams;
 
 		this.toggleNameEditMode = this.toggleNameEditMode.bind(this);
 		this.editName = this.editName.bind(this);
+		this.cancelEdit = this.cancelEdit.bind(this);
 	}
 
 	toggleNameEditMode() {
@@ -54,12 +56,17 @@ export default class PlaygroundHeaderCtrl {
 		}
 	}
 
+	cancelEdit() {
+		this.StateService.setNameEditionMode(false);
+	}
+
 	get subtitle() {
 		const { nameEditionMode, dataset } = this.state.playground;
 		return nameEditionMode ? '' : dataset.name;
 	}
 
 	get title() {
-		return this.state.playground.preparation.name;
+		const { preparation, dataset } = this.state.playground;
+		return (preparation || dataset).name;
 	}
 }

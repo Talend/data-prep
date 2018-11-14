@@ -23,7 +23,6 @@
                        on-onboarding="playgroundCtrl.startOnBoarding('playground')"
                        on-feedback="playgroundCtrl.openFeedbackForm()"
                        on-close="playgroundCtrl.beforeClose()"
-                       on-preparation-picker="playgroundCtrl.showPreparationPicker()"
     ></playground-header>
     <div class="playground"
          ng-if="!playgroundCtrl.state.playground.isLoading">
@@ -146,3 +145,5 @@
             fetch-preparations="playgroundCtrl.fetchCompatiblePreparations(datasetId)"
             on-select="playgroundCtrl.applySteps(preparationId)"></preparation-picker>
 </talend-modal>
+
+<insertion-export></insertion-export>

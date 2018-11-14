@@ -42,15 +42,6 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	//--------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------PREPARATION PICKER------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
-	/**
-	 * @ngdoc method
-	 * @name showPreparationPicker
-	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description Toggle preparation picker modal
-	 */
-	vm.showPreparationPicker = () => {
-		StateService.setIsPreprationPickerVisible(true);
-	};
 
 	/**
 	 * @ngdoc method

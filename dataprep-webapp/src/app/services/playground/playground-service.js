@@ -142,7 +142,15 @@ export default function PlaygroundService(
 	}
 
 	function getSubheaderActions() {
-		return [
+		const actions = $stateParams.datasetid ? [{
+			icon: 'talend-dataprep',
+			tooltipLabel: $translate.instant('CHOOSE_PREPARATION_TO_APPLY'),
+			hideLabel: true,
+			bsStyle: 'link',
+			onClick: () => $timeout(() => StateService.setIsPreprationPickerVisible(true)),
+		}] : [];
+
+		const controls = state.playground.isReadOnly ? [] : [
 			{
 				label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 				icon: 'talend-cog',
@@ -174,6 +182,11 @@ export default function PlaygroundService(
 				disabled: !HistoryService.canRedo(),
 				onClick: () => $timeout(HistoryService.redo),
 			},
+		];
+
+		return [
+			...actions,
+			...controls,
 		];
 	}
 

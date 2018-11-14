@@ -97,7 +97,7 @@
         fullscreen="false"
         ng-if="playgroundCtrl.state.playground.isNameValidationVisible"
         state="playgroundCtrl.state.playground.isNameValidationVisible"
-        modal-title="SAVE_CHANGE">
+        modal-title="('SAVE_CHANGE' | translate)">
 
     <form id="playground-save-form"
           name="playgroundCtrl.savePreparationForm"
@@ -120,6 +120,7 @@
                        class="form-control param-input"
                        translate-once-placeholder="ENTER_PREPARATION_NAME"
                        ng-model="playgroundCtrl.state.playground.preparationName"
+                       ng-value="playgroundCtrl.state.playground.preparationName"
                        ng-model-options="{debounce: { 'default': 200, 'blur': 0 }}"
                        can-be-blank="false" />
                 <label for="playground-save-name-input"

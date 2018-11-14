@@ -65,7 +65,7 @@
   "UPLOAD_ERROR": "Erreur lors du chargement du fichier",
   "FOLDER": "Dossier",
   "CREATE_FOLDER": "Ajouter le dossier",
-  "ENTER_FOLDER_NAME": "Saisir le nom du dossier",
+  "ENTER_FOLDER_NAME": "Nom du dossier",
   "HOME_FOLDER": "Accueil",
   "ADD_PREPARATION": "Ajouter une préparation",
   "ADD_PREPARATION_MODAL_TITLE": "Ajouter une préparation",
@@ -177,6 +177,7 @@
   "NO_FUNCTION": "Aucune fonction pour la sélection",
 
   "_comment": "Confirm",
+  "DELETE_PERMANENTLY_TITLE": "Supprimer",
   "DELETE_PERMANENTLY": "Vous allez supprimer définitivement \"{{name}}\".",
   "ENTER_DATASET_NAME": "Saisir le nom du jeu de données :",
   "NO_UNDONE_CONFIRM": "Cette opération ne peut être annulée. Êtes-vous sûr(e) ?",

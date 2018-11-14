@@ -13,13 +13,12 @@
   ~ ============================================================================
 -->
 
-<talend-modal
-        id="add-preparation-modal"
-        modal-large="true"
-        fullscreen="false"
-        state="$ctrl.state.home.preparations.creator.isVisible"
-        ng-if="$ctrl.state.home.preparations.creator.isVisible"
-        before-close="$ctrl.canBeClosed()"
-        modal-title="('ADD_PREPARATION_MODAL_TITLE' | translate)">
+<talend-modal id="add-preparation-modal"
+              fullscreen="false"
+              state="$ctrl.state.home.preparations.creator.isVisible"
+              ng-if="$ctrl.state.home.preparations.creator.isVisible"
+              before-close="$ctrl.canBeClosed()"
+              modal-large="true"
+              modal-title="('ADD_PREPARATION_MODAL_TITLE' | translate)">
     <preparation-creator-form />
 </talend-modal>

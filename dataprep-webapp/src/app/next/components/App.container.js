@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { I18nextProvider } from 'react-i18next';
 import { List, Map } from 'immutable';
 import { IconsProvider } from '@talend/react-components';
+import { ACKDispatcher } from '@talend/react-cmf-cqrs';
 import {
 	Notification,
 	ShortcutManager,
@@ -33,6 +34,7 @@ export default function App(props) {
 				<AppLoader>
 					<div className="tdp">
 						<IconsProvider />
+						<ACKDispatcher />
 						<ShortcutManager />
 						<Notification initialState={initialNotificationsState} />
 						<AboutDialog />

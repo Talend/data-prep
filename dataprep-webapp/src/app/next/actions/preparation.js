@@ -8,6 +8,7 @@ import {
 	PREPARATION_COPY,
 	PREPARATION_MOVE,
 	RENAME_PREPARATION,
+	CREATE_PREPARATIONS,
 	FETCH_PREPARATIONS,
 	CLOSE_COPY_MOVE_MODAL,
 	SET_TITLE_EDITION_MODE,
@@ -37,6 +38,13 @@ function open(event, { type, id }) {
 			},
 		};
 	}
+}
+
+function create(event, payload) {
+	return {
+		type: CREATE_PREPARATIONS,
+		payload,
+	};
 }
 
 function fetch(payload) {
@@ -145,6 +153,7 @@ export default {
 	open,
 	copy,
 	move,
+	create,
 	fetch,
 	remove,
 	rename,

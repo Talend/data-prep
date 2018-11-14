@@ -1,18 +1,18 @@
 {
   "contentTypes": {},
   "actions": {
-    "dataset:open": {
-      "id": "dataset:open",
+    "preparation:create": {
+      "id": "preparation:create",
       "label": {
         "i18n": {
-          "key": "tdp-cmf:OPEN_DATASET",
+          "key": "tdp-cmf:PREPARATIONS_CREATE",
           "options": {
-            "defaultValue": "Open dataset"
+            "defaultValue": "Create a preparation"
           }
         }
       },
-      "icon": "talend-tdp-positive",
-      "actionCreator": "dataset:view"
+      "icon": "talend-dataprep",
+      "actionCreator": "preparation:create"
     },
     "divider": {
       "divider": true
@@ -388,6 +388,15 @@
       "hasTheme": true
     },
     "HomeListView#datasets": {
+      "list": {
+        "actions": {
+          "items": [
+            "preparation:create",
+            "dataset:edit",
+            "dataset:delete"
+          ]
+        }
+      },
       "hasTheme": true
     },
     "HomeListView#preparations": {

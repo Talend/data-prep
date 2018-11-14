@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud
+@EnvOS @EnvOnPremise @EnvCloud @Action
 Feature: Perform scenarios with some Trim related action
 
   # Check date, the column type is modified after the trim action (TDP-4926 & TDP-5057)

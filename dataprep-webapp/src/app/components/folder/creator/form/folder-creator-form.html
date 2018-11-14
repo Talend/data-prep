@@ -13,7 +13,7 @@
   ~ ============================================================================
   -->
 
-<form name="$ctrl.folderNameForm" 
+<form name="$ctrl.folderNameForm"
       ng-submit="$ctrl.folderNameForm.$valid && $ctrl.createFolder()">
     <div class="modal-body">
         <div class="form-group">
@@ -21,6 +21,7 @@
                    type="text"
                    class="form-control"
                    ng-model="$ctrl.name"
+                   ng-value="$ctrl.name"
                    ng-model-options="{debounce: { default: 300, blur: 0 }}"
                    unique-folder="$ctrl.state.inventory.folder.content.folders" />
             <label for="create-folder-name"

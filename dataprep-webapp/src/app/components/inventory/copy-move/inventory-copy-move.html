@@ -23,14 +23,15 @@
         </folder-selection>
 
         <div class="form-group">
-            <label for="copy-move-name-input"
-                   class="control-label"
-                   translate-once="NAME"></label>
             <input id="copy-move-name-input"
                    class="form-control"
                    type="text"
                    ng-model="$ctrl.newName"
+                   ng-value="$ctrl.newName"
                    required />
+            <label for="copy-move-name-input"
+                   class="control-label"
+                   translate-once="NAME"></label>
         </div>
     </div>
     <div class="modal-footer">

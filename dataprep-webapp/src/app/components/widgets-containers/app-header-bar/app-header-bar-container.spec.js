@@ -25,6 +25,7 @@ describe('App header bar container', () => {
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
 		$translateProvider.translations('en', {
 			ONBOARDING: 'OnBoarding',
+			FEEDBACK_TOOLTIP: 'Feedback',
 			ONLINE_HELP_TOOLTIP: 'Help',
 		});
 		$translateProvider.preferredLanguage('en');
@@ -77,6 +78,15 @@ describe('App header bar container', () => {
 			expect(onboardingMenuItem.text()).toBe('Click here to discover the application');
 		});
 
+		it('should create feedback menu item', () => {
+			// when
+			createElement();
+
+			// then
+			const feedbackMenuItem = element.find('#modal\\:feedback');
+			expect(feedbackMenuItem.text()).toBe('Send feedback to Talend');
+		});
+
 		it('should create user menu', () => {
 			// when
 			createElement();
@@ -119,6 +129,19 @@ describe('App header bar container', () => {
 			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
 			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@onboarding/START_TOUR');
 
+		}));
+
+		it('should dispatch feedback icon click', inject((SettingsActionsService) => {
+			// given
+			createElement();
+
+			// when
+			const feedbackMenuItem = element.find('#modal\\:feedback');
+			feedbackMenuItem[0].click();
+
+			// then
+			expect(SettingsActionsService.dispatch).toHaveBeenCalled();
+			expect(SettingsActionsService.dispatch.calls.argsFor(0)[0].type).toBe('@@modal/SHOW');
 		}));
 	});
 });

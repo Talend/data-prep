@@ -562,6 +562,7 @@ const settingsMock = {
 				'modal:about',
 				'onboarding:preparation',
 				'divider',
+				'modal:feedback',
 				'divider',
 				'user:logout',
 			],

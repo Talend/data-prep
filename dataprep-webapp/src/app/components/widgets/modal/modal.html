@@ -18,7 +18,7 @@
      aria-modal="true"
      aria-labelledby="tc-dialog-header"
      tabindex="-1"
-     ng-class="::{fullscreen: talendModalCtrl.fullscreen, 'modal-large': talendModalCtrl.large}">
+     ng-class="::{fullscreen: talendModalCtrl.fullscreen, 'modal-large': talendModalCtrl.modalLarge}">
     <input type="checkbox"
            class="modal-state"
            aria-hidden="true"
@@ -26,7 +26,8 @@
 
     <div class=" modal-dialog modal-window">
         <div class="modal-content modal-inner" role="document">
-            <div class="modal-header">
+            <div class="modal-header"
+                 ng-class="::{informative: talendModalCtrl.modalInformative}">
                 <button type="button"
                         class="talend-modal-close close"
                         ng-show="::(talendModalCtrl.closeButton)"

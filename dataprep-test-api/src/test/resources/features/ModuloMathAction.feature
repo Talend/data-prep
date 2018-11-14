@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud @Action @Test
+@EnvOS @EnvOnPremise @EnvCloud @Action
 Feature: Check some features of the Duplicate Action and the Delete Invalid Action
 
   # @see <a href="https://jira.talendforge.org/browse/TDP-4889">TDP-4889</a>

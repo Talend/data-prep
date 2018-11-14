@@ -267,6 +267,7 @@ describe('Modal directive', () => {
 			input.trigger(event);
 
 			//then
+			console.log(document.activeElement);
 			expect(document.activeElement.className).toContain('modal-inner');
 		}));
 

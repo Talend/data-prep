@@ -152,6 +152,7 @@ export default function PlaygroundService(
 
 		const controls = state.playground.isReadOnly ? [] : [
 			{
+				id: 'playground-lookup-icon',
 				label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 				icon: 'talend-cog',
 				displayMode: TYPE_ICON_TOGGLE,
@@ -167,6 +168,7 @@ export default function PlaygroundService(
 				onClick: () => $timeout(toggleLookupPane),
 			},
 			{
+				id: 'help-history',
 				icon: 'talend-undo',
 				tooltipLabel: $translate.instant('UNDO_ICON_TOOLTIP'),
 				hideLabel: true,

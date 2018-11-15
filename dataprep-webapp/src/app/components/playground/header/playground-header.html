@@ -22,6 +22,7 @@
                     search-focused-item-index="$ctrl.state.search.focusedItemIndex" />
 </header>
 <pure-sub-header-bar
+    class="playground-sub-header"
     ng-attr-title="$ctrl.title"
     sub-title="$ctrl.subtitle"
     editable="!$ctrl.state.playground.isReadOnly"
@@ -34,17 +35,3 @@
     left="$ctrl.PlaygroundService.getSubheaderStatus()"
     right="$ctrl.PlaygroundService.getSubheaderActions()">
 </pure-sub-header-bar>
-
-<nav class="playground-sub-header navbar">
-    <ul class="playground-sub-header-right nav navbar-nav">
-        <li ng-if="$ctrl.preparationPicker">
-            <a id="playground-preparation-picker-icon"
-               class="btn btn-link"
-               role="button"
-               ng-click="$ctrl.onPreparationPicker()"
-               translate-once-title="CHOOSE_PREPARATION_TO_APPLY">
-                <icon name="'talend-dataprep'"/>
-            </a>
-        </li>
-    </ul>
-</nav>

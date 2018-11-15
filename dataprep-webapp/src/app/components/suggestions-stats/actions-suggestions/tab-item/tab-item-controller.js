@@ -106,6 +106,15 @@ export default function TabItemCtrl(state, TransformationService) {
 		}
 	};
 
+
+	vm.getFilteringScope = function () {
+		const scope = vm.scope;
+		if (scope === SCOPES.COLUMN && getSelectedColumnsCount() > 1) {
+			return SCOPES.MULTI_COLUMNS;
+		}
+		return scope;
+	};
+
 	/**
 	 * @ngdoc method
 	 * @name getSuggestionsState
@@ -114,14 +123,7 @@ export default function TabItemCtrl(state, TransformationService) {
 	 * @returns {Object} The appropriated state
 	 */
 	vm.getSuggestionsState = function () {
-		let scope = vm.scope;
-		if (scope === SCOPES.COLUMN) {
-			if (getSelectedColumnsCount() > 1) {
-				scope = SCOPES.MULTI_COLUMNS;
-			}
-		}
-
-		return vm.state.playground.suggestions[scope];
+		return vm.state.playground.suggestions[vm.getFilteringScope()];
 	};
 
 	/**

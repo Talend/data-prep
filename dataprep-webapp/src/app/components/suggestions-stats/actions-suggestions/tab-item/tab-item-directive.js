@@ -28,7 +28,7 @@ export default function TabItem($timeout) {
 		restrict: 'E',
 		templateUrl: template,
 		bindToController: true,
-		controllerAs: 'tabItemCtrl',
+		controllerAs: 'ctrl',
 		controller: 'TabItemCtrl',
 		scope: {
 			scope: '@',

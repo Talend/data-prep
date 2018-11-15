@@ -274,7 +274,7 @@ public class PreparationStep extends DataPrepStep {
         final Map<String, String> parameters = dataTable.asMap(String.class, String.class);
         String invalidCells = parameters.get("invalidCells");
 
-        HashMap values = (LinkedHashMap<String, String>) datasetContent.records.get(Integer.parseInt(columnNumber));
+        HashMap values = (HashMap<String, String>) datasetContent.records.get(Integer.parseInt(columnNumber));
         if (!invalidCells.equals(StringUtils.EMPTY)) {
             assertEquals(invalidCells, values.get(TDP_INVALID_MARKER));
         } else {

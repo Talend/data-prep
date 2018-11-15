@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-backend</artifactId>
@@ -9,9 +9,14 @@
         <relativePath>../dataprep-backend/pom.xml</relativePath>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-
     <artifactId>dataprep-avro-message</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.talend.daikon</groupId>
+            <artifactId>messages-model-spring-support</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -60,10 +65,4 @@
             </plugin>
         </plugins>
     </build>
-    <dependencies>
-        <dependency>
-            <groupId>org.talend.daikon</groupId>
-            <artifactId>messages-model-spring-support</artifactId>
-        </dependency>
-    </dependencies>
 </project>

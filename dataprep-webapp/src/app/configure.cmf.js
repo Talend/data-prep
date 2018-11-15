@@ -128,7 +128,7 @@ export default function initialize(additionalConfiguration = {}) {
 		const middlewares = [sagaMiddleware];
 		const additionalMiddlewares = additionalConfiguration.middlewares;
 		if (additionalMiddlewares) {
-			middlewares.concat(additionalMiddlewares);
+			middlewares.push(...additionalMiddlewares);
 		}
 
 		const store = cmfStore.initialize(reducers, initialState, undefined, middlewares);

@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud @Action
+@EnvOS @EnvOnPremise @EnvCloud @Action @Test
 Feature: Check some features of Negate Boolean Action
 
   # @see <a href="https://jira.talendforge.org/browse/TDP-6276">TDP-6276</a>
@@ -32,9 +32,6 @@ Feature: Check some features of Negate Boolean Action
       | boolean | boolean_negate |
     Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0000"
     Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0001"
-    Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0000"
-    Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0001"
-
     And I add a "concat" step identified by "concat_string" on the preparation "NegateBooleanAction_prep" with parameters :
       | column_id | 0001          |
       | mode      | constant_mode |
@@ -42,3 +39,13 @@ Feature: Check some features of Negate Boolean Action
       | suffix    | bbbb          |
     Then The preparation "NegateBooleanAction_prep" should have the following type "boolean" on the following column "0000"
     Then The preparation "NegateBooleanAction_prep" should have the following type "string" on the following column "0001"
+    Then The preparation "NegateBooleanAction_prep" should have the following invalid characteristics on the row number "0":
+      | invalidCells | 0000 |
+    Then The preparation "NegateBooleanAction_prep" should have the following quality bar characteristics on the column number "0":
+      | valid   | 5 |
+      | invalid | 1 |
+      | empty   | 0 |
+    Then The preparation "NegateBooleanAction_prep" should have the following quality bar characteristics on the column number "1":
+      | valid   | 6 |
+      | invalid | 0 |
+      | empty   | 0 |

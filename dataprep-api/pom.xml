@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ ============================================================================
   ~ Copyright (C) 2006-2018 Talend Inc. - www.talend.com
@@ -12,22 +13,26 @@
   ~ ============================================================================
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-backend-service-parent</artifactId>
         <version>3.0.0-SNAPSHOT</version>
         <relativePath>../dataprep-backend-service-parent/pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+
     <artifactId>dataprep-api</artifactId>
     <packaging>jar</packaging>
+
     <name>dataprep-api</name>
+
     <properties>
         <stack.param.name>DataPrepApiFQIN</stack.param.name>
         <start-class>org.talend.dataprep.api.Application</start-class>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>javax.mail</groupId>

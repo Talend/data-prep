@@ -2,12 +2,15 @@ package org.talend.dataprep.qa.step;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
+import org.talend.dataprep.qa.dto.ContentMetadataColumn;
+import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
@@ -38,9 +43,21 @@ import cucumber.api.java.en.When;
  */
 public class PreparationStep extends DataPrepStep {
 
-    public static final String DATASET_NAME = "dataSetName";
+    private static final String DATASET_NAME = "dataSetName";
 
     private static final String NB_STEPS = "nbSteps";
+
+    private static final String HEAD_ID = "HEAD";
+
+    private static final String VERSION_HEAD = "head";
+
+    private static final String TDP_INVALID_MARKER = "__tdpInvalid";
+
+    private static final String VALID_CELL = "valid";
+
+    private static final String INVALID_CELL = "invalid";
+
+    private static final String EMPTY_CELL = "empty";
 
     /**
      * This class' logger.
@@ -95,16 +112,6 @@ public class PreparationStep extends DataPrepStep {
             List<Action> actionsList = prepDet.actions;
             checkActionsListOfPrepa(actionsList, params.get("actionsList").toString());
         }
-    }
-
-    private void checkActionsListOfPrepa(List<Action> actionsList, String expectedActionsListFile) throws IOException {
-        if (expectedActionsListFile == null) {
-            return;
-        }
-        InputStream expectedActionsListStream = DataPrepStep.class.getResourceAsStream(expectedActionsListFile);
-        List<Action> expectedActionsList =
-                objectMapper.readValue(expectedActionsListStream, PreparationDetails.class).actions;
-        assertEquals(expectedActionsList, actionsList);
     }
 
     @When("^I load the existing preparation called \"(.*)\"$")
@@ -215,6 +222,81 @@ public class PreparationStep extends DataPrepStep {
     }
 
     /**
+     * Extract a preparation name from a full preparation name (i.e. with its path) and suffix it.
+     *
+     * @param prepFullName the preparation full name (with its dataprep path)
+     * @return the suffixed preparation name.
+     */
+    @NotNull
+    protected String getSuffixedPrepName(@NotNull String prepFullName) {
+        return suffixName(util.extractNameFromFullName(prepFullName));
+    }
+
+    @Then("^The preparation \"(.*)\" should contain the following columns:$")
+    public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
+            throws Exception {
+        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
+                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        response.then().statusCode(OK.value());
+
+        checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
+    }
+
+    @Then("^The preparation \"(.*)\" should have the following quality bar characteristics on the column number \"(.*)\":$")
+    public void thePreparationShouldHaveThefollowingQualityBar(String preparationName, String columnNumber,
+            DataTable dataTable) throws Exception {
+        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
+                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        response.then().statusCode(OK.value());
+
+        DatasetContent datasetContent = response.as(DatasetContent.class);
+
+        final Map<String, String> parameters = dataTable.asMap(String.class, String.class);
+        Integer validExpected = Integer.parseInt(parameters.get(VALID_CELL));
+        Integer invalidExpected = Integer.parseInt(parameters.get(INVALID_CELL));
+        Integer emptyExpected = Integer.parseInt(parameters.get(EMPTY_CELL));
+
+        ContentMetadataColumn columnMetadata = datasetContent.metadata.columns.get(Integer.parseInt(columnNumber));
+        assertEquals(validExpected, columnMetadata.quality.get(VALID_CELL));
+        assertEquals(invalidExpected, columnMetadata.quality.get(INVALID_CELL));
+        assertEquals(emptyExpected, columnMetadata.quality.get(EMPTY_CELL));
+    }
+
+    @Then("^The preparation \"(.*)\" should have the following invalid characteristics on the row number \"(.*)\":$")
+    public void thePreparationShouldHaveThefollowingInvalidCells(String preparationName, String columnNumber,
+            DataTable dataTable) throws Exception {
+        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
+                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        response.then().statusCode(OK.value());
+
+        DatasetContent datasetContent = response.as(DatasetContent.class);
+
+        final Map<String, String> parameters = dataTable.asMap(String.class, String.class);
+        String invalidCells = parameters.get("invalidCells");
+
+        HashMap values = (HashMap<String, String>) datasetContent.records.get(Integer.parseInt(columnNumber));
+        if (!invalidCells.equals(StringUtils.EMPTY)) {
+            assertEquals(invalidCells, values.get(TDP_INVALID_MARKER));
+        } else {
+            // there is no invalid cell
+            assertNull(values.get(TDP_INVALID_MARKER));
+        }
+    }
+
+    @Then("^The preparation \"(.*)\" should have the following type \"(.*)\" on the following column \"(.*)\"$")
+    public void thePreparationShouldHaveThefollowingTypeOnThefollowingColumn(String preparationName, String columnType,
+            String columnNumber) throws Exception {
+        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
+                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        response.then().statusCode(OK.value());
+
+        DatasetContent datasetContent = response.as(DatasetContent.class);
+
+        ContentMetadataColumn columnMetadata = datasetContent.metadata.columns.get(Integer.parseInt(columnNumber));
+        assertEquals(columnType, columnMetadata.type);
+    }
+
+    /**
      * Check if a preparation of a given name exist in a specified folder.
      *
      * @param prepFullName the seeked preparation.
@@ -237,24 +319,13 @@ public class PreparationStep extends DataPrepStep {
         return isPrepPresent;
     }
 
-    /**
-     * Extract a preparation name from a full preparation name (i.e. with its path) and suffix it.
-     *
-     * @param prepFullName the preparation full name (with its dataprep path)
-     * @return the suffixed preparation name.
-     */
-    @NotNull
-    protected String getSuffixedPrepName(@NotNull String prepFullName) {
-        return suffixName(util.extractNameFromFullName(prepFullName));
-    }
-
-    @Then("^The preparation \"(.*)\" should contain the following columns:$")
-    public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
-            throws Exception {
-        Response response =
-                api.getPreparationContent(context.getPreparationId(suffixName(preparationName)), "head", "HEAD", "");
-        response.then().statusCode(OK.value());
-
-        checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
+    private void checkActionsListOfPrepa(List<Action> actionsList, String expectedActionsListFile) throws IOException {
+        if (expectedActionsListFile == null) {
+            return;
+        }
+        InputStream expectedActionsListStream = DataPrepStep.class.getResourceAsStream(expectedActionsListFile);
+        List<Action> expectedActionsList =
+                objectMapper.readValue(expectedActionsListStream, PreparationDetails.class).actions;
+        assertEquals(expectedActionsList, actionsList);
     }
 }

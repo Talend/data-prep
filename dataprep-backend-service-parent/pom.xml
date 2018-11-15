@@ -12,23 +12,25 @@
   ~
   ~ ============================================================================
   -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <scm>
-        <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
-        <url>https://github.com/Talend/data-prep.git</url>
-    </scm>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-backend</artifactId>
         <version>3.0.0-SNAPSHOT</version>
         <relativePath>../dataprep-backend/pom.xml</relativePath>
     </parent>
-    <name>dataprep-backend-service-parent</name>
-    <packaging>pom</packaging>
+
     <artifactId>dataprep-backend-service-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>dataprep-backend-service-parent</name>
+
+    <scm>
+        <connection>scm:git:https://github.com/Talend/data-prep.git</connection>
+        <url>https://github.com/Talend/data-prep.git</url>
+    </scm>
 
     <dependencies>
         <!-- SPRING DEPENDENCIES -->
@@ -88,8 +90,8 @@
         <dependency>
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-backend-service</artifactId>
-            <type>test-jar</type>
             <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -109,6 +111,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/libs-milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -164,14 +178,4 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/libs-milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

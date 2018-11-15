@@ -42,12 +42,7 @@ public enum PreparationErrorCodes implements ErrorCode {
     PREPARATION_VERSION_DOES_NOT_EXIST(NOT_FOUND, "id", "stepId"),
     EXPORTED_PREPARATION_VERSION_NOT_SUPPORTED(BAD_REQUEST),
     UNABLE_TO_READ_PREPARATIONS_EXPORT(BAD_REQUEST, "importVersion", "dataPrepVersion"),
-    PREPARATION_ALREADY_EXIST(
-            CONFLICT,
-            "newPreparationId",
-            "oldPreparationId",
-            "newPreparationName",
-            "oldPreparationName"),
+    PREPARATION_ALREADY_EXIST(CONFLICT, "preparationName"),
     INVALID_PREPARATION(BAD_REQUEST, "message");
 
     /** The http status to use. */

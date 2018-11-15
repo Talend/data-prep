@@ -40,6 +40,9 @@ public final class VariableLevelLog {
             case ERROR:
                 logger.error(txt);
                 break;
+            default:
+                // There are more than 5 level in SLF4J ? Something should have gone horribly wrong
+                logger.warn("Unknown log level used {}", level);
             }
         }
     }

@@ -147,7 +147,7 @@ public class CloseableResourceWatch {
             if (numberOfEntries > 0) {
                 StringBuilder logMessage = new StringBuilder();
                 logMessage.append("Logging closeable resources ({} opened resources)...").append('\n');
-                for (CloseableHandler ignored : oldCloseableHandlers) {
+                for (@SuppressWarnings("unused") CloseableHandler ignored : oldCloseableHandlers) {
                     logMessage.append("{}").append('\n');
                 }
                 Object[] args = new Object[numberOfEntries + 1];

@@ -12,7 +12,18 @@
 
 package org.talend.dataprep.io;
 
-import java.io.*;
+import static java.lang.System.arraycopy;
+import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoUnit.MILLIS;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -25,11 +36,18 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.context.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.talend.daikon.content.DeletableResource;
+import org.talend.dataprep.util.VariableLevelLog;
 
 /**
  * This class configures an aspect around methods that <b>return</b> a {@link Closeable closeable} implementation.
@@ -44,12 +62,26 @@ import org.talend.daikon.content.DeletableResource;
 @Configuration
 @Aspect
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Conditional(CloseableResourceWatch.class)
-public class CloseableResourceWatch implements Condition {
+@Conditional(CloseableResourceWatch.CloseableResourceWatchCondition.class)
+public class CloseableResourceWatch {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CloseableResourceWatch.class);
 
+    private Level logLevel;
+
+    private Duration minimumClosableAgeToBeLogged;
+
     private final Set<CloseableHandler> entries = Collections.newSetFromMap(new WeakHashMap<>());
+
+    public CloseableResourceWatch(@Value("${dataprep.io.watch.min-age-milli:0}") long minimumClosableAgeToBeLoggedMilli,
+            @Value("${dataprep.io.watch.level:INFO}") String confDefinedLevel) {
+        for (Level l : Level.values()) {
+            if (l.name().equals(confDefinedLevel)) {
+                logLevel = l;
+            }
+        }
+        minimumClosableAgeToBeLogged = Duration.ofMillis(minimumClosableAgeToBeLoggedMilli);
+    }
 
     @Around("within(org.talend..*) && (execution(public java.io.Closeable+ *(..)) || execution(public org.talend.daikon.content.DeletableResource+ *(..)))")
     public Object closeableWatch(ProceedingJoinPoint pjp) throws Throwable {
@@ -102,23 +134,39 @@ public class CloseableResourceWatch implements Condition {
      */
     @Scheduled(fixedDelay = 30000)
     public void log() {
-        synchronized (entries) {
-            LOGGER.info("Logging closeable resources ({} opened resources)...", entries.size());
-            for (CloseableHandler entry : entries) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("{}", entry.format());
-                } else {
-                    LOGGER.info("{}", entry);
-                }
+        if (VariableLevelLog.isEnabledFor(LOGGER, logLevel)) {
+            CloseableHandler[] oldCloseableHandlers;
+            synchronized (entries) {
+                LocalDateTime ageLimit = now().minus(minimumClosableAgeToBeLogged);
+                oldCloseableHandlers = this.entries
+                        .stream()
+                        .filter(e -> e.getCreation().isBefore(ageLimit))
+                        .toArray(CloseableHandler[]::new);
             }
-            LOGGER.info("Done logging closeable resources ({} opened resources).", entries.size());
+            int numberOfEntries = oldCloseableHandlers.length;
+            if (numberOfEntries > 0) {
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.append("Logging closeable resources ({} opened resources)...").append('\n');
+                for (@SuppressWarnings("unused")
+                CloseableHandler ignored : oldCloseableHandlers) {
+                    logMessage.append("{}").append('\n');
+                }
+                Object[] args = new Object[numberOfEntries + 1];
+                args[0] = numberOfEntries;
+                arraycopy(oldCloseableHandlers, 0, args, 1, numberOfEntries);
+                VariableLevelLog.log(LOGGER, logLevel, logMessage.toString(), args);
+            }
         }
     }
 
-    @Override
-    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE)
-                || LOGGER.isDebugEnabled();
+    public static class CloseableResourceWatchCondition implements Condition {
+
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return context.getEnvironment().getProperty("dataprep.io.watch", Boolean.class, Boolean.FALSE)
+                    || LOGGER.isDebugEnabled();
+        }
+
     }
 
     private class ClosableMethodInterceptor implements MethodInterceptor {
@@ -144,7 +192,7 @@ public class CloseableResourceWatch implements Condition {
 
         RuntimeException getCaller();
 
-        long getCreation();
+        LocalDateTime getCreation();
 
         Closeable getCloseable();
 
@@ -155,7 +203,7 @@ public class CloseableResourceWatch implements Condition {
             writer.append('\n').append("------------").append('\n');
             writer.append("Closeable: ").append(getCloseable().getClass().getSimpleName()).append('\n');
             writer.append("Id: ").append(getId()).append('\n');
-            writer.append("Age: ").append(String.valueOf(System.currentTimeMillis() - getCreation())).append('\n');
+            writer.append("Age: ").append(String.valueOf(getCreation().until(now(), MILLIS))).append('\n');
             getCaller().printStackTrace(new PrintWriter(writer)); // NOSONAR
             writer.append("------------").append('\n');
             return writer.toString();
@@ -168,9 +216,9 @@ public class CloseableResourceWatch implements Condition {
 
         private final RuntimeException caller = new RuntimeException(); // NOSONAR
 
-        private String id = UUID.randomUUID().toString();
+        private final String id = UUID.randomUUID().toString();
 
-        private final long creation = System.currentTimeMillis();
+        private final LocalDateTime creation = now();
 
         private InputStreamHandler(InputStream delegate) {
             this.delegate = delegate;
@@ -241,7 +289,7 @@ public class CloseableResourceWatch implements Condition {
         }
 
         @Override
-        public long getCreation() {
+        public LocalDateTime getCreation() {
             return creation;
         }
 
@@ -258,9 +306,9 @@ public class CloseableResourceWatch implements Condition {
 
         private final RuntimeException caller = new RuntimeException(); // NOSONAR
 
-        private String id = UUID.randomUUID().toString();
+        private final String id = UUID.randomUUID().toString();
 
-        private final long creation = System.currentTimeMillis();
+        private final LocalDateTime creation = now();
 
         public OutputStreamHandler(OutputStream delegate) {
             this.delegate = delegate;
@@ -306,7 +354,7 @@ public class CloseableResourceWatch implements Condition {
         }
 
         @Override
-        public long getCreation() {
+        public LocalDateTime getCreation() {
             return creation;
         }
 

@@ -70,8 +70,8 @@ public class Defaults {
      */
     public static <T> BiFunction<HttpRequestBase, HttpResponse, T> asNull() {
         return (request, response) -> {
-            request.releaseConnection();
             EntityUtils.consumeQuietly(response.getEntity());
+            request.releaseConnection();
             return null;
         };
     }
@@ -86,6 +86,7 @@ public class Defaults {
             } catch (IOException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             } finally {
+                EntityUtils.consumeQuietly(response.getEntity());
                 request.releaseConnection();
             }
         };
@@ -122,6 +123,7 @@ public class Defaults {
             try {
                 return new ReleasableInputStream(response.getEntity().getContent(), request::releaseConnection);
             } catch (IOException e) {
+                EntityUtils.consumeQuietly(response.getEntity());
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
         };

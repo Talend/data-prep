@@ -44,7 +44,6 @@ public enum CommonErrorCodes implements ErrorCode {
     UNABLE_TO_READ_USER_DATA(500, "id"),
     UNABLE_TO_SAVE_PREPARATION(500, "id"),
     UNABLE_TO_GET_PREPARATION(500, "id"),
-    UNABLE_TO_READ_PREPARATION(500),
 
     ILLEGAL_ORDER_FOR_LIST(400, "order"),
     ILLEGAL_SORT_FOR_LIST(400, "sort"),

@@ -12,10 +12,10 @@ public class StringsHelper {
     }
 
     /**
-     * Normalize string to NFC: Normalization Form Canonical Composition.
-     * See https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms
+     * Normalize string to NFC.
+     * @see <a href="https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms">Normalization Form Canonical Composition</a>
      * @param s The string to normalize.
-     * @return The normalized form of the string.
+     * @return The normalized String with {@link Normalizer.Form#NFC} normalization form.
      */
     public static String normalizeString(String s) {
         if (!Normalizer.isNormalized(s, Normalizer.Form.NFC)) {

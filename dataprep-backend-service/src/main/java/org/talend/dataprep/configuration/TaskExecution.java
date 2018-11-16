@@ -28,7 +28,6 @@ public class TaskExecution {
 
     /**
      * @return an Authenticated task executor for event multi casting.
-     * @see DataPrepEvents
      */
     @Bean(name = "applicationEventMulticaster#executor")
     public TaskExecutor dataPrepAsyncTaskExecutor() {

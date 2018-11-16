@@ -92,27 +92,25 @@ $lookup-footer-height: 30px;
 
 .add-dataset-lookup .inventory {
 
-	.inventory-sort {
+	> .inventory-sort {
 		display: flex;
 		align-items: flex-end;
 		justify-content: space-between;
+		padding: 5px 0;
+		border-bottom: 1px solid $shadow-gray;
 
 		.dataset-search {
 			width: 150px;
 			height: 25px;
-			font-size: 0.8em;
 			padding: 0 20px 0 5px;
-			margin: 0 10px;
-
-			&::-ms-clear {
-				display: none;
-			}
 		}
 	}
 
 	.inventory-list {
-		height: 60vh;
 		position: relative;
+		padding: 0 .5rem;
+		height: 60vh;
+		background: $white;
 
 		.inventory-item-empty {
 			display: flex;
@@ -132,6 +130,7 @@ $lookup-footer-height: 30px;
 			flex-basis: 80px;
 			flex-grow: 0;
 			flex-shrink: 0;
+			border-bottom: 1px solid $shadow-gray;
 
 			.add-dataset-input {
 				flex-grow: 0;

@@ -16,17 +16,19 @@
 <form class="transformation-form"
       ng-submit="formCtrl.paramForm.$valid && formCtrl.transformWithParam()"
       name="formCtrl.paramForm">
-    <transform-params parameters="formCtrl.transformation.parameters"
-                      is-readonly="formCtrl.isReadonly">
-    </transform-params>
+    <div class="modal-body">
+        <transform-params parameters="formCtrl.transformation.parameters"
+                          is-readonly="formCtrl.isReadonly">
+        </transform-params>
 
-    <transform-cluster-params
-            ng-if="formCtrl.transformation.cluster"
-            details="formCtrl.transformation.cluster"
-            is-readonly="formCtrl.isReadonly">
-    </transform-cluster-params>
+        <transform-cluster-params
+                ng-if="formCtrl.transformation.cluster"
+                details="formCtrl.transformation.cluster"
+                is-readonly="formCtrl.isReadonly">
+        </transform-cluster-params>
+    </div>
 
-    <div class="modal-buttons">
+    <div class="modal-footer modal-buttons">
         <button ng-if="!formCtrl.isReadonly"
                 type="submit"
                 class="btn btn-primary"

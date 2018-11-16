@@ -7,6 +7,7 @@
 
   .folders-filter {
     text-align: right;
+    padding: .5rem 0;
 
     .search-input {
       display: inline-block;
@@ -33,5 +34,6 @@
     overflow: auto;
     border: 1px solid #CECECE;
     padding: 2px;
+    background: $white;
   }
 }

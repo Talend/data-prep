@@ -115,12 +115,13 @@
     }
 
     .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-
-      .btn-default {
-        margin-right: auto;
+      &:before,
+      &:after {
+        content: none;
       }
+
+      display: flex;
+      justify-content: space-between;
     }
 
     .modal-form-row {

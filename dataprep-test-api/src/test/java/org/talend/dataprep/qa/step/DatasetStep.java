@@ -9,6 +9,7 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -182,7 +183,9 @@ public class DatasetStep extends DataPrepStep {
     }
 
     @Given("^I have a dataset with parameters:$")
-    public void iHaveADatasetWithParameters(Map<String, String> parameters) throws Throwable {
+    public void iHaveADatasetWithParameters(Map<String, String> parametersImmutable) throws Throwable {
+
+        Map<String, String> parameters = new HashMap<>(parametersImmutable);
         // in case of only name parameter, we should use a suffixed dataSet name
         if (parameters.containsKey(DATASET_NAME_KEY) && parameters.size() == 1) {
             parameters.put(DATASET_NAME_KEY, suffixName(parameters.get(DATASET_NAME_KEY)));

@@ -1,4 +1,4 @@
-@EnvOS @EnvOnPremise @EnvCloud @Action @Test
+@EnvOS @EnvOnPremise @EnvCloud @Action
 Feature: Check some features of the pipeline (invalids, stats, ...) on the Modulo Action (and more genrally on math action)
 
   # @see <a href="https://jira.talendforge.org/browse/TDP-4889">TDP-4889</a>

@@ -6,11 +6,7 @@ import { translate } from 'react-i18next';
 import I18N from '../../constants/i18n';
 
 function OpenWithButton(props) {
-	return (
-		<Action
-			{...props}
-		/>
-	);
+	return <Action {...props} />;
 }
 
 OpenWithButton.displayName = 'OpenWithButton';

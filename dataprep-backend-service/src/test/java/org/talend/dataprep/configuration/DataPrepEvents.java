@@ -26,7 +26,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.task.AsyncListenableTaskExecutor;
 
 /**
- * For UT all event are synchrone
+ * For UT, all event are synchrone
  */
 @SuppressWarnings("InsufficientBranchCoverage")
 @Configuration
@@ -44,10 +44,10 @@ public class DataPrepEvents {
     // do NOT change the name as it is important to replace the default application context event multi caster
     @Bean(name = "applicationEventMulticaster")
     public ApplicationEventMulticaster getDataPrepEventsCaster() {
-        return new TestApplicationEventMultiCaste();
+        return new TestApplicationEventMultiCaster();
     }
 
-    private class TestApplicationEventMultiCaste extends SimpleApplicationEventMulticaster {
+    private class TestApplicationEventMultiCaster extends SimpleApplicationEventMulticaster {
 
         @Override
         public void multicastEvent(final ApplicationEvent event, ResolvableType eventType) {

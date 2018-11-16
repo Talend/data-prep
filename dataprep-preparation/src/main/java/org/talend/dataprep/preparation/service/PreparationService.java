@@ -67,6 +67,7 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.action.ActionDefinition;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
@@ -86,6 +87,7 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.conversions.inject.OwnerInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.folder.store.FolderRepository;
@@ -226,14 +228,23 @@ public class PreparationService {
         toCreate.setAppVersion(versionService.version().getVersionId());
         toCreate.setHeadId(Step.ROOT_STEP.id());
         toCreate.setAuthor(security.getUserId());
-        toCreate.setName(preparation.getName());
         toCreate.setDataSetId(preparation.getDataSetId());
         toCreate.setFolderId(folderId);
-        toCreate.setRowMetadata(preparation.getRowMetadata());
+
         try {
-            toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
-        } catch (Exception e) {
-            LOGGER.warn("Unable to find dataset name for preparation '{}'", preparation.getId(), e);
+            final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+
+            // provide fallback preparation name if not exist
+            if (StringUtils.isEmpty(preparation.getName())) {
+                toCreate.setName((dataSetMetadata.getName() != null ? dataSetMetadata.getName() + " " : "")
+                        + message("preparation.create.suffix"));
+            }
+            final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
+            toCreate.setRowMetadata(rowMetadata);
+        } catch (TDPException e) {
+            LOGGER.error("Unable to find dataset metadata of {} for preparation '{}'", preparation.getDataSetId(), preparation.getId(), e);
+            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST,
+                    ExceptionContext.withBuilder().put("id", preparation.getDataSetId()).build());
         }
 
         preparationRepository.add(toCreate);

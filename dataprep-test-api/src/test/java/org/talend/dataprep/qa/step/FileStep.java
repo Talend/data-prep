@@ -18,6 +18,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -52,7 +53,7 @@ public class FileStep extends DataPrepStep {
         try (InputStream tempFileStream = Files.newInputStream(tempFile);
                 InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {
 
-            if (tempFile.getFileName().endsWith(".xlsx")) {
+            if (FileSystems.getDefault().getPathMatcher("glob:*.xlsx").matches(tempFile.getFileName())) {
                 if (!ExcelComparator.compareTwoFile(new XSSFWorkbook(tempFileStream),
                         new XSSFWorkbook(expectedFileStream))) {
                     fail("Temporary file " + temporaryFilename + " isn't the same as the expected file "

@@ -35,7 +35,9 @@ const registerRouteFunction = api.route.registerFunction;
  * - Register action creators in CMF actions dictionary
  */
 export default function initialize(additionalConfiguration = {}) {
-	// window.registry = api.registry;
+	// FIXME remove before release
+	// for debug purpose
+	window.registry = api.registry.getRegistry();
 
 	// register all saga api
 	api.registry.addToRegistry(
@@ -44,7 +46,7 @@ export default function initialize(additionalConfiguration = {}) {
 	);
 
 	const routerSagas = {
-		...dataset.datasetSagas,
+		...dataset.datasetSagas.datasetRoutesSagas,
 	};
 	const additionalRouterSagas = additionalConfiguration.routerSagas;
 	if (additionalRouterSagas) {
@@ -54,6 +56,8 @@ export default function initialize(additionalConfiguration = {}) {
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, routerSagas),
 		fork(api.sagas.component.handle),
+		fork(dataset.datasetSagas.datasetMainSaga),
+		fork(cmfSagas.changeDocumentTitle),
 	];
 	const rootSagasToStart = {
 		...sagas.help,
@@ -87,10 +91,6 @@ export default function initialize(additionalConfiguration = {}) {
 	}
 
 	function appFactory(storage = {}) {
-		cmfSagas.http.setDefaultConfig({
-			headers: {},
-		});
-
 		const { initialState, engine } = storage;
 
 		const preReducers = [dataset.preReducers.notificationReducer, ...dataset.hors];
@@ -108,14 +108,14 @@ export default function initialize(additionalConfiguration = {}) {
 		/**
 		 * Register http middleware
 		 */
-		cmfStore.setHttpMiddleware(
-			httpMiddleware({
-				security: {
-					CSRFTokenCookieKey: 'XSRF-TOKEN',
-					CSRFTokenHeaderKey: 'X-XSRF-TOKEN',
-				},
-			}),
-		);
+		const httpMiddleWareConfig = {
+			security: {
+				CSRFTokenCookieKey: 'XSRF-TOKEN',
+				CSRFTokenHeaderKey: 'X-XSRF-TOKEN',
+			},
+		};
+		cmfSagas.http.setDefaultConfig(httpMiddleWareConfig);
+		cmfStore.setHttpMiddleware(httpMiddleware(httpMiddleWareConfig));
 
 		/**
 		 * Register your app reducers
@@ -132,7 +132,7 @@ export default function initialize(additionalConfiguration = {}) {
 		const middlewares = [sagaMiddleware];
 		const additionalMiddlewares = additionalConfiguration.middlewares;
 		if (additionalMiddlewares) {
-			middlewares.concat(additionalMiddlewares);
+			middlewares.push(...additionalMiddlewares);
 		}
 
 		const store = cmfStore.initialize(reducers, initialState, undefined, middlewares);

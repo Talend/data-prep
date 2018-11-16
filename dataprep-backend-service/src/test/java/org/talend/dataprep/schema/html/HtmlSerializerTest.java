@@ -90,9 +90,9 @@ public class HtmlSerializerTest extends AbstractSchemaTestUtils {
             Map<String, String> row0 = values.get(0);
 
             Assertions.assertThat(row0).contains(MapEntry.entry("0000", "000001"), //
-                    MapEntry.entry("0001", "Jennifer BOS"), //
+                    MapEntry.entry("0001", "aaa"), //
                     MapEntry.entry("0002", "France"), //
-                    MapEntry.entry("0003", "jbos@talend.com"));
+                    MapEntry.entry("0003", "x@talend.com"));
         }
     }
 

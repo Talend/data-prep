@@ -165,7 +165,7 @@ public abstract class BaseExportStrategy {
                 final Action[] endActions = endStepActions.execute().toArray(new Action[0]);
                 if (endActions.length > startActions.length) {
                     final Action[] filteredActions =
-                            (Action[]) ArrayUtils.subarray(endActions, startActions.length, endActions.length);
+                            ArrayUtils.subarray(endActions, startActions.length, endActions.length);
                     LOGGER.debug("Reduced actions list from {} to {} action(s)", endActions.length,
                             filteredActions.length);
                     mapper.writeValue(actionsAsString, filteredActions);

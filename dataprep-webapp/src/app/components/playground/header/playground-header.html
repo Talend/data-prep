@@ -25,13 +25,13 @@
     class="playground-sub-header"
     ng-attr-title="$ctrl.title"
     sub-title="$ctrl.subtitle"
-    editable="!$ctrl.state.playground.isReadOnly"
     on-go-back="$ctrl.onClose"
+    editable="!$ctrl.state.playground.isReadOnly"
     on-edit="$ctrl.toggleNameEditMode"
+    edit-mode="$ctrl.state.playground.nameEditionMode"
     on-submit="$ctrl.editName"
     on-cancel="$ctrl.cancelEdit"
     loading="$ctrl.loading"
-    edit-mode="$ctrl.state.playground.nameEditionMode"
     left="$ctrl.PlaygroundService.getSubheaderStatus()"
     right="$ctrl.PlaygroundService.getSubheaderActions()">
 </pure-sub-header-bar>

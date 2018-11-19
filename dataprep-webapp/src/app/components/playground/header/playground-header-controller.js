@@ -15,20 +15,12 @@
 import { PLAYGROUND_PREPARATION_ROUTE } from '../../../index-route';
 
 export default class PlaygroundHeaderCtrl {
-	constructor(
-		state, $state, $stateParams,
-		StateService, HelpService, PlaygroundService,
-		HistoryService, LookupService, PreviewService
-	) {
+	constructor(state, $state, $stateParams, StateService, PlaygroundService) {
 		'ngInject';
 
 		this.state = state;
 		this.StateService = StateService;
-		this.HelpService = HelpService;
 		this.PlaygroundService = PlaygroundService;
-		this.HistoryService = HistoryService;
-		this.LookupService = LookupService;
-		this.PreviewService = PreviewService;
 		this.$state = $state;
 		this.$stateParams = $stateParams;
 

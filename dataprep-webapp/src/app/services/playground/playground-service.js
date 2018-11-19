@@ -32,19 +32,19 @@
  */
 
 import { map } from 'lodash';
+import { ACTION_TYPES } from '@talend/react-components/lib/Actions/Action';
 import {
 	PLAYGROUND_PREPARATION_ROUTE,
 	HOME_DATASETS_ROUTE,
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
+
 // actions scopes
 const LINE = 'line';
 const DATASET = 'dataset';
 // events
 export const EVENT_LOADING_START = 'talend.loading.start';
 export const EVENT_LOADING_STOP = 'talend.loading.stop';
-
-const TYPE_ICON_TOGGLE = 'iconToggle';
 
 
 export default function PlaygroundService(
@@ -152,18 +152,19 @@ export default function PlaygroundService(
 
 		const controls = state.playground.isReadOnly ? [] : [
 			{
-				id: 'playground-lookup-icon',
+				id: 'playground-parameters-icon',
 				label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 				icon: 'talend-cog',
-				displayMode: TYPE_ICON_TOGGLE,
+				displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
 				active: state.playground.parameters.visible,
 				onClick: () => $timeout(StateService.toggleDatasetParameters),
 				inProgress: state.playground.lookup.loading,
 			},
 			{
+				id: 'playground-lookup-icon',
 				label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
 				icon: 'talend-chain',
-				displayMode: TYPE_ICON_TOGGLE,
+				displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
 				active: state.playground.lookup.visibility,
 				onClick: () => $timeout(toggleLookupPane),
 			},
@@ -177,6 +178,7 @@ export default function PlaygroundService(
 				onClick: () => $timeout(HistoryService.undo),
 			},
 			{
+				id: 'help-history-redo',
 				icon: 'talend-redo',
 				tooltipLabel: $translate.instant('REDO_ICON_TOOLTIP'),
 				hideLabel: true,

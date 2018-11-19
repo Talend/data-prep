@@ -35,7 +35,9 @@ const registerRouteFunction = api.route.registerFunction;
  * - Register action creators in CMF actions dictionary
  */
 export default function initialize(additionalConfiguration = {}) {
-	// window.registry = api.registry;
+	// FIXME remove before release
+	// for debug purpose
+	window.registry = api.registry.getRegistry();
 
 	// register all saga api
 	api.registry.addToRegistry(
@@ -44,7 +46,7 @@ export default function initialize(additionalConfiguration = {}) {
 	);
 
 	const routerSagas = {
-		...dataset.datasetSagas,
+		...dataset.datasetSagas.datasetRoutesSagas,
 	};
 	const additionalRouterSagas = additionalConfiguration.routerSagas;
 	if (additionalRouterSagas) {
@@ -54,6 +56,8 @@ export default function initialize(additionalConfiguration = {}) {
 	const rootSagas = [
 		fork(sagaRouter, browserHistory, routerSagas),
 		fork(api.sagas.component.handle),
+		fork(dataset.datasetSagas.datasetMainSaga),
+		fork(cmfSagas.changeDocumentTitle),
 	];
 	const rootSagasToStart = {
 		...sagas.help,

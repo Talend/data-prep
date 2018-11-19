@@ -109,21 +109,21 @@ public class DatasetClient {
     }
 
     public DataSetMetadata getDataSetMetadata(String id) {
-        return toDataSetMetadata(dataCatalogClient.getMetadata(id));
+        final Schema dataSetSchema = dataCatalogClient.getDataSetSchema(id);
+        return toDataSetMetadata(dataCatalogClient.getMetadata(id), dataSetSchema);
     }
 
     public RowMetadata getDataSetRowMetadata(String id) {
         Schema dataSetSchema = dataCatalogClient.getDataSetSchema(id);
-        return dataSetSchema == null ? null : AvroUtils.toRowMetadata(dataSetSchema);
-    }
-
-    public Stream<DataSetRow> getDataSetContentAsRows(String id, RowMetadata rowMetadata, boolean fullContent) {
-        return toDataSetRows(dataCatalogClient.getDataSetContent(id, limit(fullContent)), rowMetadata);
+        return AvroUtils.toRowMetadata(dataSetSchema);
     }
 
     public Stream<DataSetRow> getDataSetContentAsRows(String id, boolean fullContent) {
-        DataSetMetadata metadata = getDataSetMetadata(id);
-        return toDataSetRows(dataCatalogClient.getDataSetContent(id, limit(fullContent)), metadata.getRowMetadata());
+        final Schema dataSetSchema = dataCatalogClient.getDataSetSchema(id);
+        final DataSetMetadata dataSetMetadata = toDataSetMetadata(dataCatalogClient.getMetadata(id), dataSetSchema);
+        final Stream<GenericRecord> dataSetContent =
+                dataCatalogClient.getDataSetContent(id, limit(fullContent), dataSetSchema);
+        return toDataSetRows(dataSetContent, dataSetMetadata.getRowMetadata());
     }
 
     /**
@@ -172,17 +172,20 @@ public class DatasetClient {
         if (metadata == null) {
             return null;
         }
-        DataSetMetadata dataSetMetadata = toDataSetMetadata(metadata, fullContent);
+        final Schema dataSetSchema = dataCatalogClient.getDataSetSchema(id);
+        DataSetMetadata dataSetMetadata = toDataSetMetadata(metadata, dataSetSchema);
         dataset.setMetadata(dataSetMetadata);
 
         // convert records
-        Stream<GenericRecord> dataSetContent = dataCatalogClient.getDataSetContent(id, limit(fullContent));
-        Stream<DataSetRow> records = toDataSetRows(dataSetContent, dataSetMetadata.getRowMetadata());
+        final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
+
+        Stream<GenericRecord> dataSetContent = dataCatalogClient.getDataSetContent(id, limit(fullContent), dataSetSchema);
+        Stream<DataSetRow> records = toDataSetRows(dataSetContent, rowMetadata);
         if (withRowValidityMarker) {
-            records = records.peek(addValidity(dataSetMetadata.getRowMetadata().getColumns()));
+            records = records.peek(addValidity(rowMetadata.getColumns()));
         }
         if (filter != null) {
-            records = records.filter(filterService.build(filter, dataSetMetadata.getRowMetadata()));
+            records = records.filter(filterService.build(filter, rowMetadata));
         }
         dataset.setRecords(records);
 
@@ -205,7 +208,10 @@ public class DatasetClient {
                 datasetStream = datasetStream.filter(dataset -> containsIgnoreCase(dataset.getLabel(), name));
             }
         }
-        return datasetStream.filter(Objects::nonNull).map(this::toDataSetMetadata);
+        return datasetStream.filter(Objects::nonNull).map(dataset -> {
+            final Schema dataSetSchema = dataCatalogClient.getDataSetSchema(dataset.getId());
+            return toDataSetMetadata(dataset, dataSetSchema);
+        });
     }
 
     private Long limit(boolean fullContent) {
@@ -255,17 +261,16 @@ public class DatasetClient {
     }
 
     // Dataset -> DataSetMetadata
-    private DataSetMetadata toDataSetMetadata(Dataset dataset) {
-        return toDataSetMetadata(dataset, false);
+    private DataSetMetadata toDataSetMetadata(Dataset dataset, Schema datasetSchema) {
+        return toDataSetMetadata(dataset, false, datasetSchema);
     }
 
-    private DataSetMetadata toDataSetMetadata(Dataset dataset, boolean fullContent) {
-        RowMetadata rowMetadata = getDataSetRowMetadata(dataset.getId());
+    private DataSetMetadata toDataSetMetadata(Dataset dataset, boolean fullContent, Schema datasetSchema) {
         DataSetMetadata metadata = conversionService.convert(dataset, DataSetMetadata.class);
-        metadata.setRowMetadata(rowMetadata);
         metadata.getContent().setLimit(limit(fullContent));
 
-        if (rowMetadata != null && rowMetadata
+        RowMetadata rowMetadata = AvroUtils.toRowMetadata(datasetSchema);
+        if (rowMetadata
                 .getColumns()
                 .stream()
                 .map(ColumnMetadata::getStatistics)
@@ -274,10 +279,12 @@ public class DatasetClient {
             if (context.getBean(DatasetConfiguration.class).isLegacy()) {
                 analysisResult = getAnalyseDatasetFromLegacy(dataset.getId());
             } else {
-                analysisResult = analyseDataset(dataset.getId());
+                analysisResult = analyseDataset(dataset.getId(), datasetSchema, rowMetadata);
             }
             metadata.setRowMetadata(new RowMetadata(analysisResult.rowMetadata));
             metadata.getContent().setNbRecords(analysisResult.rowcount);
+        } else {
+            metadata.setRowMetadata(rowMetadata);
         }
 
         return metadata;
@@ -293,13 +300,12 @@ public class DatasetClient {
         return new AnalysisResult(metadata.getRowMetadata(), metadata.getContent().getNbRecords());
     }
 
-    private AnalysisResult analyseDataset(String id) {
+    private AnalysisResult analyseDataset(String id, Schema schema, RowMetadata rowMetadata) {
         try {
             return computedMetadataCache.get(id, () -> {
                 AtomicLong count = new AtomicLong(0);
-                RowMetadata rowMetadata = getDataSetRowMetadata(id);
                 try (Stream<DataSetRow> records =
-                        dataCatalogClient.getDataSetContent(id, sampleSize).map(toDatasetRow(rowMetadata))) {
+                        dataCatalogClient.getDataSetContent(id, sampleSize, schema).map(toDatasetRow(rowMetadata))) {
                     analyzerService.analyzeFull(records, rowMetadata.getColumns());
                 }
                 return new AnalysisResult(rowMetadata, count.get());

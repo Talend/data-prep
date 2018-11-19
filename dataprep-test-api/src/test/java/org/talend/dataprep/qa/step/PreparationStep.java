@@ -2,6 +2,7 @@ package org.talend.dataprep.qa.step;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.OK;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
@@ -49,6 +50,14 @@ public class PreparationStep extends DataPrepStep {
     private static final String HEAD_ID = "HEAD";
 
     private static final String VERSION_HEAD = "head";
+
+    private static final String TDP_INVALID_MARKER = "__tdpInvalid";
+
+    private static final String VALID_CELL = "valid";
+
+    private static final String INVALID_CELL = "invalid";
+
+    private static final String EMPTY_CELL = "empty";
 
     /**
      * This class' logger.
@@ -243,14 +252,14 @@ public class PreparationStep extends DataPrepStep {
         DatasetContent datasetContent = response.as(DatasetContent.class);
 
         final Map<String, String> parameters = dataTable.asMap(String.class, String.class);
-        Integer validExpected = Integer.parseInt(parameters.get("valid"));
-        Integer invalidExpected = Integer.parseInt(parameters.get("invalid"));
-        Integer emptyExpected = Integer.parseInt(parameters.get("empty"));
+        Integer validExpected = Integer.parseInt(parameters.get(VALID_CELL));
+        Integer invalidExpected = Integer.parseInt(parameters.get(INVALID_CELL));
+        Integer emptyExpected = Integer.parseInt(parameters.get(EMPTY_CELL));
 
         ContentMetadataColumn columnMetadata = datasetContent.metadata.columns.get(Integer.parseInt(columnNumber));
-        assertEquals(validExpected, columnMetadata.quality.get("valid"));
-        assertEquals(invalidExpected, columnMetadata.quality.get("invalid"));
-        assertEquals(emptyExpected, columnMetadata.quality.get("empty"));
+        assertEquals(validExpected, columnMetadata.quality.get(VALID_CELL));
+        assertEquals(invalidExpected, columnMetadata.quality.get(INVALID_CELL));
+        assertEquals(emptyExpected, columnMetadata.quality.get(EMPTY_CELL));
     }
 
     @Then("^The preparation \"(.*)\" should have the following invalid characteristics on the row number \"(.*)\":$")
@@ -265,9 +274,13 @@ public class PreparationStep extends DataPrepStep {
         final Map<String, String> parameters = dataTable.asMap(String.class, String.class);
         String invalidCells = parameters.get("invalidCells");
 
-        HashMap values = (LinkedHashMap<String, String>) datasetContent.records.get(Integer.parseInt(columnNumber));
-
-        assertEquals(invalidCells, values.get("__tdpInvalid"));
+        HashMap values = (HashMap<String, String>) datasetContent.records.get(Integer.parseInt(columnNumber));
+        if (!invalidCells.equals(StringUtils.EMPTY)) {
+            assertEquals(invalidCells, values.get(TDP_INVALID_MARKER));
+        } else {
+            // there is no invalid cell
+            assertNull(values.get(TDP_INVALID_MARKER));
+        }
     }
 
     @Then("^The preparation \"(.*)\" should have the following type \"(.*)\" on the following column \"(.*)\"$")

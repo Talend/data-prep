@@ -27,6 +27,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class TaskExecution {
 
     /**
+     * This bean is used to configure TaskExecutor for the default Spring async multicaster: SimpleApplicationEventMulticaster
      * @return an Authenticated task executor for event multi casting.
      */
     @Bean(name = "applicationEventMulticaster#executor")

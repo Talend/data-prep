@@ -52,6 +52,14 @@
   "routes": {
     "path": "/",
     "component": "App",
+    "documentTitle": {
+      "i18n": {
+        "key": "tdc-cmf:TITLE_DATA_PREP",
+        "options": {
+          "defaultValue": "Data Preparation | Talend"
+        }
+      }
+    },
     "indexRoute": {
       "component": "Redirect"
     },

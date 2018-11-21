@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
@@ -89,7 +87,6 @@ import org.talend.dataprep.command.preparation.PreparationUpdate;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
-import org.talend.dataprep.exception.error.DataSetErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
@@ -152,18 +149,13 @@ public class PreparationAPI extends APIService {
             LOG.debug("Creating a preparation in {} (pool: {} )...", folder, getConnectionStats());
         }
 
-        try {
-            final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
-            if (StringUtils.isEmpty(preparation.getName())) {
-                preparation.setName((dataSetMetadata.getName() != null ? dataSetMetadata.getName() + " " : "")
-                        + message("preparation.create.suffix"));
-            }
-            final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
-            preparation.setRowMetadata(rowMetadata);
-        } catch (TDPException e) {
-            throw new TDPException(DataSetErrorCodes.DATASET_DOES_NOT_EXIST,
-                    ExceptionContext.withBuilder().put("id", preparation.getDataSetId()).build());
+        final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+        if (StringUtils.isEmpty(preparation.getName())) {
+            preparation.setName((dataSetMetadata.getName() != null ? dataSetMetadata.getName() + " " : "")
+                    + message("preparation.create.suffix"));
         }
+        final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
+        preparation.setRowMetadata(rowMetadata);
 
         PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation, folder);
         final String preparationId = preparationCreate.execute();

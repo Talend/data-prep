@@ -36,7 +36,7 @@ export default function Playground($timeout) {
 					return;
 				}
 
-				if (e.target.nodeName === 'INPUT') {
+				if (ctrl.state.playground.nameEditionMode) {
 					container.focus();
 				}
 				else {

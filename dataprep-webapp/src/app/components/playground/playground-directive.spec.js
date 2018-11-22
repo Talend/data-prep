@@ -301,17 +301,21 @@ describe('Playground directive', () => {
 		}));
 
 		it('should NOT close playground when event target is on input element', inject(($timeout) => {
+			stateMock.playground.nameEditionMode = true;
+
 			createElement();
 
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
-			element.find('.playground-container input').eq(0).trigger(event);
+			element.find('.tc-editable-text-form-input').eq(0).trigger(event);
 			$timeout.flush();
 
 			expect(ctrl.beforeClose).not.toHaveBeenCalled();
 		}));
 
 		it('should focus on playground container when event target is on input element', inject(($timeout) => {
+			stateMock.playground.nameEditionMode = true;
+
 			createElement();
 			angular.element('body').append(element);
 			const container = element.find('.playground-container').eq(0)[0];
@@ -320,7 +324,7 @@ describe('Playground directive', () => {
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
 
-			element.find('.playground-container input').eq(0).trigger(event);
+			element.find('.tc-editable-text-form-input').eq(0).trigger(event);
 			$timeout.flush();
 
 			expect(document.activeElement).toBe(container);

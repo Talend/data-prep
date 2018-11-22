@@ -163,9 +163,11 @@ describe('Playground directive', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject(($rootScope, $compile, $q, DatasetService) => {
+	beforeEach(inject(($rootScope, $compile, $q, DatasetService, HistoryService) => {
 		scope = $rootScope.$new();
 		spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue($q.when());
+		spyOn(HistoryService, 'undo').and.returnValue();
+		spyOn(HistoryService, 'redo').and.returnValue();
 
 		createElement = () => {
 			element = angular.element('<playground></playground>');
@@ -273,6 +275,34 @@ describe('Playground directive', () => {
 			expect(playground.eq(0).find('filter-bar').find('#filter-search').length).toBe(1);
 			expect(playground.eq(0).find('datagrid').length).toBe(1);
 		});
+	});
+
+	describe('History shortcuts management', () => {
+		it('should undo', inject(($timeout, HistoryService) => {
+			createElement();
+
+			const event = angular.element.Event('keydown');
+			event.keyCode = 90;
+			event.ctrlKey = true;
+
+			element.find('.playground-container').eq(0).trigger(event);
+			$timeout.flush();
+
+			expect(HistoryService.undo).toHaveBeenCalled();
+		}));
+
+		it('should redo', inject(($timeout, HistoryService) => {
+			createElement();
+
+			const event = angular.element.Event('keydown');
+			event.keyCode = 89
+			event.ctrlKey = true;
+
+			element.find('.playground-container').eq(0).trigger(event);
+			$timeout.flush();
+
+			expect(HistoryService.redo).toHaveBeenCalled();
+		}));
 	});
 
 	describe('ESC management', () => {

@@ -40,17 +40,18 @@ export default class ConfirmService {
 	 * Example : ConfirmService.confirm(['First text', 'Second text'], {translateArg: 'value'})
 	 */
 	confirm(title, textIds, textArgs, deletion) {
-		this.$translate(title).then((translation) => {
-			this.$translate(textIds, textArgs)
-			.then(translations => textIds.map(id => translations[id]))
-			.then((texts) => {
-				this.StateService.showConfirmationModal(translation, texts, deletion);
-			});
-		});
+		return this.$translate(title)
+			.then((translation) => {
+				this.$translate(textIds, textArgs)
+					.then(translations => textIds.map(id => translations[id]))
+					.then((texts) => {
+						this.StateService.showConfirmationModal(translation, texts, deletion);
+					});
 
-		return new Promise((res, rej) => {
-			this.resolve = res;
-			this.reject = rej;
-		}).finally(this.StateService.hideConfirmationModal);
+				return new Promise((res, rej) => {
+					this.resolve = res;
+					this.reject = rej;
+				}).finally(this.StateService.hideConfirmationModal);
+			});
 	}
 }

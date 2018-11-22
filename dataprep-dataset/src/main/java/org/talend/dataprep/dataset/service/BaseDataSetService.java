@@ -45,10 +45,7 @@ public abstract class BaseDataSetService {
     protected DataSetMetadataRepository dataSetMetadataRepository;
 
     @Autowired
-    protected ApplicationEventPublisher publisher;
-
-    @Autowired
-    protected ApplicationEventMulticaster asyncPublisher;
+    protected ApplicationEventPublisher publisher;;
 
     /** DataSet metadata builder. */
     @Autowired

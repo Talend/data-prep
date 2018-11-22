@@ -11,7 +11,7 @@
           }
         }
       },
-      "icon": "talend-dataprep",
+      "icon": "talend-tdp-positive",
       "actionCreator": "preparation:create"
     },
     "divider": {
@@ -494,6 +494,20 @@
           "editCancel": "preparation:edit:cancel"
         }
       }
+    },
+    "OpenWithButton#default": {
+      "id": "preparation:create",
+      "label": {
+        "i18n": {
+          "key": "tdp-cmf:PREPARATIONS_CREATE",
+          "options": {
+            "defaultValue": "Create a preparation"
+          }
+        }
+      },
+      "bsStyle": "link",
+      "hideLabel": "true",
+      "icon": "talend-tdp-positive"
     }
   },
   "ref": {

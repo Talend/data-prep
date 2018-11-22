@@ -1,4 +1,8 @@
 import { all, call, take } from 'redux-saga/effects';
+import {
+	OPEN_WITH_BUTTON_CLICKED,
+} from '@talend/dataset/lib/app/components/SampleView/DatasetDetailSubHeaderActions/DatasetDetailSubHeaderActions.constants';
+
 import * as actions from '../../constants/actions';
 import * as effects from '../effects/preparation.effects';
 
@@ -20,6 +24,13 @@ function* create() {
 	while (true) {
 		const { payload } = yield take(actions.CREATE_PREPARATIONS);
 		yield call(effects.create, payload);
+	}
+}
+
+function* openWith() {
+	while (true) {
+		const result = yield take(OPEN_WITH_BUTTON_CLICKED);
+		yield call(effects.create, result.payload || result);
 	}
 }
 
@@ -83,6 +94,7 @@ export default {
 	'preparation:copy': copy,
 	'preparation:move': move,
 	'preparation:create': create,
+	'preparation:openWith': openWith,
 	'preparation:fetch': fetch,
 	'preparation:rename:submit': rename,
 	'preparation:copy:open': openCopyModal,

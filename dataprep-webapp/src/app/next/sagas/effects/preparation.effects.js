@@ -27,7 +27,7 @@ export function* create(payload) {
 		http.post,
 		`${uris.get('apiPreparations')}?folder=${folderId}`,
 		{
-			dataSetId: payload.id || payload.model.id,
+			dataSetId: payload.id || payload.datasetId || payload.model.id,
 		},
 	);
 	if (!(response instanceof Error)) {

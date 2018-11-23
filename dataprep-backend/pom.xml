@@ -23,6 +23,7 @@
     <artifactId>dataprep-backend</artifactId>
     <packaging>pom</packaging>
     <name>dataprep-backend</name>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.inceptionYear>2015</project.inceptionYear>

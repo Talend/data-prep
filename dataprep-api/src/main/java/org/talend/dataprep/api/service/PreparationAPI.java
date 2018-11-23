@@ -23,6 +23,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_HEAD_STEP_USING_DELETED_DATASET;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
+import static org.talend.dataprep.i18n.DataprepBundle.message;
 import static org.talend.dataprep.util.SortAndOrderHelper.Order;
 import static org.talend.dataprep.util.SortAndOrderHelper.Sort;
 
@@ -85,7 +86,6 @@ import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
 import org.talend.dataprep.command.preparation.PreparationUpdate;
-import org.talend.dataprep.conversions.inject.DataSetNameInjection;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -112,9 +112,6 @@ public class PreparationAPI extends APIService {
     private DatasetClient datasetClient;
 
     @Autowired
-    private DataSetNameInjection dataSetNameInjection;
-
-    @Autowired
     private ActionRegistry registry;
 
     @Autowired
@@ -127,7 +124,6 @@ public class PreparationAPI extends APIService {
     public Stream<PreparationListItemDTO> listPreparations(
             @ApiParam(name = "name",
                     value = "Filter preparations by name.") @RequestParam(required = false) String name,
-            @RequestParam(name = "format", required = false) String format,
             @ApiParam(name = "folder_path", value = "Filter preparations by its folder path.") @RequestParam(
                     required = false, name = "folder_path") String folderPath,
             @ApiParam(name = "path",
@@ -137,15 +133,10 @@ public class PreparationAPI extends APIService {
                     defaultValue = "lastModificationDate") Sort sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(
                     defaultValue = "desc") Order order) {
-
         GenericCommand<InputStream> command = getCommand(PreparationList.class, name, folderPath, path, sort, order);
-        if ("summary".equalsIgnoreCase(format)) {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-        } else {
-            return toStream(PreparationDTO.class, mapper, command)//
-                    .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class, dataSetNameInjection));
-        }
+        return toStream(PreparationDTO.class, mapper, command)//
+                .map(dto -> beanConversionService.convert(dto, PreparationListItemDTO.class,
+                        APIService::injectDataSetName));
     }
 
     //@formatter:off
@@ -163,6 +154,10 @@ public class PreparationAPI extends APIService {
 
         try {
             final DataSetMetadata dataSetMetadata = datasetClient.getDataSetMetadata(preparation.getDataSetId());
+            if (StringUtils.isEmpty(preparation.getName())) {
+                preparation.setName((dataSetMetadata.getName() != null ? dataSetMetadata.getName() + " " : "")
+                        + message("preparation.create.suffix"));
+            }
             final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
             preparation.setRowMetadata(rowMetadata);
         } catch (TDPException e) {

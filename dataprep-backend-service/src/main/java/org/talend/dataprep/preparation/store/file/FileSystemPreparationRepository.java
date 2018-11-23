@@ -42,7 +42,6 @@ import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.preparation.store.ObjectPreparationRepository;
 import org.talend.dataprep.preparation.store.PersistentStep;
-import org.talend.dataprep.preparation.store.PreparationRepository;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.util.FilesHelper;
 
@@ -83,9 +82,6 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
         remove(PreparationActions.ROOT_ACTIONS);
     }
 
-    /**
-     * @see PreparationRepository#add(Identifiable)
-     */
     @Override
     public void add(Identifiable object) {
 
@@ -152,9 +148,6 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
         return result;
     }
 
-    /**
-     * @see PreparationRepository#clear()
-     */
     @Override
     public void clear() {
 
@@ -169,9 +162,6 @@ public class FileSystemPreparationRepository extends ObjectPreparationRepository
         LOG.debug("preparation repository cleared");
     }
 
-    /**
-     * @see PreparationRepository#remove(Identifiable)
-     */
     @Override
     public void remove(Identifiable object) {
         if (object == null) {

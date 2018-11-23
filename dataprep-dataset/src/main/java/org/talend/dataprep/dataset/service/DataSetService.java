@@ -50,6 +50,7 @@ import java.util.Spliterator;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -97,7 +98,6 @@ import org.talend.dataprep.api.user.UserData;
 import org.talend.dataprep.cache.ContentCache;
 import org.talend.dataprep.cache.ContentCache.TimeToLive;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.conversions.inject.DatasetInjection;
 import org.talend.dataprep.dataset.DataSetMetadataBuilder;
 import org.talend.dataprep.dataset.StatisticsAdapter;
 import org.talend.dataprep.dataset.event.DatasetImportedEvent;
@@ -223,9 +223,6 @@ public class DataSetService extends BaseDataSetService {
     private BeanConversionService beanConversionService;
 
     @Autowired
-    private DatasetInjection datasetInjection;
-
-    @Autowired
     private DataSetContentLimit dataSetContentLimit;
 
     @RequestMapping(value = "/datasets", method = RequestMethod.GET)
@@ -258,8 +255,14 @@ public class DataSetService extends BaseDataSetService {
                 findDataset(sort, order, name, nameStrict, certified, favorite, limit, favorites);
 
         Set<String> finalFavorites = favorites;
-        return datasetList.map(p -> beanConversionService.convert(p, DatasetDTO.class,
-                datasetInjection.injectFavorite(finalFavorites)));
+        return datasetList.map(p -> beanConversionService.convert(p, DatasetDTO.class, injectFavorite(finalFavorites)));
+    }
+
+    private BiFunction<DataSetMetadata, DatasetDTO, DatasetDTO> injectFavorite(Set<String> favoritesDatasets) {
+        return (dataSetMetadata, datasetDTO) -> {
+            datasetDTO.setFavorite(favoritesDatasets.contains(datasetDTO.getId()));
+            return datasetDTO;
+        };
     }
 
     @RequestMapping(value = "/datasets/details", method = RequestMethod.GET)

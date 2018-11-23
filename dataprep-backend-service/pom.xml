@@ -24,6 +24,11 @@
     </parent>
     <packaging>jar</packaging>
     <artifactId>dataprep-backend-service</artifactId>
+
+    <properties>
+        <git-commit-id-plugin.file-name>dataprep-git.properties</git-commit-id-plugin.file-name>
+    </properties>
+
     <dependencies>
         <!-- SPRING DEPENDENCIES -->
         <dependency>
@@ -287,6 +292,12 @@
         </dependency>
     </dependencies>
     <build>
+        <plugins>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+        </plugins>
         <resources>
             <resource>
                 <!-- This enable maven defined variables in banner.txt as ${project.version} -->

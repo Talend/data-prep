@@ -3,12 +3,55 @@
   "valid": 5,
   "invalid": 0,
   "empty": 0,
-  "max": "2.527405701E12",
-  "min": "-2.506175513E12",
+  "max": 2.527405701E+12,
+  "min": -2.506175513E+12,
   "mean": "NaN",
   "variance": "NaN",
   "duplicateCount": 0,
   "distinctCount": 5,
+  "wordPatternFrequencyTable": [
+    {
+      "pattern": "[number]/[number]/[number] [number]:[number]:[number]",
+      "occurrences": 5
+    }
+  ],
+  "quantiles": {
+    "median": "NaN",
+    "lowerQuantile": "NaN",
+    "upperQuantile": "NaN"
+  },
+  "histogram": {
+    "type": "date",
+    "items": [
+      {
+        "occurrences": 1,
+        "range": {
+          "min": -5.3646624E+12,
+          "max": -2.2089888E+12
+        }
+      },
+      {
+        "occurrences": 1,
+        "range": {
+          "min": -2.2089888E+12,
+          "max": 9.466848E+11
+        }
+      },
+      {
+        "occurrences": 3,
+        "range": {
+          "min": 9.466848E+11,
+          "max": 4.1024448E+12
+        }
+      }
+    ],
+    "pace": "CENTURY"
+  },
+  "textLengthSummary": {
+    "minimalLength": "NaN",
+    "maximalLength": "NaN",
+    "averageLength": "NaN"
+  },
   "frequencyTable": [
     {
       "data": "10/11/2003 10:06:25",
@@ -37,16 +80,16 @@
       "occurrences": 5
     },
     {
-      "pattern": "dd/MM/yyyy H:mm:ss",
-      "occurrences": 5
-    },
-    {
       "pattern": "MM/dd/yyyy HH:mm:ss",
       "occurrences": 5
     },
     {
+      "pattern": "dd/MM/yyyy H:mm:ss",
+      "occurrences": 3
+    },
+    {
       "pattern": "MM/dd/yyyy H:mm:ss",
-      "occurrences": 5
+      "occurrences": 3
     },
     {
       "pattern": "d/M/yyyy H:mm:ss",
@@ -64,48 +107,5 @@
       "pattern": "d/M/yyyy HH:mm:ss",
       "occurrences": 2
     }
-  ],
-  "wordPatternFrequencyTable": [
-    {
-      "pattern": "[number]/[number]/[number] [number]:[number]:[number]",
-      "occurrences": 5
-    }
-  ],
-  "quantiles": {
-    "median": "NaN",
-    "lowerQuantile": "NaN",
-    "upperQuantile": "NaN"
-  },
-  "histogram": {
-    "type": "date",
-    "items": [
-      {
-        "occurrences": 1,
-        "range": {
-          "min": -5.3646624E12,
-          "max": -2.2089888E12
-        }
-      },
-      {
-        "occurrences": 1,
-        "range": {
-          "min": -2.2089888E12,
-          "max": 9.466848E11
-        }
-      },
-      {
-        "occurrences": 3,
-        "range": {
-          "min": 9.466848E11,
-          "max": 4.1024448E12
-        }
-      }
-    ],
-    "pace": "CENTURY"
-  },
-  "textLengthSummary": {
-    "minimalLength": "NaN",
-    "maximalLength": "NaN",
-    "averageLength": "NaN"
-  }
+  ]
 }

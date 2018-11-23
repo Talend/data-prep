@@ -59,7 +59,7 @@ public class SuggestLookupActions extends ChainedCommand<List<ActionForm>, DataS
      */
     public SuggestLookupActions(HystrixCommand<DataSetMetadata> dataSetMetadata) {
         super(dataSetMetadata);
-        execute(() -> new HttpGet(datasetServiceUrl + "/datasets"));
+        execute(() -> new HttpGet(datasetServiceUrl + "/api/v1/datasets"));
         on(HttpStatus.OK).then(process());
         // on error, @see getFallBack()
     }

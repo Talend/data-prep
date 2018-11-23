@@ -11,8 +11,10 @@ import './home-dataset.scss';
 
 const HomeDatasetContainer = {
 	templateUrl: template,
-	controller(state, ImportService) {
+	controller($translate, state, ImportService) {
 		'ngInject';
+
+		this.$translate = $translate;
 		this.state = state;
 		this.ImportService = ImportService;
 	},

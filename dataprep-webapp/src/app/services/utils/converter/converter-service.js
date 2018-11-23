@@ -114,7 +114,7 @@ export default function ConverterService($translate) {
 	 * @description Convert backend type to a simplified, more user friendly with translation
 	 * @returns {string} The simplified type
 	 */
-	function simplifyTypeLabel(type) {
+	function simplifyTypeLabel(type = '') {
 		switch (type.toLowerCase()) {
 		case 'numeric':
 		case 'integer':

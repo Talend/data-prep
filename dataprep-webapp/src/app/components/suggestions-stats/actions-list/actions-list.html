@@ -64,23 +64,23 @@
                   state="actionsListCtrl.showDynamicModal"
                   close-button="true"
                   ng-if="actionsListCtrl.showDynamicModal"
-                  ng-switch="actionsListCtrl.dynamicFetchInProgress">
+                  modal-title="actionsListCtrl.dynamicTransformation.label">
+        <div class="modal-body" ng-switch="actionsListCtrl.dynamicFetchInProgress">
+            <loader ng-switch-when="true"></loader>
+            <div ng-switch-when="false">
+                <div ng-if="actionsListCtrl.showModalContent">
+                    <div class="modal-subtitle">{{ actionsListCtrl.dynamicTransformation.description }}</div>
 
-        <div class="modal-title">{{ actionsListCtrl.dynamicTransformation.label }}</div>
-        <div ng-switch-when="false">
-            <div ng-if="actionsListCtrl.showModalContent">
-                <div class="modal-subtitle">{{ actionsListCtrl.dynamicTransformation.description }}</div>
+                    <loader ng-if="actionsListCtrl.dynamicFetchInProgress"></loader>
 
-                <loader ng-if="actionsListCtrl.dynamicFetchInProgress"></loader>
-
-                <transform-form transformation="actionsListCtrl.dynamicTransformation"
-                                feature="::actionsListCtrl.getDataFeature(actionsListCtrl.dynamicTransformation)"
-                                on-submit="actionsListCtrl.transform(actionsListCtrl.dynamicTransformation)(params)"></transform-form>
-            </div>
-            <div ng-if="!actionsListCtrl.showModalContent">
-                <div class="modal-subtitle">{{ actionsListCtrl.emptyParamsMsg | translate }}</div>
+                    <transform-form transformation="actionsListCtrl.dynamicTransformation"
+                                    feature="::actionsListCtrl.getDataFeature(actionsListCtrl.dynamicTransformation)"
+                                    on-submit="actionsListCtrl.transform(actionsListCtrl.dynamicTransformation)(params)"></transform-form>
+                </div>
+                <div ng-if="!actionsListCtrl.showModalContent">
+                    <div class="modal-subtitle">{{ actionsListCtrl.emptyParamsMsg | translate }}</div>
+                </div>
             </div>
         </div>
-        <loader ng-switch-when="true"></loader>
     </talend-modal>
 </div>

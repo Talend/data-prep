@@ -16,14 +16,17 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.task.AsyncListenableTaskExecutor;
-import org.talend.dataprep.event.DataPrepEventsCaster;
 
 /**
- * Setup the events management in data prep.
+ * For UT, all event are synchrone
  */
 @SuppressWarnings("InsufficientBranchCoverage")
 @Configuration
@@ -41,7 +44,19 @@ public class DataPrepEvents {
     // do NOT change the name as it is important to replace the default application context event multi caster
     @Bean(name = "applicationEventMulticaster")
     public ApplicationEventMulticaster getDataPrepEventsCaster() {
-        return new DataPrepEventsCaster(executor, beanFactory);
+        return new TestApplicationEventMultiCaster();
+    }
+
+    private class TestApplicationEventMultiCaster extends SimpleApplicationEventMulticaster {
+
+        @Override
+        public void multicastEvent(final ApplicationEvent event, ResolvableType eventType) {
+            ResolvableType type = (eventType != null ? eventType : ResolvableType.forInstance(event));
+
+            for (final ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+                invokeListener(listener, event);
+            }
+        }
     }
 
 }

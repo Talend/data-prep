@@ -12,9 +12,10 @@
 
 package org.talend.dataprep.dataset.adapter.conversions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+
+import java.util.function.BiFunction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -32,10 +33,12 @@ import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.dataset.adapter.Datastore;
 import org.talend.dataprep.processor.BeanConversionServiceWrapper;
+import org.talend.dataprep.schema.csv.CSVFormatFamily;
+import org.talend.dataprep.schema.xls.XlsFormatFamily;
 
-import java.util.function.BiFunction;
-
-import static org.talend.dataprep.conversions.BeanConversionService.fromBean;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Bean Conversion from {@link Dataset} to {@link DataSetMetadata}
@@ -60,16 +63,6 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
                 .using(DatasetDTO.class, convertDatasetToDatasetDTO())//
                 .build());
 
-        conversionService.register(fromBean(DatasetDTO.class) //
-                .toBeans(Dataset.class) //
-                .using(Dataset.class, convertDatasetDTOToDataset()) //
-                .build());
-
-        conversionService.register(fromBean(DataSetMetadata.class) //
-                .toBeans(DatasetDTO.class) //
-                .using(DatasetDTO.class, convertDatasetMetadataToDatasetDTO())//
-                .build());
-
         conversionService.register(fromBean(Dataset.class) //
                 .toBeans(DataSetMetadata.class) //
                 .using(DataSetMetadata.class, convertDatasetToDatasetMetadata()) //
@@ -78,6 +71,16 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
         conversionService.register(fromBean(Dataset.class) //
                 .toBeans(DatasetDetailsDTO.class) //
                 .using(DatasetDetailsDTO.class, convertDatasetToDatasetDetailsDTO()) //
+                .build());
+
+        conversionService.register(fromBean(DatasetDTO.class) //
+                .toBeans(Dataset.class) //
+                .using(Dataset.class, convertDatasetDTOToDataset()) //
+                .build());
+
+        conversionService.register(fromBean(DataSetMetadata.class) //
+                .toBeans(DatasetDTO.class) //
+                .using(DatasetDTO.class, convertDatasetMetadataToDatasetDTO())//
                 .build());
 
         return conversionService;
@@ -141,6 +144,45 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
         };
     }
 
+    private BiFunction<Dataset, DatasetDTO, DatasetDTO> convertDatasetToDatasetDTO() {
+        return (dataset, datasetDTO) -> {
+            datasetDTO.setName(dataset.getLabel());
+            datasetDTO.setCreationDate(dataset.getCreated());
+            datasetDTO.setLastModificationDate(dataset.getUpdated());
+            datasetDTO.setAuthor(dataset.getOwner());
+            datasetDTO.setFavorite(dataset.isFavorite());
+            datasetDTO.setCertification(dataset.getCertification());
+            datasetDTO.setShared(dataset.getSharing().isSharedWithOthers());
+
+            if (Datastore.islocal(dataset.getDatastore())) {
+                final String format = dataset.getFormat();
+                if (format != null) {
+                    switch (format) {
+                    case "EXCEL":
+                        datasetDTO.setType(XlsFormatFamily.MEDIA_TYPE);
+                        break;
+                    case "CSV":
+                        datasetDTO.setType(CSVFormatFamily.MEDIA_TYPE);
+                        break;
+                    default:
+                        LOGGER.warn("Unable to map [{}] dataset format to a supported format", format);
+                        datasetDTO.setType(CSVFormatFamily.MEDIA_TYPE);
+                        break;
+                    }
+                }
+            }
+
+            // Manage legacy fields that doesn't match data catalog concept
+            Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = dataset.getDataSetMetadataLegacy();
+            if (dataSetMetadataLegacy != null) {
+                datasetDTO.setDraft(dataSetMetadataLegacy.isDraft());
+                datasetDTO.setRecords(dataSetMetadataLegacy.getNbRecords());
+            }
+
+            return datasetDTO;
+        };
+    }
+
     private BiFunction<DataSetMetadata, DatasetDTO, DatasetDTO> convertDatasetMetadataToDatasetDTO() {
         return (datasetMetadata, datasetDTO) -> {
             datasetDTO.setCreationDate(datasetMetadata.getCreationDate());
@@ -177,26 +219,6 @@ public class DatasetBeanConversion extends BeanConversionServiceWrapper {
 
             return dataset;
 
-        };
-    }
-
-    private BiFunction<Dataset, DatasetDTO, DatasetDTO> convertDatasetToDatasetDTO() {
-        return (dataset, datasetDTO) -> {
-            datasetDTO.setName(dataset.getLabel());
-            datasetDTO.setCreationDate(dataset.getCreated());
-            datasetDTO.setLastModificationDate(dataset.getUpdated());
-            datasetDTO.setAuthor(dataset.getOwner());
-
-            datasetDTO.setCertification(dataset.getCertification());
-
-            // Manage legacy fields that doesn't match data catalog concept
-            Dataset.DataSetMetadataLegacy dataSetMetadataLegacy = dataset.getDataSetMetadataLegacy();
-            if (dataSetMetadataLegacy != null) {
-                datasetDTO.setDraft(dataSetMetadataLegacy.isDraft());
-                datasetDTO.setRecords(dataSetMetadataLegacy.getNbRecords());
-            }
-
-            return datasetDTO;
         };
     }
 

@@ -416,6 +416,9 @@ public class DataSetService extends BaseDataSetService {
 
             LOG.debug(marker, "Created!");
 
+            // All Spring event are synchronous in order to be able to get Tenancy context when converting do Kafka
+            // message. But OnPrem the process behind this event DatasetImportedEvent is asynchronous (see
+            // AsyncBackgroundAnalysis)
             publisher.publishEvent(new DatasetImportedEvent(id));
 
             return id;

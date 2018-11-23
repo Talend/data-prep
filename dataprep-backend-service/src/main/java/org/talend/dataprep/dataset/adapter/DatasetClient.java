@@ -179,7 +179,8 @@ public class DatasetClient {
         // convert records
         final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
 
-        Stream<GenericRecord> dataSetContent = dataCatalogClient.getDataSetContent(id, limit(fullContent), dataSetSchema);
+        Stream<GenericRecord> dataSetContent =
+                dataCatalogClient.getDataSetContent(id, limit(fullContent), dataSetSchema);
         Stream<DataSetRow> records = toDataSetRows(dataSetContent, rowMetadata);
         if (withRowValidityMarker) {
             records = records.peek(addValidity(rowMetadata.getColumns()));
@@ -270,11 +271,7 @@ public class DatasetClient {
         metadata.getContent().setLimit(limit(fullContent));
 
         RowMetadata rowMetadata = AvroUtils.toRowMetadata(datasetSchema);
-        if (rowMetadata
-                .getColumns()
-                .stream()
-                .map(ColumnMetadata::getStatistics)
-                .anyMatch(this::isComputedStatistics)) {
+        if (rowMetadata.getColumns().stream().map(ColumnMetadata::getStatistics).anyMatch(this::isComputedStatistics)) {
             AnalysisResult analysisResult;
             if (context.getBean(DatasetConfiguration.class).isLegacy()) {
                 analysisResult = getAnalyseDatasetFromLegacy(dataset.getId());

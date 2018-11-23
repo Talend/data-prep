@@ -416,9 +416,10 @@ public class DataSetService extends BaseDataSetService {
 
             LOG.debug(marker, "Created!");
 
-            // TDP-6141 : Do not send `DataSteImportedEvent` synchronously because it will do the same analyse as before
-            // a second time and can reach timeout
-            asyncPublisher.multicastEvent(new DatasetImportedEvent(id));
+            // All Spring event are synchronous in order to be able to get Tenancy context when converting do Kafka
+            // message. But OnPrem the process behind this event DatasetImportedEvent is asynchronous (see
+            // AsyncBackgroundAnalysis)
+            publisher.publishEvent(new DatasetImportedEvent(id));
 
             return id;
         } catch (StrictlyBoundedInputStream.InputStreamTooLargeException e) {

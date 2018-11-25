@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import { map, difference, filter, forEach } from 'lodash';
+import { difference, filter, forEach, map } from 'lodash';
 
 /**
  * @ngdoc service

@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import _ from 'lodash';
+import { chain, cloneDeep, find, map } from 'lodash';
 
 /**
  * @ngdoc service
@@ -57,7 +57,7 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 	 */
 	function initDynamicParams(recipes) {
 		function getOldStepById(step) {
-			return _.find(recipes.old, function (oldStep) {
+			return find(recipes.old, function (oldStep) {
 				return oldStep.transformation.stepId === step.transformation.stepId;
 			});
 		}
@@ -83,7 +83,7 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 			}
 		}
 
-		return _.chain(recipes.new)
+		return chain(recipes.new)
 			.filter(function (step) {
 				return step.transformation.dynamic;
 			})
@@ -150,7 +150,7 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 		const initialStep = { transformation: { stepId: initialStepId } };
 
 		const oldRecipeSteps = state.playground.recipe.current.steps;
-		const newRecipeSteps = _.chain(steps)
+		const newRecipeSteps = chain(steps)
 			.zip(details.actions, details.metadata, details.diff)
 			.map(createItem)
 			.value();
@@ -199,7 +199,7 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 					name: transformation.name,
 					label: transformation.label,
 					description: transformation.description,
-					parameters: _.cloneDeep(transformation.parameters),
+					parameters: cloneDeep(transformation.parameters),
 					dynamic: transformation.dynamic,
 				},
 				actionParameters: {
@@ -293,6 +293,6 @@ export default function RecipeService(state, StateService, StepUtilsService, Pre
 	 * @description Get all filters names
 	 */
 	function getAllFiltersNames(stepFilters) {
-		return '(' + _.map(stepFilters, 'colName').join(', ') + ')';
+		return '(' + map(stepFilters, 'colName').join(', ') + ')';
 	}
 }

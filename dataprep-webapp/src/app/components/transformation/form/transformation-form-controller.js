@@ -10,7 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
-import _ from 'lodash';
+import { merge } from 'lodash';
 
 /**
  * @ngdoc controller
@@ -71,7 +71,7 @@ export default class TransformFormCtrl {
 	gatherParams() {
 		const params = this.getParams();
 		const clusterParams = this.getClusterParams();
-		return _.merge(params, clusterParams);
+		return merge(params, clusterParams);
 	}
 
 	/**

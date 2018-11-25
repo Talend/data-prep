@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { chain, forEach } from 'lodash';
 import moment from 'moment-jdateformatparser';
 
 /**
@@ -12,7 +12,7 @@ import moment from 'moment-jdateformatparser';
  */
 function isInDateLimits(minTimestamp, maxTimestamp, patterns) {
 	return (value) => {
-		const parsedMoment = _.chain(patterns)
+		const parsedMoment = chain(patterns)
 			.map(pattern => moment(value, pattern, true))
 			.find(momentDate => momentDate.isValid())
 			.value();
@@ -38,13 +38,13 @@ function dateOccurrenceWorker(parameters) {
 	const patterns = parameters.patterns;
 	const filteredOccurrences = parameters.filteredOccurrences;
 
-	_.forEach(rangeData, (range) => {
+	forEach(rangeData, (range) => {
 		const minTimestamp = range.data.min;
 		const maxTimestamp = range.data.max;
 
 		range.filteredOccurrences = !filteredOccurrences ?
 			range.occurrences :
-			_.chain(filteredOccurrences)
+			chain(filteredOccurrences)
 				.keys()
 				.filter(isInDateLimits(minTimestamp, maxTimestamp, patterns))
 				.map(key => filteredOccurrences[key])

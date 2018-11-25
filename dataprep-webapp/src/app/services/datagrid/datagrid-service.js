@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import _ from 'lodash';
+import { map, difference, filter, forEach } from 'lodash';
 
 /**
  * @ngdoc service
@@ -57,9 +57,9 @@ export default function DatagridService(state, StateService, ConverterService, T
      * @description Get the last new created column
      */
 	function getLastNewColumnId(columns) {
-		const ancientColumnsIds = _.map(state.playground.data.metadata.columns, 'id');
-		const newColumnsIds = _.map(columns, 'id');
-		const diffIds = _.difference(newColumnsIds, ancientColumnsIds);
+		const ancientColumnsIds = map(state.playground.data.metadata.columns, 'id');
+		const newColumnsIds = map(columns, 'id');
+		const diffIds = difference(newColumnsIds, ancientColumnsIds);
 
 		return diffIds[diffIds.length - 1];
 	}
@@ -99,7 +99,7 @@ export default function DatagridService(state, StateService, ConverterService, T
 		const revertInstructions = [];
 
 		state.playground.grid.dataView.beginUpdate();
-		_.forEach(executor.instructions, function (step) {
+		forEach(executor.instructions, function (step) {
 			switch (step.type) {
 			case INSERT:
 				state.playground.grid.dataView.insertItem(step.index, step.row);
@@ -166,7 +166,7 @@ export default function DatagridService(state, StateService, ConverterService, T
 		};
 
 		let nextInsertionIndex = state.playground.grid.dataView.getIdxById(data.records[0].tdpId);
-		_.forEach(data.records, function (row) {
+		forEach(data.records, function (row) {
 			if (row.__tdpRowDiff || row.__tdpDiff) { // eslint-disable-line no-underscore-dangle
 				if (row.__tdpRowDiff === 'new') { // eslint-disable-line no-underscore-dangle
 					executor.instructions.push({
@@ -205,17 +205,17 @@ export default function DatagridService(state, StateService, ConverterService, T
 		let cols = state.playground.data.metadata.columns;
 
 		if (excludeNumeric) {
-			cols = _.filter(cols, (col) => {
+			cols = filter(cols, (col) => {
 				const simplifiedType = ConverterService.simplifyType(col.type);
 				return simplifiedType !== 'integer' && simplifiedType !== 'decimal';
 			});
 		}
 
 		if (excludeBoolean) {
-			cols = _.filter(cols, col => col.type !== 'boolean');
+			cols = filter(cols, col => col.type !== 'boolean');
 		}
 
-		return _.map(cols, col => ({ id: col.id, name: col.name }));
+		return map(cols, col => ({ id: col.id, name: col.name }));
 	}
 
     /**
@@ -249,7 +249,7 @@ export default function DatagridService(state, StateService, ConverterService, T
 				}
 			}
 
-			potentialColumns = _.difference(potentialColumns, results);
+			potentialColumns = difference(potentialColumns, results);
 			dataIndex++;
 		}
 

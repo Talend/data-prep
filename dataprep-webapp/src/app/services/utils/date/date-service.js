@@ -11,7 +11,7 @@
 
   ============================================================================*/
 
-import _ from 'lodash';
+import { chain } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -35,7 +35,7 @@ export default function DateService() {
      */
 	function isInDateLimits(minTimestamp, maxTimestamp, patterns) {
 		return (value) => {
-			const parsedMoment = _.chain(patterns)
+			const parsedMoment = chain(patterns)
                 .map(pattern => moment(value, pattern, true))
                 .find(momentDate => momentDate.isValid())
                 .value();

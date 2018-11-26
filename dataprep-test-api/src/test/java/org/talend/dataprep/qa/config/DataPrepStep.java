@@ -166,13 +166,13 @@ public abstract class DataPrepStep {
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
-        assertNotNull("The Returned columns' list on \"" + datasetOrPreparationName + "  is null.", actual);
+        assertNotNull("The Returned columns' list on \"" + datasetOrPreparationName + "\"  is null.", actual);
         assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
         assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",
                 expectedColumnNames.size(), actual.size());
         assertTrue(
-                "\"" + datasetOrPreparationName + "\" doesn't contain all expected columns :"
-                        + CollectionUtils.disjunction(expectedColumnNames, actual).toString(),
+                "\"" + datasetOrPreparationName + "\" doesn't contain all expected columns : \""
+                        + CollectionUtils.disjunction(expectedColumnNames, actual).toString()+ "\".",
                 actual.containsAll(expectedColumnNames));
     }
 

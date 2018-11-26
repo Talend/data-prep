@@ -292,7 +292,7 @@ describe('Transformation form directive', () => {
         const element = createElement();
 
         //then
-        const docLink = element.find('.param-buttons > a').eq(0);
+        const docLink = element.find('.modal-buttons a').eq(0);
         expect(docLink.attr('href')).toBe('http://www.google.com');
     });
 
@@ -304,7 +304,7 @@ describe('Transformation form directive', () => {
         const element = createElement();
 
         //then
-        expect(element.find('.param-buttons > button').length).toBe(1);
+        expect(element.find('.modal-buttons button').length).toBe(1);
     });
 
     it('should not render submit button', () => {

@@ -15,7 +15,9 @@
 
 <talend-modal fullscreen="false"
 	  ng-if="$ctrl.state.home.preparations.copyMove.isVisible"
-	  state="$ctrl.state.home.preparations.copyMove.isVisible">
+	  state="$ctrl.state.home.preparations.copyMove.isVisible"
+      modal-title="('CHOOSE_FOLDER_DESTINATION' | translate:{type: $ctrl.itemType, name: item.name})">
+
 	<inventory-copy-move
 		initial-folder="$ctrl.state.inventory.homeFolder"
 		item="$ctrl.state.home.preparations.copyMove.preparation"

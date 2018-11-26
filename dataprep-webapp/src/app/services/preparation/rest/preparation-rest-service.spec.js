@@ -115,7 +115,7 @@ describe('Preparation REST Service', () => {
 			const name = 'The new preparation';
 
 			$httpBackend
-				.expectPOST(`${RestURLs.preparationUrl}?folder=${folderId}`, {
+				.expectPOST(`${RestURLs.preparationUrl}?folder=L215L3BlcnNvbmFsL2ZvbGRlcg%3D%3D`, {
 					dataSetId: datasetId,
 					name: name
 				})

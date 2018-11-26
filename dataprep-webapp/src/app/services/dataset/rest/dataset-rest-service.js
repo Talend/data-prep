@@ -18,7 +18,7 @@
  * <b style="color: red;">WARNING : do NOT use this service directly.
  * {@link data-prep.services.dataset.service:DatasetService DatasetService} must be the only entry point for datasets</b>
  */
-export default function DatasetRestService($rootScope, $upload, $http, RestURLs) {
+export default function DatasetRestService($rootScope, $upload, $http, RestURLs, UrlService) {
 	'ngInject';
 
 	return {
@@ -59,18 +59,19 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      */
 	function create(parameters, contentType, file) {
 		const { name, size } = parameters;
-		let url = `${RestURLs.uploadDatasetUrl}?name=${encodeURIComponent(name)}`;
+		const params = { name };
+
 		if (size) {
-			url += `&size=${size}`;
+			params.size = size;
 		}
-		const req = {
-			url,
+
+		return $upload.http({
+			url: UrlService.build(RestURLs.uploadDatasetUrl, params),
 			headers: {
 				'Content-Type': contentType,
 			},
 			data: file || parameters,
-		};
-		return $upload.http(req);
+		});
 	}
 
     /**
@@ -83,13 +84,16 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} the $upload promise
      */
 	function update(dataset, parameters) {
-		let url = `${RestURLs.uploadDatasetUrl}/${dataset.id}?name=${encodeURIComponent(dataset.name)}`;
+		const params = {
+			name: dataset.name,
+		};
+
 		if (parameters && parameters.size) {
-			url += `&size=${parameters.size}`;
+			params.size = parameters.size;
 		}
 
 		return $upload.http({
-			url,
+			url: UrlService.build(`${RestURLs.uploadDatasetUrl}/${dataset.id}`, params),
 			method: 'PUT',
 			headers: { 'Content-Type': 'text/plain' },
 			data: dataset.file,
@@ -134,17 +138,17 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET call promise
      */
 	function getDatasets(sortType, sortOrder, deferredAbort) {
-		let url = `${RestURLs.datasetUrl}/summary`;
+		const params = {};
 		if (sortType) {
-			url += `?sort=${sortType}`;
+			params.sort = sortType;
 		}
 
 		if (sortOrder) {
-			url += (sortType ? '&' : '?') + 'order=' + sortOrder;
+			params.order = sortOrder;
 		}
 
 		return $http({
-			url,
+			url: UrlService.build(`${RestURLs.datasetUrl}/summary`, params),
 			method: 'GET',
 			timeout: deferredAbort.promise,
 		});
@@ -158,8 +162,11 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getDatasetByName(name) {
-		return $http.get(`${RestURLs.searchUrl}?name=${encodeURIComponent(name)}&strict=true&categories=dataset`)
-			.then(resp => resp.data.dataset && resp.data.dataset[0]);
+		return $http.get(UrlService.build(RestURLs.searchUrl, {
+			name,
+			strict: true,
+			categories: 'dataset',
+		})).then(resp => resp.data.dataset && resp.data.dataset[0]);
 	}
 
     /**
@@ -171,11 +178,7 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET call promise
      */
 	function getFilteredDatasets(filters) {
-		const params = Object.keys(filters).map((key) => {
-			return `${key}=${encodeURIComponent(filters[key])}`;
-		}).join('&');
-
-		return $http.get(`${RestURLs.datasetUrl}?${params}`)
+		return $http.get(UrlService.build(RestURLs.datasetUrl, filters))
 				.then(resp => resp.data);
 	}
 
@@ -260,9 +263,14 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The GET promise
      */
 	function getSheetPreview(datasetId, sheetName) {
+		const params = { metadata: true };
+
+		if (sheetName) {
+			params.sheetName = sheetName;
+		}
+
 		$rootScope.$emit('talend.loading.start');
-		const sheetNameParameter = sheetName ? '&sheetName=' + encodeURIComponent(sheetName) : '';
-		return $http.get(`${RestURLs.datasetUrl}/preview/${datasetId}?metadata=true${sheetNameParameter}`)
+		return $http.get(UrlService.build(`${RestURLs.datasetUrl}/preview/${datasetId}`, params))
 			.then(response => response.data)
 			.finally(() => {
 				$rootScope.$emit('talend.loading.stop');
@@ -281,7 +289,9 @@ export default function DatasetRestService($rootScope, $upload, $http, RestURLs)
      * @returns {Promise} The PUT promise
      */
 	function toggleFavorite(dataset) {
-		return $http.post(`${RestURLs.datasetUrl}/favorite/${dataset.id}?unset=${dataset.favorite}`);
+		return $http.post(UrlService.build(`${RestURLs.datasetUrl}/favorite/${dataset.id}`, {
+			unset: dataset.favorite,
+		}));
 	}
 
     //--------------------------------------------------------------------------------------------------------------

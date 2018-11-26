@@ -74,6 +74,7 @@ import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
 import org.talend.dataprep.util.SortAndOrderHelper.Order;
 import org.talend.dataprep.util.SortAndOrderHelper.Sort;
+import org.talend.dataprep.util.StringsHelper;
 
 import com.netflix.hystrix.HystrixCommand;
 
@@ -104,7 +105,7 @@ public class DataSetAPI extends APIService {
     public Callable<String> create(
             @ApiParam(
                     value = "User readable name of the data set (e.g. 'Finance Report 2015', 'Test Data Set').") @RequestParam(
-                            defaultValue = "", required = false) String name,
+                            defaultValue = "", required = false) final String name,
             @ApiParam(value = "An optional tag to be added in data set metadata once created.") @RequestParam(
                     defaultValue = "", required = false) String tag,
             @ApiParam(value = "Size of the data set, in bytes.") @RequestParam(defaultValue = "0") long size,
@@ -113,9 +114,10 @@ public class DataSetAPI extends APIService {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating dataset (pool: {} )...", getConnectionStats());
             }
+
             try {
-                HystrixCommand<String> creation =
-                        getCommand(CreateDataSet.class, name, tag, contentType, size, dataSetContent);
+                HystrixCommand<String> creation = getCommand(CreateDataSet.class, StringsHelper.normalizeString(name),
+                        tag, contentType, size, dataSetContent);
                 return creation.execute();
             } finally {
                 LOG.debug("Dataset creation done.");

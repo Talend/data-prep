@@ -113,8 +113,8 @@ describe('Modal directive', () => {
 			createElement();
 
 			//then
-			expect(element.find('.modal-close').length).toBe(1);
-			expect(element.find('.modal-close').hasClass('ng-hide')).toBe(false);
+			expect(element.find('.close').length).toBe(1);
+			expect(element.find('.close').hasClass('ng-hide')).toBe(false);
 		});
 
 		it('should not show "normal" close button', () => {
@@ -127,8 +127,8 @@ describe('Modal directive', () => {
 			createElement();
 
 			//then
-			expect(element.find('.modal-close').length).toBe(1);
-			expect(element.find('.modal-close').hasClass('ng-hide')).toBe(true);
+			expect(element.find('.close').length).toBe(1);
+			expect(element.find('.close').hasClass('ng-hide')).toBe(true);
 		});
 
 		it('should show "fullscreen" close button', () => {
@@ -141,8 +141,8 @@ describe('Modal directive', () => {
 			createElement();
 
 			//then
-			expect(element.find('.modal-header-close').length).toBe(1);
-			expect(element.find('.modal-close').hasClass('ng-hide')).toBe(false);
+			expect(element.find('.close').length).toBe(1);
+			expect(element.find('.close').hasClass('ng-hide')).toBe(false);
 		});
 
 		it('should not show "fullscreen" close button', () => {
@@ -155,8 +155,8 @@ describe('Modal directive', () => {
 			createElement();
 
 			//then
-			expect(element.find('.modal-header-close').length).toBe(1);
-			expect(element.find('.modal-header-close').hasClass('ng-hide')).toBe(true);
+			expect(element.find('.close').length).toBe(1);
+			expect(element.find('.close').hasClass('ng-hide')).toBe(true);
 		});
 
 		it('should add "modal-open" class to body when modal open state is true', () => {
@@ -211,7 +211,7 @@ describe('Modal directive', () => {
 			expect(scope.state).toBe(false);
 		}));
 
-		it('should hide modal on "modal-close" button click', inject(($timeout) => {
+		it('should hide modal on "close" button click', inject(($timeout) => {
 			//given
 			scope.fullscreen = false;
 			scope.state = true;
@@ -219,22 +219,7 @@ describe('Modal directive', () => {
 			createElement();
 
 			//when
-			element.find('.modal-close').click();
-			$timeout.flush();
-
-			//then
-			expect(scope.state).toBe(false);
-		}));
-
-		it('should hide modal on "modal-header-close" button click', inject(($timeout) => {
-			//given
-			scope.fullscreen = true;
-			scope.state = true;
-			scope.closeButton = true;
-			createElement();
-
-			//when
-			element.find('.modal-header-close').click();
+			element.find('.close').click();
 			$timeout.flush();
 
 			//then
@@ -282,6 +267,7 @@ describe('Modal directive', () => {
 			input.trigger(event);
 
 			//then
+			console.log(document.activeElement);
 			expect(document.activeElement.className).toContain('modal-inner');
 		}));
 
@@ -350,7 +336,7 @@ describe('Modal directive', () => {
 			});
 
 			//when
-			element.find('.modal-close').click();
+			element.find('.close').click();
 			$timeout.flush();
 
 			//then
@@ -365,7 +351,7 @@ describe('Modal directive', () => {
 			});
 
 			//when
-			element.find('.modal-close').click();
+			element.find('.close').click();
 			$timeout.flush();
 
 			//then

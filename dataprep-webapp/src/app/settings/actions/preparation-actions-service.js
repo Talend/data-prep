@@ -94,6 +94,7 @@ export default class PreparationActionsService {
 			const preparation = action.payload.model;
 			this.ConfirmService
 				.confirm(
+					'DELETE_PERMANENTLY_TITLE',
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: this.i18n.PREPARATION, name: preparation.name },
 					true

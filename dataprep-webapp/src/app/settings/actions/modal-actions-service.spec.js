@@ -19,19 +19,19 @@ describe('Modal actions service', () => {
 	describe('dispatch', () => {
 		it('should trigger state', inject((StateService, ModalActionsService) => {
 			// given
-			const action = { 
+			const action = {
 				type: '@@modal/SHOW',
 				payload: {
-					method: 'showFeedback',
+					method: 'showImport',
 				}
 			};
-			spyOn(StateService, 'showFeedback').and.returnValue();
-			
+			spyOn(StateService, 'showImport').and.returnValue();
+
 			// when
 			ModalActionsService.dispatch(action);
-			
+
 			// then
-			expect(StateService.showFeedback).toHaveBeenCalled();
+			expect(StateService.showImport).toHaveBeenCalled();
 		}));
 	});
 });

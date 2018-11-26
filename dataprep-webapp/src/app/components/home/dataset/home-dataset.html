@@ -49,15 +49,8 @@
         state="$ctrl.state.import.visible"
         ng-if="$ctrl.state.import.visible"
         close-button="true"
-        on-close="$ctrl.ImportService.resetImport()">
-    <div class="modal-title"
-         ng-if="!$ctrl.state.import.item">
-        {{$ctrl.ImportService.currentInputType.title}}
-    </div>
-    <div class="modal-title"
-         ng-if="$ctrl.state.import.item"
-         translate-once="EDIT_DATASET"></div>
-    <br/>
+        on-close="$ctrl.ImportService.resetImport()"
+        modal-title="$ctrl.state.import.item ? $ctrl.$translate.instant('EDIT_DATASET') : $ctrl.ImportService.currentInputType.title">
     <dataset-import item="$ctrl.state.import.item"
                     location-type="$ctrl.ImportService.currentInputType.locationType"></dataset-import>
 </talend-modal>

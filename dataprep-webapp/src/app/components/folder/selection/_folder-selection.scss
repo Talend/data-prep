@@ -5,9 +5,16 @@
   flex-direction: column;
   align-items: stretch;
 
+  .folders-filter {
+    text-align: right;
+    padding: .5rem 0;
+
+    .search-input {
+      display: inline-block;
+    }
+  }
+
   .action-search {
-    float: right;
-    width: 20%;
     height: 25px;
     font-size: 0.8em;
     padding: 0 30px 0 5px;
@@ -26,7 +33,7 @@
     height: 200px;
     overflow: auto;
     border: 1px solid #CECECE;
-    margin-top: 10px;
     padding: 2px;
+    background: $white;
   }
 }

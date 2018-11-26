@@ -12,6 +12,10 @@
 
 package org.talend.dataprep.dataset.adapter.commands;
 
+import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -28,11 +32,6 @@ import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.util.avro.AvroUtils;
-
-import static org.apache.http.HttpHeaders.ACCEPT;
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
-import static org.talend.dataprep.command.Defaults.asNull;
-import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 /**
  * Get the dataSet schema.
@@ -55,7 +54,6 @@ public class DataSetGetSchema extends GenericCommand<Schema> {
         this.dataSetId = dataSetId;
 
         onError(Defaults.passthrough());
-        on(HttpStatus.NO_CONTENT).then(asNull());
     }
 
     @PostConstruct

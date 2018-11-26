@@ -21,13 +21,8 @@
 
 	@include flex-row();
 	align-items: center;
-	border-bottom: 1px solid #CECECE;
 	height: 80px;
 	padding: 10px;
-
-	&:hover {
-		background-color: tint($pale-blue, 30%);
-	}
 
 	.inventory-icon {
 		display: flex;
@@ -81,7 +76,7 @@
 			font-weight: 700;
 		}
 		.inventory-description {
-			color: $medium-gray;
+			color: $dark-gray;
 			font-weight: 300;
 			font-size: .8em;
 			max-height: 2.6em;

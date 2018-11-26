@@ -13,27 +13,30 @@
   ~ ============================================================================
   -->
 
-<div class="dataset-import">
-    <div id="datastore-form"
-         class="datastore"
-         ng-if="$ctrl.datastoreForm && $ctrl.datastoreForm.jsonSchema">
-        <talend-form autocomplete="'nope'"
-                     data="$ctrl.datastoreForm"
-                     actions="$ctrl.datastoreFormActions"
-                     on-trigger="$ctrl.onDatastoreFormChange"
-                     on-submit="$ctrl.onDatastoreFormSubmit"
-                     show-error-list="false"
-                     watch-depth="reference" />
-    </div>
-    <div id="dataset-form"
-         class="dataset"
-         ng-if="$ctrl.datasetForm && $ctrl.datasetForm.jsonSchema">
-        <talend-form autocomplete="'nope'"
-                     data="$ctrl.datasetForm"
-                     actions="$ctrl.datasetFormActions"
-                     on-trigger="$ctrl.onDatasetFormChange"
-                     on-submit="$ctrl.onDatasetFormSubmit"
-                     show-error-list="false"
-                     watch-depth="reference" />
+<div class="modal-body">
+    <div class="dataset-import">
+        <div id="datastore-form"
+             class="datastore"
+             ng-if="$ctrl.datastoreForm && $ctrl.datastoreForm.jsonSchema">
+            <talend-form autocomplete="'nope'"
+                         data="$ctrl.datastoreForm"
+                         actions="$ctrl.datastoreFormActions"
+                         on-trigger="$ctrl.onDatastoreFormChange"
+                         on-submit="$ctrl.onDatastoreFormSubmit"
+                         show-error-list="false"
+                         watch-depth="reference" />
+        </div>
+        <div id="dataset-form"
+             class="dataset"
+             ng-if="$ctrl.datasetForm && $ctrl.datasetForm.jsonSchema">
+            <talend-form autocomplete="'nope'"
+                         data="$ctrl.datasetForm"
+                         actions="$ctrl.datasetFormActions"
+                         on-trigger="$ctrl.onDatasetFormChange"
+                         on-submit="$ctrl.onDatasetFormSubmit"
+                         show-error-list="false"
+                         watch-depth="reference" />
+        </div>
     </div>
 </div>
+<div class="modal-footer"></div>

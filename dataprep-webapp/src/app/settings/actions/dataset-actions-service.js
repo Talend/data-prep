@@ -107,6 +107,7 @@ export default class DatasetActionsService {
 			const dataset = action.payload.model;
 			this.ConfirmService
 				.confirm(
+					'DELETE_PERMANENTLY_TITLE',
 					['DELETE_PERMANENTLY', 'NO_UNDONE_CONFIRM'],
 					{ type: this.i18n.DATASET, name: dataset.name },
 					true

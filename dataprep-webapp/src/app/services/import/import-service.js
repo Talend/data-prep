@@ -317,7 +317,7 @@ export default class ImportService {
 	 * Update : update the content of the existing dataset
 	 */
 	updateOrCreate(file, existingDataset, importType, name) {
-		return this.ConfirmService.confirm(['UPDATE_EXISTING_DATASET'], { dataset: name })
+		return this.ConfirmService.confirm('UPDATE_EXISTING_DATASET_TITLE', ['UPDATE_EXISTING_DATASET'], { dataset: name })
 		// user confirm : let's update the dataset
 			.then(() => this.UpdateWorkflowService.updateDataset(file, existingDataset))
 			// user dismiss : cancel

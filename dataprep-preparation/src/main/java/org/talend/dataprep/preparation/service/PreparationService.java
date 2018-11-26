@@ -230,12 +230,7 @@ public class PreparationService {
         toCreate.setDataSetId(preparation.getDataSetId());
         toCreate.setFolderId(folderId);
         toCreate.setRowMetadata(preparation.getRowMetadata());
-        try {
-            toCreate.setDataSetName(datasetClient.getDataSetMetadata(preparation.getDataSetId()).getName());
-        } catch (Exception e) {
-            LOGGER.warn("Unable to find dataset name for preparation '{}'", preparation.getId(), e);
-        }
-
+        toCreate.setDataSetName(preparation.getDataSetName());
         preparationRepository.add(toCreate);
 
         final String id = toCreate.id();

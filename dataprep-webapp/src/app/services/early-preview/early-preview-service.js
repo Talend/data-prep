@@ -11,10 +11,7 @@
 
  ============================================================================*/
 
-// actions scopes
-const LINE = 'line';
-const DATASET = 'dataset';
-const MULTI_COLUMNS = 'multi_columns';
+import { SCOPE } from '../../services/playground/playground-service.js';
 
 // early preview delay
 const DELAY = 700;
@@ -69,7 +66,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 
 				let parameters;
 				switch (scope) {
-				case DATASET :
+				case SCOPE.DATASET :
 					parameters = [
 						{
 							...params,
@@ -77,7 +74,7 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 						},
 					];
 					break;
-				case LINE :
+				case SCOPE.LINE :
 					parameters = [
 						{
 							...params,
@@ -87,11 +84,11 @@ export default function EarlyPreviewService($timeout, state, RecipeService, Prev
 					];
 					break;
 				default:
-					if (action.actionScope && action.actionScope.includes(MULTI_COLUMNS)) {
+					if (action.actionScope && action.actionScope.includes(SCOPE.MULTI_COLUMNS)) {
 						parameters = [
 							{
 								...params,
-								scope: MULTI_COLUMNS,
+								scope: SCOPE.MULTI_COLUMNS,
 								column_ids: columns.map(col => col.id),
 								column_names: columns.map(col => col.name),
 							},

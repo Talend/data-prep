@@ -38,9 +38,11 @@ import {
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
 // actions scopes
-const LINE = 'line';
-const MULTI_COLUMNS = 'multi_columns';
-const DATASET = 'dataset';
+export const SCOPE = {
+	LINE: 'line',
+	MULTI_COLUMNS: 'multi_columns',
+	DATASET: 'dataset',
+};
 // events
 export const EVENT_LOADING_START = 'talend.loading.start';
 export const EVENT_LOADING_STOP = 'talend.loading.stop';
@@ -574,7 +576,7 @@ export default function PlaygroundService(
 		}
 
 		const { selectedColumns } = state.playground.grid;
-		if (step.actionParameters.parameters.scope === MULTI_COLUMNS &&
+		if (step.actionParameters.parameters.scope === SCOPE.MULTI_COLUMNS &&
 			(selectedColumns == null || selectedColumns.length < 2)) {
 			return Promise.reject();
 		}
@@ -797,7 +799,7 @@ export default function PlaygroundService(
 			const line = state.playground.grid.selectedLine;
 			let stepParameters = { ...params };
 			switch (scope) {
-			case DATASET: {
+			case SCOPE.DATASET: {
 				stepParameters.scope = scope;
 
 				if (state.playground.filter.applyTransformationOnFilters) {
@@ -811,7 +813,7 @@ export default function PlaygroundService(
 				];
 				break;
 			}
-			case LINE: {
+			case SCOPE.LINE: {
 				stepParameters.scope = scope;
 				stepParameters.row_id = line && line.tdpId;
 
@@ -827,15 +829,15 @@ export default function PlaygroundService(
 				break;
 			}
 			default:
-				if (action.actionScope && action.actionScope.includes(MULTI_COLUMNS)) {
+				if (action.actionScope && action.actionScope.includes(SCOPE.MULTI_COLUMNS)) {
 					let parameters = { ...params };
 					parameters.column_ids = state.playground.grid.selectedColumns.map(col => col.id);
 					if (parameters.column_ids.length < 2) {
-						MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+						MessageService.error('STEP_ERROR_TITLE', 'MULTI_COLUMNS_STEP_ERROR');
 					}
 					else {
 						parameters.column_names = state.playground.grid.selectedColumns.map(col => col.name);
-						parameters.scope = MULTI_COLUMNS;
+						parameters.scope = SCOPE.MULTI_COLUMNS;
 						if (
 							state.playground.filter
 								.applyTransformationOnFilters

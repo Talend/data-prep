@@ -243,6 +243,8 @@
   "UNSUPPORTED_CONTENT": "Impossible de créer le jeu de données : le contenu n'est pas supporté. Essaye avec un fichier CSV ou XLS.",
   "DATASET_NAME_ALREADY_USED_TITLE": "Nom du jeu de données déjà utilisé",
   "DATASET_NAME_ALREADY_USED": "Le nom de ce jeu de données est déjà utilisé par un autre jeu de données",
+  "STEP_ERROR_TITLE": "Action non autorisée",
+  "MULTI_COLUMNS_STEP_ERROR": "Le nombre de colonnes sélectionnées doit être supérieur ou égale à deux",
 
   "_comment": "Transformation",
   "NO_CLUSTERS_ACTION_MSG": "Aucun cluster trouvé.",

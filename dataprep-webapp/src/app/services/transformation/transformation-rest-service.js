@@ -11,10 +11,7 @@
 
   ============================================================================*/
 
-const LINE = 'line';
-const COLUMN = 'column';
-const DATASET = 'dataset';
-const MULTI_COLUMNS = 'multi_columns';
+import { SCOPE } from '../../services/playground/playground-service.js';
 
 /**
  * @ngdoc service
@@ -56,16 +53,17 @@ export default class TransformationRestService {
 		const queries = [];
 
 		switch (scope) {
-		case MULTI_COLUMNS:
-			queries.push(this.$http.get(`${this.RestURLs.transformUrl}/actions/${MULTI_COLUMNS}`));
-			queries.push(this.$http.post(`${this.RestURLs.transformUrl}/actions/${COLUMN}`, entity));
+		case SCOPE.MULTI_COLUMNS:
+			queries.push(this.$http.get(`${this.RestURLs.transformUrl}/actions/${SCOPE.MULTI_COLUMNS}`));
+			queries.push(this.$http.post(`${this.RestURLs.transformUrl}/actions/${SCOPE.COLUMN}`, entity));
 			break;
-		case DATASET:
-		case LINE:
+		case SCOPE.DATASET:
+		case SCOPE.LINE:
 			queries.push(this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`));
 			break;
-		case COLUMN:
+		case SCOPE.COLUMN:
 			queries.push(this.$http.post(`${this.RestURLs.transformUrl}/actions/${scope}`, entity));
+			break;
 		}
 
 		return this.$q.all(queries).then(response => [].concat(...response.map(r => r.data)));

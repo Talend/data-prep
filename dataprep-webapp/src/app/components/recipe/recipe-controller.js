@@ -11,10 +11,9 @@
 
  ============================================================================*/
 
-const CLUSTER_TYPE = 'CLUSTER';
-const COLUMN = 'column';
-const MULTI_COLUMNS = 'multi_columns';
+import { SCOPE } from '../../services/playground/playground-service.js';
 
+const CLUSTER_TYPE = 'CLUSTER';
 
 /**
  * @ngdoc controller
@@ -358,24 +357,20 @@ export default class RecipeCtrl {
 	 * @description Update a step parameters in the loaded preparation
 	 */
 	updateStep(step, newParams) {
-		// update selected columns if the scope is multi_columns because this scope allow to update
-		// selected columns in step edition
-		if (step.actionParameters.parameters.scope === MULTI_COLUMNS) {
-			newParams = this._updateSelectedColumns(newParams);
+		const params = { ...newParams };
+		// With multi_columns scope we need to update selected columns to be in the same situation
+		// from the step creation
+		if (step.actionParameters.parameters.scope === SCOPE.MULTI_COLUMNS) {
+			params.column_ids = this.state.playground.grid.selectedColumns.map(col => col.id);
+			params.column_names = this.state.playground.grid.selectedColumns.map(col => col.name);
 		}
-		return this.PlaygroundService.updateStep(step, newParams)
+		return this.PlaygroundService.updateStep(step, params)
 			.then(() => {
 				this.showModal = {};
 			})
 			.catch(() => {
-				this.MessageService.error('SERVER_ERROR_TITLE', 'GENERIC_ERROR');
+				this.MessageService.error('STEP_ERROR_TITLE', 'MULTI_COLUMNS_STEP_ERROR');
 			});
-	}
-
-	_updateSelectedColumns(newParams) {
-		newParams.column_ids = this.state.playground.grid.selectedColumns.map(col => col.id);
-		newParams.column_names = this.state.playground.grid.selectedColumns.map(col => col.name);
-		return newParams;
 	}
 
 	/**
@@ -441,15 +436,11 @@ export default class RecipeCtrl {
 		this._toggleDynamicParams(step);
 		this._toggleSpecificParams(step);
 		const { scope } = step.actionParameters.parameters;
-		switch (scope) {
-		case MULTI_COLUMNS:
+		if (scope === SCOPE.MULTI_COLUMNS) {
 			this._selectMultiColumnsAction(step);
-			break;
-		case COLUMN:
+		}
+		else {
 			this._selectColumnAction(step);
-			break;
-		default:
-			// no default comportment
 		}
 	}
 
@@ -472,9 +463,8 @@ export default class RecipeCtrl {
 	_selectMultiColumnsAction(step) {
 		const columns = this.state.playground.data.metadata.columns;
 		const stepColumns = step.actionParameters.parameters.column_ids;
-		const selectedColumns = [];
 		const tmpSelectedColumn = columns.filter(col => stepColumns.includes(col.id));
-		this.StateService.setGridSelection([].concat(selectedColumns, tmpSelectedColumn));
+		this.StateService.setGridSelection(tmpSelectedColumn);
 	}
 
 	_selectColumnAction(step) {

@@ -166,13 +166,13 @@ public abstract class DataPrepStep {
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
-        assertNotNull("The Returned columns' list on \"" + datasetOrPreparationName + "\"  is null.", actual);
+        assertNotNull("The returned columns' list on \"" + datasetOrPreparationName + "\"  is null.", actual);
         assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
         assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",
                 expectedColumnNames.size(), actual.size());
         assertTrue(
                 "\"" + datasetOrPreparationName + "\" doesn't contain all expected columns : \""
-                        + CollectionUtils.disjunction(expectedColumnNames, actual).toString()+ "\".",
+                        + CollectionUtils.disjunction(expectedColumnNames, actual).toString() + "\".",
                 actual.containsAll(expectedColumnNames));
     }
 
@@ -227,7 +227,7 @@ public abstract class DataPrepStep {
 
         Assert.assertEquals(expectedRecords.size(), actualRecords.size());
         Assert.assertTrue(
-                "Difference between expected records and actual records" //
+                "Difference between expected records and actual records:" //
                         + CollectionUtils.disjunction(expectedRecords, actualRecords).toString(),
                 actualRecords.containsAll(expectedRecords));
     }
@@ -268,7 +268,7 @@ public abstract class DataPrepStep {
             Statistics statistics = column.statistics;
             if (expectedStatistics != null && statistics != null) {
                 Assert.assertTrue(
-                        "Difference between expected records and actual records" + //
+                        "Difference between expected records and actual records:" + //
                                 CollectionUtils
                                         .disjunction(expectedStatistics.patternFrequencyTable,
                                                 statistics.patternFrequencyTable)

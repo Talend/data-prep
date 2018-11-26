@@ -21,7 +21,8 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 10px;
+	padding: 5px 0;
+
 	input {
 		width: 175px;
 		height: 25px;
@@ -45,6 +46,7 @@
 	display: flex;
 	flex-direction: row;
 	height: 40vh;
+	background: $white;
 
 	.filters-left-panel {
 		flex: 0;
@@ -70,6 +72,7 @@
 			flex-basis: 80px;
 			flex-grow: 0;
 			flex-shrink: 0;
+			border-bottom: 1px solid $shadow-gray;
 
 			inventory-item {
 				flex-basis: 200px;
@@ -156,12 +159,6 @@
 }
 
 .preparation-creator-form {
-	padding: 5px 0;
-
-	.preparation-name-input {
-		font-weight: 700;
-		margin: 15px 0;
-	}
 	.name-error {
 		color: red;
 		font-weight: 600;

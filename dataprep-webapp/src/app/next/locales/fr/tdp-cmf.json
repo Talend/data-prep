@@ -18,6 +18,7 @@
   "MOVE": "Déplacer",
   "NAME": "Nom",
   "PREPARATIONS": "Préparations",
+  "PREPARATIONS_CREATE": "",
   "PREPARATION_ADD": "Ajouter une préparation",
   "PREPARATION_COPY": "Copier une préparation",
   "PREPARATION_DUPLICATE": "Dupliquer la préparation",

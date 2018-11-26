@@ -14,8 +14,9 @@
 -->
 
 <talend-modal id="create-folder-modal"
-	fullscreen="false"
-	state="$ctrl.state.home.folders.creator.isVisible"
-	ng-if="$ctrl.state.home.folders.creator.isVisible">
-	<folder-creator-form />
+              modal-title="('CREATE_FOLDER' | translate)"
+              fullscreen="false"
+              state="$ctrl.state.home.folders.creator.isVisible"
+              ng-if="$ctrl.state.home.folders.creator.isVisible">
+    <folder-creator-form />
 </talend-modal>

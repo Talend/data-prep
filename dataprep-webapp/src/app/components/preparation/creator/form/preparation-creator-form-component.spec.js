@@ -75,7 +75,7 @@ describe('Preparation creator form component', () => {
             expect(element.find('.theme-filter-title').length).toBe(3);
             expect(element.find('.inventory-list').length).toBe(2);
             expect(element.find('form').length).toBe(1);
-            expect(element.find('.modal-buttons').length).toBe(1);
+            expect(element.find('.modal-footer').length).toBe(1);
         });
 
         describe('header', () => {
@@ -240,7 +240,7 @@ describe('Preparation creator form component', () => {
                 createElement();
 
                 //then
-                expect(element.find('form > input').length).toBe(1);
+                expect(element.find('#preparation-name').length).toBe(1);
             });
 
             it('should disable form input while import', () => {
@@ -250,7 +250,7 @@ describe('Preparation creator form component', () => {
                 scope.$digest();
 
                 //then
-                expect(element.find('form > input').eq(0).attr('disabled')).toBe('disabled');
+                expect(element.find('#preparation-name').eq(0).attr('disabled')).toBe('disabled');
             });
 
             it('should show error message when entered name already exists', () => {

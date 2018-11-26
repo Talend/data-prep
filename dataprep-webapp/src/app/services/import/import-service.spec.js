@@ -617,7 +617,7 @@ describe('Import service', () => {
 
 				// then
 				expect(DatasetService.checkNameAvailability).toHaveBeenCalledWith(ImportService.datasetName);
-				expect(ConfirmService.confirm).toHaveBeenCalledWith(['UPDATE_EXISTING_DATASET'], { dataset: 'my cool dataset' });
+				expect(ConfirmService.confirm).toHaveBeenCalledWith('UPDATE_EXISTING_DATASET_TITLE', ['UPDATE_EXISTING_DATASET'], { dataset: 'my cool dataset' });
 				expect(DatasetService.create).not.toHaveBeenCalled();
 				expect(DatasetService.update).not.toHaveBeenCalled();
 			}));

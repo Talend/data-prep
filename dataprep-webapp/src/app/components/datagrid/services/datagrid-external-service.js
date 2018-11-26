@@ -101,7 +101,10 @@ export default class DatagridExternalService {
 			const firstSelected = this.state.playground.grid.selectedColumns[0];
 			const selectedCols = map(this.state.playground.grid.selectedColumns, 'id');
 
-			if (selectedCols.length > 1) {
+if (selectedCols) {
+  const scope = selectedCols.length > 1 ? 'multi_columns' : 'column' . 
+  this.TransformationService.initTransformations(scope, firstSelected);
+}
 				this.TransformationService.initTransformations('multi_columns', firstSelected);
 			}
 			else {

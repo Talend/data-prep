@@ -125,6 +125,12 @@ export default function PlaygroundService(
 		changeDatasetParameters,
 
 		// subheader
+		_getPreparationChooserAction,
+		_getDatasetParametersAction,
+		_getLookupAction,
+		_getUndoAction,
+		_getRedoAction,
+
 		getSubheaderActions,
 		getSubheaderStatus,
 	};
@@ -132,65 +138,79 @@ export default function PlaygroundService(
 
 
 	function getSubheaderStatus() {
-		return PreviewService.previewInProgress() && [{
+		return PreviewService.previewInProgress() ? [{
 			label: $translate.instant('PREVIEW'),
 			inProgress: state.playground.isPreviewLoading,
-			disbaled: true,
+			disabled: true,
 			icon: 'talend-eye',
 			bsStyle: 'link',
-		}];
+		}] : [];
 	}
 
-	function getSubheaderActions() {
-		const actions = $stateParams.datasetid ? [{
+	function _getPreparationChooserAction() {
+		return $stateParams.datasetid ? [{
 			icon: 'talend-dataprep',
 			tooltipLabel: $translate.instant('CHOOSE_PREPARATION_TO_APPLY'),
 			hideLabel: true,
 			bsStyle: 'link',
 			onClick: () => $timeout(() => StateService.setIsPreprationPickerVisible(true)),
 		}] : [];
+	}
 
-		const controls = state.playground.isReadOnly ? [] : [
-			{
-				id: 'playground-parameters-icon',
-				label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
-				icon: 'talend-cog',
-				displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
-				active: state.playground.parameters.visible,
-				onClick: () => $timeout(StateService.toggleDatasetParameters),
-				inProgress: state.playground.lookup.loading,
-			},
-			{
-				id: 'playground-lookup-icon',
-				label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
-				icon: 'talend-chain',
-				displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
-				active: state.playground.lookup.visibility,
-				onClick: () => $timeout(toggleLookupPane),
-			},
-			{
-				id: 'help-history',
-				icon: 'talend-undo',
-				tooltipLabel: $translate.instant('UNDO_ICON_TOOLTIP'),
-				hideLabel: true,
-				bsStyle: 'link',
-				disabled: !HistoryService.canUndo(),
-				onClick: () => $timeout(HistoryService.undo),
-			},
-			{
-				id: 'help-history-redo',
-				icon: 'talend-redo',
-				tooltipLabel: $translate.instant('REDO_ICON_TOOLTIP'),
-				hideLabel: true,
-				bsStyle: 'link',
-				disabled: !HistoryService.canRedo(),
-				onClick: () => $timeout(HistoryService.redo),
-			},
-		];
+	function _getDatasetParametersAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-parameters-icon',
+			label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
+			icon: 'talend-cog',
+			displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
+			active: state.playground.parameters.visible,
+			onClick: () => $timeout(StateService.toggleDatasetParameters),
+			inProgress: state.playground.lookup.loading,
+		}];
+	}
 
+	function _getLookupAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-lookup-icon',
+			label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
+			icon: 'talend-chain',
+			displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
+			active: state.playground.lookup.visibility,
+			onClick: () => $timeout(toggleLookupPane),
+		}];
+	}
+
+	function _getUndoAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'help-history',
+			icon: 'talend-undo',
+			tooltipLabel: $translate.instant('UNDO_ICON_TOOLTIP'),
+			hideLabel: true,
+			bsStyle: 'link',
+			disabled: !HistoryService.canUndo(),
+			onClick: () => $timeout(HistoryService.undo),
+		}];
+	}
+
+	function _getRedoAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'help-history-redo',
+			icon: 'talend-redo',
+			tooltipLabel: $translate.instant('REDO_ICON_TOOLTIP'),
+			hideLabel: true,
+			bsStyle: 'link',
+			disabled: !HistoryService.canRedo(),
+			onClick: () => $timeout(HistoryService.redo),
+		}];
+	}
+
+	function getSubheaderActions() {
 		return [
-			...actions,
-			...controls,
+			..._getPreparationChooserAction(),
+			..._getDatasetParametersAction(),
+			..._getLookupAction(),
+			..._getUndoAction(),
+			..._getRedoAction(),
 		];
 	}
 

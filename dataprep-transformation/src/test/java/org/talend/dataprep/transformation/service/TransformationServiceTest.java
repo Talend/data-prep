@@ -127,7 +127,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
                         "unknown_dataset_id", "JSON");
 
         // then
-        assertEquals(400, response.getStatusCode());
+        assertEquals(404, response.getStatusCode());
         assertTrue(response.asString().contains("DATASET_DOES_NOT_EXIST"));
     }
 

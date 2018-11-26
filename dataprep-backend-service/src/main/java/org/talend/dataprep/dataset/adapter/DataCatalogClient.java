@@ -1,5 +1,8 @@
 package org.talend.dataprep.dataset.adapter;
 
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +12,6 @@ import org.talend.dataprep.dataset.adapter.commands.DataSetGetContent;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadata;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetSchema;
 import org.talend.dataprep.dataset.adapter.commands.DatasetList;
-
-import javax.annotation.Nullable;
-import java.util.stream.Stream;
 
 /**
  * Client for catalog HTTP API.
@@ -33,13 +33,11 @@ public class DataCatalogClient {
         return context.getBean(DataSetGetMetadata.class, id).execute();
     }
 
-    @Nullable
     public Schema getDataSetSchema(String id) {
         return context.getBean(DataSetGetSchema.class, id).execute();
     }
 
-    public Stream<GenericRecord> getDataSetContent(String id, Long limit) {
-        Schema schema = getDataSetSchema(id);
+    public Stream<GenericRecord> getDataSetContent(String id, Long limit, Schema schema) {
         return context.getBean(DataSetGetContent.class, id, schema, limit).execute();
     }
 

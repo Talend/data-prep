@@ -10,7 +10,6 @@ import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,10 +45,6 @@ public class PreparationStep extends DataPrepStep {
     private static final String DATASET_NAME = "dataSetName";
 
     private static final String NB_STEPS = "nbSteps";
-
-    private static final String HEAD_ID = "HEAD";
-
-    private static final String VERSION_HEAD = "head";
 
     private static final String TDP_INVALID_MARKER = "__tdpInvalid";
 
@@ -143,12 +138,14 @@ public class PreparationStep extends DataPrepStep {
         Folder originFolder = folderUtil.searchFolder(suffixedPrepOriginPath);
         Folder destFolder = folderUtil.searchFolder(prepDestPath);
 
-        Response response = api.movePreparation( //
-                suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
+        Response response = api
+                .movePreparation( //
+                        suffixedPrepOriginId, originFolder.id, destFolder.id, suffixedPrepDestName);
         response.then().statusCode(OK.value());
 
-        context.storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
-                suffixedPrepDestName, destFolder.path);
+        context
+                .storePreparationMove(suffixedPrepOriginId, suffixedPrepOriginName, originFolder.path,
+                        suffixedPrepDestName, destFolder.path);
     }
 
     @Then("^I copy the preparation \"(.*)\" to \"(.*)\"$")
@@ -203,7 +200,7 @@ public class PreparationStep extends DataPrepStep {
 
     @And("^I check that the preparation \"(.*)\" exists$")
     public void checkPrepExists(String prepFullName) throws IOException {
-        Assert.assertTrue(doesPrepExistsInFolder(prepFullName));
+        Assert.assertTrue("The preparation does not exists in the Folder", doesPrepExistsInFolder(prepFullName));
     }
 
     @Then("^I check that I can load \"(.*)\" times the preparation with name \"(.*)\"$")
@@ -214,8 +211,9 @@ public class PreparationStep extends DataPrepStep {
                     .waitResponse("Preparation #" + preparationId + " is ready", 10, 0, 1) //
                     .until(() -> {
                         int statusCode = api.getPreparationContent(preparationId, "head", "HEAD", "").getStatusCode();
-                        LOGGER.info("Ask for preparation #{} and I received status code #{}", preparationId,
-                                statusCode);
+                        LOGGER
+                                .info("Ask for preparation #{} and I received status code #{}", preparationId,
+                                        statusCode);
                         return statusCode;
                     }, is(HttpStatus.OK.value()));
         }
@@ -235,8 +233,9 @@ public class PreparationStep extends DataPrepStep {
     @Then("^The preparation \"(.*)\" should contain the following columns:$")
     public void thePreparationShouldContainTheFollowingColumns(String preparationName, List<String> columns)
             throws Exception {
-        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
-                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), VERSION_HEAD, HEAD_ID,
+                        StringUtils.EMPTY);
         response.then().statusCode(OK.value());
 
         checkColumnNames(preparationName, columns, response.jsonPath().getList("metadata.columns.name", String.class));
@@ -245,8 +244,9 @@ public class PreparationStep extends DataPrepStep {
     @Then("^The preparation \"(.*)\" should have the following quality bar characteristics on the column number \"(.*)\":$")
     public void thePreparationShouldHaveThefollowingQualityBar(String preparationName, String columnNumber,
             DataTable dataTable) throws Exception {
-        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
-                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), VERSION_HEAD, HEAD_ID,
+                        StringUtils.EMPTY);
         response.then().statusCode(OK.value());
 
         DatasetContent datasetContent = response.as(DatasetContent.class);
@@ -265,8 +265,9 @@ public class PreparationStep extends DataPrepStep {
     @Then("^The preparation \"(.*)\" should have the following invalid characteristics on the row number \"(.*)\":$")
     public void thePreparationShouldHaveThefollowingInvalidCells(String preparationName, String columnNumber,
             DataTable dataTable) throws Exception {
-        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
-                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), VERSION_HEAD, HEAD_ID,
+                        StringUtils.EMPTY);
         response.then().statusCode(OK.value());
 
         DatasetContent datasetContent = response.as(DatasetContent.class);
@@ -286,8 +287,9 @@ public class PreparationStep extends DataPrepStep {
     @Then("^The preparation \"(.*)\" should have the following type \"(.*)\" on the following column \"(.*)\"$")
     public void thePreparationShouldHaveThefollowingTypeOnThefollowingColumn(String preparationName, String columnType,
             String columnNumber) throws Exception {
-        Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
-                VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
+        Response response = api
+                .getPreparationContent(context.getPreparationId(suffixName(preparationName)), VERSION_HEAD, HEAD_ID,
+                        StringUtils.EMPTY);
         response.then().statusCode(OK.value());
 
         DatasetContent datasetContent = response.as(DatasetContent.class);

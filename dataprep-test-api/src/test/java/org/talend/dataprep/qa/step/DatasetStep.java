@@ -214,7 +214,7 @@ public class DatasetStep extends DataPrepStep {
             }
         }
 
-        assertTrue(response.isArray());
+        assertTrue("The response is not an array", response.isArray());
         JsonNode dataset = response.get(0);
 
         parameters.forEach((key, value) -> assertEquals(value, dataset.get(key).asText()));

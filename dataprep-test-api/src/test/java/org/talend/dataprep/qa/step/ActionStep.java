@@ -77,7 +77,8 @@ public class ActionStep extends DataPrepStep {
         String prepId = context.getPreparationId(prepSuffixedName, prepPath);
         Action storedAction = context.getAction(stepAlias);
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
-        assertTrue(actions.contains(storedAction));
+        assertTrue("The action" + storedAction.action + " are not been stored in the IT context.",
+                actions.contains(storedAction));
     }
 
     @Then("^I update the first step like \"(.*)\" on the preparation \"(.*)\" with the following parameters :$")
@@ -85,9 +86,9 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(prepName));
         Action storedAction = context.getAction(stepName);
-        assertTrue(storedAction != null);
+        assertTrue("Action on the step " + stepName + " are not been retrieve in the context.", storedAction != null);
         List<Action> actions = getActionsFromStoredAction(prepId, storedAction);
-        assertTrue(actions.size() > 0);
+        assertTrue("Action list on the preparation " + prepName + " is empty.", actions.size() > 0);
         // update stored action parameters
         storedAction.parameters.putAll(util.mapParamsToActionParameters(params));
         storedAction.id = actions.get(0).id;
@@ -101,7 +102,7 @@ public class ActionStep extends DataPrepStep {
         Map<String, String> params = dataTable.asMap(String.class, String.class);
         String prepId = context.getPreparationId(suffixName(prepName));
         Action foundAction = getFirstActionWithName(prepId, actionName);
-        assertTrue(foundAction != null);
+        assertTrue("No action with name " + actionName + " on the preparation " + prepName + ".", foundAction != null);
         // Update action
         Action action = new Action();
         action.action = actionName;

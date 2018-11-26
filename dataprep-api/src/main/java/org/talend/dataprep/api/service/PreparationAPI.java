@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.talend.dataprep.api.PreparationAddAction;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
@@ -154,8 +153,8 @@ public class PreparationAPI extends APIService {
             preparation.setName((dataSetMetadata.getName() != null ? dataSetMetadata.getName() + " " : "")
                     + message("preparation.create.suffix"));
         }
-        final RowMetadata rowMetadata = dataSetMetadata.getRowMetadata();
-        preparation.setRowMetadata(rowMetadata);
+        preparation.setRowMetadata(dataSetMetadata.getRowMetadata());
+        preparation.setDataSetName(dataSetMetadata.getName());
 
         PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation, folder);
         final String preparationId = preparationCreate.execute();

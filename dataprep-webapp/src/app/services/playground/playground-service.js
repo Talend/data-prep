@@ -39,9 +39,10 @@ import {
 } from '../../index-route';
 // actions scopes
 export const SCOPE = {
-	LINE: 'line',
-	MULTI_COLUMNS: 'multi_columns',
+	COLUMN: 'column',
 	DATASET: 'dataset',
+	MULTI_COLUMNS: 'multi_columns',
+	LINE: 'line',
 };
 // events
 export const EVENT_LOADING_START = 'talend.loading.start';

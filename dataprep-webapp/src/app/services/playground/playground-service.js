@@ -130,6 +130,7 @@ export default function PlaygroundService(
 		_getLookupAction,
 		_getUndoAction,
 		_getRedoAction,
+		_toggleLookupPane,
 
 		getSubheaderActions,
 		getSubheaderStatus,
@@ -176,7 +177,7 @@ export default function PlaygroundService(
 			icon: 'talend-chain',
 			displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
 			active: state.playground.lookup.visibility,
-			onClick: () => $timeout(toggleLookupPane),
+			onClick: () => $timeout(_toggleLookupPane),
 		}];
 	}
 
@@ -214,7 +215,7 @@ export default function PlaygroundService(
 		];
 	}
 
-	function toggleLookupPane() {
+	function _toggleLookupPane() {
 		if (state.playground.lookup.visibility) {
 			StateService.setLookupVisibility(false);
 			StateService.setStepInEditionMode(null);

@@ -12,15 +12,10 @@
  ============================================================================*/
 
 import { find } from 'lodash';
+import { SCOPE } from '../../../../services/playground/playground-service.js';
 
 const SUGGESTIONS = 'suggestions';
 const FILTERED_COLUMN = 'column_filtered';
-const SCOPES = {
-	COLUMN: 'column',
-	MULTI_COLUMNS: 'multi_columns',
-	DATASET: 'dataset',
-	LINE: 'line',
-};
 
 /**
  * @ngdoc controller
@@ -97,11 +92,11 @@ export default function TabItemCtrl(state, TransformationService) {
 	 */
 	vm.shouldRender = function () {
 		switch (vm.scope) {
-		case SCOPES.DATASET:
+		case SCOPE.DATASET:
 			return true;
-		case SCOPES.COLUMN:
+		case SCOPE.COLUMN:
 			return !!getSelectedColumnsCount();
-		case SCOPES.LINE:
+		case SCOPE.LINE:
 			return !!vm.state.playground.grid.selectedLine;
 		}
 	};
@@ -109,8 +104,8 @@ export default function TabItemCtrl(state, TransformationService) {
 
 	vm.getFilteringScope = function () {
 		const scope = vm.scope;
-		if (scope === SCOPES.COLUMN && getSelectedColumnsCount() > 1) {
-			return SCOPES.MULTI_COLUMNS;
+		if (scope === SCOPE.COLUMN && getSelectedColumnsCount() > 1) {
+			return SCOPE.MULTI_COLUMNS;
 		}
 		return scope;
 	};

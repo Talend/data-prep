@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import i18n from '../../../../i18n/en.json';
 
 describe('Step Description controller', () => {
 	let createController;
@@ -18,19 +19,7 @@ describe('Step Description controller', () => {
 	beforeEach(angular.mock.module('data-prep.step-description'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			RECIPE_ITEM_ON_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on column <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
-			ONLY_1_SELECTED_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>',
-			ONLY_2_SELECTED_COLS: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div>',
-			MORE_THAN_2_SELECTED_COLS: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>, <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> and <span title="restOfCols">{{restOfColsNbr}}</span> other(s).',
-			RECIPE_ITEM_ON_CELL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on cell',
-			RECIPE_ITEM_ON_LINE: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> <span class="step-scope">#{{rowId}}</span>',
-			RECIPE_ITEM_ON_DATASET: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on table',
-			LOOKUP_STEP_DESCRIPTION: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> done with dataset <div class="step-scope" title="{{lookupDsName}}">{{lookupDsName}}</div>. Join has been set between <div class="step-scope" title="{{mainColName}}">{{mainColName}}</div> and <div class="step-scope" title="{{lookupColName}}">{{lookupColName}}</div>. ',
-			ONLY_1_ADDED_COL: 'The column <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> has been added.',
-			ONLY_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> have been added.',
-			MORE_THEN_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>, <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> and <span title="{{restOfCols}}">{{restOfColsNbr}}</span> other(s) have been added.',
-		});
+		$translateProvider.translations('en', i18n);
 		$translateProvider.preferredLanguage('en');
 	}));
 

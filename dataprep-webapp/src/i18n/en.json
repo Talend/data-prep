@@ -243,6 +243,8 @@
   "UNSUPPORTED_CONTENT": "Unable to create the dataset: the content is not supported. Try with a CSV or XLS file.",
   "DATASET_NAME_ALREADY_USED_TITLE": "Dataset name already used",
   "DATASET_NAME_ALREADY_USED": "This Dataset name is already used by an other dataset",
+  "STEP_ERROR_TITLE": "Step error",
+  "MULTI_COLUMNS_STEP_ERROR": "The number of selected columns must be greater than or equal to two",
 
   "_comment": "Transformation",
   "NO_CLUSTERS_ACTION_MSG": "No clusters found.",

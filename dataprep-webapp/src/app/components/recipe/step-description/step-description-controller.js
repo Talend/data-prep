@@ -103,18 +103,9 @@ class StepDescriptionCtrl {
 	}
 
 	_getMultiColumnsDetails(step) {
-		let description;
-
 		const multiColumnsDetails = this._getSelectedColumnsInMultiColumnsAction(step);
-		switch (multiColumnsDetails.initialColsNbr) {
-		case 2:
-			description = this.$translate.instant('ONLY_2_SELECTED_COLS', multiColumnsDetails);
-			break;
-		default:
-			description = this.$translate.instant('MORE_THAN_2_SELECTED_COLS', multiColumnsDetails);
-		}
-
-		return description;
+		const i18nKey = multiColumnsDetails.initialColsNbr === 2 ? 'ONLY_2_SELECTED_COLS' : 'MORE_THAN_2_SELECTED_COLS';
+		return this.$translate.instant(i18nKey, multiColumnsDetails);
 	}
 
 	/**

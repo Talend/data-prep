@@ -166,7 +166,7 @@ public abstract class DataPrepStep {
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
-        assertNotNull("Return columns list is null on \"" + datasetOrPreparationName + ".", actual);
+        assertNotNull("The Returned columns' list on \"" + datasetOrPreparationName + "  is null.", actual);
         assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
         assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",
                 expectedColumnNames.size(), actual.size());
@@ -214,9 +214,8 @@ public abstract class DataPrepStep {
         if (expectedRecordsCount == null) {
             return;
         }
-        Assert
-                .assertEquals("The count records " + expectedRecordsCount + "is wrong: " + actualRecordsCount,
-                        expectedRecordsCount, actualRecordsCount);
+        Assert.assertEquals("The count records " + expectedRecordsCount + "is wrong: " + actualRecordsCount,
+                expectedRecordsCount, actualRecordsCount);
     }
 
     protected void checkRecords(List<Object> actualRecords, String expectedRecordsFilename) throws Exception {
@@ -226,11 +225,11 @@ public abstract class DataPrepStep {
         InputStream expectedRecordsFileStream = DataPrepStep.class.getResourceAsStream(expectedRecordsFilename);
         List<Object> expectedRecords = objectMapper.readValue(expectedRecordsFileStream, DatasetContent.class).records;
 
-        Assert.assertEquals(expectedRecords.size(), actualRecords.size() + 1);
-        Assert
-                .assertTrue("Difference between expected records and actual records" //
+        Assert.assertEquals(expectedRecords.size(), actualRecords.size());
+        Assert.assertTrue(
+                "Difference between expected records and actual records" //
                         + CollectionUtils.disjunction(expectedRecords, actualRecords).toString(),
-                        actualRecords.containsAll(expectedRecords));
+                actualRecords.containsAll(expectedRecords));
     }
 
     protected void checkQualityPerColumn(List<ContentMetadataColumn> columns, String expectedQualityFilename)
@@ -256,22 +255,24 @@ public abstract class DataPrepStep {
             Statistics expectedStatistics = expectedColumn.statistics;
 
             Map<String, Integer> quality = column.quality;
-            Assert
-                    .assertEquals("The valid records count " + expectedQuality.get("valid") + "is wrong: "
-                            + quality.get("valid"), expectedQuality.get("valid"), quality.get("valid"));
-            Assert
-                    .assertEquals("The valid records count " + expectedQuality.get("empty") + "is wrong: "
-                            + quality.get("empty"), expectedQuality.get("empty"), quality.get("empty"));
-            Assert
-                    .assertEquals("The valid records count " + expectedQuality.get("invalid") + "is wrong: "
-                            + quality.get("invalid"), expectedQuality.get("invalid"), quality.get("invalid"));
+            Assert.assertEquals(
+                    "The valid records count " + expectedQuality.get("valid") + "is wrong: " + quality.get("valid"),
+                    expectedQuality.get("valid"), quality.get("valid"));
+            Assert.assertEquals(
+                    "The valid records count " + expectedQuality.get("empty") + "is wrong: " + quality.get("empty"),
+                    expectedQuality.get("empty"), quality.get("empty"));
+            Assert.assertEquals(
+                    "The valid records count " + expectedQuality.get("invalid") + "is wrong: " + quality.get("invalid"),
+                    expectedQuality.get("invalid"), quality.get("invalid"));
 
             Statistics statistics = column.statistics;
             if (expectedStatistics != null && statistics != null) {
-                Assert.assertTrue("Difference between expected records and actual records" + //
-                        CollectionUtils
-                                .disjunction(expectedStatistics.patternFrequencyTable, statistics.patternFrequencyTable)
-                                .toString(),
+                Assert.assertTrue(
+                        "Difference between expected records and actual records" + //
+                                CollectionUtils
+                                        .disjunction(expectedStatistics.patternFrequencyTable,
+                                                statistics.patternFrequencyTable)
+                                        .toString(),
                         expectedStatistics.patternFrequencyTable.containsAll(statistics.patternFrequencyTable));
                 Assert.assertTrue(expectedStatistics.frequencyTable.containsAll(statistics.frequencyTable));
             }

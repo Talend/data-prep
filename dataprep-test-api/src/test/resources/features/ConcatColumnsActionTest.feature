@@ -1,6 +1,6 @@
 # would fail while ConcatColumns action is disable
 @EnvOnPremise @EnvCloud
-Feature: Export all data from a preparation
+Feature: Apply concat columns action
 
   Scenario: add a multi_columns action
     Given I upload the dataset "/data/10L3C_copy.csv" with name "10L3C_dataset"
@@ -22,7 +22,15 @@ Feature: Export all data from a preparation
       | valid   | 10  |
       | invalid | 0   |
       | empty   | 0   |
-
+    And I add a "reorder" step identified by "reorder" on the preparation "10L3C_prep" with parameters :
+      | column_name                 | firstname |
+      | column_id                   | 0001      |
+      | selected_column             | 0003      |
+      | dataset_action_display_type | column    |
+      | scope                       | dataset   |
+    And I add a "concat_columns" step identified by "concatColumns" on the preparation "10L3C_prep" with parameters :
+      | column_ids | ["0001","0002"]  |
+      | scope      | multi_columns    |
 
   @CleanAfter
   Scenario: Export 10L3C_prep preparation and check the exported file 10L3C_result.csv

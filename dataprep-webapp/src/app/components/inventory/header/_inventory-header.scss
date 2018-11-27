@@ -13,13 +13,11 @@
 
 .inventory-header {
     display: flex;
-    align-direction: row-reverse;
     align-items: flex-end;
     justify-content: space-between;
 
-    border-bottom: 1px solid #CECECE;
+    padding: 5px 0;
     font-size: 0.9em;
-    height: 50px;
 
     .inventory-sort {
         display: flex;
@@ -27,12 +25,12 @@
         justify-content: flex-end;
 
         .button-switch {
-            background: $white;
             color: $black;
             cursor: pointer;
             font-weight: bold;
             padding: 0 5px 0 5px;
             text-align: center;
+
             &:hover {
                 color: $dark-blue;
                 text-decoration: underline;

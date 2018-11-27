@@ -13,22 +13,29 @@
   ~ ============================================================================
   -->
 
-<form name="$ctrl.folderNameForm" ng-submit="$ctrl.folderNameForm.$valid && $ctrl.createFolder()">
-    <label for="create-folder-name" translate-once="ENTER_FOLDER_NAME"/>
-    <input id="create-folder-name"
-           type="text"
-           class="form-control"
-           ng-model="$ctrl.name"
-           ng-model-options="{debounce: { default: 300, blur: 0 }}"
-           unique-folder="$ctrl.state.inventory.folder.content.folders"/>
-
-    <div class="modal-buttons">
+<form name="$ctrl.folderNameForm"
+      ng-submit="$ctrl.folderNameForm.$valid && $ctrl.createFolder()">
+    <div class="modal-body">
+        <div class="form-group">
+            <input id="create-folder-name"
+                   type="text"
+                   class="form-control"
+                   ng-model="$ctrl.name"
+                   ng-value="$ctrl.name"
+                   ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                   unique-folder="$ctrl.state.inventory.folder.content.folders" />
+            <label for="create-folder-name"
+                   class="control-label"
+                   translate-once="ENTER_FOLDER_NAME" />
+        </div>
+    </div>
+    <div class="modal-footer">
         <button type="button"
                 class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
                 translate-once="CANCEL"></button>
         <button type="submit"
                 class="btn btn-primary modal-primary-button"
-                translate-once="OK"
+                translate-once="CREATE_FOLDER"
                 ng-disabled="$ctrl.folderNameForm.$invalid"></button>
     </div>
 </form>

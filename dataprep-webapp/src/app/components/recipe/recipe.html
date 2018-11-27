@@ -101,10 +101,9 @@
                             <talend-modal ng-if="$ctrl.showModal[step.transformation.stepId]"
                                           fullscreen="false"
                                           state="$ctrl.showModal[step.transformation.stepId]"
-                                          close-button="true">
-                                <div class="modal-title">{{ ::step.transformation.label }}</div>
-                                <div class="modal-subtitle">{{ ::step.transformation.description }}</div>
-
+                                          close-button="true"
+                                          modal-title="step.transformation.label"
+                                          modal-subtitle="step.transformation.description">
                                 <transform-form transformation="step.transformation"
                                                 on-submit="$ctrl.stepUpdateClosure(step)(params)"
                                                 is-transformation-in-progress="recipeCtrl.updateStepInProgress"></transform-form>

@@ -14,24 +14,28 @@
 export const confirmState = {
 	visible: false,
 	deletion: false,
+	title: null,
 	texts: [],
 };
 
 export class ConfirmStateService {
-	show(texts, deletion = false) {
+	show(title, texts, deletion = false) {
 		confirmState.visible = true;
 		confirmState.deletion = deletion;
 		confirmState.texts = texts;
+		confirmState.title = title;
 	}
 
 	hide() {
 		confirmState.visible = false;
 		confirmState.texts = [];
+		confirmState.title = null;
 	}
 
 	reset() {
 		confirmState.visible = false;
 		confirmState.deletion = false;
 		confirmState.texts = [];
+		confirmState.title = null;
 	}
 }

@@ -24,7 +24,7 @@ describe('Folder creator form component', () => {
         $translateProvider.translations('en', {
             ENTER_FOLDER_NAME: 'Enter folder name',
             CANCEL: 'Cancel',
-            OK: 'Ok',
+			CREATE_FOLDER: 'Add folder',
         });
         $translateProvider.preferredLanguage('en');
     }));
@@ -53,7 +53,7 @@ describe('Folder creator form component', () => {
             expect(element.find('label').eq(0).text()).toBe('Enter folder name');
             expect(element.find('input#create-folder-name').length).toBe(1);
             expect(element.find('button').eq(0).text()).toBe('Cancel');
-            expect(element.find('button').eq(1).text()).toBe('Ok');
+            expect(element.find('button').eq(1).text()).toBe('Add folder');
         });
     });
 });

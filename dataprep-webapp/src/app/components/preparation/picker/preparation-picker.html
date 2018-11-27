@@ -13,22 +13,23 @@
   ~ ============================================================================
   -->
 
-<div class="picker-modal-content">
+<div class="modal-body">
+    <div class="picker-modal-content">
+        <loader ng-if="$ctrl.isFetchingPreparations"></loader>
 
-    <loader ng-if="$ctrl.isFetchingPreparations"></loader>
+        <span ng-if="!$ctrl.candidatePreparations.length && !$ctrl.isFetchingPreparations"
+              translate-once="NO_COMPATIBLE_PREPARATIONS"
+              translate-values="{name: $ctrl.dataset.name}"
+        ></span>
 
-    <span ng-if="!$ctrl.candidatePreparations.length && !$ctrl.isFetchingPreparations"
-          translate-once="NO_COMPATIBLE_PREPARATIONS"
-          translate-values="{name: $ctrl.dataset.name}"
-    ></span>
+        <div class="preparation-list inventory-tile-list">
+            <inventory-tile
+                    ng-repeat="candidate in $ctrl.candidatePreparations track by candidate.preparation.id"
 
-    <div class="preparation-list inventory-tile-list">
-        <inventory-tile
-                ng-repeat="candidate in $ctrl.candidatePreparations track by candidate.preparation.id"
-
-                dataset="candidate.dataset"
-                on-click="$ctrl.onSelect({preparationId: candidate.preparation.id})"
-                preparation="candidate.preparation"
-        ></inventory-tile>
+                    dataset="candidate.dataset"
+                    on-click="$ctrl.onSelect({preparationId: candidate.preparation.id})"
+                    preparation="candidate.preparation"
+            ></inventory-tile>
+        </div>
     </div>
 </div>

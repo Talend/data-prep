@@ -15,13 +15,14 @@
 import { PLAYGROUND_PREPARATION_ROUTE } from '../../../index-route';
 
 export default class PlaygroundHeaderCtrl {
-	constructor(state, $state, $stateParams, StateService, PlaygroundService) {
+	constructor(state, $state, $translate, $stateParams, StateService, PlaygroundService) {
 		'ngInject';
 
 		this.state = state;
 		this.StateService = StateService;
 		this.PlaygroundService = PlaygroundService;
 		this.$state = $state;
+		this.$translate = $translate;
 		this.$stateParams = $stateParams;
 
 		this.toggleNameEditMode = this.toggleNameEditMode.bind(this);
@@ -54,7 +55,8 @@ export default class PlaygroundHeaderCtrl {
 
 	get subtitle() {
 		const { nameEditionMode, dataset } = this.state.playground;
-		return nameEditionMode ? '' : dataset.name;
+		const { instant } = this.$translate;
+		return nameEditionMode ? '' : `${instant('DATASET')}${instant('COLON')} ${dataset.name}`;
 	}
 
 	get title() {

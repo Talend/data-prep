@@ -134,6 +134,7 @@ export default function PlaygroundService(
 
 		getSubheaderActions,
 		getSubheaderStatus,
+		isSubheaderLoading,
 	};
 	return service;
 
@@ -146,6 +147,10 @@ export default function PlaygroundService(
 			icon: 'talend-eye',
 			bsStyle: 'link',
 		}] : [];
+	}
+
+	function isSubheaderLoading() {
+		return !state.export.exportTypes.length;
 	}
 
 	function _getPreparationChooserAction() {

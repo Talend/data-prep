@@ -32,6 +32,7 @@
     on-submit="$ctrl.editName"
     on-cancel="$ctrl.cancelEdit"
     loading="$ctrl.loading"
+    right-actions-loading="$ctrl.PlaygroundService.isSubheaderLoading()"
     left="$ctrl.PlaygroundService.getSubheaderStatus()"
     right="$ctrl.PlaygroundService.getSubheaderActions()">
 </pure-sub-header-bar>

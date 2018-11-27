@@ -186,6 +186,18 @@ describe('Playground Service', () => {
 	}));
 
 	describe('subheader', () => {
+		describe('loading', () => {
+			it('should return true if it is loading', inject((state, PlaygroundService) => {
+				state.export = { exportTypes: [1, 2] };
+				expect(PlaygroundService.isSubheaderLoading()).toBeFalsy();
+			}));
+
+			it('should return false if it is loading', inject((state, PlaygroundService) => {
+				state.export = { exportTypes: [] };
+				expect(PlaygroundService.isSubheaderLoading()).toBeTruthy();
+			}));
+		});
+
 		describe('status', () => {
 			it('should return a loading preview status', inject((state, PlaygroundService, PreviewService) => {
 				spyOn(PreviewService, 'previewInProgress').and.returnValue(true);

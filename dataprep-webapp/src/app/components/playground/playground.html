@@ -146,4 +146,4 @@
             on-select="playgroundCtrl.applySteps(preparationId)"></preparation-picker>
 </talend-modal>
 
-<insertion-export></insertion-export>
+<insertion-export ng-if="playgroundCtrl.state.export.exportTypes.length"></insertion-export>

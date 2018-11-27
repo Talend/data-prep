@@ -18,6 +18,7 @@
   "MOVE": "[JA] Move",
   "NAME": "[JA] Name",
   "PREPARATIONS": "[JA] Preparations",
+  "PREPARATIONS_CREATE": "",
   "PREPARATION_ADD": "[JA] Add preparation",
   "PREPARATION_COPY": "[JA] Copy preparation",
   "PREPARATION_DUPLICATE": "[JA] Duplicate",

@@ -73,45 +73,46 @@
 <talend-modal fullscreen="false"
               state="lookupCtrl.addLookupDatasetModal"
               ng-if="lookupCtrl.addLookupDatasetModal"
-              class="add-dataset-lookup">
+              class="add-dataset-lookup"
+              modal-title="('ADD_LOOKUP_DATASET_MODAL_TITLE' | translate)">
     <form name="lookupCtrl.addLookupDatasetForm"
           ng-submit="lookupCtrl.addLookupDatasets()">
-        <div translate-once="ADD_LOOKUP_DATASET_MODAL_TITLE"></div>
-        <div class="lookup-loader" ng-if="lookupCtrl.state.playground.lookup.modalLoading">
-            <loader></loader>
-        </div>
-        <div class="inventory" ng-if="!lookupCtrl.state.playground.lookup.modalLoading">
-            <div class="inventory-sort">
-                <inventory-header
-                        sort="lookupCtrl.state.playground.lookup.sort"
-                        order="lookupCtrl.state.playground.lookup.order"
-                        sort-list="lookupCtrl.state.playground.lookup.sortList"
-                        order-list="lookupCtrl.state.playground.lookup.orderList"
-                        on-sort-change="lookupCtrl.updateSortBy(sort)"
-                        on-order-change="lookupCtrl.updateSortOrder(order)"></inventory-header>
-                <input type="search"
-                       class="form-control dataset-search"
-                       id="lookup-dataset-search"
-                       translate-once-placeholder="FIND_DATASETS"
-                       ng-model="lookupCtrl.state.playground.lookup.searchDatasetString"
-                       ng-model-options="{debounce: { default: 300, blur: 0 }}"
-                       talend-search-input>
+        <div class="modal-body">
+            <div class="lookup-loader" ng-if="lookupCtrl.state.playground.lookup.modalLoading">
+                <loader></loader>
             </div>
-            <div class="inventory-list">
-                <lookup-dataset-list datasets="lookupCtrl.state.playground.lookup.datasets"
-                                     search-text="lookupCtrl.state.playground.lookup.searchDatasetString">
-                </lookup-dataset-list>
+            <div class="inventory" ng-if="!lookupCtrl.state.playground.lookup.modalLoading">
+                <div class="inventory-sort">
+                    <inventory-header
+                            sort="lookupCtrl.state.playground.lookup.sort"
+                            order="lookupCtrl.state.playground.lookup.order"
+                            sort-list="lookupCtrl.state.playground.lookup.sortList"
+                            order-list="lookupCtrl.state.playground.lookup.orderList"
+                            on-sort-change="lookupCtrl.updateSortBy(sort)"
+                            on-order-change="lookupCtrl.updateSortOrder(order)"></inventory-header>
+                    <input type="search"
+                           class="form-control dataset-search"
+                           id="lookup-dataset-search"
+                           translate-once-placeholder="FIND_DATASETS"
+                           ng-model="lookupCtrl.state.playground.lookup.searchDatasetString"
+                           ng-model-options="{debounce: { default: 300, blur: 0 }}"
+                           talend-search-input>
+                </div>
+                <div class="inventory-list">
+                    <lookup-dataset-list datasets="lookupCtrl.state.playground.lookup.datasets"
+                                         search-text="lookupCtrl.state.playground.lookup.searchDatasetString">
+                    </lookup-dataset-list>
+                </div>
             </div>
         </div>
-        <div class="modal-buttons">
+        <div class="modal-footer">
             <button type="button"
                     class="btn talend-modal-close btn-default btn-inverse modal-secondary-button"
                     translate-once="CANCEL"></button>
             <button class="btn btn-primary modal-primary-button"
                     data-feature="preparation.lookup.dataset.add"
                     translate-once="ADD_LOOKUP_DATASET"
-                    ng-disabled = "lookupCtrl.state.playground.lookup.modalLoading"></button>
+                    ng-disabled="lookupCtrl.state.playground.lookup.modalLoading"></button>
         </div>
     </form>
-    </div>
 </talend-modal>

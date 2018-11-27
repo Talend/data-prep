@@ -33,7 +33,7 @@ describe('Search Inventory Rest Service', () => {
 			datasets: [],
 		};
 		$httpBackend
-			.expectGET(RestURLs.searchUrl + '?path=/&name=test')
+			.expectGET(RestURLs.searchUrl + '?path=%2F&name=test')
 			.respond(200, expectedResult);
 
 		//when

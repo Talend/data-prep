@@ -129,6 +129,11 @@ $recipe-step-draggable-background-color: #808080 !default;
       .step-details {
         padding: 0;
 
+        .modal-body {
+          padding: 0;
+          background: none;
+        }
+
         .step-filters-list {
           display: flex;
           flex-direction: row;

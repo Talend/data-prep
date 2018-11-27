@@ -11,19 +11,21 @@
 
   ============================================================================*/
 
-.search-input {
+// Element is needed to get more weight over Bootstrap theme
+div.search-input {
 	position: relative;
 	background: $white;
 
-	> input {
+	.search-input-field {
 		margin: 0;
+		padding: 0 3rem 0 .5rem;
 	}
 
 	.search-input-icon {
 		position: absolute;
 		color: gray;
 		display: none;
-		font-size: 0.5em;
+		font-size: 0.5rem;
 		right: 0;
 		top: 50%;
 		transform: translate(-100%, -50%);

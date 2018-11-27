@@ -28,7 +28,7 @@ describe('confirm service', () => {
 	}));
 
 	it('should prompt', inject(($rootScope, StateService, ConfirmService) => {
-		ConfirmService.confirm(['a']);
+		ConfirmService.confirm('a', ['a']);
 		$rootScope.$digest();
 		$rootScope.$digest();
 		expect(StateService.showConfirmationModal).toHaveBeenCalled();

@@ -30,6 +30,17 @@
 	}
 
 	.actions-group {
+		.modal-body {
+			padding: 0;
+			background: transparent;
+		}
+
+		.modal-footer {
+			padding: 0;
+			text-align: left;
+			border: none;
+		}
+
 		sc-accordion-item:last-child {
 			.sc-accordion {
 				border-bottom: none;

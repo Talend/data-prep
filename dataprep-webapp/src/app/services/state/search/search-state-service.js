@@ -24,7 +24,7 @@ export const searchState = {
 /**
  * @ngdoc service
  * @name data-prep.services.state.service:SearchStateService
- * @description Manage the state of the feedback
+ * @description Manage the state of the search
  */
 export function SearchStateService() {
 	return {

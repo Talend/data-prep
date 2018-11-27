@@ -36,6 +36,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -87,6 +88,7 @@ import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
+import org.talend.dataprep.metrics.LogTimed;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
@@ -311,11 +313,11 @@ public class PreparationAPI extends APIService {
         }
     }
 
-    @RequestMapping(value = "/api/preparations/{id}/content", method = RequestMethod.GET,
-            produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/preparations/{id}/content", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get preparation content by id and at a given version.",
             notes = "Returns the preparation content at version.")
     @Timed
+    @LogTimed
     public ResponseEntity<StreamingResponseBody> getPreparation( //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
             @RequestParam(value = "version", defaultValue = "head") @ApiParam(name = "version",
@@ -697,7 +699,7 @@ public class PreparationAPI extends APIService {
                         hasNoDataset = dataSetAPI.getMetadata(dsId) == null;
                     } catch (TDPException e) {
                         // Dataset could not be retrieved => Main reason is not present
-                        LOG.debug("The data set could not be retrieved: " + e);
+                        LOG.debug("The data set could not be retrieved: {}", e);
                         hasNoDataset = true;
                     }
                     return hasNoDataset;

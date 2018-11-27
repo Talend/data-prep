@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import { ACTION_TYPES } from '@talend/react-components/lib/Actions/Action';
+import Action from '@talend/react-components/lib/Actions/Action';
 import {
 	HOME_PREPARATIONS_ROUTE,
 	HOME_DATASETS_ROUTE,
@@ -291,7 +291,7 @@ describe('Playground Service', () => {
 					expect(action[0].id).toEqual('playground-parameters-icon');
 					expect(action[0].icon).toEqual('talend-cog');
 					expect(action[0].label).toEqual('DATAGRID_PARAMETERS_GEAR');
-					expect(action[0].displayMode).toEqual(ACTION_TYPES.TYPE_ICON_TOGGLE);
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
 					expect(action[0].active).toEqual(false);
 					expect(action[0].inProgress).toEqual(false);
 				}));
@@ -306,7 +306,7 @@ describe('Playground Service', () => {
 					expect(action[0].id).toEqual('playground-parameters-icon');
 					expect(action[0].icon).toEqual('talend-cog');
 					expect(action[0].label).toEqual('DATAGRID_PARAMETERS_GEAR');
-					expect(action[0].displayMode).toEqual(ACTION_TYPES.TYPE_ICON_TOGGLE);
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
 					expect(action[0].active).toEqual(true);
 					expect(action[0].inProgress).toEqual(true);
 				}));
@@ -334,7 +334,7 @@ describe('Playground Service', () => {
 					expect(action[0].id).toEqual('playground-lookup-icon');
 					expect(action[0].icon).toEqual('talend-chain');
 					expect(action[0].label).toEqual('LOOKUP_ICON_TOOLTIP');
-					expect(action[0].displayMode).toEqual(ACTION_TYPES.TYPE_ICON_TOGGLE);
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
 					expect(action[0].active).toEqual(false);
 				}));
 
@@ -347,7 +347,7 @@ describe('Playground Service', () => {
 					expect(action[0].id).toEqual('playground-lookup-icon');
 					expect(action[0].icon).toEqual('talend-chain');
 					expect(action[0].label).toEqual('LOOKUP_ICON_TOOLTIP');
-					expect(action[0].displayMode).toEqual(ACTION_TYPES.TYPE_ICON_TOGGLE);
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
 					expect(action[0].active).toEqual(true);
 				}));
 

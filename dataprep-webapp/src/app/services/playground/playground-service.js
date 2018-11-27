@@ -32,7 +32,7 @@
  */
 
 import { map } from 'lodash';
-import { ACTION_TYPES } from '@talend/react-components/lib/Actions/Action';
+import Action from '@talend/react-components/lib/Actions/Action';
 import {
 	PLAYGROUND_PREPARATION_ROUTE,
 	HOME_DATASETS_ROUTE,
@@ -163,7 +163,7 @@ export default function PlaygroundService(
 			id: 'playground-parameters-icon',
 			label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 			icon: 'talend-cog',
-			displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
+			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
 			active: state.playground.parameters.visible,
 			onClick: () => $timeout(StateService.toggleDatasetParameters),
 			inProgress: state.playground.lookup.loading,
@@ -175,7 +175,7 @@ export default function PlaygroundService(
 			id: 'playground-lookup-icon',
 			label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
 			icon: 'talend-chain',
-			displayMode: ACTION_TYPES.TYPE_ICON_TOGGLE,
+			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
 			active: state.playground.lookup.visibility,
 			onClick: () => $timeout(_toggleLookupPane),
 		}];

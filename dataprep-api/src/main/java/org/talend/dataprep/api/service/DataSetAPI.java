@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,6 +70,7 @@ import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.configuration.EncodingSupport;
 import org.talend.dataprep.dataset.adapter.Dataset.CertificationState;
 import org.talend.dataprep.dataset.adapter.DatasetClient;
+import org.talend.dataprep.metrics.LogTimed;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.util.SortAndOrderHelper;
@@ -201,10 +203,11 @@ public class DataSetAPI extends APIService {
         LOG.debug("Dataset creation or update for #{} done.", datasetId);
     }
 
-    @RequestMapping(value = "/api/datasets/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/datasets/{id}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a data set by id.", produces = APPLICATION_JSON_VALUE,
             notes = "Get a data set based on given id.")
     @Timed
+    @LogTimed
     public DataSet get(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
             @ApiParam(value = "Whether output should be the full data set (true) or not (false).") @RequestParam(
                     value = "fullContent", defaultValue = "false") boolean fullContent,

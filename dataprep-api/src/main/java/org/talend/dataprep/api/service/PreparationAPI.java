@@ -261,10 +261,11 @@ public class PreparationAPI extends APIService {
         LOG.info("Preparation {} moved from {} to {}/'{}'", id, folder, destination, newName);
     }
 
-    @RequestMapping(value = "/api/preparations/{id}/details", method = RequestMethod.GET,
+    @GetMapping(value = "/api/preparations/{id}/details",
             produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
     @Timed
+    @LogTimed
     public PreparationDetailsDTO getPreparation(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
             @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId",
@@ -317,7 +318,6 @@ public class PreparationAPI extends APIService {
     @ApiOperation(value = "Get preparation content by id and at a given version.",
             notes = "Returns the preparation content at version.")
     @Timed
-    @LogTimed
     public ResponseEntity<StreamingResponseBody> getPreparation( //
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
             @RequestParam(value = "version", defaultValue = "head") @ApiParam(name = "version",

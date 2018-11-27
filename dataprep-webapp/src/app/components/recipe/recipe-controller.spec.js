@@ -45,7 +45,10 @@ describe('Recipe controller', () => {
 					}, {
 						id: '0001',
 						name: 'firstName',
-					},],
+					}, {
+						id: '0002',
+						name: 'lastName',
+					}],
 				},
 				lookup: { visibility: false },
 				data: { metadata: {
@@ -175,6 +178,7 @@ describe('Recipe controller', () => {
 			expect(PlaygroundService.updateStep).toHaveBeenCalledWith(step, parameters);
 		}));
 
+		// test the update of selected columns in case of multi_columns scope
 		it('should update step multi_columns', inject((PlaygroundService) => {
 			// given
 			const ctrl = createController();
@@ -188,13 +192,13 @@ describe('Recipe controller', () => {
 					action: 'cut',
 					parameters: {
 						pattern: '.',
-						column_names: ["state1","state2"],
+						column_names: ["id","firstName"],
 						column_ids: ["0000","0001"],
 						scope: 'multi_columns',
 					},
 				},
 			};
-			const parameters = { column_ids: ["0000","0001","0003"], column_names: ["state1","state2","state3"] };
+			const parameters = { column_ids: ["0000","0001","0002"], column_names: ["id","firstName","lastName"] };
 
 			// when
 			ctrl.updateStep(step, parameters);

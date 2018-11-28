@@ -51,7 +51,6 @@
   "_comment": "オンボーディング",
   "DATASET": "データセット",
   "DATASET_DETAILS": "所有者: {{owner.displayName}}、作成日: {{created | TDPMoment}}、含まれている行数: {{records}}行",
-  "SEARCH_DATASET_DETAILS": "所有者: {{owner.displayName}}、作成日: {{created | TDPMoment}}、含まれている行数: {{records}}行",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}<\/span> - {{dataset.dataSetNbRow}}行、所有者: {{owner.displayName}}、最終変更日: {{lastModificationDate | TDPMoment}}、含まれているステップ数: {{steps.length - 1}}ステップ",
   "SEARCH_PREPARATION_DETAILS": "ホーム{{path}}、所有者: {{owner.displayName}}、作成日: {{creationDate | TDPMoment}}、含まれているステップン数: {{steps.length-1}}ステップ",
   "FOLDER_DETAILS": "所有者: {{owner.displayName}}、作成日: {{creationDate | TDPMoment}}、含まれているプレパレーション数: {{nbPreparations}}",

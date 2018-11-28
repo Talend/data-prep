@@ -76,7 +76,7 @@ describe('InventoryItem component', () => {
 	}));
 
 	afterEach(() => {
-		scope.$destroyoo();
+		scope.$destroy();
 		element.remove();
 	});
 

@@ -556,7 +556,7 @@ public class StreamingSheet implements Sheet {
      * Not supported
      */
     @Override
-    public void shiftColumns(int i, int i1, int i2) {
+    public void shiftColumns(int startColumn, int endColumn, int n) {
         throw new UnsupportedOperationException();
     }
 

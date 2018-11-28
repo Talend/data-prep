@@ -252,7 +252,7 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
      * Not supported
      */
     @Override
-    public Font getFontAt(int i) {
+    public Font getFontAt(int idx) {
         throw new UnsupportedOperationException();
     }
 
@@ -465,7 +465,7 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
      * Not supported
      */
     @Override
-    public SheetVisibility getSheetVisibility(int i) {
+    public SheetVisibility getSheetVisibility(int sheetIx) {
         throw new UnsupportedOperationException();
     }
 
@@ -473,7 +473,7 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
      * Not supported
      */
     @Override
-    public void setSheetVisibility(int i, SheetVisibility sheetVisibility) {
+    public void setSheetVisibility(int sheetIx, SheetVisibility sheetVisibility) {
         throw new UnsupportedOperationException();
     }
 
@@ -526,7 +526,7 @@ public class StreamingWorkbook implements Workbook, AutoCloseable {
      * Not supported
      */
     @Override
-    public int addOlePackage(byte[] bytes, String s, String s1, String s2) throws IOException {
+    public int addOlePackage(byte[] oleData, String label, String fileName, String command) throws IOException {
         throw new UnsupportedOperationException();
     }
 }

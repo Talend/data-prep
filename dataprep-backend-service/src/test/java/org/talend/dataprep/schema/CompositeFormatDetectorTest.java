@@ -13,20 +13,17 @@
 
 package org.talend.dataprep.schema;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.html.HtmlEncodingDetector;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.schema.html.HtmlFormatFamily;
 import org.talend.dataprep.schema.xls.XlsFormatFamily;
 
@@ -67,7 +64,7 @@ public class CompositeFormatDetectorTest extends AbstractSchemaTestUtils {
         try (InputStream inputStream = this.getClass().getResourceAsStream("xls/test.xls")) {
             Format actual = formatDetector.detect(inputStream);
             assertTrue(actual.getFormatFamily() instanceof XlsFormatFamily);
-            assertTrue(StringUtils.equals("UTF-8", actual.getEncoding()));
+            assertEquals("UTF-8", actual.getEncoding());
         }
     }
 
@@ -76,7 +73,7 @@ public class CompositeFormatDetectorTest extends AbstractSchemaTestUtils {
         try (InputStream inputStream = this.getClass().getResourceAsStream("xls/test_new.xlsx")) {
             Format actual = formatDetector.detect(inputStream);
             assertTrue(actual.getFormatFamily() instanceof XlsFormatFamily);
-            assertTrue(StringUtils.equals("UTF-8", actual.getEncoding()));
+            assertEquals("UTF-8", actual.getEncoding());
         }
     }
 
@@ -90,7 +87,7 @@ public class CompositeFormatDetectorTest extends AbstractSchemaTestUtils {
             Assert.assertNotNull(actual);
             assertTrue(actual.getFormatFamily() instanceof XlsFormatFamily);
             assertEquals(XlsFormatFamily.MEDIA_TYPE, actual.getFormatFamily().getMediaType());
-            assertTrue(StringUtils.equals("UTF-8", actual.getEncoding()));
+            assertEquals("UTF-8", actual.getEncoding());
         }
 
     }
@@ -100,26 +97,16 @@ public class CompositeFormatDetectorTest extends AbstractSchemaTestUtils {
 
         String fileName = "html/sales-force.xls";
 
-        DataSetMetadata datasetMetadata = ioTestUtils.getSimpleDataSetMetadata();
-
-        datasetMetadata.setEncoding("ISO-8859-1");
-
-        Charset charset =
-                new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
         Format actual = formatDetector.detect(this.getClass().getResourceAsStream(fileName));
 
         assertTrue(actual.getFormatFamily() instanceof HtmlFormatFamily);
-        assertTrue(StringUtils.equals("ISO-8859-1", actual.getEncoding()));
+        assertEquals("ISO-8859-1", actual.getEncoding());
     }
 
     @Test
     public void guess_html_format_fail() throws Exception {
 
         String fileName = "html/foo.html";
-
-        DataSetMetadata datasetMetadata = ioTestUtils.getSimpleDataSetMetadata();
-
-        datasetMetadata.setEncoding("UTF-16");
 
         Format actual = formatDetector.detect(this.getClass().getResourceAsStream(fileName));
         assertFalse(actual.getFormatFamily() instanceof HtmlFormatFamily);

@@ -22,6 +22,7 @@ import sagas from './next/sagas/watchers';
 import locales from './next/locales';
 import { registerLocales } from './i18n';
 import settingsService from './next/services/settings.service';
+import preparationService from './next/services/preparation.service';
 
 const registerActionCreator = api.actionCreator.register;
 const registerComponent = api.component.register;
@@ -44,6 +45,9 @@ export default function initialize(additionalConfiguration = {}) {
 		'SEARCH_CATEGORIES_BY_PROVIDER',
 		constants.search.SEARCH_CATEGORIES_BY_PROVIDER,
 	);
+
+	api.registry.addToRegistry('preparations:sort', preparationService.sort);
+
 
 	const routerSagas = {
 		...dataset.datasetSagas.datasetRoutesSagas,

@@ -417,6 +417,7 @@
           "columns": [
             {
               "key": "name",
+              "sortFunction": "preparations:sort",
               "label": {
                 "i18n": {
                   "key": "tdp-cmf:NAME",
@@ -428,6 +429,7 @@
             },
             {
               "key": "author",
+              "sortFunction": "preparations:sort",
               "label": {
                 "i18n": {
                   "key": "tdp-cmf:AUTHOR",
@@ -439,6 +441,7 @@
             },
             {
               "key": "datasetName",
+              "sortFunction": "preparations:sort",
               "label": {
                 "i18n": {
                   "key": "tdp-cmf:DATASET",
@@ -450,6 +453,7 @@
             },
             {
               "key": "nbSteps",
+              "sortFunction": "preparations:sort",
               "label": {
                 "i18n": {
                   "key": "tdp-cmf:STEPS",

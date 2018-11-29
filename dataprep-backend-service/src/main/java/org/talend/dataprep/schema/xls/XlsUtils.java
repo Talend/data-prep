@@ -155,10 +155,7 @@ public class XlsUtils {
      * @throws IOException if the format cannot be determined.
      */
     public static boolean isNewExcelFormat(InputStream inputStream) throws IOException {
-        if (FileMagic.valueOf(inputStream) == FileMagic.OOXML) {
-            return true;
-        }
-        return false;
+        return FileMagic.valueOf(inputStream) == FileMagic.OOXML;
     }
 
     /**

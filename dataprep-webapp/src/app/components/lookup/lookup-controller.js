@@ -176,8 +176,8 @@ export default function LookupCtrl($timeout, state, StateService,
 	 */
 	vm.openAddLookupDatasetModal = () => {
 		vm.addLookupDatasetModal = true;
-		LookupService.updateLookupDatasets()
-			.then(() => LookupService.disableDatasetsUsedInRecipe());
+		LookupService.updateLookupDatasets();
+		LookupService.disableDatasetsUsedInRecipe();
 	};
 	/**
 	 * @ngdoc method

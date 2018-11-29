@@ -161,7 +161,7 @@ export default class LookupService {
 	updateLookupDatasetsAndActions() {
 		this.StateService.setLookupModalLoading(true);
 		return this.DatasetListService.refreshDatasets()
-			.then(() => this.TransformationRestService.getDatasetTransformations(this.state.playground.dataset.id))
+			.then(() => this.TransformationRestService.getDatasetTransformations())
 			.then(lookup => this.updateLookupDatasetsProperties(lookup))
 			.finally(() => this.StateService.setLookupModalLoading(false));
 	}
@@ -235,7 +235,7 @@ export default class LookupService {
 			return this.$q.when(this.state.playground.lookup.addedActions);
 		}
 		else {
-			return this.TransformationRestService.getDatasetTransformations(datasetId)
+			return this.TransformationRestService.getDatasetTransformations()
 				.then(lookup => this.updateLookupDatasetsProperties(lookup));
 		}
 	}

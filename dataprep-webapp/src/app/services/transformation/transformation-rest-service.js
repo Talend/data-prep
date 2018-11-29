@@ -34,11 +34,10 @@ export default class TransformationRestService {
      * @name getLookupActions
      * @methodOf data-prep.services.transformation.service:TransformationRestService
      * @description Get the dataset actions
-     * @param {string} datasetId The dataset id
      * @returns {Promise} The GET promise
      */
-	getDatasetTransformations(datasetId) {
-		return this.$http.get(`${this.RestURLs.datasetUrl}/${datasetId}/actions`);
+	getDatasetTransformations() {
+		return this.$http.get(`${this.RestURLs.datasetUrl}/actions/lookup`);
 	}
 
     /**

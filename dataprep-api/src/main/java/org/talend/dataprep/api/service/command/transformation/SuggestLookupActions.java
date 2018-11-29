@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.command.GenericCommand;
-import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -43,7 +42,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Suggestion Lookup actions in addition to dataset actions.
- *
+ * <p>
  * Take the suggested column actions as input and add the lookup ones.
  */
 @Component
@@ -52,9 +51,6 @@ public class SuggestLookupActions extends GenericCommand<Stream<ActionForm>> {
 
     @Autowired
     private ActionRegistry actionRegistry;
-
-    @Autowired
-    private BeanConversionService conversionService;
 
     public SuggestLookupActions() {
         super(DATASET_GROUP);
@@ -76,14 +72,17 @@ public class SuggestLookupActions extends GenericCommand<Stream<ActionForm>> {
             try {
                 List<Dataset> dataSets =
                         objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<Dataset>>() {
+
                         });
 
-                return dataSets.stream().map(dataset -> conversionService.convert(dataset, DataSetMetadata.class)).map(
-                        dataSetMetadata -> //
-                ((Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME)) //
-                        .adapt(dataSetMetadata)
-                        .getActionForm(locale) //
-                );
+                return dataSets
+                        .stream()
+                        .map(dataset -> new DataSetMetadata(dataset.getId(), dataset.getLabel(), dataset.getOwner(),
+                                dataset.getCreated(), dataset.getUpdated(), null, null))
+                        .map(dataSetMetadata -> {
+                            final Lookup lookup = ((Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME));
+                            return lookup.adapt(dataSetMetadata).getActionForm(locale);
+                        });
             } catch (IOException e) {
                 throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e);
             } finally {

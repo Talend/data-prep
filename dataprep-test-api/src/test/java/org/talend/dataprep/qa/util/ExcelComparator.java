@@ -13,7 +13,6 @@
 
 package org.talend.dataprep.qa.util;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -90,56 +89,34 @@ public class ExcelComparator {
             return true;
         } else if ((cell1 == null) || (cell2 == null)) {
             return false;
+        } else if (cell1.getCellType() != cell2.getCellType()) {
+            return false;
         }
 
         boolean equalCells = false;
-        int type1 = cell1.getCellTypeEnum().getCode();
-        int type2 = cell2.getCellTypeEnum().getCode();
-        if (type1 == type2) {
-            if (cell1.getCellStyle().equals(cell2.getCellStyle())) {
-                // Compare cells based on its type
-                switch (cell1.getCellTypeEnum().getCode()) {
-                case HSSFCell.CELL_TYPE_FORMULA:
-                    if (cell1.getCellFormula().equals(cell2.getCellFormula())) {
-                        equalCells = true;
-                    }
-                    break;
-                case HSSFCell.CELL_TYPE_NUMERIC:
-                    if (cell1.getNumericCellValue() == cell2.getNumericCellValue()) {
-                        equalCells = true;
-                    }
-                    break;
-                case HSSFCell.CELL_TYPE_STRING:
-                    if (cell1.getStringCellValue().equals(cell2.getStringCellValue())) {
-                        equalCells = true;
-                    }
-                    break;
-                case HSSFCell.CELL_TYPE_BLANK:
-                    if (cell2.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-                        equalCells = true;
-                    }
-                    break;
-                case HSSFCell.CELL_TYPE_BOOLEAN:
-                    if (cell1.getBooleanCellValue() == cell2.getBooleanCellValue()) {
-                        equalCells = true;
-                    }
-                    break;
-                case HSSFCell.CELL_TYPE_ERROR:
-                    if (cell1.getErrorCellValue() == cell2.getErrorCellValue()) {
-                        equalCells = true;
-                    }
-                    break;
-                default:
-                    if (cell1.getStringCellValue().equals(cell2.getStringCellValue())) {
-                        equalCells = true;
-                    }
-                    break;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+        // Compare cells based on their type
+        switch (cell1.getCellType()) {
+        case FORMULA:
+            equalCells = (cell1.getCellFormula().equals(cell2.getCellFormula()));
+            break;
+        case NUMERIC:
+            equalCells = (cell1.getNumericCellValue() == cell2.getNumericCellValue());
+            break;
+        case STRING:
+            equalCells = (cell1.getStringCellValue().equals(cell2.getStringCellValue()));
+            break;
+        case BLANK:
+            equalCells = true;
+            break;
+        case BOOLEAN:
+            equalCells = (cell1.getBooleanCellValue() == cell2.getBooleanCellValue());
+            break;
+        case ERROR:
+            equalCells = (cell1.getErrorCellValue() == cell2.getErrorCellValue());
+            break;
+        default:
+            equalCells = (cell1.getStringCellValue().equals(cell2.getStringCellValue()));
+            break;
         }
         return equalCells;
     }

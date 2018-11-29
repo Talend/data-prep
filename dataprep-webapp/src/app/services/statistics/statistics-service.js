@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import _ from 'lodash';
+import { chain, find, first, forEach, last, map } from 'lodash';
 
 /* eslint-disable import/no-extraneous-dependencies */
 const DateOccurrenceWorker = require('worker-loader!./date-occurence.worker');
@@ -130,7 +130,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	 * @returns {number} The Number of records
 	 */
 	function getRangeFilteredOccurrence(min, max) {
-		return _.chain(state.playground.grid.filteredOccurences)
+		return chain(state.playground.grid.filteredOccurences)
 			.keys()
 			.filter((value) => {
 				const numberValue = Number(value);
@@ -156,7 +156,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 
 		const rangeData = [];
 		const filteredRangeData = [];
-		_.forEach(histoData.items, function (histDatum) {
+		forEach(histoData.items, function (histDatum) {
 			const min = histDatum.range.min;
 			const max = histDatum.range.max;
 			const range = {
@@ -231,15 +231,15 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 
 		const column = state.playground.grid.selectedColumns[0];
 		const statistics = column.statistics;
-		const currentRangeFilter = _.find(
+		const currentRangeFilter = find(
 			state.playground.filter.gridFilters,
 			filter => filter.colId === column.id && filter.type === 'inside_range'
 		);
 
 		let rangeLimits;
 		if (state.playground.grid.selectedColumns[0].type === 'date') {
-			const firstHistogramItem = _.first(state.playground.grid.selectedColumns[0].statistics.histogram.items);
-			const lastHistogramItem = _.last(state.playground.grid.selectedColumns[0].statistics.histogram.items);
+			const firstHistogramItem = first(state.playground.grid.selectedColumns[0].statistics.histogram.items);
+			const lastHistogramItem = last(state.playground.grid.selectedColumns[0].statistics.histogram.items);
 			rangeLimits = {
 				min: cleanNumber(firstHistogramItem.range.min),
 				max: cleanNumber(lastHistogramItem.range.max),
@@ -294,7 +294,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 			return;
 		}
 
-		const dateRangeData = _.map(histoData.items, function (histDatum) {
+		const dateRangeData = map(histoData.items, function (histDatum) {
 			// range are UTC dates. We convert them to local zone date, so the app date manipulation is easier.
 			const minDate = new Date(histDatum.range.min);
 			minDate.setTime(minDate.getTime() + (minDate.getTimezoneOffset() * 60 * 1000));
@@ -342,7 +342,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		StateService.setStatisticsLoading(true);
 		const parameters = {
 			rangeData: state.playground.statistics.histogram.data,
-			patterns: _.chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
+			patterns: chain(state.playground.grid.selectedColumns[0].statistics.patternFrequencyTable)
 				.map('pattern')
 				.map(TextFormatService.convertJavaDateFormatToMomentDateFormat)
 				.value(),
@@ -413,7 +413,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		const valueField = 'occurrences';
 		const adaptedData = [];
 		const adaptedFilteredData = [];
-		_.forEach(dataTable, function (rec) {
+		forEach(dataTable, function (rec) {
 			const formattedValue = TextFormatService.adaptToGridConstraints(rec.data);
 
 			const item = {};
@@ -449,7 +449,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 	function getAggregationHistogram(valueField, label, data) {
 		const keyField = 'formattedValue';
 
-		_.forEach(data, function (rec) {
+		forEach(data, function (rec) {
 			rec[keyField] = TextFormatService.adaptToGridConstraints(rec.data);
 		});
 
@@ -835,7 +835,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 			}
 		}
 		else {
-			const aggregatedColumn = columnAggregation && _.find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+			const aggregatedColumn = columnAggregation && find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
 			if (aggregatedColumn) {
 				const aggregationProcess = processAggregation(aggregatedColumn, aggregationName);
 				asyncProcess.push(aggregationProcess);
@@ -866,7 +866,7 @@ export default function StatisticsService($q, $log, $filter, $translate, state, 
 		initPatternsFrequency();
 
 		const columnAggregation = getSavedColumnAggregation();
-		const aggregatedColumn = columnAggregation && _.find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
+		const aggregatedColumn = columnAggregation && find(state.playground.grid.numericColumns, { id: columnAggregation.aggregationColumnId });
 		const aggregation = columnAggregation && columnAggregation.aggregation;
 		if (aggregatedColumn && aggregation) {
 			processAggregation(aggregatedColumn, aggregation);

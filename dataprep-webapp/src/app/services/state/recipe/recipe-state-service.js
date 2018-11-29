@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import _ from 'lodash';
+import { forEach } from 'lodash';
 
 export const recipeState = {
 	visible: false,
@@ -130,7 +130,7 @@ export function RecipeStateService() {
 	 */
 	function disableStepsAfter(step) {
 		let stepFound = step === recipeState.initialStep;
-		_.forEach(recipeState.current.steps, (nextStep) => {
+		forEach(recipeState.current.steps, (nextStep) => {
 			nextStep.inactive = stepFound;
 			stepFound = stepFound || nextStep === step;
 		});

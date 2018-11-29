@@ -17,10 +17,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.AutoFilter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellRange;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.PaneInformation;
 
 public class StreamingSheet implements Sheet {
 
@@ -501,14 +516,6 @@ public class StreamingSheet implements Sheet {
      * Not supported
      */
     @Override
-    public void setZoom(int numerator, int denominator) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Not supported
-     */
-    @Override
     public short getTopRow() {
         throw new UnsupportedOperationException();
     }
@@ -542,6 +549,14 @@ public class StreamingSheet implements Sheet {
      */
     @Override
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Not supported
+     */
+    @Override
+    public void shiftColumns(int startColumn, int endColumn, int n) {
         throw new UnsupportedOperationException();
     }
 
@@ -758,14 +773,6 @@ public class StreamingSheet implements Sheet {
      */
     @Override
     public void autoSizeColumn(int column, boolean useMergedCells) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Not supported
-     */
-    @Override
-    public Comment getCellComment(int row, int column) {
         throw new UnsupportedOperationException();
     }
 

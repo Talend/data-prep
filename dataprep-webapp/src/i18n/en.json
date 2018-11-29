@@ -50,8 +50,7 @@
 
   "_comment": "Inventory",
   "DATASET": "Dataset",
-  "DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
-  "SEARCH_DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
+  "DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}</span> - {{dataset.dataSetNbRow}} row(s), owned by {{owner.displayName}}, last change: {{lastModificationDate | TDPMoment}}, contains {{steps.length - 1}} step(s)",
   "SEARCH_PREPARATION_DETAILS": "Home{{folder.path}}, owned by {{owner.displayName}}, created {{creationDate | TDPMoment}}, contains {{steps.length-1}} step(s)",
   "FOLDER_DETAILS": "owned by {{owner.displayName}}, created {{creationDate | TDPMoment}}, contains {{nbPreparations}} preparation(s)",

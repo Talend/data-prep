@@ -380,6 +380,11 @@ public class StreamingSheetTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
+    public void shiftColumns() throws Exception {
+        streamingSheet.shiftColumns(0, 1, 2);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
     public void createFreezePane() throws Exception {
         streamingSheet.createFreezePane(0, 0);
     }
@@ -627,11 +632,6 @@ public class StreamingSheetTest {
     @Test(expected = UnsupportedOperationException.class)
     public void setActiveCell() throws Exception {
         streamingSheet.setActiveCell(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void setZoom1() throws Exception {
-        streamingSheet.setZoom(0, 0);
     }
 
 }

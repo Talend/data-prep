@@ -15,23 +15,26 @@
 import { PLAYGROUND_PREPARATION_ROUTE } from '../../../index-route';
 
 export default class PlaygroundHeaderCtrl {
-	constructor(state, $state, $translate, $stateParams, StateService, PlaygroundService) {
+	constructor($state, $translate, state, StateService, PlaygroundService) {
 		'ngInject';
 
+		this.$state = $state;
+		this.$translate = $translate;
 		this.state = state;
 		this.StateService = StateService;
 		this.PlaygroundService = PlaygroundService;
-		this.$state = $state;
-		this.$translate = $translate;
-		this.$stateParams = $stateParams;
 
-		this.toggleNameEditMode = this.toggleNameEditMode.bind(this);
+		this.setNameInEditMode = this.setNameInEditMode.bind(this);
+		this.cancelNameInEditMode = this.cancelNameInEditMode.bind(this);
 		this.editName = this.editName.bind(this);
-		this.cancelEdit = this.cancelEdit.bind(this);
 	}
 
-	toggleNameEditMode() {
+	setNameInEditMode() {
 		this.StateService.setNameEditionMode(true);
+	}
+
+	cancelNameInEditMode() {
+		this.StateService.setNameEditionMode(false);
 	}
 
 	editName(event, { value }) {
@@ -47,10 +50,6 @@ export default class PlaygroundHeaderCtrl {
 					this.loading = false;
 				});
 		}
-	}
-
-	cancelEdit() {
-		this.StateService.setNameEditionMode(false);
 	}
 
 	get subtitle() {

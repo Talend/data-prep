@@ -125,12 +125,12 @@ export default function PlaygroundService(
 		changeDatasetParameters,
 
 		// subheader
-		_getPreparationChooserAction,
-		_getDatasetParametersAction,
-		_getLookupAction,
-		_getUndoAction,
-		_getRedoAction,
-		_toggleLookupPane,
+		getPreparationChooserAction,
+		getDatasetParametersAction,
+		getLookupAction,
+		getUndoAction,
+		getRedoAction,
+		toggleLookupPanel,
 
 		getSubheaderActions,
 		getSubheaderStatus,
@@ -141,6 +141,7 @@ export default function PlaygroundService(
 
 	function getSubheaderStatus() {
 		return PreviewService.previewInProgress() ? [{
+			id: 'playground-preview',
 			label: $translate.instant('PREVIEW'),
 			inProgress: state.playground.isPreviewLoading,
 			disabled: true,
@@ -153,8 +154,9 @@ export default function PlaygroundService(
 		return !state.export.exportTypes.length;
 	}
 
-	function _getPreparationChooserAction() {
+	function getPreparationChooserAction() {
 		return $stateParams.datasetid ? [{
+			id: 'playground-preparation-chooser',
 			icon: 'talend-dataprep',
 			tooltipLabel: $translate.instant('CHOOSE_PREPARATION_TO_APPLY'),
 			hideLabel: true,
@@ -163,9 +165,9 @@ export default function PlaygroundService(
 		}] : [];
 	}
 
-	function _getDatasetParametersAction() {
+	function getDatasetParametersAction() {
 		return state.playground.isReadOnly ? [] : [{
-			id: 'playground-parameters-icon',
+			id: 'playground-metadata',
 			label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 			icon: 'talend-cog',
 			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
@@ -175,20 +177,20 @@ export default function PlaygroundService(
 		}];
 	}
 
-	function _getLookupAction() {
+	function getLookupAction() {
 		return state.playground.isReadOnly ? [] : [{
-			id: 'playground-lookup-icon',
+			id: 'playground-lookup',
 			label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
 			icon: 'talend-chain',
 			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
 			active: state.playground.lookup.visibility,
-			onClick: () => $timeout(_toggleLookupPane),
+			onClick: () => $timeout(toggleLookupPanel),
 		}];
 	}
 
-	function _getUndoAction() {
+	function getUndoAction() {
 		return state.playground.isReadOnly ? [] : [{
-			id: 'help-history',
+			id: 'playground-undo',
 			icon: 'talend-undo',
 			tooltipLabel: $translate.instant('UNDO_ICON_TOOLTIP'),
 			hideLabel: true,
@@ -198,9 +200,9 @@ export default function PlaygroundService(
 		}];
 	}
 
-	function _getRedoAction() {
+	function getRedoAction() {
 		return state.playground.isReadOnly ? [] : [{
-			id: 'help-history-redo',
+			id: 'playground-redo',
 			icon: 'talend-redo',
 			tooltipLabel: $translate.instant('REDO_ICON_TOOLTIP'),
 			hideLabel: true,
@@ -212,15 +214,15 @@ export default function PlaygroundService(
 
 	function getSubheaderActions() {
 		return [
-			..._getPreparationChooserAction(),
-			..._getDatasetParametersAction(),
-			..._getLookupAction(),
-			..._getUndoAction(),
-			..._getRedoAction(),
+			...getPreparationChooserAction(),
+			...getDatasetParametersAction(),
+			...getLookupAction(),
+			...getUndoAction(),
+			...getRedoAction(),
 		];
 	}
 
-	function _toggleLookupPane() {
+	function toggleLookupPanel() {
 		if (state.playground.lookup.visibility) {
 			StateService.setLookupVisibility(false);
 			StateService.setStepInEditionMode(null);

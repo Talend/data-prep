@@ -22,7 +22,7 @@ $quite-large-padding: $padding-larger - $padding-normal;
 	@include flex-row();
 	position: relative;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
-	z-index: 1;
+	z-index: 11;
 
 	.tc-icon-toggle {
 		display: inherit;
@@ -34,7 +34,8 @@ $quite-large-padding: $padding-larger - $padding-normal;
 	}
 
 	#help-history-redo,
-	#subheader-action-export-history {
+	#subheader-action-export-history,
+	#subheader-action-switch-to-current-state {
 		margin-right: $quite-large-padding;
 	}
 }

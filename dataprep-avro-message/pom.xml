@@ -16,6 +16,14 @@
             <groupId>org.talend.daikon</groupId>
             <artifactId>messages-model-spring-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.talend.daikon</groupId>
+            <artifactId>messages-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

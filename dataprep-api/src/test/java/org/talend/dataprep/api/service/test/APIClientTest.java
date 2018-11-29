@@ -50,6 +50,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.api.action.ActionForm;
+import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.preparation.Action;
@@ -605,6 +607,20 @@ public class APIClientTest {
                     "Could not get preparation metadata. Response was: " + transformedResponse.print());
         }
         return metadata;
+    }
+
+    public List<ActionForm> getActions() throws IOException {
+        return getActions(null);
+    }
+
+    public List<ActionForm> getActions(ColumnMetadata column) throws IOException {
+        RequestSpecification given = given();
+        if (column != null) {
+            given = given.body(mapper.writerFor(ColumnMetadata.class).writeValueAsString(column));
+        }
+        Response response =
+                given.expect().statusCode(HttpStatus.OK.value()).log().ifError().post("/api/transform/actions/column");
+        return mapper.readerFor(ActionForm.class).<ActionForm> readValues(response.asInputStream()).readAll();
     }
 
     public static class PreparationStep {

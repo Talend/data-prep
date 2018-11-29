@@ -10,7 +10,6 @@ import org.talend.dataprep.helper.OSDataPrepAPIHelper;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -55,7 +54,6 @@ public class OSFolderUtil implements FolderUtil {
         return folderOpt.orElse(null);
     }
 
-    @Nullable
     @Override
     public Folder searchFolder(String folderPath) throws IOException {
         List<Folder> folders = listFolders();

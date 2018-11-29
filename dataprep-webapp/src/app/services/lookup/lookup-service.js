@@ -55,7 +55,7 @@ export default class LookupService {
 		this.StateService.setLookupLoading(true);
 		return this._getDatasets()
 			.then(() => {
-				return this._getActions(this.state.playground.dataset.id)
+				return this._getActions()
 					.then((lookupActions) => {
 						if (!lookupActions.length) {
 							return;
@@ -92,7 +92,7 @@ export default class LookupService {
 	 * @description initializes the creation of a lookup step
 	 */
 	loadFromAction(lookupAction) {
-		return this._getActions(this.state.playground.dataset.id)
+		return this._getActions()
 			.then(() => this.fetchLookupDatasetContent(this._getDsId(lookupAction), lookupAction));
 	}
 
@@ -107,7 +107,7 @@ export default class LookupService {
 		this.StateService.setLookupLoading(true);
 		return this._getDatasets()
 			.then(() => {
-				return this._getActions(this.state.playground.dataset.id)
+				return this._getActions()
 					.then((actions) => {
 						const lookupDsId = step.actionParameters.parameters.lookup_ds_id;
 						const lookupAction = actions.find(action => this._getDsId(action) === lookupDsId);
@@ -227,10 +227,9 @@ export default class LookupService {
 	 * @ngdoc method
 	 * @name _getActions
 	 * @methodOf data-prep.services.lookup.service:LookupService
-	 * @param {string} datasetId The dataset id
 	 * @description Loads the possible lookup actions (1 action per dataset lookup)
 	 */
-	_getActions(datasetId) {
+	_getActions() {
 		if (this.state.playground.lookup.addedActions.length) {
 			return this.$q.when(this.state.playground.lookup.addedActions);
 		}

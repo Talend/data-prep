@@ -223,7 +223,6 @@ describe('Transformation Rest Service', () => {
         it('should fetch the dataset transformations', inject(($rootScope, TransformationRestService, RestURLs) => {
             // given
             let response = null;
-            const datasetId = '4354bf2543a514c25';
             $httpBackend
                 .expectGET(RestURLs.datasetUrl + '/actions/lookup')
                 .respond(200, result);

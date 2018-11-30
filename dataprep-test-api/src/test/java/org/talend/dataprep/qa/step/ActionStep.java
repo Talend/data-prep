@@ -43,27 +43,37 @@ import cucumber.api.java.en.When;
  */
 public class ActionStep extends DataPrepStep {
 
+    private static final String ACTION_LOOKUP = "lookup";
+
+    private static final String LOOKUP_DS_ID = "lookup_ds_id";
+
+    private static final String LOOKUP_DS_NAME = "lookup_ds_name";
+
     /**
      * This class' logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(ActionStep.class);
 
     @When("^I add a \"(.*)\" step on the preparation \"(.*)\" with parameters :$")
-    public void whenIAddAStepToAPreparation(String actionName, String preparationName, DataTable dataTable) {
-        Map<String, String> params = dataTable.asMap(String.class, String.class);
+    public void whenIAddAStepToAPreparation(String actionName, String preparationName, Map<String, String> params) {
         String prepId = context.getPreparationId(suffixName(preparationName));
         Action action = new Action();
         action.action = actionName;
         action.parameters.putAll(util.mapParamsToActionParameters(params));
+        if (ACTION_LOOKUP.equals(actionName)) {
+            String DatasetNamesuffixed = suffixName(params.get(LOOKUP_DS_NAME));
+            String datasetId = context.getDatasetId(DatasetNamesuffixed);
+            action.parameters.put(LOOKUP_DS_ID, datasetId);
+        }
 
         api.addAction(prepId, action).then().statusCode(200).log().ifValidationFails();
     }
 
     @When("^I add a \"(.*)\" step identified by \"(.*)\" on the preparation \"(.*)\" with parameters :$")
     public void whenIAddAStepWithAliasToAPreparation(String actionName, String stepAlias, String preparationName,
-            DataTable dataTable) throws IOException {
+            Map<String, String> params) throws IOException {
         // step creation
-        whenIAddAStepToAPreparation(actionName, preparationName, dataTable);
+        whenIAddAStepToAPreparation(actionName, preparationName, params);
         // we recover the preparation details in order to get an action object with the step Id
         String prepId = context.getPreparationId(suffixName(preparationName));
         Action action = getLastActionfromPreparation(prepId);

@@ -14,7 +14,9 @@ import org.talend.dataprep.api.dataset.DatasetDTO;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.schema.Schema;
+import org.talend.dataprep.schema.csv.CSVFormatFamily;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DatasetBeanConversionTest {
@@ -27,6 +29,7 @@ public class DatasetBeanConversionTest {
 
     @Before
     public void setUp() throws IOException {
+        objectMapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         // conversion registration
         new DatasetBeanConversion(objectMapper).doWith(beanConversionService, "toto", null);
         // create catalog dataset from json file
@@ -45,7 +48,8 @@ public class DatasetBeanConversionTest {
         assertEquals(dataset.getUpdated(), datasetDTO.getLastModificationDate());
         assertEquals(dataset.getLabel(), datasetDTO.getName());
         assertEquals(dataset.getOwner(), datasetDTO.getAuthor());
-        assertEquals(dataset.getType(), datasetDTO.getType());
+        assertEquals(CSVFormatFamily.MEDIA_TYPE, datasetDTO.getType());
+        assertEquals(dataset.getCertification(), datasetDTO.getCertification());
     }
 
     @Test

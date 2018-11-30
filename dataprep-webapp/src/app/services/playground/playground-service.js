@@ -32,17 +32,20 @@
  */
 
 import { map } from 'lodash';
+import Action from '@talend/react-components/lib/Actions/Action';
 import {
 	PLAYGROUND_PREPARATION_ROUTE,
 	HOME_DATASETS_ROUTE,
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
+
 // actions scopes
 const LINE = 'line';
 const DATASET = 'dataset';
 // events
 export const EVENT_LOADING_START = 'talend.loading.start';
 export const EVENT_LOADING_STOP = 'talend.loading.stop';
+
 
 export default function PlaygroundService(
 	$state,
@@ -71,6 +74,7 @@ export default function PlaygroundService(
 	OnboardingService,
 	MessageService,
 	TitleService,
+	LookupService,
 ) {
 	'ngInject';
 
@@ -119,8 +123,115 @@ export default function PlaygroundService(
 
 		// parameters
 		changeDatasetParameters,
+
+		// subheader
+		getPreparationChooserAction,
+		getDatasetParametersAction,
+		getLookupAction,
+		getUndoAction,
+		getRedoAction,
+		toggleLookupPanel,
+
+		getSubheaderActions,
+		getSubheaderStatus,
+		isSubheaderLoading,
 	};
 	return service;
+
+
+	function getSubheaderStatus() {
+		return PreviewService.previewInProgress() ? [{
+			id: 'playground-preview',
+			label: $translate.instant('PREVIEW'),
+			inProgress: state.playground.isPreviewLoading,
+			disabled: true,
+			icon: 'talend-eye',
+			bsStyle: 'link',
+		}] : [];
+	}
+
+	function isSubheaderLoading() {
+		return !state.export.exportTypes.length;
+	}
+
+	function getPreparationChooserAction() {
+		return $stateParams.datasetid ? [{
+			id: 'playground-preparation-chooser',
+			icon: 'talend-dataprep',
+			tooltipLabel: $translate.instant('CHOOSE_PREPARATION_TO_APPLY'),
+			hideLabel: true,
+			bsStyle: 'link',
+			onClick: () => $timeout(() => StateService.setIsPreprationPickerVisible(true)),
+		}] : [];
+	}
+
+	function getDatasetParametersAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-metadata',
+			label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
+			icon: 'talend-cog',
+			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
+			active: state.playground.parameters.visible,
+			onClick: () => $timeout(StateService.toggleDatasetParameters),
+			inProgress: state.playground.lookup.loading,
+		}];
+	}
+
+	function getLookupAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-lookup',
+			label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
+			icon: 'talend-chain',
+			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
+			active: state.playground.lookup.visibility,
+			onClick: () => $timeout(toggleLookupPanel),
+		}];
+	}
+
+	function getUndoAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-undo',
+			icon: 'talend-undo',
+			tooltipLabel: $translate.instant('UNDO_ICON_TOOLTIP'),
+			hideLabel: true,
+			bsStyle: 'link',
+			disabled: !HistoryService.canUndo(),
+			onClick: () => $timeout(HistoryService.undo),
+		}];
+	}
+
+	function getRedoAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-redo',
+			icon: 'talend-redo',
+			tooltipLabel: $translate.instant('REDO_ICON_TOOLTIP'),
+			hideLabel: true,
+			bsStyle: 'link',
+			disabled: !HistoryService.canRedo(),
+			onClick: () => $timeout(HistoryService.redo),
+		}];
+	}
+
+	function getSubheaderActions() {
+		return [
+			...getPreparationChooserAction(),
+			...getDatasetParametersAction(),
+			...getLookupAction(),
+			...getUndoAction(),
+			...getRedoAction(),
+		];
+	}
+
+	function toggleLookupPanel() {
+		if (state.playground.lookup.visibility) {
+			StateService.setLookupVisibility(false);
+			StateService.setStepInEditionMode(null);
+		}
+		else {
+			StateService.setLookupVisibility(true);
+			LookupService.initLookups();
+		}
+	}
 
 	/**
 	 * Helper to emit start loader event

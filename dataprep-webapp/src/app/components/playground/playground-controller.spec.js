@@ -162,45 +162,6 @@ describe('Playground controller', () => {
 		});
 	});
 
-	describe('recipe header', () => {
-		it('should create/update preparation with clean name on name edition confirmation', inject((PlaygroundService) => {
-			// given
-			const ctrl = createController();
-			stateMock.playground.preparationName = '  my new name  ';
-
-			// when
-			ctrl.confirmPrepNameEdition(stateMock.playground.preparationName);
-
-			// then
-			expect(PlaygroundService.createOrUpdatePreparation).toHaveBeenCalledWith('my new name');
-		}));
-
-		it('should change route to preparation route on name edition confirmation', inject(($rootScope, $state) => {
-			// given
-			const ctrl = createController();
-			stateMock.playground.preparationName = '  my new name  ';
-			stateMock.playground.preparation = { id: 'fe6843da512545e' };
-
-			// when
-			ctrl.confirmPrepNameEdition(stateMock.playground.preparationName);
-			$rootScope.$digest();
-
-			// then
-			expect($state.go).toHaveBeenCalledWith('playground.preparation', { prepid: createPreparation.id });
-		}));
-
-		it('should not call service create/updateName service if name is blank on name edition confirmation', inject((PlaygroundService) => {
-			// given
-			const ctrl = createController();
-
-			// when
-			ctrl.confirmPrepNameEdition(' ');
-
-			// then
-			expect(PlaygroundService.createOrUpdatePreparation).not.toHaveBeenCalled();
-		}));
-	});
-
 	describe('lookup', () => {
 		beforeEach(inject(($q, LookupService, StateService) => {
 			spyOn(LookupService, 'initLookups').and.returnValue($q.when());
@@ -256,18 +217,6 @@ describe('Playground controller', () => {
 	});
 
 	describe('apply other preparation steps', () => {
-		it('should update the display modal state', inject((StateService) => {
-			// given
-			const ctrl = createController();
-			expect(StateService.setIsPreprationPickerVisible).not.toHaveBeenCalled();
-
-			// when
-			ctrl.showPreparationPicker();
-
-			// then
-			expect(StateService.setIsPreprationPickerVisible).toHaveBeenCalledWith(true);
-		}));
-
 		it('should fetch compatible preparations', inject((DatasetService) => {
 			// given
 			spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue();
@@ -544,18 +493,6 @@ describe('Playground controller', () => {
 			spyOn(PlaygroundService, 'changeDatasetParameters').and.returnValue($q.when());
 		}));
 
-		it('should open dataset parameters', inject((StateService) => {
-			// given
-			const ctrl = createController();
-			expect(StateService.toggleDatasetParameters).not.toHaveBeenCalled();
-
-			// when
-			ctrl.toggleParameters();
-
-			// then
-			expect(StateService.toggleDatasetParameters).toHaveBeenCalled();
-		}));
-
 		it('should manage progress flag', inject((StateService) => {
 			// given
 			const ctrl = createController();
@@ -599,20 +536,6 @@ describe('Playground controller', () => {
 
 			// then
 			expect(StateService.hideDatasetParameters).toHaveBeenCalled();
-		}));
-	});
-
-	describe('preview in progress', () => {
-		it('should check if preview is in progress', inject((PreviewService) => {
-			// given
-			spyOn(PreviewService, 'previewInProgress').and.returnValue();
-			const ctrl = createController();
-
-			// when
-			ctrl.previewInProgress();
-
-			// then
-			expect(PreviewService.previewInProgress).toHaveBeenCalled();
 		}));
 	});
 

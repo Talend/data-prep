@@ -36,9 +36,7 @@ const registerRouteFunction = api.route.registerFunction;
 export default function initialize(additionalConfiguration = {}) {
 	// FIXME remove before release
 	// for debug purpose
-	if (process.env.NODE_ENV !== 'production') {
-		window.registry = api.registry.getRegistry();
-	}
+	window.registry = api.registry.getRegistry();
 
 	// register all saga api
 	api.registry.addToRegistry(
@@ -90,6 +88,8 @@ export default function initialize(additionalConfiguration = {}) {
 	function* rootSaga() {
 		yield all(rootSagas);
 	}
+
+	const additionalLocalStorage = additionalConfiguration.localStorage || {};
 	const localStorageKey = additionalLocalStorage.key || 'data-prep';
 	const preloadedState = api.localStorage.getState(localStorageKey);
 	const KEEP = [
@@ -241,7 +241,6 @@ export default function initialize(additionalConfiguration = {}) {
 		additionalCallback();
 	}
 
-	const additionalLocalStorage = additionalConfiguration.localStorage || {};
 
 	return {
 		store,

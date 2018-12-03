@@ -12,245 +12,231 @@
   ============================================================================*/
 
 describe('Transformation Rest Service', () => {
-	let $httpBackend;
+    let $httpBackend;
 
-	beforeEach(angular.mock.module('data-prep.services.transformation'));
+    beforeEach(angular.mock.module('data-prep.services.transformation'));
 
-	beforeEach(inject(($injector) => {
-		$httpBackend = $injector.get('$httpBackend');
-	}));
+    beforeEach(inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+    }));
 
-	describe('transformations', () => {
-		const result = [
-			{
-				category: 'case',
-				items: [],
-				name: 'uppercase',
-				value: '',
-				type: 'OPERATION',
-				parameters: [{ name: 'column_name', type: 'string', default: '' }],
-			},
-			{
-				category: 'case',
-				items: [],
-				name: 'lowercase',
-				value: '',
-				type: 'OPERATION',
-				parameters: [{ name: 'column_name', type: 'string', default: '' }],
-			},
-		];
-		const multi = [
-			{
-				name: 'concat_columns',
-				category: 'columns',
-				parameters: [{ name: 'column_id', type: 'string', default: '' }],
-				actionScope: [
-					'multi_columns',
-				],
-				description: 'Join selected columns together',
-				label: 'Concatenate Columns',
-				docUrl: '',
-				dynamic: false,
-			}
-		];
+    describe('transformations', () => {
+        const result = [
+            {
+                category: 'case',
+                items: [],
+                name: 'uppercase',
+                value: '',
+                type: 'OPERATION',
+                parameters: [{ name: 'column_name', type: 'string', default: '' }],
+            },
+            {
+                category: 'case',
+                items: [],
+                name: 'lowercase',
+                value: '',
+                type: 'OPERATION',
+                parameters: [{ name: 'column_name', type: 'string', default: '' }],
+            },
+        ];
 
-		it('should get transformations on column scope', inject((RestURLs, TransformationRestService) => {
-			const column = {
-				id: 'firstname',
-				quality: { empty: 0, invalid: 0, valid: 2 },
-				type: 'string',
-				total: 2,
-			};
-			let response = null;
-			$httpBackend
-				.expectPOST(RestURLs.transformUrl + '/actions/column', column)
-				.respond(200, result);
+        it('should get transformations on column scope', inject((RestURLs, TransformationRestService) => {
+            // given
+            const column = {
+                id: 'firstname',
+                quality: { empty: 0, invalid: 0, valid: 2 },
+                type: 'string',
+                total: 2,
+            };
+            let response = null;
+            $httpBackend
+                .expectPOST(RestURLs.transformUrl + '/actions/column', column)
+                .respond(200, result);
 
-			TransformationRestService.getTransformations('column', column)
-				.then((resp) => { response = resp; });
+            // when
+            TransformationRestService.getTransformations('column', column)
+                .then((resp) => { response = resp; });
 
-			$httpBackend.flush();
+            $httpBackend.flush();
 
-			expect(response).toEqual(result);
-		}));
+            // then
+            expect(response).toEqual(result);
+        }));
 
-		it('should get transformations on line scope', inject((RestURLs, TransformationRestService) => {
-			let response = null;
-			$httpBackend
-				.expectGET(RestURLs.transformUrl + '/actions/line')
-				.respond(200, result);
+        it('should get transformations on line scope', inject((RestURLs, TransformationRestService) => {
+            // given
+            let response = null;
+            $httpBackend
+                .expectGET(RestURLs.transformUrl + '/actions/line')
+                .respond(200, result);
 
-			TransformationRestService.getTransformations('line')
-				.then((resp) => { response = resp; });
+            // when
+            TransformationRestService.getTransformations('line')
+                .then((resp) => { response = resp; });
 
-			$httpBackend.flush();
+            $httpBackend.flush();
 
-			expect(response).toEqual(result);
-		}));
+            // then
+            expect(response).toEqual(result);
+        }));
 
-		it('should get transformations on multi_columns scope', inject((RestURLs, TransformationRestService) => {
-			const column = {
-				id: 'firstname',
-				quality: { empty: 0, invalid: 0, valid: 2 },
-				type: 'string',
-				total: 2,
-			};
-			let response = null;
-			$httpBackend
-				.expectGET(RestURLs.transformUrl + '/actions/multi_columns')
-				.respond(200, multi);
-			$httpBackend
-				.expectPOST(RestURLs.transformUrl + '/actions/column', column)
-				.respond(200, result);
+        it('should get transformations on dataset scope', inject((RestURLs, TransformationRestService) => {
+            // given
+            let response = null;
+            $httpBackend
+                .expectGET(RestURLs.transformUrl + '/actions/dataset')
+                .respond(200, result);
 
-			TransformationRestService.getTransformations('multi_columns', column)
-				.then((resp) => { response = resp; });
+            // when
+            TransformationRestService.getTransformations('dataset')
+                .then((resp) => { response = resp; });
 
-			$httpBackend.flush();
+            $httpBackend.flush();
 
-			expect(response).toEqual([...multi, ...result]);
-		}));
+            // then
+            expect(response).toEqual(result);
+        }));
+    });
 
-		it('should get transformations on dataset scope', inject((RestURLs, TransformationRestService) => {
-			let response = null;
-			$httpBackend
-				.expectGET(RestURLs.transformUrl + '/actions/dataset')
-				.respond(200, result);
+    describe('suggestions', () => {
+        const result = [
+            {
+                category: 'case',
+                items: [],
+                name: 'uppercase',
+                value: '',
+                type: 'OPERATION',
+                parameters: [{ name: 'column_name', type: 'string', default: '' }],
+            },
+            {
+                category: 'case',
+                items: [],
+                name: 'lowercase',
+                value: '',
+                type: 'OPERATION',
+                parameters: [{ name: 'column_name', type: 'string', default: '' }],
+            },
+        ];
 
-			TransformationRestService.getTransformations('dataset')
-				.then((resp) => { response = resp; });
+        it('should get suggestions on provided scope and entity', inject((RestURLs, TransformationRestService) => {
+            // given
+            const entity = {
+                id: 'firstname',
+                quality: { empty: 0, invalid: 0, valid: 2 },
+                type: 'string',
+                total: 2,
+            };
+            const scope = 'column';
+            let response = null;
+            $httpBackend
+                .expectPOST(`${RestURLs.transformUrl}/suggest/${scope}`, entity)
+                .respond(200, result);
 
-			$httpBackend.flush();
+            // when
+            TransformationRestService.getSuggestions(scope, entity)
+                .then((resp) => { response = resp; });
+            $httpBackend.flush();
 
-			expect(response).toEqual(result);
-		}));
-	});
+            // then
+            expect(response).toEqual(result);
+        }));
+    });
 
-	describe('suggestions', () => {
-		const result = [
-			{
-				category: 'case',
-				items: [],
-				name: 'uppercase',
-				value: '',
-				type: 'OPERATION',
-				parameters: [{ name: 'column_name', type: 'string', default: '' }],
-			},
-			{
-				category: 'case',
-				items: [],
-				name: 'lowercase',
-				value: '',
-				type: 'OPERATION',
-				parameters: [{ name: 'column_name', type: 'string', default: '' }],
-			},
-		];
+    describe('dynamic parameters', () => {
+        it('should call GET transformation dynamic params rest service with preparationId', inject(($rootScope, TransformationRestService, RestURLs) => {
+            // given
+            let response = null;
+            const action = 'textclustering';
+            const columnId = 'firstname';
+            const preparationId = '7b89ef45f6';
 
-		it('should get suggestions on provided scope and entity', inject((RestURLs, TransformationRestService) => {
-			const entity = {
-				id: 'firstname',
-				quality: { empty: 0, invalid: 0, valid: 2 },
-				type: 'string',
-				total: 2,
-			};
-			const scope = 'column';
-			let response = null;
-			$httpBackend
-				.expectPOST(`${RestURLs.transformUrl}/suggest/${scope}`, entity)
-				.respond(200, result);
+            const result = { type: 'cluster', details: { titles: ['', ''] } };
+            $httpBackend
+                .expectGET(RestURLs.transformUrl + '/suggest/textclustering/params?preparationId=7b89ef45f6&columnId=firstname')
+                .respond(200, result);
 
-			TransformationRestService.getSuggestions(scope, entity)
-				.then((resp) => { response = resp; });
-			$httpBackend.flush();
+            // when
+            TransformationRestService.getDynamicParameters(action, columnId, null, preparationId)
+                .then((resp) => {
+                    response = resp;
+                });
 
-			expect(response).toEqual(result);
-		}));
-	});
+            $httpBackend.flush();
 
-	describe('dynamic parameters', () => {
-		it('should call GET transformation dynamic params rest service with preparationId', inject(($rootScope, TransformationRestService, RestURLs) => {
-			let response = null;
-			const action = 'textclustering';
-			const columnId = 'firstname';
-			const preparationId = '7b89ef45f6';
+            // then
+            expect(response).toEqual(result);
+        }));
 
-			const result = { type: 'cluster', details: { titles: ['', ''] } };
-			$httpBackend
-				.expectGET(RestURLs.transformUrl + '/suggest/textclustering/params?preparationId=7b89ef45f6&columnId=firstname')
-				.respond(200, result);
+        it('should call GET transformation dynamic params rest service with preparationId and stepId', inject(($rootScope, TransformationRestService, RestURLs) => {
+            // given
+            let response = null;
+            const action = 'textclustering';
+            const columnId = 'firstname';
+            const preparationId = '7b89ef45f6';
+            const stepId = '126578a98bf';
 
-			TransformationRestService.getDynamicParameters(action, columnId, null, preparationId)
-				.then((resp) => {
-					response = resp;
-				});
+            const result = { type: 'cluster', details: { titles: ['', ''] } };
+            $httpBackend
+                .expectGET(RestURLs.transformUrl + '/suggest/textclustering/params?preparationId=7b89ef45f6&stepId=126578a98bf&columnId=firstname')
+                .respond(200, result);
 
-			$httpBackend.flush();
+            // when
+            TransformationRestService.getDynamicParameters(action, columnId, null, preparationId, stepId)
+                .then((resp) => {
+                    response = resp;
+                });
 
-			expect(response).toEqual(result);
-		}));
+            $httpBackend.flush();
 
-		it('should call GET transformation dynamic params rest service with preparationId and stepId', inject(($rootScope, TransformationRestService, RestURLs) => {
-			let response = null;
-			const action = 'textclustering';
-			const columnId = 'firstname';
-			const preparationId = '7b89ef45f6';
-			const stepId = '126578a98bf';
+            // then
+            expect(response).toEqual(result);
+        }));
 
-			const result = { type: 'cluster', details: { titles: ['', ''] } };
-			$httpBackend
-				.expectGET(RestURLs.transformUrl + '/suggest/textclustering/params?preparationId=7b89ef45f6&stepId=126578a98bf&columnId=firstname')
-				.respond(200, result);
+        it('should call GET transformation dynamic params rest service with datasetId', inject(($rootScope, TransformationRestService, RestURLs) => {
+            // given
+            let response = null;
+            const action = 'textclustering';
+            const columnId = 'firstname';
+            const datasetId = '7b89ef45f6';
 
-			TransformationRestService.getDynamicParameters(action, columnId, null, preparationId, stepId)
-				.then((resp) => {
-					response = resp;
-				});
+            const result = { type: 'cluster', details: { titles: ['', ''] } };
+            $httpBackend
+                .expectGET(RestURLs.transformUrl + '/suggest/textclustering/params?datasetId=7b89ef45f6&columnId=firstname')
+                .respond(200, result);
 
-			$httpBackend.flush();
+            // when
+            TransformationRestService.getDynamicParameters(action, columnId, datasetId, null)
+                .then((resp) => {
+                    response = resp;
+                });
 
-			expect(response).toEqual(result);
-		}));
+            $httpBackend.flush();
 
-		it('should call GET transformation dynamic params rest service with datasetId', inject(($rootScope, TransformationRestService, RestURLs) => {
-			let response = null;
-			const action = 'textclustering';
-			const columnId = 'firstname';
-			const datasetId = '7b89ef45f6';
+            // then
+            expect(response).toEqual(result);
+        }));
+    });
 
-			const result = { type: 'cluster', details: { titles: ['', ''] } };
-			$httpBackend
-				.expectGET(RestURLs.transformUrl + '/suggest/textclustering/params?datasetId=7b89ef45f6&columnId=firstname')
-				.respond(200, result);
+    describe('datasets transformations', () => {
+        const result = [{}];
 
-			TransformationRestService.getDynamicParameters(action, columnId, datasetId, null)
-				.then((resp) => {
-					response = resp;
-				});
+        it('should fetch the dataset transformations', inject(($rootScope, TransformationRestService, RestURLs) => {
+            // given
+            let response = null;
+            $httpBackend
+                .expectGET(RestURLs.datasetUrl + '/actions/lookup')
+                .respond(200, result);
 
-			$httpBackend.flush();
+            // when
+            TransformationRestService.getDatasetTransformations()
+                .then((resp) => {
+                    response = resp.data;
+                });
 
-			expect(response).toEqual(result);
-		}));
-	});
+            $httpBackend.flush();
 
-	describe('datasets transformations', () => {
-		const result = [{}];
-
-		it('should fetch the dataset transformations', inject(($rootScope, TransformationRestService, RestURLs) => {
-			let response = null;
-			const datasetId = '4354bf2543a514c25';
-			$httpBackend
-				.expectGET(RestURLs.datasetUrl + '/' + datasetId + '/actions')
-				.respond(200, result);
-
-			TransformationRestService.getDatasetTransformations(datasetId)
-				.then((resp) => {
-					response = resp.data;
-				});
-
-			$httpBackend.flush();
-
-			expect(response).toEqual(result);
-		}));
-	});
+            // then
+            expect(response).toEqual(result);
+        }));
+    });
 });

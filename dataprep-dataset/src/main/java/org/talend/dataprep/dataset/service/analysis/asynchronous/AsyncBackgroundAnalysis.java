@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.dataset.event.AnalysisEventProcessingUtil;
 import org.talend.dataprep.dataset.event.DatasetImportedEvent;
@@ -28,6 +29,8 @@ import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 
 /**
  * Compute statistics analysis on the full dataset.
+ * TDP-6141 : `DataSteImportedEvent` should be compute asynchronously because it will do some analyse and can reach
+ * timeout
  */
 @SuppressWarnings("InsufficientBranchCoverage")
 @Component
@@ -48,6 +51,7 @@ public class AsyncBackgroundAnalysis {
      * @param event the event to respond to
      */
     @EventListener
+    @Async
     public void onEvent(DatasetImportedEvent event) {
         LOGGER.debug("Processing spring dataset imported event: {}", event);
         String datasetId = event.getSource();
@@ -55,6 +59,7 @@ public class AsyncBackgroundAnalysis {
     }
 
     @EventListener
+    @Async
     public void onEvent(DatasetUpdatedEvent event) {
         LOGGER.debug("Processing spring dataset imported event: {}", event);
         String datasetId = event.getSource().getId();

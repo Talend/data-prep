@@ -16,14 +16,18 @@ package org.talend.dataprep.schema.xls;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.StringCharacterIterator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -32,16 +36,14 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,22 +66,22 @@ public class XlsUtils {
 
     /**
      *
-     * @param cell
-     * @param formulaEvaluator
-     * @return return the cell value as String (if needed evaluate the existing formula)
+     * @param cell the cell
+     * @param formulaEvaluator the formula to evaluate, if needed
+     * @return return the cell value as String
      */
     public static String getCellValueAsString(Cell cell, FormulaEvaluator formulaEvaluator) {
         if (cell == null) {
             return StringUtils.EMPTY;
         }
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_BLANK:
+        case BLANK:
             return "";
-        case Cell.CELL_TYPE_BOOLEAN:
+        case BOOLEAN:
             return cell.getBooleanCellValue() ? Boolean.TRUE.toString() : Boolean.FALSE.toString();
-        case Cell.CELL_TYPE_ERROR:
+        case ERROR:
             return "Cell Error type";
-        case Cell.CELL_TYPE_FORMULA:
+        case FORMULA:
             try {
                 return getCellValueAsString(cell, formulaEvaluator.evaluate(cell));
             } catch (Exception e) {
@@ -88,9 +90,9 @@ public class XlsUtils {
                         cell.getColumnIndex(), cell.getCellFormula(), e.getMessage(), e);
                 return StringUtils.EMPTY;
             }
-        case Cell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             return getNumericValue(cell, null, false);
-        case Cell.CELL_TYPE_STRING:
+        case STRING:
             return StringUtils.trim(cell.getStringCellValue());
         default:
             return "Unknown Cell Type: " + cell.getCellType();
@@ -99,8 +101,8 @@ public class XlsUtils {
 
     /**
      *
-     * @param cell
-     * @param cellValue
+     * @param cell the cell
+     * @param cellValue the result of the evaluation of a formula, containing the cell type
      * @return internal method which switch on the formula result value type then return a String value
      */
     private static String getCellValueAsString(Cell cell, CellValue cellValue) {
@@ -108,15 +110,15 @@ public class XlsUtils {
             return StringUtils.EMPTY;
         }
         switch (cellValue.getCellType()) {
-        case Cell.CELL_TYPE_BLANK:
+        case BLANK:
             return "";
-        case Cell.CELL_TYPE_BOOLEAN:
+        case BOOLEAN:
             return cellValue.getBooleanValue() ? Boolean.TRUE.toString() : Boolean.FALSE.toString();
-        case Cell.CELL_TYPE_ERROR:
+        case ERROR:
             return "Cell Error type";
-        case Cell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             return getNumericValue(cell, cellValue, cellValue != null);
-        case Cell.CELL_TYPE_STRING:
+        case STRING:
             return StringUtils.trim(cell.getStringCellValue());
         default:
             return "Unknown Cell Type: " + cell.getCellType();
@@ -146,28 +148,14 @@ public class XlsUtils {
     }
 
     /**
-     * Detect the excel format with only peeking at the first 8 bytes of the input stream (leaving the stream untouched).
+     * Detect the excel format, based only on the first bytes of the input stream (leaving the stream untouched).
      *
-     * @param inputStream the xls input stream.
-     * @return true if the given input stream is a xls new format.
-     * @throws IOException if an error occurs.
+     * @param inputStream the xls input stream, which supports mark/reset.
+     * @return true if the given input stream is a xlsx (new format), otherwise false.
+     * @throws IOException if the format cannot be determined.
      */
     public static boolean isNewExcelFormat(InputStream inputStream) throws IOException {
-
-        boolean newFormat = false;
-
-        // Ensure that there is at least some data there
-        byte[] headers = IOUtils.peekFirst8Bytes(inputStream);
-
-        if (NPOIFSFileSystem.hasPOIFSHeader(headers)) {
-            newFormat = false;
-        }
-        if (POIXMLDocument.hasOOXMLHeader(new ByteArrayInputStream(headers))) {
-            newFormat = true;
-        }
-
-        return newFormat;
-
+        return FileMagic.valueOf(inputStream) == FileMagic.OOXML;
     }
 
     /**

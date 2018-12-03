@@ -13,17 +13,12 @@
 
 package org.talend.dataprep.schema.html;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.charset.Charset;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.html.HtmlEncodingDetector;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.schema.AbstractSchemaTestUtils;
 import org.talend.dataprep.schema.Format;
 
@@ -37,26 +32,16 @@ public class HtmlDetectorTest extends AbstractSchemaTestUtils {
 
         String fileName = "sales-force.xls";
 
-        DataSetMetadata datasetMetadata = ioTestUtils.getSimpleDataSetMetadata();
-
-        datasetMetadata.setEncoding("UTF-16");
-
-        Charset charset =
-                new HtmlEncodingDetector().detect(this.getClass().getResourceAsStream(fileName), new Metadata());
         Format actual = htmlDetector.detect(this.getClass().getResourceAsStream(fileName));
 
         assertTrue(actual.getFormatFamily() instanceof HtmlFormatFamily);
-        assertTrue(StringUtils.equals("UTF-16", actual.getEncoding()));
+        assertEquals("ISO-8859-1", actual.getEncoding());
     }
 
     @Test
     public void guess_html_format_fail() throws Exception {
 
         String fileName = "foo.html";
-
-        DataSetMetadata datasetMetadata = ioTestUtils.getSimpleDataSetMetadata();
-
-        datasetMetadata.setEncoding("UTF-16");
 
         Format actual = htmlDetector.detect(this.getClass().getResourceAsStream(fileName));
         assertNull(actual);

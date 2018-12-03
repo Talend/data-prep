@@ -51,7 +51,6 @@
   "_comment": "入门",
   "DATASET": "数据集",
   "DATASET_DETAILS": "所有者：{{owner.displayName}}，创建日期：{{created | TDPMoment}}，包含 {{records}} 行",
-  "SEARCH_DATASET_DETAILS": "所有者：{{owner.displayName}}，创建日期：{{created | TDPMoment}}，包含 {{records}} 行",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}<\/span> - {{dataset.dataSetNbRow}} 行，所有者：{{owner.displayName}}，上次更改日期：{{lastModificationDate | TDPMoment}}，包含 {{steps.length - 1}} 步",
   "SEARCH_PREPARATION_DETAILS": "Home{{folder.path}}，所有者：{{owner.displayName}}，创建日期：{{creationDate | TDPMoment}}，包含 {{steps.length-1}} 步",
   "FOLDER_DETAILS": "所有者：{{owner.displayName}}，创建日期：{{creationDate | TDPMoment}}，包含 {{nbPreparations}} 个准备",

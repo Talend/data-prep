@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { chain, find } from 'lodash';
 import moment from 'moment-jdateformatparser';
 
 const SPECIAL_JAVA_PATTERNS = [
@@ -34,7 +34,7 @@ function convertJavaDateFormatToMomentDateFormat(javaDateFormat) {
 	// we save those escaped parts, convert the pattern and replace the parts
 	// that should be escaped
 	const patternEscapedParts = pattern.match(/\[.*\]/g);
-	const patternToApply = _.find(SPECIAL_JAVA_PATTERNS, { java: pattern });
+	const patternToApply = find(SPECIAL_JAVA_PATTERNS, { java: pattern });
 	pattern = patternToApply ? patternToApply.js : moment().toMomentFormatString(pattern);
 	let escapedPartIndex = 0;
 	pattern = pattern.replace(/\[.*\]/g, () => {
@@ -158,7 +158,7 @@ function patternOccurrenceWorker(parameters) {
 
 		patternFrequency.filteredOccurrences = !filteredRecords ?
 			patternFrequency.occurrences :
-			_.chain(filteredRecords)
+			chain(filteredRecords)
 				.map(columnId)
 				.filter(value => matchingFn(value))
 				.groupBy(value => value)

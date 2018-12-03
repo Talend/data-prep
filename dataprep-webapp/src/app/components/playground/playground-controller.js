@@ -11,7 +11,6 @@
 
  ============================================================================*/
 
-import { PLAYGROUND_PREPARATION_ROUTE } from '../../index-route';
 /**
  * @ngdoc controller
  * @name data-prep.playground.controller:PlaygroundCtrl
@@ -20,15 +19,14 @@ import { PLAYGROUND_PREPARATION_ROUTE } from '../../index-route';
  * @requires data-prep.services.state.service:StateService
  * @requires data-prep.services.playground.service:PlaygroundService
  * @requires data-prep.services.preparation.service:PreparationService
- * @requires data-prep.services.playground.service:PreviewService
  * @requires data-prep.services.onboarding.service:OnboardingService
  * @requires data-prep.services.lookup.service:LookupService
  * @requires data-prep.services.utils.service:MessageService
  */
 export default function PlaygroundCtrl($state, $stateParams, state, StateService,
                                        PlaygroundService, DatasetService, PreparationService,
-                                       PreviewService, FilterManagerService,
-                                       OnboardingService, LookupService, FolderService) {
+                                       FilterManagerService, OnboardingService, LookupService,
+                                       FolderService) {
 	'ngInject';
 
 	const vm = this;
@@ -37,8 +35,6 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	vm.destinationFolder = this.state.inventory.homeFolder;
 
 	vm.openFeedbackForm = () => StateService.showFeedback();
-	vm.toggleParameters = () => StateService.toggleDatasetParameters();
-	vm.previewInProgress = () => PreviewService.previewInProgress();
 	vm.startOnBoarding = tourId => OnboardingService.startTour(tourId);
 	vm.fetchCompatiblePreparations = datasetId => DatasetService.getCompatiblePreparations(datasetId);
 	vm.removeAllFilters = () => FilterManagerService.removeAllFilters();
@@ -46,15 +42,6 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 	//--------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------PREPARATION PICKER------------------------------------------
 	//--------------------------------------------------------------------------------------------------------------
-	/**
-	 * @ngdoc method
-	 * @name showPreparationPicker
-	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description Toggle preparation picker modal
-	 */
-	vm.showPreparationPicker = () => {
-		StateService.setIsPreprationPickerVisible(true);
-	};
 
 	/**
 	 * @ngdoc method
@@ -69,37 +56,6 @@ export default function PlaygroundCtrl($state, $stateParams, state, StateService
 				StateService.setIsPreprationPickerVisible(false);
 			});
 	};
-
-	//--------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------RECIPE HEADER-----------------------------------------------
-	//--------------------------------------------------------------------------------------------------------------
-	/**
-	 * @ngdoc method
-	 * @name confirmPrepNameEdition
-	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description Change the preparation name
-	 */
-	vm.confirmPrepNameEdition = (name) => {
-		const cleanName = name.trim();
-		if (!vm.changeNameInProgress && cleanName) {
-			changeName(cleanName)
-				.then(preparation => $state.go(PLAYGROUND_PREPARATION_ROUTE, { prepid: preparation.id }));
-		}
-	};
-
-	/**
-	 * @ngdoc method
-	 * @name changeName
-	 * @methodOf data-prep.playground.controller:PlaygroundCtrl
-	 * @description [PRIVATE] Create a preparation or update existing preparation name if it already exists
-	 * @param {string} name The preparation name
-	 * @returns {Promise} The create/update promise
-	 */
-	function changeName(name) {
-		vm.changeNameInProgress = true;
-		return PlaygroundService.createOrUpdatePreparation(name)
-			.finally(() => vm.changeNameInProgress = false);
-	}
 
 	//--------------------------------------------------------------------------------------------------------------
 	// ------------------------------------------------------LOOKUP--------------------------------------------------

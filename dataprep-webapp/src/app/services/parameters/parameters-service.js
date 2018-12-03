@@ -12,7 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
-import _ from 'lodash';
+import { chain, forEach } from 'lodash';
 
 const CHOICE_TYPE = 'CHOICE';
 const CLUSTER_TYPE = 'CLUSTER';
@@ -42,7 +42,7 @@ export default class ParametersService {
 		}
 
 		function executeOnSimpleParams(simpleParamsToInit) {
-			_.forEach(simpleParamsToInit, (param) => {
+			forEach(simpleParamsToInit, (param) => {
 				param.value = angular.isDefined(param.initialValue) ?
                     param.initialValue :
                     param.default;
@@ -51,19 +51,19 @@ export default class ParametersService {
 
 		switch (type) {
 		case CHOICE_TYPE:
-			_.forEach(params, (choice) => {
+			forEach(params, (choice) => {
 				choice.selectedValue = angular.isDefined(choice.initialValue) ?
                         choice.initialValue :
                         choice.default;
 
-				_.forEach(choice.values, (choiceItem) => {
+				forEach(choice.values, (choiceItem) => {
 					executeOnSimpleParams(choiceItem.parameters);
 				});
 			});
 			break;
 
 		case CLUSTER_TYPE:
-			_.forEach(params.clusters, (cluster) => {
+			forEach(params.clusters, (cluster) => {
 				cluster.active = cluster.initialActive;
 				executeOnSimpleParams(cluster.parameters);
 				executeOnSimpleParams([cluster.replace]);
@@ -85,7 +85,7 @@ export default class ParametersService {
      * @returns {object[]} The parameters with initialized values
      */
 	initParameters(parameters, paramValues) {
-		return _.chain(parameters)
+		return chain(parameters)
             .filter(param => !param.implicit)
             .forEach((param) => {
 	param.initialValue = param.value = this.ConverterService.adaptValue(
@@ -96,7 +96,7 @@ export default class ParametersService {
 
                 // also take care of select parameters
 	if (param.type === 'select' && param.configuration && param.configuration.values) {
-		_.forEach(param.configuration.values, (selectItem) => {
+		forEach(param.configuration.values, (selectItem) => {
 			this.initParameters(selectItem.parameters, paramValues);
 		});
 	}
@@ -114,8 +114,8 @@ export default class ParametersService {
      * @returns {object} The Cluster with initialized values
      */
 	initCluster(cluster, paramValues) {
-		_.forEach(cluster.clusters, (clusterItem) => {
-			const firstActiveParam = _.chain(clusterItem.parameters)
+		forEach(cluster.clusters, (clusterItem) => {
+			const firstActiveParam = chain(clusterItem.parameters)
                 .forEach((param) => {
 	param.initialValue = param.value = param.name in paramValues;
 })

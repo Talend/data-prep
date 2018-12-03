@@ -10,15 +10,17 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import Action from '@talend/react-components/lib/Actions/Action';
 import {
 	HOME_PREPARATIONS_ROUTE,
 	HOME_DATASETS_ROUTE,
 } from '../../index-route';
-
 import {
 	EVENT_LOADING_START,
 	EVENT_LOADING_STOP,
 } from './playground-service';
+import i18n from '../../../i18n/en.json';
 
 describe('Playground Service', () => {
 	const datasetColumnsWithoutStatistics = {
@@ -116,6 +118,13 @@ describe('Playground Service', () => {
 						columns: [{ id: '0001', statistics: { frequencyTable: [{ toto: 2 }], wordPatternFrequencyTable: [] } }],
 					},
 				},
+				parameters: {
+					visible: false,
+				},
+				lookup: {
+					loading: false,
+					visibility: false,
+				}
 			},
 			inventory: {
 				homeFolder: { id: 'Lw==' },
@@ -124,17 +133,14 @@ describe('Playground Service', () => {
 					metadata: {
 						id: 'abcd'
 					}
-				}
+				},
 			},
 		};
 		$provide.constant('state', stateMock);
 	}));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			PREPARATION: 'Preparation',
-			TALEND: 'TALEND',
-		});
+		$translateProvider.translations('en', i18n);
 		$translateProvider.preferredLanguage('en');
 	}));
 
@@ -170,6 +176,283 @@ describe('Playground Service', () => {
 		spyOn(FilterService, 'initFilters').and.returnValue();
 		spyOn(TitleService, 'setStrict').and.returnValue();
 	}));
+
+	describe('subheader', () => {
+		describe('loading', () => {
+			it('should return true if it is loading', inject((state, PlaygroundService) => {
+				state.export = { exportTypes: [1, 2] };
+				expect(PlaygroundService.isSubheaderLoading()).toBeFalsy();
+			}));
+
+			it('should return false if it is loading', inject((state, PlaygroundService) => {
+				state.export = { exportTypes: [] };
+				expect(PlaygroundService.isSubheaderLoading()).toBeTruthy();
+			}));
+		});
+
+		describe('status', () => {
+			it('should return a loading preview status', inject((state, PlaygroundService, PreviewService) => {
+				spyOn(PreviewService, 'previewInProgress').and.returnValue(true);
+				state.playground.isPreviewLoading = true;
+				const status = PlaygroundService.getSubheaderStatus();
+
+				expect(PreviewService.previewInProgress).toHaveBeenCalled();
+				expect(status.length).toBe(1);
+				expect(status[0]).toEqual({
+					id: 'playground-preview',
+					label: 'Preview',
+					inProgress: true,
+					disabled: true,
+					icon: 'talend-eye',
+					bsStyle: 'link',
+				});
+			}));
+
+			it('should return a loaded preview status', inject((state, PlaygroundService, PreviewService) => {
+				spyOn(PreviewService, 'previewInProgress').and.returnValue(true);
+				state.playground.isPreviewLoading = false;
+				const status = PlaygroundService.getSubheaderStatus();
+
+				expect(PreviewService.previewInProgress).toHaveBeenCalled();
+				expect(status.length).toBe(1);
+				expect(status[0]).toEqual({
+					id: 'playground-preview',
+					label: 'Preview',
+					inProgress: false,
+					disabled: true,
+					icon: 'talend-eye',
+					bsStyle: 'link',
+				});
+			}));
+
+			it('should return an empty array', inject((PlaygroundService, PreviewService) => {
+				spyOn(PreviewService, 'previewInProgress').and.returnValue(false);
+				const status = PlaygroundService.getSubheaderStatus();
+				expect(PreviewService.previewInProgress).toHaveBeenCalled();
+				expect(status.length).toBe(0);
+			}));
+		});
+
+		describe('actions', () => {
+			beforeEach(inject((StateService, PlaygroundService, LookupService, HistoryService) => {
+				spyOn(StateService, 'setIsPreprationPickerVisible').and.returnValue();
+				spyOn(StateService, 'toggleDatasetParameters').and.returnValue();
+				spyOn(PlaygroundService, 'toggleLookupPanel').and.returnValue();
+				spyOn(StateService, 'setLookupVisibility').and.returnValue();
+				spyOn(StateService, 'setStepInEditionMode').and.returnValue();
+				spyOn(LookupService, 'initLookups').and.returnValue();
+				spyOn(HistoryService, 'undo').and.returnValue();
+				spyOn(HistoryService, 'redo').and.returnValue();
+			}));
+
+			it('should call action getters', inject(($stateParams, PlaygroundService) => {
+				$stateParams.datasetid = 666;
+				const actions = PlaygroundService.getSubheaderActions();
+				expect(actions.length).toBe(5);
+				expect(actions[0].id).toBe('playground-preparation-chooser');
+				expect(actions[1].id).toBe('playground-metadata');
+				expect(actions[2].id).toBe('playground-lookup');
+				expect(actions[3].id).toBe('playground-undo');
+				expect(actions[4].id).toBe('playground-redo');
+			}));
+
+			describe('getPreparationChooserAction', () => {
+				it('should return preparation chooser', inject(($stateParams, PlaygroundService) => {
+					$stateParams.datasetid = 666;
+					const action = PlaygroundService.getPreparationChooserAction();
+					expect(action[0].icon).toEqual('talend-dataprep');
+					expect(action[0].tooltipLabel).toEqual('Choose a preparation to apply to this dataset');
+					expect(action[0].hideLabel).toEqual(true);
+					expect(action[0].bsStyle).toEqual('link');
+				}));
+
+				it('should return a valid action', inject(($timeout, $stateParams, PlaygroundService, StateService) => {
+					$stateParams.datasetid = 666;
+					const action = PlaygroundService.getPreparationChooserAction();
+					action[0].onClick();
+					$timeout.flush();
+					expect(StateService.setIsPreprationPickerVisible).toHaveBeenCalledWith(true);
+				}));
+
+				it('should not return preparation chooser', inject(($stateParams, PlaygroundService) => {
+					$stateParams.datasetid = null;
+					expect(PlaygroundService.getPreparationChooserAction()).toEqual([]);
+				}));
+			});
+
+			describe('getDatasetParametersAction', () => {
+				it('should return dataset parameters', inject(($rootScope, state, PlaygroundService) => {
+					state.playground.isReadOnly = false;
+					state.playground.parameters.visible = false;
+					state.playground.lookup.loading = false;
+
+					const action = PlaygroundService.getDatasetParametersAction();
+
+					expect(action[0].id).toEqual('playground-metadata');
+					expect(action[0].icon).toEqual('talend-cog');
+					expect(action[0].label).toEqual('Edit dataset parameters (encoding, separator, etc.)');
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
+					expect(action[0].active).toEqual(false);
+					expect(action[0].inProgress).toEqual(false);
+				}));
+
+				it('should return dataset parameters with active and inProgress flags to true', inject(($rootScope, state, PlaygroundService) => {
+					state.playground.isReadOnly = false;
+					state.playground.parameters.visible = true;
+					state.playground.lookup.loading = true;
+
+					const action = PlaygroundService.getDatasetParametersAction();
+
+					expect(action[0].id).toEqual('playground-metadata');
+					expect(action[0].icon).toEqual('talend-cog');
+					expect(action[0].label).toEqual('Edit dataset parameters (encoding, separator, etc.)');
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
+					expect(action[0].active).toEqual(true);
+					expect(action[0].inProgress).toEqual(true);
+				}));
+
+				it('should return a valid action', inject(($timeout, state, PlaygroundService, StateService) => {
+					state.playground.isReadOnly = false;
+					const action = PlaygroundService.getDatasetParametersAction();
+					action[0].onClick();
+					$timeout.flush();
+					expect(StateService.toggleDatasetParameters).toHaveBeenCalled();
+				}));
+
+				it('should not return dataset parameters', inject((state, PlaygroundService) => {
+					state.playground.isReadOnly = true;
+					expect(PlaygroundService.getDatasetParametersAction()).toEqual([]);
+				}));
+			});
+
+			describe('getLookupAction', () => {
+				it('should return lookup', inject((state, PlaygroundService) => {
+					state.playground.isReadOnly = false;
+
+					const action = PlaygroundService.getLookupAction();
+
+					expect(action[0].id).toEqual('playground-lookup');
+					expect(action[0].icon).toEqual('talend-chain');
+					expect(action[0].label).toEqual('Lookup: combine two datasets');
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
+					expect(action[0].active).toEqual(false);
+				}));
+
+				it('should return lookup with active flag to true', inject((state, PlaygroundService) => {
+					state.playground.isReadOnly = false;
+					state.playground.lookup.visibility = true;
+
+					const action = PlaygroundService.getLookupAction();
+
+					expect(action[0].id).toEqual('playground-lookup');
+					expect(action[0].icon).toEqual('talend-chain');
+					expect(action[0].label).toEqual('Lookup: combine two datasets');
+					expect(action[0].displayMode).toEqual(Action.DISPLAY_MODE_ICON_TOGGLE);
+					expect(action[0].active).toEqual(true);
+				}));
+
+				it('should return a valid action', inject(($timeout, state, PlaygroundService, StateService, LookupService) => {
+					state.playground.isReadOnly = false;
+					const action = PlaygroundService.getLookupAction();
+					action[0].onClick();
+					$timeout.flush();
+					expect(StateService.setLookupVisibility).toHaveBeenCalledWith(true);
+					expect(LookupService.initLookups).toHaveBeenCalled();
+				}));
+
+				it('should not return lookup parameters', inject((state, PlaygroundService) => {
+					state.playground.isReadOnly = true;
+					expect(PlaygroundService.getLookupAction()).toEqual([]);
+				}));
+			});
+
+			describe('getUndoAction', () => {
+				it('should return lookup', inject((state, PlaygroundService, HistoryService) => {
+					state.playground.isReadOnly = false;
+					spyOn(HistoryService, 'canUndo').and.returnValue(true);
+
+					const action = PlaygroundService.getUndoAction();
+
+					expect(action[0].id).toEqual('playground-undo');
+					expect(action[0].icon).toEqual('talend-undo');
+					expect(action[0].tooltipLabel).toEqual('Undo');
+					expect(action[0].hideLabel).toEqual(true);
+					expect(action[0].bsStyle).toEqual('link');
+					expect(action[0].disabled).toEqual(false);
+				}));
+
+				it('should return undo with disabled flag to true', inject((state, PlaygroundService, HistoryService) => {
+					state.playground.isReadOnly = false;
+					spyOn(HistoryService, 'canUndo').and.returnValue(false);
+
+					const action = PlaygroundService.getUndoAction();
+
+					expect(action[0].id).toEqual('playground-undo');
+					expect(action[0].icon).toEqual('talend-undo');
+					expect(action[0].tooltipLabel).toEqual('Undo');
+					expect(action[0].hideLabel).toEqual(true);
+					expect(action[0].bsStyle).toEqual('link');
+					expect(action[0].disabled).toEqual(true);
+				}));
+
+				it('should return a valid action', inject(($timeout, state, PlaygroundService, HistoryService) => {
+					state.playground.isReadOnly = false;
+					const action = PlaygroundService.getUndoAction();
+					action[0].onClick();
+					$timeout.flush();
+					expect(HistoryService.undo).toHaveBeenCalled();
+				}));
+
+				it('should not return lookup parameters', inject((state, PlaygroundService) => {
+					state.playground.isReadOnly = true;
+					expect(PlaygroundService.getUndoAction()).toEqual([]);
+				}));
+			});
+
+			describe('getRedoAction', () => {
+				it('should return redo', inject((state, PlaygroundService, HistoryService) => {
+					state.playground.isReadOnly = false;
+					spyOn(HistoryService, 'canRedo').and.returnValue(true);
+
+					const action = PlaygroundService.getRedoAction();
+
+					expect(action[0].id).toEqual('playground-redo');
+					expect(action[0].icon).toEqual('talend-redo');
+					expect(action[0].tooltipLabel).toEqual('Redo');
+					expect(action[0].hideLabel).toEqual(true);
+					expect(action[0].bsStyle).toEqual('link');
+					expect(action[0].disabled).toEqual(false);
+				}));
+
+				it('should return redo with disabled flag to true', inject((state, PlaygroundService, HistoryService) => {
+					state.playground.isReadOnly = false;
+					spyOn(HistoryService, 'canRedo').and.returnValue(false);
+
+					const action = PlaygroundService.getRedoAction();
+
+					expect(action[0].id).toEqual('playground-redo');
+					expect(action[0].icon).toEqual('talend-redo');
+					expect(action[0].tooltipLabel).toEqual('Redo');
+					expect(action[0].hideLabel).toEqual(true);
+					expect(action[0].bsStyle).toEqual('link');
+					expect(action[0].disabled).toEqual(true);
+				}));
+
+				it('should return a valid action', inject(($timeout, state, PlaygroundService, HistoryService) => {
+					state.playground.isReadOnly = false;
+					const action = PlaygroundService.getRedoAction();
+					action[0].onClick();
+					$timeout.flush();
+					expect(HistoryService.redo).toHaveBeenCalled();
+				}));
+
+				it('should not return lookup parameters', inject((state, PlaygroundService) => {
+					state.playground.isReadOnly = true;
+					expect(PlaygroundService.getRedoAction()).toEqual([]);
+				}));
+			});
+		});
+	});
 
 	describe('update preparation', () => {
 		it('should set new name to the preparation name',

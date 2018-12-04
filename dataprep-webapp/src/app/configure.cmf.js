@@ -200,7 +200,7 @@ export default function initialize(additionalConfiguration = {}) {
 		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
 		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
 		registerActionCreator('help:about:open', actions.help.openAbout);
-		registerActionCreator('redirect', actions.redirect);
+		registerActionCreator('redirect', actions.redirect.redirect);
 		registerActionCreator('headerbar:search:start', actions.search.start);
 		registerActionCreator('headerbar:search:select', actions.search.select);
 		registerActionCreator('headerbar:search:reset', actions.search.reset);

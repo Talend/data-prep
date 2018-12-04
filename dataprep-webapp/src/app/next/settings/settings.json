@@ -387,13 +387,11 @@
     "HomeListView#datastores": {
       "hasTheme": true
     },
-    "HomeListView#datasets": {
+    "DatasetHomeListView#default": {
       "list": {
         "actions": {
           "items": [
-            "preparation:create",
-            "dataset:edit",
-            "dataset:delete"
+            "preparation:create"
           ]
         }
       },

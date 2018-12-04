@@ -5,7 +5,6 @@ import api, {
 	sagas as cmfSagas,
 	store as cmfStore,
 } from '@talend/react-cmf';
-import reduxLocalStorage from '@talend/react-cmf/lib/reduxstorage/reduxLocalStorage';
 import { registerAllContainers } from '@talend/react-containers/lib/register';
 import dataset from '@talend/dataset';
 import '@talend/dataset/lib/app/index.scss';
@@ -90,176 +89,161 @@ export default function initialize(additionalConfiguration = {}) {
 		yield all(rootSagas);
 	}
 
-	function appFactory(storage = {}) {
-		const { initialState, engine } = storage;
+	const additionalLocalStorage = additionalConfiguration.localStorage || {};
+	const localStorageKey = additionalLocalStorage.key || 'data-prep';
+	const preloadedState = api.localStorage.getState(localStorageKey);
+	const KEEP = [
+		['cmf', 'components', 'Container(SidePanel)'],
+		['cmf', 'components', 'Container(List)', 'preparations'],
+		['cmf', 'components', 'Container(List)', 'datasets'],
+		['cmf', 'components', 'Container(List)', 'datastores'],
+	].concat(additionalLocalStorage.whitelist || []);
 
-		const preReducers = [dataset.preReducers.notificationReducer, ...dataset.hors];
-		const additionalPreReducers = additionalConfiguration.preReducers;
-		if (additionalPreReducers) {
-			preReducers.push(...additionalPreReducers);
-		}
-		cmfStore.addPreReducer(preReducers);
+	const preReducers = [dataset.preReducers.notificationReducer, ...dataset.hors];
+	const additionalPreReducers = additionalConfiguration.preReducers;
+	if (additionalPreReducers) {
+		preReducers.push(...additionalPreReducers);
+	}
+	cmfStore.addPreReducer(preReducers);
 
-		/**
-		 * Register react-router-redux router reducer (see https://github.com/reactjs/react-router-redux)
-		 */
-		cmfStore.setRouterMiddleware(routerMiddleware(browserHistory));
+	/**
+	 * Register react-router-redux router reducer (see https://github.com/reactjs/react-router-redux)
+	 */
+	cmfStore.setRouterMiddleware(routerMiddleware(browserHistory));
 
-		/**
-		 * Register http middleware
-		 */
-		const httpMiddleWareConfig = {
-			security: {
-				CSRFTokenCookieKey: 'XSRF-TOKEN',
-				CSRFTokenHeaderKey: 'X-XSRF-TOKEN',
-			},
-		};
-		cmfSagas.http.setDefaultConfig(httpMiddleWareConfig);
-		cmfStore.setHttpMiddleware(httpMiddleware(httpMiddleWareConfig));
+	/**
+	 * Register http middleware
+	 */
+	const httpMiddleWareConfig = {
+		security: {
+			CSRFTokenCookieKey: 'XSRF-TOKEN',
+			CSRFTokenHeaderKey: 'X-XSRF-TOKEN',
+		},
+	};
+	cmfSagas.http.setDefaultConfig(httpMiddleWareConfig);
+	cmfStore.setHttpMiddleware(httpMiddleware(httpMiddleWareConfig));
 
-		/**
-		 * Register your app reducers
-		 */
-		let reducers = {};
-		const additionalReducers = additionalConfiguration.reducers;
-		if (additionalReducers) {
-			reducers = {
-				...additionalReducers,
-			};
-		}
-
-		const sagaMiddleware = createSagaMiddleware();
-		const middlewares = [sagaMiddleware];
-		const additionalMiddlewares = additionalConfiguration.middlewares;
-		if (additionalMiddlewares) {
-			middlewares.push(...additionalMiddlewares);
-		}
-
-		const store = cmfStore.initialize(reducers, initialState, undefined, middlewares);
-
-		sagaMiddleware.run(rootSaga);
-
-		api.registerInternals();
-
-		/**
-		 * Register route functions
-		 */
-		const additionalRouteFunctions = additionalConfiguration.routeFunctions;
-		if (additionalRouteFunctions) {
-			Object.keys(additionalRouteFunctions).map(k =>
-				registerRouteFunction(k, additionalRouteFunctions[k]),
-			);
-		}
-
-		registerAllContainers();
-
-		dataset.configure();
-
-		/**
-		 * Register expressions in CMF expressions dictionary
-		 */
-		const additionalExpressions = additionalConfiguration.expressions;
-		if (additionalExpressions) {
-			registerExpressions(additionalExpressions);
-		}
-		registerExpressions(api.expressions);
-
-		/**
-		 * Register components in CMF Components dictionary
-		 */
-		registerComponent('App', App);
-		registerComponents(components);
-		const additionalComponents = additionalConfiguration.components;
-		if (additionalComponents) {
-			registerComponents(additionalComponents);
-		}
-
-		/**
-		 * Register action creators in CMF Actions dictionary
-		 */
-		registerActionCreator('preparation:edit:submit', actions.preparation.rename);
-		registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
-		registerActionCreator('preparation:open', actions.preparation.open);
-		registerActionCreator('folder:open', actions.folder.open);
-		registerActionCreator('folder:add', actions.folder.add);
-		registerActionCreator('folder:add:open', actions.folder.openAddFolderModal);
-		registerActionCreator('folder:add:close', actions.folder.closeAddFolderModal);
-		registerActionCreator('folder:remove', actions.folder.remove);
-		registerActionCreator('folder:remove:open', actions.folder.openRemoveFolderModal);
-		registerActionCreator('folder:remove:close', actions.folder.closeRemoveFolderModal);
-		registerActionCreator('preparation:fetch', actions.preparation.fetch);
-		registerActionCreator('preparation:create', actions.preparation.create);
-		registerActionCreator('preparation:copy', actions.preparation.copy);
-		registerActionCreator('preparation:move', actions.preparation.move);
-		registerActionCreator('preparation:remove', actions.preparation.remove);
-		registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
-		registerActionCreator('preparation:add:open', actions.preparation.openPreparationCreatorModal);
-		registerActionCreator('preparation:copy:open', actions.preparation.openCopyModal);
-		registerActionCreator('preparation:move:open', actions.preparation.openMoveModal);
-		registerActionCreator('preparation:copy:move:cancel', actions.preparation.closeCopyMoveModal);
-		registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
-		registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
-		registerActionCreator('help:about:open', actions.help.openAbout);
-		registerActionCreator('redirect', actions.redirect.redirect);
-		registerActionCreator('headerbar:search:start', actions.search.start);
-		registerActionCreator('headerbar:search:select', actions.search.select);
-		registerActionCreator('headerbar:search:reset', actions.search.reset);
-		registerActionCreator('dataset:view', actions.dataset.open);
-
-		const additionalActionCreators = additionalConfiguration.actionCreators;
-		if (additionalActionCreators) {
-			Object.keys(additionalActionCreators).map(k =>
-				registerActionCreator(k, additionalActionCreators[k]),
-			);
-		}
-		/**
-		 * Fetch the CMF settings and configure the CMF app
-		 */
-		store.dispatch(
-			cmfActions.settingsActions.fetchSettings(`/settings.${settingsService.getLanguage()}.json`),
-		);
-
-		reduxLocalStorage.saveOnReload({
-			engine,
-			store,
-		});
-
-		/**
-		 * Register i18next locales per namespace
-		 */
-		registerLocales(locales);
-		const additionalLocales = additionalConfiguration.locales;
-		if (additionalLocales) {
-			registerLocales(additionalLocales);
-		}
-
-		const additionalCallback = additionalConfiguration.callback;
-		if (additionalCallback) {
-			additionalCallback();
-		}
-
-		return {
-			store,
-			browserHistory,
+	/**
+	 * Register your app reducers
+	 */
+	let reducers = {};
+	const additionalReducers = additionalConfiguration.reducers;
+	if (additionalReducers) {
+		reducers = {
+			...additionalReducers,
 		};
 	}
 
-	const additionalLocalStorage = additionalConfiguration.localStorage || {};
-	return reduxLocalStorage
-		.loadInitialState({
-			key: additionalLocalStorage.key || 'data-prep',
-			whitelist: [
-				['cmf', 'components', 'Container(SidePanel)'],
-				['cmf', 'components', 'Container(List)', 'preparations'],
-				['cmf', 'components', 'Container(List)', 'datasets'],
-				['cmf', 'components', 'Container(List)', 'datastores'],
-			].concat(additionalLocalStorage.whitelist || []),
-		})
-		.then(
-			storage => appFactory(storage),
-			(error) => {
-				console.error(error); // eslint-disable-line no-console
-				return appFactory();
-			},
+	const sagaMiddleware = createSagaMiddleware();
+	const middlewares = [sagaMiddleware];
+	const additionalMiddlewares = additionalConfiguration.middlewares;
+	if (additionalMiddlewares) {
+		middlewares.push(...additionalMiddlewares);
+	}
+
+	const store = cmfStore.initialize(reducers, preloadedState, undefined, middlewares);
+
+	sagaMiddleware.run(rootSaga);
+
+	api.registerInternals();
+
+	/**
+	 * Register route functions
+	 */
+	const additionalRouteFunctions = additionalConfiguration.routeFunctions;
+	if (additionalRouteFunctions) {
+		Object.keys(additionalRouteFunctions).map(k =>
+			registerRouteFunction(k, additionalRouteFunctions[k]),
 		);
+	}
+
+	registerAllContainers();
+
+	dataset.configure();
+
+	/**
+	 * Register expressions in CMF expressions dictionary
+	 */
+	const additionalExpressions = additionalConfiguration.expressions;
+	if (additionalExpressions) {
+		registerExpressions(additionalExpressions);
+	}
+	registerExpressions(api.expressions);
+
+	/**
+	 * Register components in CMF Components dictionary
+	 */
+	registerComponent('App', App);
+	registerComponents(components);
+	const additionalComponents = additionalConfiguration.components;
+	if (additionalComponents) {
+		registerComponents(additionalComponents);
+	}
+
+	/**
+	 * Register action creators in CMF Actions dictionary
+	 */
+	registerActionCreator('preparation:edit:submit', actions.preparation.rename);
+	registerActionCreator('preparation:edit:cancel', actions.preparation.cancelRename);
+	registerActionCreator('preparation:open', actions.preparation.open);
+	registerActionCreator('folder:open', actions.folder.open);
+	registerActionCreator('folder:add', actions.folder.add);
+	registerActionCreator('folder:add:open', actions.folder.openAddFolderModal);
+	registerActionCreator('folder:add:close', actions.folder.closeAddFolderModal);
+	registerActionCreator('folder:remove', actions.folder.remove);
+	registerActionCreator('folder:remove:open', actions.folder.openRemoveFolderModal);
+	registerActionCreator('folder:remove:close', actions.folder.closeRemoveFolderModal);
+	registerActionCreator('preparation:fetch', actions.preparation.fetch);
+	registerActionCreator('preparation:create', actions.preparation.create);
+	registerActionCreator('preparation:copy', actions.preparation.copy);
+	registerActionCreator('preparation:move', actions.preparation.move);
+	registerActionCreator('preparation:remove', actions.preparation.remove);
+	registerActionCreator('preparation:rename', actions.preparation.setTitleEditionMode);
+	registerActionCreator('preparation:add:open', actions.preparation.openPreparationCreatorModal);
+	registerActionCreator('preparation:copy:open', actions.preparation.openCopyModal);
+	registerActionCreator('preparation:move:open', actions.preparation.openMoveModal);
+	registerActionCreator('preparation:copy:move:cancel', actions.preparation.closeCopyMoveModal);
+	registerActionCreator('help:tour', () => ({ type: ALERT, payload: 'help:tour' }));
+	registerActionCreator('help:feedback:open', () => ({ type: ALERT, payload: 'help:feedback:open' }));
+	registerActionCreator('help:about:open', actions.help.openAbout);
+	registerActionCreator('redirect', actions.redirect.redirect);
+	registerActionCreator('headerbar:search:start', actions.search.start);
+	registerActionCreator('headerbar:search:select', actions.search.select);
+	registerActionCreator('headerbar:search:reset', actions.search.reset);
+	registerActionCreator('dataset:view', actions.dataset.open);
+
+	const additionalActionCreators = additionalConfiguration.actionCreators;
+	if (additionalActionCreators) {
+		Object.keys(additionalActionCreators).map(k =>
+			registerActionCreator(k, additionalActionCreators[k]),
+		);
+	}
+	/**
+	 * Fetch the CMF settings and configure the CMF app
+	 */
+	store.dispatch(
+		cmfActions.settingsActions.fetchSettings(`/settings.${settingsService.getLanguage()}.json`),
+	);
+
+	api.localStorage.getStoreCallback(localStorageKey, KEEP)(store);
+
+	/**
+	 * Register i18next locales per namespace
+	 */
+	registerLocales(locales);
+	const additionalLocales = additionalConfiguration.locales;
+	if (additionalLocales) {
+		registerLocales(additionalLocales);
+	}
+
+	const additionalCallback = additionalConfiguration.callback;
+	if (additionalCallback) {
+		additionalCallback();
+	}
+
+
+	return {
+		store,
+		browserHistory,
+	};
 }

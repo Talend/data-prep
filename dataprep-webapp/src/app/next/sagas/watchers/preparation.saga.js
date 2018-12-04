@@ -1,4 +1,4 @@
-import { all, call, take } from 'redux-saga/effects';
+import { call, take } from 'redux-saga/effects';
 import {
 	OPEN_WITH_BUTTON_CLICKED,
 } from '@talend/dataset/lib/app/components/SampleView/DatasetDetailSubHeaderActions/DatasetDetailSubHeaderActions.constants';
@@ -6,12 +6,6 @@ import {
 import * as actions from '../../constants/actions';
 import * as effects from '../effects/preparation.effects';
 
-function* fetch() {
-	while (true) {
-		const { payload } = yield take(actions.FETCH_PREPARATIONS);
-		yield call(effects.refresh, payload);
-	}
-}
 
 function* create() {
 	while (true) {
@@ -37,6 +31,5 @@ function* openPreparationCreatorModal() {
 export default {
 	'preparation:create': create,
 	'preparation:openWith': openWith,
-	'preparation:fetch': fetch,
 	'preparation:creator:open': openPreparationCreatorModal,
 };

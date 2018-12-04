@@ -7,19 +7,6 @@ import * as effects from '../../effects/preparation.effects';
 import * as actions from '../../../constants/actions';
 
 describe('preparation', () => {
-	describe('fetch', () => {
-		it('should wait for FETCH_PREPARATIONS action and call fetch', () => {
-			const gen = sagas['preparation:fetch']();
-			const action = {
-				payload: { folderId: 'folderId' },
-			};
-
-			expect(gen.next().value).toEqual(take(actions.FETCH_PREPARATIONS));
-			expect(gen.next(action).value).toEqual(call(effects.refresh, action.payload));
-			expect(gen.next().value).toEqual(take(actions.FETCH_PREPARATIONS));
-		});
-	});
-
 	describe('create', () => {
 		it('should wait for CREATE_PREPARATIONS action and call create', () => {
 			const gen = sagas['preparation:create']();

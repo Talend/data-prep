@@ -114,43 +114,4 @@ describe('preparation', () => {
 			expect(gen.next(error).done).toBeTruthy();
 		});
 	});
-
-	describe('fetchFolder', () => {
-		beforeEach(() => {
-			PreparationService.transformFolder = jest.fn(() => 'folders');
-		});
-
-		it('should update Breadcrumb cmf store with default folder id', () => {
-			const payload = {};
-			const gen = effects.fetchFolder(payload);
-			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, `/api/folders/${effects.DEFAULT_FOLDER_ID}`));
-
-			const effect = gen.next(API_RESPONSE).value.PUT.action;
-			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('Breadcrumbs');
-			expect(effect.componentState).toEqual(new Map({ items: 'folders', maxItems: 5 }));
-			expect(PreparationService.transformFolder).toHaveBeenCalledWith(API_PAYLOAD);
-			expect(gen.next().done).toBeTruthy();
-		});
-
-		it('should update Breadcrumb cmf store with folder id', () => {
-			const folderId = 'FOLDER_ID';
-			const payload = {
-				folderId,
-			};
-			const gen = effects.fetchFolder(payload);
-			expect(gen.next().value.SELECT).toBeDefined();
-			expect(gen.next(IMMUTABLE_SETTINGS).value).toEqual(call(http.get, '/api/folders/FOLDER_ID'));
-
-			const effect = gen.next(API_RESPONSE).value.PUT.action;
-			expect(effect.type).toEqual('REACT_CMF.COMPONENT_MERGE_STATE');
-			expect(effect.key).toEqual('default');
-			expect(effect.componentName).toEqual('Breadcrumbs');
-			expect(effect.componentState).toEqual(new Map({ items: 'folders', maxItems: 5 }));
-			expect(PreparationService.transformFolder).toHaveBeenCalledWith(API_PAYLOAD);
-			expect(gen.next().done).toBeTruthy();
-		});
-	});
 });

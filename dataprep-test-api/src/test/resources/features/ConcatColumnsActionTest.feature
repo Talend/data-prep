@@ -1,5 +1,5 @@
 # would fail while ConcatColumns action is disable
-@EnvOnPremise @EnvCloud @Unstable
+@EnvOnPremise @EnvCloud
 Feature: Apply concat columns action
 
   Scenario: add a multi_columns action

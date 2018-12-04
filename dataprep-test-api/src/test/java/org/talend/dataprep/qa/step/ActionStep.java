@@ -43,7 +43,7 @@ import cucumber.api.java.en.When;
  */
 public class ActionStep extends DataPrepStep {
 
-    private static final String ACTION_LOOKUP = "lookup";
+    public static final String ACTION_LOOKUP = "lookup";
 
     private static final String LOOKUP_DS_ID = "lookup_ds_id";
 
@@ -64,6 +64,8 @@ public class ActionStep extends DataPrepStep {
             String DatasetNamesuffixed = suffixName(params.get(LOOKUP_DS_NAME));
             String datasetId = context.getDatasetId(DatasetNamesuffixed);
             action.parameters.put(LOOKUP_DS_ID, datasetId);
+            context.storeAction("", action, preparationName);
+
         }
 
         api.addAction(prepId, action).then().statusCode(200).log().ifValidationFails();
@@ -77,7 +79,7 @@ public class ActionStep extends DataPrepStep {
         // we recover the preparation details in order to get an action object with the step Id
         String prepId = context.getPreparationId(suffixName(preparationName));
         Action action = getLastActionfromPreparation(prepId);
-        context.storeAction(stepAlias, action);
+        context.storeAction(stepAlias, action, preparationName);
     }
 
     @Given("^I check that a step like \"(.*)\" exists in the preparation \"(.*)\"$")

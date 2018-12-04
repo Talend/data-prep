@@ -272,8 +272,9 @@ public class FeatureContext {
      *
      * @param alias the {@link Action} alias.
      * @param action the {@link Action} to store.
+     * @param preparationName the Preparation name whose action belongs to.
      */
-    public void storeAction(String alias, Action action) {
+    public void storeAction(String alias, Action action, String preparationName) {
         actionByAlias.put(alias, action);
     }
 

@@ -68,6 +68,7 @@ Object {
   "payload": Object {
     "id": 42,
     "name": undefined,
+    "type": "preparation",
   },
   "type": "TDP_RENAME_PREPARATION",
 }

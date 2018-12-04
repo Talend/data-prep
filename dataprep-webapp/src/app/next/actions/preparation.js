@@ -64,12 +64,13 @@ function fetch(payload) {
 	};
 }
 
-function rename(event, data) {
+function rename(event, { model, value }) {
 	return {
 		type: RENAME_PREPARATION,
 		payload: {
-			id: data.model.id,
-			name: data.value,
+			id: model.id,
+			type: model.type,
+			name: value,
 		},
 	};
 }

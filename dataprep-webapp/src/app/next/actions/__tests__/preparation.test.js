@@ -69,6 +69,7 @@ describe('Preparation action', () => {
 			vale: 'name',
 			model: {
 				id: 42,
+				type: 'preparation',
 			},
 		};
 		const action = actions.rename(event, payload);

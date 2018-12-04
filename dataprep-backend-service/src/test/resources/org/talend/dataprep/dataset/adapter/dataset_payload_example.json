@@ -1,37 +1,36 @@
 {
   "entitlements": [
-    "DATASET_FETCH_SAMPLE",
-    "DATASET_UPDATE",
-    "DATASET_READ",
-    "DATASET_DELETE",
     "CONNECTION_READ",
-    "CONNECTION_UPDATE",
-    "DATASET_SHARE",
-    "CONNECTION_SHARE"
+    "TDP_DATASET_CERTIFY",
+    "DATASET_FETCH_SAMPLE",
+    "DATASET_DELETE",
+    "DATASET_READ",
+    "DATASET_UPDATE",
+    "DATASET_SHARE"
   ],
-  "__acl": 15910,
-  "id": "9640b5b6-9fa2-11e7-abc4-cec278b6b50a",
-  "created": 1529419221860,
-  "updated": 1529419221860,
-  "enabled": true,
-  "label": "French stations frequencies",
-  "type": "SimpleFileIoDataset",
-  "version": 0,
-  "datastoreId": "9abb1206-5f2b-4d51-97cd-f742991d3533",
+  "__acl": 15874,
+  "id": "15b9d7c8-106b-4f14-9b32-f030cb3c3550",
+  "created": 1542961848184,
+  "updated": 1542961880447,
+  "creator": "Aurélien Leboulanger",
+  "label": "Customers20",
   "datastore": {
-    "id": "9abb1206-5f2b-4d51-97cd-f742991d3533",
-    "label": "HDFS Datastore",
-    "type": "SimpleFileIoDatastore"
+    "id": "LOCAL_CONN",
+    "label": "Local storage",
+    "type": "LocalStorageDatastore"
   },
-  "properties": {
-    "path": "/frequentation-gares.csv",
-    "format": "CSV",
-    "fieldDelimiter": "SEMICOLON",
-    "@definitionName": "SimpleFileIoDataset",
-    "recordDelimiter": "LF",
-    "specificFieldDelimiter": ";",
-    "specificRecordDelimiter": "\\n"
+  "rating": {},
+  "certification": "none",
+  "format": "CSV",
+  "sharing": {
+    "isOwner": true,
+    "isSharedWithOthers": false
   },
-  "owner": "9e78073b-961a-4ce4-b807-3b961a5ce4d4",
-  "creator": "Jane Doe"
+  "favorite": false,
+  "talendGlobalQuality": {
+    "-1": 10,
+    "1": 223,
+    "0": 7,
+    "total": 240
+  }
 }

@@ -121,11 +121,20 @@ describe('Playground directive', () => {
 			playground: {
 				visible: true,
 				filter: { gridFilters: [] },
+				dataset: {
+					name: 'test',
+				},
+				preparation: {
+					name: 'test prep',
+				},
 				lookup: {
 					visibility: false,
 					datasets: [],
 					sortList: sortList,
 					orderList: orderList,
+				},
+				parameters: {
+					visible: false,
 				},
 				grid: {
 					selectedColumns: [{ id: '0001' }],
@@ -154,9 +163,11 @@ describe('Playground directive', () => {
 		$provide.constant('state', stateMock);
 	}));
 
-	beforeEach(inject(($rootScope, $compile, $q, DatasetService) => {
+	beforeEach(inject(($rootScope, $compile, $q, DatasetService, HistoryService) => {
 		scope = $rootScope.$new();
 		spyOn(DatasetService, 'getCompatiblePreparations').and.returnValue($q.when());
+		spyOn(HistoryService, 'undo').and.returnValue();
+		spyOn(HistoryService, 'redo').and.returnValue();
 
 		createElement = () => {
 			element = angular.element('<playground></playground>');
@@ -176,13 +187,10 @@ describe('Playground directive', () => {
 
 	describe('loading', () => {
 		it('should NOT render playground header and playground', () => {
-			// given
 			stateMock.playground.isLoading = true;
 
-			// when
 			createElement();
 
-			// then
 			expect(element.find('pure-app-loader').length).toBe(1);
 			expect(element.find('playground-header').length).toBe(0);
 			expect(element.find('.playground').length).toBe(0);
@@ -191,25 +199,19 @@ describe('Playground directive', () => {
 
 	describe('suggestions', () => {
 		it('should render right slidable panel', () => {
-			// given
 			stateMock.playground.dataset = metadata;
 
-			// when
 			createElement();
 
-			// then: check right slidable is displayed transformations with right slide action
 			expect(element.find('.playground-suggestions').eq(0).hasClass('slide-hide')).toBe(false);
 			expect(element.find('.playground-suggestions').eq(0).find('.action').eq(0).hasClass('right')).toBe(true);
 		});
 
 		it('should render splitter inside slidable panel', () => {
-			// given
 			stateMock.playground.dataset = metadata;
 
-			// when
 			createElement();
 
-			// then
 			expect(element.find('.suggestions-stats-content').length).toBe(1);
 			expect(element.find('#help-suggestions').length).toBe(1);
 			expect(element.find('#help-stats').length).toBe(1);
@@ -225,33 +227,26 @@ describe('Playground directive', () => {
 		}));
 
 		it('should render left slidable panel', () => {
-			// given
 			stateMock.playground.dataset = metadata;
 
-			// when
 			createElement();
 
-			// then : check left slidable is hidden recipe with left slide action
 			expect(element.find('.playground-recipe').eq(0).hasClass('slide-hide')).toBe(true);
 			expect(element.find('.playground-recipe').eq(0).find('.action').eq(0).hasClass('right')).toBe(false);
 		});
 
 		it('should hide preparation picker modal', () => {
-			// given
 			stateMock.playground.isPreprationPickerVisible = false;
 
-			// when
 			createElement();
 
 			expect(angular.element('body').find('preparation-picker').length).toBe(0);
 		});
 
 		it('should display preparation picker modal', inject(() => {
-			// given
 			stateMock.playground.dataset = metadata;
 			stateMock.playground.isPreprationPickerVisible = true;
 
-			// when
 			createElement();
 
 			expect(angular.element('body').find('preparation-picker').length).toBe(1);
@@ -260,13 +255,10 @@ describe('Playground directive', () => {
 
 	describe('dataset parameters', () => {
 		it('should render dataset parameters', () => {
-			// given
 			stateMock.playground.dataset = metadata;
 
-			// when
 			createElement();
 
-			// then : check dataset parameters is present
 			const playground = element.find('.playground').eq(0);
 			expect(playground.find('.dataset-parameters').length).toBe(1);
 		});
@@ -274,13 +266,10 @@ describe('Playground directive', () => {
 
 	describe('datagrid', () => {
 		it('should render datagrid with filters', () => {
-			// given
 			stateMock.playground.dataset = metadata;
 
-			// when
 			createElement();
 
-			// then : check datagrid and filters are present
 			const playground = element.find('.playground').eq(0);
 			expect(playground.eq(0).find('filter-bar').length).toBe(1);
 			expect(playground.eq(0).find('filter-bar').find('#filter-search').length).toBe(1);
@@ -288,54 +277,75 @@ describe('Playground directive', () => {
 		});
 	});
 
+	describe('History shortcuts management', () => {
+		it('should undo', inject(($timeout, HistoryService) => {
+			createElement();
+
+			const event = angular.element.Event('keydown');
+			event.keyCode = 90;
+			event.ctrlKey = true;
+
+			element.find('.playground-container').eq(0).trigger(event);
+			$timeout.flush();
+
+			expect(HistoryService.undo).toHaveBeenCalled();
+		}));
+
+		it('should redo', inject(($timeout, HistoryService) => {
+			createElement();
+
+			const event = angular.element.Event('keydown');
+			event.keyCode = 89
+			event.ctrlKey = true;
+
+			element.find('.playground-container').eq(0).trigger(event);
+			$timeout.flush();
+
+			expect(HistoryService.redo).toHaveBeenCalled();
+		}));
+	});
+
 	describe('ESC management', () => {
 		it('should close playground on escape key', inject(($timeout) => {
-			// given
 			createElement();
 
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
 
-			// when
 			element.find('.playground-container').eq(0).trigger(event);
 			$timeout.flush();
 
-			// then
 			expect(ctrl.beforeClose).toHaveBeenCalled();
 		}));
 
 		it('should NOT close playground on non escape key', inject(($timeout) => {
-			// given
 			createElement();
 
 			const event = angular.element.Event('keydown');
 			event.keyCode = 14;
 
-			// when
 			element.find('.playground-container').eq(0).trigger(event);
 			$timeout.flush();
 
-			// then
 			expect(ctrl.beforeClose).not.toHaveBeenCalled();
 		}));
 
 		it('should NOT close playground when event target is on input element', inject(($timeout) => {
-			// given
+			stateMock.playground.nameEditionMode = true;
+
 			createElement();
 
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
-
-			// when
-			element.find('.playground-container input').eq(0).trigger(event);
+			element.find('.tc-editable-text-form-input').eq(0).trigger(event);
 			$timeout.flush();
 
-			// then
 			expect(ctrl.beforeClose).not.toHaveBeenCalled();
 		}));
 
 		it('should focus on playground container when event target is on input element', inject(($timeout) => {
-			// given
+			stateMock.playground.nameEditionMode = true;
+
 			createElement();
 			angular.element('body').append(element);
 			const container = element.find('.playground-container').eq(0)[0];
@@ -344,11 +354,9 @@ describe('Playground directive', () => {
 			const event = angular.element.Event('keydown');
 			event.keyCode = 27;
 
-			// when
-			element.find('.playground-container input').eq(0).trigger(event);
+			element.find('.tc-editable-text-form-input').eq(0).trigger(event);
 			$timeout.flush();
 
-			// then
 			expect(document.activeElement).toBe(container);
 		}));
 	});

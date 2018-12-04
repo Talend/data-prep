@@ -1507,7 +1507,7 @@ public class PreparationService {
             allAppendSteps.add(lastUnchangedIndex == stepIndex - 1 ? parentIndex - 1 : parentIndex, removedStep);
 
             // check that the wanted reordering is legal
-            if (!reorderStepsUtils.isStepOrderValid(allAppendSteps)) {
+            if (!reorderStepsUtils.isStepOrderInvalid(allAppendSteps)) {
                 throw new TDPException(PREPARATION_STEP_CANNOT_BE_REORDERED, build());
             }
 

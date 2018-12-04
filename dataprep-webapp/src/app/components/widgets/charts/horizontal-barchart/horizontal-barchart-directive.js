@@ -13,7 +13,7 @@
 
 import d3 from 'd3';
 import d3Tip from 'd3-tip';
-import _ from 'lodash';
+import { extend, find, findIndex, remove } from 'lodash';
 
 const formatNumber = d3.format(',d');
 
@@ -278,11 +278,11 @@ export default function HorizontalBarchart($timeout, $translate) {
 						tooltip.hide(d);
 					})
 					.on('click', (d) => {
-						const item = _.extend({}, d);
-						const index = _.findIndex(statData, d);
+						const item = extend({}, d);
+						const index = findIndex(statData, d);
 						if (d3.event.ctrlKey || d3.event.metaKey) {
-							if (_.find(selectedValues, item)) {
-								_.remove(selectedValues, item);
+							if (find(selectedValues, item)) {
+								remove(selectedValues, item);
 							}
 							else {
 								selectedValues.push(item);
@@ -294,7 +294,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 								const previousMax = max;
 								max = index;
 								for (let i = (index + 1); i <= previousMax; i++) {
-									const currentItem = _.extend({}, statData[i]);
+									const currentItem = extend({}, statData[i]);
 									delete selectedValues.currentItem;
 									scope.onCtrlClick({ item: currentItem });
 								}
@@ -309,8 +309,8 @@ export default function HorizontalBarchart($timeout, $translate) {
 								}
 
 								for (let i = min; i <= max; i++) {
-									const currentItem = _.extend({}, statData[i]);
-									if (!_.find(selectedValues, currentItem)) {
+									const currentItem = extend({}, statData[i]);
+									if (!find(selectedValues, currentItem)) {
 										selectedValues.push(currentItem);
 										scope.onCtrlClick({ item: currentItem });
 									}
@@ -319,7 +319,7 @@ export default function HorizontalBarchart($timeout, $translate) {
 						}
 						else {
 							selectedValues = [];
-							if (_.find(selectedValues, item)) {
+							if (find(selectedValues, item)) {
 								min = max = -1;
 							}
 							else {

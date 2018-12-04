@@ -28,6 +28,7 @@ import static org.talend.dataprep.test.SameJSONFile.sameJSONAsFile;
 import static org.talend.dataprep.transformation.actions.category.ScopeCategory.COLUMN;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -53,13 +55,13 @@ import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataquality.semantic.broadcast.TdqCategories;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 
 /**
  * Unit test for Transformation API.
  */
+@SuppressWarnings("RedundantThrows")
 public class TransformAPITest extends ApiServiceTestBase {
 
     @Autowired
@@ -67,9 +69,6 @@ public class TransformAPITest extends ApiServiceTestBase {
 
     @Autowired
     private CacheKeyGenerator cacheKeyGenerator;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     /**
      * Test asynchronous preparation transformation
@@ -533,5 +532,14 @@ public class TransformAPITest extends ApiServiceTestBase {
 
         // then
         assertFalse(contentCache.has(transformationCacheKey));
+    }
+
+    @Test
+    public void allActionsArePresent() throws IOException {
+        // when
+        List<ActionForm> actions = testClient.getActions();
+
+        // then
+        assertEquals(83, actions.size());
     }
 }

@@ -463,18 +463,18 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Get suggested actions for a whole data set.",
             notes = "Returns the suggested actions for the given dataset in decreasing order of likeness.")
     @Timed
-    public List<ActionForm> suggestDatasetActions(@PathVariable(value = "id") @ApiParam(name = "id",
+    @Deprecated
+    public Stream<ActionForm> suggestDatasetActions(@PathVariable(value = "id") @ApiParam(name = "id",
             value = "Data set id to get suggestions from.") String dataSetId) {
-        HystrixCommand<List<ActionForm>> getLookupActions = getCommand(SuggestLookupActions.class,
-                new HystrixCommand<DataSetMetadata>(GenericCommand.DATASET_GROUP) {
+        return getDatasetsLookupActions();
+    }
 
-                    @Override
-                    protected DataSetMetadata run() {
-                        return getMetadata(dataSetId);
-                    }
-                });
-
-        return getLookupActions.execute();
+    @RequestMapping(value = "/api/datasets/actions/lookup", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get lookup actions for all data sets.",
+            notes = "Returns the lookup actions for the datasets.")
+    @Timed
+    public Stream<ActionForm> getDatasetsLookupActions() {
+        return getCommand(SuggestLookupActions.class).execute();
     }
 
     @RequestMapping(value = "/api/datasets/favorite/{id}", method = POST, produces = TEXT_PLAIN_VALUE)

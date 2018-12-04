@@ -104,6 +104,17 @@ public class TransformAPI extends APIService {
     }
 
     /**
+     * Get all the possible actions available on the selected columns.
+     */
+    @RequestMapping(value = "/api/transform/actions/multi_columns", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get all actions the selected columns.",
+            notes = "Returns all actions for the selected columns..")
+    @Timed
+    public Stream<ActionForm> multiColumnsActions() {
+        return toStream(ActionForm.class, mapper, getCommand(MultiColumnsActions.class));
+    }
+
+    /**
      * Get the suggested action dynamic params. Dynamic params depends on the context (dataset / preparation / actual
      * transformations)
      */

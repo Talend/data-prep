@@ -68,6 +68,17 @@ describe('Datagrid external service', () => {
             // then
             expect(gridMock.onScroll.subscribe).toHaveBeenCalled();
         }));
+
+	    it('should reset selected index', inject((DatagridExternalService) => {
+		    // when
+		    DatagridExternalService.init(gridMock);
+
+		    // then
+		    expect(DatagridExternalService.lastSelectedTab).toBe(null);
+		    expect(DatagridExternalService.lastSelectedColumn).toBe(null);
+		    expect(DatagridExternalService.lastSelectedColumnsNumber).toBe(null);
+		    expect(DatagridExternalService.lastSelectedLine).toBe(null);
+	    }));
     });
 
     describe('update grid range index', () => {

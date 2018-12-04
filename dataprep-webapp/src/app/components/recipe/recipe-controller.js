@@ -10,6 +10,9 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+
+import { SCOPE } from '../../services/playground/playground-service.js';
+
 const CLUSTER_TYPE = 'CLUSTER';
 
 /**
@@ -354,9 +357,19 @@ export default class RecipeCtrl {
 	 * @description Update a step parameters in the loaded preparation
 	 */
 	updateStep(step, newParams) {
-		return this.PlaygroundService.updateStep(step, newParams)
+		const params = { ...newParams };
+		// With multi_columns scope we need to update selected columns to be in the same situation
+		// from the step creation
+		if (step.actionParameters.parameters.scope === SCOPE.MULTI_COLUMNS) {
+			params.column_ids = this.state.playground.grid.selectedColumns.map(col => col.id);
+			params.column_names = this.state.playground.grid.selectedColumns.map(col => col.name);
+		}
+		return this.PlaygroundService.updateStep(step, params)
 			.then(() => {
 				this.showModal = {};
+			})
+			.catch(() => {
+				this.MessageService.error('STEP_ERROR_TITLE', 'MULTI_COLUMNS_STEP_ERROR');
 			});
 	}
 
@@ -422,6 +435,13 @@ export default class RecipeCtrl {
 	select(step) {
 		this._toggleDynamicParams(step);
 		this._toggleSpecificParams(step);
+		const { scope } = step.actionParameters.parameters;
+		if (scope === SCOPE.MULTI_COLUMNS) {
+			this._selectMultiColumnsAction(step);
+		}
+		else {
+			this._selectColumnAction(step);
+		}
 	}
 
 	_toggleDynamicParams(step) {
@@ -437,6 +457,23 @@ export default class RecipeCtrl {
 			this.StateService.setStepInEditionMode(step);
 			this.StateService.setLookupVisibility(true);
 			this.LookupService.loadFromStep(step);
+		}
+	}
+
+	_selectMultiColumnsAction(step) {
+		const columns = this.state.playground.data.metadata.columns;
+		const stepColumns = step.actionParameters.parameters.column_ids;
+		const tmpSelectedColumn = columns.filter(col => stepColumns.includes(col.id));
+		this.StateService.setGridSelection(tmpSelectedColumn);
+	}
+
+	_selectColumnAction(step) {
+		const selectedColumn = this.state.playground
+			.data
+			.metadata
+			.columns.find(col => col.id === step.actionParameters.parameters.column_id);
+		if (selectedColumn != null) {
+			this.StateService.setGridSelection([selectedColumn]);
 		}
 	}
 

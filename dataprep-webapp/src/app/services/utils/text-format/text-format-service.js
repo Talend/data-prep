@@ -11,7 +11,7 @@
 
  ============================================================================*/
 
-import _ from 'lodash';
+import { find, forEach } from 'lodash';
 import moment from 'moment-jdateformatparser';
 
 const SPECIAL_JAVA_PATTERNS = [
@@ -87,7 +87,7 @@ export default function TextFormatService() {
 			addTrailingAndLeadingSpacesDivs,
 		];
 
-		_.forEach(constraints, function (constraintFn) {
+		forEach(constraints, function (constraintFn) {
 			value = constraintFn(value);
 		});
 
@@ -212,7 +212,7 @@ export default function TextFormatService() {
 		// we save those escaped parts, convert the pattern and replace the parts
 		// that should be escaped
 		const patternEscapedParts = pattern.match(/\[.*\]/g);
-		const patternToApply = _.find(SPECIAL_JAVA_PATTERNS, { java: pattern });
+		const patternToApply = find(SPECIAL_JAVA_PATTERNS, { java: pattern });
 		pattern = patternToApply ? patternToApply.js : moment().toMomentFormatString(pattern);
 		let escapedPartIndex = 0;
 		pattern = pattern.replace(/\[.*\]/g, () => {

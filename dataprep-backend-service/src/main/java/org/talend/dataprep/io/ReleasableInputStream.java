@@ -16,8 +16,6 @@ package org.talend.dataprep.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +49,7 @@ public class ReleasableInputStream extends InputStream {
     }
 
     @Override
-    public int read(@Nonnull byte[] bytes) throws IOException {
+    public int read(byte[] bytes) throws IOException {
         try {
             int read = delegate.read(bytes);
             if (read < 0) {
@@ -65,7 +63,7 @@ public class ReleasableInputStream extends InputStream {
     }
 
     @Override
-    public int read(@Nonnull byte[] bytes, int i, int i1) throws IOException {
+    public int read(byte[] bytes, int i, int i1) throws IOException {
         try {
             int read = delegate.read(bytes, i, i1);
             if (read < 0) {

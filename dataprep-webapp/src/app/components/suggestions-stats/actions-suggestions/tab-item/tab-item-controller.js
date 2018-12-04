@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import { find } from 'lodash';
+import { SCOPE } from '../../../../services/playground/playground-service.js';
 
 const SUGGESTIONS = 'suggestions';
 const FILTERED_COLUMN = 'column_filtered';
@@ -42,6 +43,12 @@ export default function TabItemCtrl(state, TransformationService) {
 		}
 		return state.playground.grid.selectedColumns.length === 1;
 	}
+
+	function getSelectedColumnsCount() {
+		const { selectedColumns } = state.playground.grid;
+		return (selectedColumns && selectedColumns.length) || 0;
+	}
+
 
 	/**
 	 * @ngdoc method
@@ -85,14 +92,22 @@ export default function TabItemCtrl(state, TransformationService) {
 	 */
 	vm.shouldRender = function () {
 		switch (vm.scope) {
-		case 'dataset':
+		case SCOPE.DATASET:
 			return true;
-		case 'column':
-			return vm.state.playground.grid.selectedColumns &&
-				vm.state.playground.grid.selectedColumns.length > 0;
-		case 'line':
+		case SCOPE.COLUMN:
+			return !!getSelectedColumnsCount();
+		case SCOPE.LINE:
 			return !!vm.state.playground.grid.selectedLine;
 		}
+	};
+
+
+	vm.getFilteringScope = function () {
+		const scope = vm.scope;
+		if (scope === SCOPE.COLUMN && getSelectedColumnsCount() > 1) {
+			return SCOPE.MULTI_COLUMNS;
+		}
+		return scope;
 	};
 
 	/**
@@ -103,7 +118,7 @@ export default function TabItemCtrl(state, TransformationService) {
 	 * @returns {Object} The appropriated state
 	 */
 	vm.getSuggestionsState = function () {
-		return vm.state.playground.suggestions[vm.scope];
+		return vm.state.playground.suggestions[vm.getFilteringScope()];
 	};
 
 	/**

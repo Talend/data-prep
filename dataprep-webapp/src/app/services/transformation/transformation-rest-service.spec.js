@@ -39,7 +39,7 @@ describe('Transformation Rest Service', () => {
                 parameters: [{ name: 'column_name', type: 'string', default: '' }],
             },
         ];
-        
+
         it('should get transformations on column scope', inject((RestURLs, TransformationRestService) => {
             // given
             const column = {
@@ -62,7 +62,7 @@ describe('Transformation Rest Service', () => {
             // then
             expect(response).toEqual(result);
         }));
-        
+
         it('should get transformations on line scope', inject((RestURLs, TransformationRestService) => {
             // given
             let response = null;
@@ -79,7 +79,7 @@ describe('Transformation Rest Service', () => {
             // then
             expect(response).toEqual(result);
         }));
-        
+
         it('should get transformations on dataset scope', inject((RestURLs, TransformationRestService) => {
             // given
             let response = null;
@@ -97,7 +97,7 @@ describe('Transformation Rest Service', () => {
             expect(response).toEqual(result);
         }));
     });
-    
+
     describe('suggestions', () => {
         const result = [
             {
@@ -223,13 +223,12 @@ describe('Transformation Rest Service', () => {
         it('should fetch the dataset transformations', inject(($rootScope, TransformationRestService, RestURLs) => {
             // given
             let response = null;
-            const datasetId = '4354bf2543a514c25';
             $httpBackend
-                .expectGET(RestURLs.datasetUrl + '/' + datasetId + '/actions')
+                .expectGET(RestURLs.datasetUrl + '/actions/lookup')
                 .respond(200, result);
 
             // when
-            TransformationRestService.getDatasetTransformations(datasetId)
+            TransformationRestService.getDatasetTransformations()
                 .then((resp) => {
                     response = resp.data;
                 });

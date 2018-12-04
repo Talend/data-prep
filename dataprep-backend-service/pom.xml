@@ -54,10 +54,6 @@
         </dependency>
         <!-- TALEND DEPENDENCIES -->
         <dependency>
-            <groupId>com.netflix.archaius</groupId>
-            <artifactId>archaius-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.talend.daikon</groupId>
             <artifactId>content-service-common</artifactId>
             <classifier>lib</classifier>
@@ -73,15 +69,7 @@
         </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
-            <artifactId>dataquality-statistics</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.talend.dataquality</groupId>
             <artifactId>dataquality-record-linkage</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.talend.dataquality</groupId>
-            <artifactId>dataquality-sampling</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.dataquality</groupId>
@@ -92,10 +80,6 @@
                     <artifactId>json</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.talend.dataquality</groupId>
-            <artifactId>dataquality-standardization</artifactId>
         </dependency>
         <dependency>
             <groupId>org.talend.daikon</groupId>
@@ -155,10 +139,6 @@
             <artifactId>hystrix-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
         </dependency>
@@ -180,15 +160,7 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-afterburner</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -217,25 +189,10 @@
         <dependency>
             <groupId>com.monitorjbl</groupId>
             <artifactId>xlsx-streamer</artifactId>
-            <!-- xerces version is too old to be compatible with apache tika 1.16-->
-            <exclusions>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -250,16 +207,8 @@
             <artifactId>hamcrest-json</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -282,11 +231,6 @@
             <groupId>org.talend.dataprep</groupId>
             <artifactId>dataprep-core</artifactId>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

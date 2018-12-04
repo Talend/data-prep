@@ -21,87 +21,18 @@
                     search-focused-section-index="$ctrl.state.search.focusedSectionIndex"
                     search-focused-item-index="$ctrl.state.search.focusedItemIndex" />
 </header>
-<nav class="playground-sub-header navbar">
-    <ul class="playground-sub-header-left nav navbar-nav">
-        <li ng-switch="!!$ctrl.isReadonly">
-            <talend-editable-text ng-switch-when="false"
-                                  edition-mode="$ctrl.nameEditionMode"
-                                  on-validate="$ctrl.confirmNameEdition(text)"
-                                  placeholder="ENTER_PREPARATION_NAME"
-                                  text="$ctrl.preparationName"
-                                  text-class="header-preparation-name"
-                                  text-title="{{$ctrl.preparationName}}">
-            </talend-editable-text>
-            <span ng-switch-when="true"
-                  title="{{$ctrl.preparationName}}"
-                  ng-bind="$ctrl.preparationName"
-                  class="header-preparation-name">
-            </span>
-        </li>
-        <li insertion-playground-sub-header-left></li>
-    </ul>
-    <ul class="playground-sub-header-center nav navbar-nav">
-        <li ng-if="$ctrl.isReadonly">
-            <span class="playground-header-icon"><icon name="'talend-lock'"/></span>
-            <span translate-once="READ_ONLY"></span>
-        </li>
-        <li class="preview" ng-if="$ctrl.preview">
-            <icon ng-if="!$ctrl.previewLoading" class="playground-header-icon" name="'talend-eye'"/>
-            <loader ng-if="$ctrl.previewLoading"></loader>
-            <span translate-once="PREVIEW"></span>
-        </li>
-    </ul>
-    <ul class="playground-sub-header-right nav navbar-nav">
-        <li insertion-playground-sub-header-right></li>
-        <li ng-if="!$ctrl.isReadonly">
-            <a id="playground-gear-icon"
-               class="btn btn-link"
-               role="button"
-               ng-click="$ctrl.onParameters()"
-               ng-class="{pressed: $ctrl.parametersVisible}"
-               translate-once-title="DATAGRID_PARAMETERS_GEAR">
-                <icon name="'talend-cog'"/>
-            </a>
-        </li>
-        <li ng-if="$ctrl.preparationPicker">
-            <a id="playground-preparation-picker-icon"
-               class="btn btn-link"
-               role="button"
-               ng-click="$ctrl.onPreparationPicker()"
-               translate-once-title="CHOOSE_PREPARATION_TO_APPLY">
-                <icon name="'talend-dataprep'"/>
-            </a>
-        </li>
-        <li ng-if="!$ctrl.isReadonly">
-            <a id="playground-lookup-icon"
-               class="btn btn-link"
-               role="button"
-               ng-click="$ctrl.onLookup()"
-               ng-class="{pressed: $ctrl.lookupVisible}"
-               translate-once-title="LOOKUP_ICON_TOOLTIP">
-                <loader ng-if="$ctrl.lookupLoading"></loader>
-                <icon ng-if="!$ctrl.lookupLoading" name="'talend-chain'"/>
-            </a>
-        </li>
-        <li id="export-data"
-            ng-if="$ctrl.enableExport"
-            insertion-export>
-            <export id="export-types-dropdown"/>
-        </li>
-        <li>
-            <history-control
-                    id="help-history"
-                    ng-if="!$ctrl.isReadonly">
-            </history-control>
-        </li>
-        <li>
-            <a id="playground-close-icon"
-               class="btn btn-link"
-               role="button"
-               ng-click="$ctrl.onClose()"
-               translate-once-title="CLOSE_ICON_TOOLTIP">
-                <icon name="'talend-cross'"/>
-            </a>
-        </li>
-    </ul>
-</nav>
+<pure-sub-header-bar
+    class="playground-sub-header"
+    ng-attr-title="$ctrl.title"
+    sub-title="$ctrl.subtitle"
+    on-go-back="$ctrl.onClose"
+    editable="!$ctrl.state.playground.isReadOnly"
+    on-edit="$ctrl.setNameInEditMode"
+    edit-mode="$ctrl.state.playground.nameEditionMode"
+    on-submit="$ctrl.editName"
+    on-cancel="$ctrl.cancelNameInEditMode"
+    loading="$ctrl.loading"
+    right-actions-loading="$ctrl.PlaygroundService.isSubheaderLoading()"
+    left="$ctrl.PlaygroundService.getSubheaderStatus()"
+    right="$ctrl.PlaygroundService.getSubheaderActions()">
+</pure-sub-header-bar>

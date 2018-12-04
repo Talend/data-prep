@@ -13,13 +13,17 @@
 
 import template from './playground.html';
 
+const ESC = 27;
+const Y = 89;
+const Z = 90;
+
 /**
  * @ngdoc directive
  * @name data-prep.playground.directive:Playground
  * @description This directive create the playground.
  * @restrict E
  */
-export default function Playground($timeout) {
+export default function Playground($timeout, HistoryService) {
 	'ngInject';
 
 	return {
@@ -32,15 +36,19 @@ export default function Playground($timeout) {
 			const container = iElement.find('.playground-container').eq(0);
 
 			container.bind('keydown', (e) => {
-				if (e.keyCode !== 27) {
-					return;
+				if (e.keyCode === ESC) {
+					if (ctrl.state.playground.nameEditionMode) {
+						container.focus();
+					}
+					else {
+						$timeout(ctrl.beforeClose);
+					}
 				}
-
-				if (e.target.nodeName === 'INPUT') {
-					container.focus();
+				else if (e.keyCode === Z && e.ctrlKey) {
+					HistoryService.undo();
 				}
-				else {
-					$timeout(ctrl.beforeClose);
+				else if (e.keyCode === Y && e.ctrlKey) {
+					HistoryService.redo();
 				}
 			});
 

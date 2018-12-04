@@ -50,8 +50,7 @@
 
   "_comment": "Inventory",
   "DATASET": "Jeu de données",
-  "DATASET_DETAILS": "créé par {{owner.displayName}}, créé {{created | TDPMoment}}, contient {{records}} ligne(s)",
-  "SEARCH_DATASET_DETAILS": "créé par {{owner.displayName}}, créé {{created | TDPMoment}}, contient {{records}} ligne(s)",
+  "DATASET_DETAILS": "créé par {{owner.displayName}}, créé {{created | TDPMoment}}",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}</span> - {{dataset.dataSetNbRow}} ligne(s), créé par {{owner.displayName}}, dernière modification : {{lastModificationDate | TDPMoment}}, contient {{steps.length - 1}} étape(s)",
   "SEARCH_PREPARATION_DETAILS": "Accueil{{folder.path}}, créé par {{owner.displayName}}, créé {{creationDate | TDPMoment}}, contient {{steps.length-1}} étape(s)",
   "FOLDER_DETAILS": "créé par {{owner.displayName}}, créé {{creationDate | TDPMoment}}, contient {{nbPreparations}} préparation(s)",
@@ -115,6 +114,8 @@
 
   "_comment": "Datagrid transformations",
   "RECIPE_ITEM_ON_COL": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> sur la colonne <div class=\"step-scope\" title=\"{{columnName}}\">{{columnName}}</div>",
+  "ONLY_2_SELECTED_COLS": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> sur les colonnes <div class=\"step-scope\" title=\"{{firstCol}}\">{{firstCol}}</div> et <div class=\"step-scope\" title=\"{{secondCol}}\">{{secondCol}}</div>",
+  "MORE_THAN_2_SELECTED_COLS": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> sur les colonnes <div class=\"step-scope\" title=\"{{firstCol}}\">{{firstCol}}</div>, <div class=\"step-scope\" title=\"{{secondCol}}\">{{secondCol}}</div> et <span title=\"restOfCols\">{{restOfColsNbr}}</span> autre(s).",
   "RECIPE_ITEM_ON_CELL": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> sur la cellule",
   "RECIPE_ITEM_ON_LINE": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> <span class=\"step-scope\">#{{rowId}}</span>",
   "RECIPE_ITEM_ON_DATASET": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> dans la table",
@@ -241,6 +242,8 @@
   "UNSUPPORTED_CONTENT": "Impossible de créer le jeu de données : le contenu n'est pas supporté. Essaye avec un fichier CSV ou XLS.",
   "DATASET_NAME_ALREADY_USED_TITLE": "Nom du jeu de données déjà utilisé",
   "DATASET_NAME_ALREADY_USED": "Le nom de ce jeu de données est déjà utilisé par un autre jeu de données",
+  "STEP_ERROR_TITLE": "Action non autorisée",
+  "MULTI_COLUMNS_STEP_ERROR": "Le nombre de colonnes sélectionnées doit être supérieur ou égale à deux",
 
   "_comment": "Transformation",
   "NO_CLUSTERS_ACTION_MSG": "Aucun cluster trouvé.",

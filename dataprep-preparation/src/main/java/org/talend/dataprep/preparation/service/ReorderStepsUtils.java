@@ -12,11 +12,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.transformation.actions.category.ActionScope;
 import org.talend.dataprep.transformation.actions.column.DeleteColumn;
+
+import org.talend.dataprep.transformation.actions.common.ActionsUtils;
 import org.talend.dataprep.transformation.actions.common.ImplicitParameters;
 
 @Component
 public class ReorderStepsUtils {
+
+    protected static final String COLUMN_IDS = "column_ids";
 
     /**
      * Checks if the reordering implied by the specified list of steps is legal.
@@ -28,31 +33,37 @@ public class ReorderStepsUtils {
      * @return either <tt>true</tt> if the specified list of steps have a step that use a column before it is created by
      * a following step or deleted by a preceding step or <t>false</t> otherwise
      */
-    boolean isStepOrderValid(List<AppendStep> appendSteps) {
+    boolean isStepOrderInvalid(List<AppendStep> appendSteps) {
         // Add all the columns created by steps as not available at the beginning
         final Set<String> notYetAvailableColumnsIds = appendSteps
                 .stream()
                 .flatMap(step -> step.getDiff().getCreatedColumns().stream())
                 .collect(Collectors.toSet());
 
-        return !appendSteps.stream().anyMatch(step -> {
+        return appendSteps.stream().noneMatch(step -> {
             for (Action action : step.getActions()) {
                 final Map<String, String> parameters = action.getParameters();
-                final String columnId = parameters.get(ImplicitParameters.COLUMN_ID.getKey());
+                String[] columnIds = { parameters.get(ImplicitParameters.COLUMN_ID.getKey()) };
+                if (ActionScope.MULTI_COLUMNS
+                        .getDisplayName()
+                        .equals(action.getParameters().get(ImplicitParameters.SCOPE.getKey()))) {
+                    columnIds = ActionsUtils.extractColumnsId(parameters.get(COLUMN_IDS));
+                }
 
                 // remove the created columns from not available columns
                 notYetAvailableColumnsIds.removeAll(step.getDiff().getCreatedColumns());
 
-                // if the columns is no
-                if (notYetAvailableColumnsIds.contains(columnId)) {
-                    return true;
-                }
+                for (String columnId : columnIds) {
+                    // if the columns is no
+                    if (notYetAvailableColumnsIds.contains(columnId)) {
+                        return true;
+                    }
 
-                // add removed columns to non available
-                if (StringUtils.equalsIgnoreCase(DeleteColumn.DELETE_COLUMN_ACTION_NAME, action.getName())) {
-                    notYetAvailableColumnsIds.add(columnId);
+                    // add removed columns to non available
+                    if (StringUtils.equalsIgnoreCase(DeleteColumn.DELETE_COLUMN_ACTION_NAME, action.getName())) {
+                        notYetAvailableColumnsIds.add(columnId);
+                    }
                 }
-
             }
             return false;
         });
@@ -107,4 +118,5 @@ public class ReorderStepsUtils {
             }
         });
     }
+
 }

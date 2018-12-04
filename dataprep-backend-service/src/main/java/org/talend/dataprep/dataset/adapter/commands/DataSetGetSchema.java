@@ -14,6 +14,7 @@ package org.talend.dataprep.dataset.adapter.commands;
 
 import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.command.Defaults;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.util.avro.AvroUtils;
@@ -53,7 +53,7 @@ public class DataSetGetSchema extends GenericCommand<Schema> {
         super(GenericCommand.DATASET_GROUP);
         this.dataSetId = dataSetId;
 
-        onError(Defaults.passthrough());
+        on(HttpStatus.NO_CONTENT).then(asNull());
     }
 
     @PostConstruct

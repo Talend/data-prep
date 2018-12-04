@@ -12,6 +12,7 @@
  ============================================================================*/
 
 import angular from 'angular';
+import i18n from '../../../../i18n/en';
 
 const dataset = {
 	id: '12ce6c32-bf80-41c8-92e5-66d70f22ec1f',
@@ -70,9 +71,7 @@ describe('InventoryItem component', () => {
 	beforeEach(angular.mock.module('data-prep.inventory-item'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			DATASET_DETAILS: 'owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} lines',
-		});
+		$translateProvider.translations('en', i18n);
 		$translateProvider.preferredLanguage('en');
 	}));
 
@@ -98,7 +97,7 @@ describe('InventoryItem component', () => {
 				return element;
 			};
 		}));
-		
+
 		describe('icon', () => {
 			it('should select CSV icon', () => {
 				// when
@@ -148,7 +147,7 @@ describe('InventoryItem component', () => {
 				expect(element.find('talend-file-selector').length).toBe(0);
 			});
 		});
-		
+
 		it('should display inventory icon without certification pin', () => {
 			// when
 			createElement(dataset);
@@ -172,7 +171,7 @@ describe('InventoryItem component', () => {
 		it('should display inventory details', inject(($filter) => {
 			// given
 			const momentize = $filter('TDPMoment');
-			const expectedDescription = `owned by anonymousUser, created ${momentize('1437020219741')}, contains  lines`;
+			const expectedDescription = `owned by anonymousUser, created ${momentize('1437020219741')}`;
 
 			// when
 			createElement(dataset);

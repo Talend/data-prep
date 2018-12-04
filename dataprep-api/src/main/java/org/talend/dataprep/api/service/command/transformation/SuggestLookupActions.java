@@ -17,10 +17,10 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -31,67 +31,64 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.action.ActionForm;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.service.command.common.ChainedCommand;
+import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.dataset.adapter.Dataset;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.transformation.actions.datablending.Lookup;
 import org.talend.dataprep.transformation.pipeline.ActionRegistry;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.netflix.hystrix.HystrixCommand;
 
 /**
  * Suggestion Lookup actions in addition to dataset actions.
- *
+ * <p>
  * Take the suggested column actions as input and add the lookup ones.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class SuggestLookupActions extends ChainedCommand<List<ActionForm>, DataSetMetadata> {
+public class SuggestLookupActions extends GenericCommand<Stream<ActionForm>> {
 
     @Autowired
     private ActionRegistry actionRegistry;
 
-    /**
-     * Constructor.
-     *
-     * @param dataSetMetadata the command to execute to get the DataSetMetadata.
-     */
-    public SuggestLookupActions(HystrixCommand<DataSetMetadata> dataSetMetadata) {
-        super(dataSetMetadata);
+    public SuggestLookupActions() {
+        super(DATASET_GROUP);
         execute(() -> new HttpGet(datasetServiceUrl + "/api/v1/datasets"));
         on(HttpStatus.OK).then(process());
-        // on error, @see getFallBack()
     }
 
     @Override
-    protected List<ActionForm> getFallback() {
-        return Collections.emptyList();
+    protected Stream<ActionForm> getFallback() {
+        return Stream.empty();
     }
 
     /**
      * @return the function that aggregates the SuggestColumnActions with the lookups.
      */
-    private BiFunction<HttpRequestBase, HttpResponse, List<ActionForm>> process() {
+    private BiFunction<HttpRequestBase, HttpResponse, Stream<ActionForm>> process() {
         return (request, response) -> {
-
+            final Locale locale = getLocale();
             try {
-                List<DataSetMetadata> dataSets = objectMapper.readValue(response.getEntity().getContent(),
-                        new TypeReference<List<DataSetMetadata>>() {
+                List<Dataset> dataSets =
+                        objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<Dataset>>() {
+
                         });
 
-                return dataSets.stream().map(dataset -> {
-                    Lookup lookup = (Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME);
-                    return lookup.adapt(dataset).getActionForm(getLocale());
-                }).collect(Collectors.toList());
+                return dataSets
+                        .stream()
+                        .map(dataset -> new DataSetMetadata(dataset.getId(), dataset.getLabel(), dataset.getOwner(),
+                                dataset.getCreated(), dataset.getUpdated(), null, null))
+                        .map(dataSetMetadata -> {
+                            final Lookup lookup = ((Lookup) actionRegistry.get(Lookup.LOOKUP_ACTION_NAME));
+                            return lookup.adapt(dataSetMetadata).getActionForm(locale);
+                        });
             } catch (IOException e) {
                 throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e);
             } finally {
                 request.releaseConnection();
             }
-
         };
-
     }
 
 }

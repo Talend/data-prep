@@ -11,9 +11,7 @@
 
   ============================================================================*/
 
-const LINE = 'line';
-const COLUMN = 'column';
-const DATASET = 'dataset';
+import { SCOPE } from '../../services/playground/playground-service.js';
 
 /**
  * @ngdoc service
@@ -23,9 +21,10 @@ const DATASET = 'dataset';
  * {@link data-prep.services.transformation.service:TransformationService TransformationService} must be the only entry point for transformation</b>
  */
 export default class TransformationRestService {
-	constructor($http, RestURLs) {
+	constructor($http, $q, RestURLs) {
 		'ngInject';
 		this.$http = $http;
+		this.$q = $q;
 		this.RestURLs = RestURLs;
 	}
 
@@ -34,11 +33,10 @@ export default class TransformationRestService {
      * @name getLookupActions
      * @methodOf data-prep.services.transformation.service:TransformationRestService
      * @description Get the dataset actions
-     * @param {string} datasetId The dataset id
      * @returns {Promise} The GET promise
      */
-	getDatasetTransformations(datasetId) {
-		return this.$http.get(`${this.RestURLs.datasetUrl}/${datasetId}/actions`);
+	getDatasetTransformations() {
+		return this.$http.get(`${this.RestURLs.datasetUrl}/actions/lookup`);
 	}
 
     /**
@@ -51,15 +49,23 @@ export default class TransformationRestService {
      * @returns {Promise} The promise
      */
 	getTransformations(scope, entity) {
+		const queries = [];
+
 		switch (scope) {
-		case LINE:
-		case DATASET:
-			return this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`)
-                .then(response => response.data);
-		case COLUMN:
-			return this.$http.post(`${this.RestURLs.transformUrl}/actions/${scope}`, entity)
-                .then(response => response.data);
+		case SCOPE.MULTI_COLUMNS:
+			queries.push(this.$http.get(`${this.RestURLs.transformUrl}/actions/${SCOPE.MULTI_COLUMNS}`));
+			queries.push(this.$http.post(`${this.RestURLs.transformUrl}/actions/${SCOPE.COLUMN}`, entity));
+			break;
+		case SCOPE.DATASET:
+		case SCOPE.LINE:
+			queries.push(this.$http.get(`${this.RestURLs.transformUrl}/actions/${scope}`));
+			break;
+		case SCOPE.COLUMN:
+			queries.push(this.$http.post(`${this.RestURLs.transformUrl}/actions/${scope}`, entity));
+			break;
 		}
+
+		return this.$q.all(queries).then(response => [].concat(...response.map(r => r.data)));
 	}
 
     /**

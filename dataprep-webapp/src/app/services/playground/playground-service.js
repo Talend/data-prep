@@ -32,17 +32,24 @@
  */
 
 import { map } from 'lodash';
+import Action from '@talend/react-components/lib/Actions/Action';
 import {
 	PLAYGROUND_PREPARATION_ROUTE,
 	HOME_DATASETS_ROUTE,
 	HOME_PREPARATIONS_ROUTE,
 } from '../../index-route';
+
 // actions scopes
-const LINE = 'line';
-const DATASET = 'dataset';
+export const SCOPE = {
+	COLUMN: 'column',
+	DATASET: 'dataset',
+	MULTI_COLUMNS: 'multi_columns',
+	LINE: 'line',
+};
 // events
 export const EVENT_LOADING_START = 'talend.loading.start';
 export const EVENT_LOADING_STOP = 'talend.loading.stop';
+
 
 export default function PlaygroundService(
 	$state,
@@ -71,6 +78,7 @@ export default function PlaygroundService(
 	OnboardingService,
 	MessageService,
 	TitleService,
+	LookupService,
 ) {
 	'ngInject';
 
@@ -119,8 +127,115 @@ export default function PlaygroundService(
 
 		// parameters
 		changeDatasetParameters,
+
+		// subheader
+		getPreparationChooserAction,
+		getDatasetParametersAction,
+		getLookupAction,
+		getUndoAction,
+		getRedoAction,
+		toggleLookupPanel,
+
+		getSubheaderActions,
+		getSubheaderStatus,
+		isSubheaderLoading,
 	};
 	return service;
+
+
+	function getSubheaderStatus() {
+		return PreviewService.previewInProgress() ? [{
+			id: 'playground-preview',
+			label: $translate.instant('PREVIEW'),
+			inProgress: state.playground.isPreviewLoading,
+			disabled: true,
+			icon: 'talend-eye',
+			bsStyle: 'link',
+		}] : [];
+	}
+
+	function isSubheaderLoading() {
+		return !state.export.exportTypes.length;
+	}
+
+	function getPreparationChooserAction() {
+		return $stateParams.datasetid ? [{
+			id: 'playground-preparation-chooser',
+			icon: 'talend-dataprep',
+			tooltipLabel: $translate.instant('CHOOSE_PREPARATION_TO_APPLY'),
+			hideLabel: true,
+			bsStyle: 'link',
+			onClick: () => $timeout(() => StateService.setIsPreprationPickerVisible(true)),
+		}] : [];
+	}
+
+	function getDatasetParametersAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-metadata',
+			label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
+			icon: 'talend-cog',
+			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
+			active: state.playground.parameters.visible,
+			onClick: () => $timeout(StateService.toggleDatasetParameters),
+			inProgress: state.playground.lookup.loading,
+		}];
+	}
+
+	function getLookupAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-lookup',
+			label: $translate.instant('LOOKUP_ICON_TOOLTIP'),
+			icon: 'talend-chain',
+			displayMode: Action.DISPLAY_MODE_ICON_TOGGLE,
+			active: state.playground.lookup.visibility,
+			onClick: () => $timeout(toggleLookupPanel),
+		}];
+	}
+
+	function getUndoAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-undo',
+			icon: 'talend-undo',
+			tooltipLabel: $translate.instant('UNDO_ICON_TOOLTIP'),
+			hideLabel: true,
+			bsStyle: 'link',
+			disabled: !HistoryService.canUndo(),
+			onClick: () => $timeout(HistoryService.undo),
+		}];
+	}
+
+	function getRedoAction() {
+		return state.playground.isReadOnly ? [] : [{
+			id: 'playground-redo',
+			icon: 'talend-redo',
+			tooltipLabel: $translate.instant('REDO_ICON_TOOLTIP'),
+			hideLabel: true,
+			bsStyle: 'link',
+			disabled: !HistoryService.canRedo(),
+			onClick: () => $timeout(HistoryService.redo),
+		}];
+	}
+
+	function getSubheaderActions() {
+		return [
+			...getPreparationChooserAction(),
+			...getDatasetParametersAction(),
+			...getLookupAction(),
+			...getUndoAction(),
+			...getRedoAction(),
+		];
+	}
+
+	function toggleLookupPanel() {
+		if (state.playground.lookup.visibility) {
+			StateService.setLookupVisibility(false);
+			StateService.setStepInEditionMode(null);
+		}
+		else {
+			StateService.setLookupVisibility(true);
+			LookupService.initLookups();
+		}
+	}
 
 	/**
 	 * Helper to emit start loader event
@@ -528,7 +643,7 @@ export default function PlaygroundService(
 		const previousHead = StepUtilsService.getLastStep(state.playground.recipe);
 
 		return getCurrentPreparation()
-			// append step
+		// append step
 			.then(preparation => PreparationService.appendStep(preparation.id, actions))
 			// update recipe and datagrid
 			.then(() => {
@@ -572,6 +687,11 @@ export default function PlaygroundService(
 			return $q.when();
 		}
 
+		const { selectedColumns } = state.playground.grid;
+		if (step.actionParameters.parameters.scope === SCOPE.MULTI_COLUMNS &&
+			(selectedColumns == null || selectedColumns.length < 2)) {
+			return Promise.reject();
+		}
 		startLoader();
 
 		// save the head before transformation for undo
@@ -674,9 +794,9 @@ export default function PlaygroundService(
 				currentStepId,
 				nextParentStepId,
 			)
-				// update recipe and datagrid (due to backend implementation:
-				// getContent should be called first so that updated stepRowMetadata
-				// is available for getContent)
+			// update recipe and datagrid (due to backend implementation:
+			// getContent should be called first so that updated stepRowMetadata
+			// is available for getContent)
 				.then(updatePreparationDatagrid)
 				.then(this.updatePreparationDetails)
 				// add entry in history for undo/redo
@@ -791,7 +911,7 @@ export default function PlaygroundService(
 			const line = state.playground.grid.selectedLine;
 			let stepParameters = { ...params };
 			switch (scope) {
-			case DATASET:
+			case SCOPE.DATASET: {
 				stepParameters.scope = scope;
 
 				if (state.playground.filter.applyTransformationOnFilters) {
@@ -804,7 +924,8 @@ export default function PlaygroundService(
 					{ action: action.name, parameters: stepParameters },
 				];
 				break;
-			case LINE:
+			}
+			case SCOPE.LINE: {
 				stepParameters.scope = scope;
 				stepParameters.row_id = line && line.tdpId;
 
@@ -818,16 +939,17 @@ export default function PlaygroundService(
 					{ action: action.name, parameters: stepParameters },
 				];
 				break;
+			}
 			default:
-				actions = map(
-					state.playground.grid.selectedColumns,
-					(column) => {
-						let parameters = { ...params };
-						parameters.scope = scope;
-						parameters.column_id = column && column.id;
-						parameters.column_name = column && column.name;
-						parameters.row_id = line && line.tdpId;
-
+				if (action.actionScope && action.actionScope.includes(SCOPE.MULTI_COLUMNS)) {
+					let parameters = { ...params };
+					parameters.column_ids = state.playground.grid.selectedColumns.map(col => col.id);
+					if (parameters.column_ids.length < 2) {
+						MessageService.error('STEP_ERROR_TITLE', 'MULTI_COLUMNS_STEP_ERROR');
+					}
+					else {
+						parameters.column_names = state.playground.grid.selectedColumns.map(col => col.name);
+						parameters.scope = SCOPE.MULTI_COLUMNS;
 						if (
 							state.playground.filter
 								.applyTransformationOnFilters
@@ -837,9 +959,32 @@ export default function PlaygroundService(
 							);
 							parameters = { ...parameters, filter: stepFilters };
 						}
-						return { action: action.name, parameters };
-					},
-				);
+						actions = [{ action: action.name, parameters }];
+					}
+				}
+				else {
+					actions = map(
+						state.playground.grid.selectedColumns,
+						(column) => {
+							let parameters = { ...params };
+							parameters.scope = scope;
+							parameters.column_id = column && column.id;
+							parameters.column_name = column && column.name;
+							parameters.row_id = line && line.tdpId;
+
+							if (
+								state.playground.filter
+									.applyTransformationOnFilters
+							) {
+								const stepFilters = TqlFilterAdapterService.toTQL(
+									state.playground.filter.gridFilters,
+								);
+								parameters = { ...parameters, filter: stepFilters };
+							}
+							return { action: action.name, parameters };
+						},
+					);
+				}
 				break;
 			}
 			return service.appendStep(actions);

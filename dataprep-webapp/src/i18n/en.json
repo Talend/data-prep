@@ -50,8 +50,7 @@
 
   "_comment": "Inventory",
   "DATASET": "Dataset",
-  "DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
-  "SEARCH_DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}, contains {{records}} row(s)",
+  "DATASET_DETAILS": "owned by {{owner.displayName}}, created {{created | TDPMoment}}",
   "PREPARATION_DETAILS": "<span class=\"dataset-name\" title=\"{{dataset.dataSetName}}\">{{dataset.dataSetName}}</span> - {{dataset.dataSetNbRow}} row(s), owned by {{owner.displayName}}, last change: {{lastModificationDate | TDPMoment}}, contains {{steps.length - 1}} step(s)",
   "SEARCH_PREPARATION_DETAILS": "Home{{folder.path}}, owned by {{owner.displayName}}, created {{creationDate | TDPMoment}}, contains {{steps.length-1}} step(s)",
   "FOLDER_DETAILS": "owned by {{owner.displayName}}, created {{creationDate | TDPMoment}}, contains {{nbPreparations}} preparation(s)",
@@ -115,6 +114,8 @@
 
   "_comment": "Datagrid transformations",
   "RECIPE_ITEM_ON_COL": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> on column <div class=\"step-scope\" title=\"{{columnName}}\">{{columnName}}</div>",
+  "ONLY_2_SELECTED_COLS": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> on columns <div class=\"step-scope\" title=\"{{firstCol}}\">{{firstCol}}</div> and <div class=\"step-scope\" title=\"{{secondCol}}\">{{secondCol}}</div>",
+  "MORE_THAN_2_SELECTED_COLS": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> on columns <div class=\"step-scope\" title=\"{{firstCol}}\">{{firstCol}}</div>, <div class=\"step-scope\" title=\"{{secondCol}}\">{{secondCol}}</div> and <span title=\"restOfCols\">{{restOfColsNbr}}</span> other(s).",
   "RECIPE_ITEM_ON_CELL": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> on cell",
   "RECIPE_ITEM_ON_LINE": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> <span class=\"step-scope\">#{{rowId}}</span>",
   "RECIPE_ITEM_ON_DATASET": "<span class=\"step-number\">{{index}}</span> <span class=\"step-label\">{{label}}</span> on table",
@@ -241,6 +242,8 @@
   "UNSUPPORTED_CONTENT": "Unable to create the dataset: the content is not supported. Try with a CSV or XLS file.",
   "DATASET_NAME_ALREADY_USED_TITLE": "Dataset name already used",
   "DATASET_NAME_ALREADY_USED": "This Dataset name is already used by an other dataset",
+  "STEP_ERROR_TITLE": "Step error",
+  "MULTI_COLUMNS_STEP_ERROR": "The number of selected columns must be greater than or equal to two",
 
   "_comment": "Transformation",
   "NO_CLUSTERS_ACTION_MSG": "No clusters found.",

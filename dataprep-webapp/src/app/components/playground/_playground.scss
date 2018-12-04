@@ -30,7 +30,7 @@ $slide-action-background: $base-background-color;
 
 $navigation-border: 1px;
 $navigation-height: $navbar-height;
-$sub-header-height: $navbar-height;
+$sub-header-height: 70px;
 $navigation-all-height: ($navigation-height + $navigation-border + $sub-header-height);
 $playground-height: '100vh - ' + ($navigation-all-height);
 

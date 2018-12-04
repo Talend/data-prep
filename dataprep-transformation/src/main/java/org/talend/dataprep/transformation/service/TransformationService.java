@@ -747,6 +747,23 @@ public class TransformationService extends BaseTransformationService {
     }
 
     /**
+     * Returns all {@link ActionDefinition actions} data prep may apply to selected columns.
+     *
+     * @return A list of {@link ActionDefinition} that can be applied to selected columns.
+     */
+    @RequestMapping(value = "/actions/multi_columns", method = GET)
+    @ApiOperation(value = "Return all actions on the selected columns.",
+            notes = "This operation returns an array of actions.")
+    @ResponseBody
+    public Stream<ActionForm> multiColumnsActions() {
+        return actionRegistry
+                .findAll() //
+                .filter(action -> action.acceptScope(ScopeCategory.MULTI_COLUMNS)) //
+                .map(action -> action.adapt(ScopeCategory.MULTI_COLUMNS))
+                .map(ad -> ad.getActionForm(getLocale()));
+    }
+
+    /**
      * List all transformation related error codes.
      */
     @RequestMapping(value = "/transform/errors", method = RequestMethod.GET)

@@ -19,6 +19,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.dataset.event.DatasetImportedEvent;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
+import org.talend.dataprep.metrics.LogTimed;
 
 /**
  * Synchronous analysis of a dataset used for unit / integration tests.
@@ -37,12 +38,14 @@ public class SyncBackgroundAnalysis {
      */
 
     @EventListener
+    @LogTimed
     public void onEvent(DatasetImportedEvent event) {
         String dataSetId = event.getSource();
         backgroundAnalysis.analyze(dataSetId);
     }
 
     @EventListener
+    @LogTimed
     public void onEvent(DatasetUpdatedEvent event) {
         String dataSetId = event.getSource().getId();
         backgroundAnalysis.analyze(dataSetId);

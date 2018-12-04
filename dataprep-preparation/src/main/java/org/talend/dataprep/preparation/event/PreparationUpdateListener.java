@@ -18,6 +18,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
+import org.talend.dataprep.metrics.LogTimed;
 
 /**
  * <p>
@@ -37,6 +38,7 @@ public class PreparationUpdateListener {
     private PreparationEventUtil preparationEventUtil;
 
     @EventListener
+    @LogTimed
     public void onUpdate(DatasetUpdatedEvent event) {
         preparationEventUtil.performUpdateEvent(event.getSource().getId());
     }

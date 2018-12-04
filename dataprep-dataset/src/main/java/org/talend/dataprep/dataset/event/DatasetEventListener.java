@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.metrics.LogTimed;
 
 @Component
 @ConditionalOnProperty(name = "dataprep.event.listener", havingValue = "spring")
@@ -25,11 +26,13 @@ public class DatasetEventListener {
     private DatasetEventUtil datasetEventUtil;
 
     @EventListener
+    @LogTimed
     public void onUpdate(DatasetUpdatedEvent event) {
         datasetEventUtil.performUpdateEvent(event.getSource().getId());
     }
 
     @EventListener
+    @LogTimed
     public void onInsert(DatasetImportedEvent event) {
         datasetEventUtil.performImportEvent(event.getSource());
     }

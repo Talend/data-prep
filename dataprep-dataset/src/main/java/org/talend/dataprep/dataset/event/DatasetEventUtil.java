@@ -35,13 +35,11 @@ public class DatasetEventUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetEventUtil.class);
 
     public void performUpdateEvent(String datasetId) {
-        LOGGER.info("Performing update event for dataset {}", datasetId);
         this.cleanDatasetCache(datasetId);
         this.analyseDataset(datasetId);
     }
 
     public void performImportEvent(String datasetId) {
-        LOGGER.info("Performing import event for dataset {}", datasetId);
         this.analyseDataset(datasetId);
     }
 

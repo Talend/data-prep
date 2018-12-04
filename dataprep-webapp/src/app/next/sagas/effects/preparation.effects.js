@@ -5,14 +5,6 @@ import { REDIRECT_WINDOW } from '../../constants/actions';
 
 export const DEFAULT_FOLDER_ID = 'Lw==';
 
-export function* cancelRename(payload) {
-	const preparations = yield select(state => state.cmf.collections.get('preparations'));
-	const updated = preparations.update(
-		preparations.findIndex(val => val.get('id') === payload),
-		val => val.set('display', 'text'),
-	);
-	yield put(actions.collections.addOrReplace('preparations', updated));
-}
 
 export function* create(payload) {
 	const folderId = (payload && payload.folderId) || DEFAULT_FOLDER_ID;

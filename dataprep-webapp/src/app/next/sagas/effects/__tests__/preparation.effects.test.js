@@ -1,34 +1,11 @@
-import { all, call } from 'redux-saga/effects';
 import { HTTPError } from '@talend/react-cmf/lib/sagas/http';
-import { Map } from 'immutable';
 import * as effects from '../../effects/preparation.effects';
-import {
-	IMMUTABLE_STATE,
-	IMMUTABLE_SETTINGS,
-	API_PAYLOAD,
-	API_RESPONSE,
-} from './preparation.effects.mock';
+import { IMMUTABLE_SETTINGS } from './preparation.effects.mock';
 import http from '../http';
-import PreparationService from '../../../services/preparation.service';
 import { REDIRECT_WINDOW } from '../../../constants/actions';
 
 
 describe('preparation', () => {
-	describe('cancelRename', () => {
-		it('should update preparations in the cmf store', () => {
-			const preparation = 'id0';
-			const gen = effects.cancelRename(preparation);
-			expect(gen.next().value.SELECT).toBeDefined();
-			const effect = gen.next(IMMUTABLE_STATE).value.PUT.action;
-			expect(effect.type).toBe('REACT_CMF.COLLECTION_ADD_OR_REPLACE');
-			expect(effect.collectionId).toBe('preparations');
-			const prepUpdated = effect.data.find(prep => prep.get('id') === preparation);
-			expect(prepUpdated.get('display')).toEqual('text');
-
-			expect(gen.next().done).toBeTruthy();
-		});
-	});
-
 	describe('create', () => {
 		it('should open preparation with default folder id', () => {
 			const payload = {

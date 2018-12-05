@@ -13,16 +13,7 @@
 
 package org.talend.dataprep.qa.step;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
-
+import cucumber.api.java.en.Then;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -31,7 +22,14 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.ExcelComparator;
 import org.talend.dataprep.qa.util.FileComparator;
 
-import cucumber.api.java.en.Then;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
+
+import static org.junit.Assert.fail;
 
 /**
  * Store all steps related to files and temporary files.
@@ -56,13 +54,10 @@ public class FileStep extends DataPrepStep {
             if (FileSystems.getDefault().getPathMatcher("glob:*.xlsx").matches(tempFile.getFileName())) {
                 if (!ExcelComparator.compareTwoFile(new XSSFWorkbook(tempFileStream),
                         new XSSFWorkbook(expectedFileStream))) {
-                    fail("Temporary file " + temporaryFilename + " isn't the same as the expected file "
-                            + expectedFilename);
+                    failFileComparatorAlert(temporaryFilename, expectedFilename, tempFile);
                 }
             } else if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
-
-                fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename
-                        + ":\n" + String.join("\n", Files.readAllLines(tempFile)));
+                failFileComparatorAlert(temporaryFilename, expectedFilename, tempFile);
             }
         }
     }
@@ -76,8 +71,14 @@ public class FileStep extends DataPrepStep {
         Path tempFile = context.getTempFile(temporaryFilename).toPath();
         try (InputStream tempFileStream = Files.newInputStream(tempFile);
                 InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {
-
-            assertTrue(FileComparator.doesFilesContainSameLines(expectedFileStream, tempFileStream));
+            if (!FileComparator.doesFilesContainSameLines(expectedFileStream, tempFileStream)) {
+                failFileComparatorAlert(temporaryFilename, expectedFilename, tempFile);
+            }
         }
+    }
+
+    private void  failFileComparatorAlert(String temporaryFilename, String expectedFilename, Path tempFile) throws IOException {
+        fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename
+                + ":\n" + String.join("\n", Files.readAllLines(tempFile)));
     }
 }

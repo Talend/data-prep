@@ -131,7 +131,7 @@ describe('Settings service', () => {
 
 		it('should return false if provider has an incorrect value', inject((appSettings, SettingsService) => {
 			appSettings.context = {
-				provider: 'cestladansedescanads',
+				provider: 'cestladansedescanards',
 			};
 
 			expect(SettingsService.isCatalog()).toBeFalsy();

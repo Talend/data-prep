@@ -65,7 +65,6 @@ public class ActionStep extends DataPrepStep {
             String datasetId = context.getDatasetId(DatasetNamesuffixed);
             action.parameters.put(LOOKUP_DS_ID, datasetId);
             context.storeAction("", action, preparationName);
-
         }
 
         api.addAction(prepId, action).then().statusCode(200).log().ifValidationFails();

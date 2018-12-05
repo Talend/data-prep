@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -39,11 +37,11 @@ public class TransformerFactory {
 
     /**
      * Generate the wanted Transformer.
-     * 
+     *
      * @return the Transformer.
      * @param configuration A {@link Configuration configuration} for a transformation.
      */
-    public Transformer get(@Nonnull Configuration configuration) {
+    public Transformer get(Configuration configuration) {
         List<Transformer> electedTransformers = context
                 .getBeansOfType(Transformer.class)
                 .values()

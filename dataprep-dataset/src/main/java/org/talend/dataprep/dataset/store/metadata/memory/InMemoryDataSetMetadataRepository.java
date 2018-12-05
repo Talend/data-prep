@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +67,7 @@ public class InMemoryDataSetMetadataRepository extends ObjectDataSetMetadataRepo
      *
      * @param zeObject The object where non transient fields will be nullified.
      */
-    void resetTransientValues(@Nullable Object zeObject) {
+    void resetTransientValues(Object zeObject) {
         if (zeObject != null) {
             Field[] fields = zeObject.getClass().getDeclaredFields();
             for (Field field : fields) {

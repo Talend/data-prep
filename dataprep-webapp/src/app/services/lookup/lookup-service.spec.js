@@ -345,8 +345,7 @@ describe('Lookup service', () => {
 				$rootScope.$digest();
 
 				//then
-				expect(TransformationRestService.getDatasetTransformations)
-					.toHaveBeenCalledWith(stateMock.playground.dataset.id);
+				expect(TransformationRestService.getDatasetTransformations).toHaveBeenCalled();
 				expect(StateService.setLookupDatasets).toHaveBeenCalledWith(datasetsToAdd);
 				expect(StateService.setLookupActions).toHaveBeenCalledWith(lookupActions);
 			}));
@@ -477,7 +476,7 @@ describe('Lookup service', () => {
 
 				// then
 				expect(DatasetListService.refreshDatasets).toHaveBeenCalled();
-				expect(TransformationRestService.getDatasetTransformations).toHaveBeenCalledWith(stateMock.playground.dataset.id);
+				expect(TransformationRestService.getDatasetTransformations).toHaveBeenCalled();
 				expect(LookupService.updateLookupDatasetsProperties).toHaveBeenCalledWith({ data: lookupActions });
 				expect(StateService.setLookupModalLoading).toHaveBeenCalledWith(false);
 			}));

@@ -19,3 +19,9 @@
     display: none;
   }
 }
+
+.tc-icon-toggle {
+  &:focus {
+    border-color: inherit;
+  }
+}

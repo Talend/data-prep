@@ -139,6 +139,45 @@ describe('Early Preview Service', () => {
                 parametersByColumn
             );
         }));
+
+	    it('should trigger a preview on multi_columns scope', inject(($timeout, PreviewService, EarlyPreviewService, RecipeService) => {
+		    // given
+		    stateMock.playground.grid.selectedColumns = [firstnameColumn, lastnameColumn];
+
+		    // when
+		    EarlyPreviewService.earlyPreview(transformation, 'multi_columns')(params);
+		    expect(PreviewService.getPreviewAddRecords).not.toHaveBeenCalled();
+		    $timeout.flush(700);
+
+		    // then
+		    const parametersByColumn = [
+			    {
+				    value: 'James',
+				    replace: 'Jimmy',
+				    scope: 'multi_columns',
+				    column_id: firstnameColumn.id,
+				    column_name: firstnameColumn.name,
+			    },
+			    {
+				    value: 'James',
+				    replace: 'Jimmy',
+				    scope: 'multi_columns',
+				    column_id: lastnameColumn.id,
+				    column_name: lastnameColumn.name,
+			    }
+		    ];
+
+		    expect(PreviewService.getPreviewAddRecords).toHaveBeenCalledWith(
+			    preparation.id,
+			    dataset.id,
+			    'replace_on_value',
+			    parametersByColumn
+		    );
+		    expect(RecipeService.earlyPreview).toHaveBeenCalledWith(
+			    transformation,
+			    parametersByColumn
+		    );
+	    }));
     });
 
     describe('cancel preview', () => {

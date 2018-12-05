@@ -56,7 +56,6 @@ export default class TransformationService {
 		if (fromCache) {
 			return this.$q.when(fromCache);
 		}
-
 		return this.TransformationRestService.getTransformations(scope, entity)
 			.then((response) => {
 				const allTransformations = this.TransformationUtilsService.adaptTransformations(response);
@@ -157,7 +156,6 @@ export default class TransformationService {
 					allCategories: adaptedCategories,
 					searchActionString: '',
 				};
-
 				this.StateService.setTransformations(scope, actions);
 			})
 			.finally(() => {

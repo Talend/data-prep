@@ -72,7 +72,7 @@ public class TransformationServiceTest extends TransformationServiceBaseTest {
     private PreparationRepository preparationRepository;
 
     @Before
-    public void customSetUp() throws Exception {
+    public void customSetUp() {
         contentCache.clear();
     }
 

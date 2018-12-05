@@ -381,14 +381,18 @@
     "SidePanel#default": {
       "actionIds": ["menu:preparations", "menu:datasets", "menu:datastores"]
     },
-    "FolderCreatorModal#default": {},
+    "FolderCreatorModal#default": {
+
+    },
     "HomeListView#datastores": {
       "hasTheme": true
     },
-    "HomeListView#datasets": {
+    "DatasetHomeListView#default": {
       "list": {
         "actions": {
-          "items": ["preparation:create", "dataset:edit", "dataset:delete"]
+          "items": [
+            "preparation:create"
+          ]
         }
       },
       "hasTheme": true
@@ -513,7 +517,10 @@
         },
         "actions": {
           "title": "preparation:open",
-          "left": ["preparation:add:open", "folder:add:open"],
+          "left": [
+            "preparation:add:open",
+            "folder:add:open"
+          ],
           "items": [
             "preparation:rename",
             "folder:remove:open",

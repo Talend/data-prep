@@ -2,9 +2,6 @@ package org.talend.dataprep.qa.util.export;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.qa.step.export.ExportSampleStep;
@@ -20,14 +17,12 @@ public class ExportParamAnalyzer {
     @Autowired
     private ExportSampleStepXLSX exportSampleStepXLSX;
 
-    @Nullable
-    public ExportType detectExportType(@NotNull Map<String, String> params) {
+    public ExportType detectExportType(Map<String, String> params) {
         String exportType = params.get(MandatoryParameters.EXPORT_TYPE.getName());
         return ExportType.getExportType(exportType);
     }
 
-    @Nullable
-    public ExportSampleStep getExporter(@NotNull ExportType exportType) {
+    public ExportSampleStep getExporter(ExportType exportType) {
         ExportSampleStep ret = null;
         switch (exportType) {
         case CSV:

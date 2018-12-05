@@ -16,8 +16,6 @@ package org.talend.dataprep.dataset.store.metadata;
 import java.util.Collections;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.metrics.Timed;
@@ -31,7 +29,7 @@ public interface DataSetMetadataRepository {
 
     /**
      * Returns <code>true</code> if at least one {@link DataSetMetadata} matches given filter.
-     * 
+     *
      * @param filter A TQL filter (i.e. storage-agnostic)
      * @return <code>true</code> if at least one {@link DataSetMetadata} matches <code>filter</code>.
      */
@@ -97,7 +95,6 @@ public interface DataSetMetadataRepository {
      * @return The {@link DataSetMetadata} with given <code>id</code> or null if non found.
      */
     @Timed
-    @Nullable
     DataSetMetadata get(String id);
 
     /**

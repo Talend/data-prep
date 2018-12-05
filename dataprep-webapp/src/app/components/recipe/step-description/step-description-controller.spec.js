@@ -10,6 +10,7 @@
  9 rue Pages 92150 Suresnes, France
 
  ============================================================================*/
+import i18n from '../../../../i18n/en.json';
 
 describe('Step Description controller', () => {
 	let createController;
@@ -18,16 +19,7 @@ describe('Step Description controller', () => {
 	beforeEach(angular.mock.module('data-prep.step-description'));
 
 	beforeEach(angular.mock.module('pascalprecht.translate', ($translateProvider) => {
-		$translateProvider.translations('en', {
-			RECIPE_ITEM_ON_COL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on column <div class="step-scope" title="{{columnName}}">{{columnName}}</div>',
-			RECIPE_ITEM_ON_CELL: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on cell',
-			RECIPE_ITEM_ON_LINE: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> <span class="step-scope">#{{rowId}}</span>',
-			RECIPE_ITEM_ON_DATASET: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> on table',
-			LOOKUP_STEP_DESCRIPTION: '<span class="step-number">{{index}}</span> <span class="step-label">{{label}}</span> done with dataset <div class="step-scope" title="{{lookupDsName}}">{{lookupDsName}}</div>. Join has been set between <div class="step-scope" title="{{mainColName}}">{{mainColName}}</div> and <div class="step-scope" title="{{lookupColName}}">{{lookupColName}}</div>. ',
-			ONLY_1_ADDED_COL: 'The column <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> has been added.',
-			ONLY_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div> and <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> have been added.',
-			MORE_THEN_2_ADDED_COLS: 'The columns <div class="step-scope" title="{{firstCol}}">{{firstCol}}</div>, <div class="step-scope" title="{{secondCol}}">{{secondCol}}</div> and <span title="{{restOfCols}}">{{restOfColsNbr}}</span> other(s) have been added.',
-		});
+		$translateProvider.translations('en', i18n);
 		$translateProvider.preferredLanguage('en');
 	}));
 
@@ -68,6 +60,72 @@ describe('Step Description controller', () => {
 
 			//then
 			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on column <div class="step-scope" title="col1">col1</div>');
+		});
+
+		it('should translate description on scope: multi_columns with 2 columns selected', () => {
+			//given
+			const ctrl = createController();
+			ctrl.index = 5;
+			ctrl.step = {
+				column: { id: ['0', '1'], name: ['col1', 'col2'] },
+				transformation: {
+					stepId: '13a24e8765ef4',
+					name: 'split',
+					label: 'Split',
+					category: 'split',
+					parameters: [{ name: 'pattern', type: 'string' }],
+					items: [],
+				},
+				actionParameters: {
+					action: 'split',
+					parameters: {
+						scope: 'multi_columns',
+						column_ids: ['0', '1'],
+						column_names: ['col1', 'col2'],
+						pattern: '/',
+					},
+				},
+			};
+
+			//when
+			ctrl.$onChanges();
+			scope.$digest();
+
+			//then
+			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on columns <div class="step-scope" title="col1">col1</div> and <div class="step-scope" title="col2">col2</div>');
+		});
+
+		it('should translate description on scope: multi_columns with more then 2 columns selected', () => {
+			//given
+			const ctrl = createController();
+			ctrl.index = 5;
+			ctrl.step = {
+				column: { id: ['0', '1', '3'], name: ['col1', 'col2', 'col3'] },
+				transformation: {
+					stepId: '13a24e8765ef4',
+					name: 'split',
+					label: 'Split',
+					category: 'split',
+					parameters: [{ name: 'pattern', type: 'string' }],
+					items: [],
+				},
+				actionParameters: {
+					action: 'split',
+					parameters: {
+						scope: 'multi_columns',
+						column_ids: ['0', '1', '3'],
+						column_names: ['col1', 'col2', 'col3'],
+						pattern: '/',
+					},
+				},
+			};
+
+			//when
+			ctrl.$onChanges();
+			scope.$digest();
+
+			//then
+			expect(ctrl.stepDescription).toBe('<span class="step-number">6</span> <span class="step-label">Split</span> on columns <div class="step-scope" title="col1">col1</div>, <div class="step-scope" title="col2">col2</div> and <span title="restOfCols">1</span> other(s).');
 		});
 
 		it('should translate description on scope: cell', () => {

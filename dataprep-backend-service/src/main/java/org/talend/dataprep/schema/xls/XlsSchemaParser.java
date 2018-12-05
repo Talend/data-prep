@@ -12,18 +12,36 @@
 
 package org.talend.dataprep.schema.xls;
 
-import static org.talend.dataprep.api.type.Type.*;
+import static org.talend.dataprep.api.type.Type.ANY;
+import static org.talend.dataprep.api.type.Type.BOOLEAN;
+import static org.talend.dataprep.api.type.Type.DATE;
+import static org.talend.dataprep.api.type.Type.NUMERIC;
+import static org.talend.dataprep.api.type.Type.STRING;
 import static org.talend.dataprep.i18n.DataprepBundle.message;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalLong;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -111,7 +129,7 @@ public class XlsSchemaParser implements SchemaParser {
     protected List<Schema.SheetContent> parseAllSheets(Request request) throws IOException {
         InputStream inputStream = request.getContent();
         if (!inputStream.markSupported()) {
-            inputStream = new PushbackInputStream(inputStream, 8);
+            inputStream = FileMagic.prepareToCheckMagic(inputStream);
         }
         boolean newExcelFormat = XlsUtils.isNewExcelFormat(inputStream);
         // parse the xls input stream using the correct format
@@ -401,29 +419,29 @@ public class XlsSchemaParser implements SchemaParser {
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
 
-                int xlsType = Cell.CELL_TYPE_STRING;
+                CellType xlsType = CellType.STRING;
 
                 try {
-                    xlsType = cell.getCellType() == Cell.CELL_TYPE_FORMULA ? //
+                    xlsType = cell.getCellType() == CellType.FORMULA ? //
                             formulaEvaluator.evaluate(cell).getCellType() : cell.getCellType();
                 } catch (Exception e) {
                     // ignore formula error evaluation get as a String with the formula
                 }
                 switch (xlsType) {
-                case Cell.CELL_TYPE_BOOLEAN:
+                case BOOLEAN:
                     currentType = BOOLEAN.getName();
                     break;
-                case Cell.CELL_TYPE_NUMERIC:
+                case NUMERIC:
                     currentType = getTypeFromNumericCell(cell);
                     break;
-                case Cell.CELL_TYPE_BLANK:
+                case BLANK:
                     currentType = BLANK;
                     break;
-                case Cell.CELL_TYPE_FORMULA:
-                case Cell.CELL_TYPE_STRING:
+                case FORMULA:
+                case STRING:
                     currentType = STRING.getName();
                     break;
-                case Cell.CELL_TYPE_ERROR:
+                case ERROR:
                     // we cannot really do anything with an error
                 default:
                     currentType = ANY.getName();

@@ -132,6 +132,9 @@ describe('Datagrid header controller', () => {
 				preparation: {
 					id: 'prepId',
 				},
+				grid: {
+					selectedColumns: [],
+				}
 			},
 		};
 		$provide.constant('state', stateMock);

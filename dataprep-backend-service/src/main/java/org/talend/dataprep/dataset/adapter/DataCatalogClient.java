@@ -1,7 +1,6 @@
 package org.talend.dataprep.dataset.adapter;
 
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
@@ -28,7 +27,6 @@ public class DataCatalogClient {
         return context.getBean(DatasetList.class, certification, favorite).execute();
     }
 
-    @Nullable
     public Dataset getMetadata(String id) {
         return context.getBean(DataSetGetMetadata.class, id).execute();
     }

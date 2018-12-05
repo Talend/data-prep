@@ -63,6 +63,9 @@ class StepDescriptionCtrl {
 				});
 			}
 			break;
+		case 'multi_columns':
+			this.stepDescription = this._getMultiColumnsDetails(this.step);
+			break;
 		}
 	}
 
@@ -99,6 +102,12 @@ class StepDescriptionCtrl {
 		return description;
 	}
 
+	_getMultiColumnsDetails(step) {
+		const multiColumnsDetails = this._getSelectedColumnsInMultiColumnsAction(step);
+		const i18nKey = multiColumnsDetails.initialColsNbr === 2 ? 'ONLY_2_SELECTED_COLS' : 'MORE_THAN_2_SELECTED_COLS';
+		return this.$translate.instant(i18nKey, multiColumnsDetails);
+	}
+
 	/**
 	 * @ngdoc method
 	 * @name _getAddedColumnsInLookup
@@ -118,6 +127,17 @@ class StepDescriptionCtrl {
 		};
 	}
 
+	_getSelectedColumnsInMultiColumnsAction(step) {
+		const allSelectedColumns = step.actionParameters.parameters.column_names;
+		return {
+			index: (this.index + 1),
+			label: this.step.transformation.label,
+			initialColsNbr: allSelectedColumns.length,
+			firstCol: allSelectedColumns[0],
+			secondCol: allSelectedColumns[1],
+			restOfColsNbr: allSelectedColumns.length - 2,
+		};
+	}
 }
 
 export default StepDescriptionCtrl;

@@ -58,7 +58,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

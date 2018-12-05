@@ -4,8 +4,6 @@ import com.jayway.restassured.response.Response;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -37,8 +35,7 @@ public interface FolderUtil {
      * @param folders    the {@link List} of {@link Folder}
      * @return a {@link Folder} or <code>null</code> if the folder doesn't exist.
      */
-    @Nullable
-    Folder extractFolder(@NotNull String folderPath, @NotNull Collection<Folder> folders) throws IOException;
+    Folder extractFolder(String folderPath, Collection<Folder> folders) throws IOException;
 
     /**
      * Search a {@link Folder} from its path.
@@ -47,15 +44,14 @@ public interface FolderUtil {
      * @return the searched Folder if it exists.
      * @throws IOException
      */
-    @Nullable
-    Folder searchFolder(@NotNull String folderPath) throws IOException;
+    Folder searchFolder(String folderPath) throws IOException;
 
     /**
      * Delete a folder.
      *
      * @param folder the folder to delete
      */
-    Response deleteFolder(@NotNull Folder folder);
+    Response deleteFolder(Folder folder);
 
     /**
      * Sort a {@link Set} of {@link Folder} in its natural order based on their path.
@@ -63,15 +59,13 @@ public interface FolderUtil {
      * @param folders the {@link Set} of {@link Folder} to sort.
      * @return a natural {@link SortedSet} of the given {@link Folder} {@link Set}.
      */
-    @NotNull
-    SortedSet<Folder> sortFolders(@NotNull Set<Folder> folders);
+    SortedSet<Folder> sortFolders(Set<Folder> folders);
 
     /**
      * Obtain a {@link SortedSet} of {@link Folder} sorted in a natural inverse order based on the folder path.
      *
      * @return an empty {@link SortedSet} of {@link Folder} sorted in a natural inverse order.
      */
-    @NotNull
     SortedSet<Folder> getEmptyReverseSortedSet();
 
     /**
@@ -81,8 +75,7 @@ public interface FolderUtil {
      * @param folders existing folders.
      * @return a {@link Set} of folders and subfolders.
      */
-    @NotNull
-    Set<Folder> splitFolder(@NotNull Folder folder, @NotNull List<Folder> folders);
+    Set<Folder> splitFolder(Folder folder, List<Folder> folders);
 
     /**
      * Return a string that represent the folder for dataprep API depending on the context (OS / EE)
@@ -90,7 +83,6 @@ public interface FolderUtil {
      * @param folder the {@link Folder} to represent.
      * @return a folder API representation.
      */
-    @NotNull
-    String getAPIFolderRepresentation(@NotNull Folder folder);
+    String getAPIFolderRepresentation(Folder folder);
 
 }

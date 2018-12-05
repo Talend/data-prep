@@ -97,13 +97,15 @@ public abstract class BaseDataSetService {
             final ExceptionContext context = ExceptionContext
                     .build() //
                     .put("name", name);
+            // this exception will be catched by
             throw new TDPException(DATASET_NAME_ALREADY_USED, context);
         }
     }
 
     /**
      * Performs the analysis on the given dataset id.
-     *  @param id the dataset id.
+     * 
+     * @param id the dataset id.
      * @param analysersToSkip the list of analysers to skip.
      */
     protected final void analyzeDataSet(String id, List<Class<? extends DataSetAnalyzer>> analysersToSkip) {
@@ -120,8 +122,9 @@ public abstract class BaseDataSetService {
         // important log here (TDP-4137)
         final DataSetMetadata metadata = dataSetMetadataRepository.get(id);
         if (metadata != null) {
-            LOG.info("New DataSet #{}, name: {}, type: {}, from: {}", metadata.getId(), metadata.getName(),
-                    metadata.getContent().getMediaType(), metadata.getLocation().getStoreName());
+            LOG
+                    .info("New DataSet #{}, name: {}, type: {}, from: {}", metadata.getId(), metadata.getName(),
+                            metadata.getContent().getMediaType(), metadata.getLocation().getStoreName());
         } else {
             LOG.error("Dataset #{} does not exist (but was expected to)", id);
         }

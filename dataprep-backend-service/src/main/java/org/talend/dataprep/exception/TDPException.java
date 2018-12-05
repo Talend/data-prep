@@ -180,7 +180,7 @@ public class TDPException extends TalendRuntimeException {
     // This code duplicates the one in ExceptionsConfiguration and should not be used anywhere else.
     private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
         ErrorCode errorCode = internal.getCode();
-        String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
+        String serializedCode = getSerializedCode(errorCode.getProduct() , errorCode.getGroup() ,errorCode.getCode());
         String defaultMessage = internal.getMessage();
         String message = internal.getLocalizedMessage();
         String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
@@ -206,6 +206,10 @@ public class TDPException extends TalendRuntimeException {
             values = stream(context.entries().spliterator(), false).map(Map.Entry::getValue).collect(toList());
         }
         return values;
+    }
+
+    static String getSerializedCode(String product, String group, String code) {
+        return product + '_' + group + '_' + code;
     }
 
 }

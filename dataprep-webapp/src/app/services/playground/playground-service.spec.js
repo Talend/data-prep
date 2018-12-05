@@ -96,13 +96,9 @@ describe('Playground Service', () => {
 		},
 	];
 
-	let appSettingsMock;
 	let stateMock;
 
 	beforeEach(angular.mock.module('data-prep.services.playground', ($provide) => {
-		appSettingsMock = {
-			context: {},
-		};
 		stateMock = {
 			route: {
 				previous: HOME_PREPARATIONS_ROUTE,
@@ -140,7 +136,6 @@ describe('Playground Service', () => {
 				},
 			},
 		};
-		$provide.constant('appSettings', appSettingsMock);
 		$provide.constant('state', stateMock);
 	}));
 
@@ -329,8 +324,8 @@ describe('Playground Service', () => {
 					expect(PlaygroundService.getDatasetParametersAction()).toEqual([]);
 				}));
 
-				it('should not return dataset parameters with provider set to catalog', inject((appSettings, PlaygroundService) => {
-					appSettings.context.provider = 'catalog';
+				it('should not return dataset parameters with provider set to catalog', inject((SettingsService, PlaygroundService) => {
+					spyOn(SettingsService, 'isCatalog').and.returnValue(true);
 					expect(PlaygroundService.getDatasetParametersAction()).toEqual([]);
 				}));
 			});
@@ -508,7 +503,7 @@ describe('Playground Service', () => {
 				redo = HistoryService.addAction.calls.argsFor(0)[1];
 			}));
 
-			it('should add undo/redo actions after append transformation', inject((HistoryService) => {
+			it('should add undo/redo actions after end transformation', inject((HistoryService) => {
 				// then
 				expect(HistoryService.addAction).toHaveBeenCalled();
 			}));

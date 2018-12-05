@@ -59,8 +59,8 @@ export default function PlaygroundService(
 	$timeout,
 	$stateParams,
 	$window,
-	appSettings,
 	state,
+	SettingsService,
 	StateService,
 	StepUtilsService,
 	DatasetService,
@@ -170,7 +170,7 @@ export default function PlaygroundService(
 	}
 
 	function getDatasetParametersAction() {
-		return state.playground.isReadOnly || isCatalog() ? [] : [{
+		return state.playground.isReadOnly || SettingsService.isCatalog() ? [] : [{
 			id: 'playground-metadata',
 			label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 			icon: 'talend-cog',
@@ -1310,24 +1310,11 @@ export default function PlaygroundService(
 	function close() {
 		$timeout.cancel(fetchStatsTimeout);
 		$timeout(StateService.resetPlayground, 500, false);
-		if (isCatalog()) {
+		if (SettingsService.isCatalog()) {
 			$window.location.href = '/';
 		}
 		else {
 			$state.go(state.route.previous, state.route.previousOptions);
 		}
-	}
-
-	/**
-	 * @ngdoc method
-	 * @name isCatalog
-	 * @methodOf data-prep.services.playground.service:PlaygroundService
-	 * @description Returns true if provider is catalog
-	 */
-	function isCatalog() {
-		return appSettings &&
-			appSettings.context &&
-			appSettings.context.provider &&
-			appSettings.context.provider.includes('catalog');
 	}
 }

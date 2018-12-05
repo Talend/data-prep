@@ -113,4 +113,28 @@ describe('Settings service', () => {
 			expect(appSettings.analytics).toEqual({});
 		}));
 	});
+
+	describe('isCatalog', () => {
+		it('should return true if catalog is enabled', inject((appSettings, SettingsService) => {
+			appSettings.context = {
+				provider: 'catalog',
+			};
+
+			expect(SettingsService.isCatalog()).toBeTruthy();
+		}));
+
+		it('should return false if provider is not present', inject((appSettings, SettingsService) => {
+			appSettings.context = {};
+
+			expect(SettingsService.isCatalog()).toBeFalsy();
+		}));
+
+		it('should return false if provider has an incorrect value', inject((appSettings, SettingsService) => {
+			appSettings.context = {
+				provider: 'cestladansedescanads',
+			};
+
+			expect(SettingsService.isCatalog()).toBeFalsy();
+		}));
+	});
 });

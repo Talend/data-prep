@@ -23,6 +23,7 @@ export function SettingsService($http, RestURLs) {
 		clearSettings,
 		refreshSettings,
 		setSettings,
+		isCatalog,
 	};
 
 	function refreshSettings() {
@@ -44,5 +45,15 @@ export function SettingsService($http, RestURLs) {
 		appSettings.help = {};
 		appSettings.analytics = {};
 		appSettings.context = {};
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name isCatalog
+	 * @description Returns true if provider is catalog
+	 */
+	function isCatalog() {
+		const { provider } = appSettings.context;
+		return !!(provider && provider.includes('catalog'));
 	}
 }

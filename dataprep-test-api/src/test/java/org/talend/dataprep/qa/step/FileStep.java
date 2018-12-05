@@ -77,8 +77,9 @@ public class FileStep extends DataPrepStep {
         }
     }
 
-    private void  failFileComparatorAlert(String temporaryFilename, String expectedFilename, Path tempFile) throws IOException {
-        fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename
-                + ":\n" + String.join("\n", Files.readAllLines(tempFile)));
+    private void failFileComparatorAlert(String temporaryFilename, String expectedFilename, Path tempFile)
+            throws IOException {
+        fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename + ":\n"
+                + String.join("\n", Files.readAllLines(tempFile)));
     }
 }

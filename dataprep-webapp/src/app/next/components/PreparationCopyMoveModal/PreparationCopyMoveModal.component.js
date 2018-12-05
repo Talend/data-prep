@@ -79,6 +79,7 @@ class PreparationCopyMoveModal extends React.Component {
 
 		return (
 			<Inject
+				id="copy-move-modal"
 				component="Dialog"
 				header={title}
 				subtitle={subtitle}

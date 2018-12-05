@@ -503,7 +503,7 @@ describe('Playground Service', () => {
 				redo = HistoryService.addAction.calls.argsFor(0)[1];
 			}));
 
-			it('should add undo/redo actions after end transformation', inject((HistoryService) => {
+			it('should add undo/redo actions after append transformation', inject((HistoryService) => {
 				// then
 				expect(HistoryService.addAction).toHaveBeenCalled();
 			}));

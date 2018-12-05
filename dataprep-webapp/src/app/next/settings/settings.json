@@ -471,6 +471,9 @@
           }
         },
         "toolbar": {
+          "display": {
+            "displayModes": ["large", "table"]
+          },
           "filter": {
             "placeholder": {
               "i18n": {

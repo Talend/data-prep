@@ -44,9 +44,7 @@ export default function initialize(additionalConfiguration = {}) {
 		'SEARCH_CATEGORIES_BY_PROVIDER',
 		constants.search.SEARCH_CATEGORIES_BY_PROVIDER,
 	);
-
 	api.registry.addToRegistry('preparations:sort', preparationService.sort);
-
 
 	const routerSagas = {
 		...dataset.datasetSagas.datasetRoutesSagas,

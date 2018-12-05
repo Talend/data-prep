@@ -170,7 +170,7 @@ export default function PlaygroundService(
 	}
 
 	function getDatasetParametersAction() {
-		return state.playground.isReadOnly ? [] : [{
+		return state.playground.isReadOnly || isCatalog() ? [] : [{
 			id: 'playground-metadata',
 			label: $translate.instant('DATAGRID_PARAMETERS_GEAR'),
 			icon: 'talend-cog',
@@ -1310,14 +1310,24 @@ export default function PlaygroundService(
 	function close() {
 		$timeout.cancel(fetchStatsTimeout);
 		$timeout(StateService.resetPlayground, 500, false);
-		if (appSettings &&
-			appSettings.context &&
-			appSettings.context.provider &&
-			appSettings.context.provider.includes('catalog')) {
+		if (isCatalog()) {
 			$window.location.href = '/';
 		}
 		else {
 			$state.go(state.route.previous, state.route.previousOptions);
 		}
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name isCatalog
+	 * @methodOf data-prep.services.playground.service:PlaygroundService
+	 * @description Returns true if provider is catalog
+	 */
+	function isCatalog() {
+		return appSettings &&
+			appSettings.context &&
+			appSettings.context.provider &&
+			appSettings.context.provider.includes('catalog');
 	}
 }

@@ -96,9 +96,13 @@ describe('Playground Service', () => {
 		},
 	];
 
+	let appSettingsMock;
 	let stateMock;
 
 	beforeEach(angular.mock.module('data-prep.services.playground', ($provide) => {
+		appSettingsMock = {
+			context: {},
+		};
 		stateMock = {
 			route: {
 				previous: HOME_PREPARATIONS_ROUTE,
@@ -136,6 +140,7 @@ describe('Playground Service', () => {
 				},
 			},
 		};
+		$provide.constant('appSettings', appSettingsMock);
 		$provide.constant('state', stateMock);
 	}));
 
@@ -321,6 +326,11 @@ describe('Playground Service', () => {
 
 				it('should not return dataset parameters', inject((state, PlaygroundService) => {
 					state.playground.isReadOnly = true;
+					expect(PlaygroundService.getDatasetParametersAction()).toEqual([]);
+				}));
+
+				it('should not return dataset parameters with provider set to catalog', inject((appSettings, PlaygroundService) => {
+					appSettings.context.provider = 'catalog';
 					expect(PlaygroundService.getDatasetParametersAction()).toEqual([]);
 				}));
 			});

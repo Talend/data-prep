@@ -178,8 +178,8 @@
   "NO_FUNCTION": "No function for the current selection",
 
   "_comment": "Confirm",
-  "DELETE_PERMANENTLY_TITLE": "Delete",
-  "DELETE_PERMANENTLY": "You are going to permanently delete the {{type}} \"{{name}}\".",
+  "DELETE_PERMANENTLY_TITLE": "Remove",
+  "DELETE_PERMANENTLY": "You are going to permanently remove the {{type}} \"{{name}}\".",
   "ENTER_DATASET_NAME": "Enter the dataset name",
   "NO_UNDONE_CONFIRM": "This operation cannot be undone. Do you want to proceed?",
   "DELETE_STEP": "You are going to remove this action: \"{{action}}\" on \"{{column}}\".",

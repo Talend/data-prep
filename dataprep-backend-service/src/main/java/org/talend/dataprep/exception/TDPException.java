@@ -40,11 +40,11 @@ public class TDPException extends TalendRuntimeException {
 
     private final String localizedMessage;
 
-    boolean writableStackTrace;
+    private final String message;
 
-    String message;
+    private final String messageTitle;
 
-    String messageTitle;
+    private final boolean writableStackTrace;
 
     @Override
     public String getMessage() {
@@ -58,10 +58,6 @@ public class TDPException extends TalendRuntimeException {
 
     public String getMessageTitle() {
         return messageTitle;
-    }
-
-    public boolean isWritableStackTrace() {
-        return writableStackTrace;
     }
 
     /**

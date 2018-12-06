@@ -46,8 +46,9 @@ public class DataSetDelete extends GenericCommand<ResponseEntity<String>> {
         execute(() -> onExecute(dataSetId));
         on(NOT_FOUND).then((req, resp) -> getResponseEntity(NOT_FOUND, resp));
         on(OK).then((req, resp) -> getResponseEntity(OK, resp));
+        // use Exception for flux control : bad pattern
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_DELETE_DATASET, e,
-                ExceptionContext.build().put("dataSetId", dataSetId)));
+                ExceptionContext.build().put("dataSetId", dataSetId), false));
     }
 
     private HttpRequestBase onExecute(final String dataSetId) {

@@ -46,9 +46,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.conversions.BeanConversionService;
+import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -549,7 +551,10 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                 }
                 TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
                 TDPException cause = buildTDPException(exceptionDto, content);
-
+                ErrorCode code = cause.getCode();
+                if (code instanceof ErrorCodeDto) {
+                    ((ErrorCodeDto) code).setHttpStatus(statusCode);
+                }
                 throw onError.apply(cause);
             } catch (JsonProcessingException e) {
                 LOGGER.debug("Cannot parse response content as JSON with content '" + content + "'", e);
@@ -580,7 +585,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             }
         }
 
-        protected TDPException buildTDPException(TdpExceptionDto exceptionDto, String content) {
+        private TDPException buildTDPException(TdpExceptionDto exceptionDto, String content) {
             try {
                 return conversionService.convert(exceptionDto, TDPException.class);
             } catch (RuntimeException e) {

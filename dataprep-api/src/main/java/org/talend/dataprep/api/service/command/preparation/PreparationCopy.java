@@ -22,6 +22,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -63,8 +64,8 @@ public class PreparationCopy extends GenericCommand<String> {
             }
             return new HttpPost(uriBuilder.build());
         } catch (URISyntaxException e) {
-
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            final ExceptionContext context = ExceptionContext.build().put("preparationId", preparationId);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e, context);
         }
     }
 }

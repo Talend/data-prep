@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -89,15 +91,15 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "Get folder by id", produces = APPLICATION_JSON_VALUE, notes = "Get a folder by id")
     @Timed
     public ResponseEntity<StreamingResponseBody>
-            getFolderAndHierarchyById(@PathVariable(value = "id") final String folderId) {
+            getFolderAndHierarchyById(@PathVariable(value = "id") final String id) {
         try {
-            final HystrixCommand<InputStream> foldersList = getCommand(GetFolder.class, folderId);
+            final HystrixCommand<InputStream> foldersList = getCommand(GetFolder.class, id);
             return ResponseEntity
                     .ok() //
                     .contentType(APPLICATION_JSON_UTF8) //
                     .body(CommandHelper.toStreaming(foldersList));
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, folderId);
+            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_FOLDERS, e, context);
         }
     }
@@ -122,11 +124,11 @@ public class FolderAPI extends APIService {
     @DeleteMapping(value = "/api/folders/{id}")
     @ApiOperation(value = "Remove a Folder")
     @Timed
-    public ResponseEntity<String> removeFolder(@PathVariable final String folderId, final OutputStream output) {
+    public ResponseEntity<String> removeFolder(@PathVariable final String id, final OutputStream output) {
         try {
-            return getCommand(RemoveFolder.class, folderId).execute();
+            return getCommand(RemoveFolder.class, id).execute();
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, folderId);
+            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER, e, context);
         }
     }
@@ -134,18 +136,18 @@ public class FolderAPI extends APIService {
     @PutMapping(value = "/api/folders/{id}/name")
     @ApiOperation(value = "Rename a Folder")
     @Timed
-    public void renameFolder(@PathVariable final String folderId, @RequestBody final String newName) {
+    public void renameFolder(@PathVariable final String id, @RequestBody final String newName) {
 
-        if (StringUtils.isEmpty(folderId) || StringUtils.isEmpty(newName)) {
-            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, folderId);
+        if (StringUtils.isEmpty(id) || StringUtils.isEmpty(newName)) {
+            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER, context);
         }
 
         try {
-            final HystrixCommand<Void> renameFolder = getCommand(RenameFolder.class, folderId, newName);
+            final HystrixCommand<Void> renameFolder = getCommand(RenameFolder.class, id, newName);
             renameFolder.execute();
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID, folderId);
+            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER, e, context);
         }
     }
@@ -160,14 +162,14 @@ public class FolderAPI extends APIService {
     @GetMapping(value = "/api/folders/search", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Search Folders with parameter as part of the name", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<StreamingResponseBody> search(@RequestParam(required = false) final String folderName,
+    public ResponseEntity<StreamingResponseBody> search(@RequestParam(required = false) final String name,
             @RequestParam(required = false) final Boolean strict, @RequestParam(required = false) final String path) {
         try {
-            final GenericCommand<InputStream> searchFolders = getCommand(SearchFolders.class, folderName, strict, path);
+            final GenericCommand<InputStream> searchFolders = getCommand(SearchFolders.class, name, strict, path);
             return CommandHelper.toStreaming(searchFolders);
         } catch (Exception e) {
             final ExceptionContext context =
-                    ExceptionContext.build().put("folderName", folderName).put("strict", strict).put("path", path);
+                    ExceptionContext.build().put("folderName", name).put("strict", strict).put("path", path);
             throw new TDPException(APIErrorCodes.UNABLE_TO_LIST_FOLDERS, e, context);
         }
     }

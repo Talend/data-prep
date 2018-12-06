@@ -38,14 +38,12 @@ public class SyncBackgroundAnalysis {
      */
 
     @EventListener
-    @LogTimed
     public void onEvent(DatasetImportedEvent event) {
         String dataSetId = event.getSource();
         backgroundAnalysis.analyze(dataSetId);
     }
 
     @EventListener
-    @LogTimed
     public void onEvent(DatasetUpdatedEvent event) {
         String dataSetId = event.getSource().getId();
         backgroundAnalysis.analyze(dataSetId);

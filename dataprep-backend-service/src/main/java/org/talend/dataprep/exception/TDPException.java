@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.ErrorCode;
@@ -36,6 +37,32 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 public class TDPException extends TalendRuntimeException {
 
     private static final long serialVersionUID = -51732176302413600L;
+
+    private final String localizedMessage;
+
+    boolean writableStackTrace;
+
+    String message;
+
+    String messageTitle;
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return localizedMessage;
+    }
+
+    public String getMessageTitle() {
+        return messageTitle;
+    }
+
+    public boolean isWritableStackTrace() {
+        return writableStackTrace;
+    }
 
     /**
      * If the exception is a TDPException, rethrow it, else wrap it and then throw it. ClassPostProcessor : Cannot
@@ -67,16 +94,14 @@ public class TDPException extends TalendRuntimeException {
         }
     }
 
-    private String message;
-
-    private String localizedMessage;
-
-    private String messageTitle;
-
     /** Build a blank TDP unexpected exception. **/
     // Needed to be able to convert with conversionService
     public TDPException() {
         super(UNEXPECTED_EXCEPTION);
+        this.message = StringUtils.EMPTY;
+        this.messageTitle = StringUtils.EMPTY;
+        this.localizedMessage = StringUtils.EMPTY;
+        this.writableStackTrace = true;
     }
 
     /**
@@ -93,6 +118,19 @@ public class TDPException extends TalendRuntimeException {
         // Translation done at the object creation
         List<Object> values = getValuesFromContext(context);
         this.localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
+        this.writableStackTrace = true;
+    }
+
+    public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context,
+            boolean writableStackTrace) {
+        super(code, cause, context);
+        this.message = message;
+        this.messageTitle = messageTitle;
+
+        // Translation done at the object creation
+        List<Object> values = getValuesFromContext(context);
+        this.localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
+        this.writableStackTrace = writableStackTrace;
     }
 
     /**
@@ -110,6 +148,25 @@ public class TDPException extends TalendRuntimeException {
         message = ErrorMessage.getDefaultMessage(getCode(), values.toArray(new Object[values.size()]));
         localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
         messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new Object[values.size()]));
+        this.writableStackTrace = true;
+    }
+
+    /**
+     * Build a Talend exception that can be interpreted throughout the application and handled by the HTTP API to translate into
+     * a meaningful internationalized error message to the end-user.
+     *
+     * @param code the error code that identify uniquely this error and bind to an i18ned message
+     * @param cause the root cause if any of this error.
+     * @param context the context of the error depending on the {@link ErrorCode}. It allow i18n messages to be built.
+     */
+    public TDPException(ErrorCode code, Throwable cause, ExceptionContext context, boolean writableStackTrace) {
+        super(code, cause, context);
+
+        List<Object> values = getValuesFromContext(context);
+        message = ErrorMessage.getDefaultMessage(getCode(), values.toArray(new Object[values.size()]));
+        localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
+        messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new Object[values.size()]));
+        this.writableStackTrace = writableStackTrace;
     }
 
     /**
@@ -133,6 +190,16 @@ public class TDPException extends TalendRuntimeException {
     }
 
     /**
+     * Lightweight constructor without a cause.
+     *
+     * @param code the error code that holds all the .
+     * @param context the exception context.
+     */
+    public TDPException(ErrorCode code, ExceptionContext context, boolean writableStackTrace) {
+        this(code, null, context, writableStackTrace);
+    }
+
+    /**
      * Basic constructor from a JSON error code.
      *
      * @param code an error code serialized to JSON.
@@ -148,20 +215,6 @@ public class TDPException extends TalendRuntimeException {
      */
     public TDPException(ErrorCode code) {
         this(code, null, null);
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public String getLocalizedMessage() {
-        return localizedMessage;
-    }
-
-    public String getMessageTitle() {
-        return messageTitle;
     }
 
     /**
@@ -180,7 +233,7 @@ public class TDPException extends TalendRuntimeException {
     // This code duplicates the one in ExceptionsConfiguration and should not be used anywhere else.
     private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
         ErrorCode errorCode = internal.getCode();
-        String serializedCode = getSerializedCode(errorCode.getProduct() , errorCode.getGroup() ,errorCode.getCode());
+        String serializedCode = getSerializedCode(errorCode.getProduct(), errorCode.getGroup(), errorCode.getCode());
         String defaultMessage = internal.getMessage();
         String message = internal.getLocalizedMessage();
         String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
@@ -210,6 +263,20 @@ public class TDPException extends TalendRuntimeException {
 
     static String getSerializedCode(String product, String group, String code) {
         return product + '_' + group + '_' + code;
+    }
+
+    /**
+     * writableStackTrace = false -->
+     * Efficient exception that has no stacktrace; we use this for flow-control.
+     * But it is a bad pattern. See
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        if (writableStackTrace) {
+            return super.fillInStackTrace();
+        } else {
+            return this;
+        }
     }
 
 }

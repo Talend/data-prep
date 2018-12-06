@@ -63,6 +63,7 @@ public class PreparationCopy extends GenericCommand<String> {
             }
             return new HttpPost(uriBuilder.build());
         } catch (URISyntaxException e) {
+
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }

@@ -35,22 +35,23 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RENAME
 @Scope(SCOPE_PROTOTYPE)
 public class RenameFolder extends GenericCommand<Void> {
 
-    public RenameFolder(final String id, final String newName) {
+    public RenameFolder(final String folderId, final String newName) {
         super(GenericCommand.DATASET_GROUP);
-        execute(() -> onExecute(id, newName));
-        onError(e -> new TDPException(UNABLE_TO_RENAME_FOLDER, e, ExceptionContext.build()));
+        execute(() -> onExecute(folderId, newName));
+        onError(e -> new TDPException(UNABLE_TO_RENAME_FOLDER, e, ExceptionContext.build().put("folderId", folderId)));
         on(HttpStatus.OK).then(asNull());
     }
 
-    private HttpRequestBase onExecute(final String id, final String newName) {
+    private HttpRequestBase onExecute(final String folderId, final String newName) {
         try {
-            final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + id + "/name");
+            final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + folderId + "/name");
             uriBuilder.addParameter("newName", newName);
             final HttpPut put = new HttpPut(uriBuilder.build());
             put.setEntity(new StringEntity(newName));
             return put;
         } catch (UnsupportedEncodingException | URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            final ExceptionContext context = ExceptionContext.build().put("folderId", folderId);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e, context);
         }
     }
 

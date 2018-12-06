@@ -26,6 +26,7 @@ import org.apache.http.entity.StringEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
@@ -61,7 +62,8 @@ public class Export extends GenericCommand<InputStream> {
             post.setEntity(new StringEntity(parametersAsString, ContentType.APPLICATION_JSON));
             return post;
         } catch (Exception e) {
-            throw new TDPException(APIErrorCodes.UNABLE_TO_EXPORT_CONTENT, e);
+            final ExceptionContext context = ExceptionContext.build().put("ExportParameters", parameters);
+            throw new TDPException(APIErrorCodes.UNABLE_TO_EXPORT_CONTENT, e, context);
         }
     }
 

@@ -14,7 +14,6 @@ package org.talend.dataprep.api.service;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
 
@@ -30,10 +29,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.preparation.PreparationDTO;
@@ -44,7 +44,6 @@ import org.talend.dataprep.api.service.command.export.PreparationExportTypes;
 import org.talend.dataprep.audit.BaseDataprepAuditService;
 import org.talend.dataprep.command.CommandHelper;
 import org.talend.dataprep.command.preparation.PreparationSummaryGet;
-import org.talend.dataprep.dataset.adapter.DatasetClient;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.format.export.ExportFormat;
@@ -60,12 +59,9 @@ import io.swagger.annotations.ApiParam;
 public class ExportAPI extends APIService {
 
     @Autowired
-    private DatasetClient datasetClient;
-
-    @Autowired
     private BaseDataprepAuditService auditService;
 
-    @RequestMapping(value = "/api/export", method = GET)
+    @GetMapping(value = "/api/export")
     @ApiOperation(value = "Export a dataset", consumes = APPLICATION_FORM_URLENCODED_VALUE,
             notes = "Export a dataset or a preparation to file. The file type is provided in the request body.")
     public ResponseEntity<StreamingResponseBody>
@@ -98,7 +94,8 @@ public class ExportAPI extends APIService {
         } catch (TDPException e) {
             throw e;
         } catch (Exception e) {
-            throw new TDPException(APIErrorCodes.UNABLE_TO_EXPORT_CONTENT, e);
+            final ExceptionContext context = ExceptionContext.build().put("ExportParameters", parameters);
+            throw new TDPException(APIErrorCodes.UNABLE_TO_EXPORT_CONTENT, e, context);
         }
     }
 
@@ -135,7 +132,7 @@ public class ExportAPI extends APIService {
     /**
      * Get the available export formats
      */
-    @RequestMapping(value = "/api/export/formats", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/export/formats", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types")
     @Timed
     @PublicAPI
@@ -146,8 +143,7 @@ public class ExportAPI extends APIService {
     /**
      * Get the available export formats for preparation
      */
-    @RequestMapping(value = "/api/export/formats/preparations/{preparationId}", method = GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/export/formats/preparations/{preparationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types for preparation.")
     @Timed
     public Callable<Stream<ExportFormatMessage>>
@@ -159,8 +155,7 @@ public class ExportAPI extends APIService {
     /**
      * Get the available export formats for dataset
      */
-    @RequestMapping(value = "/api/export/formats/datasets/{dataSetId}", method = GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/export/formats/datasets/{dataSetId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types for preparation.")
     @Timed
     public Callable<Stream<ExportFormatMessage>> exportTypesForDataSet(@PathVariable("dataSetId") String dataSetId) {

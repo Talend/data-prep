@@ -41,23 +41,24 @@ public class RemoveFolder extends GenericCommand<ResponseEntity<String>> {
     /**
      * Remove a folder
      *
-     * @param id the folder id to remove.
+     * @param folderId the folder id to remove.
      */
-    public RemoveFolder(final String id) {
+    public RemoveFolder(final String folderId) {
         super(GenericCommand.DATASET_GROUP);
-        execute(() -> onExecute(id));
-        onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER, e, ExceptionContext.build()));
+        execute(() -> onExecute(folderId));
+        onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER, e, ExceptionContext.build().put("folderId", folderId)));
         on(OK).then((req, resp) -> Defaults.getResponseEntity(NO_CONTENT, resp));
         on(NOT_FOUND).then((req, resp) -> Defaults.getResponseEntity(NOT_FOUND, resp));
         on(CONFLICT).then((req, resp) -> Defaults.getResponseEntity(CONFLICT, resp));
     }
 
-    private HttpRequestBase onExecute(final String id) {
+    private HttpRequestBase onExecute(final String folderId) {
         try {
-            final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + id);
+            final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + folderId);
             return new HttpDelete(uriBuilder.build());
         } catch (URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            final ExceptionContext context = ExceptionContext.build().put("folderId", folderId);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e, context);
         }
     }
 

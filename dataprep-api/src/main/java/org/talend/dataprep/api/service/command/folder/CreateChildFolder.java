@@ -19,6 +19,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -55,7 +56,8 @@ public class CreateChildFolder extends GenericCommand<InputStream> {
             uriBuilder.addParameter("path", path);
             return new HttpPut(uriBuilder.build());
         } catch (URISyntaxException e) {
-            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            final ExceptionContext context = ExceptionContext.build().put("path", path).put("parentId", parentId);
+            throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e, context);
         }
     }
 

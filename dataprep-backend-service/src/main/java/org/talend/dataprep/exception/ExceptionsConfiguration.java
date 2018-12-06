@@ -88,7 +88,8 @@ public class ExceptionsConfiguration {
                                 .setHttpStatus(null); // default that may be changed after
 
                         return new TDPException(errorCodeDto, null, dto.getMessage(), dto.getMessageTitle(),
-                                ExceptionContext.build().from(dto.getContext()).put("cause", dto.getCause()));
+                                ExceptionContext.build().from(dto.getContext()).put("cause", dto.getCause()),
+                                dto.isWritableStackTrace());
                     })
                     .build());
 

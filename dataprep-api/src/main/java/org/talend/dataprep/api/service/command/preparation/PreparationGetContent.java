@@ -27,6 +27,7 @@ import org.apache.http.entity.StringEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.export.ExportParameters;
 import org.talend.dataprep.api.export.ExportParameters.SourceType;
 import org.talend.dataprep.command.Defaults;
@@ -53,17 +54,17 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
     }
 
     /**
-     * @param id the preparation id.
+     * @param preparationId the preparation id.
      * @param version the preparation version.
      * @param from where to read the data from.
      */
-    private PreparationGetContent(String id, String version, SourceType from, String filter) {
+    private PreparationGetContent(String preparationId, String version, SourceType from, String filter) {
         super(TRANSFORM_GROUP);
 
         execute(() -> {
             try {
                 ExportParameters parameters = new ExportParameters();
-                parameters.setPreparationId(id);
+                parameters.setPreparationId(preparationId);
                 parameters.setStepId(version);
                 parameters.setExportType("JSON");
                 parameters.setFrom(from);
@@ -75,7 +76,13 @@ public class PreparationGetContent extends GenericCommand<InputStream> {
                 post.setEntity(new StringEntity(parametersAsString, ContentType.APPLICATION_JSON));
                 return post;
             } catch (Exception e) {
-                throw new TDPException(UNEXPECTED_EXCEPTION, e);
+                final ExceptionContext context = ExceptionContext
+                        .build()
+                        .put("preparationId", preparationId)
+                        .put("version", version)
+                        .put("from", from)
+                        .put("filter", filter);
+                throw new TDPException(UNEXPECTED_EXCEPTION, e, context);
             }
         });
         on(HttpStatus.OK).then(pipeStream());

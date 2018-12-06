@@ -19,6 +19,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 
@@ -33,18 +34,18 @@ import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EX
 @Scope(SCOPE_PROTOTYPE)
 public class SearchFolders extends GenericCommand<InputStream> {
 
-    private SearchFolders(final String name, final Boolean strict, String path) {
+    private SearchFolders(final String folderName, final Boolean strict, String path) {
         super(GenericCommand.DATASET_GROUP);
-        execute(() -> onExecute(name, strict, path));
+        execute(() -> onExecute(folderName, strict, path));
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    private HttpRequestBase onExecute(final String name, final Boolean strict, String path) {
+    private HttpRequestBase onExecute(final String folderName, final Boolean strict, String path) {
         try {
 
             URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/search");
-            if (name != null) {
-                uriBuilder.addParameter("name", name);
+            if (folderName != null) {
+                uriBuilder.addParameter("name", folderName);
             }
             if (strict != null) {
                 uriBuilder.addParameter("strict", String.valueOf(strict));
@@ -55,7 +56,8 @@ public class SearchFolders extends GenericCommand<InputStream> {
             return new HttpGet(uriBuilder.build());
 
         } catch (URISyntaxException e) {
-            throw new TDPException(UNEXPECTED_EXCEPTION, e);
+            final ExceptionContext context = ExceptionContext.build().put("folderName", folderName);
+            throw new TDPException(UNEXPECTED_EXCEPTION, e, context);
         }
     }
 

@@ -14,8 +14,6 @@ package org.talend.dataprep.api.service.command.dataset;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -39,11 +37,6 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.DATASET_STILL_IN
 public class DataSetDelete extends GenericCommand<ResponseEntity<String>> {
 
     /**
-     * This class' logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(DataSetDelete.class);
-
-    /**
      * Default constructor.
      *
      * @param dataSetId The dataset id to delete.
@@ -62,7 +55,6 @@ public class DataSetDelete extends GenericCommand<ResponseEntity<String>> {
 
         // if the dataset is used by preparation(s), the deletion is forbidden
         if (isDatasetUsed) {
-            LOG.debug("DataSet {} is used by {} preparation(s) and cannot be deleted", dataSetId);
             final ExceptionContext context = ExceptionContext.build().put("dataSetId", dataSetId);
             throw new TDPException(DATASET_STILL_IN_USE, context);
         }

@@ -12,7 +12,6 @@
 
 package org.talend.dataprep.exception;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 import java.util.HashMap;
@@ -28,7 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -85,28 +83,6 @@ public class TDPExceptionController {
         TdpExceptionDto exceptionDto = new TdpExceptionDto(CommonErrorCodes.UNEXPECTED_CONTENT.getCode(), null,
                 e.getMessage(), e.getLocalizedMessage(), "Invalid argument", context);
         return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders, NOT_ACCEPTABLE);
-    }
-
-
-    /**
-     * This method is invoked when Spring throw a TDPException with a Status Conflict
-     */
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler({ TDPException.class })
-    public ResponseEntity<String> handleConflictTDPException(TDPException tdpException)
-            throws JsonProcessingException {
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        // on the front side only messageTitlle and LocalizedMessage are used
-        // but this interception is re-intercepted by the generic command, so all the info are needed to be set
-        String code =  TDPException.getSerializedCode(tdpException.getCode().getProduct(),tdpException.getCode().getGroup(),tdpException.getCode().getCode());
-        Map<String, Object> context = new HashMap<>();
-        for (Map.Entry<String, Object> contextEntry : tdpException.getContext().entries()) {
-            context.put(contextEntry.getKey(), contextEntry.getValue());
-        }
-        TdpExceptionDto exceptionDto = new TdpExceptionDto(code, new TdpExceptionDto(),
-                tdpException.getMessage(), tdpException.getLocalizedMessage(), tdpException.getMessageTitle(), context);
-        return new ResponseEntity<>(objectMapper.writeValueAsString(exceptionDto), httpHeaders, CONFLICT);
     }
 
 }

@@ -46,11 +46,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.conversions.BeanConversionService;
-import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.TdpExceptionDto;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -537,7 +535,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         @Override
         public T apply(HttpRequestBase req, HttpResponse res) {
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("request on error {} -> {}", req.toString(), res.getStatusLine());
+                LOGGER.trace("request on error {} -> {}", req, res.getStatusLine());
             }
             final int statusCode = res.getStatusLine().getStatusCode();
             String content = StringUtils.EMPTY;
@@ -550,23 +548,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     LOGGER.trace("Error received {}", content);
                 }
                 TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
-                TDPException cause;
-                try {
-                    cause = conversionService.convert(exceptionDto, TDPException.class);
-                } catch (RuntimeException e) {
-                    cause = new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, null, content,
-                            "Remote service returned an unhandled error and response could not be deserialized.",
-                            ExceptionContext.build());
-                }
-                ErrorCode code = cause.getCode();
-                if (code instanceof ErrorCodeDto) {
-                    ((ErrorCodeDto) code).setHttpStatus(statusCode);
-                }
+                TDPException cause = buildTDPException(exceptionDto, content);
+
                 throw onError.apply(cause);
             } catch (JsonProcessingException e) {
                 LOGGER.debug("Cannot parse response content as JSON with content '" + content + "'", e);
                 // Failed to parse JSON error, returns an unexpected code with returned HTTP code
-                final TDPException exception = new TDPException(new JsonErrorCode() {
+                final TDPException tdpException = new TDPException(new JsonErrorCode() {
 
                     @Override
                     public String getProduct() {
@@ -583,7 +571,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                         return statusCode;
                     }
                 });
-                throw onError.apply(exception);
+                throw onError.apply(tdpException);
             } catch (IOException e) {
                 LOGGER.error("Unexpected error message: {}", buildRequestReport(req, res));
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
@@ -592,7 +580,17 @@ public class GenericCommand<T> extends HystrixCommand<T> {
             }
         }
 
-        public String buildRequestReport(HttpRequestBase req, HttpResponse res) {
+        protected TDPException buildTDPException(TdpExceptionDto exceptionDto, String content) {
+            try {
+                return conversionService.convert(exceptionDto, TDPException.class);
+            } catch (RuntimeException e) {
+                return new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, null, content,
+                        "Remote service returned an unhandled error and response could not be deserialized.",
+                        ExceptionContext.build());
+            }
+        }
+
+        protected String buildRequestReport(HttpRequestBase req, HttpResponse res) {
             StringBuilder builder = new StringBuilder("{request:{\n");
             builder.append("uri:").append(req.getURI()).append(",\n");
             builder.append("request:").append(req.getRequestLine()).append(",\n");

@@ -31,6 +31,8 @@ public class TdpExceptionDto {
 
     private TdpExceptionDto cause;
 
+    private boolean writableStackTrace = true;
+
     public TdpExceptionDto() {
     }
 
@@ -42,6 +44,12 @@ public class TdpExceptionDto {
         this.message = message;
         this.messageTitle = messageTitle;
         this.context = context;
+    }
+
+    public TdpExceptionDto(String code, TdpExceptionDto cause, String defaultMessage, String message,
+            String messageTitle, Map<String, Object> context, boolean writableStackTrace) {
+        new TdpExceptionDto(code, cause, defaultMessage, message, messageTitle, context);
+        this.writableStackTrace = writableStackTrace;
     }
 
     public String getCode() {
@@ -90,5 +98,13 @@ public class TdpExceptionDto {
 
     public void setCause(TdpExceptionDto cause) {
         this.cause = cause;
+    }
+
+    public boolean isWritableStackTrace() {
+        return writableStackTrace;
+    }
+
+    public void setWritableStackTrace(boolean writableStackTrace) {
+        this.writableStackTrace = writableStackTrace;
     }
 }

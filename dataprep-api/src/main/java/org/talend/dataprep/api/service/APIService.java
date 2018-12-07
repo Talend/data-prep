@@ -37,7 +37,7 @@ public class APIService {
 
     protected static final Logger LOG = LoggerFactory.getLogger(APIService.class);
 
-    protected static final String PREPARATION_ID = "preparationId";
+    protected static final String PREPARATION_ID_LOG_MSG_KEY = "preparationId";
 
     @Autowired
     protected ApplicationContext context;

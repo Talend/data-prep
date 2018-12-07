@@ -12,6 +12,13 @@
 
 package org.talend.dataprep.api.service.command.folder;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.asNull;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RENAME_FOLDER;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -23,13 +30,6 @@ import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static org.talend.dataprep.command.Defaults.asNull;
-import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RENAME_FOLDER;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)

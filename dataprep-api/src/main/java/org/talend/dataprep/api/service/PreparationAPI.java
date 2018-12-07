@@ -21,6 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.dataprep.command.CommandHelper.toStream;
+import static org.talend.dataprep.exception.error.APIErrorCodes.*;
 import static org.talend.dataprep.exception.error.APIErrorCodes.INVALID_HEAD_STEP_USING_DELETED_DATASET;
 import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
 import static org.talend.dataprep.i18n.DataprepBundle.message;
@@ -31,6 +32,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
@@ -275,8 +277,8 @@ public class PreparationAPI extends APIService {
         try {
             return getCommand(PreparationDetailsGet.class, preparationId, stepId).execute();
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID, preparationId);
-            throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e, context);
+            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID_LOG_MSG_KEY, preparationId);
+            throw new TDPException(UNABLE_TO_GET_PREPARATION_DETAILS, e, context);
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Retrieved preparation details (pool: {} )...", getConnectionStats());
@@ -302,8 +304,8 @@ public class PreparationAPI extends APIService {
                     getCommand(PreparationSummaryGet.class, preparationId, stepId);
             return enrichPreparation.execute();
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID, preparationId);
-            throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e, context);
+            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID_LOG_MSG_KEY, preparationId);
+            throw new TDPException(UNABLE_TO_GET_PREPARATION_DETAILS, e, context);
         } finally {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Retrieved preparation summary (pool: {} )...", getConnectionStats());
@@ -469,14 +471,15 @@ public class PreparationAPI extends APIService {
 
         Step step = getCommand(FindStep.class, headId).execute();
         if (step == null) {
-            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID, preparationId);
+            final ExceptionContext context =
+                    ExceptionContext.build().put(PREPARATION_ID_LOG_MSG_KEY, preparationId).put("headId", headId);
             throw new TDPException(PREPARATION_STEP_DOES_NOT_EXIST, context, false);
         } else if (isHeadStepDependingOnDeletedDataSet(preparationId, step.id())) {
             final HystrixCommand<Void> command = getCommand(PreparationMoveHead.class, preparationId, headId);
             command.execute();
         } else {
             final ExceptionContext context =
-                    ExceptionContext.build().put(PREPARATION_ID, preparationId).put("headId", headId);
+                    ExceptionContext.build().put(PREPARATION_ID_LOG_MSG_KEY, preparationId).put("headId", headId);
             throw new TDPException(INVALID_HEAD_STEP_USING_DELETED_DATASET, context, false);
         }
 

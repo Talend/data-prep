@@ -46,9 +46,8 @@ public class DataSetDelete extends GenericCommand<ResponseEntity<String>> {
         execute(() -> onExecute(dataSetId));
         on(NOT_FOUND).then((req, resp) -> getResponseEntity(NOT_FOUND, resp));
         on(OK).then((req, resp) -> getResponseEntity(OK, resp));
-        // use Exception for flux control : bad pattern
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_DELETE_DATASET, e,
-                ExceptionContext.build().put("dataSetId", dataSetId), false));
+                ExceptionContext.build().put("dataSetId", dataSetId).put("preparations", "")));
     }
 
     private HttpRequestBase onExecute(final String dataSetId) {
@@ -56,8 +55,10 @@ public class DataSetDelete extends GenericCommand<ResponseEntity<String>> {
 
         // if the dataset is used by preparation(s), the deletion is forbidden
         if (isDatasetUsed) {
-            final ExceptionContext context = ExceptionContext.build().put("dataSetId", dataSetId);
-            throw new TDPException(DATASET_STILL_IN_USE, context);
+            // use Exception for flow control : bad pattern
+            final ExceptionContext context =
+                    ExceptionContext.build().put("dataSetId", dataSetId).put("preparations", "");
+            throw new TDPException(DATASET_STILL_IN_USE, context, false);
         }
         return new HttpDelete(datasetServiceUrl + "/datasets/" + dataSetId);
     }

@@ -107,16 +107,14 @@ public class TDPException extends TalendRuntimeException {
      */
     public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle,
             ExceptionContext context) {
-        super(code, cause, context);
-        this.message = message;
-        this.messageTitle = messageTitle;
-
-        // Translation done at the object creation
-        List<Object> values = getValuesFromContext(context);
-        this.localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
-        this.writableStackTrace = true;
+        this(code, cause, message, messageTitle, context, true);
     }
 
+    /**
+     * Build a Talend exception with no i18n handling internally. It is useful when the goal is to just pass an exception in a
+     * component
+     * that does not have access to the exception bundle.
+     */
     public TDPException(ErrorCode code, Throwable cause, String message, String messageTitle, ExceptionContext context,
             boolean writableStackTrace) {
         super(code, cause, context);
@@ -138,13 +136,7 @@ public class TDPException extends TalendRuntimeException {
      * @param context the context of the error depending on the {@link ErrorCode}. It allow i18n messages to be built.
      */
     public TDPException(ErrorCode code, Throwable cause, ExceptionContext context) {
-        super(code, cause, context);
-
-        List<Object> values = getValuesFromContext(context);
-        message = ErrorMessage.getDefaultMessage(getCode(), values.toArray(new Object[values.size()]));
-        localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
-        messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new Object[values.size()]));
-        this.writableStackTrace = true;
+        this(code, cause, context, true);
     }
 
     /**
@@ -154,6 +146,7 @@ public class TDPException extends TalendRuntimeException {
      * @param code the error code that identify uniquely this error and bind to an i18ned message
      * @param cause the root cause if any of this error.
      * @param context the context of the error depending on the {@link ErrorCode}. It allow i18n messages to be built.
+     * @param writableStackTrace false if the stacktrace should not be printed
      */
     public TDPException(ErrorCode code, Throwable cause, ExceptionContext context, boolean writableStackTrace) {
         super(code, cause, context);
@@ -190,6 +183,7 @@ public class TDPException extends TalendRuntimeException {
      *
      * @param code the error code that holds all the .
      * @param context the exception context.
+     * @param writableStackTrace false if the stacktrace should not be printed
      */
     public TDPException(ErrorCode code, ExceptionContext context, boolean writableStackTrace) {
         this(code, null, context, writableStackTrace);
@@ -239,7 +233,7 @@ public class TDPException extends TalendRuntimeException {
     // This code duplicates the one in ExceptionsConfiguration and should not be used anywhere else.
     private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
         ErrorCode errorCode = internal.getCode();
-        String serializedCode = getSerializedCode(errorCode.getProduct(), errorCode.getGroup(), errorCode.getCode());
+        String serializedCode = getSerializedCode(errorCode);
         String defaultMessage = internal.getMessage();
         String message = internal.getLocalizedMessage();
         String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
@@ -250,6 +244,10 @@ public class TDPException extends TalendRuntimeException {
             context.put(contextEntry.getKey(), contextEntry.getValue());
         }
         return new TdpExceptionDto(serializedCode, cause, defaultMessage, message, messageTitle, context);
+    }
+
+    private static String getSerializedCode(ErrorCode errorCode) {
+        return errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
     }
 
     /**
@@ -267,14 +265,10 @@ public class TDPException extends TalendRuntimeException {
         return values;
     }
 
-    static String getSerializedCode(String product, String group, String code) {
-        return product + '_' + group + '_' + code;
-    }
-
     /**
      * writableStackTrace = false -->
      * Efficient exception that has no stacktrace; we use this for flow-control.
-     * But it is a bad pattern. See
+     * But it is a bad pattern.
      */
     @Override
     public synchronized Throwable fillInStackTrace() {

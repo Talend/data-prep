@@ -14,6 +14,7 @@ package org.talend.dataprep.api.service;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.talend.dataprep.command.CommandHelper.toStream;
 import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
 
@@ -27,7 +28,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -132,7 +132,7 @@ public class ExportAPI extends APIService {
     /**
      * Get the available export formats
      */
-    @GetMapping(value = "/api/export/formats", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/export/formats", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types")
     @Timed
     @PublicAPI
@@ -143,7 +143,7 @@ public class ExportAPI extends APIService {
     /**
      * Get the available export formats for preparation
      */
-    @GetMapping(value = "/api/export/formats/preparations/{preparationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/export/formats/preparations/{preparationId}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types for preparation.")
     @Timed
     public Callable<Stream<ExportFormatMessage>>
@@ -155,7 +155,7 @@ public class ExportAPI extends APIService {
     /**
      * Get the available export formats for dataset
      */
-    @GetMapping(value = "/api/export/formats/datasets/{dataSetId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/export/formats/datasets/{dataSetId}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types for preparation.")
     @Timed
     public Callable<Stream<ExportFormatMessage>> exportTypesForDataSet(@PathVariable("dataSetId") String dataSetId) {

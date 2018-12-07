@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -60,7 +58,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 public class FolderAPI extends APIService {
 
-    private static final String FOLDER_ID = "folderId";
+    private static final String FOLDER_ID_LOG_MSG_KEY = "folderId";
 
     @GetMapping(value = "/api/folders")
     @ApiOperation(value = "List folders. Optional filter on parent ID may be supplied.",
@@ -99,7 +97,7 @@ public class FolderAPI extends APIService {
                     .contentType(APPLICATION_JSON_UTF8) //
                     .body(CommandHelper.toStreaming(foldersList));
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, id);
+            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID_LOG_MSG_KEY, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_GET_FOLDERS, e, context);
         }
     }
@@ -113,7 +111,8 @@ public class FolderAPI extends APIService {
             final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, parentId, path);
             return CommandHelper.toStreaming(createChildFolder);
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, parentId).put("path", path);
+            final ExceptionContext context =
+                    ExceptionContext.build().put(FOLDER_ID_LOG_MSG_KEY, parentId).put("path", path);
             throw new TDPException(APIErrorCodes.UNABLE_TO_CREATE_FOLDER, e, context);
         }
     }
@@ -128,7 +127,7 @@ public class FolderAPI extends APIService {
         try {
             return getCommand(RemoveFolder.class, id).execute();
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, id);
+            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID_LOG_MSG_KEY, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_DELETE_FOLDER, e, context);
         }
     }
@@ -139,7 +138,7 @@ public class FolderAPI extends APIService {
     public void renameFolder(@PathVariable final String id, @RequestBody final String newName) {
 
         if (StringUtils.isEmpty(id) || StringUtils.isEmpty(newName)) {
-            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID, id);
+            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID_LOG_MSG_KEY, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER, context);
         }
 
@@ -147,7 +146,7 @@ public class FolderAPI extends APIService {
             final HystrixCommand<Void> renameFolder = getCommand(RenameFolder.class, id, newName);
             renameFolder.execute();
         } catch (Exception e) {
-            final ExceptionContext context = ExceptionContext.build().put(PREPARATION_ID, id);
+            final ExceptionContext context = ExceptionContext.build().put(FOLDER_ID_LOG_MSG_KEY, id);
             throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER, e, context);
         }
     }
@@ -155,7 +154,7 @@ public class FolderAPI extends APIService {
     /**
      * no javadoc here so see description in @ApiOperation notes.
      *
-     * @param folderName The folder to search.
+     * @param name The folder to search.
      * @param strict Strict mode means searched name is the full name.
      * @return the list of folders that match the given name.
      */

@@ -38,7 +38,7 @@ public class PreparationUpdateListener {
     private PreparationEventUtil preparationEventUtil;
 
     @EventListener
-    @LogTimed
+    @LogTimed(needLogCorrelationId = true)
     public void onUpdate(DatasetUpdatedEvent event) {
         preparationEventUtil.performUpdateEvent(event.getSource().getId());
     }

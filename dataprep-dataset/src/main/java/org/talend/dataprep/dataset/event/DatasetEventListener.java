@@ -26,13 +26,13 @@ public class DatasetEventListener {
     private DatasetEventUtil datasetEventUtil;
 
     @EventListener
-    @LogTimed
+    @LogTimed(needLogCorrelationId = true)
     public void onUpdate(DatasetUpdatedEvent event) {
         datasetEventUtil.performUpdateEvent(event.getSource().getId());
     }
 
     @EventListener
-    @LogTimed
+    @LogTimed(needLogCorrelationId = true)
     public void onInsert(DatasetImportedEvent event) {
         datasetEventUtil.performImportEvent(event.getSource());
     }

@@ -333,7 +333,7 @@ public class DatasetClient {
     }
 
     @EventListener
-    @LogTimed
+    @LogTimed(needLogCorrelationId = true)
     public void cleanCacheEntryOnDatasetModification(DatasetUpdatedEvent event) {
         computedMetadataCache.invalidate(event.getSource().getId());
     }

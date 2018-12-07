@@ -207,7 +207,8 @@ public class DataSetAPI extends APIService {
     @ApiOperation(value = "Get a data set by id.", produces = APPLICATION_JSON_VALUE,
             notes = "Get a data set based on given id.")
     @Timed
-    @LogTimed
+    @LogTimed(logStartAspectMessage = "Starting Get dataset by id", logStopAspectMessage = "Ending Get dataset by id",
+            needLogCorrelationId = true)
     public DataSet get(@ApiParam(value = "Id of the data set to get") @PathVariable(value = "id") String id,
             @ApiParam(value = "Whether output should be the full data set (true) or not (false).") @RequestParam(
                     value = "fullContent", defaultValue = "false") boolean fullContent,

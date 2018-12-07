@@ -205,6 +205,16 @@ public class TDPException extends TalendRuntimeException {
     }
 
     /**
+     * Constructor with the bare error code and if the stacktrace needs to be printed or not.
+     *
+     * @param code the error code
+     * @param writableStackTrace false if the stacktrace should not be printed
+     */
+    public TDPException(ErrorCode code, boolean writableStackTrace) {
+        this(code, null, null, writableStackTrace);
+    }
+
+    /**
      * Basic constructor with the bare error code.
      *
      * @param code the error code that holds all the .

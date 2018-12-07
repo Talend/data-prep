@@ -261,11 +261,11 @@ public class PreparationAPI extends APIService {
         LOG.info("Preparation {} moved from {} to {}/'{}'", id, folder, destination, newName);
     }
 
-    @GetMapping(value = "/api/preparations/{id}/details",
-            produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/preparations/{id}/details", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preparation by id and details.", notes = "Returns the preparation details.")
     @Timed
-    @LogTimed
+    @LogTimed(logStartAspectMessage = "Starting Get prep by (id,details)",
+            logStopAspectMessage = "Ending Get prep by (id,details)", needLogCorrelationId = true)
     public PreparationDetailsDTO getPreparation(
             @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId, //
             @RequestParam(value = "stepId", defaultValue = "head") @ApiParam(name = "stepId",

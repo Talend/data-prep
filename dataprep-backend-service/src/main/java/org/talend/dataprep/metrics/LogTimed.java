@@ -19,6 +19,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Identify a method which duration should be log.
  */
@@ -26,4 +28,13 @@ import java.lang.annotation.Target;
 @Inherited
 @Target({ ElementType.METHOD })
 public @interface LogTimed {
+
+    String logStartAspectMessage() default StringUtils.EMPTY;
+
+    String logStopAspectMessage() default StringUtils.EMPTY;
+
+    String logSpecificMessage() default StringUtils.EMPTY;
+
+    boolean needLogCorrelationId() default false;
+
 }

@@ -39,6 +39,7 @@ import org.talend.dataprep.dataset.DatasetConfiguration;
 import org.talend.dataprep.dataset.adapter.commands.DataSetGetMetadataLegacy;
 import org.talend.dataprep.dataset.event.DatasetUpdatedEvent;
 import org.talend.dataprep.dataset.store.content.DataSetContentLimit;
+import org.talend.dataprep.metrics.LogTimed;
 import org.talend.dataprep.quality.AnalyzerService;
 import org.talend.dataprep.util.avro.AvroUtils;
 import org.talend.dataquality.common.inference.Analyzer;
@@ -332,6 +333,7 @@ public class DatasetClient {
     }
 
     @EventListener
+    @LogTimed
     public void cleanCacheEntryOnDatasetModification(DatasetUpdatedEvent event) {
         computedMetadataCache.invalidate(event.getSource().getId());
     }

@@ -241,7 +241,7 @@ public class PreparationService {
 
         auditService.auditPreparationCreation(toCreate.getName(), id, toCreate.getDataSetName(),
                 toCreate.getDataSetId(), folderId);
-        LOGGER.info("New preparation {} created and stored in {} ", preparation, folderId);
+        LOGGER.info("New preparation {} created and stored in {} ", toCreate, folderId);
         return id;
     }
 

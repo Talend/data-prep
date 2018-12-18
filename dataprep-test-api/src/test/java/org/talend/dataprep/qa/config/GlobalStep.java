@@ -15,6 +15,7 @@ package org.talend.dataprep.qa.config;
 
 import static org.talend.dataprep.qa.config.FeatureContext.setUseSuffix;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +73,10 @@ public class GlobalStep extends DataPrepStep {
         context.clearAction();
 
         // cleaning temporary files
+        context.getTempFiles().forEach(filename -> {
+            File file = context.getTempFile(filename);
+            deleteFile(file);
+        });
         context.clearTempFile();
 
         // cleaning application's preparations
@@ -122,4 +127,26 @@ public class GlobalStep extends DataPrepStep {
         }
     }
 
+    /**
+     * Delete a file that can represent a directory
+     * 
+     * @param file
+     */
+    private void deleteFile(File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        if (file.isFile()) {
+            file.delete();
+            return;
+        }
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f != null && file.exists()) {
+                    deleteFile(f);
+                }
+            }
+        }
+    }
 }

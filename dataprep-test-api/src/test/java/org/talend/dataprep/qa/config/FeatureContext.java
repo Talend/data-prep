@@ -14,12 +14,7 @@
 package org.talend.dataprep.qa.config;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -378,6 +373,13 @@ public class FeatureContext {
      */
     public void clearTempFile() {
         tempFileByName.clear();
+    }
+
+    /**
+     * Return the list of temporary {@link File}.
+     */
+    public Set<String> getTempFiles() {
+        return tempFileByName.keySet();
     }
 
     /**

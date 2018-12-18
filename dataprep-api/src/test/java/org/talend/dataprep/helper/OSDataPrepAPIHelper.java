@@ -14,9 +14,7 @@
 package org.talend.dataprep.helper;
 
 import static com.jayway.restassured.http.ContentType.JSON;
-import static org.talend.dataprep.async.AsyncExecution.Status.FAILED;
-import static org.talend.dataprep.async.AsyncExecution.Status.NEW;
-import static org.talend.dataprep.async.AsyncExecution.Status.RUNNING;
+import static org.talend.dataprep.async.AsyncExecution.Status.*;
 import static org.talend.dataprep.helper.VerboseMode.NONE;
 
 import java.io.File;
@@ -433,7 +431,6 @@ public class OSDataPrepAPIHelper {
                 "." + FilenameUtils.getExtension(tempFilename));
         Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
         File tempFile = path.toFile();
-        tempFile.deleteOnExit();
         return tempFile;
     }
 

@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.talend.dataprep</groupId>
         <artifactId>dataprep-dependencies</artifactId>
-        <version>1.0.10-SNAPSHOT</version>
+        <version>1.0.9</version>
         <relativePath/>
     </parent>
 

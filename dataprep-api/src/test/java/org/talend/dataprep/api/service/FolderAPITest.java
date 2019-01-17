@@ -133,7 +133,7 @@ public class FolderAPITest extends ApiServiceTestBase {
         assertThat(response.getStatusCode(), is(409));
         final String content = response.asString();
         assertTrue(StringUtils.isNoneBlank(content));
-        assertTrue(content.contains(FolderErrorCodes.FOLDER_NOT_EMPTY.name()));
+        assertTrue(content.contains(FolderErrorCodes.FOLDER_NOT_EMPTY.getCode()));
 
         final List<Folder> folders = getFolderChildren(home.getId());
         assertThat(folders, hasSize(1));

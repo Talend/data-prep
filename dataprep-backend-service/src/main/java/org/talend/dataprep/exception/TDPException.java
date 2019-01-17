@@ -18,7 +18,6 @@ import static java.util.stream.StreamSupport.stream;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +91,7 @@ public class TDPException extends TalendRuntimeException {
 
         // Translation done at the object creation
         List<Object> values = getValuesFromContext(context);
-        this.localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
+        this.localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[0]));
     }
 
     /**
@@ -107,9 +106,9 @@ public class TDPException extends TalendRuntimeException {
         super(code, cause, context);
 
         List<Object> values = getValuesFromContext(context);
-        message = ErrorMessage.getDefaultMessage(getCode(), values.toArray(new Object[values.size()]));
-        localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[values.size()]));
-        messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new Object[values.size()]));
+        message = ErrorMessage.getDefaultMessage(getCode(), values.toArray(new Object[0]));
+        localizedMessage = ErrorMessage.getMessage(getCode(), values.toArray(new Object[0]));
+        messageTitle = ErrorMessage.getMessageTitle(getCode(), values.toArray(new Object[0]));
     }
 
     /**
@@ -176,25 +175,8 @@ public class TDPException extends TalendRuntimeException {
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    // Needed to keep the compatibility with the deprecated writeTo(Writer) method.
-    // This code duplicates the one in ExceptionsConfiguration and should not be used anywhere else.
-    private static TdpExceptionDto toExceptionDto(TalendRuntimeException internal) {
-        ErrorCode errorCode = internal.getCode();
-        String serializedCode = errorCode.getProduct() + '_' + errorCode.getGroup() + '_' + errorCode.getCode();
-        String defaultMessage = internal.getMessage();
-        String message = internal.getLocalizedMessage();
-        String messageTitle = internal instanceof TDPException ? ((TDPException) internal).getMessageTitle() : null;
-        TdpExceptionDto cause =
-                internal.getCause() instanceof TDPException ? toExceptionDto((TDPException) internal.getCause()) : null;
-        Map<String, Object> context = new HashMap<>();
-        for (Map.Entry<String, Object> contextEntry : internal.getContext().entries()) {
-            context.put(contextEntry.getKey(), contextEntry.getValue());
-        }
-        return new TdpExceptionDto(serializedCode, cause, defaultMessage, message, messageTitle, context);
-    }
-
     /**
-     * Return thie list of object store in the context
+     * Return the list of object store in the context
      *
      * @param context the error context
      *

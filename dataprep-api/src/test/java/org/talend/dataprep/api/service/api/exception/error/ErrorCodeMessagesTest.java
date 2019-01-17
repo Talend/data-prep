@@ -19,7 +19,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.ServiceBaseTest;
-import org.talend.dataprep.exception.error.*;
+import org.talend.daikon.exception.error.ErrorCode;
+import org.talend.dataprep.exception.error.APIErrorCodes;
+import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
+import org.talend.dataprep.exception.error.ErrorMessage;
+import org.talend.dataprep.exception.error.PreparationErrorCodes;
+import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.i18n.MessagesBundle;
 
 /**
@@ -52,7 +58,7 @@ public class ErrorCodeMessagesTest extends ServiceBaseTest {
 
     @Test
     public void testCommonErrorCodeMessages() {
-        for (CommonErrorCodes code : CommonErrorCodes.values()) {
+        for (ErrorCode code : CommonErrorCodes.values()) {
             assertErrorCodeMessageExists(code.getCode());
             assertErrorCodeMessageTitleExists(code.getCode());
         }
@@ -60,7 +66,7 @@ public class ErrorCodeMessagesTest extends ServiceBaseTest {
 
     @Test
     public void testAPIErrorCodeMessages() {
-        for (APIErrorCodes code : APIErrorCodes.values()) {
+        for (ErrorCode code : APIErrorCodes.values()) {
             assertErrorCodeMessageExists(code.getCode());
             assertErrorCodeMessageTitleExists(code.getCode());
         }
@@ -68,7 +74,7 @@ public class ErrorCodeMessagesTest extends ServiceBaseTest {
 
     @Test
     public void testDatasetErrorCodeMessages() {
-        for (DataSetErrorCodes code : DataSetErrorCodes.values()) {
+        for (ErrorCode code : DataSetErrorCodes.values()) {
             assertErrorCodeMessageExists(code.getCode());
             assertErrorCodeMessageTitleExists(code.getCode());
         }
@@ -76,7 +82,7 @@ public class ErrorCodeMessagesTest extends ServiceBaseTest {
 
     @Test
     public void testTransformationErrorCodeMessages() {
-        for (TransformationErrorCodes code : TransformationErrorCodes.values()) {
+        for (ErrorCode code : TransformationErrorCodes.values()) {
             assertErrorCodeMessageExists(code.getCode());
             assertErrorCodeMessageTitleExists(code.getCode());
         }
@@ -84,7 +90,7 @@ public class ErrorCodeMessagesTest extends ServiceBaseTest {
 
     @Test
     public void testPreparationErrorCodeMessages() {
-        for (PreparationErrorCodes code : PreparationErrorCodes.values()) {
+        for (ErrorCode code : PreparationErrorCodes.values()) {
             assertErrorCodeMessageExists(code.getCode());
             assertErrorCodeMessageTitleExists(code.getCode());
         }

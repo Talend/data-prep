@@ -23,9 +23,8 @@ import org.talend.daikon.exception.error.ErrorCode;
  */
 public class TDPExceptionFlowControl extends TDPException {
 
-    public TDPExceptionFlowControl(ErrorCodeDto errorCodeDto, Throwable cause, String message, String messageTitle,
-            ExceptionContext context) {
-        super(errorCodeDto, cause, message, messageTitle, context);
+    // Needed to be able to convert with conversionService
+    public TDPExceptionFlowControl() {
     }
 
     /**

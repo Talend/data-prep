@@ -99,7 +99,7 @@ public class SchemaAnalysis implements SynchronousDataSetAnalyzer {
                 }
             } catch (Exception e) {
                 LOGGER.error("Unable to analyse schema for dataset " + dataSetId + ".", e);
-                TDPException.rethrowOrWrap(e, UNABLE_TO_ANALYZE_COLUMN_TYPES);
+                throw TDPException.rethrowOrWrap(e, UNABLE_TO_ANALYZE_COLUMN_TYPES);
             }
         } finally {
             datasetLock.unlock();

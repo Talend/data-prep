@@ -19,9 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.talend.daikon.exception.error.ErrorCode;
-import org.talend.daikon.exception.json.JsonErrorCode;
-import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
@@ -49,31 +46,6 @@ public class Converters {
                     return mapper.readTree(source);
                 } catch (IOException e) {
                     throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-                }
-            }
-        };
-    }
-
-    @Bean
-    public Converter<String, ErrorCode> errorCodeConverter() {
-        // Don't convert to lambda -> cause issue for Spring to infer source and target types.
-        return new Converter<String, ErrorCode>() {
-
-            @Override
-            public ErrorCode convert(String source) {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    return mapper.readerFor(JsonErrorCode.class).readValue(source);
-                } catch (Exception e) {
-                    LOGGER.trace("Unable to read error code from '{}'", source, e);
-
-                    // Build a JSON error code out of "source" (mostly likely a error code as string).
-                    final ErrorCodeDto errorCodeDto = new ErrorCodeDto();
-                    errorCodeDto.setCode(source);
-                    errorCodeDto.setHttpStatus(CommonErrorCodes.UNEXPECTED_EXCEPTION.getHttpStatus());
-                    errorCodeDto.setGroup(CommonErrorCodes.UNEXPECTED_EXCEPTION.getGroup());
-                    errorCodeDto.setProduct(CommonErrorCodes.UNEXPECTED_EXCEPTION.getProduct());
-                    return errorCodeDto;
                 }
             }
         };

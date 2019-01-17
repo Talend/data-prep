@@ -828,7 +828,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
                 mapper.readerFor(AsyncExecutionMessage.class).readValue(response.asString());
 
         assertEquals(AsyncExecution.Status.FAILED, asyncExecutionMessage.getStatus());
-        assertEquals(BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name(), asyncExecutionMessage.getError().getCode());
+        assertEquals(BaseErrorCodes.UNABLE_TO_PARSE_FILTER.getCode(), asyncExecutionMessage.getError().getCode());
     }
 
     @Test

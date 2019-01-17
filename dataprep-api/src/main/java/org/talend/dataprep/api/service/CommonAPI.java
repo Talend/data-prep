@@ -156,8 +156,7 @@ public class CommonAPI extends APIService {
     private void writeErrorsFromEnum(JsonGenerator generator, ErrorCode[] codes) throws IOException {
         for (ErrorCode code : codes) {
             // cast to JsonErrorCode needed to ease json handling
-            JsonErrorCodeDescription description = new JsonErrorCodeDescription(code);
-            generator.writeObject(description);
+            generator.writeObject(new JsonErrorCodeDescription(code));
         }
     }
 
@@ -172,8 +171,7 @@ public class CommonAPI extends APIService {
         Iterator<JsonErrorCodeDescription> iterator =
                 mapper.readerFor(JsonErrorCodeDescription.class).readValues(input);
         while (iterator.hasNext()) {
-            final JsonErrorCodeDescription description = iterator.next();
-            generator.writeObject(description);
+            generator.writeObject(iterator.next());
         }
     }
 }

@@ -751,7 +751,8 @@ public class DataSetServiceTest extends DataSetBaseTest {
                 .get("/datasets/{id}/content", dataSetId);
 
         assertEquals(400, response.statusCode());
-        assertTrue(response.jsonPath().get("code").toString().contains(BaseErrorCodes.UNABLE_TO_PARSE_FILTER.name()));
+        assertTrue(
+                response.jsonPath().get("code").toString().contains(BaseErrorCodes.UNABLE_TO_PARSE_FILTER.getCode()));
     }
 
     @Test
@@ -843,7 +844,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
 
         // then
         assertEquals(200, response.getStatusCode());
-        assertTrue(response.asString().length() == 0);
+        assertEquals(0, response.asString().length());
     }
 
     @Test

@@ -13,6 +13,7 @@
 package org.talend.dataprep.transformation.service;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -36,7 +37,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -753,13 +753,8 @@ public class TransformationService extends BaseTransformationService {
     @ApiOperation(value = "Get all transformation related error codes.",
             notes = "Returns the list of all transformation related error codes.")
     @Timed
-    public Iterable<JsonErrorCodeDescription> listErrors() {
-        // need to cast the typed dataset errors into mock ones to use json parsing
-        List<JsonErrorCodeDescription> errors = new ArrayList<>(TransformationErrorCodes.values().length);
-        for (TransformationErrorCodes code : TransformationErrorCodes.values()) {
-            errors.add(new JsonErrorCodeDescription(code));
-        }
-        return errors;
+    public Stream<JsonErrorCodeDescription> listErrors() {
+        return stream(TransformationErrorCodes.values()).map(JsonErrorCodeDescription::new);
     }
 
     /**

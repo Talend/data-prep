@@ -28,6 +28,14 @@ public class ErrorCodeDto implements ErrorCode {
 
     private Collection<String> expectedContextEntries = emptyList();
 
+    public ErrorCodeDto() {
+    }
+
+    // Allow direct deserialization of Enum value
+    public ErrorCodeDto(String code) {
+        this.code = code;
+    }
+
     @Override
     public String getProduct() {
         return product;

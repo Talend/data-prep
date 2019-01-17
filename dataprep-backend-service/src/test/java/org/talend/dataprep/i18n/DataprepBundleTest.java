@@ -56,7 +56,7 @@ public class DataprepBundleTest {
 
     @Test
     public void errorTitle() throws Exception {
-        String producedKey = CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST.name() + ".TITLE";
+        String producedKey = CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST.getCode() + ".TITLE";
         assertEquals(messagesProperties.getProperty(producedKey),
                 DataprepBundle.errorTitle(CommonErrorCodes.ILLEGAL_ORDER_FOR_LIST));
     }

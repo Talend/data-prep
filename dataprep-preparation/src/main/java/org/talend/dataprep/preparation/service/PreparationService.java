@@ -13,6 +13,7 @@
 package org.talend.dataprep.preparation.service;
 
 import static java.lang.Integer.MAX_VALUE;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -1028,13 +1029,8 @@ public class PreparationService {
     /**
      * List all preparation related error codes.
      */
-    public Iterable<JsonErrorCodeDescription> listErrors() {
-        // need to cast the typed dataset errors into mock ones to use json parsing
-        List<JsonErrorCodeDescription> errors = new ArrayList<>(PreparationErrorCodes.values().length);
-        for (PreparationErrorCodes code : PreparationErrorCodes.values()) {
-            errors.add(new JsonErrorCodeDescription(code));
-        }
-        return errors;
+    public Stream<JsonErrorCodeDescription> listErrors() {
+        return stream(PreparationErrorCodes.values()).map(JsonErrorCodeDescription::new);
     }
 
     public boolean isDatasetUsedInPreparation(final String datasetId) {

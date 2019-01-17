@@ -14,6 +14,7 @@ package org.talend.dataprep.command;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.cloud.sleuth.Span.SPAN_NAME_NAME;
+import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -47,14 +48,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.error.ErrorCode;
-import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.conversions.BeanConversionService;
 import org.talend.dataprep.exception.ErrorCodeDto;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.TDPExceptionFlowControl;
 import org.talend.dataprep.exception.TdpExceptionDto;
-import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -551,50 +550,35 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                     LOGGER.trace("Error received {}", content);
                 }
                 TdpExceptionDto exceptionDto = objectMapper.readValue(content, TdpExceptionDto.class);
-
-                if (exceptionDto.isStacktraceDisplayed()) {
-                    throw onError.apply(getTDPExceptionFromDTO(exceptionDto, content, statusCode, TDPException.class));
-                } else {
-                    throw onError.apply(
-                            getTDPExceptionFromDTO(exceptionDto, content, statusCode, TDPExceptionFlowControl.class));
-                }
-
+                throw onError.apply(getTDPExceptionFromDTO(exceptionDto, content, statusCode));
             } catch (JsonProcessingException e) {
                 LOGGER.debug("Cannot parse response content as JSON with content '" + content + "'", e);
                 // Failed to parse JSON error, returns an unexpected code with returned HTTP code
-                final TDPException exception = new TDPException(new JsonErrorCode() {
 
-                    @Override
-                    public String getProduct() {
-                        return CommonErrorCodes.UNEXPECTED_EXCEPTION.getProduct();
-                    }
-
-                    @Override
-                    public String getCode() {
-                        return CommonErrorCodes.UNEXPECTED_EXCEPTION.getCode();
-                    }
-
-                    @Override
-                    public int getHttpStatus() {
-                        return statusCode;
-                    }
-                });
+                final TDPException exception = new TDPException(new ErrorCodeDto()
+                        .setProduct(UNEXPECTED_EXCEPTION.getProduct())
+                        .setGroup(UNEXPECTED_EXCEPTION.getGroup())
+                        .setCode(UNEXPECTED_EXCEPTION.getCode())
+                        .setHttpStatus(statusCode));
                 throw onError.apply(exception);
             } catch (IOException e) {
                 LOGGER.error("Unexpected error message: {}", buildRequestReport(req, res));
-                throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                throw new TDPException(UNEXPECTED_EXCEPTION, e);
             } finally {
                 req.releaseConnection();
             }
         }
 
-        private TDPException getTDPExceptionFromDTO(TdpExceptionDto exceptionDto, String content, int statusCode,
-                Class<? extends TDPException> clazz) {
+        private TDPException getTDPExceptionFromDTO(TdpExceptionDto exceptionDto, String content, int statusCode) {
             TDPException cause;
             try {
-                cause = clazz.cast(conversionService.convert(exceptionDto, TDPException.class));
+                if (exceptionDto.isStacktraceDisplayed()) {
+                    cause = conversionService.convert(exceptionDto, TDPException.class);
+                } else {
+                    cause = conversionService.convert(exceptionDto, TDPExceptionFlowControl.class);
+                }
             } catch (RuntimeException e) {
-                cause = new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, null, content,
+                cause = new TDPException(UNEXPECTED_EXCEPTION, null, content,
                         "Remote service returned an unhandled error and response could not be deserialized.",
                         ExceptionContext.build());
             }

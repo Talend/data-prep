@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -831,13 +832,8 @@ public class DataSetService extends BaseDataSetService {
     @ApiOperation(value = "Get all dataset related error codes.",
             notes = "Returns the list of all dataset related error codes.")
     @Timed
-    public Iterable<JsonErrorCodeDescription> listErrors() {
-        // need to cast the typed dataset errors into mock ones to use json parsing
-        List<JsonErrorCodeDescription> errors = new ArrayList<>(DataSetErrorCodes.values().length);
-        for (DataSetErrorCodes code : DataSetErrorCodes.values()) {
-            errors.add(new JsonErrorCodeDescription(code));
-        }
-        return errors;
+    public Stream<JsonErrorCodeDescription> listErrors() {
+        return Arrays.stream(DataSetErrorCodes.values()).map(JsonErrorCodeDescription::new);
     }
 
     /**

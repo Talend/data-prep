@@ -458,7 +458,7 @@ public class PreparationController {
     @ApiOperation(value = "Get all preparation related error codes.",
             notes = "Returns the list of all preparation related error codes.")
     @Timed
-    public Iterable<JsonErrorCodeDescription> listErrors() {
+    public Stream<JsonErrorCodeDescription> listErrors() {
         return preparationService.listErrors();
     }
 

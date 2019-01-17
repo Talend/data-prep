@@ -58,8 +58,6 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
     private AsyncExecutionResult result;
 
     /** The execution error code when it failed. */
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
     private ErrorCode error;
 
     /** The current execution progress. */
@@ -136,19 +134,14 @@ public class AsyncExecution implements Comparable<AsyncExecution> {
     }
 
     /**
-     * @return the execution error code.
+     * @return the execution error code.0
      */
     public ErrorCode getError() {
         return error;
     }
 
     public void setError(ErrorCode error) {
-        if (error instanceof ErrorCodeDto) {
-            LOGGER.debug("Execution '{}' has error from underlying service '{}'", getId(), error);
-            this.error = TransformationErrorCodes.UNABLE_TO_TRANSFORM_DATASET;
-        } else {
-            this.error = error;
-        }
+        this.error = error;
     }
 
     public ExecutionProgress getProgress() {

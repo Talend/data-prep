@@ -158,7 +158,7 @@ public abstract class DataPrepStep {
     }
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
-                                    List<String> actual) {
+            List<String> actual) {
         assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
         assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
         assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",

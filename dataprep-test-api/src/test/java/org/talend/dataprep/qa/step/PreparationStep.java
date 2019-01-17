@@ -233,7 +233,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^The preparation \"(.*)\" should have the following quality bar characteristics on the column number \"(.*)\":$")
     public void thePreparationShouldHaveThefollowingQualityBar(String preparationName, String columnNumber,
-                                                               DataTable dataTable) throws Exception {
+            DataTable dataTable) throws Exception {
         Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
                 VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
         response.then().statusCode(OK.value());
@@ -253,7 +253,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^The preparation \"(.*)\" should have the following invalid characteristics on the row number \"(.*)\":$")
     public void thePreparationShouldHaveThefollowingInvalidCells(String preparationName, String columnNumber,
-                                                                 DataTable dataTable) throws Exception {
+            DataTable dataTable) throws Exception {
         Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
                 VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
         response.then().statusCode(OK.value());
@@ -274,7 +274,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^The preparation \"(.*)\" should have the following type \"(.*)\" on the following column \"(.*)\"$")
     public void thePreparationShouldHaveThefollowingTypeOnThefollowingColumn(String preparationName, String columnType,
-                                                                             String columnNumber) throws Exception {
+            String columnNumber) throws Exception {
         Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
                 VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
         response.then().statusCode(OK.value());

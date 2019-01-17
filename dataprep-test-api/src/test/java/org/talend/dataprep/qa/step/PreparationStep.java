@@ -1,21 +1,11 @@
 package org.talend.dataprep.qa.step;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotNull;
-
+import com.jayway.restassured.response.Response;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -26,15 +16,22 @@ import org.talend.dataprep.qa.dto.ContentMetadataColumn;
 import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.dto.FolderContent;
+import org.talend.dataprep.qa.dto.PreparationContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import com.jayway.restassured.response.Response;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Step dealing with preparation
@@ -90,7 +87,7 @@ public class PreparationStep extends DataPrepStep {
      * Check if an existing preparation contains the same actions as the one given in parameters.
      * Be careful ! If your preparation contains lookup actions, you'll need to load your dataset by restoring a Mongo
      * dump, else the lookup_ds_id won't be the same in actions' parameter value.
-     * 
+     *
      * @param dataTable step parameters.
      * @throws IOException in case of exception.
      */
@@ -236,7 +233,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^The preparation \"(.*)\" should have the following quality bar characteristics on the column number \"(.*)\":$")
     public void thePreparationShouldHaveThefollowingQualityBar(String preparationName, String columnNumber,
-            DataTable dataTable) throws Exception {
+                                                               DataTable dataTable) throws Exception {
         Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
                 VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
         response.then().statusCode(OK.value());
@@ -256,7 +253,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^The preparation \"(.*)\" should have the following invalid characteristics on the row number \"(.*)\":$")
     public void thePreparationShouldHaveThefollowingInvalidCells(String preparationName, String columnNumber,
-            DataTable dataTable) throws Exception {
+                                                                 DataTable dataTable) throws Exception {
         Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
                 VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
         response.then().statusCode(OK.value());
@@ -277,7 +274,7 @@ public class PreparationStep extends DataPrepStep {
 
     @Then("^The preparation \"(.*)\" should have the following type \"(.*)\" on the following column \"(.*)\"$")
     public void thePreparationShouldHaveThefollowingTypeOnThefollowingColumn(String preparationName, String columnType,
-            String columnNumber) throws Exception {
+                                                                             String columnNumber) throws Exception {
         Response response = api.getPreparationContent(context.getPreparationId(suffixName(preparationName)),
                 VERSION_HEAD, HEAD_ID, StringUtils.EMPTY);
         response.then().statusCode(OK.value());
@@ -286,6 +283,37 @@ public class PreparationStep extends DataPrepStep {
 
         ContentMetadataColumn columnMetadata = datasetContent.metadata.columns.get(Integer.parseInt(columnNumber));
         assertEquals(columnType, columnMetadata.type);
+    }
+
+    @Then("^The characteristics of the preparation \"(.*)\" match:$")
+    public void checkFilterAppliedOnPreparation(String preparationName, DataTable dataTable) throws Exception {
+        PreparationContent preparationContent = (PreparationContent) context.getObject("preparationContent");
+        if (preparationContent == null) {
+            preparationContent = getPreparationContent(preparationName, null);
+        }
+        checkContent(preparationContent, dataTable);
+    }
+
+    @Then("^The characteristics of the dataset \"(.*)\" match:$")
+    public void checkFilterAppliedOnDataSet(String datasetName, DataTable dataTable) throws Exception {
+        Map<String, String> expected = dataTable.asMap(String.class, String.class);
+
+        DatasetContent datasetContent = (DatasetContent) context.getObject("dataSetContent");
+        if (datasetContent == null) {
+            datasetContent = getDatasetContent(context.getDatasetId(suffixName(datasetName)), null);
+        }
+
+        if (expected.get("records") != null) {
+            checkRecords(datasetContent.records, expected.get("records"));
+        }
+
+        if (expected.get("sample_records_count") != null) {
+            checkSampleRecordsCount(datasetContent.metadata.records, expected.get("sample_records_count"));
+        }
+
+        if (expected.get("quality") != null) {
+            checkQualityPerColumn(datasetContent.metadata.columns, expected.get("quality"));
+        }
     }
 
     /**

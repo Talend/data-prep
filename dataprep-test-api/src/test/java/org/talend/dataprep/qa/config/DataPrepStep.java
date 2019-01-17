@@ -13,33 +13,10 @@
 
 package org.talend.dataprep.qa.config;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.awaitility.Awaitility.with;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
-import javax.annotation.PostConstruct;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.restassured.response.Response;
 import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import org.awaitility.core.ConditionFactory;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +37,24 @@ import org.talend.dataprep.qa.dto.Statistics;
 import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.restassured.response.Response;
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
 
 /**
  * Base class for all DataPrep step classes.
@@ -165,7 +158,7 @@ public abstract class DataPrepStep {
     }
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
-            List<String> actual) {
+                                    List<String> actual) {
         assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
         assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
         assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",
@@ -249,13 +242,24 @@ public abstract class DataPrepStep {
             Statistics expectedStatistics = expectedColumn.statistics;
 
             Map<String, Integer> quality = column.quality;
-            Assert.assertEquals(expectedQuality.get("valid"), quality.get("valid"));
-            Assert.assertEquals(expectedQuality.get("empty"), quality.get("empty"));
-            Assert.assertEquals(expectedQuality.get("invalid"), quality.get("invalid"));
+            Assert.assertEquals(
+                    "The valid records count " + expectedQuality.get("valid") + "is wrong: " + quality.get("valid"),
+                    expectedQuality.get("valid"), quality.get("valid"));
+            Assert.assertEquals(
+                    "The valid records count " + expectedQuality.get("empty") + "is wrong: " + quality.get("empty"),
+                    expectedQuality.get("empty"), quality.get("empty"));
+            Assert.assertEquals(
+                    "The valid records count " + expectedQuality.get("invalid") + "is wrong: " + quality.get("invalid"),
+                    expectedQuality.get("invalid"), quality.get("invalid"));
 
             Statistics statistics = column.statistics;
             if (expectedStatistics != null && statistics != null) {
                 Assert.assertTrue(
+                        "Difference between expected records and actual records on column " + i + ":" + //
+                                CollectionUtils
+                                        .disjunction(expectedStatistics.patternFrequencyTable,
+                                                statistics.patternFrequencyTable)
+                                        .toString(),
                         expectedStatistics.patternFrequencyTable.containsAll(statistics.patternFrequencyTable));
                 Assert.assertTrue(expectedStatistics.frequencyTable.containsAll(statistics.frequencyTable));
             }

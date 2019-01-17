@@ -1,11 +1,7 @@
 package org.talend.dataprep.qa.step;
 
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
-
-import java.io.IOException;
-import java.util.Map;
-
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +10,10 @@ import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.DatasetContent;
 import org.talend.dataprep.qa.dto.PreparationContent;
 
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import java.io.IOException;
+
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import static org.talend.dataprep.transformation.actions.common.ImplicitParameters.FILTER;
 
 public class FilterStep extends DataPrepStep {
 
@@ -53,39 +50,9 @@ public class FilterStep extends DataPrepStep {
         context.storeObject("preparationContent", preparationContent);
     }
 
-    @Then("^The characteristics of the preparation \"(.*)\" match:$")
-    public void checkFilterAppliedOnPreparation(String preparationName, DataTable dataTable) throws Exception {
-        PreparationContent preparationContent = (PreparationContent) context.getObject("preparationContent");
-        if (preparationContent == null) {
-            preparationContent = getPreparationContent(preparationName, null);
-        }
-        checkContent(preparationContent, dataTable);
-    }
-
     @Then("^I remove all filters on preparation \"(.*)\"$")
     public void removeAllFiltersOnPreparation(String preparationName) throws Exception {
         doApplyFilterOnPreparation(null, preparationName);
     }
 
-    @Then("^The characteristics of the dataset \"(.*)\" match:$")
-    public void checkFilterAppliedOnDataSet(String datasetName, DataTable dataTable) throws Exception {
-        Map<String, String> expected = dataTable.asMap(String.class, String.class);
-
-        DatasetContent datasetContent = (DatasetContent) context.getObject("dataSetContent");
-        if (datasetContent == null) {
-            datasetContent = getDatasetContent(context.getDatasetId(suffixName(datasetName)), null);
-        }
-
-        if (expected.get("records") != null) {
-            checkRecords(datasetContent.records, expected.get("records"));
-        }
-
-        if (expected.get("sample_records_count") != null) {
-            checkSampleRecordsCount(datasetContent.metadata.records, expected.get("sample_records_count"));
-        }
-
-        if (expected.get("quality") != null) {
-            checkQualityPerColumn(datasetContent.metadata.columns, expected.get("quality"));
-        }
-    }
 }

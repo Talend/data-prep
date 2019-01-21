@@ -90,6 +90,12 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility-proxy</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.talend.dataprep</groupId>
+            <artifactId>dataprep-backend-service</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.qa.config;
+package org.talend.dataprep.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

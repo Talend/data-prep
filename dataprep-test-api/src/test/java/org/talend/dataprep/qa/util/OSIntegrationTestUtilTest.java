@@ -17,7 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.FeatureContext;
-import org.talend.dataprep.qa.config.UnitTestsUtil;
+import org.talend.dataprep.util.UnitTestsUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(classes = { OSIntegrationTestUtil.class })

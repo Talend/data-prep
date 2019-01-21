@@ -1,5 +1,12 @@
 package org.talend.dataprep.qa.config;
 
+import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.talend.dataprep.util.UnitTestsUtil;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.qa.config.FeatureContext.getSuffix;
@@ -7,13 +14,6 @@ import static org.talend.dataprep.qa.config.FeatureContext.isUseSuffix;
 import static org.talend.dataprep.qa.config.FeatureContext.setUseSuffix;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixFolderName;
 import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
-import static org.talend.dataprep.qa.config.UnitTestsUtil.injectFieldInClass;
-
-import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FeatureContextTest {
@@ -22,7 +22,7 @@ public class FeatureContextTest {
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
-        injectFieldInClass(context, "TI_SUFFIX_UID", "_123456789");
+        UnitTestsUtil.injectFieldInClass(context, "TI_SUFFIX_UID", "_123456789");
     }
 
     @Test

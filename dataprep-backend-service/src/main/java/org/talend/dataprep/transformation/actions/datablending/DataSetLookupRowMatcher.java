@@ -27,9 +27,11 @@ import org.talend.dataprep.dataset.adapter.DatasetClient;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,10 +56,15 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
     private Iterator<DataSetRow> lookupIterator;
 
     /** Default empty row for the parsed lookup dataset. */
-    private DataSetRow emptyRow;
+    private Map<String, String> defaultEmptyRow;
+
+    private DataSetRow defaultEmptyDatasetRow;
 
     /** Cache of dataset row. */
-    private Map<String, DataSetRow> cache = new HashMap<>();
+    private Map<String, Map<String, String>> cacheMatchingValues = new HashMap();
+
+    /** Cache values with no match of dataset row. */
+    private Set<String> cacheNoMatchingValues = new HashSet<>();
 
     private String joinOnColumn;
 
@@ -96,11 +103,11 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
      */
     @PostConstruct
     private void init() {
-        LOGGER.debug("opening {}", datasetId);
+        LOGGER.debug("Opening the dataset {}", datasetId);
         DataSet lookup = datasetClient.getDataSet(datasetId, true);
         records = lookup.getRecords();
         this.lookupIterator = records.iterator();
-        this.emptyRow = getEmptyRow(lookup.getMetadata().getRowMetadata().getColumns());
+        initEmptyRow(lookup.getMetadata().getRowMetadata().getColumns());
     }
 
     /**
@@ -120,71 +127,81 @@ public class DataSetLookupRowMatcher implements DisposableBean, LookupRowMatcher
      * @return the matching row or an empty one based on the
      */
     @Override
-    public DataSetRow getMatchingRow(String joinOn, String joinValue) {
+    public Map<String, String> getMatchingRow(String joinOn, String joinValue) {
 
-        if (joinValue == null) {
-            LOGGER.debug("join value is null, returning empty row");
-            return emptyRow;
+        if (joinValue == null || cacheNoMatchingValues.contains(joinValue)) {
+            LOGGER.debug("join value is null or there is no matching values existing, returning empty row");
+            return defaultEmptyRow;
         }
 
-        // first, let's look in the cache
-        if (cache.containsKey(joinValue)) {
-            return cache.get(joinValue);
+        // first, let's look in the cache not Empty Values
+        if (cacheMatchingValues.containsKey(joinValue)) {
+            return cacheMatchingValues.get(joinValue);
         }
 
-        // if the value is not cached, let's update the cache
+        // if the value is not cached, let's update the cached matching Values
         List<ColumnMetadata> filteredColumns = null;
         while (lookupIterator.hasNext()) {
             DataSetRow nextRow = lookupIterator.next();
             final String nextRowJoinValue = nextRow.get(joinOn);
+            LOGGER.debug("Search Match for row {} on joinOn {} : joinValue {} / nextRowJoinValue {}",
+                    nextRow.getTdpId(), joinOn, joinValue, nextRowJoinValue);
 
-            // update the cache no matter what so that the next joinValue may be already cached !
-            if (filteredColumns == null) {
-                final List<String> selectedColumnIds = selectedColumns
-                        .stream() //
-                        .map(LookupSelectedColumnParameter::getId) //
-                        .collect(Collectors.toList());
-                filteredColumns = nextRow
-                        .getRowMetadata() //
-                        .getColumns() //
-                        .stream() //
-                        .filter(c -> !joinOnColumn.equals(c.getId()) && selectedColumnIds.contains(c.getId())) //
-                        .collect(Collectors.toList());
-            }
+            if (!cacheMatchingValues.containsKey(nextRowJoinValue)) {
+                // update the cacheValues no matter what so that the next joinValue may be already cached !
+                if (filteredColumns == null) {
+                    final List<String> selectedColumnIds = selectedColumns
+                            .stream() //
+                            .map(LookupSelectedColumnParameter::getId) //
+                            .collect(Collectors.toList());
+                    filteredColumns =
+                            nextRow
+                                    .getRowMetadata() //
+                                    .getColumns() //
+                                    .stream() //
+                                    .filter(c -> !joinOnColumn.equals(c.getId())
+                                            && selectedColumnIds.contains(c.getId())) //
+                                    .collect(Collectors.toList());
+                }
 
-            if (!cache.containsKey(nextRowJoinValue)) {
-                cache.put(nextRowJoinValue, nextRow.filter(filteredColumns).clone());
+                Map<String, String> values = nextRow.values().entrySet().stream().collect(
+                        Collectors.toMap(Map.Entry::getKey, e -> (String) e.getValue()));
+
                 LOGGER.trace("row found and cached for {} -> {}", nextRowJoinValue, nextRow.values());
+                cacheMatchingValues.put(nextRowJoinValue, values);
             }
 
             // if matching row is found, let's stop here
             if (StringUtils.equals(joinValue, nextRowJoinValue)) {
-                return cache.get(nextRowJoinValue);
+                return cacheMatchingValues.get(nextRowJoinValue);
             }
         }
 
-        // the join value was not found and the cache is fully updated, so let's cache an empty row and return it
-        cache.put(joinValue, this.emptyRow);
+        // the join value was not found and the matching cached values map is fully updated, so let's update no matching
+        // map values and return an empty row
+        cacheNoMatchingValues.add(joinValue);
         LOGGER.trace("no row found for {}, returning an empty row", joinValue);
-        return this.emptyRow;
+        return this.defaultEmptyRow;
     }
 
     @Override
     public RowMetadata getRowMetadata() {
-        return emptyRow.getRowMetadata();
+        return defaultEmptyDatasetRow.getRowMetadata();
     }
 
     /**
-     * Return an empty default row based on the given dataset metadata.
+     * Init an empty default row based on the given dataset metadata.
      *
-     * @param columns the dataset to get build the row from.
-     * @return an empty default row based on the given dataset metadata.
+     * @param columns the list of column metadata of rows within the data set
      */
-    private DataSetRow getEmptyRow(List<ColumnMetadata> columns) {
+    private void initEmptyRow(List<ColumnMetadata> columns) {
         RowMetadata rowMetadata = new RowMetadata(columns);
-        DataSetRow defaultRow = new DataSetRow(rowMetadata);
-        columns.forEach(column -> defaultRow.set(column.getId(), EMPTY));
-        return defaultRow;
+        defaultEmptyDatasetRow = new DataSetRow(rowMetadata);
+        defaultEmptyRow = new HashMap<>();
+        columns.forEach(column -> {
+            defaultEmptyDatasetRow.set(column.getId(), EMPTY);
+            defaultEmptyRow.put(column.getId(), EMPTY);
+        });
     }
 
     @Override

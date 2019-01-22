@@ -13,18 +13,6 @@
 
 package org.talend.dataprep.qa.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +22,15 @@ import org.talend.dataprep.qa.dto.Folder;
 import org.talend.dataprep.qa.util.OSIntegrationTestUtil;
 import org.talend.dataprep.qa.util.PreparationUID;
 import org.talend.dataprep.qa.util.folder.FolderUtil;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Used to share data within steps.
@@ -53,16 +50,24 @@ public class FeatureContext {
 
     private static boolean USE_SUFFIX = true;
 
-    /** Classify dataset id by their suffixed name (Map< Name, Id >) */
+    /**
+     * Classify dataset id by their suffixed name (Map< Name, Id >)
+     */
     protected Map<String, String> datasetIdByName = new HashMap<>();
 
-    /** Classify uploaded dataset id by their suffixed name (Map< Name, Id >) in order to delete them later. */
+    /**
+     * Classify uploaded dataset id by their suffixed name (Map< Name, Id >) in order to delete them later.
+     */
     protected Map<String, String> datasetIdByNameToDelete = new HashMap<>();
 
-    /** Classify uploaded preparation id by their full suffixed name (Map< Name, Id >) in order to delete them later. */
+    /**
+     * Classify uploaded preparation id by their full suffixed name (Map< Name, Id >) in order to delete them later.
+     */
     protected Map<PreparationUID, String> preparationIdByFullNameToDelete = new HashMap<>();
 
-    /** Classify preparation id by their full suffixed name (Map< Name, Id >). */
+    /**
+     * Classify preparation id by their full suffixed name (Map< Name, Id >).
+     */
     protected Map<PreparationUID, String> preparationIdByFullName = new HashMap<>();
 
     protected SortedSet<Folder> folders;
@@ -101,9 +106,8 @@ public class FeatureContext {
     /**
      * Add suffix to a filename. This suffix is added before the filename extensions. For example "/tmp/file.csv" become
      * "/tmp/file_654321.csv".
-     * 
-     * @param fileName The filename.
      *
+     * @param fileName The filename.
      * @return The suffixed filename.
      */
     public static String suffixFileName(String fileName) {
@@ -117,9 +121,8 @@ public class FeatureContext {
 
     /**
      * Remove the suffix from the filename.
-     * 
-     * @param fileName The suffixed filename.
      *
+     * @param fileName The suffixed filename.
      * @return The filename without suffix.
      */
     public static String removeSuffixFileName(String fileName) {
@@ -176,20 +179,20 @@ public class FeatureContext {
     /**
      * Store a new dataset reference. In order to delete it later.
      *
-     * @param id the dataset id.
+     * @param id   the dataset id.
      * @param name the dataset name.
      */
-    public void storeDatasetRef(@NotNull String id, @NotNull String name) {
+    public void storeDatasetRef(String id, String name) {
         storeExistingDatasetRef(id, name);
         datasetIdByNameToDelete.put(name, id);
     }
 
     /**
      * Remove a dataset reference from the context.
-     * 
+     *
      * @param datasetName the dataset name.
      */
-    public void removeDatasetRef(@NotNull String datasetName) {
+    public void removeDatasetRef(String datasetName) {
         datasetIdByName.remove(datasetName);
         datasetIdByNameToDelete.remove(datasetName);
     }
@@ -197,20 +200,20 @@ public class FeatureContext {
     /**
      * Store an existing dataset reference.
      *
-     * @param id the dataset id.
+     * @param id   the dataset id.
      * @param name the dataset name.
      */
-    public void storeExistingDatasetRef(@NotNull String id, @NotNull String name) {
+    public void storeExistingDatasetRef(String id, String name) {
         datasetIdByName.put(name, id);
     }
 
     /**
      * Store a new preparation reference. In order to delete it later.
      *
-     * @param id the preparation id.
+     * @param id   the preparation id.
      * @param name the preparation name.
      */
-    public void storePreparationRef(@NotNull String id, @NotNull String name, @NotNull String path) {
+    public void storePreparationRef(String id, String name, String path) {
         storeExistingPreparationRef(id, name, path);
         preparationIdByFullNameToDelete.put( //
                 new PreparationUID() //
@@ -222,10 +225,10 @@ public class FeatureContext {
     /**
      * Store an existing preparation reference.
      *
-     * @param id the preparation id.
+     * @param id   the preparation id.
      * @param name the preparation name.
      */
-    public void storeExistingPreparationRef(@NotNull String id, @NotNull String name, @NotNull String path) {
+    public void storeExistingPreparationRef(String id, String name, String path) {
         preparationIdByFullName.put( //
                 new PreparationUID() //
                         .setName(name) //
@@ -236,14 +239,13 @@ public class FeatureContext {
     /**
      * Store the information about a preparation movement. In order to delete it later.
      *
-     * @param id the preparation id.
+     * @param id      the preparation id.
      * @param oldName the old preparation name.
      * @param oldPath the old preparation path.
      * @param newName the new preparation name.
      * @param newPath the new preparation path.
      */
-    public void storePreparationMove(@NotNull String id, @NotNull String oldName, @NotNull String oldPath,
-            @NotNull String newName, @NotNull String newPath) {
+    public void storePreparationMove(String id, String oldName, String oldPath, String newName, String newPath) {
         // Note : it's inferred that the moved preparation is a created one and not a loaded one (see
         // #storeExistingPreparationRef())
         preparationIdByFullName.remove(new PreparationUID().setName(oldName).setPath(oldPath));
@@ -257,7 +259,7 @@ public class FeatureContext {
      *
      * @param prepName the preparation name.
      */
-    public void removePreparationRef(@NotNull String prepName, @NotNull String prepPath) {
+    public void removePreparationRef(String prepName, String prepPath) {
         preparationIdByFullNameToDelete.remove(new PreparationUID().setPath(prepPath).setName(prepName));
     }
 
@@ -266,17 +268,18 @@ public class FeatureContext {
      *
      * @param file the temporary {@link File} to store.
      */
-    public void storeTempFile(@NotNull String filename, @NotNull File file) {
+    public void storeTempFile(String filename, File file) {
         tempFileByName.put(filename, file);
     }
 
     /**
      * Store an {@link Action}.
      *
-     * @param alias the {@link Action} alias.
-     * @param action the {@link Action} to store.
+     * @param alias           the {@link Action} alias.
+     * @param action          the {@link Action} to store.
+     * @param preparationName the Preparation name whose action belongs to.
      */
-    public void storeAction(@NotNull String alias, @NotNull Action action) {
+    public void storeAction(String alias, Action action, String preparationName) {
         actionByAlias.put(alias, action);
     }
 
@@ -285,7 +288,6 @@ public class FeatureContext {
      *
      * @return a {@link List} of all created dataset id.
      */
-    @NotNull
     public List<String> getDatasetIdsToDelete() {
         return new ArrayList<>(datasetIdByNameToDelete.values());
     }
@@ -295,7 +297,6 @@ public class FeatureContext {
      *
      * @return a {@link List} of all created preparation id.
      */
-    @NotNull
     public List<String> getPreparationIdsToDelete() {
         return new ArrayList<>(preparationIdByFullNameToDelete.values());
     }
@@ -306,8 +307,7 @@ public class FeatureContext {
      * @param datasetName the name of the searched dataset.
      * @return the dataset id.
      */
-    @Nullable
-    public String getDatasetId(@NotNull String datasetName) {
+    public String getDatasetId(String datasetName) {
         return datasetIdByName.get(datasetName);
     }
 
@@ -317,8 +317,7 @@ public class FeatureContext {
      * @param preparationName the name of the searched preparation.
      * @return the preparation id.
      */
-    @Nullable
-    public String getPreparationId(@NotNull String preparationName) {
+    public String getPreparationId(String preparationName) {
         String path = util.extractPathFromFullName(preparationName);
         String name = util.extractNameFromFullName(preparationName);
         return preparationIdByFullName.get(new PreparationUID().setName(name).setPath(path));
@@ -328,11 +327,9 @@ public class FeatureContext {
      * Get the id of a stored preparation.
      *
      * @param preparationName the name of the searched preparation.
-     *
      * @return the preparation id.
      */
-    @Nullable
-    public String getPreparationId(@NotNull String preparationName, @NotNull String folder) {
+    public String getPreparationId(String preparationName, String folder) {
         return preparationIdByFullName.get(new PreparationUID().setName(preparationName).setPath(folder));
     }
 
@@ -342,8 +339,7 @@ public class FeatureContext {
      * @param fileName the stored temporary {@link File}.
      * @return the temporary stored {@link File}.
      */
-    @Nullable
-    public File getTempFile(@NotNull String fileName) {
+    public File getTempFile(String fileName) {
         return tempFileByName.get(fileName);
     }
 
@@ -353,7 +349,7 @@ public class FeatureContext {
      * @param alias the stored {@link Action} alias.
      * @return the stored {@link Action}.
      */
-    public Action getAction(@NotNull String alias) {
+    public Action getAction(String alias) {
         return actionByAlias.get(alias);
     }
 
@@ -387,15 +383,15 @@ public class FeatureContext {
         actionByAlias.clear();
     }
 
-    public void storeObject(@NotNull String key, @NotNull Object object) {
+    public void storeObject(String key, Object object) {
         featureContext.put(key, object);
     }
 
-    public void removeObject(@NotNull String key) {
+    public void removeObject(String key) {
         featureContext.remove(key);
     }
 
-    public Object getObject(@NotNull String key) {
+    public Object getObject(String key) {
         return featureContext.get(key);
     }
 
@@ -408,14 +404,13 @@ public class FeatureContext {
      *
      * @param pFolders the folders to store.
      */
-    public void storeFolder(@NotNull Set<Folder> pFolders) { //
+    public void storeFolder(Set<Folder> pFolders) { //
         pFolders.forEach(f -> folders.add(f));
     }
 
     /**
      * Retreive the list of stored folders.
      */
-    @NotNull
     public Set<Folder> getFolders() {
         return folders;
     }

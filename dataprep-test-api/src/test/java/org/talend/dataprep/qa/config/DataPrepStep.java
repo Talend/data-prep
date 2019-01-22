@@ -76,6 +76,10 @@ public abstract class DataPrepStep {
 
     protected static final String DATASET_ID_KEY = "dataSetId";
 
+    protected static final String HEAD_ID = "HEAD";
+
+    protected static final String VERSION_HEAD = "head";
+
     /**
      * This class' logger.
      */
@@ -159,11 +163,13 @@ public abstract class DataPrepStep {
 
     protected void checkColumnNames(String datasetOrPreparationName, List<String> expectedColumnNames,
             List<String> actual) {
-        assertNotNull("No columns in \"" + datasetOrPreparationName + "\".", actual);
+        assertNotNull("The returned columns' list on \"" + datasetOrPreparationName + "\"  is null.", actual);
         assertFalse("No columns in \"" + datasetOrPreparationName + "\".", actual.isEmpty());
         assertEquals("Not the expected number of columns in \"" + datasetOrPreparationName + "\".",
                 expectedColumnNames.size(), actual.size());
-        assertTrue("\"" + datasetOrPreparationName + "\" doesn't contain all expected columns.",
+        assertTrue(
+                "\"" + datasetOrPreparationName + "\" doesn't contain all expected columns : \""
+                        + CollectionUtils.disjunction(expectedColumnNames, actual).toString() + "\".",
                 actual.containsAll(expectedColumnNames));
     }
 
@@ -195,7 +201,7 @@ public abstract class DataPrepStep {
     // FixMe : same thing as the other one because DatasetContent seems to be the same thing as PreparationContent
     protected PreparationContent getPreparationContent(String preparationName, String tql) throws IOException {
         String preparationId = context.getPreparationId(suffixName(preparationName));
-        Response response = api.getPreparationContent(preparationId, "head", "HEAD", tql);
+        Response response = api.getPreparationContent(preparationId, VERSION_HEAD, HEAD_ID, tql);
         response.then().statusCode(200);
 
         return response.as(PreparationContent.class);
@@ -205,7 +211,8 @@ public abstract class DataPrepStep {
         if (expectedRecordsCount == null) {
             return;
         }
-        Assert.assertEquals(expectedRecordsCount, actualRecordsCount);
+        Assert.assertEquals("The count records " + expectedRecordsCount + "is wrong: " + actualRecordsCount,
+                expectedRecordsCount, actualRecordsCount);
     }
 
     protected void checkRecords(List<Object> actualRecords, String expectedRecordsFilename) throws Exception {
@@ -216,7 +223,10 @@ public abstract class DataPrepStep {
         List<Object> expectedRecords = objectMapper.readValue(expectedRecordsFileStream, DatasetContent.class).records;
 
         Assert.assertEquals(expectedRecords.size(), actualRecords.size());
-        Assert.assertTrue(actualRecords.containsAll(expectedRecords));
+        Assert.assertTrue(
+                "Difference between expected records and actual records:" //
+                        + CollectionUtils.disjunction(expectedRecords, actualRecords).toString(),
+                actualRecords.containsAll(expectedRecords));
     }
 
     protected void checkQualityPerColumn(List<ContentMetadataColumn> columns, String expectedQualityFilename)
@@ -255,7 +265,7 @@ public abstract class DataPrepStep {
             Statistics statistics = column.statistics;
             if (expectedStatistics != null && statistics != null) {
                 Assert.assertTrue(
-                        "Difference between expected records and actual records on column " + i + ":" + //
+                        "Difference between expected records and actual records:" + //
                                 CollectionUtils
                                         .disjunction(expectedStatistics.patternFrequencyTable,
                                                 statistics.patternFrequencyTable)

@@ -1,15 +1,26 @@
 package org.talend.dataprep.qa.step;
 
-import com.jayway.restassured.response.Response;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.springframework.http.HttpStatus.OK;
+import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.talend.dataprep.helper.api.Action;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.dto.ContentMetadataColumn;
@@ -19,19 +30,13 @@ import org.talend.dataprep.qa.dto.FolderContent;
 import org.talend.dataprep.qa.dto.PreparationContent;
 import org.talend.dataprep.qa.dto.PreparationDetails;
 
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.jayway.restassured.response.Response;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.qa.config.FeatureContext.suffixName;
+import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Step dealing with preparation
@@ -41,10 +46,6 @@ public class PreparationStep extends DataPrepStep {
     private static final String DATASET_NAME = "dataSetName";
 
     private static final String NB_STEPS = "nbSteps";
-
-    private static final String HEAD_ID = "HEAD";
-
-    private static final String VERSION_HEAD = "head";
 
     private static final String TDP_INVALID_MARKER = "__tdpInvalid";
 
@@ -198,15 +199,21 @@ public class PreparationStep extends DataPrepStep {
 
     @And("^I check that the preparation \"(.*)\" exists$")
     public void checkPrepExists(String prepFullName) throws IOException {
-        Assert.assertTrue(doesPrepExistsInFolder(prepFullName));
+        Assert.assertTrue("The preparation does not exists in the Folder", doesPrepExistsInFolder(prepFullName));
     }
 
     @Then("^I check that I can load \"(.*)\" times the preparation with name \"(.*)\"$")
     public void loadPreparationMultipleTimes(Integer nbTime, String prepFullName) throws IOException {
-        String prepId = context.getPreparationId(suffixName(prepFullName));
+        String preparationId = context.getPreparationId(suffixName(prepFullName));
         for (int i = 0; i < nbTime; i++) {
-            Response response = api.getPreparationContent(prepId, "head", "HEAD", "");
-            assertEquals(OK.value(), response.getStatusCode());
+            api
+                    .waitResponse("Preparation #" + preparationId + " is ready", 10, 0, 1) //
+                    .until(() -> {
+                        int statusCode = api.getPreparationContent(preparationId, "head", "HEAD", "").getStatusCode();
+                        LOGGER.info("Ask for preparation #{} and I received status code #{}", preparationId,
+                                statusCode);
+                        return statusCode;
+                    }, is(HttpStatus.OK.value()));
         }
     }
 
@@ -292,6 +299,46 @@ public class PreparationStep extends DataPrepStep {
             preparationContent = getPreparationContent(preparationName, null);
         }
         checkContent(preparationContent, dataTable);
+    }
+
+    @Then("^I check that some basic characteristics on the preparation \"(.*)\" match:$")
+    public void checkBasicCharacteristicsOnThePreparationMatch(String preparationName, DataTable dataTable)
+            throws Exception {
+        PreparationContent preparationContent = (PreparationContent) context.getObject("preparationContent");
+        if (preparationContent == null) {
+            preparationContent = getPreparationContent(preparationName, null);
+        }
+        Map<String, String> expected = dataTable.asMap(String.class, String.class);
+
+        if (expected.get("sample_records_count") != null) {
+            Assert.assertEquals(Integer.parseInt(expected.get("sample_records_count")),
+                    preparationContent.records.size());
+        }
+
+        if (expected.get("columns_number") != null) {
+            Assert.assertEquals(Integer.parseInt(expected.get("columns_number")),
+                    preparationContent.metadata.columns.size());
+        }
+    }
+
+    @Then("^I check the quality of the column \"(.*)\" on the preparation \"(.*)\" match:$")
+    public void checkBasicCharacteristicsOnThePreparationMatch(String columnNumber, String preparationName,
+            DataTable dataTable) throws Exception {
+        PreparationContent preparationContent = (PreparationContent) context.getObject("preparationContent");
+        if (preparationContent == null) {
+            preparationContent = getPreparationContent(preparationName, null);
+        }
+        Map<String, String> expected = dataTable.asMap(String.class, String.class);
+
+        ContentMetadataColumn contentMetadataColumn =
+                preparationContent.metadata.columns.get(Integer.parseInt(columnNumber));
+
+        Assert.assertEquals((Integer) Integer.parseInt(expected.get("empty")),
+                contentMetadataColumn.quality.get("empty"));
+        Assert.assertEquals((Integer) Integer.parseInt(expected.get("invalid")),
+                contentMetadataColumn.quality.get("invalid"));
+        Assert.assertEquals((Integer) Integer.parseInt(expected.get("valid")),
+                contentMetadataColumn.quality.get("valid"));
     }
 
     @Then("^The characteristics of the dataset \"(.*)\" match:$")

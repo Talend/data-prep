@@ -84,7 +84,7 @@ const app = angular
 					false,
 				);
 			});
-		$translateProvider.useSanitizeValueStrategy('escape');
+		$translateProvider.useSanitizeValueStrategy('escapeParameters');
 	})
 	// Router config
 	.config(routeConfig)

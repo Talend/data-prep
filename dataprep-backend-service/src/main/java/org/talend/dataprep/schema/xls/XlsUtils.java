@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -335,6 +336,17 @@ public class XlsUtils {
 
     }
 
+    /**
+     * Create a new XMLEventReader from a java.io.InputStream
+     *
+     * @param stream the InputStream to read from
+     * @return a correctly configured XMLEventReader (especially regarding XXE prevention)
+     * @throws XMLStreamException see {@link XMLInputFactory#createXMLEventReader(InputStream)}
+     */
+    public static XMLEventReader createXMLEventReader(InputStream stream) throws XMLStreamException {
+        return XML_INPUT_FACTORY.createXMLEventReader(stream);
+    }
+
     private static class XMLInputSingletonHolder {
 
         private static final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
@@ -342,6 +354,10 @@ public class XlsUtils {
         static {
             xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
             xmlInputFactory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+            // Disable DTDs entirely to prevent XXE attack
+            xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+            // Disable external entities
+            xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
         }
     }
 }

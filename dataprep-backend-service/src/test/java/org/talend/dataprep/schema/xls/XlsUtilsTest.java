@@ -13,21 +13,15 @@
 
 package org.talend.dataprep.schema.xls;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
@@ -116,6 +110,13 @@ public class XlsUtilsTest {
         Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("A15")).isEqualTo(0);
         Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("AG142")).isEqualTo(32);
         Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("BB11")).isEqualTo(53);
+    }
+
+    @Test
+    public void testCreateXMLEventReader_shouldPreventXXE() throws Exception {
+        XMLEventReader reader = XlsUtils.createXMLEventReader(new ByteArrayInputStream(new byte[0]));
+        Assert.assertEquals(false, reader.getProperty(XMLInputFactory.SUPPORT_DTD));
+        Assert.assertEquals(false, reader.getProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES));
     }
 
 }

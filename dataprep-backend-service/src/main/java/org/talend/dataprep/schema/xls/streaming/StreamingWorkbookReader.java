@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
@@ -43,6 +42,7 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.StylesTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.dataprep.schema.xls.XlsUtils;
 import org.talend.dataprep.util.FilesHelper;
 import org.xml.sax.SAXException;
 
@@ -140,7 +140,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
         Iterator<InputStream> iter = reader.getSheetsData();
         int i = 0;
         while (iter.hasNext()) {
-            XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(iter.next());
+            XMLEventReader parser = XlsUtils.createXMLEventReader(iter.next());
             sheets.add(new StreamingSheet(sheetNames.get(i++),
                     new StreamingSheetReader(sst, stylesTable, parser, rowCacheSize)));
         }
@@ -149,7 +149,7 @@ public class StreamingWorkbookReader implements Iterable<Sheet>, AutoCloseable {
     void lookupSheetNames(InputStream workBookData) throws IOException, InvalidFormatException, XMLStreamException {
         sheetNames.clear();
 
-        XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(workBookData);
+        XMLEventReader parser = XlsUtils.createXMLEventReader(workBookData);
         boolean parsingsSheets = false;
         while (parser.hasNext()) {
             XMLEvent event = parser.nextEvent();

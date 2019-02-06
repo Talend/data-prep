@@ -354,7 +354,8 @@ public class XlsUtils {
         static {
             xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
             xmlInputFactory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
-            // Disable DTDs entirely to prevent XXE attack
+            // Disable DTDs entirely to prevent XXE attack, see
+            // https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#XMLInputFactory_.28a_StAX_parser.29
             xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
             // Disable external entities
             xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);

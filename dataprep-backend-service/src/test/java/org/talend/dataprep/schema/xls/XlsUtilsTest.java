@@ -112,6 +112,10 @@ public class XlsUtilsTest {
         Assertions.assertThat(XlsUtils.getColumnNumberFromCellRef("BB11")).isEqualTo(53);
     }
 
+    /**
+     * See https://jira.talendforge.org/browse/TDP-6725 and
+     * https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#XMLInputFactory_.28a_StAX_parser.29
+     */
     @Test
     public void testCreateXMLEventReader_shouldPreventXXE() throws Exception {
         XMLEventReader reader = XlsUtils.createXMLEventReader(new ByteArrayInputStream(new byte[0]));

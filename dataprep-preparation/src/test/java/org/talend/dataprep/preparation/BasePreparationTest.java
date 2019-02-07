@@ -67,7 +67,7 @@ public abstract class BasePreparationTest extends ServiceBaseTest {
     @Before
     public void setUp() {
         super.setUp();
-        home = folderRepository.getHome();
+        home = folderRepository.getOrCreateHome();
     }
 
     @After

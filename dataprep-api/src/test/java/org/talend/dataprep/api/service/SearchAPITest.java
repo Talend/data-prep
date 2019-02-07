@@ -39,7 +39,7 @@ public class SearchAPITest extends ApiServiceTestBase {
     public void shouldReturnMatchingPreparationsWhenPerformingInventory() throws IOException {
         // given
         final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv",
-                "testInventoryOfPreparations", folderRepository.getHome().getId());
+                "testInventoryOfPreparations", folderRepository.getOrCreateHome().getId());
 
         // when
         final Response response = given() //
@@ -67,7 +67,7 @@ public class SearchAPITest extends ApiServiceTestBase {
     public void shouldReturnMatchingPreparationsWithSpaceWhenPerformingInventory() throws IOException {
         // given
         final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv",
-                "testInventory OfPreparations", folderRepository.getHome().getId());
+                "testInventory OfPreparations", folderRepository.getOrCreateHome().getId());
 
         // when
         final Response response = given() //
@@ -163,7 +163,7 @@ public class SearchAPITest extends ApiServiceTestBase {
     public void shouldFilterResultOnCategories() throws IOException {
         // given
         final String preparationId = testClient.createPreparationFromFile("t-shirt_100.csv",
-                "testInventoryOfPreparations", folderRepository.getHome().getId());
+                "testInventoryOfPreparations", folderRepository.getOrCreateHome().getId());
 
         // when
         Response response = given() //

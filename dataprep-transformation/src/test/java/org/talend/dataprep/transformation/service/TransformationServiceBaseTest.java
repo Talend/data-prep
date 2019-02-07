@@ -86,7 +86,7 @@ public abstract class TransformationServiceBaseTest extends TransformationBaseTe
     public void setUp() {
         super.setUp();
         urlUpdater.setUp();
-        home = folderRepository.getHome();
+        home = folderRepository.getOrCreateHome();
     }
 
     @After

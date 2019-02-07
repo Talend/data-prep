@@ -69,7 +69,7 @@ public class PreparationClientTest {
 
     @PostConstruct
     private void init() {
-        this.homeFolderId = folderRepository.getHome().getId();
+        this.homeFolderId = folderRepository.getOrCreateHome().getId();
     }
 
     static {

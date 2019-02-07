@@ -96,8 +96,16 @@ public class FileSystemFolderRepository implements FolderRepository {
     }
 
     @Override
-    public Folder getHome() {
+    public Folder getOrCreateHome() {
         return toFolder(pathsConverter.getRootFolder(), security.getUserId());
+    }
+
+    @Override
+    public Folder getHome() {
+        if (Files.exists(pathsConverter.getRootFolder())) {
+            return getOrCreateHome();
+        }
+        return null;
     }
 
     @Override
@@ -402,7 +410,7 @@ public class FileSystemFolderRepository implements FolderRepository {
     @Override
     public Optional<Folder> getFolder(String path) {
         if ("/".equals(path)) {
-            return Optional.of(getHome());
+            return Optional.of(getOrCreateHome());
         }
         final String queryForFileSearch;
         if (path.startsWith("/")) {

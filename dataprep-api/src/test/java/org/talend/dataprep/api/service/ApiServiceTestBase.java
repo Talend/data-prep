@@ -69,7 +69,7 @@ public abstract class ApiServiceTestBase extends ServiceBaseTest {
         for (UrlRuntimeUpdater urlUpdater : urlUpdaters) {
             urlUpdater.setUp();
         }
-        home = folderRepository.getHome();
+        home = folderRepository.getOrCreateHome();
     }
 
     @After

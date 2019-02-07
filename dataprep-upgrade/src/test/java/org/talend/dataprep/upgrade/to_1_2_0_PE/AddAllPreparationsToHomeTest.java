@@ -65,7 +65,7 @@ public class AddAllPreparationsToHomeTest extends Base_1_2_0_PE_Test {
     public void shouldAddAllPreparationsToHome() throws Exception {
 
         // given
-        final String homeFolderId = folderRepository.getHome().getId();
+        final String homeFolderId = folderRepository.getOrCreateHome().getId();
 
         // when
         task.run();

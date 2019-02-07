@@ -64,7 +64,7 @@ public class AddAllPreparationsTaskToHome implements BaseUpgradeTaskTo_1_2_0_PE 
     @Override
     public void run() {
         final Stream<Preparation> preparations = preparationRepository.list(Preparation.class);
-        final String homeId = folderRepository.getHome().getId();
+        final String homeId = folderRepository.getOrCreateHome().getId();
 
         preparations.forEach(p -> {
             folderRepository.addFolderEntry(new FolderEntry(FolderContentType.PREPARATION, p.id()), homeId);

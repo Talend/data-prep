@@ -16,7 +16,11 @@ import static junit.framework.TestCase.assertFalse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.talend.dataprep.api.folder.FolderContentType.DATASET;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 
@@ -25,7 +29,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.ServiceBaseTest;
 import org.talend.dataprep.api.folder.Folder;
@@ -60,7 +67,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
     @Before
     public void setUp() {
         super.setUp();
-        this.homeFolderId = getFolderRepository().getHome().getId();
+        this.homeFolderId = getFolderRepository().getOrCreateHome().getId();
     }
 
     @After
@@ -456,7 +463,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
     @Test
     public void shouldLocateEntry() throws Exception {
         // given (root & 2 entries)
-        final Folder root = getFolderRepository().getHome();
+        final Folder root = getFolderRepository().getOrCreateHome();
 
         final FolderEntry littleCreatures = new FolderEntry(DATASET, "littleCreatures");
         getFolderRepository().addFolderEntry(littleCreatures, root.getId());
@@ -525,7 +532,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
     @Test
     public void parentIdShouldBeNullForHome() throws Exception {
         // when
-        final Folder home = getFolderRepository().getHome();
+        final Folder home = getFolderRepository().getOrCreateHome();
 
         // then
         assertNull(home.getParentId());
@@ -534,7 +541,7 @@ public abstract class AbstractFolderTest extends ServiceBaseTest {
     @Test
     public void shouldReturnHomeFolder() {
         // when
-        final Folder home = getFolderRepository().getHome();
+        final Folder home = getFolderRepository().getOrCreateHome();
 
         // then
         Assert.assertThat(home.getPath(), is("/"));

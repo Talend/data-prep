@@ -34,7 +34,7 @@ public interface FolderRepository {
 
     /**
      * Return true if the given folder exists.
-     * 
+     *
      * @param folderId the wanted folder folderId.
      * @return true if the given folder exists.
      */
@@ -42,6 +42,13 @@ public interface FolderRepository {
 
     /**
      * Get the current user home folder. If the folder does not yet exists, it's created.
+     *
+     * @return the Home {@link Folder}.
+     */
+    Folder getOrCreateHome();
+
+    /**
+     * Get the current user home folder. If the folder does not yet exists, return null.
      *
      * @return the Home {@link Folder}.
      */
@@ -99,7 +106,7 @@ public interface FolderRepository {
 
     /**
      * List the {@link FolderEntry} of the wanted type within the given folderId.
-     * 
+     *
      * @param folderId the parent folderId
      * @param contentType the contentClass to filter folder entries
      * @return A {@link java.lang.Iterable iterable} of {@link FolderEntry} content filtered for the given type
@@ -120,7 +127,7 @@ public interface FolderRepository {
 
     /**
      * <b>if the destination or entry doesn't exist a {@link IllegalArgumentException} will be thrown</b>
-     * 
+     *
      * @param folderEntry the {@link FolderEntry} to move.
      * @param fromId where to look for the folder entry.
      * @param toId the destination where to move the entry.
@@ -129,7 +136,7 @@ public interface FolderRepository {
 
     /**
      * Copy the given folder entry to the target destination.
-     * 
+     *
      * @param folderEntry the {@link FolderEntry} to move
      * @param toId the destination where to copy the entry
      */
@@ -209,7 +216,7 @@ public interface FolderRepository {
                 // we just add the current user home because every top level shared folder is considered
                 // as the user's home child
                 if (e.getCode().getHttpStatus() == 403) {
-                    hierarchy.add(0, this.getHome());
+                    hierarchy.add(0, this.getOrCreateHome());
                     break;
                 }
                 throw e;

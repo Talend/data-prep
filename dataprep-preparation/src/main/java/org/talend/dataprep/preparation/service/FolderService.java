@@ -172,7 +172,7 @@ public class FolderService {
     @Timed
     public Folder addFolder(@RequestParam(required = false) String parentId, @RequestParam String path) {
         if (parentId == null) {
-            parentId = folderRepository.getHome().getId();
+            parentId = folderRepository.getOrCreateHome().getId();
         }
         Folder folderCreated = folderRepository.addFolder(parentId, path);
 
@@ -216,7 +216,7 @@ public class FolderService {
     @ApiOperation(value = "List all folders")
     @Timed
     public FolderTreeNode getTree() {
-        final Folder home = folderRepository.getHome();
+        final Folder home = folderRepository.getOrCreateHome();
         return getTree(home);
     }
 

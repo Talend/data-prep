@@ -725,7 +725,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     public void shouldCreatePreparationInDefaultFolder() throws Exception {
 
         // given
-        Folder home = folderRepository.getHome();
+        Folder home = folderRepository.getOrCreateHome();
         List<FolderEntry> entries = getEntries(home.getId());
         assertTrue(entries.isEmpty());
 
@@ -746,7 +746,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
 
         // given
         final String path = "/folder-1/sub-folder-2";
-        Folder folder = folderRepository.addFolder(folderRepository.getHome().getId(), path);
+        Folder folder = folderRepository.addFolder(folderRepository.getOrCreateHome().getId(), path);
         List<FolderEntry> entries = getEntries(folder.getId());
         assertThat(entries.size(), is(0));
 
@@ -765,7 +765,7 @@ public class PreparationAPITest extends ApiServiceTestBase {
     @Test
     public void shouldNotAcceptPreparationWithoutRowMetadata() throws Exception {
         // given
-        Folder home = folderRepository.getHome();
+        Folder home = folderRepository.getOrCreateHome();
         final List<FolderEntry> entries = getEntries(home.getId());
         assertThat(entries.size(), is(0));
         String dataSetId = testClient.createDataset("dataset/dataset.csv", "testCreatePreparation");

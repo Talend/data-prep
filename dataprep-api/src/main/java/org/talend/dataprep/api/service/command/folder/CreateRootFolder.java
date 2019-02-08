@@ -1,5 +1,6 @@
 // ============================================================================
-// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+//
+// Copyright (C) 2006-2019 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // https://github.com/Talend/data-prep/blob/master/LICENSE
@@ -13,43 +14,51 @@
 package org.talend.dataprep.api.service.command.folder;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static org.talend.dataprep.command.Defaults.asNull;
-import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RENAME_FOLDER;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE_FOLDER;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.daikon.exception.ExceptionContext;
+import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class RenameFolder extends GenericCommand<Void> {
+public class CreateRootFolder extends GenericCommand<Folder> {
 
-    public RenameFolder(final String id, final String newName) {
-        super(GenericCommand.DATASET_GROUP);
-        execute(() -> onExecute(id, newName));
-        onError(e -> new TDPException(UNABLE_TO_RENAME_FOLDER, e, ExceptionContext.build()));
-        on(HttpStatus.OK).then(asNull());
+    public CreateRootFolder() {
+        super(GenericCommand.PREPARATION_GROUP);
+        execute(() -> onExecute());
+        on(HttpStatus.OK).then((req, resp) -> processResponse(req, resp));
     }
 
-    private HttpRequestBase onExecute(final String id, final String newName) {
+    private HttpRequestBase onExecute() {
         try {
-            final URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + id + "/name");
-            final HttpPut put = new HttpPut(uriBuilder.build());
-            put.setEntity(new StringEntity(newName, "UTF-8"));
-            return put;
+
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders");
+            return new HttpPost(uriBuilder.build());
         } catch (URISyntaxException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
     }
 
+    private Folder processResponse(HttpRequestBase request, HttpResponse response) {
+        try {
+            return objectMapper.readerFor(Folder.class).readValue(response.getEntity().getContent());
+        } catch (IOException e) {
+            throw new TDPException(UNABLE_TO_CREATE_FOLDER, e);
+        } finally {
+            request.releaseConnection();
+        }
+
+    }
 }

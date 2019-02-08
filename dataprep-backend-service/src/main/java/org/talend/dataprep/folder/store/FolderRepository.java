@@ -52,7 +52,7 @@ public interface FolderRepository {
      *
      * @return the Home {@link Folder}.
      */
-    Folder getHome();
+    Optional<Folder> getHome();
 
     /**
      * Add a folder.

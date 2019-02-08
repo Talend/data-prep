@@ -15,6 +15,7 @@ package org.talend.dataprep.preparation.service;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
@@ -162,21 +163,27 @@ public class FolderService {
     }
 
     /**
-     * Add a folder.
+     * Creates a sub folder in a folder.
      *
-     * @param parentId where to add the folder.
      * @return the created folder.
      */
-    @RequestMapping(value = "/folders", method = PUT)
+    @RequestMapping(value = "/folders/{id}/folders", method = POST)
+    @ApiOperation(value = "Creates a sub folder in a folder", notes = "Creates a sub folder in a folder")
+    @Timed
+    public Folder addFolder(@PathVariable String id, @RequestParam String path) {
+        Folder folderCreated = folderRepository.addFolder(id, path);
+
+        auditService.auditFolderCreation(folderCreated.getId(), folderCreated.getName(), id);
+
+        return folderCreated;
+    }
+
+    @RequestMapping(value = "/folders", method = POST)
     @ApiOperation(value = "Create a Folder", notes = "Create a folder")
     @Timed
-    public Folder addFolder(@RequestParam(required = false) String parentId, @RequestParam String path) {
-        if (parentId == null) {
-            parentId = folderRepository.getOrCreateHome().getId();
-        }
-        Folder folderCreated = folderRepository.addFolder(parentId, path);
-
-        auditService.auditFolderCreation(folderCreated.getId(), folderCreated.getName(), parentId);
+    public Folder createRootFolder() {
+        Folder folderCreated = folderRepository.getOrCreateHome();
+        auditService.auditFolderCreation(folderCreated.getId(), folderCreated.getName(), null);
 
         return folderCreated;
     }

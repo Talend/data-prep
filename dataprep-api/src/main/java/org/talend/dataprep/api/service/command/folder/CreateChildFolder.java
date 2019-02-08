@@ -13,7 +13,13 @@
 
 package org.talend.dataprep.api.service.command.folder;
 
-import org.apache.http.client.methods.HttpPut;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static org.talend.dataprep.command.Defaults.pipeStream;
+
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
@@ -22,12 +28,6 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
-
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static org.talend.dataprep.command.Defaults.pipeStream;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -48,12 +48,9 @@ public class CreateChildFolder extends GenericCommand<InputStream> {
     private HttpRequestBase onExecute(final String parentId, final String path) {
         try {
 
-            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders");
-            if (parentId != null) {
-                uriBuilder.addParameter("parentId", parentId);
-            }
+            URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/folders/" + parentId + "/folders");
             uriBuilder.addParameter("path", path);
-            return new HttpPut(uriBuilder.build());
+            return new HttpPost(uriBuilder.build());
         } catch (URISyntaxException e) {
             throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }

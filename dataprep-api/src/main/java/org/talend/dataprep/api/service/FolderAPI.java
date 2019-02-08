@@ -103,8 +103,7 @@ public class FolderAPI extends APIService {
     @RequestMapping(value = "/api/folders", method = PUT)
     @ApiOperation(value = "Add a folder.", produces = APPLICATION_JSON_VALUE)
     @Timed
-    public StreamingResponseBody addFolder(@RequestParam(required = false) final String parentId,
-            @RequestParam final String path) {
+    public StreamingResponseBody addFolder(@RequestParam final String parentId, @RequestParam final String path) {
         try {
             final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, parentId, path);
             return CommandHelper.toStreaming(createChildFolder);
@@ -132,7 +131,7 @@ public class FolderAPI extends APIService {
     @Timed
     public void renameFolder(@PathVariable final String id, @RequestBody final String newName) {
 
-        if (StringUtils.isEmpty(id) || StringUtils.isEmpty(newName)) {
+        if (StringUtils.isEmpty(id) || StringUtils.isEmpty(newName) || newName.contains("/")) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER);
         }
 

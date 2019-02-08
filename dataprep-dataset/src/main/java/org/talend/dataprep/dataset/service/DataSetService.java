@@ -436,7 +436,14 @@ public class DataSetService extends BaseDataSetService {
             // So, let's read fully the request content before closing the connection.
             dataSetContentToNull(content);
         }
-        dataSetMetadataRepository.remove(id);
+        // remove dataSetMetadata
+        securityProxy.asTechnicalUser();
+        try {
+            dataSetMetadataRepository.remove(id);
+        } finally {
+            securityProxy.releaseIdentity();
+        }
+
         if (dataSetMetadata != null) {
             try {
                 contentStore.delete(dataSetMetadata);

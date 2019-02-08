@@ -374,7 +374,7 @@ public class FolderAPITest extends ApiServiceTestBase {
     public void updateFolderWithUnknownParent_TDP_4959() {
         // check non encoding issue on path query parameter
         Response response = given() //
-                .queryParam("parentId", "ZAP%n%s%n%s%n%s%n%s%n%s") //
+                .queryParam("parentId", "unknown") //
                 .queryParam("path", "new-folder") //
                 .expect()
                 .statusCode(400)

@@ -101,9 +101,9 @@ public class FileSystemFolderRepository implements FolderRepository {
     }
 
     @Override
-    public Folder getHome() {
+    public Optional<Folder> getHome() {
         if (Files.exists(pathsConverter.getRootFolder())) {
-            return getOrCreateHome();
+            return Optional.of(getOrCreateHome());
         }
         return null;
     }

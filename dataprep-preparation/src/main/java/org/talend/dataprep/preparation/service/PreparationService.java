@@ -1301,6 +1301,12 @@ public class PreparationService {
             final String headId = preparation.getHeadId();
             final Step head = preparationRepository.get(headId, Step.class);
             final PreparationActions headActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+
+            if (headActions == null) {
+                LOGGER.warn("Cannot retrieve the action corresponding to step {}. Therefore it will be skipped.", head);
+                return;
+            }
+
             final PreparationActions newContent = new PreparationActions();
             final List<Action> newActions = new ArrayList<>(headActions.getActions());
             newActions.addAll(step.getActions());

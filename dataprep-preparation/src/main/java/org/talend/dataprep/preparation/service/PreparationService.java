@@ -23,20 +23,32 @@ import static org.talend.dataprep.api.folder.FolderContentType.PREPARATION;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.CONFLICT_TO_LOCK_RESOURCE;
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNEXPECTED_EXCEPTION;
 import static org.talend.dataprep.exception.error.FolderErrorCodes.FOLDER_NOT_FOUND;
-import static org.talend.dataprep.exception.error.PreparationErrorCodes.*;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_DOES_NOT_EXIST;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_NAME_ALREADY_USED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_NOT_EMPTY;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_ROOT_STEP_CANNOT_BE_DELETED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_CANNOT_BE_REORDERED;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.PREPARATION_STEP_DOES_NOT_EXIST;
 import static org.talend.dataprep.lock.store.LockedResource.LockUserInfo;
 import static org.talend.dataprep.util.SortAndOrderHelper.getPreparationComparator;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,7 +62,16 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.RowMetadata;
 import org.talend.dataprep.api.folder.Folder;
 import org.talend.dataprep.api.folder.FolderEntry;
-import org.talend.dataprep.api.preparation.*;
+import org.talend.dataprep.api.preparation.Action;
+import org.talend.dataprep.api.preparation.AppendStep;
+import org.talend.dataprep.api.preparation.Preparation;
+import org.talend.dataprep.api.preparation.PreparationActions;
+import org.talend.dataprep.api.preparation.PreparationMessage;
+import org.talend.dataprep.api.preparation.PreparationSummary;
+import org.talend.dataprep.api.preparation.PreparationUtils;
+import org.talend.dataprep.api.preparation.Step;
+import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.api.preparation.StepRowMetadata;
 import org.talend.dataprep.api.service.info.VersionService;
 import org.talend.dataprep.command.dataset.DataSetGetMetadata;
 import org.talend.dataprep.conversions.BeanConversionService;
@@ -252,7 +273,7 @@ public class PreparationService {
      * <li>folderId path</li>
      * </ul>
      * </p>
-     * 
+     *
      * @param dataSetId to search all preparations based on this dataset id.
      * @param folderId to search all preparations located in this folderId.
      * @param name to search all preparations that match this name.
@@ -651,7 +672,7 @@ public class PreparationService {
             PreparationActions prepActions = preparationRepository.get(head.getContent(), PreparationActions.class);
             boolean inconsistentPreparation = false;
             while (prepActions == null && head != Step.ROOT_STEP) {
-                LOGGER.info(
+                LOGGER.warn(
                         "Head step {} is inconsistent. Its corresponding action is unavailable. for the sake of safety new head is set to {}",
                         head.getId(), head.getParent());
 
@@ -1264,7 +1285,9 @@ public class PreparationService {
     }
 
     /**
-     * Rewrite the preparation history from a specific step, with the provided actions
+     * Rewrite the preparation history from a specific step, with the provided actions.
+     * <p>The preparation consistency is verified before rewrite the history.</p>
+     * @see PreparationService#ensurePreparationConsistency(Preparation)
      *
      * @param preparation The preparation
      * @param startStepId The step id to start the (re)write. The following steps will be erased
@@ -1277,39 +1300,27 @@ public class PreparationService {
             setPreparationHead(preparation, startingStep);
         }
 
-        actionsSteps.forEach(step -> appendStepToHead(preparation, step));
-    }
+        ensurePreparationConsistency(preparation);
 
-    /**
-     * Append a single appendStep after the preparation head
-     *
-     * @param preparation The preparation.
-     * @param appendStep The appendStep to apply.
-     */
-    private void appendStepToHead(final Preparation preparation, final AppendStep appendStep) {
-        // Add new actions after head
-        final String headId = preparation.getHeadId();
-        final Step head = preparationRepository.get(headId, Step.class);
-        final PreparationActions headActions = preparationRepository.get(head.getContent(), PreparationActions.class);
-        final PreparationActions newContent = new PreparationActions();
+        actionsSteps.forEach(step -> {
+            // Add new actions after preparation head
+            final String headId = preparation.getHeadId();
+            final Step head = preparationRepository.get(headId, Step.class);
+            final PreparationActions headActions = preparationRepository.get(head.getContent(), PreparationActions.class);
+            final PreparationActions newContent = new PreparationActions();
+            final List<Action> newActions = new ArrayList<>(headActions.getActions());
+            newActions.addAll(step.getActions());
+            newContent.setActions(newActions);
 
-        if (headActions == null) {
-            LOGGER.info("Cannot retrieve the action corresponding to step {}. Therefore it will be skipped.", head);
-            return;
-        }
-        final List<Action> newActions = new ArrayList<>(headActions.getActions());
+            // Create new step from new content
+            final Step newHead = new Step(headId, newContent.id(), versionService.version().getVersionId(), step.getDiff());
+            preparationRepository.add(newHead);
+            preparationRepository.add(newContent);
 
-        newActions.addAll(appendStep.getActions());
-        newContent.setActions(newActions);
-
-        // Create new step from new content
-        final Step newHead = new Step(headId, newContent.id(), versionService.version().getVersionId(), appendStep.getDiff());
-        preparationRepository.add(newHead);
-        preparationRepository.add(newContent);
-
-        // TODO Could we get the new step id?
-        // Update preparation head step
-        setPreparationHead(preparation, newHead);
+            // TODO Could we get the new step id?
+            // Update preparation head step
+            setPreparationHead(preparation, newHead);
+        });
     }
 
     /**

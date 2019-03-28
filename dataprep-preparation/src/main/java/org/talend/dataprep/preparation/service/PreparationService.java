@@ -1296,8 +1296,6 @@ public class PreparationService {
             setPreparationHead(preparation, startingStep);
         }
 
-        ensurePreparationConsistency(preparation);
-
         actionsSteps.forEach(step -> {
             // Add new actions after preparation head
             final String headId = preparation.getHeadId();

@@ -1282,8 +1282,6 @@ public class PreparationService {
 
     /**
      * Rewrite the preparation history from a specific step, with the provided actions.
-     * <p>The preparation consistency is verified before rewrite the history.</p>
-     * @see PreparationService#ensurePreparationConsistency(Preparation)
      *
      * @param preparation The preparation
      * @param startStepId The step id to start the (re)write. The following steps will be erased

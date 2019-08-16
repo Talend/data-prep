@@ -13,12 +13,8 @@
 
 package org.talend.dataprep.qa.step;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
+import com.epam.reportportal.service.ReportPortal;
+import cucumber.api.java.en.Then;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -26,7 +22,12 @@ import org.slf4j.LoggerFactory;
 import org.talend.dataprep.qa.config.DataPrepStep;
 import org.talend.dataprep.qa.util.ExcelComparator;
 
-import cucumber.api.java.en.Then;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Calendar;
 
 import static org.junit.Assert.fail;
 
@@ -47,7 +48,7 @@ public class FileStep extends DataPrepStep {
         Path tempFile = context.getTempFile(temporaryFilename).toPath();
 
         try (InputStream tempFileStream = Files.newInputStream(tempFile);
-                InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {
+             InputStream expectedFileStream = DataPrepStep.class.getResourceAsStream(expectedFilename)) {
 
             if (FileSystems.getDefault()
                     .getPathMatcher("glob:*.xlsx")
@@ -55,10 +56,12 @@ public class FileStep extends DataPrepStep {
 
                 if (!ExcelComparator.compareTwoFile(new XSSFWorkbook(tempFileStream),
                         new XSSFWorkbook(expectedFileStream))) {
+                    ReportPortal.emitLog("Logging temporary file " + tempFile.getFileName().toString(), "INFO", Calendar.getInstance().getTime(), tempFile.toFile());
                     fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
                 }
             } else if (!IOUtils.contentEquals(tempFileStream, expectedFileStream)) {
-                    fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
+                ReportPortal.emitLog("Logging temporary file " + tempFile.getFileName().toString(), "INFO", Calendar.getInstance().getTime(), tempFile.toFile());
+                fail("Temporary file " + temporaryFilename + " isn't the same as the expected file " + expectedFilename);
             }
         }
     }

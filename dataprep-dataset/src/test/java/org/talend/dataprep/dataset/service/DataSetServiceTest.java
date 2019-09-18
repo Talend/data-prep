@@ -21,6 +21,7 @@ import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -1323,6 +1324,7 @@ public class DataSetServiceTest extends DataSetBaseTest {
     }
 
     @Test
+    @Ignore("No explicit fix - see TDP-7705")
     public void datePattern() throws Exception {
         int before = dataSetMetadataRepository.size();
         String dataSetId = given().body(IOUtils.toString(this.getClass().getResourceAsStream("../date_time_pattern.csv")))

@@ -104,6 +104,8 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     private static final String JapaneseStr = "0008-10-29";
 
+    private static final String JapaneseStrWithEra = "0008-10-29 平成";
+
     private static final String MinguoStr = "0085-10-29";
 
     private static final String ThaiBuddhistStr = "2539-10-29";
@@ -426,9 +428,6 @@ public class DateCalendarConverterTest extends BaseDateTest {
     public void testChronologyToJulianDay(){
         testConversion(IsoStr2, CalendarUnit.ISO, pattern, JulianDay,
                 CalendarUnit.JULIAN_DAY);
-        testConversion(JapaneseStr, CalendarUnit.JAPANESE, pattern,ModifiedJulianDay ,
-                CalendarUnit.MODIFIED_JULIAN_DAY);
-
         testConversion(HijrahStr, CalendarUnit.HIJRI, pattern,EpochDay ,
                 CalendarUnit.EPOCH_DAY);
         testConversion(MinguoStr, CalendarUnit.MINGUO, pattern,RataDie ,

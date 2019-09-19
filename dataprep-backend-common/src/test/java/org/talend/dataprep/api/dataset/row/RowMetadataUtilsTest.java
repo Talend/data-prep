@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avro.Schema;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.type.Type;
@@ -32,6 +33,7 @@ import org.talend.dataprep.api.type.Type;
 public class RowMetadataUtilsTest {
 
     @Test
+    @Ignore("No explicit fix - see TDP-7705")
     public void shouldCreateSchemaWithName() {
 
         // given

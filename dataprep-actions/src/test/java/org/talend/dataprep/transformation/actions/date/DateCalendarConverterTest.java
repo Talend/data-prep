@@ -104,8 +104,6 @@ public class DateCalendarConverterTest extends BaseDateTest {
 
     private static final String JapaneseStr = "0008-10-29";
 
-    private static final String JapaneseStrWithEra = "0008-10-29 平成";
-
     private static final String MinguoStr = "0085-10-29";
 
     private static final String ThaiBuddhistStr = "2539-10-29";

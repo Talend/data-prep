@@ -461,6 +461,32 @@ describe('Dataset Service', () => {
             }));
         });
 
+        describe('isRemote', () => {
+            it('should return true if it is a TCOMP dataset', inject(($rootScope, DatasetService) => {
+                expect(DatasetService.isRemote({
+                    type: 'application/prs.tcomp-ds.tcomp-SuperService',
+                })).toBeTruthy();
+            }));
+
+            it('should return true if it is a LIVE dataset', inject(($rootScope, DatasetService) => {
+                expect(DatasetService.isRemote({
+                    type: 'application/vnd.remote-ds.job',
+                })).toBeTruthy();
+            }));
+
+            it('should return false if it is a LOCAL dataset', inject(($rootScope, DatasetService) => {
+                expect(DatasetService.isRemote({
+                    type: 'text/csv',
+                })).toBeFalsy();
+            }));
+
+            it('should return true if there is no type', inject(($rootScope, DatasetService) => {
+                expect(DatasetService.isRemote({
+                    type: '',
+                })).toBeFalsy();
+            }));
+        });
+
         describe('checkNameAvailability', () => {
             it('should resolve on name availability', inject(($rootScope, $q, DatasetRestService, DatasetService) => {
                 // given

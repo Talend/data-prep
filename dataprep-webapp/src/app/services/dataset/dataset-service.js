@@ -111,6 +111,7 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 		createDatasetInfo,
 		checkNameAvailability,
 		getLocationParamIteration: getParamIteration,
+		isRemote,
 	};
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -313,6 +314,18 @@ export default function DatasetService($q, state, StateService, DatasetListServi
 	function checkNameAvailability(name) {
 		return DatasetRestService.getDatasetByName(name)
 			.then(dataset => (dataset ? $q.reject(dataset) : $q.when(name)));
+	}
+
+	/**
+	 * @ngdoc method
+	 * @name isRemote
+	 * @methodOf data-prep.services.dataset.service:DatasetService
+	 * @description Returns true if the given dataset is a remote one
+	 * @param {object} dataset The dataset to check
+	 */
+	function isRemote(dataset) {
+		const { type } = dataset;
+		return type && (type.includes('application/vnd.remote-ds') || type.includes('application/prs.tcomp-ds'));
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
